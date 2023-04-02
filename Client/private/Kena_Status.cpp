@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Kena_Status.h"
 #include "GameInstance.h"
+#include "Kena.h"
 
 CKena_Status::CKena_Status(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CStatus(pDevice, pContext)
@@ -33,6 +34,43 @@ void CKena_Status::Tick(_float fTimeDelta)
 	Update_ArrowCoolTime(fTimeDelta);
 	Update_BombCoolTime(fTimeDelta);
 	Update_ShieldRecovery(fTimeDelta);
+
+	/* TEST */
+	if (CGameInstance::GetInstance()->Key_Down(DIK_G))
+		Unlock_Skill(CKena_Status::SKILL_SHIELD, 2);
+	if (CGameInstance::GetInstance()->Key_Down(DIK_H))
+		Unlock_Skill(CKena_Status::SKILL_SHIELD, 4);
+	if (CGameInstance::GetInstance()->Key_Down(DIK_J))
+		Unlock_Skill(CKena_Status::SKILL_BOW, 3);
+	if (CGameInstance::GetInstance()->Key_Down(DIK_K))
+		Unlock_Skill(CKena_Status::SKILL_BOW, 4);
+	if (CGameInstance::GetInstance()->Key_Down(DIK_L))
+		Unlock_Skill(CKena_Status::SKILL_BOMB, 3);
+	if (CGameInstance::GetInstance()->Key_Down(DIK_SEMICOLON))
+		Add_RotCount();
+	if (CGameInstance::GetInstance()->Key_Down(DIK_APOSTROPHE))
+	{
+		/* RESET */
+		m_iRotLevel = 1;
+		m_iCurrentRotCount = 0;
+		m_iRotCountMax = 2;
+
+		m_iPipLevel = m_iRotLevel;
+		m_iMaxPIPCount = m_iRotLevel;
+		m_fCurPIPGuage = (_float)m_iMaxPIPCount;
+
+		m_fMaxShield = 100.f;
+		m_fShield = 100.f;
+		m_iMaxArrowCount = 4;
+		m_iCurArrowCount = 4;
+		m_iMaxBombCount = 1;
+		m_iCurBombCount = 1;
+		m_bSkills[SKILL_SHIELD][2] = false;
+		m_bSkills[SKILL_SHIELD][4] = false;
+		m_bSkills[SKILL_BOW][3] = false;
+		m_bSkills[SKILL_BOW][4] = false;
+		m_bSkills[SKILL_BOMB][3] = false;
+	}
 }
 
 void CKena_Status::Imgui_RenderProperty()
@@ -140,10 +178,18 @@ void CKena_Status::Update_ShieldRecovery(_float fTimeDelta)
 			if (m_fCurShieldCoolTime < m_fInitShieldCoolTime)
 				m_fCurShieldCoolTime += fTimeDelta;
 			else
+			{
 				m_fShield += fTimeDelta * 3.f;
+
+				/* NEED : UI SHIELD GAGE UPDATE */
+			}
 		}
 		else
+		{
 			m_fShield = m_fMaxShield;
+
+			/* NEED : UI SHIELD GAGE UPDATE */
+		}
 	}
 	else
 	{
@@ -154,6 +200,68 @@ void CKena_Status::Update_ShieldRecovery(_float fTimeDelta)
 			m_bShieldBreak = false;
 			m_fCurShieldRecoveryTime = 0.f;
 			m_fCurShieldCoolTime = m_fInitShieldCoolTime;
+		}
+	}
+	CUI_ClientManager::UI_PRESENT eShield = CUI_ClientManager::HUD_SHIELD;
+	m_StatusDelegator.broadcast(eShield, m_fShield);
+}
+
+void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
+{
+	switch (eCategory)
+	{
+	case CKena_Status::SKILL_MELEE:
+		{
+			break;
+		}
+	case CKena_Status::SKILL_SHIELD:
+		{
+			if (iSlot == 2)
+			{
+				m_fMaxShield *= 1.5f;
+
+				/* NEED : UI SHILED GAGE UP */
+			}
+			else if (iSlot == 4)
+			{
+				m_fMaxShield *= 1.5f;
+
+				/* NEED : UI SHILED GAGE UP */
+			}
+
+			break;
+		}
+	case CKena_Status::SKILL_BOW:
+		{
+			if (iSlot == 3)
+			{
+				m_iMaxArrowCount++;
+
+				/* NEED : UI ARROW COUNT UP */
+			}
+			else if (iSlot == 4)
+			{
+				m_iMaxArrowCount++;
+
+				/* NEED : UI ARROW COUNT UP */
+			}
+
+			break;
+		}
+	case CKena_Status::SKILL_BOMB:
+		{
+			if (iSlot == 3)
+			{
+				m_iMaxBombCount++;
+
+				/* NEED : UI BOMB COUNT UP */
+			}
+
+			break;
+		}
+	case CKena_Status::SKILL_ROT:
+		{
+			break;
 		}
 	}
 }
@@ -215,7 +323,7 @@ HRESULT CKena_Status::Save()
 	jKenaStatus["03. m_fInitShieldRecoveryTime"] = m_fInitShieldRecoveryTime;
 	jKenaStatus["04. m_iKarma"] = m_iKarma;
 	jKenaStatus["05. m_iRotLevel"] = m_iRotLevel;
-	jKenaStatus["06. m_iRotCount"] = m_iRotCount;
+	jKenaStatus["06. m_iRotCount"] = m_iCurrentRotCount;
 	jKenaStatus["07. m_iCrystal"] = m_iCrystal;
 	jKenaStatus["08. m_iMaxPIPCount"] = m_iMaxPIPCount;
 	jKenaStatus["09. m_fCurPIPGuage"] = m_fCurPIPGuage;
@@ -251,7 +359,7 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 	jKenaStatus["03. m_fInitShieldRecoveryTime"].get_to<_float>(m_fInitShieldRecoveryTime);
 	jKenaStatus["04. m_iKarma"].get_to<_int>(m_iKarma);
 	jKenaStatus["05. m_iRotLevel"].get_to<_int>(m_iRotLevel);
-	jKenaStatus["06. m_iRotCount"].get_to<_int>(m_iRotCount);
+	jKenaStatus["06. m_iRotCount"].get_to<_int>(m_iCurrentRotCount);
 	jKenaStatus["07. m_iCrystal"].get_to<_int>(m_iCrystal);
 	jKenaStatus["08. m_iMaxPIPCount"].get_to<_int>(m_iMaxPIPCount);
 	jKenaStatus["09. m_fCurPIPGuage"].get_to<_float>(m_fCurPIPGuage);
@@ -309,16 +417,29 @@ _int CKena_Status::Get_MaxPIPCount()
 	return m_iMaxPIPCount;
 }
 
+const _bool CKena_Status::Get_SkillState(SKILLTAB eCategory, _uint iSlot) const
+{
+	if (eCategory >= CKena_Status::SKILLTAB_END)
+		return false;
+
+	if (iSlot >= 5)
+		return false;
+
+	return m_bSkills[eCategory][iSlot];
+}
+
 void CKena_Status::Set_RotCount(_int iValue)
 {
-	m_iRotCount = iValue;
+	/* NEED : ADD_ROTCOUNT() 수정 후에 이 함수는 비워줘. */
+
+	m_iCurrentRotCount = iValue;
 
 	CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
 	CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
 	CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
 
 	_float fRotMax = (_float)Get_RotMax();
-	_float fRotNow = (_float)m_iRotCount;
+	_float fRotNow = (_float)m_iCurrentRotCount;
 	_float fGuage = fRotNow / fRotMax;
 
 	m_StatusDelegator.broadcast(eNow, fRotNow);
@@ -327,7 +448,7 @@ void CKena_Status::Set_RotCount(_int iValue)
 
 
 	/* think later */
-	if (Get_RotMax() == m_iRotCount)
+	if (Get_RotMax() == m_iCurrentRotCount)
 		m_iRotLevel++;
 }
 
@@ -340,4 +461,48 @@ void CKena_Status::Set_CurArrowCount(_int iValue)
 	_float fCount = (_float)m_iCurArrowCount;
 	m_StatusDelegator.broadcast(eArrow, fCount);
 
+}
+
+void CKena_Status::Add_RotCount()
+{
+	/* NEED : UI UPDATE ROT COUNT GAGE */
+	m_iCurrentRotCount++;
+
+	if (m_iCurrentRotCount >= m_iRotCountMax && m_iRotLevel != 4)
+	{
+		dynamic_cast<CKena*>(m_pOwner)->Set_State(CKena::STATE_LEVELUP, true);
+		m_iRotLevel++;
+		m_iRotCountMin = m_iRotCountMax;
+
+		m_iPipLevel = m_iRotLevel;
+		m_iMaxPIPCount = m_iRotLevel;
+		m_fCurPIPGuage = (_float)m_iMaxPIPCount;
+
+		if (m_iRotLevel == 2)
+			m_iRotCountMax = 5;
+
+		else if (m_iRotLevel == 3)
+			m_iRotCountMax = 8;
+
+		else if (m_iRotLevel == 4)
+			m_iRotCountMax = 10;
+
+		/* NEED : UI MAX PIP COUNT INCREASE */
+		/* NEED : UI ROT COUNT GAGE RESET */
+	}
+}
+
+void CKena_Status::Unlock_Skill(SKILLTAB eCategory, _uint iSlot)
+{
+	if (eCategory >= CKena_Status::SKILLTAB_END)
+		return;
+
+	if (iSlot >= 5)
+		return;
+
+	m_bSkills[eCategory][iSlot] = true;
+	
+	/* NEED : UI SKILL SLOT STATE CHANGE */
+
+	Apply_Skill(eCategory, iSlot);
 }

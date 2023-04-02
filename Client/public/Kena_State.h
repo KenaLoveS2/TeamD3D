@@ -1191,6 +1191,7 @@ private:
 private:	/* Changer */
 	_bool	TruePass();
 	_bool	OnGround();
+	_bool	LevelUp();
 	_bool	CommonHit();
 	_bool	HeavyHit();
 	_bool	Shield_Small();
@@ -1198,6 +1199,8 @@ private:	/* Changer */
 	_bool	Shield_Big();
 	_bool	Shield_Break_Front();
 	_bool	Shield_Break_Back();
+	_bool	Dash_Attack();
+	_bool	Dash_Portal();
 	_bool	Falling();
 	_bool	Pulse_Jump();
 	_bool	Parry();
@@ -1264,10 +1267,9 @@ private:
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
 
-
 public:
 	static	CKena_State*	Create(class CKena* pKena, class CKena_Status* pStatus, CStateMachine* pStateMachine, CModel* pModel, CAnimationState* pAnimation, CTransform* pTransform, class CCamera_Player* pCamera);
-	virtual void				Free() override;
+	virtual void			Free() override;
 };
 
 END

@@ -16,6 +16,9 @@ CEffect_Base_S2::CEffect_Base_S2(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	, m_fFrameNow(0.f)
 	, m_vScaleSpeed(0.0f, 0.0f)
 	, m_ParentPosition(0.0f, 0.0f, 0.0f, 1.0f)
+	, m_bSelfStop(false)
+	, m_fSelfStopTime(0.0f)
+	, m_fSelfStopTimeAcc(0.0f)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
@@ -49,6 +52,9 @@ CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2& rhs)
 	, m_fFrameNow(0.f)
 	, m_vScaleSpeed(0.0f, 0.0f)
 	, m_ParentPosition(0.0f, 0.0f, 0.0f, 1.0f)
+	, m_bSelfStop(false)
+	, m_fSelfStopTime(0.0f)
+	, m_fSelfStopTimeAcc(0.0f)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
@@ -130,6 +136,13 @@ void CEffect_Base_S2::Tick(_float fTimeDelta)
 void CEffect_Base_S2::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (true == m_bSelfStop)
+	{
+		m_fSelfStopTimeAcc += fTimeDelta;
+		if (m_fSelfStopTimeAcc > m_fSelfStopTime)
+			DeActivate();
+	}
 }
 
 HRESULT CEffect_Base_S2::Render()

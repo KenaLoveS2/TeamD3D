@@ -213,12 +213,17 @@ HRESULT CVIBuffer_Point_Instancing_S2::Render()
 
 HRESULT CVIBuffer_Point_Instancing_S2::Update_Buffer(POINTINFO* pInfo)
 {
-	if (nullptr == pInfo)
-		return E_FAIL;
-
 	Reset();
 
-	Initialize(pInfo, nullptr);
+	if (nullptr == pInfo)
+	{
+		POINTINFO tInfo;
+		ZeroMemory(&tInfo, sizeof POINTINFO);
+		memcpy(&tInfo, &m_tInfo, sizeof POINTINFO);
+		Initialize(&tInfo, nullptr);
+	}
+	else
+		Initialize(pInfo, nullptr);
 
 	return S_OK;
 }

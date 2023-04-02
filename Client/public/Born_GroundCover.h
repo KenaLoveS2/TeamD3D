@@ -34,7 +34,7 @@ private:
 	_bool										m_bRenderCheck = false;
 
 	_bool					m_bOnceTest = false;
-
+	_bool					m_bUprise = false;
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
@@ -42,7 +42,7 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
-	void	Culling();
+	void	Culling(_float fTimeDelta);
 public:
 	static  CBorn_GroundCover*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

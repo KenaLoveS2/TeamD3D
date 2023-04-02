@@ -4,7 +4,7 @@
 #include "Bone.h"
 #include "GameInstance.h"
 
-CInstancing_Mesh::CInstancing_Mesh(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CInstancing_Mesh::CInstancing_Mesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CVIBuffer_Instancing(pDevice, pContext)
 {
 }
@@ -22,6 +22,7 @@ CInstancing_Mesh::CInstancing_Mesh(const CInstancing_Mesh& rhs)
 	, m_iIncreaseInstancingNumber(rhs.m_iIncreaseInstancingNumber)
 	, m_pInstancingPositions(rhs.m_pInstancingPositions)
 	, m_iNumInstance_Origin(rhs.m_iNumInstance_Origin)
+	, m_bTriangle_Collider(rhs.m_bTriangle_Collider)
 {
 	m_Bones.reserve(rhs.m_Bones.size());
 
@@ -35,7 +36,7 @@ CInstancing_Mesh::CInstancing_Mesh(const CInstancing_Mesh& rhs)
 	}
 }
 
-HRESULT CInstancing_Mesh::Save_Mesh(HANDLE & hFile, DWORD & dwByte)
+HRESULT CInstancing_Mesh::Save_Mesh(HANDLE& hFile, DWORD& dwByte)
 {
 	if (m_eType == CModel::TYPE_END)
 		return E_FAIL;
@@ -63,7 +64,7 @@ HRESULT CInstancing_Mesh::Save_Mesh(HANDLE & hFile, DWORD & dwByte)
 	return S_OK;
 }
 
-HRESULT CInstancing_Mesh::Save_MeshBones(HANDLE & hFile, DWORD & dwByte)
+HRESULT CInstancing_Mesh::Save_MeshBones(HANDLE& hFile, DWORD& dwByte)
 {
 	for (auto& pBone : m_Bones)
 		pBone->Save_BoneName(hFile, dwByte);
@@ -71,7 +72,7 @@ HRESULT CInstancing_Mesh::Save_MeshBones(HANDLE & hFile, DWORD & dwByte)
 	return S_OK;
 }
 
-HRESULT CInstancing_Mesh::Load_Mesh(HANDLE & hFile, DWORD & dwByte)
+HRESULT CInstancing_Mesh::Load_Mesh(HANDLE& hFile, DWORD& dwByte)
 {
 	if (m_eType == CModel::TYPE_END)
 		return E_FAIL;
@@ -148,7 +149,7 @@ HRESULT CInstancing_Mesh::Load_Mesh(HANDLE & hFile, DWORD & dwByte)
 
 void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>	VecInstancingMatrix)
 {
-	m_iNumInstance = m_iNumInstance_Origin =(_uint)VecInstancingMatrix.size();
+	m_iNumInstance = m_iNumInstance_Origin = (_uint)VecInstancingMatrix.size();
 	m_iNumPrimitive = m_iOriginNumPrimitive * m_iNumInstance;
 	m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
 
@@ -161,7 +162,7 @@ void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>	VecInstancingMatrix)
 	m_BufferDesc.MiscFlags = 0;
 
 	/*Instancing_ Mesh*/
-	FACEINDICES32*		pIndices = new FACEINDICES32[m_iNumPrimitive];
+	FACEINDICES32* pIndices = new FACEINDICES32[m_iNumPrimitive];
 	ZeroMemory(pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
 
 	_uint		iNumFaces = 0;
@@ -197,12 +198,12 @@ void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>	VecInstancingMatrix)
 	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;		//Rock UnLock을 하겠다.
 	m_BufferDesc.MiscFlags = 0;
 
-	VTXMATRIX*			pInstanceVertices = new VTXMATRIX[m_iNumInstance];
-	ZeroMemory(pInstanceVertices, sizeof(VTXMATRIX)*m_iNumInstance);
+	VTXMATRIX* pInstanceVertices = new VTXMATRIX[m_iNumInstance];
+	ZeroMemory(pInstanceVertices, sizeof(VTXMATRIX) * m_iNumInstance);
 
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
-		memcpy(&pInstanceVertices[i].vRight, &VecInstancingMatrix[i]->m[0],sizeof(_float4));
+		memcpy(&pInstanceVertices[i].vRight, &VecInstancingMatrix[i]->m[0], sizeof(_float4));
 		memcpy(&pInstanceVertices[i].vUp, &VecInstancingMatrix[i]->m[1], sizeof(_float4));
 		memcpy(&pInstanceVertices[i].vLook, &VecInstancingMatrix[i]->m[2], sizeof(_float4));
 		memcpy(&pInstanceVertices[i].vPosition, &VecInstancingMatrix[i]->m[3], sizeof(_float4));
@@ -254,12 +255,12 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 
 		XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)) * (_float)iSize);
 		XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)) * (_float)iSize);
-		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)) *(_float)iSize);
+		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)) * (_float)iSize);
 
 		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &vRight, sizeof(_float4));
 		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &vUp, sizeof(_float4));
 		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &vLook, sizeof(_float4));
-	
+
 
 	}
 
@@ -295,13 +296,13 @@ void CInstancing_Mesh::InstaincingMesh_EffectTick(_float yLimitPos, _float fTime
 
 }
 
-HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _bool bIsLod,
+HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod,
 	_bool bUseTriangleMeshActor, _uint iNumInstance)
 {
 	if (hFile == nullptr)
 		return S_OK;
 	m_bLodMesh = bIsLod;			// is_Lod Or NonLod????
-
+	m_bTriangle_Collider = bUseTriangleMeshActor;
 	_ulong dwByte = 0;
 	ReadFile(hFile, &m_eType, sizeof(m_eType), &dwByte, nullptr);
 	ReadFile(hFile, &m_iMaterialIndex, sizeof(_uint), &dwByte, nullptr);
@@ -341,13 +342,13 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _b
 	m_iIndexCountPerInstance = 3 * m_iNumPrimitive;
 	m_iNumVertexBuffers = 2;
 	m_iNumPrimitive = m_iNumPrimitive * iNumInstance;
-	
+
 
 #pragma region VERTEX_BUFFER
 	HRESULT	hr = 0;
 	if (CModel::TYPE_NONANIM == m_eType)
 		hr = Ready_VertexBuffer_NonAnimModel(hFile, pModel);
-	else 
+	else
 		hr = Ready_VertexBuffer_AnimModel(hFile, pModel);
 
 	if (FAILED(hr))
@@ -366,13 +367,13 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _b
 
 	/*Origin _Mesh*/
 	m_pIndices = new FACEINDICES32[m_iOriginNumPrimitive];
-	ZeroMemory(m_pIndices, sizeof(FACEINDICES32)*m_iOriginNumPrimitive);
+	ZeroMemory(m_pIndices, sizeof(FACEINDICES32) * m_iOriginNumPrimitive);
 	ReadFile(hFile, m_pIndices, sizeof(FACEINDICES32) * m_iOriginNumPrimitive, &dwByte, nullptr);
 
 #pragma region Instancing_INDEX_BUFFER
 
 	/*Instancing_ Mesh*/
-	FACEINDICES32*		pIndices = new FACEINDICES32[m_iNumPrimitive];
+	FACEINDICES32* pIndices = new FACEINDICES32[m_iNumPrimitive];
 	ZeroMemory(pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
 
 	_uint		iNumFaces = 0;
@@ -407,8 +408,8 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _b
 	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;		//Rock UnLock을 하겠다.
 	m_BufferDesc.MiscFlags = 0;
 
-	VTXMATRIX*			pInstanceVertices = new VTXMATRIX[iNumInstance];
-	ZeroMemory(pInstanceVertices, sizeof(VTXMATRIX)*iNumInstance);
+	VTXMATRIX* pInstanceVertices = new VTXMATRIX[iNumInstance];
+	ZeroMemory(pInstanceVertices, sizeof(VTXMATRIX) * iNumInstance);
 
 	for (_uint i = 0; i < iNumInstance; ++i)
 	{
@@ -424,7 +425,7 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _b
 
 	m_pDevice->CreateBuffer(&m_BufferDesc, &m_SubResourceData, &m_pInstanceBuffer);
 
-	
+
 #pragma endregion
 	if (bUseTriangleMeshActor)
 	{
@@ -451,13 +452,13 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _b
 				m_pPxIndicies[i]._2 = m_pIndices[i]._1;
 			}
 		}
-		
+
 	}
 
 	return S_OK;
 }
 
-HRESULT CInstancing_Mesh::Initialize(void * pArg, CGameObject * pOwner)
+HRESULT CInstancing_Mesh::Initialize(void* pArg, CGameObject* pOwner)
 {
 	FAILED_CHECK_RETURN(__super::Initialize(pArg, pOwner), E_FAIL);
 
@@ -505,13 +506,13 @@ HRESULT CInstancing_Mesh::Tick(_float fTimeDelta)
 
 HRESULT CInstancing_Mesh::Render()
 {
-	if (nullptr == m_pContext )
+	if (nullptr == m_pContext)
 		return E_FAIL;
 
 
 	/* 정점버퍼들을 장치에 바인딩한다.(복수를 바인딩한다.)  */
 
-	ID3D11Buffer*			pVertexBuffers[] = {
+	ID3D11Buffer* pVertexBuffers[] = {
 		m_pVB,
 		m_pInstanceBuffer
 	};
@@ -545,21 +546,21 @@ _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vecto
 {
 
 	list<_float4x4> InstPos;
-	
-	_float4 vCamPos	=	CGameInstance::GetInstance()->Get_CamPosition();
+
+	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
 	_vector camPos = XMLoadFloat4(&vCamPos);
-	
+
 	const _vector distLimit = XMVectorReplicate(fCameraDistanceLimit);
 
 	for (auto OriginPos : InstanceMatrixVec)
 	{
-		_matrix matTransWorld = XMLoadFloat4x4(OriginPos)* ParentMat;
+		_matrix matTransWorld = XMLoadFloat4x4(OriginPos) * ParentMat;
 
 		_vector vTransPos = XMVectorSetW(matTransWorld.r[3], 1.0f);
 		vTransPos = XMVectorSwizzle(vTransPos, 0, 1, 2, 3);
 		const _vector	 vDir = camPos - vTransPos;
 
-		const _vector vDistance  (XMVector3Length(vDir));
+		const _vector vDistance(XMVector3Length(vDir));
 
 		if (XMVector4Less(vDistance, distLimit))
 		{
@@ -568,16 +569,16 @@ _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vecto
 	}
 
 	m_iNumInstance = (_int)InstPos.size();
-	
+
 	if (m_iNumInstance == 0)
 		return 0;
-	
+
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	_int iIndex = 0;
-	for (auto &Iter : InstPos)
+	for (auto& Iter : InstPos)
 	{
 		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vRight, &Iter.m[0], sizeof(_float4));
 		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vUp, &Iter.m[1], sizeof(_float4));
@@ -602,7 +603,7 @@ _int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLi
 	/*wjf*/
 	for (auto OriginPos : InstanceMatrixVec)
 	{
-		_matrix matTransWorld = XMLoadFloat4x4(OriginPos)* ParentMat;
+		_matrix matTransWorld = XMLoadFloat4x4(OriginPos) * ParentMat;
 		_vector vTransPos = XMVectorSetW(matTransWorld.r[3], 1.0f);
 		vTransPos = XMVectorSwizzle(vTransPos, 0, 1, 2, 3);
 
@@ -635,7 +636,7 @@ _int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLi
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	_int iIndex = 0;
-	for (auto &Iter : InstPos)
+	for (auto& Iter : InstPos)
 	{
 		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vRight, &Iter.m[0], sizeof(_float4));
 		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vUp, &Iter.m[1], sizeof(_float4));
@@ -650,7 +651,7 @@ _int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLi
 	return 1;
 }
 
-void CInstancing_Mesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix PivotMatrix)
+void CInstancing_Mesh::SetUp_BoneMatrices(_float4x4* pBoneMatrices, _fmatrix PivotMatrix)
 {
 	_uint		iNumBones = 0;
 
@@ -667,7 +668,7 @@ void CInstancing_Mesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix Pi
 	}
 }
 
-void CInstancing_Mesh::Set_InstanceMeshEffect(CTransform* pParentTransform,_int iInstanceNum, _float fMinSpeed, _float fMaxSpeed)
+void CInstancing_Mesh::Set_InstanceMeshEffect(CTransform* pParentTransform, _int iInstanceNum, _float fMinSpeed, _float fMaxSpeed)
 {
 	m_pInstancingPositions.clear();
 	if (m_fInstancingEffect_Speed != nullptr)
@@ -735,7 +736,7 @@ void CInstancing_Mesh::Set_InstanceMeshEffect(CTransform* pParentTransform,_int 
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
 		_float4 vRandomPos = _float4(0.f, 0.f, 0.f, 1.f);
-		vRandomPos.x  += CUtile::Get_RandomFloat(-35.f, 35.f);
+		vRandomPos.x += CUtile::Get_RandomFloat(-35.f, 35.f);
 		vRandomPos.y += CUtile::Get_RandomFloat(0.f, 10.f);
 		vRandomPos.z += CUtile::Get_RandomFloat(-25.f, 25.f);
 
@@ -762,53 +763,64 @@ void CInstancing_Mesh::Set_InstanceMeshEffect(CTransform* pParentTransform,_int 
 
 }
 
-_bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta)
+_bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _float fTimeDelta)
 {
-	if (eChapterGimmcik == CEnviromentObj::CHAPTER::Gimmick_TYPE_GO_UP)
-	{
-		D3D11_MAPPED_SUBRESOURCE			SubResource;
-		ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
-		m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
-
-		_int iFinishCnt = 0;
-
-		for (_uint i = 0; i < m_iNumInstance; ++i)
-		{
-			if (m_vecOriginYPos[i] <= ((VTXMATRIX*)SubResource.pData)[i].vPosition.y)
-			{
-				iFinishCnt += 0;
-				continue;
-			}
-			_float fMaxSpeed = fmax((i + 1)*1.5f, 3.f);
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fMaxSpeed) * fTimeDelta;
-			iFinishCnt += 1;
-		}
-		m_pContext->Unmap(m_pInstanceBuffer, 0);
 	
 	
-		if (iFinishCnt == 0)
-			return true;
-	}
-
-	return false;
-
-}
-
-void CInstancing_Mesh::InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik)
-{
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-	if (eChapterGimmcik == CEnviromentObj::CHAPTER::Gimmick_TYPE_GO_UP)
+	_int iFinishCnt = 0;
+	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
-		for (_uint i = 0; i < m_iNumInstance; ++i)
+		if (m_vecOriginYPos[i] <= ((VTXMATRIX*)SubResource.pData)[i].vPosition.y)
 		{
-			m_vecOriginYPos.push_back(((VTXMATRIX*)SubResource.pData)[i].vPosition.y);
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= 10.f;
+			iFinishCnt += 0;
+			continue;
 		}
+
+		if (eChapterGimmcik == CEnviromentObj::Gimmick_TYPE_GO_UP)
+		{
+			_float fMaxSpeed = fmax((i + 1) * 1.5f, 3.0f);
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fMaxSpeed)*fTimeDelta;
+		}
+		else if(eChapterGimmcik == CEnviromentObj::Gimmick_TYPE_FLOWER)
+		{
+			_float fRandomSpeed = CUtile::Get_RandomFloat(0.7f, 1.6f);
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fRandomSpeed)*fTimeDelta;
+		}
+	
+		iFinishCnt += 1;
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+
+	if (iFinishCnt == 0)
+		return true;
+
+	return false;
+}
+
+void CInstancing_Mesh::InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik)
+{
+	_float fMinus_YPos = 0.f;
+
+	if (eChapterGimmcik == CEnviromentObj::CHAPTER::Gimmick_TYPE_GO_UP)
+		fMinus_YPos = 10.f;
+	else if (eChapterGimmcik == CEnviromentObj::CHAPTER::Gimmick_TYPE_FLOWER)
+		fMinus_YPos = 4.f;
+
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		m_vecOriginYPos.push_back(((VTXMATRIX*)SubResource.pData)[i].vPosition.y);
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= fMinus_YPos;
 	}
 
 	m_pContext->Unmap(m_pInstanceBuffer, 0);
@@ -828,15 +840,15 @@ void CInstancing_Mesh::InstaincingMesh_yPosControl(_float yPos)
 	m_pContext->Unmap(m_pInstanceBuffer, 0);
 }
 
-void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransform ,vector<_float4x4*> VecInstancingMatrix)
+void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransform, vector<_float4x4*> VecInstancingMatrix)
 {
 	size_t InstSize = VecInstancingMatrix.size();
 	assert(InstSize > 0 && "CInstancing_Mesh::Create_PxTriangle_InstMeshActor");
-		
-	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+
+	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
 
 	PxTriangleMeshDesc TriangleMeshDesc;
-	
+
 	_float4x4 MatPosTrans;
 	_float4 vPos, vRight, vUp, vLook, vFloat4Len;
 	_float  fXSize, fYSize, fZSize;
@@ -849,7 +861,7 @@ void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransf
 		TriangleMeshDesc.triangles.count = m_iOriginNumPrimitive;
 		TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
 		TriangleMeshDesc.triangles.data = m_pPxIndicies;
-		
+
 		MatPosTrans = *VecInstancingMatrix[i];
 		XMStoreFloat4x4(&MatPosTrans, XMLoadFloat4x4(&MatPosTrans) * pParentTransform->Get_WorldMatrix());
 
@@ -865,8 +877,8 @@ void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransf
 		XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)));
 		XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)));
 		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)));
-				
-		
+
+
 		_float4x4 matNew;
 		XMStoreFloat4x4(&matNew, XMMatrixIdentity());
 
@@ -875,16 +887,19 @@ void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransf
 		memcpy(&matNew.m[2], &vLook, sizeof(_float4));
 		memcpy(&matNew.m[3], &vPos, sizeof(_float4));
 
-	
-		PxRigidStatic *pStaticRigid = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc, nullptr
-			,0.5f,0.5f, 0.1f,_float3(fXSize,fYSize,fZSize));
-		
-	
+
+		PxRigidStatic*  pStaticRigid = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc, nullptr
+			, 0.5f, 0.5f, 0.1f, _float3(fXSize, fYSize, fZSize));
+
+		assert(pStaticRigid != nullptr && "CInstancing_Mesh::Create_PxTriangle_InstMeshActor");
 		pPhysX->Set_ActorMatrix(pStaticRigid, (matNew));		// 노말라이즈 매트릭스보내고
-	}	
+		m_StaticRigid_List.push_back(pStaticRigid);
+	}
+
+
 }
 
-HRESULT CInstancing_Mesh::SetUp_BonePtr(CModel * pModel)
+HRESULT CInstancing_Mesh::SetUp_BonePtr(CModel* pModel)
 {
 	if (m_pBoneNames == nullptr)
 		return E_FAIL;
@@ -904,16 +919,16 @@ HRESULT CInstancing_Mesh::SetUp_BonePtr(CModel * pModel)
 	return S_OK;
 }
 
-HRESULT CInstancing_Mesh::SetUp_BonePtr(HANDLE & hFile, DWORD & dwByte, CModel * pModel)
+HRESULT CInstancing_Mesh::SetUp_BonePtr(HANDLE& hFile, DWORD& dwByte, CModel* pModel)
 {
 	for (_uint i = 0; i < m_iNumBones; ++i)
 	{
 		_uint		iBoneNameLength = 0;
 		ReadFile(hFile, &iBoneNameLength, sizeof(_uint), &dwByte, nullptr);
-		char*		pBoneName = new char[iBoneNameLength];
+		char* pBoneName = new char[iBoneNameLength];
 		ReadFile(hFile, pBoneName, sizeof(char) * iBoneNameLength, &dwByte, nullptr);
 
-		CBone*		pBone = pModel->Get_BonePtr(pBoneName);
+		CBone* pBone = pModel->Get_BonePtr(pBoneName);
 
 		Safe_Delete_Array(pBoneName);
 		if (pBone == nullptr)
@@ -926,7 +941,7 @@ HRESULT CInstancing_Mesh::SetUp_BonePtr(HANDLE & hFile, DWORD & dwByte, CModel *
 	return S_OK;
 }
 
-HRESULT CInstancing_Mesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel * pModel)
+HRESULT CInstancing_Mesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel* pModel)
 {
 	if (m_bLodMesh == true)
 	{
@@ -982,7 +997,7 @@ HRESULT CInstancing_Mesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel *
 	return S_OK;
 }
 
-HRESULT CInstancing_Mesh::Ready_VertexBuffer_AnimModel(HANDLE hFile, CModel * pModel)
+HRESULT CInstancing_Mesh::Ready_VertexBuffer_AnimModel(HANDLE hFile, CModel* pModel)
 {
 	if (m_bLodMesh == true)
 		assert(!"CInstancing_Mesh::Ready_VertexBuffer_AnimModel");
@@ -1014,7 +1029,7 @@ HRESULT CInstancing_Mesh::Ready_VertexBuffer_AnimModel(HANDLE hFile, CModel * pM
 	if (FAILED(__super::Create_VertexBuffer()))
 		return E_FAIL;
 
-	
+
 
 	return S_OK;
 }
@@ -1043,15 +1058,15 @@ _bool CInstancing_Mesh::IsOccluded(_fmatrix Worldmat)
 		}
 		if (!isInside)
 		{
-			return true; 
+			return true;
 		}
 	}
-	
 
-	return false; 
+
+	return false;
 }
 
-void CInstancing_Mesh::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _float * pMaxY, _float * pMinZ, _float * pMaxZ)
+void CInstancing_Mesh::Calc_InstMinMax(_float* pMinX, _float* pMaxX, _float* pMinY, _float* pMaxY, _float* pMinZ, _float* pMaxZ)
 {
 	_float Xmin = (_float)INT_MAX, Xmax = (_float)INT_MIN, Ymin = (_float)INT_MAX, Ymax = (_float)INT_MIN, Zmin = (_float)INT_MAX, Zmax = INT_MIN;
 
@@ -1068,7 +1083,7 @@ void CInstancing_Mesh::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * 
 			Zmax = max(Zmax, m_pNonAnimVertices[j].vPosition.z);
 		}
 	}
-	else 
+	else
 	{
 		for (_uint j = 0; j < m_iNumVertices; ++j) {
 			Xmin = min(Xmin, m_pAnimVertices[j].vPosition.x);
@@ -1090,11 +1105,11 @@ void CInstancing_Mesh::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * 
 	*pMaxZ = Zmax;
 }
 
-CInstancing_Mesh * CInstancing_Mesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext,
-	HANDLE hFile, CModel * pModel, _bool bIsLod, _bool bUseTriangleMeshActor,_uint iNumInstance)
+CInstancing_Mesh* CInstancing_Mesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
+	HANDLE hFile, CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _uint iNumInstance)
 {
 	CInstancing_Mesh* pInstance = new CInstancing_Mesh(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, bUseTriangleMeshActor,iNumInstance )))
+	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, bUseTriangleMeshActor, iNumInstance)))
 	{
 		MSG_BOX("Failed to Created : CInstancing_Mesh");
 		Safe_Release(pInstance);
@@ -1102,7 +1117,7 @@ CInstancing_Mesh * CInstancing_Mesh::Create(ID3D11Device * pDevice, ID3D11Device
 	return pInstance;
 }
 
-CComponent * CInstancing_Mesh::Clone(void * pArg, CGameObject * pOwner)
+CComponent* CInstancing_Mesh::Clone(void* pArg, CGameObject* pOwner)
 {
 	CInstancing_Mesh* pInstance = new CInstancing_Mesh(*this);
 	if (FAILED(pInstance->Initialize(pArg, pOwner)))
@@ -1125,11 +1140,26 @@ void CInstancing_Mesh::Free()
 
 	if (m_isCloned == false)
 	{
+		
 		Safe_Delete_Array(m_pAnimVertices);
 		Safe_Delete_Array(m_pNonAnimVertices);
-
 		Safe_Delete_Array(m_pIndices);
 	}
 
+	if (m_bTriangle_Collider)
+	{
+		for (auto pStaticRigid : m_StaticRigid_List)
+		{
+			if (pStaticRigid != nullptr)
+			{
+				CPhysX_Manager::GetInstance()->Delete_Actor(pStaticRigid);
+			}
+		}
+		m_StaticRigid_List.clear();
+	}
+
+
 	m_pInstancingPositions.clear();
+
+
 }

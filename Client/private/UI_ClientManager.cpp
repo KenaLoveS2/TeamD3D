@@ -142,6 +142,13 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Basic1"), TEXT("../Bin/Resources/fonts/Font04.SpriteFont"))))
 		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Jangmi0"), TEXT("../Bin/Resources/fonts/NanumJangmi00.SpriteFont"))))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_JungE0"), TEXT("../Bin/Resources/fonts/NanumJungHagSaeng00.SpriteFont"))))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_SR0"), TEXT("../Bin/Resources/fonts/SquareRound00.SpriteFont"))))
+		return E_FAIL;
 	/********************************************/
 	/*				For. Canvas_HUD				*/
 	/********************************************/
