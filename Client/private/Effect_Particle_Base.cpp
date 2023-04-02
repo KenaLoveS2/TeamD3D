@@ -112,6 +112,8 @@ HRESULT CEffect_Particle_Base::Render()
 
 void CEffect_Particle_Base::Imgui_RenderProperty()
 {
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
+
 	/* Diffuse Texture Select */
 	if (ImGui::CollapsingHeader(" > DiffuseTexture"))
 	{
@@ -129,16 +131,26 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 				m_iTextureIndex = i;
 			}
 		}
+	}
 
+	/* Render */
+	if (ImGui::CollapsingHeader("Render Info"))
+	{
 		/* RenderPass */
 		static _int iRenderPass;
 		iRenderPass = m_iRenderPass;
-		const char* renderPass[4] = { "DefaultHaze", "BlackHaze", "BlackGather", "AlphaBlendHaze" };
+		const char* renderPass[4] = { "DefaultHaze", "BlackHaze", "BlackGather", "RePaint" };
 		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 4, 5))
 			m_iRenderPass = iRenderPass;
 
 		/* Color */
 		ColorCode();
+
+		if (ImGui::Button("ReCompile"))
+		{
+			m_pShaderCom->ReCompile();
+			m_pRendererCom->ReCompile();
+		}
 	}
 
 
@@ -229,16 +241,27 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 			if (m_bOptions[OPTION_SPRITE])
 				m_fFrameNow = 0.f;
+
+			m_bActive = true;
 		}
 	}
 
-	ImGui::Separator();
 	/* Position */
+	ImGui::Separator();
 	{
 		static _float4  vPosition = { 0.f, 0.f,0.f,1.f };
 		vPosition = m_pTransformCom->Get_Position();
 		if (ImGui::DragFloat3("vWorldPosition", (_float*)&vPosition, 0.10f, -1000.0f, 1000.0f, "%.3f"))
 			m_pTransformCom->Set_Position(vPosition);
+	}
+	
+	/* SelfStop */
+	ImGui::Separator();
+	ImGui::Checkbox("IsSelfStop", &m_bSelfStop);
+
+	if (m_bSelfStop)
+	{
+		ImGui::DragFloat("SelfStopDuration", &m_fSelfStopTime, 0.0f, 30.0f);
 	}
 
 	ImGui::Separator();
@@ -336,7 +359,8 @@ HRESULT CEffect_Particle_Base::Save_Data()
 				json["22. SpriteFrames"].push_back(m_iFrames[i]);
 			}
 			json["23. SpriteSpeed"] = m_fFrameSpeed;
-
+			json["24. SelfStop"] = m_bSelfStop;
+			json["25. SelfStopTime"] = m_fSelfStopTime;
 
 			ofstream file(strSaveDirectory.c_str());
 			file << json;
@@ -445,7 +469,11 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 	if (jLoad.contains("23. SpriteSpeed"))
 		jLoad["23. SpriteSpeed"].get_to<_float>(m_fFrameSpeed);
 
+	if(jLoad.contains("24. SelfStop"))
+		jLoad["24. SelfStop"].get_to<_bool>(m_bSelfStop);
 
+	if(jLoad.contains("25. SelfStopTime"))
+		jLoad["25. SelfStopTime"].get_to<_float>(m_fSelfStopTime);
 
 	return S_OK;
 }
@@ -465,6 +493,9 @@ void CEffect_Particle_Base::Activate(CGameObject* pTarget)
 void CEffect_Particle_Base::DeActivate()
 {
 	m_bActive = false;
+	m_fSelfStopTimeAcc = 0.0f;
+
+	m_pVIBufferCom->Update_Buffer(nullptr);
 }
 
 HRESULT CEffect_Particle_Base::SetUp_Components()

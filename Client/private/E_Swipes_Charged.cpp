@@ -48,7 +48,7 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 		
-	CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, CUtile::Float_4to3(vPos), 1.f));
+	/*CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, CUtile::Float_4to3(vPos), 1.f));*/
 
 	_float3 vOriginPos = _float3(0.f, 0.f, 0.f);
 	_float3 vPivotScale = _float3(1.0f, 0.0f, 1.f);

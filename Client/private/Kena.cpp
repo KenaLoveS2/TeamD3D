@@ -70,6 +70,15 @@ const _uint CKena::Get_AnimationStateIndex() const
 	return m_pAnimation->Get_CurrentAnimIndex();
 }
 
+CEffect_Base* CKena::Get_Effect(const string& strKey)
+{
+	auto iter = m_mapEffect.find(strKey);
+	if (iter == m_mapEffect.end())
+		return nullptr;
+
+	return iter->second;
+}
+
 const _bool CKena::Get_State(STATERETURN eState) const
 {
 	/* Used by Camera */
@@ -78,6 +87,10 @@ const _bool CKena::Get_State(STATERETURN eState) const
 
 	switch (eState)
 	{
+	case STATE_LEVELUP:
+		return m_bLevelUp;
+		break;
+
 	case STATE_ATTACK:
 		return m_bAttack;
 		break;
@@ -154,6 +167,10 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 
 	switch (eState)
 	{
+	case STATE_LEVELUP:
+		m_bLevelUp = bValue;
+		break;
+
 	case STATE_ATTACK:
 		m_bAttack = bValue;
 		break;
@@ -409,7 +426,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 		else if (i == 7)
 			desc.vPivotPos = _float4(-2.f, 0.f, 0.f, 1.f);
 
-		if (FAILED(p_game_instance->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), 
+		if (FAILED(p_game_instance->Clone_GameObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), 
 			CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
 			return E_FAIL;
 
@@ -419,9 +436,10 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	RELEASE_INSTANCE(CGameInstance)
 
 	CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
-	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+	//CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	_float fRotState = (_float)CKena_Status::RS_GOOD;
-	m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
+	m_Delegator.broadcast(eRot, fRotState);
+	//m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
 
 	m_pTransformCom->Set_Position(_float4(13.f, 0.f, 9.f, 1.f));
 
@@ -474,9 +492,10 @@ void CKena::Tick(_float fTimeDelta)
 			{
 				m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
 				CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
-				CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+				//CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 				_float fGuage = m_pKenaStatus->Get_PercentHP();
-				m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
+				m_Delegator.broadcast(eHP, fGuage);
+				//m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
 			} 				
  
  			m_bParry = false;
@@ -485,9 +504,10 @@ void CKena::Tick(_float fTimeDelta)
  	}
 
 	CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
-	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+	//CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	_float fGuage = m_pKenaStatus->Get_PercentHP();
-	m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
+	m_Delegator.broadcast(eHP, fGuage);
+	//m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
 
 	if (m_pAnimation->Get_Preview() == false)
 	{
@@ -652,7 +672,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 			m_pKenaStatus->Set_RotState(eRotState);
 			_float fState = (_float)eRotState;
-			m_PlayerDelegator.broadcast(eRot, funcDefault, fState);
+			m_Delegator.broadcast(eRot, fState);
+			//m_PlayerDelegator.broadcast(eRot, funcDefault, fState);
 		}
 	}
 
@@ -690,20 +711,20 @@ void CKena::Late_Tick(_float fTimeDelta)
 	//	m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
 	//}
 
-	if(CGameInstance::GetInstance()->Key_Down(DIK_P))
-	{
-		/* Test Before Hit Monster */
-		_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
-		m_pKenaStatus->Plus_CurPIPGuage(0.2f);
-		_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
-		m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
-	}
+	//if(CGameInstance::GetInstance()->Key_Down(DIK_P))
+	//{
+	//	/* Test Before Hit Monster */
+	//	_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
+	//	m_pKenaStatus->Plus_CurPIPGuage(0.2f);
+	//	_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
+	//	m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
+	//}
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
-	{
-		CKena* pPlayer = this;
-		m_PlayerPtrDelegator.broadcast(eCart, funcDefault, pPlayer);
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+	//{
+	//	CKena* pPlayer = this;
+	//	m_PlayerPtrDelegator.broadcast(eCart, funcDefault, pPlayer);
+	//}
 
 	//	//static _float fTag = 0.0f;
 	//	//if (fTag < 1.0f)
@@ -1237,11 +1258,13 @@ void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 			m_pKenaStatus->Set_RotState(CKena_Status::RS_ACTIVE);
 			CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
 			CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
-			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+			//CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 			_float fZero = 0.f;
-			m_PlayerDelegator.broadcast(ePip, funcDefault, fZero);
+			//m_PlayerDelegator.broadcast(ePip, funcDefault, fZero);
+			m_Delegator.broadcast(ePip, fZero);
 			_float fRot = 2;
-			m_PlayerDelegator.broadcast(eRot, funcDefault, fRot);
+			//m_PlayerDelegator.broadcast(eRot, funcDefault, fRot);
+			m_Delegator.broadcast(eRot, fRot);
 			/* ~UI Control */
 
 			static_cast<CMonster*>(pTarget)->Bind(m_pRotForMonster, 8);
@@ -1360,11 +1383,11 @@ HRESULT CKena::Ready_Parts()
 
 HRESULT CKena::Ready_Arrows()
 {
-	_uint		iArrowCount = m_pKenaStatus->Get_MaxArrowCount();
+	//_uint		iArrowCount = m_pKenaStatus->Get_MaxArrowCount();
 	_tchar*	pTag = nullptr;
 	CSpiritArrow*	pArrow = nullptr;
 
-	for (_uint i = 0; i < iArrowCount; ++i)
+	for (_uint i = 0; i < 8; ++i)
 	{
 		pTag = CUtile::Create_DummyString(L"SpiritArrow", i);
 
@@ -1379,11 +1402,11 @@ HRESULT CKena::Ready_Arrows()
 
 HRESULT CKena::Ready_Bombs()
 {
-	_uint		iBombCount = m_pKenaStatus->Get_MaxBombCount();
+	//_uint		iBombCount = m_pKenaStatus->Get_MaxBombCount();
 	_tchar*	pTag = nullptr;
 	CRotBomb*	pBomb = nullptr;
 
-	for (_uint i = 0; i < iBombCount; ++i)
+	for (_uint i = 0; i < 4; ++i)
 	{
 		pTag = CUtile::Create_DummyString(L"RotBomb", i);
 
@@ -2027,6 +2050,18 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_bParry = true;
 			m_iCurParryFrame = 0;
 			m_pAttackObject = pTarget;
+		}
+
+		if (iColliderIndex == (_int)COL_MONSTER && m_bDash == true)
+		{
+			m_bDashAttack = true;
+			m_pDashTarget = pTarget;
+		}
+
+		if (iColliderIndex == (_int)COL_PORTAL && m_bDash == true)
+		{
+			m_bDashPortal = true;
+			m_pDashTarget = pTarget;
 		}
 	}
 

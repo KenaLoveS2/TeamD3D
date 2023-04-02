@@ -315,7 +315,7 @@ void CBossHunter::Imgui_RenderProperty()
 
 void CBossHunter::ImGui_AnimationProperty()
 {
-	//m_pTransformCom->Imgui_RenderProperty_ForJH();
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
 	//m_pArrows[m_iArrowIndex]->Get_TransformCom()->Imgui_RenderProperty_ForJH();
 
 	if (ImGui::CollapsingHeader("Effect"))
@@ -384,8 +384,8 @@ void CBossHunter::Push_EventFunctions()
 	FireArrow_Rapid(true, 0.f);
 	FireArrow_Shock(true, 0.f);
 
-	Test1(true, 0.f);
-	Test2(true, 0.f);
+	ShockEffect_On(true, 0.f);
+	ShockEffect_Off(true, 0.f);
 	Test3(true, 0.f);
 	Test4(true, 0.f);
 
@@ -394,708 +394,708 @@ void CBossHunter::Push_EventFunctions()
 HRESULT CBossHunter::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-		.InitState("SLEEP")
-		.AddState("SLEEP")
-		.OnExit([this]()
-			{
-
-			})
-		.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
-				.Predicator([this]()
-					{
-						// 대기 종결 조건 수정 필요
-						m_fSpawnRange = 5.f;
-						return DistanceTrigger(m_fSpawnRange);
-					})
-
-
-				.AddState("READY_SPAWN")
-						.OnStart([this]()
-							{
-								// 등장 연출 필요
-								m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
-								m_pModelCom->Set_AnimIndex(IDLE);
-
-								CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
-								_float fValue = 30.f; /* == BossHunter Name */
-								m_BossHunterDelegator.broadcast(eBossHP, fValue);
-							})
-						.OnExit([this]()
-							{
-								m_pTransformCom->LookAt(m_vKenaPos);
-								m_bSpawn = true;
-							})
-								.AddTransition("READY_SPAWN to IDLE", "IDLE")
-								.Predicator([this]()
-									{
-										return AnimFinishChecker(IDLE);
-									})
-
-								.AddState("IDLE")
-										.OnStart([this]()
-											{
-												m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-												m_pTransformCom->Speed_Boost(true, 0.5f);
-
-												m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
-												m_pModelCom->Set_AnimIndex(IDLE);
-
-												m_fIdleTimeCheck = m_bDodge ? m_fIdleTimeCheck : 0.f;
-												m_bDodge = false;
-											})
-										.Tick([this](_float fTimeDelta)
-											{
-												m_fIdleTimeCheck += fTimeDelta;
-
-												if (m_pTransformCom->Get_PositionY() <= m_fFlyHeightY)
-												{
-													m_pTransformCom->Go_AxisY(fTimeDelta);
-													if (m_pTransformCom->Get_PositionY() >= m_fFlyHeightY)
-														m_pTransformCom->Set_PositionY(m_fFlyHeightY);
-												}
-
-												m_bDodge = m_pKena->Get_State(CKena::STATE_BOW) && (rand() % 3 == 0);
-											})
-												.OnExit([this]()
-													{
-														Reset_HitFlag();
-														m_pTransformCom->Speed_Boost(true, 1.f);
-													})
-												.AddTransition("To DYING", "DYING")
-														.Predicator([this]()
-															{
-																return m_pMonsterStatusCom->IsDead();
-															})
-														.AddTransition("IDLE To DODGE", "DODGE")
-																.Predicator([this]()
-																	{
-																		return !TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_bDodge;
-																	})
-																.AddTransition("IDLE To START_ATTACK_KNIFE", "START_ATTACK_KNIFE")
-																		.Predicator([this]()
-																			{
-																				return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_KNIFE;
-																			})
-																		.AddTransition("IDLE To START_ATTACK_KNIFE_SLAM", "START_ATTACK_KNIFE_SLAM")
-																				.Predicator([this]()
-																					{
-																						return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_KNIFE_SLAM;
-																					})
-																				.AddTransition("IDLE To START_SWOOP_ATTACK", "START_SWOOP_ATTACK")
-																						.Predicator([this]()
-																							{
-																								return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_SWOOP_ATTACK;
-																							})
-
-
-																						.AddTransition("IDLE To SINGLE_SHOT", "SINGLE_SHOT")
-																								.Predicator([this]()
-																									{
-																										return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_SINGLE_SHOT;
-																									})
-																								.AddTransition("IDLE To RAPID_SHOOT", "RAPID_SHOOT")
-																										.Predicator([this]()
-																											{
-																												return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_RAPID_SHOOT;
-																											})
-																										.AddTransition("IDLE To START_SHOCK_ARROW", "START_SHOCK_ARROW")
-																												.Predicator([this]()
-																													{
-																														return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_SHOCK_ARROW;
-																													})
-																												.AddTransition("IDLE To START_CHARGE_ARROW", "START_CHARGE_ARROW")
-																														.Predicator([this]()
-																															{
-																																return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_CHARGE_ARROW;
-																															})
-																														.AddTransition("IDLE To START_CHARGE_ARROW", "FLY")
-																																.Predicator([this]()
-																																	{
-																																		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_FLY;
-																																	})
-
-																																.AddState("DODGE")
-																																		.OnStart([this]()
-																																			{
-																																				m_iDodgeAnimIndex++;
-																																				m_iDodgeAnimIndex = m_iDodgeAnimIndex > DODGE_FAR_RIGHT ? DODGE_DOWN : m_iDodgeAnimIndex;
-																																				ResetAndSet_Animation(m_iDodgeAnimIndex);
-																																			})
-																																		.AddTransition("To DYING", "DYING")
-																																				.Predicator([this]()
-																																					{
-																																						return m_pMonsterStatusCom->IsDead();
-																																					})
-																																				.AddTransition("DODGE To IDLE", "IDLE")
-																																						.Predicator([this]()
-																																							{
-																																								return AnimFinishChecker(m_iDodgeAnimIndex);
-																																							})
-
-
-																																						.AddState("START_ATTACK_KNIFE")
-																																								.OnStart([this]()
-																																									{
-																																										Set_NextAttack();
-																																										m_pTransformCom->Speed_Boost(true, 0.5f);
-																																									})
-																																								.Tick([this](_float fTimeDelta)
-																																									{
-																																										m_pTransformCom->Go_AxisNegY(fTimeDelta);
-																																									})
-																																										.OnExit([this]()
-																																											{
-																																												m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
-																																												m_pTransformCom->Speed_Boost(true, 1.f);
-																																											})
-																																										.AddTransition("To DYING", "DYING")
-																																												.Predicator([this]()
-																																													{
-																																														return m_pMonsterStatusCom->IsDead();
-																																													})
-																																												.AddTransition("START_ATTACK_KNIFE To ATTACK_KNIFE", "ATTACK_KNIFE")
-																																														.Predicator([this]()
-																																															{
-																																																return m_pTransformCom->Get_PositionY() <= m_vKenaPos.y + m_fKenaPosOffsetY;
-																																															})
-
-
-																																														.AddState("ATTACK_KNIFE")
-																																																.OnStart([this]()
-																																																	{
-																																																		m_bRealAttack = true;
-																																																		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-																																																		ResetAndSet_Animation(KNIFE_ATTACK);
-																																																	})
-																																																.OnExit([this]()
-																																																	{
-																																																		m_bRealAttack = false;
-																																																	})
-																																																		.AddTransition("To DYING", "DYING")
-																																																		.Predicator([this]()
-																																																			{
-																																																				return m_pMonsterStatusCom->IsDead();
-																																																			})
-																																																		.AddTransition("ATTACK_KNIFE To KNIFE_PARRY", "KNIFE_PARRY")
-																																																				.Predicator([this]()
-																																																					{
-																																																						return m_bStronglyHit;
-																																																					})
-																																																				.AddTransition("ATTACK_KNIFE_SLAM To IDLE", "IDLE")
-																																																						.Predicator([this]()
-																																																							{
-																																																								return AnimFinishChecker(KNIFE_ATTACK);
-																																																							})
-
-
-																																																						.AddState("START_ATTACK_KNIFE_SLAM")
-																																																								.OnStart([this]()
-																																																									{
-																																																										ResetAndSet_Animation(KNIFE_SLAM_TELEPORT);
-																																																										Set_NextAttack();
-																																																									})
-																																																								.OnExit([this]()
-																																																									{
-
-																																																									})
-																																																										.AddTransition("To DYING", "DYING")
-																																																										.Predicator([this]()
-																																																											{
-																																																												return m_pMonsterStatusCom->IsDead();
-																																																											})
-																																																										.AddTransition("START_ATTACK_SWOOP To ATTACK_KNIFE_SLAM", "ATTACK_KNIFE_SLAM")
-																																																												.Predicator([this]()
-																																																													{
-																																																														return AnimFinishChecker(KNIFE_SLAM_TELEPORT);
-																																																													})
-
-
-																																																												.AddState("ATTACK_KNIFE_SLAM")
-																																																														.OnStart([this]()
-																																																															{
-																																																																_float fX = CUtile::Get_RandomFloat(-2.f, 2.f);
-																																																																_float fZ = CUtile::Get_RandomFloat(-2.f, 2.f);
-																																																																fX = fX < 0.f ? fX + 2.f : fX - 2.f;
-																																																																fZ = fZ < 0.f ? fZ + 2.f : fZ - 2.f;
-
-																																																																_float4 vTeleportPos = m_vKenaPos + _float4(fX, m_fKenaPosOffsetY, fZ, 0.f);
-																																																																m_pTransformCom->Set_Position(vTeleportPos);
-																																																																m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-																																																																ResetAndSet_Animation(KNIFE_SLAM_ATTACK);
-																																																																m_bRealAttack = true;
-																																																															})
-																																																														.OnExit([this]()
-																																																															{
-																																																																m_bRealAttack = false;
-																																																															})
-																																																																.AddTransition("To DYING", "DYING")
-																																																																.Predicator([this]()
-																																																																	{
-																																																																		return m_pMonsterStatusCom->IsDead();
-																																																																	})
-																																																																.AddTransition("ATTACK_KNIFE_SLAM To KNIFE_PARRY", "KNIFE_PARRY")
-																																																																		.Predicator([this]()
-																																																																			{
-																																																																				return m_bStronglyHit;
-																																																																			})
-																																																																		.AddTransition("ATTACK_KNIFE_SLAM To IDLE", "IDLE")
-																																																																				.Predicator([this]()
-																																																																					{
-																																																																						return AnimFinishChecker(KNIFE_SLAM_ATTACK);
-																																																																					})
-
-
-																																																																				.AddState("KNIFE_PARRY")
-																																																																						.OnStart([this]()
-																																																																							{
-																																																																								m_bStronglyHit = false;
-																																																																								ResetAndSet_Animation(KNIFE_PARRY);
-																																																																							})
-																																																																						.AddTransition("To DYING", "DYING")
-																																																																								.Predicator([this]()
-																																																																									{
-																																																																										return m_pMonsterStatusCom->IsDead();
-																																																																									})
-																																																																								.AddTransition("KNIFE_PARRY To KNIFE_PARRY_STUN_LOOP", "KNIFE_PARRY_STUN_LOOP")
-																																																																										.Predicator([this]()
-																																																																											{
-																																																																												return AnimFinishChecker(KNIFE_PARRY);
-																																																																											})
-
-
-																																																																										.AddState("KNIFE_PARRY_STUN_LOOP")
-																																																																												.OnStart([this]()
-																																																																													{
-																																																																														m_bStronglyHit = false;
-																																																																														// ResetAndSet_Animation(KNIFE_PARRY_STUN_LOOP);
-																																																																														m_fStunTimeCheck = 0.f;
-																																																																													})
-																																																																												.Tick([this](_float fTimeDelta)
-																																																																													{
-																																																																														m_fStunTimeCheck += fTimeDelta;
-																																																																													})
-																																																																														.OnExit([this]()
-																																																																															{
-																																																																																m_fStunTimeCheck = 0.f;
-																																																																															})
-																																																																														.AddTransition("To DYING", "DYING")
-																																																																																.Predicator([this]()
-																																																																																	{
-																																																																																		return m_pMonsterStatusCom->IsDead();
-																																																																																	})
-																																																																																.AddTransition("KNIFE_PARRY_STUN_LOOP To KNIFE_PARRY_EXIT", "KNIFE_PARRY_EXIT")
-																																																																																		.Predicator([this]()
-																																																																																			{
-																																																																																				return TimeTrigger(m_fStunTimeCheck, m_fStunTime);
-																																																																																			})
-
-																																																																																		.AddState("KNIFE_PARRY_EXIT")
-																																																																																				.OnStart([this]()
-																																																																																					{
-																																																																																						m_bStronglyHit = false;
-																																																																																						ResetAndSet_Animation(KNIFE_PARRY_EXIT);
-																																																																																					})
-																																																																																				.AddTransition("To DYING", "DYING")
-																																																																																						.Predicator([this]()
-																																																																																							{
-																																																																																								return m_pMonsterStatusCom->IsDead();
-																																																																																							})
-																																																																																						.AddTransition("KNIFE_PARRY_EXIT To IDLE", "IDLE")
-																																																																																								.Predicator([this]()
-																																																																																									{
-																																																																																										return AnimFinishChecker(KNIFE_PARRY_EXIT);
-																																																																																									})
-
-
-																																																																																								.AddState("START_SWOOP_ATTACK")
-																																																																																										.OnStart([this]()
-																																																																																											{
-																																																																																												m_pTransformCom->LookAt(m_vKenaPos);
-																																																																																												m_pTransformCom->Speed_Boost(true, 0.5f);
-																																																																																												Set_NextAttack();
-																																																																																											})
-																																																																																										.Tick([this](_float fTimeDelta)
-																																																																																											{
-																																																																																												m_pTransformCom->Go_AxisNegY(fTimeDelta);
-																																																																																											})
-																																																																																												.OnExit([this]()
-																																																																																													{
-																																																																																														m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
-																																																																																														m_pTransformCom->Speed_Boost(true, 1.f);
-																																																																																													})
-																																																																																												.AddTransition("To DYING", "DYING")
-																																																																																														.Predicator([this]()
-																																																																																															{
-																																																																																																return m_pMonsterStatusCom->IsDead();
-																																																																																															})
-																																																																																														.AddTransition("START_SWOOP_ATTACK To SWOOP_ATTACK", "SWOOP_ATTACK")
-																																																																																																.Predicator([this]()
-																																																																																																	{
-																																																																																																		return m_pTransformCom->Get_PositionY() <= m_vKenaPos.y + m_fKenaPosOffsetY;
-																																																																																																	})
-
-																																																																																																.AddState("SWOOP_ATTACK")
-																																																																																																		.OnStart([this]()
-																																																																																																			{
-																																																																																																				m_bRealAttack = true;
-																																																																																																				m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-																																																																																																				ResetAndSet_Animation(SWOOP_ATTACK);
-																																																																																																			})
-																																																																																																		.OnExit([this]()
-																																																																																																			{
-																																																																																																				m_bRealAttack = false;
-																																																																																																			})
-																																																																																																				.AddTransition("To DYING", "DYING")
-																																																																																																				.Predicator([this]()
-																																																																																																					{
-																																																																																																						return m_pMonsterStatusCom->IsDead();
-																																																																																																					})
-																																																																																																				.AddTransition("SWOOP_ATTACK To IDLE", "IDLE")
-																																																																																																						.Predicator([this]()
-																																																																																																							{
-																																																																																																								return AnimFinishChecker(SWOOP_ATTACK);
-																																																																																																							})
-
-
-																																																																																																						.AddState("SINGLE_SHOT")
-																																																																																																								.OnStart([this]()
-																																																																																																									{
-																																																																																																										ResetAndSet_Animation(SINGLE_SHOT); // 일반 화살 한발을 날린다 애니메이션 끝날 때쯤 발사 함수 호출 필요
-																																																																																																										m_pTransformCom->LookAt(m_vKenaPos);
-																																																																																																										Set_NextAttack();
-																																																																																																									})
-																																																																																																								.Tick([this](_float fTimeDelta)
-																																																																																																									{
-																																																																																																										m_pTransformCom->LookAt(m_vKenaPos);
-																																																																																																									})
-																																																																																																										.OnExit([this]()
-																																																																																																											{
-
-																																																																																																											})
-																																																																																																										.AddTransition("To DYING", "DYING")
-																																																																																																												.Predicator([this]()
-																																																																																																													{
-																																																																																																														return m_pMonsterStatusCom->IsDead();
-																																																																																																													})
-																																																																																																												.AddTransition("KNIFE_PARRY_EXIT To IDLE", "IDLE")
-																																																																																																														.Predicator([this]()
-																																																																																																															{
-																																																																																																																return AnimFinishChecker(SINGLE_SHOT);
-																																																																																																															})
-
-
-																																																																																																														.AddState("RAPID_SHOOT")
-																																																																																																																.OnStart([this]()
-																																																																																																																	{
-																																																																																																																		ResetAndSet_Animation(RAPID_SHOOT); // 일반 화살을 여러발을 날린다 애니메이션 중간중간 발사 함수 호출 필요
-																																																																																																																		m_pTransformCom->LookAt(m_vKenaPos);
-																																																																																																																		Set_NextAttack();
-																																																																																																																	})
-																																																																																																																.AddTransition("To DYING", "DYING")
-																																																																																																																		.Predicator([this]()
-																																																																																																																			{
-																																																																																																																				return m_pMonsterStatusCom->IsDead();
-																																																																																																																			})
-																																																																																																																		.AddTransition("KNIFE_PARRY_EXIT To IDLE", "IDLE")
-																																																																																																																				.Predicator([this]()
-																																																																																																																					{
-																																																																																																																						return AnimFinishChecker(RAPID_SHOOT);
-																																																																																																																					})
-
-
-
-																																																																																																																				.AddState("START_SHOCK_ARROW")
-																																																																																																																						.OnStart([this]()
-																																																																																																																							{
-																																																																																																																								ResetAndSet_Animation(SHOCK_ARROW_ATTACK);
-																																																																																																																								Set_NextAttack();
-																																																																																																																							})
-																																																																																																																						.OnExit([this]()
-																																																																																																																							{
-																																																																																																																								if (m_bReadyStrongArrow)
-																																																																																																																								{
-																																																																																																																									m_pArrows[m_iArrowIndex]->Execute_Finish();
-																																																																																																																									m_bReadyStrongArrow = false;
-																																																																																																																									Update_ArrowIndex();
-																																																																																																																								}
-																																																																																																																							})
-																																																																																																																								.AddTransition("To DYING", "DYING")
-																																																																																																																								.Predicator([this]()
-																																																																																																																									{
-																																																																																																																										return m_pMonsterStatusCom->IsDead();
-																																																																																																																									})
-																																																																																																																								.AddTransition("START_SHOCK_ARROW To START_STUN", "START_STUN")
-																																																																																																																										.Predicator([this]()
-																																																																																																																											{
-																																																																																																																												return m_bStronglyHit && m_bReadyStrongArrow;
-																																																																																																																											})
-																																																																																																																										.AddTransition("START_SHOCK_ARROW To SHOCK_ARROW_LOOP", "SHOCK_ARROW_LOOP")
-																																																																																																																												.Predicator([this]()
-																																																																																																																													{
-																																																																																																																														return AnimFinishChecker(SHOCK_ARROW_ATTACK);
-																																																																																																																													})
-
-
-																																																																																																																												.AddState("SHOCK_ARROW_LOOP")
-																																																																																																																														.OnStart([this]()
-																																																																																																																															{
-																																																																																																																																ResetAndSet_Animation(SHOCK_ARROW_LOOP);
-																																																																																																																															})
-																																																																																																																														.AddTransition("To DYING", "DYING")
-																																																																																																																																.Predicator([this]()
-																																																																																																																																	{
-																																																																																																																																		return m_pMonsterStatusCom->IsDead();
-																																																																																																																																	})
-																																																																																																																																.AddTransition("SHOCK_ARROW_LOOP To SHOCK_ARROW_EXIT", "SHOCK_ARROW_EXIT")
-																																																																																																																																		.Predicator([this]()
-																																																																																																																																			{
-																																																																																																																																				return m_pArrows[m_iArrowIndex]->IsEnd();
-																																																																																																																																			})
-
-
-																																																																																																																																		.AddState("SHOCK_ARROW_EXIT")
-																																																																																																																																				.OnStart([this]()
-																																																																																																																																					{
-																																																																																																																																						ResetAndSet_Animation(SHOCK_ARROW_EXIT);
-																																																																																																																																					})
-																																																																																																																																				.AddTransition("To DYING", "DYING")
-																																																																																																																																						.Predicator([this]()
-																																																																																																																																							{
-																																																																																																																																								return m_pMonsterStatusCom->IsDead();
-																																																																																																																																							})
-																																																																																																																																						.AddTransition("SHOCK_ARROW_EXIT To IDLE", "IDLE")
-																																																																																																																																								.Predicator([this]()
-																																																																																																																																									{
-																																																																																																																																										return AnimFinishChecker(SHOCK_ARROW_EXIT);
-																																																																																																																																									})
-
-
-
-																																																																																																																																								.AddState("START_CHARGE_ARROW")
-																																																																																																																																										.OnStart([this]()
-																																																																																																																																											{
-																																																																																																																																												Reset_HitFlag();
-																																																																																																																																												ResetAndSet_Animation(CHARGE_ARROW_FIRST_SHOT);
-																																																																																																																																												m_pTransformCom->LookAt(m_vKenaPos);
-																																																																																																																																												Set_NextAttack();
-																																																																																																																																											})
-																																																																																																																																										.OnExit([this]()
-																																																																																																																																											{
-																																																																																																																																												if (m_bReadyStrongArrow)
-																																																																																																																																												{
-																																																																																																																																													m_pArrows[m_iArrowIndex]->Execute_Finish();
-																																																																																																																																													m_bReadyStrongArrow = false;
-																																																																																																																																													Update_ArrowIndex();
-																																																																																																																																												}
-																																																																																																																																											})
-																																																																																																																																												.AddTransition("To DYING", "DYING")
-																																																																																																																																												.Predicator([this]()
-																																																																																																																																													{
-																																																																																																																																														return m_pMonsterStatusCom->IsDead();
-																																																																																																																																													})
-																																																																																																																																												.AddTransition("START_CHARGE_ARROW To START_STUN", "START_STUN")
-																																																																																																																																														.Predicator([this]()
-																																																																																																																																															{
-																																																																																																																																																return m_bStronglyHit && m_bReadyStrongArrow;
-																																																																																																																																															})
-																																																																																																																																														.AddTransition("START_CHARGE_ARROW To CHARGE_ARROW_EXIT", "CHARGE_ARROW_EXIT")
-																																																																																																																																																.Predicator([this]()
-																																																																																																																																																	{
-																																																																																																																																																		return AnimFinishChecker(CHARGE_ARROW_FIRST_SHOT);
-																																																																																																																																																	})
-
-
-																																																																																																																																																.AddState("CHARGE_ARROW_EXIT")
-																																																																																																																																																		.OnStart([this]()
-																																																																																																																																																			{
-																																																																																																																																																				ResetAndSet_Animation(CHARGE_ARROW_EXIT);
-																																																																																																																																																			})
-																																																																																																																																																		.AddTransition("To DYING", "DYING")
-																																																																																																																																																				.Predicator([this]()
-																																																																																																																																																					{
-																																																																																																																																																						return m_pMonsterStatusCom->IsDead();
-																																																																																																																																																					})
-																																																																																																																																																				.AddTransition("CHARGE_ARROW_EXIT To IDLE", "IDLE")
-																																																																																																																																																						.Predicator([this]()
-																																																																																																																																																							{
-																																																																																																																																																								return AnimFinishChecker(CHARGE_ARROW_EXIT);
-																																																																																																																																																							})
-
-
-																																																																																																																																																						.AddState("START_STUN")
-																																																																																																																																																								.OnStart([this]()
-																																																																																																																																																									{
-																																																																																																																																																										Reset_HitFlag();
-																																																																																																																																																										ResetAndSet_Animation(STUN_INTO_FALL);
-																																																																																																																																																										m_pTransformCom->Speed_Boost(true, 0.5f);
-																																																																																																																																																									})
-																																																																																																																																																								.Tick([this](_float fTimeDelta)
-																																																																																																																																																									{
-																																																																																																																																																										m_pTransformCom->Go_AxisNegY(fTimeDelta);
-																																																																																																																																																									})
-																																																																																																																																																										.OnExit([this]()
-																																																																																																																																																											{
-																																																																																																																																																												m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
-																																																																																																																																																												m_pTransformCom->Speed_Boost(true, 1.f);
-																																																																																																																																																											})
-																																																																																																																																																										.AddTransition("To DYING", "DYING")
-																																																																																																																																																												.Predicator([this]()
-																																																																																																																																																													{
-																																																																																																																																																														return m_pMonsterStatusCom->IsDead();
-																																																																																																																																																													})
-																																																																																																																																																												.AddTransition("START_STUN to STUN_INTO", "STUN_INTO")
-																																																																																																																																																														.Predicator([this]()
-																																																																																																																																																															{
-																																																																																																																																																																return m_pTransformCom->Get_PositionY() <= m_vKenaPos.y + m_fKenaPosOffsetY;
-																																																																																																																																																															})
-
-
-																																																																																																																																																														.AddState("STUN_INTO")
-																																																																																																																																																																.OnStart([this]()
-																																																																																																																																																																	{
-																																																																																																																																																																		ResetAndSet_Animation(STUN_INTO);
-																																																																																																																																																																	})
-																																																																																																																																																																.AddTransition("To DYING", "DYING")
-																																																																																																																																																																		.Predicator([this]()
-																																																																																																																																																																			{
-																																																																																																																																																																				return m_pMonsterStatusCom->IsDead();
-																																																																																																																																																																			})
-																																																																																																																																																																		.AddTransition("STUN_INTO to STUN_LOOP", "STUN_LOOP")
-																																																																																																																																																																				.Predicator([this]()
-																																																																																																																																																																					{
-																																																																																																																																																																						return AnimFinishChecker(STUN_INTO);
-																																																																																																																																																																					})
-
-																																																																																																																																																																				.AddState("STUN_LOOP")
-																																																																																																																																																																						.OnStart([this]()
-																																																																																																																																																																							{
-																																																																																																																																																																								ResetAndSet_Animation(STUN_LOOP);
-																																																																																																																																																																								m_fStunTimeCheck = 0.f;
-																																																																																																																																																																							})
-																																																																																																																																																																						.Tick([this](_float fTimeDelta)
-																																																																																																																																																																							{
-																																																																																																																																																																								m_fStunTimeCheck += fTimeDelta;
-																																																																																																																																																																							})
-																																																																																																																																																																								.AddTransition("To DYING", "DYING")
-																																																																																																																																																																								.Predicator([this]()
-																																																																																																																																																																									{
-																																																																																																																																																																										return m_pMonsterStatusCom->IsDead();
-																																																																																																																																																																									})
-																																																																																																																																																																								.AddTransition("STUN_LOOP to STUN_EXIT", "STUN_EXIT")
-																																																																																																																																																																										.Predicator([this]()
-																																																																																																																																																																											{
-																																																																																																																																																																												return TimeTrigger(m_fStunTimeCheck, m_fStunTime);
-																																																																																																																																																																											})
-
-
-																																																																																																																																																																										.AddState("STUN_EXIT")
-																																																																																																																																																																												.OnStart([this]()
-																																																																																																																																																																													{
-																																																																																																																																																																														ResetAndSet_Animation(STUN_EXIT);
-																																																																																																																																																																													})
-																																																																																																																																																																												.AddTransition("To DYING", "DYING")
-																																																																																																																																																																														.Predicator([this]()
-																																																																																																																																																																															{
-																																																																																																																																																																																return m_pMonsterStatusCom->IsDead();
-																																																																																																																																																																															})
-																																																																																																																																																																														.AddTransition("STUN_EXIT to IDLE", "IDLE")
-																																																																																																																																																																																.Predicator([this]()
-																																																																																																																																																																																	{
-																																																																																																																																																																																		return AnimFinishChecker(STUN_EXIT);
-																																																																																																																																																																																	})
-
-
-																																																																																																																																																																																.AddState("FLY")
-																																																																																																																																																																																		.OnStart([this]()
-																																																																																																																																																																																			{
-																																																																																																																																																																																				m_pTransformCom->Speed_Boost(true, 1.3f);
-																																																																																																																																																																																				ResetAndSet_Animation(FLY_FORWRAD_FAST);
-
-																																																																																																																																																																																				_float4 vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-																																																																																																																																																																																				_float fX = vCurPos.x - m_vKenaPos.x, fZ = vCurPos.z - m_vKenaPos.z;
-
-																																																																																																																																																																																				// x' = (x-a) * cosR - (y-b)sinR + a
-																																																																																																																																																																																				// y' = (x-a) * sinR + (y-b)cosR + b
-
-																																																																																																																																																																																				_float fDegree = (rand() % 2) == 0 ? -45.f : 45.f;
-																																																																																																																																																																																				for (_uint i = 0; i < FLY_POS_COUNT; i++)
-																																																																																																																																																																																				{
-																																																																																																																																																																																					_uint index = i + 1;
-																																																																																																																																																																																					m_vFlyTargetPos[i].x = fX * cosf(XMConvertToRadians(fDegree * index)) - fZ * sinf(XMConvertToRadians(fDegree * index)) + m_vKenaPos.x;
-																																																																																																																																																																																					m_vFlyTargetPos[i].y = vCurPos.y + (i != (FLY_POS_COUNT - 1)) * CUtile::Get_RandomFloat(-1.5f, 3.f);
-																																																																																																																																																																																					m_vFlyTargetPos[i].z = fX * sinf(XMConvertToRadians(fDegree * index)) + fZ * cosf(XMConvertToRadians(fDegree * index)) + m_vKenaPos.z;
-																																																																																																																																																																																					m_vFlyTargetPos[i].w = 1.f;
-																																																																																																																																																																																				}
-																																																																																																																																																																																				Set_NextAttack();
-																																																																																																																																																																																			})
-																																																																																																																																																																																		.Tick([this](_float fTimeDelta)
-																																																																																																																																																																																			{
-																																																																																																																																																																																				m_pTransformCom->Chase(m_vFlyTargetPos[m_vFlyTargetIndex], fTimeDelta);
-																																																																																																																																																																																				if (m_pTransformCom->IsClosed_XZ(m_vFlyTargetPos[m_vFlyTargetIndex], 1.f))
-																																																																																																																																																																																				{
-																																																																																																																																																																																					m_vFlyTargetIndex++;
-																																																																																																																																																																																					m_bFlyEnd = (m_vFlyTargetIndex == FLY_POS_COUNT);
-																																																																																																																																																																																					m_vFlyTargetIndex %= FLY_POS_COUNT;
-																																																																																																																																																																																				}
-																																																																																																																																																																																			})
-																																																																																																																																																																																				.OnExit([this]()
-																																																																																																																																																																																					{
-																																																																																																																																																																																						m_pTransformCom->Speed_Boost(true, 1.f);
-																																																																																																																																																																																						m_vFlyTargetIndex = 0;
-																																																																																																																																																																																						m_bFlyEnd = false;
-																																																																																																																																																																																					})
-																																																																																																																																																																																				.AddTransition("To DYING", "DYING")
-																																																																																																																																																																																						.Predicator([this]()
-																																																																																																																																																																																							{
-																																																																																																																																																																																								return m_pMonsterStatusCom->IsDead();
-																																																																																																																																																																																							})
-																																																																																																																																																																																						.AddTransition("FLY to IDLE", "IDLE")
-																																																																																																																																																																																								.Predicator([this]()
-																																																																																																																																																																																									{
-																																																																																																																																																																																										return m_bFlyEnd;
-																																																																																																																																																																																									})
-
-
-																																																																																																																																																																																								.AddState("DYING")
-																																																																																																																																																																																										.OnStart([this]()
-																																																																																																																																																																																											{
-																																																																																																																																																																																												CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
-																																																																																																																																																																																												_float fValue = -1.f;
-																																																																																																																																																																																												m_BossHunterDelegator.broadcast(eBossHP, fValue);
-
-																																																																																																																																																																																												m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
-																																																																																																																																																																																												m_pModelCom->Set_AnimIndex(DEATH);
-
-																																																																																																																																																																																												m_pKena->Dead_FocusRotIcon(this);
-
-																																																																																																																																																																																												m_bDying = true;
-																																																																																																																																																																																											})
-																																																																																																																																																																																										.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
-																																																																																																																																																																																												.Predicator([this]()
-																																																																																																																																																																																													{
-																																																																																																																																																																																														return m_pModelCom->Get_AnimationFinish();
-																																																																																																																																																																																													})
-
-																																																																																																																																																																																												.AddState("DEATH_SCENE")
-																																																																																																																																																																																														.OnStart([this]()
-																																																																																																																																																																																															{
-																																																																																																																																																																																																// 죽은 애니메이션 후 죽음 연출 State
-																																																																																																																																																																																															})
-																																																																																																																																																																																														.AddTransition("DEATH_SCENE to DEATH", "DEATH")
-																																																																																																																																																																																																.Predicator([this]()
-																																																																																																																																																																																																	{
-																																																																																																																																																																																																		return true;
-																																																																																																																																																																																																	})
-
-																																																																																																																																																																																																.AddState("DEATH")
-																																																																																																																																																																																																		.OnStart([this]()
-																																																																																																																																																																																																			{
-																																																																																																																																																																																																				m_pTransformCom->Clear_Actor();
-																																																																																																																																																																																																				Clear_Death();
-																																																																																																																																																																																																			})
-
-																																																																																																																																																																																																		.Build();
-																																																																																																																																																																																																			return S_OK;
+	.InitState("SLEEP")
+	.AddState("SLEEP")
+	.OnExit([this]()
+	{
+
+	})
+	.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
+	.Predicator([this]()
+	{
+	// 대기 종결 조건 수정 필요
+	m_fSpawnRange = 5.f;
+	return DistanceTrigger(m_fSpawnRange);
+	})
+
+
+	.AddState("READY_SPAWN")
+	.OnStart([this]()
+	{
+	// 등장 연출 필요
+	m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
+	m_pModelCom->Set_AnimIndex(IDLE);
+
+	CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+	_float fValue = 30.f; /* == BossHunter Name */
+	m_BossHunterDelegator.broadcast(eBossHP, fValue);
+	})
+	.OnExit([this]()
+	{
+	m_pTransformCom->LookAt(m_vKenaPos);
+	m_bSpawn = true;
+	})
+	.AddTransition("READY_SPAWN to IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(IDLE);
+	})
+
+	.AddState("IDLE")
+	.OnStart([this]()
+	{
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+	m_pTransformCom->Speed_Boost(true, 0.5f);
+
+	m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
+	m_pModelCom->Set_AnimIndex(IDLE);
+
+	m_fIdleTimeCheck = m_bDodge ? m_fIdleTimeCheck : 0.f;
+	m_bDodge = false;
+	})
+	.Tick([this](_float fTimeDelta)
+	{
+	m_fIdleTimeCheck += fTimeDelta;
+
+	if (m_pTransformCom->Get_PositionY() <= m_fFlyHeightY)
+	{
+	m_pTransformCom->Go_AxisY(fTimeDelta);
+	if (m_pTransformCom->Get_PositionY() >= m_fFlyHeightY)
+	m_pTransformCom->Set_PositionY(m_fFlyHeightY);
+	}
+
+	m_bDodge = m_pKena->Get_State(CKena::STATE_BOW) && (rand() % 3 == 0);
+	})
+	.OnExit([this]()
+	{
+	Reset_HitFlag();
+	m_pTransformCom->Speed_Boost(true, 1.f);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("IDLE To DODGE", "DODGE")
+	.Predicator([this]()
+	{
+	return !TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_bDodge;
+	})
+	.AddTransition("IDLE To START_ATTACK_KNIFE", "START_ATTACK_KNIFE")
+	.Predicator([this]()
+	{
+	return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_KNIFE;
+	})
+	.AddTransition("IDLE To START_ATTACK_KNIFE_SLAM", "START_ATTACK_KNIFE_SLAM")
+	.Predicator([this]()
+	{
+	return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_KNIFE_SLAM;
+	})
+	.AddTransition("IDLE To START_SWOOP_ATTACK", "START_SWOOP_ATTACK")
+	.Predicator([this]()
+	{
+	return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_SWOOP_ATTACK;
+	})
+
+
+	.AddTransition("IDLE To SINGLE_SHOT", "SINGLE_SHOT")
+	.Predicator([this]()
+	{
+	return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_SINGLE_SHOT;
+	})
+	.AddTransition("IDLE To RAPID_SHOOT", "RAPID_SHOOT")
+	.Predicator([this]()
+	{
+	return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_RAPID_SHOOT;
+	})
+	.AddTransition("IDLE To START_SHOCK_ARROW", "START_SHOCK_ARROW")
+	.Predicator([this]()
+	{
+	return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_SHOCK_ARROW;
+	})
+	.AddTransition("IDLE To START_CHARGE_ARROW", "START_CHARGE_ARROW")
+	.Predicator([this]()
+	{
+	return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_CHARGE_ARROW;
+	})
+	.AddTransition("IDLE To START_CHARGE_ARROW", "FLY")
+	.Predicator([this]()
+	{
+	return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && m_eAttackType == AT_FLY;
+	})
+
+	.AddState("DODGE")
+	.OnStart([this]()
+	{
+	m_iDodgeAnimIndex++;
+	m_iDodgeAnimIndex = m_iDodgeAnimIndex > DODGE_FAR_RIGHT ? DODGE_DOWN : m_iDodgeAnimIndex;
+	ResetAndSet_Animation(m_iDodgeAnimIndex);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("DODGE To IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(m_iDodgeAnimIndex);
+	})
+
+
+	.AddState("START_ATTACK_KNIFE")
+	.OnStart([this]()
+	{
+	Set_NextAttack();
+	m_pTransformCom->Speed_Boost(true, 0.5f);
+	})
+	.Tick([this](_float fTimeDelta)
+	{
+	m_pTransformCom->Go_AxisNegY(fTimeDelta);
+	})
+	.OnExit([this]()
+	{
+	m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
+	m_pTransformCom->Speed_Boost(true, 1.f);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("START_ATTACK_KNIFE To ATTACK_KNIFE", "ATTACK_KNIFE")
+	.Predicator([this]()
+	{
+	return m_pTransformCom->Get_PositionY() <= m_vKenaPos.y + m_fKenaPosOffsetY;
+	})
+
+
+	.AddState("ATTACK_KNIFE")
+	.OnStart([this]()
+	{
+	m_bRealAttack = true;
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+	ResetAndSet_Animation(KNIFE_ATTACK);
+	})
+	.OnExit([this]()
+	{
+	m_bRealAttack = false;
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("ATTACK_KNIFE To KNIFE_PARRY", "KNIFE_PARRY")
+	.Predicator([this]()
+	{
+	return m_bStronglyHit;
+	})
+	.AddTransition("ATTACK_KNIFE_SLAM To IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(KNIFE_ATTACK);
+	})
+
+
+	.AddState("START_ATTACK_KNIFE_SLAM")
+	.OnStart([this]()
+	{
+	ResetAndSet_Animation(KNIFE_SLAM_TELEPORT);
+	Set_NextAttack();
+	})
+	.OnExit([this]()
+	{
+
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("START_ATTACK_SWOOP To ATTACK_KNIFE_SLAM", "ATTACK_KNIFE_SLAM")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(KNIFE_SLAM_TELEPORT);
+	})
+
+
+	.AddState("ATTACK_KNIFE_SLAM")
+	.OnStart([this]()
+	{
+	_float fX = CUtile::Get_RandomFloat(-2.f, 2.f);
+	_float fZ = CUtile::Get_RandomFloat(-2.f, 2.f);
+	fX = fX < 0.f ? fX + 2.f : fX - 2.f;
+	fZ = fZ < 0.f ? fZ + 2.f : fZ - 2.f;
+
+	_float4 vTeleportPos = m_vKenaPos + _float4(fX, m_fKenaPosOffsetY, fZ, 0.f);
+	m_pTransformCom->Set_Position(vTeleportPos);
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+	ResetAndSet_Animation(KNIFE_SLAM_ATTACK);
+	m_bRealAttack = true;
+	})
+	.OnExit([this]()
+	{
+	m_bRealAttack = false;
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("ATTACK_KNIFE_SLAM To KNIFE_PARRY", "KNIFE_PARRY")
+	.Predicator([this]()
+	{
+	return m_bStronglyHit;
+	})
+	.AddTransition("ATTACK_KNIFE_SLAM To IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(KNIFE_SLAM_ATTACK);
+	})
+
+
+	.AddState("KNIFE_PARRY")
+	.OnStart([this]()
+	{
+	m_bStronglyHit = false;
+	ResetAndSet_Animation(KNIFE_PARRY);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("KNIFE_PARRY To KNIFE_PARRY_STUN_LOOP", "KNIFE_PARRY_STUN_LOOP")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(KNIFE_PARRY);
+	})
+
+
+	.AddState("KNIFE_PARRY_STUN_LOOP")
+	.OnStart([this]()
+	{
+	m_bStronglyHit = false;
+	// ResetAndSet_Animation(KNIFE_PARRY_STUN_LOOP);
+	m_fStunTimeCheck = 0.f;
+	})
+	.Tick([this](_float fTimeDelta)
+	{
+	m_fStunTimeCheck += fTimeDelta;
+	})
+	.OnExit([this]()
+	{
+	m_fStunTimeCheck = 0.f;
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("KNIFE_PARRY_STUN_LOOP To KNIFE_PARRY_EXIT", "KNIFE_PARRY_EXIT")
+	.Predicator([this]()
+	{
+	return TimeTrigger(m_fStunTimeCheck, m_fStunTime);
+	})
+
+	.AddState("KNIFE_PARRY_EXIT")
+	.OnStart([this]()
+	{
+	m_bStronglyHit = false;
+	ResetAndSet_Animation(KNIFE_PARRY_EXIT);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("KNIFE_PARRY_EXIT To IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(KNIFE_PARRY_EXIT);
+	})
+
+
+	.AddState("START_SWOOP_ATTACK")
+	.OnStart([this]()
+	{
+	m_pTransformCom->LookAt(m_vKenaPos);
+	m_pTransformCom->Speed_Boost(true, 0.5f);
+	Set_NextAttack();
+	})
+	.Tick([this](_float fTimeDelta)
+	{
+	m_pTransformCom->Go_AxisNegY(fTimeDelta);
+	})
+	.OnExit([this]()
+	{
+	m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
+	m_pTransformCom->Speed_Boost(true, 1.f);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("START_SWOOP_ATTACK To SWOOP_ATTACK", "SWOOP_ATTACK")
+	.Predicator([this]()
+	{
+	return m_pTransformCom->Get_PositionY() <= m_vKenaPos.y + m_fKenaPosOffsetY;
+	})
+
+	.AddState("SWOOP_ATTACK")
+	.OnStart([this]()
+	{
+	m_bRealAttack = true;
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+	ResetAndSet_Animation(SWOOP_ATTACK);
+	})
+	.OnExit([this]()
+	{
+	m_bRealAttack = false;
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("SWOOP_ATTACK To IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(SWOOP_ATTACK);
+	})
+
+
+	.AddState("SINGLE_SHOT")
+	.OnStart([this]()
+	{
+	ResetAndSet_Animation(SINGLE_SHOT); // 일반 화살 한발을 날린다 애니메이션 끝날 때쯤 발사 함수 호출 필요
+	m_pTransformCom->LookAt(m_vKenaPos);
+	Set_NextAttack();
+	})
+	.Tick([this](_float fTimeDelta)
+	{
+	m_pTransformCom->LookAt(m_vKenaPos);
+	})
+	.OnExit([this]()
+	{
+
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("KNIFE_PARRY_EXIT To IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(SINGLE_SHOT);
+	})
+
+
+	.AddState("RAPID_SHOOT")
+	.OnStart([this]()
+	{
+	ResetAndSet_Animation(RAPID_SHOOT); // 일반 화살을 여러발을 날린다 애니메이션 중간중간 발사 함수 호출 필요
+	m_pTransformCom->LookAt(m_vKenaPos);
+	Set_NextAttack();
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("KNIFE_PARRY_EXIT To IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(RAPID_SHOOT);
+	})
+
+
+
+	.AddState("START_SHOCK_ARROW")
+	.OnStart([this]()
+	{
+	ResetAndSet_Animation(SHOCK_ARROW_ATTACK);
+	Set_NextAttack();
+	})
+	.OnExit([this]()
+	{
+	if (m_bReadyStrongArrow)
+	{
+	m_pArrows[m_iArrowIndex]->Execute_Finish();
+	m_bReadyStrongArrow = false;
+	Update_ArrowIndex();
+	}
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("START_SHOCK_ARROW To START_STUN", "START_STUN")
+	.Predicator([this]()
+	{
+	return m_bStronglyHit && m_bReadyStrongArrow;
+	})
+	.AddTransition("START_SHOCK_ARROW To SHOCK_ARROW_LOOP", "SHOCK_ARROW_LOOP")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(SHOCK_ARROW_ATTACK);
+	})
+
+
+	.AddState("SHOCK_ARROW_LOOP")
+	.OnStart([this]()
+	{
+	ResetAndSet_Animation(SHOCK_ARROW_LOOP);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("SHOCK_ARROW_LOOP To SHOCK_ARROW_EXIT", "SHOCK_ARROW_EXIT")
+	.Predicator([this]()
+	{
+	return m_pArrows[m_iArrowIndex]->IsEnd();
+	})
+
+
+	.AddState("SHOCK_ARROW_EXIT")
+	.OnStart([this]()
+	{
+	ResetAndSet_Animation(SHOCK_ARROW_EXIT);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("SHOCK_ARROW_EXIT To IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(SHOCK_ARROW_EXIT);
+	})
+
+
+
+	.AddState("START_CHARGE_ARROW")
+	.OnStart([this]()
+	{
+	Reset_HitFlag();
+	ResetAndSet_Animation(CHARGE_ARROW_FIRST_SHOT);
+	m_pTransformCom->LookAt(m_vKenaPos);
+	Set_NextAttack();
+	})
+	.OnExit([this]()
+	{
+	if (m_bReadyStrongArrow)
+	{
+	m_pArrows[m_iArrowIndex]->Execute_Finish();
+	m_bReadyStrongArrow = false;
+	Update_ArrowIndex();
+	}
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("START_CHARGE_ARROW To START_STUN", "START_STUN")
+	.Predicator([this]()
+	{
+	return m_bStronglyHit && m_bReadyStrongArrow;
+	})
+	.AddTransition("START_CHARGE_ARROW To CHARGE_ARROW_EXIT", "CHARGE_ARROW_EXIT")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(CHARGE_ARROW_FIRST_SHOT);
+	})
+
+
+	.AddState("CHARGE_ARROW_EXIT")
+	.OnStart([this]()
+	{
+	ResetAndSet_Animation(CHARGE_ARROW_EXIT);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("CHARGE_ARROW_EXIT To IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(CHARGE_ARROW_EXIT);
+	})
+
+
+	.AddState("START_STUN")
+	.OnStart([this]()
+	{
+	Reset_HitFlag();
+	ResetAndSet_Animation(STUN_INTO_FALL);
+	m_pTransformCom->Speed_Boost(true, 0.5f);
+	})
+	.Tick([this](_float fTimeDelta)
+	{
+	m_pTransformCom->Go_AxisNegY(fTimeDelta);
+	})
+	.OnExit([this]()
+	{
+	m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
+	m_pTransformCom->Speed_Boost(true, 1.f);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("START_STUN to STUN_INTO", "STUN_INTO")
+	.Predicator([this]()
+	{
+	return m_pTransformCom->Get_PositionY() <= m_vKenaPos.y + m_fKenaPosOffsetY;
+	})
+
+
+	.AddState("STUN_INTO")
+	.OnStart([this]()
+	{
+	ResetAndSet_Animation(STUN_INTO);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("STUN_INTO to STUN_LOOP", "STUN_LOOP")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(STUN_INTO);
+	})
+
+	.AddState("STUN_LOOP")
+	.OnStart([this]()
+	{
+	ResetAndSet_Animation(STUN_LOOP);
+	m_fStunTimeCheck = 0.f;
+	})
+	.Tick([this](_float fTimeDelta)
+	{
+	m_fStunTimeCheck += fTimeDelta;
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("STUN_LOOP to STUN_EXIT", "STUN_EXIT")
+	.Predicator([this]()
+	{
+	return TimeTrigger(m_fStunTimeCheck, m_fStunTime);
+	})
+
+
+	.AddState("STUN_EXIT")
+	.OnStart([this]()
+	{
+	ResetAndSet_Animation(STUN_EXIT);
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("STUN_EXIT to IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return AnimFinishChecker(STUN_EXIT);
+	})
+
+
+	.AddState("FLY")
+	.OnStart([this]()
+	{
+	m_pTransformCom->Speed_Boost(true, 1.3f);
+	ResetAndSet_Animation(FLY_FORWRAD_FAST);
+
+	_float4 vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float fX = vCurPos.x - m_vKenaPos.x, fZ = vCurPos.z - m_vKenaPos.z;
+
+	// x' = (x-a) * cosR - (y-b)sinR + a
+	// y' = (x-a) * sinR + (y-b)cosR + b
+
+	_float fDegree = (rand() % 2) == 0 ? -45.f : 45.f;
+	for (_uint i = 0; i < FLY_POS_COUNT; i++)
+	{
+	_uint index = i + 1;
+	m_vFlyTargetPos[i].x = fX * cosf(XMConvertToRadians(fDegree * index)) - fZ * sinf(XMConvertToRadians(fDegree * index)) + m_vKenaPos.x;
+	m_vFlyTargetPos[i].y = vCurPos.y + (i != (FLY_POS_COUNT - 1)) * CUtile::Get_RandomFloat(-1.5f, 3.f);
+	m_vFlyTargetPos[i].z = fX * sinf(XMConvertToRadians(fDegree * index)) + fZ * cosf(XMConvertToRadians(fDegree * index)) + m_vKenaPos.z;
+	m_vFlyTargetPos[i].w = 1.f;
+	}
+	Set_NextAttack();
+	})
+	.Tick([this](_float fTimeDelta)
+	{
+	m_pTransformCom->Chase(m_vFlyTargetPos[m_vFlyTargetIndex], fTimeDelta);
+	if (m_pTransformCom->IsClosed_XZ(m_vFlyTargetPos[m_vFlyTargetIndex], 1.f))
+	{
+	m_vFlyTargetIndex++;
+	m_bFlyEnd = (m_vFlyTargetIndex == FLY_POS_COUNT);
+	m_vFlyTargetIndex %= FLY_POS_COUNT;
+	}
+	})
+	.OnExit([this]()
+	{
+	m_pTransformCom->Speed_Boost(true, 1.f);
+	m_vFlyTargetIndex = 0;
+	m_bFlyEnd = false;
+	})
+	.AddTransition("To DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pMonsterStatusCom->IsDead();
+	})
+	.AddTransition("FLY to IDLE", "IDLE")
+	.Predicator([this]()
+	{
+	return m_bFlyEnd;
+	})
+
+
+	.AddState("DYING")
+	.OnStart([this]()
+	{
+	CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+	_float fValue = -1.f;
+	m_BossHunterDelegator.broadcast(eBossHP, fValue);
+
+	m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
+	m_pModelCom->Set_AnimIndex(DEATH);
+
+	m_pKena->Dead_FocusRotIcon(this);
+
+	m_bDying = true;
+	})
+	.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
+	.Predicator([this]()
+	{
+	return m_pModelCom->Get_AnimationFinish();
+	})
+
+	.AddState("DEATH_SCENE")
+	.OnStart([this]()
+	{
+	// 죽은 애니메이션 후 죽음 연출 State
+	})
+	.AddTransition("DEATH_SCENE to DEATH", "DEATH")
+	.Predicator([this]()
+	{
+	return true;
+	})
+
+	.AddState("DEATH")
+	.OnStart([this]()
+	{
+	m_pTransformCom->Clear_Actor();
+	Clear_Death();
+	})
+
+	.Build();
+	return S_OK;
 }
 
 HRESULT CBossHunter::SetUp_Components()
@@ -1491,12 +1491,12 @@ void CBossHunter::Reset_HitFlag()
 	m_bWeaklyHit = false;
 }
 
-void CBossHunter::Test1(_bool bIsInit, _float fTimeDelta)
+void CBossHunter::ShockEffect_On(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
 	{
 		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test1);
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::ShockEffect_On);
 		return;
 	}
 
@@ -1504,23 +1504,19 @@ void CBossHunter::Test1(_bool bIsInit, _float fTimeDelta)
 	CGameObject* pArrow = m_pArrows[m_iArrowIndex];
 
 	m_vecEffects[EFFECT_CHARGE_PARTICLE_GATHER]->Activate(vPos);
-
-
-	m_vecEffects[EFFECT_CHARGE_TEXTURE_CIRCLE]->Activate(nullptr);
-
-	m_vecEffects[EFFECT_CHARGE_TEXTURE_CIRCLE]->Activate(vPos, { -3.f, -3.f });
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_CIRCLE]->Activate_Scaling(vPos, { -3.f, -3.f });
 	m_vecEffects[EFFECT_CHARGE_TEXTURE_SHINE]->Activate(vPos);
-	m_vecEffects[EFFECT_CHARGE_TEXTURE_CENTER]->Activate(vPos);
-	m_vecEffects[EFFECT_CHARGE_TEXTURE_LINE1]->Activate(vPos);
-	m_vecEffects[EFFECT_CHARGE_TEXTURE_LINE2]->Activate(vPos);
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_CENTER]->Activate_Spread(vPos, { 0.7f, 0.7f });
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_LINE1]->Activate_Spread(vPos, { 1.f, 1.f });
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_LINE2]->Activate_Spread(vPos, { 1.f, 1.f });
 }
 
-void CBossHunter::Test2(_bool bIsInit, _float fTimeDelta)
+void CBossHunter::ShockEffect_Off(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
 	{
 		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test2);
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::ShockEffect_Off);
 		return;
 	}
 
@@ -1616,8 +1612,15 @@ void CBossHunter::ImGui_EffectProperty()
 	static vector<string> tags;
 	if (ImGui::Button("Refresh"))
 	{
-		if (!tags.empty())
-			tags.clear();
+		//if (!tags.empty())
+		//	tags.clear();
+		m_pSelectedEffect = nullptr;
+
+		for (auto& pEffect : m_vecEffects)
+			Safe_Release(pEffect);
+		m_vecEffects.clear();
+		tags.clear();
+		Create_Effects();
 
 		for (auto pEffect : m_vecEffects)
 		{

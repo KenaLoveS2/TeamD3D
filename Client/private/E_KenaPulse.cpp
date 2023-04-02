@@ -353,6 +353,13 @@ _int CE_KenaPulse::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
             m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
             /* Update */
 
+            /* Shield Guage UI Call */
+            m_fHpRatio = m_eStatus.fCurHp / m_eStatus.fMaxHp;
+            CUI_ClientManager::UI_PRESENT eShield = CUI_ClientManager::HUD_SHIELD;
+            CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+            m_ShieldDelegator.broadcast(eShield, funcDefault, m_fHpRatio);
+            /* ~Shield Guage UI Call */
+
             if (m_eStatus.fCurHp <= 0.0f)
             {
                 m_bDesolve = true;

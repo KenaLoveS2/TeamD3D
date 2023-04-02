@@ -550,6 +550,9 @@
     <Filter Include="02.GameObjects\Envrioment\ControlRoom">
       <UniqueIdentifier>{cdc58b59-40df-4e45-9aba-7290005222c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\06. 3D UI\Effect_Complex">
+      <UniqueIdentifier>{8bda720b-f543-4f6b-9ca4-f5c9fabaa9aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1401,24 +1404,11 @@
     <ClInclude Include="..\public\RotHat.h">
       <Filter>02.GameObjects\Rot</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_P_ExplosionGravity.h" />
-    <ClInclude Include="..\public\E_ShamanBossHandPlane.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    <ClInclude Include="..\public\Pet.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_ShamanBossPlate.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanSmoke.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanSummons.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanThunderCylinder.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    <ClInclude Include="..\public\Frog.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2254,24 +2244,11 @@
     <ClCompile Include="..\private\RotHat.cpp">
       <Filter>02.GameObjects\Rot</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_P_ExplosionGravity.cpp" />
-    <ClCompile Include="..\private\E_ShamanBossHandPlane.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    <ClCompile Include="..\private\Frog.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_ShamanBossPlate.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanSmoke.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanSummons.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanThunderCylinder.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    <ClCompile Include="..\private\Pet.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

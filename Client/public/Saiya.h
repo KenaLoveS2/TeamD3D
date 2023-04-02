@@ -8,6 +8,12 @@ BEGIN(Client)
 class CUI_FocusNPC;
 class CSaiya final : public CNpc
 {
+	struct SAIYAKEYFRAME
+	{
+		_float3 vPos;
+		_float3 vLook;
+	};
+
 	enum ANIMATION
 	{
 		SAIYA_APPEAR,
@@ -91,14 +97,14 @@ public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
 	virtual HRESULT			Late_Initialize(void* pArg) override;
-	virtual void			Tick(_float fTimeDelta) override;
-	virtual void			Late_Tick(_float fTimeDelta) override;
+	virtual void					Tick(_float fTimeDelta) override;
+	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual HRESULT			RenderShadow() override;
-	virtual void			Imgui_RenderProperty() override;
-	virtual void			ImGui_AnimationProperty() override;
-	virtual void			ImGui_ShaderValueProperty() override;
-	virtual void			ImGui_PhysXValueProperty() override;
+	virtual void					Imgui_RenderProperty() override;
+	virtual void					ImGui_AnimationProperty() override;
+	virtual void					ImGui_ShaderValueProperty() override;
+	virtual void					ImGui_PhysXValueProperty() override;
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>		m_SaiyaDelegator;
@@ -113,16 +119,21 @@ protected:
 	virtual HRESULT			SetUp_UI()override;
 
 private:
-	virtual void					AdditiveAnim(_float fTimeDelta);
+	virtual void					AdditiveAnim(_float fTimeDelta) override;
 
-	_bool							IsChatEnd();
+	_bool									IsChatEnd();
+	HRESULT								Save_KeyFrame();
+	HRESULT								Load_KeyFrame();
 
 private:
-	CUI_FocusNPC*					m_pFocus;
-	_bool							m_bMeetPlayer = false;
-	vector<wstring>					m_vecChat[10];
-	_uint							m_iChatIndex;
-	_uint							m_iLineIndex;
+	CUI_FocusNPC*							m_pFocus;
+	_bool											m_bMeetPlayer = false;
+	vector<wstring>							m_vecChat[10];
+	_uint												m_iChatIndex;
+	_uint												m_iLineIndex;
+	vector<SAIYAKEYFRAME>			m_keyframes;
+	_uint												m_iNumKeyFrame = 0;
+	_uint												m_iKeyFrame = 0;
 
 public:
 	static CSaiya*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

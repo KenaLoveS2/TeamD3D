@@ -18,11 +18,11 @@ public:
 		ZeroMemory(m_szName, MAX_PATH);
 		strcpy_s(m_szName, strRootNodeName.c_str());
 	}
-	void		Set_BoneTranfromMatrix(_fmatrix matTransform);
-	class CBone*	Get_BonePtr() { return m_pBone; }
-	_matrix	Get_BoneTransformMatrix();
-	_bool		Get_BoneLocked();
-	const _uint&		Get_KeyFrameCount() const { return m_iNumKeyframes; }
+	void								Set_BoneTranfromMatrix(_fmatrix matTransform);
+	class CBone*				Get_BonePtr() { return m_pBone; }
+	_matrix							Get_BoneTransformMatrix();
+	_bool							Get_BoneLocked();
+	const _uint&					Get_KeyFrameCount() const { return m_iNumKeyframes; }
 	vector<KEYFRAME>*	Get_KeyFrames() { return &m_KeyFrames; }
 
 public:
@@ -48,22 +48,20 @@ public:
 	HRESULT Synchronization_BonePtr(CModel* pModel);
 
 private:
-	class CModel*		m_pModel = nullptr;
-	char				m_szName[MAX_PATH] = "";
-	class CBone*		m_pBone = nullptr;
-	_float4			m_vRootBonePos = { 0.f, 0.f, 0.f, 1.f };
+	class CModel*			m_pModel = nullptr;
+	char							m_szName[MAX_PATH] = "";
+	class CBone*			m_pBone = nullptr;
+	_float4						m_vRootBonePos = { 0.f, 0.f, 0.f, 1.f };
 
-	_uint				m_iNumKeyframes = 0;
+	_uint							m_iNumKeyframes = 0;
 	vector<KEYFRAME>	m_KeyFrames;
 
-	_uint				m_iCurrentKeyFrameIndex = 0;
+	_uint							m_iCurrentKeyFrameIndex = 0;
 
 public:
 	static CChannel* Create(HANDLE hFile, class CModel* pModel);
 	CChannel* Clone(void* pArg = nullptr);
 	virtual void Free() override;
-
-
 };
 
 END

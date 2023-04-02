@@ -40,12 +40,12 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
 	//p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImGui_Rot::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImGui_Rot::Create(m_pDevice, m_pContext));
 	
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
@@ -125,26 +125,6 @@ HRESULT CLevel_TestPlay::Initialize()
 void CLevel_TestPlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	if (CGameInstance::GetInstance()->Key_Down(DIK_F2))
-		CGameInstance::GetInstance()->Work_Camera(L"DEBUG_CAM_1");
-
-	//if(!m_bEnviromentInputShaderValue)
-	//{
-	//	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
-
-	//	CLayer* pLayer =	p_game_instance->Find_Layer(LEVEL_TESTPLAY, L"Layer_Enviroment");
-
-	//	for(auto& pGameObject : pLayer->GetGameObjects())
-	//	{
-	//		if(pGameObject.second != nullptr)
-	//			p_game_instance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject.second);
-	//	}
-
-	//	RELEASE_INSTANCE(CGameInstance)
-
-	//	m_bEnviromentInputShaderValue = true;
-	//}
 }
 
 void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
@@ -186,9 +166,10 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	LightDesc.isEnable = true;
 	LightDesc.vPosition = _float4(13.f, 5.f, 9.f, 1.f);
 	LightDesc.fRange = 20.0f;
-	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 0.2f);
+	LightDesc.vDiffuse = _float4(10.f, 0.f, 0.f, 1.f);
+	LightDesc.vAmbient = _float4(1.f, 0.f, 0.f, 1.f);
 	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.szLightName = "Point_0";
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
@@ -221,10 +202,10 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	//	return E_FAIL;
 
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -233,7 +214,6 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Parkour.json");C
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
@@ -263,22 +243,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 
 	CCamera *pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), nullptr, &CameraDesc);
 	if (pCamera == nullptr) return E_FAIL;
-	if (FAILED(pGameInstance->Add_Camera(TEXT("DEBUG_CAM_1"), pCamera, true))) return E_FAIL;
-
-	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
-	CameraDesc.vEye = _float4(30.f, 7.f, 30.f, 1.f);
-	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
-	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-	CameraDesc.fFovy = XMConvertToRadians(40.0f);
-	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
-	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 500.f;
-	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
-	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-
-	pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), nullptr, &CameraDesc);
-	if (pCamera == nullptr) return E_FAIL;
-	if (FAILED(pGameInstance->Add_Camera(TEXT("DEBUG_CAM_2"), pCamera))) return E_FAIL;
+	if (FAILED(pGameInstance->Add_Camera(TEXT("DEBUG_CAM"), pCamera, true))) return E_FAIL;
 
 	/* For. DynamicShadow */
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_DynamicLightCamera"), L"DynamicLightCamera")))
@@ -501,13 +466,6 @@ HRESULT CLevel_TestPlay::Ready_Layer_Rot(const _tchar* pLayerTag)
 {
 	CImGui_Rot::Load_RotObjects(g_LEVEL, "Test_Chap1.json");
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_LiftRot_Master"), TEXT("LiftRot_Master"))))
-	//	return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 
@@ -560,8 +518,8 @@ HRESULT CLevel_TestPlay::Ready_Layer_UI(const _tchar * pLayerTag)
 HRESULT CLevel_TestPlay::Ready_Layer_NPC(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	//pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Beni"), L"Beni");
-	//pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Saiya"), L"Saiya");
+	pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Beni"), L"Beni");
+	pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Saiya"), L"Saiya");
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

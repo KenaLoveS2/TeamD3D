@@ -114,6 +114,38 @@ void CAnimationState::Set_RootAnimation(const string& strStateName)
 	State_Animation(strStateName, 0.f);
 }
 
+void CAnimationState::Set_AnimationPlayTime(_float fPlayTime)
+{
+	if (m_pCurAnim != nullptr)
+	{
+		if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
+			m_pCurAnim->m_pMainAnim->Set_PlayTime((_double)fPlayTime);
+		else
+			m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Set_PlayTime((_double)fPlayTime);
+	}
+	else
+		return;
+}
+
+void CAnimationState::Set_AnimationProgress(_float fProgress)
+{
+	if (m_pCurAnim != nullptr)
+	{
+		if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
+		{
+			_double	dPlayTime = (_double)fProgress * m_pCurAnim->m_pMainAnim->Get_AnimationDuration();
+			m_pCurAnim->m_pMainAnim->Set_PlayTime(dPlayTime);
+		}
+		else
+		{
+			_double	dPlayTime = (_double)fProgress * m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_AnimationDuration();
+			m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Set_PlayTime((_double)dPlayTime);
+		}
+	}
+	else
+		return;
+}
+
 HRESULT CAnimationState::Initialize(CGameObject * pOwner, CModel * pModelCom, const string & strRootBone, const string & strFilePath)
 {
 	NULL_CHECK_RETURN(pOwner, E_FAIL);

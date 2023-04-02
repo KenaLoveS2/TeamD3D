@@ -69,7 +69,8 @@ void CEnviromentObj::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
-	m_bRenderActive = true;// m_pEnviroment_Manager->Is_RenderIndex(m_EnviromentDesc.iRoomIndex);
+	m_bRenderActive = m_pEnviroment_Manager->Is_RenderIndex(m_EnviromentDesc.iRoomIndex);
+
 #else
 	m_bRenderActive = m_pEnviroment_Manager->Is_RenderIndex(m_EnviromentDesc.iRoomIndex);
 #endif
@@ -123,7 +124,7 @@ void CEnviromentObj::Imgui_RenderComponentProperties()
 #pragma region 예외처리
 		if (m_iImgui_ComponentOption < 0)
 			m_iImgui_ComponentOption = 0;
-		else if (m_iImgui_ComponentOption >= static_cast<COMPONENTS_OPTION>(COMPONENTS_END))
+		else if (m_iImgui_ComponentOption >= (COMPONENTS_END))
 			m_iImgui_ComponentOption = COMPONENTS_END;
 #pragma endregion
 

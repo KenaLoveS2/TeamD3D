@@ -293,6 +293,7 @@
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
     <ClInclude Include="..\Public\Flower.h" />
+    <ClInclude Include="..\public\Frog.h" />
     <ClInclude Include="..\public\Gate.h" />
     <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
     <ClInclude Include="..\Public\Grass.h" />
@@ -329,6 +330,7 @@
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\Npc.h" />
+    <ClInclude Include="..\public\Pet.h" />
     <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\public\RotBomb.h" />
     <ClInclude Include="..\public\RotForMonster.h" />
@@ -559,6 +561,7 @@
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
     <ClCompile Include="..\Private\Flower.cpp" />
+    <ClCompile Include="..\private\Frog.cpp" />
     <ClCompile Include="..\private\Gate.cpp" />
     <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
     <ClCompile Include="..\Private\Grass.cpp" />
@@ -595,6 +598,7 @@
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
+    <ClCompile Include="..\private\Pet.cpp" />
     <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\private\RotBomb.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />

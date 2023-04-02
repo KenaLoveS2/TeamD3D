@@ -140,12 +140,15 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 
 void CCinematicCamera::Tick(_float fTimeDelta)
 {
-//#ifdef _DEBUG
-//	ImGui::Begin("CinematicCam");
-//	Imgui_RenderProperty();
-//	ImGui::End();
-//#endif
-
+#ifdef _DEBUG
+		char szName[MAX_PATH] = "";
+		CUtile::WideCharToChar(m_szCloneObjectTag, szName);
+		ImGui::Begin(szName);
+		Imgui_RenderProperty();
+		m_pTransformCom->Imgui_RenderProperty();
+		ImGui::End();
+#endif
+		
 	m_iNumKeyFrames = (_uint)m_keyframes.size();
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
@@ -200,12 +203,16 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 				if (m_iChatIndex >= (int)m_vecChat.size())
 				{
 					bVal = false;
-					m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[0]);
+					if (!m_vecChat.empty())
+						m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[0]);
 				}
 				else
 				{
-					m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[m_iChatIndex]);
-					m_iChatIndex++;
+					if (!m_vecChat.empty())
+					{
+						m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[m_iChatIndex]);
+						m_iChatIndex++;
+					}
 				}
 			}
 		}		
@@ -231,15 +238,41 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 		if (!m_bFinishSet)
 		{
 			CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
-			/* Call CinemaUI */
-			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
-			_bool bOn = false;
-			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
-			/* ~Call CinemaUI */
+			if (!m_vecChat.empty())
+			{
+				/* Call CinemaUI */
+				CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
+				_bool bOn = false;
+				m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
+				/* ~Call CinemaUI */
+			}
 			m_bFinishSet = true;
 		}
-	}
+		/*else
+		{
+			if (pGameInstance->Key_Pressing(DIK_UP))
+				m_pTransformCom->Go_Straight(fTimeDelta);
 
+			if (pGameInstance->Key_Pressing(DIK_DOWN))
+				m_pTransformCom->Go_Backward(fTimeDelta);
+
+			if (pGameInstance->Key_Pressing(DIK_LEFT))
+				m_pTransformCom->Go_Left(fTimeDelta);
+
+			if (pGameInstance->Key_Pressing(DIK_RIGHT))
+				m_pTransformCom->Go_Right(fTimeDelta);
+
+			if (pGameInstance->Get_DIMouseState(DIM_RB) & 0x80)
+			{
+				long	MouseMove = 0;
+				if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+					m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * 0.1f);
+				if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+					m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * 0.1f);
+			}
+		}
+		CCamera::Tick(fTimeDelta);*/
+	}
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_CINEVIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
 	RELEASE_INSTANCE(CGameInstance)
 }
@@ -276,6 +309,7 @@ HRESULT CCinematicCamera::Render()
 	m_pContext->IASetInputLayout(m_pInputLayout);
 	m_pBatch->Begin();
 
+	m_iNumKeyFrames = (_uint)m_keyframes.size();
 	BoundingSphere**   ppSphere = new BoundingSphere*[m_iNumKeyFrames];
 
 	for (unsigned int i = 1; i < m_iNumKeyFrames; ++i)
@@ -333,22 +367,27 @@ void CCinematicCamera::Imgui_RenderProperty()
 		}
 
 
+		
 		if (ImGui::Button("CinematicPlay"))
 		{
 			m_fDeltaTime = 0.f;
 			m_bPlay = true;
 			m_bPausePlay = false;
 			CGameInstance::GetInstance()->Work_Camera(m_szCloneObjectTag);
-			/* Call CinemaUI */
-			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
-			_bool bOn = true;
-			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
-			/* ~Call CinemaUI */
+
+			{
+				/* Call CinemaUI */
+				CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
+				_bool bOn = true;
+				m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
+				/* ~Call CinemaUI */
+			}
 
 			/* Call Chat */
 			if (!m_vecChat.empty())
 			{
 				CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+				_bool bOn = true;
 				m_iChatIndex = 0;
 				m_CinemaDelegator.broadcast(eChat, bOn, fTemp, m_vecChat[m_iChatIndex]);
 				m_iChatIndex++;			
@@ -408,18 +447,20 @@ void CCinematicCamera::Imgui_RenderProperty()
 
 	if (ImGui::Button("Test Chat"))
 	{
-		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
-		_bool bVal = true;
-
-		if (m_iChatIndex >= (int)m_vecChat.size())
+		if (!m_vecChat.empty())
 		{
-			bVal = false;
-			m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[0]);
-		}
-		else
-		{
-			m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[m_iChatIndex]);
-			m_iChatIndex++;
+			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+			_bool bVal = true;
+			if (m_iChatIndex >= (int)m_vecChat.size())
+			{
+				bVal = false;
+				m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[0]);
+			}
+			else
+			{
+				m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[m_iChatIndex]);
+				m_iChatIndex++;
+			}
 		}
 	}
 
@@ -478,8 +519,6 @@ void CCinematicCamera::Imgui_RenderProperty()
 				ImGuiFileDialog::Instance()->Close();
 		}
 	}
-
-	m_pTransformCom->Imgui_RenderProperty();
 }
 
 void CCinematicCamera::AddKeyFrame(CAMERAKEYFRAME keyFrame)
@@ -612,8 +651,6 @@ void CCinematicCamera::Save_Data()
 
 void CCinematicCamera::Load_Data()
 {
-	list<CGameObject*> gameobjectList;
-
 	string      strLoadDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();   // GetCurrentPath F12
 	string      strLoadFileName = ImGuiFileDialog::Instance()->GetCurrentFileName();
 	char   szDash[128] = "\\";
@@ -652,7 +689,6 @@ void CCinematicCamera::Load_Data()
 
 	///* Chat File Load */
 	//Load_ChatData(str);
-
 }
 
 void CCinematicCamera::Load_ChatData(string str)
