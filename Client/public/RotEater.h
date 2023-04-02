@@ -5,7 +5,7 @@ BEGIN(Client)
 
 class CRotEater : public CMonster
 {
-private:
+public:
 	enum ANIMATION
 	{
 		APPEAR, // no

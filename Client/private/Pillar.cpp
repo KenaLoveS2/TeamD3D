@@ -39,22 +39,16 @@ HRESULT CPillar::Initialize(void * pArg)
 
 HRESULT CPillar::Late_Initialize(void* pArg)
 {
-	_float3 vPos, vSize;
-	vSize = _float3(0.87f, 1.f, 0.85f);
-	vPos = _float3(0.0f, 0.5f, 0.0f);
-
-
-	if (m_pModelCom->Get_UseTriangleMeshActor())
+	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
 	{
 		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
 	}
-	else
+	else if (m_pModelCom->Get_IStancingModel() == false && m_pModelCom->Get_UseTriangleMeshActor())
 	{
-		if (m_pModelCom->Get_IStancingModel() == true)
-			m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
-		else
-			m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+		m_pModelCom->Create_PxTriangle(Create_PxUserData(this, false, COL_ENVIROMENT));
 	}
+	else
+		return S_OK;
 
 	return S_OK;
 }
