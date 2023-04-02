@@ -386,7 +386,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Door/StoneDoor/StoneDoor_Anim_0.mdat"), PivotMatrix))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
+	/*PivotMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Pet",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Pet/Pet.model"), PivotMatrix))))
 		return E_FAIL;
@@ -397,7 +397,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Frog",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Frog/Frog.model"), PivotMatrix))))
 		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Frog"), CFrog::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Frog"), CFrog::Create(m_pDevice, m_pContext)))) return E_FAIL;*/
 
 	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall03",
