@@ -8,6 +8,7 @@
 #include "Kena_State.h"
 #include "Kena_Status.h"
 #include "Camera_Player.h"
+#include "E_P_ExplosionGravity.h"
 
 CHealthFlower_Anim::CHealthFlower_Anim(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -34,6 +35,7 @@ HRESULT CHealthFlower_Anim::Initialize(void* pArg)
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
+	FAILED_CHECK_RETURN(SetUp_Effects(), E_FAIL);
 
 	m_bRenderActive = true;
 
@@ -95,11 +97,13 @@ void CHealthFlower_Anim::Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animation(fTimeDelta);
 
 	m_pTransformCom->Tick(fTimeDelta);
+	if (m_pExplosionGravity)	m_pExplosionGravity->Tick(fTimeDelta);
 }
 
 void CHealthFlower_Anim::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+	if (m_pExplosionGravity)	m_pExplosionGravity->Late_Tick(fTimeDelta);
 
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
@@ -127,12 +131,18 @@ HRESULT CHealthFlower_Anim::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 	}
-
+	 
 	return S_OK;
 }
 
 void CHealthFlower_Anim::ImGui_AnimationProperty()
 {
+	if (ImGui::Button("Reset Anim"))
+	{
+		m_bUsed = false;
+		m_eCurState = OPEN_LOOP;
+	}
+
 	m_pTransformCom->Imgui_RenderProperty_ForJH();
 	m_pModelCom->Imgui_RenderProperty();
 }
@@ -201,6 +211,21 @@ _int CHealthFlower_Anim::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iT
 	return 0;
 }
 
+HRESULT CHealthFlower_Anim::SetUp_Effects()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	/// <ExplosionGravity / Particle>
+	m_pExplosionGravity = dynamic_cast<CE_P_ExplosionGravity*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", L"HealthFlower_P"));
+	NULL_CHECK_RETURN(m_pExplosionGravity, E_FAIL);
+	m_pExplosionGravity->Set_Parent(this);
+	m_pExplosionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_HEALTHFLOWER);
+	/// <ExplosionGravity / Particle>
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
 CHealthFlower_Anim::ANIMATION CHealthFlower_Anim::Check_State()
 {
 	ANIMATION	eState = m_ePreState;
@@ -234,6 +259,7 @@ CHealthFlower_Anim::ANIMATION CHealthFlower_Anim::Check_State()
 				m_pKena->Get_Status()->Add_HealAmount(iHalfAmount);
 
 				/* PARTICLE */
+				m_pExplosionGravity->UpdateParticle(m_pTransformCom->Get_Position());
 			}
 
 			break;
@@ -369,4 +395,5 @@ void CHealthFlower_Anim::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
+	Safe_Release(m_pExplosionGravity);
 }

@@ -6,7 +6,18 @@ BEGIN(Engine)
 class ENGINE_DLL CVIBuffer_Trail final : public CVIBuffer_Instancing
 {
 public:
-	enum TYPE { OBJ_KENA, OBJ_MONSTER, OBJ_BOSS, OBJ_DEFAULT, OBJ_END };
+	enum TYPE 
+	{
+		OBJ_KENA,
+		OBJ_MONSTER,
+		OBJ_BOSS,
+		OBJ_ROTWISP,
+		OBJ_B_SHAMAN,
+		OBJ_BODY_SHAMAN,
+		OBJ_DEFAULT,
+		OBJ_TRAIL,
+		OBJ_END
+	};
 
 private:
 	CVIBuffer_Trail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

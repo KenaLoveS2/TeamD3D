@@ -21,6 +21,7 @@ uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
 float   g_WidthFrame, g_HeightFrame;
 float4  g_vColor;
 float   g_Time;
+float2  g_fUV;
 /**********************************/
 
 /* HpRatio */
@@ -194,8 +195,8 @@ PS_OUT PS_MAIN(PS_IN In)
 	else
 		Out.vColor = Out.vColor * g_vColor;
 
-	/*if (Out.vColor.a < 0.02f)
-		discard;*/
+	if (Out.vColor.a < 0.1f)
+		discard;
 
 	return Out;
 }
@@ -401,7 +402,12 @@ PS_OUT PS_MAIN_E_HEAVYATTACK(PS_IN In)
 	float3 vColor = float3(15.f, 130.f, 190.f) / 255.f;
 	albedo.rgb = float3(1.f, 1.f, 1.f) * 3.f;
 	albedo = albedo * g_vColor;
-	Out.vColor = albedo;
+	if (albedo.a < 0.01f)
+		discard;
+
+	// Out.vColor = albedo;
+	Out.vColor = CalcHDRColor(albedo, g_fHDRValue);
+
 	return Out;
 }
 

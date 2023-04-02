@@ -151,6 +151,11 @@ public:
 		m_fInitSpriteCnt = InitSprit;
 	}
 
+	public:
+	void	TurnOffSystem(_float fDurationTime, _float fTimeDelta);
+	_bool	TurnOffSystem(_float& fTurnoffTime, _float fDurationTime, _float fTimeDelta);
+	void	Tick_Sprite(_float& fDurationTime, _float fTimeDelta);
+
 public: // Texture Cnt
 	_int    Get_TotalDTextureCnt() { return m_iTotalDTextureComCnt; }
 	_int    Get_TotalMTextureCnt() { return m_iTotalMTextureComCnt; }
@@ -163,6 +168,12 @@ public:
 	void    Set_TrailDesc();
 
 public:
+	/* Option Tool */
+	void			 ToolOption(const char* pToolTag);
+	void			 TransformView();
+	void			 Set_Color();
+
+public:
 	virtual void				 Set_FreePos() {}
 	virtual _bool				 Play_FreePos(_float4& vPos) { return true; }
 	virtual vector<_float4>*	 Get_FreePos() { return nullptr; }
@@ -170,6 +181,7 @@ public:
 
 public:
 	void						 BillBoardSetting(_float3 vScale);
+	void						 Set_ShaderOption(_int iPassCnt, _float fHDRValue, _float2 fUV, _bool bActive = false);
 
 public:
 	virtual HRESULT				 Initialize_Prototype(const _tchar* pFilePath = nullptr);
@@ -177,8 +189,8 @@ public:
 	virtual void				 Tick(_float fTimeDelta) override;
 	virtual void				 Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				 Render() override;
-	virtual void				Imgui_RenderProperty()override;
-
+	virtual void				 Imgui_RenderProperty()override;
+	
 public:
 	virtual HRESULT				 Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag) { return S_OK; }
 	virtual HRESULT				 Edit_Child(const _tchar * ProtoTag) { return S_OK; }
@@ -237,7 +249,9 @@ protected:
 
 	_bool  m_bFinishSprite = false;
 	_float2 m_fInitSpriteCnt = { 0.f,0.f };
-	_float  m_fHDRValue = 0.0f;
+	_float  m_fHDRValue = 1.0f;
+	_float  m_fTurnOffTime = 0.0f;
+	_float2 m_fUV = { 0.f,0.f };
 
 public:
 	virtual void          Free() override;

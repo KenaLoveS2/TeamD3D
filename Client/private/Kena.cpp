@@ -23,6 +23,7 @@
 #include "RotForMonster.h"
 #include "E_KenaDust.h"
 #include "UI_FocusMonster.h"
+#include "E_P_ExplosionGravity.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -1470,6 +1471,12 @@ HRESULT CKena::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("InteractStaff", pEffectBase);
 
+	/* Particle  */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", L"Kena_Particle"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	dynamic_cast<CE_P_ExplosionGravity*>(pEffectBase)->Set_Option(CE_P_ExplosionGravity::TYPE_KENA_ATTACK);
+	m_mapEffect.emplace("Kena_Particle", pEffectBase);
+
 	for (auto& pEffects : m_mapEffect)
 		pEffects.second->Set_Parent(this);
 
@@ -1870,8 +1877,10 @@ void CKena::TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta)
 	matIntoAttack.r[3] = matWorldSocket.r[3];
 	m_mapEffect["HeavyAttackInto"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
 	/* IntoAttack Update */
-
 	m_mapEffect["HeavyAttackInto"]->Set_Active(true);
+
+	CE_P_ExplosionGravity* pParticle = dynamic_cast<CE_P_ExplosionGravity*>(m_mapEffect["Kena_Particle"]);
+	pParticle->UpdateParticle(matWorldSocket.r[3]);
 }
 
 void CKena::TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta)
@@ -1928,6 +1937,9 @@ void CKena::TurnOnPulseParryHand(_bool bIsInit, _float fTimeDelta)
 	matIntoAttack.r[3] = matWorldSocket.r[3];
 	m_mapEffect["KenaPulseParryHand"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
 	m_mapEffect["KenaPulseParryHand"]->Set_Active(true);
+
+	CE_P_ExplosionGravity* pParticle = dynamic_cast<CE_P_ExplosionGravity*>(m_mapEffect["Kena_Particle"]);
+	pParticle->UpdateParticle(matWorldSocket.r[3]);
 }
 
 void CKena::TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta)

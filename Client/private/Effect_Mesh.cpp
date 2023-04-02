@@ -349,6 +349,7 @@ HRESULT CEffect_Mesh::Set_ModelCom(EFFECTDESC::MESHTYPE eMeshType)
 }
 #pragma endregion FreePos Setting
 
+
 HRESULT CEffect_Mesh::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -419,6 +420,7 @@ HRESULT CEffect_Mesh::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRValue", &m_fHDRValue, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fUV", &m_fUV, sizeof(_float2)), E_FAIL);
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{
