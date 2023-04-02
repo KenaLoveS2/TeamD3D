@@ -24,7 +24,7 @@ HRESULT CBeni::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.5f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
@@ -78,9 +78,11 @@ HRESULT CBeni::Late_Initialize(void* pArg)
 		MSG_BOX("!!!!!There is No Saiya!!!!!");
 	}
 
-	_float4 vPos =	m_pSaiya->Get_TransformCom()->Get_Position();
-	_float4 vLook = m_pSaiya->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
-	m_pTransformCom->Set_Position(_float3(vPos.x - 0.5f, vPos.y, vPos.z));
+	const _float4 vPos =	m_pSaiya->Get_TransformCom()->Get_Position();
+	const _float4 vChangePos =	_float4(vPos.x - 0.5f, vPos.y, vPos.z, 1.f);
+	const _float4 vLook = m_pSaiya->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+
+	m_pTransformCom->Set_Position(vChangePos);
 	m_pTransformCom->Set_Look(vLook);
 
 	return S_OK;
@@ -91,7 +93,7 @@ void CBeni::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	Update_Collider(fTimeDelta);
 	SaiyaFunc(fTimeDelta);
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	AdditiveAnim(fTimeDelta);
@@ -200,38 +202,37 @@ void CBeni::Update_Collider(_float fTimeDelta)
 HRESULT CBeni::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-		.InitState("PLAY")
-
-		.AddState("PLAY")
+		.InitState("ACTION_0")
+		.AddState("ACTION_0")
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(BENI_CHASINGLOOP);
 	})
-
-		.AddTransition("PLAY to PLAYERBACKRUN", "PLAYERBACKRUN")
+		.AddTransition("ACTION_0 to ACTION_1", "ACTION_1")
 		.Predicator([this]()
 	{
-		return  DistanceTrigger(5.f) && AnimFinishChecker(BENI_CHASINGLOOP);
+		return m_strState == "ACTION_1" && AnimFinishChecker(BENI_CHASINGLOOP);
 	})
 
-		.AddState("PLAYERBACKRUN")
+
+		.AddState("ACTION_1")
 		.OnStart([this]()
 	{
-		SaiyaPos();
+				SaiyaPos();
 	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(BENI_RUN);
 		m_pTransformCom->Go_Straight(fTimeDelta);
 	})
-		.AddTransition("PLAYERBACKRUN to DISAPPEAR0", "DISAPPEAR0")
-		.Predicator([this]()
+		.AddTransition("ACTION_1 to ACTION_2", "ACTION_2")
+	.Predicator([this]()
 	{
-		return m_strState == "DISAPPEAR0";
+		return m_strState == "ACTION_2";
 	})
 
 
-		.AddState("DISAPPEAR0")
+		.AddState("ACTION_2")
 		.OnStart([this]()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(BENI_TELEPORT);
@@ -239,123 +240,76 @@ HRESULT CBeni::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		//µðÁ¹ºê
+		// »ç¶óÁú¶§ ÀÌÆåÆ® 	
 	})
 		.OnExit([this]()
 	{
-		SaiyaPos();
+				SaiyaPos();
 	})
-		.AddTransition("PLAYERBACKRUN to PLAY2", "PLAY2")
+		.AddTransition("ACTION_2 to ACTION_3", "ACTION_3")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(BENI_TELEPORT);
+		return m_strState == "ACTION_3";
 	})
 
-		.AddState("PLAY2")
+
+		.AddState("ACTION_3")
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(BENI_CHASINGLOOP);
 	})
-
-		.AddTransition("PLAY2 to PLAYERBACKRUN2", "PLAYERBACKRUN2")
+		.AddTransition("ACTION_3 to ACTION_4", "ACTION_4")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(5.f) && AnimFinishChecker(BENI_CHASINGLOOP);
+		return m_strState == "ACTION_4" && AnimFinishChecker(BENI_CHASINGLOOP);;
 	})
 
-		.AddState("PLAYERBACKRUN2")
+
+		.AddState("ACTION_4")
 		.OnStart([this]()
 	{
-		SaiyaPos();
+				SaiyaPos();
 	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(BENI_RUN);
 		m_pTransformCom->Go_Straight(fTimeDelta);
 	})
-		.AddTransition("PLAYERBACKRUN2 to IDLE", "IDLE")
+		.AddTransition("ACTION_4 to ACTION_5", "ACTION_5")
 		.Predicator([this]()
 	{
-		return	m_strState == "IDLE";
+		return m_strState == "ACTION_5";
 	})
 
-		/* Idle */
-		.AddState("IDLE")
-		.Tick([this](_float fTimeDelta)
-	{
-			m_pModelCom->Set_AnimIndex(BENI_IDLE);
-	})
-		.AddTransition("IDLE to CHEER", "CHEER")
-		.Predicator([this]()
-	{
-			return m_strState == "CHEER";
-	})
-
-			/* Cheer */
-		.AddState("CHEER")
+		.AddState("ACTION_5")
 		.OnStart([this]()
 	{
-		SaiyaPos();
-		m_pModelCom->ResetAnimIdx_PlayTime(BENI_CHEER);
-		m_pModelCom->Set_AnimIndex(BENI_CHEER);
-		CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_TELEPORT);
+		m_pModelCom->Set_AnimIndex(BENI_TELEPORT);
 	})
-
-		.AddTransition("CHEER to CHAT", "CHAT")
+		.Tick([this](_float fTimeDelta)
+	{
+		// »ç¶óÁú¶§ ÀÌÆåÆ® 	
+	})
+		.OnExit([this]()
+	{
+				SaiyaPos();
+	})
+		.AddTransition("ACTION_5 to ACTION_6", "ACTION_6")
 		.Predicator([this]()
 	{
-		return  m_strState == "CHAT";
+		return m_strState == "ACTION_6";
 	})
 
-		/* Chat */
-		.AddState("CHAT")
+
+		.AddState("ACTION_6")
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(BENI_IDLE);
 	})
-		.AddTransition("CHAT to RUN", "RUN")
-		.Predicator([this]()
-	{
-		return m_strState == "RUN";
-	})
 
-		.AddState("RUN")
-		.OnStart([this]()
-	{
-		SaiyaPos();
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-		m_pModelCom->Set_AnimIndex(BENI_RUN);
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	})
-		.AddTransition("RUN to DISAPPEAR", "DISAPPEAR")
-		.Predicator([this]()
-	{
-		return m_strState == "DISAPPEAR";
-	})
 
-		.AddState("DISAPPEAR")
-		.OnStart([this]()
-	{
-		m_pModelCom->ResetAnimIdx_PlayTime(BENI_TELEPORT);
-		m_pModelCom->Set_AnimIndex(BENI_TELEPORT);
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-			//µðÁ¹ºê
-	})
-		.OnExit([this]()
-	{
-		SaiyaPos();
-	})
-		.AddTransition("DISAPPEAR to IDLE", "IDLE")
-		.Predicator([this]()
-	{
-		return m_strState == "IDLE";
-	})
 		.Build();
-
 	return S_OK;
 }
 
@@ -370,6 +324,7 @@ HRESULT CBeni::SetUp_Components()
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(6, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Beni/jizokids_slingshot_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(7, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Beni/jizoboy_body_AO_R_M.png")), E_FAIL);
 	m_pModelCom->Set_RootBone("jizo_boy_RIG");
+	
 	return S_OK;
 }
 
@@ -416,9 +371,10 @@ void CBeni::SaiyaFunc(_float fTimeDelta)
 
 void CBeni::SaiyaPos()
 {
-	_float4 vPos = m_pSaiya->Get_TransformCom()->Get_Position();
-	_float4 vLook = m_pSaiya->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
-	m_pTransformCom->Set_Position(_float3(vPos.x - 0.5f, vPos.y, vPos.z));
+	const _float4 vPos = m_pSaiya->Get_TransformCom()->Get_Position();
+	const _float4 vChangePos = _float4(vPos.x - 0.5f, vPos.y, vPos.z, 1.f);
+	const _float4 vLook = m_pSaiya->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	m_pTransformCom->Set_Position(vChangePos);
 	m_pTransformCom->Set_Look(vLook);
 }
 

@@ -53,9 +53,9 @@ private:
 	void		Save_Data();
 	void		Load_Data();
 
-
 public:
 	static void Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAME>& v, string& chatFileName);
+	_bool		CameraFinishedChecker(_float fRatio = 0.95f);
 
 private:
 	vector<CAMERAKEYFRAME>		m_keyframes;
@@ -65,13 +65,13 @@ private:
 
 private:
 	CRenderer*					m_pRendererCom	= nullptr;
-	CShader*						m_pShaderCom	= nullptr;
+	CShader*					m_pShaderCom	= nullptr;
 	CModel*						m_pModelCom		= nullptr;
 
 private:
-	char									m_szChatFileName[MAX_PATH] = "";
-	vector<wstring>				m_vecChat;
-	_int									m_iChatIndex;
+	char								m_szChatFileName[MAX_PATH] = "";
+	vector<wstring>						m_vecChat;
+	_int								m_iChatIndex;
 	_bool								m_bDebugRender = false;
 #pragma region Render Variable
 #ifdef _DEBUG
@@ -83,9 +83,9 @@ private:
 #endif // _DEBUG
 
 	_bool										m_bInitSet		= false;
-	class CCamera*						m_pPlayerCam	= nullptr;
+	class CCamera*								m_pPlayerCam	= nullptr;
 	_bool										m_bPausePlay	= false;
-	_uint											m_iNumKeyFrames = 0;
+	_uint										m_iNumKeyFrames = 0;
 	_bool										m_bSaveWrite	= false;
 	string										m_strFileName;
 	_float										m_fChatRatio = 0.f;

@@ -136,6 +136,7 @@ private:
 	_uint												m_iKeyFrame = 0;
 
 	_bool											m_bCinecam[5] = { false, };
+	class CCinematicCamera*			m_pCinecam[5] = { nullptr, };
 
 public:
 	static CSaiya*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

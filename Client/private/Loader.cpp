@@ -1738,7 +1738,8 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	lstrcpy(m_szLoadingText, TEXT("Loading SY..."));
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	
+	Safe_AddRef(pGameInstance);
+
 	/********************************************/
 	/*				For. VIBuffer				*/
 	/********************************************/
@@ -1754,8 +1755,8 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	/********************************************/
 	
 	/* HatCart */
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VillageCart", true, true, true, false, true)))
-		assert(!"VillageCart");
+	//if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, true, true, false, true)))
+	//	assert(!"VillageCart");
 
 	/********************************************/
 	/*				For. GameObject				*/
@@ -1777,9 +1778,9 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 		return E_FAIL;
 
 	/* HatCart */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HatCart"),
-		CHatCart::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HatCart"),
+	//	CHatCart::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
