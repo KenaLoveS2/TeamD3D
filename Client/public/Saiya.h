@@ -135,6 +135,8 @@ private:
 	_uint												m_iNumKeyFrame = 0;
 	_uint												m_iKeyFrame = 0;
 
+	_bool											m_bCinecam[5] = { false, };
+
 public:
 	static CSaiya*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;

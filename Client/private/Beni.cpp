@@ -24,7 +24,7 @@ HRESULT CBeni::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.5f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
@@ -91,11 +91,7 @@ void CBeni::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	Update_Collider(fTimeDelta);
 	SaiyaFunc(fTimeDelta);
-
-	if (ImGui::Button("abc"))
-		m_pModelCom->Print_Animation_Names("../Bin/Benianimaiotn.json");
-
-	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	AdditiveAnim(fTimeDelta);
@@ -215,19 +211,72 @@ HRESULT CBeni::SetUp_State()
 		.AddTransition("PLAY to PLAYERBACKRUN", "PLAYERBACKRUN")
 		.Predicator([this]()
 	{
-		return m_strState == "PLAYERBACKRUN";
+		return  DistanceTrigger(5.f) && AnimFinishChecker(BENI_CHASINGLOOP);
 	})
 
 		.AddState("PLAYERBACKRUN")
+		.OnStart([this]()
+	{
+		SaiyaPos();
+	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(BENI_RUN);
 		m_pTransformCom->Go_Straight(fTimeDelta);
 	})
-		.AddTransition("PLAYERBACKRUN to IDLE", "IDLE")
+		.AddTransition("PLAYERBACKRUN to DISAPPEAR0", "DISAPPEAR0")
 		.Predicator([this]()
 	{
-		return m_strState == "IDLE";
+		return m_strState == "DISAPPEAR0";
+	})
+
+
+		.AddState("DISAPPEAR0")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_TELEPORT);
+		m_pModelCom->Set_AnimIndex(BENI_TELEPORT);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		//µðÁ¹ºê
+	})
+		.OnExit([this]()
+	{
+		SaiyaPos();
+	})
+		.AddTransition("PLAYERBACKRUN to PLAY2", "PLAY2")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BENI_TELEPORT);
+	})
+
+		.AddState("PLAY2")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_CHASINGLOOP);
+	})
+
+		.AddTransition("PLAY2 to PLAYERBACKRUN2", "PLAYERBACKRUN2")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(5.f) && AnimFinishChecker(BENI_CHASINGLOOP);
+	})
+
+		.AddState("PLAYERBACKRUN2")
+		.OnStart([this]()
+	{
+		SaiyaPos();
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_RUN);
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	})
+		.AddTransition("PLAYERBACKRUN2 to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return	m_strState == "IDLE";
 	})
 
 		/* Idle */

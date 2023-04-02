@@ -9,6 +9,7 @@
 #include "Kena.h"
 #include "UI_ClientManager.h"
 #include "UI_FocusNPC.h"
+#include "CinematicCamera.h"
 
 /* For. Delegator Default Value (meaningless) */
 _float		fDefaultVal = 345.f; /* Default Chat Value */
@@ -102,12 +103,23 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 void CSaiya::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (DistanceTrigger(10.f) && !m_bCinecam[0])
+	{
+		CGameInstance::GetInstance()->Work_Camera(L"NPC_CINE0");
+		dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Play();
+		m_bCinecam[0] = true;
+	}
+
 	m_iNumKeyFrame = (_uint)m_keyframes.size();
 	Update_Collider(fTimeDelta);
 	if (m_pFSM && m_iKeyFrame < m_iNumKeyFrame - 2) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	AdditiveAnim(fTimeDelta);
+
+	if (m_bStraight)
+		m_pTransformCom->Go_Straight(fTimeDelta);
 }
 
 void CSaiya::Late_Tick(_float fTimeDelta)
@@ -165,6 +177,8 @@ void CSaiya::Imgui_RenderProperty()
 {
 	//CNpc::Imgui_RenderProperty();
 
+	ImGui::Checkbox("GoStraight", &m_bStraight);
+
 	if (ImGui::Button("Add KeyFrame"))
 	{
 		SAIYAKEYFRAME keyframe;
@@ -183,6 +197,10 @@ void CSaiya::Imgui_RenderProperty()
 	}
 
 	static _int iSelectKeyFrame = -1;
+
+	if (ImGui::Button("Reset"))
+		iSelectKeyFrame = -1;
+
 	ImGui::ListBox("KeyFrameList", &iSelectKeyFrame, ppKeyFrameNum, (int)m_iNumKeyFrame);
 
 	if (iSelectKeyFrame != -1)
@@ -204,6 +222,9 @@ void CSaiya::Imgui_RenderProperty()
 		}
 	}
 
+	if (ImGui::Button("Clear"))
+		m_keyframes.clear();
+
 	for (_uint i = 0; i < m_iNumKeyFrame; ++i)
 		Safe_Delete_Array(ppKeyFrameNum[i]);
 	Safe_Delete_Array(ppKeyFrameNum);
@@ -212,6 +233,9 @@ void CSaiya::Imgui_RenderProperty()
 
 	if (ImGui::Button("Save_KeyFrame"))
 		Save_KeyFrame();
+
+	if (ImGui::Button("Load_KeyFrame"))
+		Load_KeyFrame();
 }
 
 void CSaiya::ImGui_AnimationProperty()
@@ -271,19 +295,69 @@ HRESULT CSaiya::SetUp_State()
 		.AddTransition("PLAY to PLAYERBACKRUN", "PLAYERBACKRUN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(5.f);
+		return DistanceTrigger(5.f) && AnimFinishChecker(SAIYA_CHASINGLOOP);
 	})
-
 		.AddState("PLAYERBACKRUN")
 		.Tick([this](_float fTimeDelta)
 	{
 			m_pModelCom->Set_AnimIndex(SAIYA_RUN);
+			m_pTransformCom->Set_Look(m_keyframes[1].vLook);
 			m_pTransformCom->Go_Straight(fTimeDelta);
 	})
-		.AddTransition("PLAYERBACKRUN to IDLE", "IDLE")
+		.AddTransition("PLAYERBACKRUN to DISAPPEAR0", "DISAPPEAR0")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(5.f);
+		return !DistanceTrigger(10.f);
+	})
+
+		.AddState("DISAPPEAR0")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_TELEPORT);
+		m_pModelCom->Set_AnimIndex(SAIYA_TELEPORT);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		//디졸브
+	})
+		.OnExit([this]()
+	{
+		if (!m_keyframes.empty())
+		{
+			m_pTransformCom->Set_Position(m_keyframes[2].vPos);
+			m_pTransformCom->Set_Look(m_keyframes[2].vLook);
+		}
+	})
+		.AddTransition("PLAYERBACKRUN to PLAY2", "PLAY2")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(SAIYA_TELEPORT);
+	})
+
+
+		.AddState("PLAY2")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_CHASINGLOOP);
+	})
+
+		.AddTransition("PLAY2 to PLAYERBACKRUN2", "PLAYERBACKRUN2")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(5.f) && AnimFinishChecker(SAIYA_CHASINGLOOP);
+	})
+
+		.AddState("PLAYERBACKRUN2")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_RUN);
+		m_pTransformCom->Set_Look(m_keyframes[3].vLook);
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	})
+		.AddTransition("PLAYERBACKRUN2 to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return !DistanceTrigger(30.f);
 	})
 
 		/* Idle */

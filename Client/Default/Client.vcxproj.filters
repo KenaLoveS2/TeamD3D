@@ -1280,9 +1280,6 @@
     <ClInclude Include="..\public\HunterArrow.h">
       <Filter>02.GameObjects\Monster\Hunter</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\public\CinematicCamera.h">
-      <Filter>02.GameObjects\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ShamanTrapGeo.h">
       <Filter>02.GameObjects\Monster\Shaman</Filter>
     </ClInclude>
@@ -1400,6 +1397,9 @@
     </ClInclude>
     <ClInclude Include="..\public\RotHat.h">
       <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CinematicCamera.h">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

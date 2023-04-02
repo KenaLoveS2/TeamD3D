@@ -387,6 +387,21 @@ HRESULT CLevel_TestPlay::Ready_Layer_CineCamera(const _tchar * pLayerTag)
 		v.clear();
 	}
 
+	{
+		vector<CCinematicCamera::CAMERAKEYFRAME> v;
+		string chatFileName;
+		CCinematicCamera::Clone_Load_Data("NPC_CINE0.json", v, chatFileName);
+		CGameObject* p_game_object = nullptr;
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"NPC_CINE0", &v, &p_game_object))) return E_FAIL;
+		CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
+		NULL_CHECK_RETURN(pCamera, E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"NPC_CINE0", pCamera), E_FAIL);
+		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
+		RELEASE_INSTANCE(CGameInstance)
+			v.clear();
+	}
+
 	return S_OK;
 }
 
