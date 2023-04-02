@@ -47,6 +47,14 @@ void CUI_NodeAmmoBombGuage::Change_To_GuageImage()
 	m_iTextureIdx = TEX_DEFAULT;
 }
 
+void CUI_NodeAmmoBombGuage::Plus_Guage(_float fDiff)
+{
+	m_fGuage += fDiff;
+
+	if (m_fGuage > 1.f)
+		m_fGuage = 1.f;
+}
+
 HRESULT CUI_NodeAmmoBombGuage::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))

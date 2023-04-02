@@ -91,7 +91,9 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 			if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
 			{
 				CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
-				m_CartDelegator.broadcast(eCart, m_pPlayer);
+				_bool* isOpen = new _bool;
+				m_CartDelegator.broadcast(eCart, m_pPlayer, isOpen);
+				Safe_Delete(isOpen);
 			}
 		}
 

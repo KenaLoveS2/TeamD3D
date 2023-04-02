@@ -96,10 +96,9 @@ HRESULT CUI_CanvasAmmo::Initialize(void * pArg)
 	/* Bomb */
 	m_iNumBombs		= 1;
 	m_iNumBombNow	= m_iNumBombs;
-	m_qBombIndex.push(0);
-	//m_qBombIndex.push(1);
 	m_Bombs[BOMB_1] = UI_BOMBGUAGE1; 
 	m_Bombs[BOMB_2] = UI_BOMBGUAGE2; 
+	m_qLeft.push(0);
 
 	/* temp */
 	m_bActive = true;
@@ -316,65 +315,64 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue
 		break;
 
 	/* Bomb */
-	case CUI_ClientManager::AMMO_BOMB:
+	case CUI_ClientManager::AMMO_BOMB:	/* Bomb Use Moment */
+	{
 		m_iNumBombNow = (_uint)fValue;
-		_int iBomb = m_qBombIndex.front();
+
+		_int iBomb = m_qLeft.front();
+		m_qLeft.pop();
+		m_qUsed.push(iBomb);
+
+		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iBomb]])->Set_Guage(0.f);
 		pCanvas->Set_Bomb(iBomb, 0);
 		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iBomb]])->Change_To_GuageImage();
-		m_qBombIndex.pop();
+		
 		break;
-	case CUI_ClientManager::AMMO_BOMBCOOL:
-		if(m_iNumBombs == 1)
-			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Set_Guage(fValue);
-		else if(m_iNumBombs == 2) /* if upgraded */
+	}
+	case CUI_ClientManager::AMMO_BOMBCOOL: 
+		if (1 == m_qUsed.size())
 		{
-
+			_int iBomb = m_qUsed.front();
+			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iBomb]])->Plus_Guage(fValue);
 		}
+		else if(2 == m_qUsed.size())
+		{
+			_int iFront = m_qUsed.front();
+			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iFront]])->Plus_Guage(fValue);
 
-		//if (m_iNumBombNow <= 1)
-		//	static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Set_Guage(fValue);
-		//else if(m_iNumBombNow <= 2)
-		//	static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE2])->Set_Guage(fValue);
-		//break;
-	case CUI_ClientManager::AMMO_BOMBEFFECT:
-		_int iBomb = m_qBombIndex.size();
-		m_qBombIndex.push(iBomb);
+			_int iBack = m_qUsed.back();
+			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iBack]])->Plus_Guage(fValue);
+		}
+		break;
+	case CUI_ClientManager::AMMO_BOMBEFFECT: /* Bomb Guage Fullfilled */
+	{
+		if (m_qUsed.empty())
+			break;
+		
+		_int	iBomb = m_qUsed.front();
+		m_qUsed.pop();
+		m_qLeft.push(iBomb);
+
+		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iBomb]])->Set_Guage(1.f);
 		static_cast<CUI_NodeEffect*>(m_vecNode[UI_BOMBEFFECT])->
 			Start_Effect(m_vecNode[m_Bombs[iBomb]], 0.f, 0.f);
 		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iBomb]])->Change_To_FullFilledImage();
+		pCanvas->Set_Bomb(iBomb, 1);
+
 		break;
-
-		//if (m_iNumBombNow <= 1)
-		//{
-		//	static_cast<CUI_NodeEffect*>(m_vecNode[UI_BOMBEFFECT])->Start_Effect(m_vecNode[UI_BOMBGUAGE1], 0.f, 0.f);
-		//	static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Change_To_FullFilledImage();
-		//}
-		//else if(m_iNumBombNow <= 2)
-		//{
-		//	static_cast<CUI_NodeEffect*>(m_vecNode[UI_BOMBEFFECT])->Start_Effect(m_vecNode[UI_BOMBGUAGE2], 0.f, 0.f);
-		//	static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE2])->Change_To_FullFilledImage();
-		//}
-
-	//case CUI_ClientManager::AMMO_BOMBRECHARGE:
-	//	m_iNumBombNow = (_uint)fValue;
-	//	pCanvas->Set_Bomb(m_iNumBombNow, 1);
-	//	break;
-	//case CUI_ClientManager::AMMO_BOMBMOMENT:
-	//	if(m_iNumBombNow <= 1 )
-	//	else if(m_iNumBombNow <= 2 )
-	//		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE2])->Change_To_GuageImage();
-	//	break;
+	}
 	case CUI_ClientManager::AMMO_BOMBUPGRADE:
 		m_iNumBombs = (_uint)fValue;
 		m_iNumBombNow = m_iNumBombs;
-		m_qBombIndex.swap(queue<_int>());
-		m_qBombIndex.push(0);
-		m_qBombIndex.push(1);
-
+		m_qUsed.swap(queue<_int>());
+		m_qLeft.swap(queue<_int>());
+		m_qLeft.push(0);
+		m_qLeft.push(1);
+		
 		m_vecNode[UI_BOMBFRAME2]->Set_Active(true);
 		m_vecNode[UI_BOMBGUAGE2]->Set_Active(true);
-		static_cast<CUI_Node*>(m_vecNode[UI_BOMBGUAGE1])->ReArrangeX();
-		static_cast<CUI_Node*>(m_vecNode[UI_BOMBFRAME1])->ReArrangeX();
+		static_cast<CUI_Node*>(m_vecNode[UI_BOMBGUAGE2])->ReArrangeX();
+		static_cast<CUI_Node*>(m_vecNode[UI_BOMBFRAME2])->ReArrangeX();
 		
 		/* initialize */
 		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Set_Guage(1.0f);

@@ -19,6 +19,7 @@ public:
 	void	Change_To_FullFilledImage();
 	void	Change_To_GuageImage();
 	_float	Get_Guage() { return m_fGuage; }
+	void	Plus_Guage(_float fDiff);
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

@@ -125,7 +125,7 @@ void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
 	CUI_ClientManager::UI_PRESENT eCool = CUI_ClientManager::AMMO_BOMBCOOL;
 	CUI_ClientManager::UI_PRESENT eBombEffect = CUI_ClientManager::AMMO_BOMBEFFECT;
-	CUI_ClientManager::UI_PRESENT eReCharge = CUI_ClientManager::AMMO_BOMBRECHARGE;
+	//CUI_ClientManager::UI_PRESENT eReCharge = CUI_ClientManager::AMMO_BOMBRECHARGE;
 	//CUI_ClientManager::UI_PRESENT eMoment = CUI_ClientManager::AMMO_BOMBMOMENT;
 
 	_float fGuage = 0.f;
@@ -143,15 +143,11 @@ void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
 			//m_StatusDelegator.broadcast(eMoment, fGuage);
 		}
 
-
 		m_fCurBombCoolTime += fTimeDelta;
 		if (m_fCurBombCoolTime >= m_fInitBombCoolTime)
 		{
-			fGuage = 1.0f;
-			m_StatusDelegator.broadcast(eCool, fGuage);
-
 			/* Fullfilll Effect Call */
-			m_StatusDelegator.broadcast(eBombEffect, fGuage);
+			m_StatusDelegator.broadcast(eBombEffect, fTimeDelta);
 
 			++m_iCurBombCount;
 			if (m_iCurBombCount < m_iMaxBombCount)
@@ -164,11 +160,8 @@ void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
 			//
 			//m_StatusDelegator.broadcast(eReCharge, fIndex);
 		}
-		else
-		{
-			fGuage = m_fCurBombCoolTime / m_fInitBombCoolTime;
-			m_StatusDelegator.broadcast(eCool, fGuage);
-		}
+		_float fDiff = fTimeDelta / m_fInitBombCoolTime;
+		m_StatusDelegator.broadcast(eCool, fDiff);
 	}
 }
 

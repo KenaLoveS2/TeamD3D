@@ -321,13 +321,15 @@ HRESULT CUI_CanvasHatCart::SetUp_ShaderResources()
 
 }
 
-void CUI_CanvasHatCart::BindFunction(CUI_ClientManager::UI_PRESENT eType, CKena* pPlayer)
+void CUI_CanvasHatCart::BindFunction(CUI_ClientManager::UI_PRESENT eType, CKena* pPlayer, _bool* Out_Open)
 {
 	if (eType == CUI_ClientManager::HATCART_)
 	{
 		m_bActive = !m_bActive;
 		m_pPlayer = pPlayer;
 		static_cast<CUI_NodeCurrentCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal(m_pPlayer->Get_Status()->Get_Crystal());
+
+		*Out_Open = m_bActive;
 	}
 }
 void CUI_CanvasHatCart::Picking()

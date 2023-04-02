@@ -71,8 +71,10 @@ private:
 	/* Bomb */
 	_uint			m_iNumBombs;
 	_uint			m_iNumBombNow;
-	queue<_int>		m_qBombIndex;
 	_int			m_Bombs[BOMB_END];
+
+	queue<_int>		m_qLeft;
+	queue<_int>		m_qUsed;
 
 public:
 	static	CUI_CanvasAmmo*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

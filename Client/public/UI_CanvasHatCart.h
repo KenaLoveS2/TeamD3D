@@ -34,7 +34,7 @@ private:
 	virtual HRESULT			SetUp_ShaderResources()			override;
 
 private:
-	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CKena* pPlayer);
+	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CKena* pPlayer, _bool* Out_Open);
 	void	Picking();
 	void	Shopping();
 

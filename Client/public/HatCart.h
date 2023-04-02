@@ -39,7 +39,7 @@ public:
 	virtual _int						Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 public:
-	Delegator<CUI_ClientManager::UI_PRESENT, CKena*>		m_CartDelegator;
+	Delegator<CUI_ClientManager::UI_PRESENT, CKena*, _bool*>		m_CartDelegator;
 
 private:
 	CModel* m_pModelCom = nullptr;
