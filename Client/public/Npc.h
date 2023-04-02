@@ -52,6 +52,7 @@ public:
 	_bool							DistanceTrigger(_float distance);
 	virtual void					AdditiveAnim(_float fTimeDelta);
 	CFSMComponent*		Get_FSM() { return m_pFSM; }
+
 protected:
 	CRenderer*						m_pRendererCom = nullptr;
 	CShader*							m_pShaderCom = nullptr;

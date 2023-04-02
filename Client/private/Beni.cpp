@@ -91,7 +91,11 @@ void CBeni::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	Update_Collider(fTimeDelta);
 	SaiyaFunc(fTimeDelta);
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+
+	if (ImGui::Button("abc"))
+		m_pModelCom->Print_Animation_Names("../Bin/Benianimaiotn.json");
+
+	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	AdditiveAnim(fTimeDelta);
@@ -200,7 +204,31 @@ void CBeni::Update_Collider(_float fTimeDelta)
 HRESULT CBeni::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-		.InitState("IDLE")
+		.InitState("PLAY")
+
+		.AddState("PLAY")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_CHASINGLOOP);
+	})
+
+		.AddTransition("PLAY to PLAYERBACKRUN", "PLAYERBACKRUN")
+		.Predicator([this]()
+	{
+		return m_strState == "PLAYERBACKRUN";
+	})
+
+		.AddState("PLAYERBACKRUN")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_RUN);
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	})
+		.AddTransition("PLAYERBACKRUN to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return m_strState == "IDLE";
+	})
 
 		/* Idle */
 		.AddState("IDLE")
@@ -249,7 +277,7 @@ HRESULT CBeni::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pModelCom->Set_AnimIndex(BENI_RUN_180);
+		m_pModelCom->Set_AnimIndex(BENI_RUN);
 		m_pTransformCom->Go_Straight(fTimeDelta);
 	})
 		.AddTransition("RUN to DISAPPEAR", "DISAPPEAR")
@@ -261,8 +289,8 @@ HRESULT CBeni::SetUp_State()
 		.AddState("DISAPPEAR")
 		.OnStart([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(BENI_DISAPPEAR);
-		m_pModelCom->Set_AnimIndex(BENI_DISAPPEAR);
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_TELEPORT);
+		m_pModelCom->Set_AnimIndex(BENI_TELEPORT);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -288,7 +316,6 @@ HRESULT CBeni::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Beni", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Beni/jizoboy_body_AO_R_M.png")), E_FAIL);
-	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_NORMALS, TEXT("../Bin/Resources/Anim/NPC/Eyes_NORMAL.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Beni/jizoboy_cloth_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(5, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Beni/jizokids_mask_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(6, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Beni/jizokids_slingshot_AO_R_M.png")), E_FAIL);
