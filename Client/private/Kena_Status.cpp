@@ -202,6 +202,8 @@ void CKena_Status::Update_ShieldRecovery(_float fTimeDelta)
 			m_fCurShieldCoolTime = m_fInitShieldCoolTime;
 		}
 	}
+	CUI_ClientManager::UI_PRESENT eShield = CUI_ClientManager::HUD_SHIELD;
+	m_StatusDelegator.broadcast(eShield, m_fShield);
 }
 
 void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)

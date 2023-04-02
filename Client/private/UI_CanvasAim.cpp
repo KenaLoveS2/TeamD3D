@@ -194,7 +194,7 @@ HRESULT CUI_CanvasAim::Bind()
 		return E_FAIL;
 
 	pKena->Get_State()->m_PlayerDelegator.bind(this, &CUI_CanvasAim::Function);
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAim::Function);
+	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAim::Function);
 
 	m_bBindFinished = true;
 	return S_OK;

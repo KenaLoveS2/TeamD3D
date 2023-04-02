@@ -193,6 +193,7 @@ void CImgui_UIEditor::Effect_Tool()
 	{
 		m_pEffect = m_vecEffects[iSelectedEffect];
 		m_pEffect->Set_ActiveFlip();
+		m_pEffect->Set_EffectTag(m_vecEffectTag[iSelectedEffect]);
 	}
 
 	LINE;

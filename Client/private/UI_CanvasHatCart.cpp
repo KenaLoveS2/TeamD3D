@@ -260,7 +260,7 @@ HRESULT CUI_CanvasHatCart::Ready_Nodes()
 			return E_FAIL;
 		m_vecNodeCloneTag.push_back(strCloneTag);
 		pGameInstance->Add_String(wstrCloneTag);
-		static_cast<CUI_NodeCurrentCrystal*>(pUI)->Set_Font(L"Font_Comic", { 1.f, 1.f, 1.f, 1.f }, { 0.6f, 0.6f }, { 30.f, -10.f });
+		static_cast<CUI_NodeCurrentCrystal*>(pUI)->Set_Font(L"Font_Jangmi0", { 1.f, 1.f, 1.f, 1.f }, { 1.0f, 1.0f }, { 30.f, -10.f });
 
 	}
 	RELEASE_INSTANCE(CGameInstance);

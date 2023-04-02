@@ -3,14 +3,17 @@
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
+#include "Kena.h"
 
-CHatCart::CHatCart(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CHatCart::CHatCart(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
+	, m_pPlayer(nullptr)
 {
 }
 
-CHatCart::CHatCart(const CHatCart & rhs)
+CHatCart::CHatCart(const CHatCart& rhs)
 	: CEnviromentObj(rhs)
+	, m_pPlayer(nullptr)
 {
 }
 
@@ -22,7 +25,7 @@ HRESULT CHatCart::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CHatCart::Initialize(void * pArg)
+HRESULT CHatCart::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -36,10 +39,14 @@ HRESULT CHatCart::Initialize(void * pArg)
 	return S_OK;
 }
 
-HRESULT CHatCart::Late_Initialize(void * pArg)
+HRESULT CHatCart::Late_Initialize(void* pArg)
 {
 	/*Player_Need*/
-	
+	m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->
+		Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+
+	if (m_pPlayer == nullptr)
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -71,6 +78,24 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
 
 
+	/* compare distance */
+	if (m_pPlayer != nullptr)
+	{
+		_float4 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_Position();
+		_float4 vPos = m_pTransformCom->Get_Position();
+		_float	fDist = (vPlayerPos - vPos).Length();
+
+		if (fDist <= 5.f)
+		{
+			if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+			{
+				CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
+				m_CartDelegator.broadcast(eCart, m_pPlayer);
+			}
+		}
+
+	}
+
 	if (m_pRendererCom) //&& m_bRenderActive && m_bRenderCheck)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
@@ -87,29 +112,10 @@ HRESULT CHatCart::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-
-
-		if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
-		}
-		else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
-		}
-		else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
-		}
-		else
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
-		}
+		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
 	}
 
 	return S_OK;
@@ -157,7 +163,7 @@ void CHatCart::ImGui_PhysXValueProperty()
 {
 }
 
-HRESULT CHatCart::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
+HRESULT CHatCart::Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
 
@@ -241,7 +247,7 @@ HRESULT CHatCart::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
@@ -253,7 +259,7 @@ HRESULT CHatCart::SetUp_ShadowShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
@@ -261,9 +267,9 @@ HRESULT CHatCart::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
-CHatCart * CHatCart::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CHatCart* CHatCart::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CHatCart*		pInstance = new CHatCart(pDevice, pContext);
+	CHatCart* pInstance = new CHatCart(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -273,9 +279,9 @@ CHatCart * CHatCart::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pConte
 	return pInstance;
 }
 
-CGameObject * CHatCart::Clone(void * pArg)
+CGameObject* CHatCart::Clone(void* pArg)
 {
-	CHatCart*		pInstance = new CHatCart(*this);
+	CHatCart* pInstance = new CHatCart(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
