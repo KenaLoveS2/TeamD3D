@@ -38,8 +38,6 @@ HRESULT CRot::Initialize_Prototype()
 	return S_OK;
 }
 
-_uint g_iTemp = 0;
-
 HRESULT CRot::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GaemObjectDesc;
@@ -64,7 +62,7 @@ HRESULT CRot::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = g_iTemp++;
+		m_Desc.WorldMatrix._41 = m_iEveryRotCount;
 		m_Desc.WorldMatrix._43 = -5.f;
 	}
 
@@ -128,11 +126,11 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 void CRot::Tick(_float fTimeDelta)
 {
-	//m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	//m_pModelCom->Play_Animation(fTimeDelta);
-	//m_pRotHat->Tick(fTimeDelta);
-	//m_pTransformCom->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
-	//return;
+	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	m_pModelCom->Play_Animation(fTimeDelta);
+	m_pRotHat->Tick(fTimeDelta);
+	m_pTransformCom->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
+	return;
 
 	m_fTeleportDistance = 5.f;
 
@@ -161,11 +159,11 @@ void CRot::Tick(_float fTimeDelta)
 
 void CRot::Late_Tick(_float fTimeDelta)
 {
-	/*__super::Late_Tick(fTimeDelta);
+	__super::Late_Tick(fTimeDelta);
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	m_pRotHat->Late_Tick(fTimeDelta);
-	return;*/
+	return;
 
 	if(m_pRotWisp->Get_Collect())
 	{

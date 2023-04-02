@@ -1410,6 +1410,9 @@
     <ClInclude Include="..\public\Frog.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MannequinRot.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2249,6 +2252,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Pet.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MannequinRot.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

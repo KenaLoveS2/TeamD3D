@@ -118,6 +118,7 @@ private:
 	class CRot*				m_pFirstRot = nullptr;
 	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
 	class CMonster* m_pTargetMonster = nullptr;
+	class CHatCart* m_pHatCart = nullptr;
 
 private:
 	vector<class CKena_Parts*>					m_vecPart;
@@ -276,6 +277,7 @@ public:
 	void End_LiftRotRock();
 	void Buy_RotHat(_uint iHatIndex);
 	_bool IsBuyPossible_RotHat();
+	void Set_HatCartPtr(class CHatCart* pHatCart) { m_pHatCart = pHatCart; }
 };
 
 END

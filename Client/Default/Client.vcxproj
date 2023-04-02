@@ -320,6 +320,7 @@
     <ClInclude Include="..\Public\LodObject.h" />
     <ClInclude Include="..\public\Mage.h" />
     <ClInclude Include="..\public\MainApp.h" />
+    <ClInclude Include="..\public\MannequinRot.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\Npc.h" />
@@ -589,6 +590,7 @@
     <ClCompile Include="..\private\RotBomb.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />
     <ClCompile Include="..\private\RotHat.cpp" />
+    <ClCompile Include="..\private\MannequinRot.cpp" />
     <ClCompile Include="..\private\RotWisp.cpp" />
     <ClCompile Include="..\private\Saiya.cpp" />
     <ClCompile Include="..\private\ShamanTrapGeo.cpp" />

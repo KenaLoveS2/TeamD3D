@@ -93,14 +93,14 @@ HRESULT CRotHat::Late_Initialize(void * pArg)
 
 void CRotHat::Tick(_float fTimeDelta)
 {
-	Imgui_RenderProperty();
+	// Imgui_RenderProperty();
 
 	__super::Tick(fTimeDelta);
 }
 
 void CRotHat::Late_Tick(_float fTimeDelta)
 {
-	if (m_pModelCom == nullptr) return;
+	if (m_bShowFlag == false) return;
 
 	__super::Late_Tick(fTimeDelta);	
 	
@@ -256,7 +256,7 @@ void CRotHat::Free()
 	Safe_Release(m_pRendererCom);
 }
 
-HRESULT CRotHat::Create_HatModel(HAT_DESC& HatDesc)
+HRESULT CRotHat::Create_HatModel(HAT_DESC& HatDesc, _bool bShowFlag)
 {
 	if (HatDesc.eHatType >= HAT_TYPE_END) return E_FAIL;
 
@@ -266,6 +266,8 @@ HRESULT CRotHat::Create_HatModel(HAT_DESC& HatDesc)
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	memcpy(&m_HatDesc, &HatDesc, sizeof(HAT_DESC));
+
+	m_bShowFlag = bShowFlag;
 
 	return S_OK;
 } 

@@ -93,6 +93,8 @@
 #include "Frog.h"
 #include "Pet.h"
 #include "HealthFlower_Anim.h"
+#include "MannequinRot.h"
+
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
@@ -280,7 +282,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
-	//FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
@@ -510,7 +512,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	// Prototype_Component_Model_Rot
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Rot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.model"), PivotMatrix)))) return E_FAIL;
 
 	/*if (FAILED(Loading_ForBJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;*/
@@ -1973,7 +1975,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_Component_Model_Rot
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Rot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.model"), PivotMatrix)))) return E_FAIL;
 
 	// Prototype_Component_Model_CorruptVillager
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_CorruptVillager",
@@ -2082,6 +2084,9 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_GameObject_HunterArrow
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HunterArrow"), CHunterArrow::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
+	// Prototype_GameObject_HunterArrow
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MannequinRot"), CMannequinRot::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	
 	return S_OK;
 }
 
@@ -2549,17 +2554,17 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Real_Height/Terrain_Height_3.bmp")))))
 		assert(!"Issue");
 
-	// 임시
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
-		CTerrain::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
-		CGroundMark::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HatCart"),
-		CHatCart::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	return S_OK; 
+	//// 임시
+	//if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, true, true)))
+	//	assert(!"VillageCart");
+
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
+	//	CTerrain::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
+	//	CGroundMark::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
+	//return S_OK; 
 	
 	_matrix			PivotMatrix = XMMatrixIdentity();
 	/* For.Prototype_Component_Model_DeadZoneTree */

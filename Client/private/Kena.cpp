@@ -23,6 +23,7 @@
 #include "RotForMonster.h"
 #include "E_KenaDust.h"
 #include "UI_FocusMonster.h"
+#include "HatCart.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -2149,6 +2150,7 @@ void CKena::Buy_RotHat(_uint iHatIndex)
 	if (m_pFirstRot == nullptr) return;
 
 	m_pFirstRot->Buy_Hat(iHatIndex);
+	m_pHatCart ? m_pHatCart->Change_MannequinHat(iHatIndex) : 0;
 }
 
 _bool CKena::IsBuyPossible_RotHat()

@@ -39,6 +39,8 @@ private:
 
 	HAT_DESC m_HatDesc;
 
+	_bool m_bShowFlag = false;
+
 	// 사무라이
 	/*_float3 m_vPivotTrans = { 0.f, -0.03f, -0.21f };
 	_float3 m_vPivotRot = { -0.880f, -0.02f, -3.040f };*/
@@ -73,7 +75,9 @@ public:
 	virtual void Imgui_RenderProperty() override;	
 	virtual void ImGui_ShaderValueProperty() override;
 	
-	HRESULT Create_HatModel(HAT_DESC& HatDesc);
+	HRESULT Create_HatModel(HAT_DESC& HatDesc, _bool bShowFlag = true);
+	void Set_ShowFlag(_bool bFlag) { m_bShowFlag = bFlag; }
+	
 };
 
 END

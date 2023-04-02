@@ -108,7 +108,8 @@ HRESULT CUI_CanvasHatCart::Render()
 HRESULT CUI_CanvasHatCart::Bind()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(), L"Layer_Player", L"Kena"));
+	
+	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 	RELEASE_INSTANCE(CGameInstance);
 
 	if (pKena == nullptr)
@@ -324,6 +325,7 @@ void CUI_CanvasHatCart::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_Cl
 {
 	m_bActive = !m_bActive;
 	m_pPlayer = pPlayer;
+	
 	static_cast<CUI_NodeCurrentCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal(m_pPlayer->Get_Status()->Get_Crystal());
 }
 void CUI_CanvasHatCart::Picking()
@@ -367,7 +369,7 @@ void CUI_CanvasHatCart::Shopping()
 		m_iHatCount[m_iPickedIndex- UI_ITEMBAR0] += 1;
 		static_cast<CUI_CanvasItemBar*>(m_vecNode[m_iPickedIndex])->Buy(m_iHatCount[m_iPickedIndex - UI_ITEMBAR0]);
 
-		m_pPlayer->Buy_RotHat(m_iPickedIndex - UI_ITEMBAR0);
+		m_pPlayer->Buy_RotHat(m_iPickedIndex - UI_ITEMBAR0);		
 	}
 }
 CUI_CanvasHatCart * CUI_CanvasHatCart::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
