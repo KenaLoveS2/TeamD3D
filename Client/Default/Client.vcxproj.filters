@@ -1401,8 +1401,6 @@
     <ClInclude Include="..\public\RotHat.h">
       <Filter>02.GameObjects\Rot</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\CinematicCamera.h">
-      <Filter>02.GameObjects\Camera</Filter>
     <ClInclude Include="..\public\Pet.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
@@ -1429,6 +1427,9 @@
     </ClInclude>
     <ClInclude Include="..\public\E_ShamanTrail.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CinematicCamera.h">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

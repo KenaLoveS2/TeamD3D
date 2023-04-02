@@ -165,7 +165,7 @@ void CMage::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
 	m_pModelCom->Play_Animation(fTimeDelta);
-	AdditiveAnim(fTimeDelta);
+	if(m_bSpawn) AdditiveAnim(fTimeDelta);
 
 	m_pFireBullet->Tick(fTimeDelta);
 }
