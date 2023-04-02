@@ -1398,6 +1398,7 @@
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClInclude>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <ClInclude Include="..\public\Frog.h">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClInclude>
@@ -1414,6 +1415,9 @@
     <ClInclude Include="..\public\Dynamic_Stone.h">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClInclude>
+=======
+    <ClInclude Include="..\public\HealthFlower_Anim.h" />
+>>>>>>> parent of 285d1e32 (.)
 =======
     <ClInclude Include="..\public\HealthFlower_Anim.h" />
 >>>>>>> parent of 285d1e32 (.)
@@ -2248,6 +2252,7 @@
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClCompile>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <ClCompile Include="..\private\Frog.cpp">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClCompile>
@@ -2264,6 +2269,9 @@
     <ClCompile Include="..\private\Dynamic_Stone.cpp">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClCompile>
+=======
+    <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
+>>>>>>> parent of 285d1e32 (.)
 =======
     <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
 >>>>>>> parent of 285d1e32 (.)

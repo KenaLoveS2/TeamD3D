@@ -387,6 +387,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	PivotMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Pet",
@@ -426,6 +427,8 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 
 
+=======
+>>>>>>> parent of 285d1e32 (.)
 =======
 >>>>>>> parent of 285d1e32 (.)
 #pragma  endregion ANIM_OBJ
