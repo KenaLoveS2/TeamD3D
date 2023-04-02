@@ -1781,7 +1781,6 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 		CHatCart::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
