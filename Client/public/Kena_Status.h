@@ -10,6 +10,7 @@ class CKena_Status final : public CStatus
 {
 public:
 	enum ROTSTATE { RS_GOOD, RS_HIDE, RS_ACTIVE, RS_LIFT, RS_END };
+	enum SKILLTAB { SKILL_MELEE, SKILL_SHIELD, SKILL_BOW, SKILL_BOMB, SKILL_ROT, SKILLTAB_END };
 
 private:
 	CKena_Status(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -36,13 +37,14 @@ private:
 	_float				m_fCurShieldRecoveryTime = 0.f;
 
 	_int				m_iKarma = 0;
-	_int				m_iRotLevel = 0;
-	_int				m_iRotCount = 0;
-	ROTSTATE		m_eRotState = RS_END;
-	_int				m_iRotMax = 0;
+	_int				m_iRotLevel = 1;
+	_int				m_iCurrentRotCount = 0;
+	_int				m_iRotCountMin = 0;
+	_int				m_iRotCountMax = 2;
+	ROTSTATE			m_eRotState = RS_END;
 	_int				m_iCrystal = 0;
 
-	_int				m_iPipLevel = 0;
+	_int				m_iPipLevel = 1;
 	_int				m_iMaxPIPCount = 0;
 	_float				m_fCurPIPGuage = 0.f;
 
@@ -57,19 +59,17 @@ private:
 	_float				m_fInitBombCoolTime = 0.f;
 	_float				m_fCurBombCoolTime = 0.f;
 
+	/* UNLOCK SKILL */
+	_bool				m_bSkills[SKILLTAB_END][5];
+
 private:
 	void				Update_ArrowCoolTime(_float fTimeDelta);
 	void				Update_BombCoolTime(_float fTimeDelta);
 	void				Update_ShieldRecovery(_float fTimeDelta);
+	void				Apply_Skill(SKILLTAB eCategory, _uint iSlot);
 
 public:
 	void				Under_Shield(CStatus* pEnemyStatus);
-
-public: /* skill test */
-	enum SKILL { SKILL_STICK, SKILL_SHIELD, SKILL_BOW, SKILL_BOBM, SKILL_END };
-	enum LEVEL { LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_END };
-	enum STATE { STATE_BLOCKED, STATE_LOCKED, STATE_UNLOCKED, STATE_END };
-	STATE		m_Skill[SKILL_END][LEVEL_END];
 
 public:
 	static CKena_Status* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -91,7 +91,7 @@ public:
 
 	inline _int Get_Karma() { return m_iKarma; }
 	inline _int Get_RotLevel() { return m_iRotLevel; }
-	inline _int Get_RotCount() { return m_iRotCount; }
+	inline _int Get_RotCount() { return m_iCurrentRotCount; }
 	inline ROTSTATE Get_RotState() { return m_eRotState; }
 	_int	Get_RotMax();
 	inline _int Get_Crystal() { return m_iCrystal; }
@@ -108,6 +108,8 @@ public:
 	inline _int Get_CurBombCount() { return m_iCurBombCount; }
 	inline _float Get_InitBombCoolTime() { return m_fInitBombCoolTime; }
 	inline _float Get_CurBombCoolTime() { return m_fCurBombCoolTime; }
+
+	const _bool Get_SkillState(SKILLTAB eCategory, _uint iSlot) const;
 
 public:
 
@@ -137,6 +139,9 @@ public:
 	inline void Set_CurBombCount(_int iValue) { m_iCurBombCount = iValue; }
 	inline void Set_InitBombCoolTime(_float fValue) { m_fInitBombCoolTime = fValue; }
 	inline void Set_CurBombCoolTime(_float fValue) { m_fCurBombCoolTime = fValue; }
+
+	void		Add_RotCount();
+	void		Unlock_Skill(SKILLTAB eCategory, _uint iSlot);
 };
 
 END
