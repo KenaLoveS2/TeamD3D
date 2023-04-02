@@ -13,6 +13,8 @@
 /* Bind Object */
 #include "Kena.h"
 #include "Kena_State.h"
+#include "E_KenaPulse.h"
+//#include "Effect_Base.h"
 
 CUI_CanvasHUD::CUI_CanvasHUD(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -118,15 +120,19 @@ HRESULT CUI_CanvasHUD::Render()
 
 HRESULT CUI_CanvasHUD::Bind()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),L"Layer_Player", L"Kena"));
-	RELEASE_INSTANCE(CGameInstance);
-
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,L"Layer_Player", L"Kena"));
 	if (pKena == nullptr)
 		return E_FAIL;
 
+	CE_KenaPulse* pShield = static_cast<CE_KenaPulse*>(pKena->Get_Effect("KenaPulse"));
+	
+	if (pShield == nullptr)
+		return E_FAIL;
+
+
 	pKena->Get_State()->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
+	pKena->m_Delegator.bind(this, &CUI_CanvasHUD::Function);
+	pShield->m_ShieldDelegator.bind(this, &CUI_CanvasHUD::Function);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -296,6 +302,73 @@ void CUI_CanvasHUD::Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientMana
 		break;
 	case CUI_ClientManager::FUNC_LEVELUP:
 		LevelUp(eType, (_int)fValue);
+		break;
+	}
+}
+
+void CUI_CanvasHUD::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
+{
+	_int iIndex = 0;
+	_float fVal = fValue;
+	switch (eType)
+	{
+	case CUI_ClientManager::HUD_HP:
+		static_cast<CUI_NodeHUDHP*>(m_vecNode[UI_HPGUAGE])->Set_Guage(fValue);
+		break;
+	case CUI_ClientManager::HUD_SHIELD:
+		static_cast<CUI_NodeHUDShield*>(m_vecNode[UI_SHIELD])->Set_Guage(fValue);
+		break;
+	case CUI_ClientManager::HUD_PIP:
+		/* PIP_3	PIP_2	PIP_1 */
+		/* guage add -> */
+		/* guage use <- */
+		if (fValue == 0.f) /* Use All */
+		{
+			if (m_iNumPipsNow == 0)
+				return;
+
+			/* if m_iNuMPipsNow == 3, use at PIP_1 -> index == 0*/
+			/* pipsNow/index : 3,0 / 2,1 / 1,2 */
+			iIndex = m_iNumPips - m_iNumPipsNow;
+			m_iNumPipsNow -= 1;
+
+			CUI_NodeHUDPip* pCurPip = static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[iIndex]]);
+			pCurPip->Set_Guage(fVal);
+
+			/* when using pip energy, consume dir and charge dir is opposite. */
+			/* so they need to be reorganized */
+			if (iIndex - 1 >= 0)
+			{
+				CUI_NodeHUDPip* pNextPip = static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[iIndex - 1]]);
+				_float fGuage = pNextPip->Get_Guage();
+				if (fGuage > 0.001f)
+				{
+					pCurPip->ReArrangeGuage(); /* Let Guage can be changed */
+					pCurPip->Set_Guage(pNextPip->Get_Guage());
+					pNextPip->Set_Guage(0.f);
+				}
+			}
+
+		}
+		else /* Gradually add */
+		{
+			if (m_iNumPipsNow == m_iNumPips)
+				return;
+
+			/* If m_iNumPipsNow == 0 , guage on at PIP_3 -> index==2 */
+			/* pipsNow/index : 0,2 / 1,1 / 2,0*/
+			iIndex = (m_iNumPips - 1) - m_iNumPipsNow;
+
+			fVal = fValue - m_iNumPipsNow;
+			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[iIndex]])->Set_Guage(fVal);
+
+			if (fVal >= 1.f)
+				static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(0);
+		}
+
+		break;
+	case CUI_ClientManager::HUD_ROT:
+		static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(fValue);
 		break;
 	}
 }

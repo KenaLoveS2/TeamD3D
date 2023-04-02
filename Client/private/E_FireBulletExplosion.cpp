@@ -37,6 +37,10 @@ HRESULT CE_FireBulletExplosion::Initialize(void * pArg)
 	m_eEFfectDesc.bActive = false;
 	m_fInitSpriteCnt = _float2(0.0f, 0.0f);
 	m_eEFfectDesc.vScale = XMVectorSet(2.f, 2.f, 2.f, 1.f);
+
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Parent(this);
+
 	return S_OK;
 }
 
@@ -44,14 +48,26 @@ void CE_FireBulletExplosion::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Active(m_eEFfectDesc.bActive);
+
 	if (m_eEFfectDesc.bActive == true)
 	{
 		m_fDurationTime += fTimeDelta;
-		if (m_fDurationTime > 0.5f)
+		for (auto& pChild : m_vecChild)
+			pChild->Set_AddScale(fTimeDelta + 0.3f);
+
+		Set_AddScale(fTimeDelta + 0.3f);
+
+		if (m_fDurationTime > 0.4f)
 		{
 			ResetSprite();
-			m_eEFfectDesc.bActive = false;
+			for (auto& pChild : m_vecChild)
+				pChild->Set_Scale(_float3(0.1f, 0.1f, 0.1f));
+
+			m_eEFfectDesc.vScale = _float3(0.1f, 0.1f, 0.1f);
 			m_bFinishSprite = false;
+			m_eEFfectDesc.bActive = false;
 			m_fDurationTime = 0.0f;
 		}
 	}
@@ -62,8 +78,8 @@ void CE_FireBulletExplosion::Late_Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	if (m_pParent != nullptr)
-		Set_Matrix();
+	//if (m_pParent != nullptr)
+	//	Set_Matrix();
 
 	__super::Late_Tick(fTimeDelta);
 

@@ -49,6 +49,9 @@ void CE_KenaCharge::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	_vector fCurScale = m_eEFfectDesc.vScale;
 
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Active(m_eEFfectDesc.bActive);
+
 	if (m_eEFfectDesc.bActive == true)
 	{
 		m_fScale += 0.6f;
@@ -62,9 +65,6 @@ void CE_KenaCharge::Tick(_float fTimeDelta)
 		m_fScale = 0.0f;
 		fCurScale = m_eEFfectDesc.vScale = _float3(1.f, 1.f, 1.f);
 	}
-
-	for (auto& pChild : m_vecChild)
-		pChild->Set_Active(m_eEFfectDesc.bActive);
 }
 
 void CE_KenaCharge::Late_Tick(_float fTimeDelta)

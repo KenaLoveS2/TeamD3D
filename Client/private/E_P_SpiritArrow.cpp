@@ -45,6 +45,9 @@ void CE_P_SpiritArrow::Tick(_float fTimeDelta)
 
 void CE_P_SpiritArrow::Late_Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	if (m_pParent != nullptr)
 		Set_Matrix();
 

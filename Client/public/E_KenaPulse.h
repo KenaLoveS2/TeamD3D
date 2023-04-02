@@ -2,8 +2,10 @@
 #include "Effect_Mesh.h"
 #include "Client_Defines.h"
 #include "PhysX_Defines.h"
-BEGIN(Client)
+#include "Delegator.h"
+#include "UI_ClientManager.h"
 
+BEGIN(Client)
 class CE_KenaPulse final : public CEffect_Mesh
 {
 public:
@@ -13,11 +15,11 @@ public:
     {
         enum STATE { STATE_DEFAULT, STATE_DAMAGE, STATE_END };
 
-        STATE  eState = STATE_DEFAULT;
-        _float fStateDurationTime = 0.0f;
+        STATE   eState               = STATE_DEFAULT;
+        _float  fStateDurationTime   = 0.0f;
 
-        _float   fCurHp;
-        _float   fMaxHp;
+        _float  fCurHp;
+        _float  fMaxHp;
 
     }STATUS;
 
@@ -28,11 +30,10 @@ private:
 
 public:
     _float3         Get_InitMatrixScaled();
-    void         Set_NoActive(_bool bActive) { m_bNoActive = bActive; }
-    void         Set_InitMatrixScaled(_float3 vScale);
-    void         Set_Child();
-
-    void         Set_Type(PULSETYPE eType) { m_ePulseType = eType; }
+    void            Set_NoActive(_bool bActive) { m_bNoActive = bActive; }
+    void            Set_InitMatrixScaled(_float3 vScale);
+    void            Set_Child();
+    void            Set_Type(PULSETYPE eType) { m_ePulseType = eType; }
 
 public:
     virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr);
@@ -41,14 +42,14 @@ public:
     virtual void    Tick(_float fTimeDelta) override;
     virtual void    Late_Tick(_float fTimeDelta) override;
     virtual HRESULT Render() override;
-    void         Reset();
-    virtual _int   Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
-    virtual _int   Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
-    virtual void   ImGui_PhysXValueProperty()override;
+    void            Reset();
+    virtual _int    Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+    virtual _int    Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+    virtual void    ImGui_PhysXValueProperty()override;
 
 private:
-    HRESULT SetUp_ShaderResources();
-    void   Imgui_RenderProperty() override;
+    HRESULT         SetUp_ShaderResources();
+    virtual void    Imgui_RenderProperty() override;
 
 public:
     void   Set_Status();
@@ -59,6 +60,7 @@ private:
     class CTexture* m_pDissolveTexture = nullptr;
     class CKena* m_pKena = nullptr;
     class CKena_Status* m_pStatus = nullptr;
+    class CE_P_ExplosionGravity* m_pExplsionGravity = nullptr;
 
     PX_TRIGGER_DATA* m_pTriggerDAta = nullptr;
     PULSETYPE            m_ePulseType = PULSE_DEFAULT;
@@ -76,9 +78,12 @@ private:
     _float m_fHpRatio = 0.0f;
 
 public:
-    static  CE_KenaPulse* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
-    virtual CGameObject* Clone(void* pArg = nullptr) override;
-    virtual void          Free() override;
+    Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_ShieldDelegator;
+
+public:
+    static  CE_KenaPulse*   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
+    virtual CGameObject*    Clone(void* pArg = nullptr) override;
+    virtual void            Free() override;
 
 };
 

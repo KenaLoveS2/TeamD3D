@@ -2,6 +2,7 @@
 #include "Monster.h"
 #include "Delegator.h"
 #include "UI_ClientManager.h"
+#include "E_P_ExplosionGravity.h"
 
 #define WARRIR_CLOSE_ATTACK_COUNT			4
 #define WARRIR_FAR_ATTACK_COUNT				2
@@ -88,6 +89,7 @@ protected:
 public:
 	HRESULT SetUp_Effects();
 	void	Update_Trail(const char* pBoneTag);
+	void	Update_ParticleType(CE_P_ExplosionGravity::TYPE eType, _float4 vCreatePos,_bool bSetDir, _fvector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
 
 private:
 	void Update_Collider(_float fTimeDelta) override;
@@ -116,6 +118,8 @@ private:	/* Animation Event Func */
 	// EnrageInto
 	void TurnOnEnrage_Into(_bool bIsInit, _float fTimeDelta);
 	void TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta);
+
+	void TurnOnCamShake(_bool bIsInit, _float fTimeDelta);
 
 private:
 	_float3 m_vWeaPonPivotTrans = {-1.76f, 0.03f, -2.2f};

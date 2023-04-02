@@ -7,6 +7,7 @@
 #include "Kena.h"
 #include "Kena_Status.h"
 #include "Monster.h"
+#include "E_P_ExplosionGravity.h"
 
 CE_KenaPulse::CE_KenaPulse(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CEffect_Mesh(pDevice, pContext)
@@ -52,6 +53,12 @@ void CE_KenaPulse::Set_Child()
     NULL_CHECK_RETURN(pEffectBase, );
     m_vecChild.push_back(pEffectBase);
 
+    /// <ExplosionGravity / Particle>
+    m_pExplsionGravity = dynamic_cast<CE_P_ExplosionGravity*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", L"PulseDamageParticle"));
+    NULL_CHECK_RETURN(m_pExplsionGravity, );
+    m_pExplsionGravity->Set_Parent(this);
+    /// <ExplosionGravity / Particle>
+
     for (auto* pChild : m_vecChild)
         pChild->Set_Parent(this);
 
@@ -89,9 +96,9 @@ HRESULT CE_KenaPulse::Initialize(void* pArg)
     /* ~Component */
 
     Set_Child();
+    Set_ShaderOption(m_eEFfectDesc.iPassCnt, 2.0f, _float2(0.0f, 0.0f), false);
     m_eEFfectDesc.vColor = XMVectorSet(0.0f, 116.f, 255.f, 255.f) / 255.f;
     m_eStatus.eState = CE_KenaPulse::tagMyStatus::STATE_DEFAULT;
-    m_eEFfectDesc.bActive = false;
     memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
     return S_OK;
 }
@@ -140,6 +147,8 @@ HRESULT CE_KenaPulse::Late_Initialize(void* pArg)
     _smatrix   matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
     m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 
+    /* Damage_Particle */
+    m_pExplsionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_DAMAGE_PULSE);
     return S_OK;
 }
 
@@ -149,6 +158,7 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
    		return;
 
 	__super::Tick(fTimeDelta);
+	if (m_pExplsionGravity) m_pExplsionGravity->Tick(fTimeDelta);
 
 	m_fTimeDelta += fTimeDelta;
 	if (m_bDesolve)
@@ -244,6 +254,7 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
         Set_Matrix();
 
     __super::Late_Tick(fTimeDelta);
+    if (m_pExplsionGravity) m_pExplsionGravity->Late_Tick(fTimeDelta);
 
     if (nullptr != m_pRendererCom)
     {
@@ -266,11 +277,11 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_KenaPulse::Render()
 {
-    if (FAILED(SetUp_ShaderResources()))
-        return E_FAIL;
-
     if (FAILED(__super::Render()))
         return E_FAIL;
+
+	if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;
 
     if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
         m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
@@ -301,6 +312,10 @@ _int CE_KenaPulse::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
     }
     else
     {
+        CEffect_Base* pEffectBase = dynamic_cast<CEffect_Base*>(pTarget);
+        if (pEffectBase != nullptr && pEffectBase->Get_Active() == false)
+            return 0;
+
         if (iColliderIndex == (_uint)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
         {
             if (m_pKena->Get_State(CKena::STATE_PULSE) == false)
@@ -317,9 +332,11 @@ _int CE_KenaPulse::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
             m_pKena->Set_AttackObject(pTarget);
             //
             CKena::DAMAGED_FROM      eDir = CKena::DAMAGED_FROM_END;
-            CTransform* pTargetTransCom = pTarget->Get_TransformCom();
-            _float4      vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+            CTransform*              pTargetTransCom = pTarget->Get_TransformCom();
+            _float4    vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
             vDir.Normalize();
+
+            m_pExplsionGravity->UpdateParticle(m_pTransformCom->Get_Position(), vDir);
 
             _float         fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
 
@@ -329,11 +346,19 @@ _int CE_KenaPulse::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
                 eDir = CKena::DAMAGED_BACK;
 
             m_pKena->Set_DamagedDir(eDir);
-            //
             m_pStatus->Under_Shield(pStatus);
 
+            /* Update */
             m_eStatus.fCurHp = m_pStatus->Get_Shield();
             m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
+            /* Update */
+
+            /* Shield Guage UI Call */
+            m_fHpRatio = m_eStatus.fCurHp / m_eStatus.fMaxHp;
+            CUI_ClientManager::UI_PRESENT eShield = CUI_ClientManager::HUD_SHIELD;
+            CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+            m_ShieldDelegator.broadcast(eShield, funcDefault, m_fHpRatio);
+            /* ~Shield Guage UI Call */
 
             if (m_eStatus.fCurHp <= 0.0f)
             {
@@ -386,11 +411,6 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
         FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
         FAILED_CHECK_RETURN(m_pDissolveTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 3), E_FAIL);
     }
-
-    if (g_bDayOrNight == false)
-        m_fHDRValue = 2.f;
-    else
-        m_fHDRValue = 1.0f;
 
     return S_OK;
 }
@@ -457,5 +477,5 @@ void CE_KenaPulse::Free()
     __super::Free();
 
     Safe_Release(m_pDissolveTexture);
-
+    Safe_Release(m_pExplsionGravity);
 }

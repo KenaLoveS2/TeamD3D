@@ -12,9 +12,9 @@ public:
 	}GAMEOBJECTDESC;
 
 public:
-	_float					Get_CamDistance() const { return m_fCamDistance; }
+	_float				Get_CamDistance() const { return m_fCamDistance; }
 	const _int&			Get_AnimationIndex() const { return m_iAnimationIndex; }
-	void					Set_AnimationIndex(_uint iAnimationIndex) { m_iAnimationIndex = iAnimationIndex; }
+	void				Set_AnimationIndex(_uint iAnimationIndex) { m_iAnimationIndex = iAnimationIndex; }
 
 public:
 	CTransform*			Get_TransformCom() { return m_pTransformCom; }

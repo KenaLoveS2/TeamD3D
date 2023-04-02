@@ -59,10 +59,8 @@ void CE_Sapling::Tick(_float fTimeDelta)
 
 	if (m_fTimeDelta > 0.2f)
 	{
-		m_eEFfectDesc.fWidthFrame = 0.0;
-		m_eEFfectDesc.fHeightFrame = 0.0;
+		ResetSprite();
 		m_eEFfectDesc.vScale = _float3(0.5f, 0.5f, 1.f);
-
 		m_eEFfectDesc.bActive = false;
 		m_fTimeDelta = 0.0f;
 	}

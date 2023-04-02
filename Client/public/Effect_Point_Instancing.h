@@ -15,6 +15,7 @@ protected:
 
 public:
 	HRESULT				 Set_ShapePosition();
+	HRESULT				 Set_Position(_float3 fMin, _float3 fMax);
 
 public:
 	virtual HRESULT				 Set_Trail(class CEffect_Base* pEffect, const _tchar* pProtoTag);

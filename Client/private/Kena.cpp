@@ -24,6 +24,7 @@
 #include "E_KenaDust.h"
 #include "UI_FocusMonster.h"
 #include "CPortalPlane.h"
+#include "E_P_ExplosionGravity.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -68,6 +69,15 @@ const string & CKena::Get_AnimationState() const
 const _uint CKena::Get_AnimationStateIndex() const
 {
 	return m_pAnimation->Get_CurrentAnimIndex();
+}
+
+CEffect_Base* CKena::Get_Effect(const string& strKey)
+{
+	auto iter = m_mapEffect.find(strKey);
+	if (iter == m_mapEffect.end())
+		return nullptr;
+
+	return iter->second;
 }
 
 const _bool CKena::Get_State(STATERETURN eState) const
@@ -427,9 +437,10 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	RELEASE_INSTANCE(CGameInstance)
 
 	CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
-	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+	//CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	_float fRotState = (_float)CKena_Status::RS_GOOD;
-	m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
+	m_Delegator.broadcast(eRot, fRotState);
+	//m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
 
 	m_pTransformCom->Set_Position(_float4(13.f, 0.f, 9.f, 1.f));
 
@@ -482,9 +493,10 @@ void CKena::Tick(_float fTimeDelta)
 			{
 				m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
 				CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
-				CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+				//CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 				_float fGuage = m_pKenaStatus->Get_PercentHP();
-				m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
+				m_Delegator.broadcast(eHP, fGuage);
+				//m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
 			} 				
  
  			m_bParry = false;
@@ -493,9 +505,10 @@ void CKena::Tick(_float fTimeDelta)
  	}
 
 	CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
-	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+	//CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	_float fGuage = m_pKenaStatus->Get_PercentHP();
-	m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
+	m_Delegator.broadcast(eHP, fGuage);
+	//m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
 
 	if (m_pAnimation->Get_Preview() == false)
 	{
@@ -660,7 +673,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 			m_pKenaStatus->Set_RotState(eRotState);
 			_float fState = (_float)eRotState;
-			m_PlayerDelegator.broadcast(eRot, funcDefault, fState);
+			m_Delegator.broadcast(eRot, fState);
+			//m_PlayerDelegator.broadcast(eRot, funcDefault, fState);
 		}
 	}
 
@@ -1245,11 +1259,13 @@ void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 			m_pKenaStatus->Set_RotState(CKena_Status::RS_ACTIVE);
 			CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
 			CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
-			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+			//CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 			_float fZero = 0.f;
-			m_PlayerDelegator.broadcast(ePip, funcDefault, fZero);
+			//m_PlayerDelegator.broadcast(ePip, funcDefault, fZero);
+			m_Delegator.broadcast(ePip, fZero);
 			_float fRot = 2;
-			m_PlayerDelegator.broadcast(eRot, funcDefault, fRot);
+			//m_PlayerDelegator.broadcast(eRot, funcDefault, fRot);
+			m_Delegator.broadcast(eRot, fRot);
 			/* ~UI Control */
 
 			static_cast<CMonster*>(pTarget)->Bind(m_pRotForMonster, 8);
@@ -1454,6 +1470,12 @@ HRESULT CKena::Ready_Effects()
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_InteractStaff", L"InteractStaff"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("InteractStaff", pEffectBase);
+
+	/* Particle  */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", L"Kena_Particle"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	dynamic_cast<CE_P_ExplosionGravity*>(pEffectBase)->Set_Option(CE_P_ExplosionGravity::TYPE_KENA_ATTACK);
+	m_mapEffect.emplace("Kena_Particle", pEffectBase);
 
 	for (auto& pEffects : m_mapEffect)
 		pEffects.second->Set_Parent(this);
@@ -1855,8 +1877,10 @@ void CKena::TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta)
 	matIntoAttack.r[3] = matWorldSocket.r[3];
 	m_mapEffect["HeavyAttackInto"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
 	/* IntoAttack Update */
-
 	m_mapEffect["HeavyAttackInto"]->Set_Active(true);
+
+	CE_P_ExplosionGravity* pParticle = dynamic_cast<CE_P_ExplosionGravity*>(m_mapEffect["Kena_Particle"]);
+	pParticle->UpdateParticle(matWorldSocket.r[3]);
 }
 
 void CKena::TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta)
@@ -1913,6 +1937,9 @@ void CKena::TurnOnPulseParryHand(_bool bIsInit, _float fTimeDelta)
 	matIntoAttack.r[3] = matWorldSocket.r[3];
 	m_mapEffect["KenaPulseParryHand"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
 	m_mapEffect["KenaPulseParryHand"]->Set_Active(true);
+
+	CE_P_ExplosionGravity* pParticle = dynamic_cast<CE_P_ExplosionGravity*>(m_mapEffect["Kena_Particle"]);
+	pParticle->UpdateParticle(matWorldSocket.r[3]);
 }
 
 void CKena::TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta)
@@ -2047,7 +2074,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 			_float3		vScale = m_pTransformCom->Get_Scaled();
 
-			/* µ¹¸®´Â°Ç ÃßÈÄ ¼öÁ¤ ÇÊ¿ä */
+			/* ï¿½ï¿½ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ */
 			m_pTransformCom->Set_State(CTransform::STATE_RIGHT, vOutRight * vScale.x);
 			m_pTransformCom->Set_State(CTransform::STATE_LOOK, vOutLook * vScale.z);
 

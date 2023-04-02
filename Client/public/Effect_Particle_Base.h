@@ -40,10 +40,10 @@ private:
 	HRESULT							SetUp_Buffer();
 
 private:
-	CShader* m_pShaderCom;
-	CRenderer* m_pRendererCom;
-	CTexture* m_pTextureCom;
-	CVIBuffer_Point_Instancing_S2* m_pVIBufferCom;
+	CShader*						m_pShaderCom;
+	CRenderer*						m_pRendererCom;
+	CTexture*						m_pTextureCom;
+	CVIBuffer_Point_Instancing_S2*	m_pVIBufferCom;
 
 public:
 	static CEffect_Particle_Base* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
