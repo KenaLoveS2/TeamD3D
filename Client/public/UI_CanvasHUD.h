@@ -40,6 +40,8 @@ private:
 
 private: /* Bind Functions */
 	void	Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
+	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue);
+
 private:
 	void	Default(CUI_ClientManager::UI_PRESENT eType, _float fValue);
 	void	LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel);

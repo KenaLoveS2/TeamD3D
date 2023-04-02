@@ -131,16 +131,26 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 				m_iTextureIndex = i;
 			}
 		}
+	}
 
+	/* Render */
+	if (ImGui::CollapsingHeader("Render Info"))
+	{
 		/* RenderPass */
 		static _int iRenderPass;
 		iRenderPass = m_iRenderPass;
-		const char* renderPass[4] = { "DefaultHaze", "BlackHaze", "BlackGather", "AlphaBlendHaze" };
+		const char* renderPass[4] = { "DefaultHaze", "BlackHaze", "BlackGather", "RePaint" };
 		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 4, 5))
 			m_iRenderPass = iRenderPass;
 
 		/* Color */
 		ColorCode();
+
+		if (ImGui::Button("ReCompile"))
+		{
+			m_pShaderCom->ReCompile();
+			m_pRendererCom->ReCompile();
+		}
 	}
 
 
@@ -231,6 +241,8 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 			if (m_bOptions[OPTION_SPRITE])
 				m_fFrameNow = 0.f;
+
+			m_bActive = true;
 		}
 	}
 
@@ -246,6 +258,11 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 	/* SelfStop */
 	ImGui::Separator();
 	ImGui::Checkbox("IsSelfStop", &m_bSelfStop);
+
+	if (m_bSelfStop)
+	{
+		ImGui::DragFloat("SelfStopDuration", &m_fSelfStopTime, 0.0f, 30.0f);
+	}
 
 	ImGui::Separator();
 	Save_Data();

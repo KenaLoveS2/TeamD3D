@@ -175,7 +175,7 @@ void CEffect_Mesh_Base::Imgui_RenderProperty()
 	ImGui::Text("<Set Model>");
 	Set_ModelCom();
 
-	m_pTransformCom->Imgui_RenderProperty();
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
 
 	/* Render Info */
 	for (_uint texID = 0; texID < TEXTURE_END; ++texID)
