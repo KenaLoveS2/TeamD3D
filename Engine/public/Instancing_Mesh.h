@@ -85,7 +85,8 @@ private:		/*For.Instancing*/
 	_vector								m_corners[8];
 
 	_float* m_fInstancingEffect_Speed = nullptr;
-
+	list<PxRigidStatic*>				m_StaticRigid_List;
+	_bool								m_bTriangle_Collider = false;
 private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
 	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);

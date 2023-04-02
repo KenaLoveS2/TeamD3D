@@ -46,7 +46,7 @@ private:
 private:
 	class CKena*					m_pKena = nullptr;
 	CTransform*					m_pKenaTransform = nullptr;
-
+	_bool								m_bRenderCheck = false;
 private:
 	_bool								m_bKenaDetected = false;
 	_bool								m_bOpened = false;

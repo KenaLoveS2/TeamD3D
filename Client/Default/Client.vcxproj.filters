@@ -1401,6 +1401,12 @@
     <ClInclude Include="..\public\RotHat.h">
       <Filter>02.GameObjects\Rot</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Pet.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Frog.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2234,6 +2240,12 @@
     </ClCompile>
     <ClCompile Include="..\private\RotHat.cpp">
       <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Frog.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Pet.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
