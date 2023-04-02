@@ -120,35 +120,7 @@ void CEffect::Tick(_float fTimeDelta)
 #pragma endregion nouse
 
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
-	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
-		{
-			if (m_eEFfectDesc.fTimeDelta < 1.f)
-				m_eEFfectDesc.fWidthFrame++;
-			else
-				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-			m_fTimeDelta = 0.0;
-
-			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
-			{
-				if (m_eEFfectDesc.fTimeDelta < 1.f)
-					m_eEFfectDesc.fHeightFrame++;
-				else
-					m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
-
-				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-				{
-					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
-					m_bFinishSprite = true;
-				}
-			}
-
-		}
-	}
+		Tick_Sprite(m_fTimeDelta, fTimeDelta);
 
 	if (nullptr != m_pEffectTrail)
 		dynamic_cast<CEffect_Trail*>(m_pEffectTrail)->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());
@@ -348,6 +320,7 @@ HRESULT CEffect::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fShaderBindTime, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRValue", &m_fHDRValue, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fUV", &m_fUV, sizeof(_float2)), E_FAIL);
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{

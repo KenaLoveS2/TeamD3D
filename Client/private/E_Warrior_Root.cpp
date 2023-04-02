@@ -28,15 +28,17 @@ HRESULT CE_Warrior_Root::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
+	m_iTotalDTextureComCnt = 2;
+
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Child(), E_FAIL);
 
-	m_eEFfectDesc.iPassCnt = 16;
 	m_eEFfectDesc.fFrame[0] = 16.f;
+	m_eEFfectDesc.fFrame[1] = 4.f;
 
-	m_eEFfectDesc.bActive = false;
+	Set_ShaderOption(16, 3.f, _float2(0.0f, 0.0f), false);
 	return S_OK;
 }
 
@@ -78,18 +80,11 @@ HRESULT CE_Warrior_Root::Late_Initialize(void * pArg)
 
 void CE_Warrior_Root::Tick(_float fTimeDelta)
 {
-	ImGui::Begin("Root");
-
-	if (ImGui::Button("re"))
-		m_pShaderCom->ReCompile();
-
-	ImGui::End();
-
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
 	for (auto& pChild : m_vecChild)
-		pChild->Set_Active(m_eEFfectDesc.bActive);
+		pChild->Set_Active(false);
 
 	if (m_eEFfectDesc.bActive == false)
    		return;
@@ -107,14 +102,14 @@ void CE_Warrior_Root::Tick(_float fTimeDelta)
 
 void CE_Warrior_Root::Late_Tick(_float fTimeDelta)
 {
-   	if (m_eEFfectDesc.bActive == false)
+	if (m_eEFfectDesc.bActive == false)
    		return;
 
 	__super::Late_Tick(fTimeDelta);
 
 	/* NonAlpha => alpha test */
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CE_Warrior_Root::Render()

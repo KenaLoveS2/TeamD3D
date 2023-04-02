@@ -43,7 +43,8 @@ HRESULT CE_FireBulletCover::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);		
 
 	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
-	m_eEFfectDesc.vScale = XMVectorSet(0.23f, 0.23f, 0.23f, 1.f);
+	m_eEFfectDesc.vScale = XMVectorSet(0.16f, 0.16f, 0.16f, 1.f);
+	m_fHDRValue = 3.0f;
 	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
@@ -76,7 +77,7 @@ HRESULT CE_FireBulletCover::Render()
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_MaskTexture");
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 9);
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 9);
 	}
 
 	return S_OK;

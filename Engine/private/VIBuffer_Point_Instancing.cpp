@@ -128,7 +128,8 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 
 			if (m_ePointDesc->bSpread == true)
 			{
-				m_ePointDesc[i].vExplosionDir = XMVector3Normalize(XMVectorSet(CUtile::Get_RandomFloat(-5.f, 5.f), CUtile::Get_RandomFloat(-5.f, 5.f), CUtile::Get_RandomFloat(-5.f, 5.f), 0.f)) * 2.f;//m_ePointDesc->fCreateRange;
+				_float fRange = m_ePointDesc->fCreateRange;
+				m_ePointDesc[i].vExplosionDir = XMVector3Normalize(XMVectorSet(CUtile::Get_RandomFloat(-fRange, fRange), CUtile::Get_RandomFloat(-fRange, fRange), CUtile::Get_RandomFloat(-fRange, fRange), 0.f)) * 2.f;//m_ePointDesc->fCreateRange;
 				XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f) + m_ePointDesc[i].vExplosionDir);
 			}
 			else
@@ -150,7 +151,42 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 			m_ePointDesc[i].fRange = (m_ePointDesc->fRange - m_ePointDesc[i].fRangeOffset) < 0 ? m_ePointDesc->fRange : (m_ePointDesc->fRange - m_ePointDesc[i].fRangeOffset);
 		}
 		break;
+
+	case CVIBuffer_Point_Instancing::tagPointDesc::VIBUFFER_PLANECIRCLE_HAZE:
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+		{
+			((VTXMATRIX*)SubResource.pData)[i].vRight = _float4(CUtile::Get_RandomFloat(0.3f, 2.f), 0.f, 0.f, 0.f);
+			((VTXMATRIX*)SubResource.pData)[i].vUp = _float4(0.0f, 1.f, 0.f, 0.f);
+			((VTXMATRIX*)SubResource.pData)[i].vLook = _float4(0.0f, 0.f, 1.f, 0.f);
+			((VTXMATRIX*)SubResource.pData)[i].vPosition = _float4(0.0f, 0.f, 0.f, 1.f);
+
+			m_ePointDesc[i].vDir = XMVectorSet(1.0f, 0.f, 0.0f, 0.0f) * m_ePointDesc->fCreateRange * CUtile::Get_RandomFloat(0.5f, 1.f);
+			m_ePointDesc[i].vDir = XMVector3TransformNormal(m_ePointDesc[i].vDir, XMMatrixRotationY(XMConvertToRadians(_float(rand() % 360))));
+
+			((VTXMATRIX*)SubResource.pData)[i].vPosition = _float4(0.0f, CUtile::Get_RandomFloat(-1.0f, 3.f), 0.f, 1.f) + m_ePointDesc[i].vDir;
+			m_ePointDesc[i].vOriginPos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition);
+		}
+		break;
+
 	}
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Point_Instancing::Set_Position(_float3 fMin, _float3 fMax)
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+
+	for (_uint i = 0; i < m_iNumInstance; i++)
+	{
+		m_InstanceData[i].Position.x = CUtile::Get_RandomFloat(fMin.x, fMax.x);
+		m_InstanceData[i].Position.y = CUtile::Get_RandomFloat(fMin.y, fMax.y);
+		m_InstanceData[i].Position.z = CUtile::Get_RandomFloat(fMin.z, fMax.z);
+	}
+
 	m_pContext->Unmap(m_pInstanceBuffer, 0);
 	return S_OK;
 }
@@ -241,6 +277,26 @@ void CVIBuffer_Point_Instancing::Set_ResetOriginPos()
 
 	m_pContext->Unmap(m_pInstanceBuffer, 0);
 
+}
+
+HRESULT CVIBuffer_Point_Instancing::Reset_Type()
+{
+	switch (m_ePointDesc->eShapeType)
+	{
+	case POINTDESC::SHAPETYPE::VIBUFFER_HAZE:
+		FAILED_CHECK_RETURN(Reset_Haze(), E_FAIL);
+		break;
+	case POINTDESC::SHAPETYPE::VIBUFFER_GATHER:
+		FAILED_CHECK_RETURN(Reset_Gather(), E_FAIL);
+		break;
+	case POINTDESC::SHAPETYPE::VIBUFFER_PARABOLA:
+		FAILED_CHECK_RETURN(Reset_Parabola(), E_FAIL);
+		break;
+	}
+
+	m_ePointDesc->fTermAcc = 0.0f;
+	m_bFinish = false;
+	return S_OK;
 }
 
 HRESULT CVIBuffer_Point_Instancing::Tick_Box(_float fTimeDelta)
@@ -470,42 +526,6 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Explosion(_float fTimeDelta)
 	_float     fDistance = 0.f;
 
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
-	m_fGravity += fTimeDelta;
-
-	for (_uint i = 0; i < m_iNumInstance; ++i)
-	{
-		_float fDownSpeedY = _float(m_InstanceData[i].pSpeeds) * pow(m_fGravity, m_ePointDesc[i].fRange);
-		vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + m_ePointDesc[i].vExplosionDir * _float(m_InstanceData[i].pSpeeds) * m_ePointDesc->fTimeDelta;
-		XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vMovePos);
-
-		if (m_fGravity > m_ePointDesc[i].fRange)
-		{
-			((VTXMATRIX*)SubResource.pData)[i].vPosition = m_ePointDesc[i].vOriginPos;
-
-			if (i == m_iNumInstance - 1)
-				m_fGravity = 0.0f;
-		}
-		else
-		{
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += _float(m_InstanceData[i].pSpeeds * fTimeDelta) - fDownSpeedY;
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1 - m_fGravity / m_ePointDesc[i].fRange;
-		}
-	}
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
-	return S_OK;
-}
-
-HRESULT CVIBuffer_Point_Instancing::Tick_ExplosionGravity(_float fTimeDelta)
-{
-	D3D11_MAPPED_SUBRESOURCE			SubResource;
-	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
-	_vector    vNormalLook = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	_vector    vMovePos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-	_vector    vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	_float     fDistance = 0.f;
-
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	m_fGravity += fTimeDelta;
 	for (_uint i = 0; i < m_iNumInstance; ++i)
@@ -537,15 +557,324 @@ HRESULT CVIBuffer_Point_Instancing::Tick_ExplosionGravity(_float fTimeDelta)
 				vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + m_ePointDesc[i].vExplosionDir * _float(m_InstanceData[i].pSpeeds) * m_ePointDesc->fTimeDelta;
 				fDistance = XMVectorGetX(XMVector3Length(vMovePos - XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
 
-				if (fDistance > m_ePointDesc[i].fRange)
+				if (fDistance > m_ePointDesc->fRange)
 					XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, m_ePointDesc[i].vOriginPos);
 				else
 					XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vMovePos);
 			}
 		}
+		else
+		{
+			vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - m_ePointDesc[i].vExplosionDir * _float(m_InstanceData->pSpeeds) * fTimeDelta;
+			fDistance = XMVectorGetX(XMVector3Length(vMovePos));
+
+			if (fDistance < m_ePointDesc[i].vOriginPos.x)
+				XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, m_ePointDesc[i].vOriginPos);
+			else
+				XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vMovePos);
+		}
 	}
 	m_pContext->Unmap(m_pInstanceBuffer, 0);
 	return S_OK;
+}
+
+HRESULT CVIBuffer_Point_Instancing::Tick_ExplosionGravity(_float fTimeDelta)
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	_vector    vMovePos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+	_vector    vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	_float     fDistance = 0.f;
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	m_fGravity += fTimeDelta;
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		_float fDownSpeedY = _float(m_InstanceData[i].pSpeeds) * pow(m_fGravity, m_ePointDesc[i].fRange);
+
+		// if (m_fGravity > m_ePointDesc[i].fRange)
+		if (((VTXMATRIX*)SubResource.pData)[i].vPosition.w < -2.f)
+		{
+			((VTXMATRIX*)SubResource.pData)[i].vRight = _float4(1.0f, 0.f, 0.f, 0.f);
+			((VTXMATRIX*)SubResource.pData)[i].vUp = _float4(0.0f, 1.f, 0.f, 0.f);
+			((VTXMATRIX*)SubResource.pData)[i].vLook = _float4(0.0f, 0.f, 1.f, 0.f);
+			((VTXMATRIX*)SubResource.pData)[i].vPosition = _float4(0.0f, 0.f, 0.f, 1.f);
+
+			if (i == m_iNumInstance - 1)
+				m_fGravity = 0.0f;
+		}
+		else
+		{
+			if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y < 1.f)
+			{
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.x += _float(m_InstanceData[i].pSpeeds * fTimeDelta);
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.z += _float(m_InstanceData[i].pSpeeds * fTimeDelta);
+			}
+			else
+			{
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.x += _float(m_InstanceData[i].pSpeeds * fTimeDelta);
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y += _float(m_InstanceData[i].pSpeeds * fTimeDelta) - fDownSpeedY;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.z += _float(m_InstanceData[i].pSpeeds * fTimeDelta);
+			}
+
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1 - m_fGravity / m_ePointDesc[i].fRange;
+		}
+
+	}
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Point_Instancing::Tick_PlaneCircle_Haze(_float fTimeDelta)
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	m_ePointDesc->fTermAcc += _float(m_InstanceData->pSpeeds * fTimeDelta);
+	if (m_ePointDesc->fTermAcc >= 360.f)
+		m_ePointDesc->fTermAcc -= 360.f;
+
+	_float fMaxY = m_ePointDesc->fTerm * _float(m_InstanceData->pSpeeds);
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		if (fMaxY <= ((VTXMATRIX*)SubResource.pData)[i].vPosition.y)
+		{
+			m_bFinish = true;
+
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.x = 0.f + m_ePointDesc[i].vOriginPos.x;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 0.f + m_ePointDesc[i].vOriginPos.y;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.z = 0.f + m_ePointDesc[i].vOriginPos.z;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+		}
+		else
+		{
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += _float(m_InstanceData[i].pSpeeds * fTimeDelta);
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_ePointDesc[i].vOriginPos.x + _float(m_InstanceData[i].pSpeeds) * sinf(m_ePointDesc->fTermAcc * 6.0f);
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_ePointDesc[i].vOriginPos.z + _float(m_InstanceData[i].pSpeeds) * sinf(m_ePointDesc->fTermAcc * 6.0f);
+
+			/* Life */
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = (1 - ((VTXMATRIX*)SubResource.pData)[i].vPosition.y / fMaxY);
+		}
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Point_Instancing::Tick_Haze(_float fTimeDelta)
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	m_ePointDesc->fTermAcc += _float(m_InstanceData->pSpeeds * fTimeDelta);
+	if (m_ePointDesc->fTermAcc >= 360.f)
+		m_ePointDesc->fTermAcc -= 360.f;
+
+	_float fMaxY = m_ePointDesc->fTerm * _float(m_InstanceData->pSpeeds);
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		if (fMaxY <= ((VTXMATRIX*)SubResource.pData)[i].vPosition.y)
+		{
+			m_bFinish = true;
+
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.x = 0.f + m_InstanceData[i].Position.x;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 0.f + m_InstanceData[i].Position.y;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.z = 0.f + m_InstanceData[i].Position.z;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+		}
+		else
+		{
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += _float(m_InstanceData[i].pSpeeds * fTimeDelta);
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_InstanceData[i].Position.x + _float(m_InstanceData[i].pSpeeds) * sinf(m_ePointDesc->fTermAcc);
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_InstanceData[i].Position.z + _float(m_InstanceData[i].pSpeeds) * sinf(m_ePointDesc->fTermAcc);
+
+			/* Life */
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = (1 - ((VTXMATRIX*)SubResource.pData)[i].vPosition.y / fMaxY);
+		}
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Point_Instancing::Tick_Gather(_float fTimeDelta)
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		if (m_ePointDesc->bSpread == false)
+		{
+			if (((VTXMATRIX*)SubResource.pData)[i].vPosition.w < 0.05f)
+			{
+				m_bFinish = true;
+
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.x = 0.f + m_InstanceData[i].Position.x;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 0.f + m_InstanceData[i].Position.y;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.z = 0.f + m_InstanceData[i].Position.z;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+			}
+			else
+			{
+				_float4 vPos = ((VTXMATRIX*)SubResource.pData)[i].vPosition;
+				_float4 vDir = XMVector3Normalize(-vPos);
+
+				((VTXMATRIX*)SubResource.pData)[i].vPosition = vPos + _float(m_InstanceData[i].pSpeeds) * vDir;
+
+				/* Life */
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.w =
+					(XMVectorGetX(XMVector3Length(vPos + _float(m_InstanceData[i].pSpeeds) * vDir))
+						/ XMVectorGetX(XMVector3Length(m_InstanceData[i].Position)));
+			}
+		}
+		else // Explosion
+		{
+			if (((VTXMATRIX*)SubResource.pData)[i].vPosition.w > m_ePointDesc->fRange)
+			{
+				m_bFinish = true;
+
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.x = 0.f + m_InstanceData[i].Position.x;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 0.f + m_InstanceData[i].Position.y;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.z = 0.f + m_InstanceData[i].Position.z;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+			}
+			else
+			{
+				_float4 vPos = ((VTXMATRIX*)SubResource.pData)[i].vPosition;
+				_float4 vDir = XMVector3Normalize(m_ePointDesc[i].vExplosionDir);
+
+				((VTXMATRIX*)SubResource.pData)[i].vPosition = vPos + _float(m_InstanceData[i].pSpeeds) * vDir;
+
+				/* Life */
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.w =
+					(XMVectorGetX(XMVector3Length(vPos + _float(m_InstanceData[i].pSpeeds) * vDir)) / XMVectorGetX(XMVector3Length(m_InstanceData[i].Position)));
+			}
+		}
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Point_Instancing::Tick_Parabola(_float fTimeDelta)
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	m_ePointDesc->fTermAcc += fTimeDelta;
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		_float fDownSpeedY = _float(m_InstanceData[i].pSpeeds) * pow(m_ePointDesc->fTermAcc, 2.f);
+
+		/* Reset Condition */
+		if (m_ePointDesc->fTermAcc > m_ePointDesc->fTerm)
+		{
+			m_bFinish = true;
+
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_InstanceData[i].Position.x;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_InstanceData[i].Position.y;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_InstanceData[i].Position.z;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+
+			if (i == m_iNumInstance - 1)
+				m_ePointDesc->fTermAcc = 0.0f;
+		}
+		/* Normal Tick Action */
+		else
+		{
+			_float4 vPos = ((VTXMATRIX*)SubResource.pData)[i].vPosition;
+			_float4 vDir = _float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+			if (m_ePointDesc->bSetDir == false)
+				vDir = XMVector3Normalize(vPos);
+			else
+				vDir = XMVector3Normalize(vPos) + m_ePointDesc->SetDir;
+
+			vPos += _float(m_InstanceData[i].pSpeeds) * vDir;
+
+			vPos.y += _float(m_InstanceData[i].pSpeeds * fTimeDelta) - fDownSpeedY;
+			vPos.x += _float(m_InstanceData[i].pSpeeds * fTimeDelta);
+			vPos.z += _float(m_InstanceData[i].pSpeeds * fTimeDelta);
+
+			/* Life */
+			vPos.w = 1 - m_ePointDesc->fTermAcc / m_ePointDesc->fTerm;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition = vPos;
+		}
+
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Point_Instancing::Reset_Haze()
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.x = 0.f + m_InstanceData[i].Position.x;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 0.f + m_InstanceData[i].Position.y;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.z = 0.f + m_InstanceData[i].Position.z;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+HRESULT CVIBuffer_Point_Instancing::Reset_Gather()
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_InstanceData[i].Position.x;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_InstanceData[i].Position.y;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_InstanceData[i].Position.z;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+HRESULT CVIBuffer_Point_Instancing::Reset_Parabola()
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_InstanceData[i].Position.x;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_InstanceData[i].Position.y;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_InstanceData[i].Position.z;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+
+void CVIBuffer_Point_Instancing::SetRandomDir()
+{
+	_float fRange = m_ePointDesc->fCreateRange;
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+		m_ePointDesc[i].vExplosionDir = XMVector3Normalize(XMVectorSet(CUtile::Get_RandomFloat(-fRange, fRange), CUtile::Get_RandomFloat(-fRange, fRange), CUtile::Get_RandomFloat(-fRange, fRange), 0.f)) * 2.f;
 }
 
 HRESULT CVIBuffer_Point_Instancing::Initialize_Prototype(_uint iNumInstance)
@@ -567,6 +896,7 @@ HRESULT CVIBuffer_Point_Instancing::Initialize_Prototype(_uint iNumInstance)
 		m_InstanceData[i].fPos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 		m_InstanceData[i].SpeedMinMax = _float2((_float)m_InstanceData[i].pSpeeds, (_float)m_InstanceData[i].pSpeeds);
 		m_InstanceData[i].fPSize = _float2(0.2f, 0.2f);
+		m_InstanceData[i].Position = _float3(0.0f, 0.0f, 0.0f);
 	}
 
 	m_iNumInstance = iNumInstance;
@@ -699,6 +1029,27 @@ HRESULT CVIBuffer_Point_Instancing::Tick(_float fTimeDelta)
 	case POINTDESC::VIBUFFER_EXPLOSION:
 		FAILED_CHECK_RETURN(Tick_Explosion(fTimeDelta), E_FAIL);
 		break;
+
+	case POINTDESC::VIBUFFER_EXPLOSION_GRAVITY:
+		FAILED_CHECK_RETURN(Tick_ExplosionGravity(fTimeDelta), E_FAIL);
+		break;
+
+	case POINTDESC::VIBUFFER_PLANECIRCLE_HAZE:
+		FAILED_CHECK_RETURN(Tick_PlaneCircle_Haze(fTimeDelta), E_FAIL);
+		break;
+
+	case POINTDESC::VIBUFFER_HAZE:
+		FAILED_CHECK_RETURN(Tick_Haze(fTimeDelta), E_FAIL);
+		break;
+
+	case POINTDESC::VIBUFFER_GATHER:
+		FAILED_CHECK_RETURN(Tick_Gather(fTimeDelta), E_FAIL);
+		break;
+
+	case POINTDESC::VIBUFFER_PARABOLA:
+		FAILED_CHECK_RETURN(Tick_Parabola(fTimeDelta), E_FAIL);
+		break;
+
 	}
 	return S_OK;
 }

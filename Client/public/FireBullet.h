@@ -6,7 +6,7 @@ BEGIN(Client)
 class CFireBullet final : public CEffect_Mesh
 {
 public:
-	enum CHILD { CHILD_COVER, CHILD_BACK, CHILD_EXPLOSION, CHILD_END };
+	enum CHILD { CHILD_COVER, CHILD_BACK, CHILD_EXPLOSION, CHILD_P_TRAIL, CHILD_P_DEAD, CHILD_END };
 	enum STATE { STATE_WAIT, STATE_CREATE, STATE_CHASE, STATE_EXPLOSION_START, STATE_EXPLOSION, STATE_RESET, STATE_END };
 	
 private:
@@ -28,13 +28,13 @@ private:
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
-	virtual HRESULT Late_Initialize(void * pArg) override;
+	virtual HRESULT			Late_Initialize(void * pArg) override;
 	virtual void			Tick(_float fTimeDelta) override;
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 
 	_bool	IsActiveState();
-
+	
 public:
 	virtual void			ImGui_AnimationProperty() override;
 	virtual void			Imgui_RenderProperty() override;

@@ -172,12 +172,12 @@ void CDeadZoneObj::Change_Model(_int iDissolveTimer)
 	CGameObject::Delete_Component(TEXT("Com_Model"));
 	Safe_Release(m_pModelCom);
 
-	 if (FAILED(__super::Add_Component(g_LEVEL, pModelName[m_iDeadZoneModelID], TEXT("Com_Model"),
-		 (CComponent**)&m_pModelCom)))
-		 assert(!"CDeadZoneObj::Change_Model(_int iDissolveTimer)");
+	 //if (FAILED(__super::Add_Component(g_LEVEL, pModelName[m_iDeadZoneModelID], TEXT("Com_Model"),
+		// (CComponent**)&m_pModelCom)))
+		// assert(!"CDeadZoneObj::Change_Model(_int iDissolveTimer)");
 
 
-	 m_pModelCom->Set_InstancePos(New_Matrix);
+	//  m_pModelCom->Set_InstancePos(New_Matrix);
 }
 
 HRESULT CDeadZoneObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

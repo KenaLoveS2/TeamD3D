@@ -14,16 +14,16 @@ public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
 	virtual HRESULT		Late_Initialize(void* pArg) override;
-	virtual void				Tick(_float fTimeDelta) override;
-	virtual void				Late_Tick(_float fTimeDelta) override;
+	virtual void		Tick(_float fTimeDelta) override;
+	virtual void		Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
-	virtual void				Imgui_RenderProperty() override;
-	virtual void				ImGui_AnimationProperty() override;
-	virtual void				ImGui_ShaderValueProperty() override;
+	virtual void		Imgui_RenderProperty() override;
+	virtual void		ImGui_AnimationProperty() override;
+	virtual void		ImGui_ShaderValueProperty() override;
 
 	virtual HRESULT		RenderCine() override;
-	HRESULT					SetUp_CineShaderResources();
+	HRESULT				SetUp_CineShaderResources();
 
 private:
 	virtual HRESULT		SetUp_Components() override;
@@ -33,11 +33,17 @@ private:
 public:
 	HRESULT		Ready_Effects();
 
+public:
+	void		Tick_TrailOption(_float4 vPosition);
+	void		Tick_ChargeOption(_float4 vPosition);
+	void    	Tick_EffectWorld(OUT _float4& vWeaponPosition);
+
 private:
 	map<const string, class CEffect_Base*>   m_mapEffect;
 
-	_float m_fTimeDelta = 0.0f;
+	_float  m_fTimeDelta = 0.0f;
 	_float  m_fBowDurationTime = 0.0f;
+	_float4 m_vStaffPosition = _float4(0.0f, 0.0f, 0.0f, 1.0f);
 
 public:
 	static CKena_Staff*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

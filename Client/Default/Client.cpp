@@ -94,7 +94,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			TimerAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
 			
 			if (TimerAcc > FrameTime || !g_bFrameLimit)
-			{
+			{		
 				pGameInstance->Update_Timer(TEXT("Timer_60"));
 
 				pMainApp->Tick(pGameInstance->Get_TimeDelta(TEXT("Timer_60")));
