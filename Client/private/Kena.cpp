@@ -77,6 +77,10 @@ const _bool CKena::Get_State(STATERETURN eState) const
 
 	switch (eState)
 	{
+	case STATE_LEVELUP:
+		return m_bLevelUp;
+		break;
+
 	case STATE_ATTACK:
 		return m_bAttack;
 		break;
@@ -153,6 +157,10 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 
 	switch (eState)
 	{
+	case STATE_LEVELUP:
+		m_bLevelUp = bValue;
+		break;
+
 	case STATE_ATTACK:
 		m_bAttack = bValue;
 		break;
@@ -1359,11 +1367,11 @@ HRESULT CKena::Ready_Parts()
 
 HRESULT CKena::Ready_Arrows()
 {
-	_uint		iArrowCount = m_pKenaStatus->Get_MaxArrowCount();
+	//_uint		iArrowCount = m_pKenaStatus->Get_MaxArrowCount();
 	_tchar*	pTag = nullptr;
 	CSpiritArrow*	pArrow = nullptr;
 
-	for (_uint i = 0; i < iArrowCount; ++i)
+	for (_uint i = 0; i < 8; ++i)
 	{
 		pTag = CUtile::Create_DummyString(L"SpiritArrow", i);
 
@@ -1378,11 +1386,11 @@ HRESULT CKena::Ready_Arrows()
 
 HRESULT CKena::Ready_Bombs()
 {
-	_uint		iBombCount = m_pKenaStatus->Get_MaxBombCount();
+	//_uint		iBombCount = m_pKenaStatus->Get_MaxBombCount();
 	_tchar*	pTag = nullptr;
 	CRotBomb*	pBomb = nullptr;
 
-	for (_uint i = 0; i < iBombCount; ++i)
+	for (_uint i = 0; i < 4; ++i)
 	{
 		pTag = CUtile::Create_DummyString(L"RotBomb", i);
 
