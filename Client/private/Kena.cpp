@@ -718,7 +718,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 		_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
 		m_pKenaStatus->Plus_CurPIPGuage(0.2f);
 		_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
-		m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
+		m_Delegator.broadcast(ePip, fCurGuage);
 	}
 
 	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
@@ -938,6 +938,9 @@ void CKena::Imgui_RenderProperty()
 		m_bCommonHit = true;
 	if (ImGui::Button("m_bParryLaunch"))
 		m_bParryLaunch = !m_bParryLaunch;
+
+	_int	HP[2] = { m_pKenaStatus->Get_HP(), m_pKenaStatus->Get_MaxHP() };
+	ImGui::InputInt2("HP", (_int*)&HP, ImGuiInputTextFlags_ReadOnly);
 
 	_int	ArrowCount[2] = { m_pKenaStatus->Get_CurArrowCount(), m_pKenaStatus->Get_MaxArrowCount() };
 	ImGui::InputInt2("Arrow Count", (_int*)&ArrowCount, ImGuiInputTextFlags_ReadOnly);
@@ -1250,6 +1253,7 @@ void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 
 	if (pTarget != nullptr)
 	{
+		m_bRotActionPossible = true;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 		if (pGameInstance->Key_Down(DIK_R))
