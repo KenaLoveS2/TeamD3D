@@ -29,9 +29,14 @@ public:
 	virtual void			ImGui_PhysXValueProperty() override;
 
 private:
-	CModel* m_pModelCom = nullptr;
+	CModel*					m_pModelCom = nullptr;
 
-	float	m_fTimeDelta = 0.f;
+private:
+	class CKena*			m_pKena = nullptr;
+	class CCamera_Player*	m_pCamera = nullptr;
+	CPortalPlane*			m_pLinkedPortal = nullptr;
+
+	_float					m_fTimeDelta = 0.f;
 
 private:
 	HRESULT  SetUp_Components();

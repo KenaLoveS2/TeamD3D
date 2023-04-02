@@ -66,7 +66,7 @@ public:
 protected:
 	HRESULT					Set_UpTexture_FilePathToMaterial(class CModel* pMode, const _tchar * TexturePath, aiTextureType Type);
 
-	HRESULT					SetUp_CineShaderResources();
+	virtual HRESULT					SetUp_CineShaderResources();
 
 protected:
 	class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;

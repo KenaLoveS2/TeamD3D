@@ -161,7 +161,7 @@ void CImGui_Rot::Load_RotObjects(_uint iLevel, string JsonFileName, _bool isDyna
 		wszCloneTag = CUtile::StringToWideChar(szCloneTag);
 		pGameInstance->Add_String(wszCloneTag);
 
-		pGameInstance->Clone_AnimObject(g_LEVEL, wszLayerTag, L"Prototype_GameObject_Rot", wszCloneTag, &RotDesc, &pLoadObject);
+		pGameInstance->Clone_GameObject(g_LEVEL, wszLayerTag, L"Prototype_GameObject_Rot", wszCloneTag, &RotDesc, &pLoadObject);
 
 		if (isDynamic)
 			gameobjectList.push_back(pLoadObject);

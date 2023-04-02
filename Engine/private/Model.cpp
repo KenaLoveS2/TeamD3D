@@ -38,13 +38,11 @@ CModel::CModel(const CModel & rhs)
 	, m_bIsLodModel(rhs.m_bIsLodModel)
 	, m_bUseTriangleMeshActor(rhs.m_bUseTriangleMeshActor)
 {
-
 	for (auto& Material : m_Materials)
 	{
 		for (_uint i = 0; i < (_uint)WJ_TEXTURE_TYPE_MAX; ++i)
 			Safe_AddRef(Material.pTexture[i]);
 	}
-
 
 	m_Bones.reserve(rhs.m_Bones.size());
 	for (auto& pBone : rhs.m_Bones)

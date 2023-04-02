@@ -28,6 +28,8 @@ HRESULT CKena_Status::Initialize(void* pArg, CGameObject * pOwner)
 
 void CKena_Status::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
+
 	Update_ArrowCoolTime(fTimeDelta);
 	Update_BombCoolTime(fTimeDelta);
 	Update_ShieldRecovery(fTimeDelta);

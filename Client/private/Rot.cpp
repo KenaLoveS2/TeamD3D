@@ -66,6 +66,8 @@ HRESULT CRot::Initialize(void* pArg)
 		m_Desc.WorldMatrix._43 = 2.f;
 	}
 
+	m_pHatBone = m_pModelCom->Get_BonePtr("hat_socket_jnt");
+	
 	return S_OK;
 }
 
@@ -120,9 +122,9 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 void CRot::Tick(_float fTimeDelta)
 {
-	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	m_pModelCom->Play_Animation(fTimeDelta);
-	return;
+	//m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	//m_pModelCom->Play_Animation(fTimeDelta);
+	//return;
 
 	m_fTeleportDistance = 5.f;
 

@@ -408,7 +408,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 		else if (i == 7)
 			desc.vPivotPos = _float4(-2.f, 0.f, 0.f, 1.f);
 
-		if (FAILED(p_game_instance->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), 
+		if (FAILED(p_game_instance->Clone_GameObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), 
 			CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
 			return E_FAIL;
 
@@ -440,11 +440,6 @@ void CKena::Tick(_float fTimeDelta)
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 	//m_pKenaStatus->Set_Attack(20);
 #endif	
-
-	/*if (m_pTransformCom->IsFalling())
-	{
-		int i = 0;
-	}*/
 	
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
@@ -487,6 +482,11 @@ void CKena::Tick(_float fTimeDelta)
  			m_pAttackObject = nullptr;
  		}
  	}
+
+	CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
+	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+	_float fGuage = m_pKenaStatus->Get_PercentHP();
+	m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
 
 	if (m_pAnimation->Get_Preview() == false)
 	{
@@ -689,20 +689,20 @@ void CKena::Late_Tick(_float fTimeDelta)
 	//	m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
 	//}
 
-	if(CGameInstance::GetInstance()->Key_Down(DIK_P))
-	{
-		/* Test Before Hit Monster */
-		_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
-		m_pKenaStatus->Plus_CurPIPGuage(0.2f);
-		_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
-		m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
-	}
+	//if(CGameInstance::GetInstance()->Key_Down(DIK_P))
+	//{
+	//	/* Test Before Hit Monster */
+	//	_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
+	//	m_pKenaStatus->Plus_CurPIPGuage(0.2f);
+	//	_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
+	//	m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
+	//}
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
-	{
-		CKena* pPlayer = this;
-		m_PlayerPtrDelegator.broadcast(eCart, funcDefault, pPlayer);
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+	//{
+	//	CKena* pPlayer = this;
+	//	m_PlayerPtrDelegator.broadcast(eCart, funcDefault, pPlayer);
+	//}
 
 	//	//static _float fTag = 0.0f;
 	//	//if (fTag < 1.0f)
@@ -2015,6 +2015,18 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_bParry = true;
 			m_iCurParryFrame = 0;
 			m_pAttackObject = pTarget;
+		}
+
+		if (iColliderIndex == (_int)COL_MONSTER && m_bDash == true)
+		{
+			m_bDashAttack = true;
+			m_pDashTarget = pTarget;
+		}
+
+		if (iColliderIndex == (_int)COL_PORTAL && m_bDash == true)
+		{
+			m_bDashPortal = true;
+			m_pDashTarget = pTarget;
 		}
 	}
 
