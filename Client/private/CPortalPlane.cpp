@@ -29,7 +29,6 @@ HRESULT CPortalPlane::Initialize(void* pArg)
 	m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-	m_pTransformCom->Set_Position(_float4(15.f, 0.f, 15.f, 1.f));
 
 	return S_OK;
 }
@@ -42,7 +41,17 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
 	NULL_CHECK_RETURN(m_pCamera, E_FAIL);
 
-	
+	/* TEST */
+	if (!lstrcmp(m_szCloneObjectTag, L"Portal_0"))
+		m_pTransformCom->Set_Position(_float4(15.f, 5.f, 15.f, 1.f));
+	else if (!lstrcmp(m_szCloneObjectTag, L"Portal_1"))
+		m_pTransformCom->Set_Position(_float4(30.f, 5.f, 30.f, 1.f));
+
+	if (!lstrcmp(m_szCloneObjectTag, L"Portal_0"))
+		m_pLinkedPortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Environment", L"Portal_1"));
+	else if (!lstrcmp(m_szCloneObjectTag, L"Portal_1"))
+		m_pLinkedPortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Environment", L"Portal_0"));
+	NULL_CHECK_RETURN(m_pLinkedPortal, E_FAIL);
 
 	_float3 vPos;
 	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));

@@ -5491,6 +5491,8 @@ void CKena_State::Start_Dash_Settle(_float fTimeDelta)
 void CKena_State::Start_Dash_Portal(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("DASH_PORTAL", 0.f);
+
+	m_pKena->m_pDashTarget = nullptr;
 }
 
 void CKena_State::Start_Dash_Combat_Attack_1(_float fTimeDelta)
@@ -7506,6 +7508,7 @@ void CKena_State::End_Dash_Settle(_float fTimeDelta)
 void CKena_State::End_Dash_Portal(_float fTimeDelta)
 {
 	m_pKena->m_bDash = false;
+	m_pKena->m_bDashPortal = false;
 }
 
 void CKena_State::End_Dash_Combat_Attack_1(_float fTimeDelta)
