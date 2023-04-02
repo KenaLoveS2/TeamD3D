@@ -263,6 +263,8 @@ public:
 
 	void Setup_TerrainPtr();
 	void End_LiftRotRock();
+	void Buy_RotHat(_uint iHatIndex);
+	_bool IsBuyPossible_RotHat();
 };
 
 END

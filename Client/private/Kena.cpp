@@ -2108,3 +2108,17 @@ void CKena::End_LiftRotRock()
 	if (pCurTerrain)		
 		pCurTerrain->Set_BrushPosition(_float3(-1000.f, 0.f, 0.f));
 }
+
+void CKena::Buy_RotHat(_uint iHatIndex)
+{
+	if (m_pFirstRot == nullptr) return;
+
+	m_pFirstRot->Buy_Hat(iHatIndex);
+}
+
+_bool CKena::IsBuyPossible_RotHat()
+{
+	if (m_pFirstRot == nullptr) false;
+
+	return m_pFirstRot->IsBuyPossible();
+}

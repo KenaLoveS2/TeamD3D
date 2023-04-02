@@ -9,6 +9,8 @@
 
 #include "Kena.h"
 #include "Kena_Status.h"
+#include "RotHat.h"
+
 
 _uint CRot::m_iEveryRotCount = 0;
 _uint CRot::m_iKenaFindRotCount = 0;
@@ -36,6 +38,8 @@ HRESULT CRot::Initialize_Prototype()
 	return S_OK;
 }
 
+_uint g_iTemp = 0;
+
 HRESULT CRot::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GaemObjectDesc;
@@ -51,8 +55,6 @@ HRESULT CRot::Initialize(void* pArg)
 	m_pModelCom->Set_AllAnimCommonType();
 	Push_EventFunctions();
 
-	m_iEveryRotCount++;
-	m_iObjectProperty = OP_ROT;
 
 	ZeroMemory(&m_Desc, sizeof(CRot::DESC));
 
@@ -62,12 +64,16 @@ HRESULT CRot::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = 2.f;
-		m_Desc.WorldMatrix._43 = 2.f;
+		m_Desc.WorldMatrix._41 = g_iTemp++;
+		m_Desc.WorldMatrix._43 = -5.f;
 	}
 
-	m_pHatBone = m_pModelCom->Get_BonePtr("hat_socket_jnt");
-	
+	m_pRotHat = (CRotHat*)CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_RotHat"), CUtile::Create_DummyString(TEXT("Hat"), m_iEveryRotCount));
+	assert(m_pRotHat && " CRot::Initialize()");
+
+	m_iEveryRotCount++;
+	m_iObjectProperty = OP_ROT;
+
 	return S_OK;
 }
 
@@ -122,9 +128,13 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 void CRot::Tick(_float fTimeDelta)
 {
-	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	m_pModelCom->Play_Animation(fTimeDelta);
-	return;
+	//m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	//m_pModelCom->Play_Animation(fTimeDelta);
+	//m_pRotHat->Tick(fTimeDelta);
+
+	//m_pTransformCom->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
+
+	//return;
 
 	m_fTeleportDistance = 5.f;
 
@@ -148,15 +158,16 @@ void CRot::Tick(_float fTimeDelta)
 		m_pTeleportRot->Tick(fTimeDelta);
 
 	m_pTransformCom->Tick(fTimeDelta);
+	m_pRotHat->Tick(fTimeDelta);
 }
 
 void CRot::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
+	/*__super::Late_Tick(fTimeDelta);
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-
-	return;
+	m_pRotHat->Late_Tick(fTimeDelta);
+	return;*/
 
 	if(m_pRotWisp->Get_Collect())
 	{
@@ -174,6 +185,8 @@ void CRot::Late_Tick(_float fTimeDelta)
 
 	if (m_pTeleportRot)
 		m_pTeleportRot->Late_Tick(fTimeDelta);
+
+	m_pRotHat->Late_Tick(fTimeDelta);
 }
 
 HRESULT CRot::Render()
@@ -340,6 +353,8 @@ void CRot::Free()
 
 	/* Effect */
 	Safe_Release(m_pTeleportRot);
+
+	Safe_Release(m_pRotHat);	
 }
 
 HRESULT CRot::SetUp_State()
@@ -510,6 +525,11 @@ HRESULT CRot::SetUp_Effects()
 
 _int CRot::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {	
+	if (pTarget && iColliderIndex == COL_PLAYER)
+	{
+		m_bWakeUp = true;
+	}
+
 	return 0;
 }
 
@@ -521,4 +541,49 @@ _int CRot::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, 
 	}
 
 	return 0;
+}
+
+void CRot::Create_Hat(_uint iHatIndex)
+{
+	CRotHat::HAT_DESC HatDesc;
+	HatDesc.eHatType = (CRotHat::HAT_TYPE)iHatIndex;
+	HatDesc.pSocket = m_pModelCom->Get_BonePtr("hat_socket_jnt");
+	HatDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+	HatDesc.pTargetTransform = m_pTransformCom;
+	HatDesc.pOwnerRot = this;
+
+	m_pRotHat->Create_HatModel(HatDesc);
+}
+
+void CRot::Buy_Hat(_uint iHatIndex)
+{
+	if (IsBuyPossible() == false) return;
+
+	m_vecKenaConnectRot[m_iBuyHatIndex++]->Create_Hat(iHatIndex);
+}
+
+_bool CRot::IsBuyPossible()
+{
+	return m_iThisRotIndex == FIRST_ROT && m_iBuyHatIndex < m_vecKenaConnectRot.size();
+}
+
+_int CRot::Get_KenaConnectRotCount()
+{ 
+	if (m_iThisRotIndex != FIRST_ROT) return -1;
+
+	return m_vecKenaConnectRot.size();
+}
+
+_int CRot::Get_HaveHatRotCount()
+{
+	if (m_iThisRotIndex != FIRST_ROT) return -1;
+
+	return m_iBuyHatIndex;
+}
+
+_int CRot::Get_NoHatRotCount()
+{
+	if (m_iThisRotIndex != FIRST_ROT) return -1;
+
+	return m_vecKenaConnectRot.size() - m_iBuyHatIndex;
 }

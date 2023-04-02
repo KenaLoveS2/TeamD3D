@@ -488,8 +488,8 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		PxRigidStatic* pSphere = m_pPhysics->createRigidStatic(Transform);		
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
 		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *pMaterial, true);
-		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, Desc.isTrigger);
-		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 	
 		PxFilterData FilterData;
 		FilterData.word0 = Desc.eFilterType;		
@@ -520,8 +520,8 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *pMaterial, true);
 		PxTransform relativePose(PxVec3(0, 0, 0));
 		pShape->setLocalPose(relativePose);
-		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, Desc.isTrigger);
-		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 
 		PxFilterData FilterData;
 		FilterData.word0 = Desc.eFilterType;		
