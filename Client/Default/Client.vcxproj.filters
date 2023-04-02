@@ -1397,7 +1397,6 @@
     <ClInclude Include="..\public\ControlRoom.h">
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\HealthFlower_Anim.h" />
     <ClInclude Include="..\public\Frog.h">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClInclude>
@@ -1407,7 +1406,13 @@
     <ClInclude Include="..\public\RotEater_Small.h">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Dynamic_Stone.h" />
+    <ClInclude Include="..\public\RotHat.h" />
+    <ClInclude Include="..\public\HealthFlower_Anim.h">
+      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dynamic_Stone.h">
+      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2235,7 +2240,6 @@
     <ClCompile Include="..\private\ControlRoom.cpp">
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
     <ClCompile Include="..\private\Frog.cpp">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClCompile>
@@ -2245,7 +2249,13 @@
     <ClCompile Include="..\private\RotEater_Small.cpp">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Dynamic_Stone.cpp" />
+    <ClCompile Include="..\private\RotHat.cpp" />
+    <ClCompile Include="..\private\HealthFlower_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dynamic_Stone.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
