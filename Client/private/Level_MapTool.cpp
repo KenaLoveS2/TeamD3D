@@ -144,10 +144,6 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "UpRise_Flower_Test.json");
-
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Pulse_DZ_Change_Normal.json"); // 나중에 디졸브할때 필요
-
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
