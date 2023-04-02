@@ -69,6 +69,7 @@ HRESULT CKena_State::Initialize(CKena * pKena, CKena_Status * pStatus, CStateMac
 	FAILED_CHECK_RETURN(SetUp_State_Mask(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Meditate(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Pulse(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_RotAction(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Shield(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Spin_Attack(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Sprint(), E_FAIL);
@@ -5491,6 +5492,7 @@ void CKena_State::Start_Dash_Settle(_float fTimeDelta)
 void CKena_State::Start_Dash_Portal(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("DASH_PORTAL", 0.f);
+	m_pAnimationState->Set_AnimationProgress(0.055f);
 
 	m_pKena->m_pDashTarget = nullptr;
 }

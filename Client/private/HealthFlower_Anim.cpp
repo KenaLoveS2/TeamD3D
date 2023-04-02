@@ -132,6 +132,12 @@ HRESULT CHealthFlower_Anim::Render()
 
 void CHealthFlower_Anim::ImGui_AnimationProperty()
 {
+	if (ImGui::Button("Reset Anim"))
+	{
+		m_bUsed = false;
+		m_eCurState = OPEN_LOOP;
+	}
+
 	m_pTransformCom->Imgui_RenderProperty_ForJH();
 	m_pModelCom->Imgui_RenderProperty();
 }
@@ -211,7 +217,7 @@ CHealthFlower_Anim::ANIMATION CHealthFlower_Anim::Check_State()
 		{
 			if (m_bUsed == false && m_bInteractable == true)
 			{
-				if (iKenaState == (_uint)CKena_State::ROT_ACTION || iKenaState == (_uint)CKena_State::ROT_ACTION_AIM_STATE || CGameInstance::GetInstance()->Key_Down(DIK_R))
+				if (iKenaState == (_uint)CKena_State::ROT_ACTION || iKenaState == (_uint)CKena_State::ROT_ACTION_AIM_STATE)
 				{
 					m_bUsed = true;
 					eState = CHealthFlower_Anim::BIND;
@@ -283,7 +289,10 @@ _bool CHealthFlower_Anim::Check_CameraRay()
 	_float3		vCamLook = XMVector3Normalize(CGameInstance::GetInstance()->Get_CamLook_Float3());
 
 	if (CPhysX_Manager::GetInstance()->Raycast_CollisionTarget(vCamPos, vCamLook, 15.f, nullptr, this))
+	{
+		m_pKena->Call_FocusRotIcon(this);
 		return true;
+	}
 
 	return false;
 }

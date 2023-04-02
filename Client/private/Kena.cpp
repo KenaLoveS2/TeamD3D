@@ -698,14 +698,14 @@ void CKena::Late_Tick(_float fTimeDelta)
 	//	m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
 	//}
 
-	//if(CGameInstance::GetInstance()->Key_Down(DIK_P))
-	//{
-	//	/* Test Before Hit Monster */
-	//	_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
-	//	m_pKenaStatus->Plus_CurPIPGuage(0.2f);
-	//	_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
-	//	m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
-	//}
+	if(CGameInstance::GetInstance()->Key_Down(DIK_P))
+	{
+		/* Test Before Hit Monster */
+		_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
+		m_pKenaStatus->Plus_CurPIPGuage(0.2f);
+		_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
+		m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
+	}
 
 	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
 	//{
@@ -2041,7 +2041,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			_smatrix	matOutPortal = pPortal->Get_LinkedPortal()->Get_WorldMatrix();
 
 			_float4		vOutRight;
-			_float4		vOutLook = matOutPortal.Forward();
+			_float4		vOutLook = matOutPortal.Up();
 			vOutLook.Normalize();
 			vOutRight = XMVector3Normalize(XMVector3Cross(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_UP)), vOutLook));
 
@@ -2052,7 +2052,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_pTransformCom->Set_State(CTransform::STATE_LOOK, vOutLook * vScale.z);
 
 			_float4		vPos = matOutPortal.Translation() + vOutLook * 0.5f;
-			vPos.y -= 5.f;
+			vPos.y -= 4.f;
 			//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
 			m_pTransformCom->Set_Position(vPos);
 		}

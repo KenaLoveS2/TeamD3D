@@ -381,9 +381,6 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
     FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_PulseState", &m_eStatus.eState, sizeof _uint), E_FAIL);
     FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_DamageDurationTime", &m_eStatus.fStateDurationTime, sizeof _float), E_FAIL);
 
-    /* Kena Status */
-    FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDesolve, sizeof(_bool)), E_FAIL);
-
     if (m_bDesolve)
     {
         FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
