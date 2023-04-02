@@ -454,21 +454,23 @@ PS_OUT PS_MAGEBULLET(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	//T_Deadzone_REAM
-	float4 vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	//t_fur_noise_02
-	float4 vNoise = g_ReamTexture.Sample(LinearSampler, In.vTexUV);
-	// T_GR_Cloud_Noise_A
-	float4 vSmooth = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+	float4 vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);	//T_Deadzone_REAM
+	float4 vNoise = g_ReamTexture.Sample(LinearSampler, In.vTexUV);		// t_fur_noise_02
+	float4 vSmooth = g_MaskTexture.Sample(LinearSampler, In.vTexUV);	// T_GR_Cloud_Noise_A
+	vNoise = vNoise + float4(53.f, 25.f, 0.0f, 0.0f) / 255.f;
 
-	float4 vblendColor = lerp(vSmooth, vColor, 0.4f);
-	float4 finalcolor = lerp(vblendColor, vNoise, vNoise.r) * float4(81.f, 12.f, 0.f, 255.f) / 255.f;
+	/* */
+	vector vfresnelcolor = float4(255.f, 40.f, 6.0f, 0.0f) / 255.f;
+	float4 vfinalblendColor = (vNoise + vSmooth + vfresnelcolor);
+	vector texturefresnel = vector(fresnel_glow(-1.0f, 0.64f, vfinalblendColor.rgb, In.vNormal.rgb, In.vViewDir), 1.f);
+	texturefresnel.a = texturefresnel.r;
 
-	float4 fresnelcolor = float4(255.f, 37.f, 0.f, 255.f) / 255.f;
-	float4 fresnel = float4(fresnel_glow(3.5, 2.5, fresnelcolor.rgb, In.vNormal.rgb, In.vViewDir.rgb), fresnelcolor.a);
+	vector InnerColor = vector(0.0f, 255.f, 255.f, 0.0f) / 255.f;
+	vector Inner = vector(fresnel_glow(-0.55f, -0.1f, InnerColor.rgb, In.vNormal.rgb, -In.vViewDir), InnerColor.a);
+	/* */
 
-	float4 vfinalblendColor = lerp(finalcolor, fresnel, finalcolor.r);
-	Out.vDiffuse = vfinalblendColor;
+	vfinalblendColor = saturate(texturefresnel) + Inner;
+	Out.vDiffuse = CalcHDRColor(vfinalblendColor, g_fHDRValue);
 	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
@@ -494,7 +496,8 @@ PS_OUT PS_MAGEBULLETCOVER(PS_IN In)
 	}
 
 	float4 vColor = float4(255.f, 136.f, 98.f, 255.f) / 255.f;
-	Out.vDiffuse = vDissolve * vColor * 3.f;
+	float4 finalcolor = vDissolve * vColor;
+	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
 	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
@@ -593,28 +596,27 @@ PS_OUT PS_SWIPES_CHARGED(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	float  time = frac(g_Time * 0.5f);
-	float2 OffsetUV = TilingAndOffset(In.vTexUV * 1.5f, float2(0.8f, 1.0f), float2(0.0f, time));
-
-	float4 swipes_charged_color = float4(1.f, 0.166602f, 0.419517f, 0.514f);
+	float2 OffsetUV = TilingAndOffset(float2(In.vTexUV.x, In.vTexUV.y * 2.5f), float2(0.8f, 1.0f), float2(0.0f, time));
+	float4 swipes_charged_color = float4(255.f, 0.0f, 0.0f, 0.0f) / 255.f;
 
 	vector vRedRim = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	vector vIcenoise = g_DTexture_1.Sample(LinearSampler, In.vTexUV);
 
-	vector vLerpTexture = lerp(vRedRim, vIcenoise, vRedRim.r);
-	vLerpTexture.a = vLerpTexture.r;
-
-	vector texturefresnel = vector(fresnel_glow(4.f, 4.5f, vLerpTexture.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
-	texturefresnel.a = texturefresnel.r * 0.1f;
-
-	vector fresnel = vector(fresnel_glow(0.5f, 3.5f, swipes_charged_color.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
-	fresnel.a = fresnel.r * 0.1f;
-
 	vector vSwipe05 = g_DTexture_2.Sample(LinearSampler, OffsetUV);
-	vSwipe05.a = vSwipe05.r * 0.1f;
+	vSwipe05.a = vSwipe05.r;
 
-	Out.vDiffuse = texturefresnel + fresnel + vSwipe05 * (swipes_charged_color * 3.f);
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
+	/* */
+	float4 finalcolor = vRedRim + vIcenoise;
+	vector texturefresnel = vector(fresnel_glow(5.f, 5.5f, finalcolor.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
+	texturefresnel.a = texturefresnel.r ;
+	/* */
+
+	vector fresnel = vector(fresnel_glow(1.0f, 0.03f, finalcolor.rgb, In.vNormal.rgb, -In.vViewDir), g_vColor.a);
+	finalcolor = finalcolor + vSwipe05 + texturefresnel + fresnel + swipes_charged_color;
+	finalcolor = saturate(finalcolor);
+	finalcolor.a = 0.3f;
+
+	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
 	return Out;
 }
 

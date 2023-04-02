@@ -281,6 +281,19 @@ void CVIBuffer_Point_Instancing::Set_ResetOriginPos()
 
 HRESULT CVIBuffer_Point_Instancing::Reset_Type()
 {
+	switch (m_ePointDesc->eShapeType)
+	{
+	case POINTDESC::SHAPETYPE::VIBUFFER_HAZE:
+		FAILED_CHECK_RETURN(Reset_Haze(), E_FAIL);
+		break;
+	case POINTDESC::SHAPETYPE::VIBUFFER_GATHER:
+		FAILED_CHECK_RETURN(Reset_Gather(), E_FAIL);
+		break;
+	case POINTDESC::SHAPETYPE::VIBUFFER_PARABOLA:
+		FAILED_CHECK_RETURN(Reset_Parabola(), E_FAIL);
+		break;
+	}
+
 	m_ePointDesc->fTermAcc = 0.0f;
 	m_bFinish = false;
 	return S_OK;
@@ -799,6 +812,58 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Parabola(_float fTimeDelta)
 			((VTXMATRIX*)SubResource.pData)[i].vPosition = vPos;
 		}
 
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Point_Instancing::Reset_Haze()
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.x = 0.f + m_InstanceData[i].Position.x;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 0.f + m_InstanceData[i].Position.y;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.z = 0.f + m_InstanceData[i].Position.z;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+HRESULT CVIBuffer_Point_Instancing::Reset_Gather()
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_InstanceData[i].Position.x;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_InstanceData[i].Position.y;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_InstanceData[i].Position.z;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+HRESULT CVIBuffer_Point_Instancing::Reset_Parabola()
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_InstanceData[i].Position.x;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_InstanceData[i].Position.y;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_InstanceData[i].Position.z;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
 	}
 
 	m_pContext->Unmap(m_pInstanceBuffer, 0);

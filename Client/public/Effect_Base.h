@@ -151,8 +151,10 @@ public:
 		m_fInitSpriteCnt = InitSprit;
 	}
 
+	public:
 	void	TurnOffSystem(_float fDurationTime, _float fTimeDelta);
-	_bool	TurnOffSystem(_float fTurnoffTime, _float fDurationTime, _float fTimeDelta);
+	_bool	TurnOffSystem(_float& fTurnoffTime, _float fDurationTime, _float fTimeDelta);
+	void	Tick_Sprite(_float& fDurationTime, _float fTimeDelta);
 
 public: // Texture Cnt
 	_int    Get_TotalDTextureCnt() { return m_iTotalDTextureComCnt; }

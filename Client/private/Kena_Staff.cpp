@@ -163,7 +163,7 @@ void CKena_Staff::Tick_ChargeOption(_float4 vPosition)
 			{
 				dynamic_cast<CE_P_ExplosionGravity*>(Pair.second)->Set_Option(CE_P_ExplosionGravity::TYPE_KENA_ATTACK2);
 				dynamic_cast<CE_P_ExplosionGravity*>(Pair.second)->UpdateParticle(vPosition);
-				break;
+				//break;
 			}
 		}
 	}

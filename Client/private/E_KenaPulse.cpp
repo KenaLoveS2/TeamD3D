@@ -96,9 +96,9 @@ HRESULT CE_KenaPulse::Initialize(void* pArg)
     /* ~Component */
 
     Set_Child();
+    Set_ShaderOption(m_eEFfectDesc.iPassCnt, 2.0f, _float2(0.0f, 0.0f), false);
     m_eEFfectDesc.vColor = XMVectorSet(0.0f, 116.f, 255.f, 255.f) / 255.f;
     m_eStatus.eState = CE_KenaPulse::tagMyStatus::STATE_DEFAULT;
-    m_eEFfectDesc.bActive = false;
     memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
     return S_OK;
 }
@@ -154,13 +154,11 @@ HRESULT CE_KenaPulse::Late_Initialize(void* pArg)
 
 void CE_KenaPulse::Tick(_float fTimeDelta)
 {
-    /* 테스트때문에 위로 잠깐 올림 */
-    if (m_pExplsionGravity) m_pExplsionGravity->Tick(fTimeDelta);
-
 	if (m_eEFfectDesc.bActive == false)
    		return;
 
 	__super::Tick(fTimeDelta);
+	if (m_pExplsionGravity) m_pExplsionGravity->Tick(fTimeDelta);
 
 	m_fTimeDelta += fTimeDelta;
 	if (m_bDesolve)
@@ -279,11 +277,11 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_KenaPulse::Render()
 {
-    if (FAILED(SetUp_ShaderResources()))
-        return E_FAIL;
-
     if (FAILED(__super::Render()))
         return E_FAIL;
+
+	if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;
 
     if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
         m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
@@ -314,6 +312,10 @@ _int CE_KenaPulse::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
     }
     else
     {
+        CEffect_Base* pEffectBase = dynamic_cast<CEffect_Base*>(pTarget);
+        if (pEffectBase != nullptr && pEffectBase->Get_Active() == false)
+            return 0;
+
         if (iColliderIndex == (_uint)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
         {
             if (m_pKena->Get_State(CKena::STATE_PULSE) == false)
@@ -405,11 +407,6 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
         FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
         FAILED_CHECK_RETURN(m_pDissolveTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 3), E_FAIL);
     }
-
-    if (g_bDayOrNight == false)
-        m_fHDRValue = 2.f;
-    else
-        m_fHDRValue = 1.0f;
 
     return S_OK;
 }

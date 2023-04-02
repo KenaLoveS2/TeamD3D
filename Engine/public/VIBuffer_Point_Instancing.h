@@ -107,6 +107,11 @@ public:
 	HRESULT			Tick_Parabola(_float fTimeDelta); // Gravity
 
 public:
+	HRESULT			Reset_Haze();
+	HRESULT			Reset_Gather();
+	HRESULT			Reset_Parabola();
+
+public:
 	POINTDESC*      Get_PointDesc() { return m_ePointDesc; }
 	void	        Set_PointDesc(POINTDESC* ePointDesc) {
 		memcpy(m_ePointDesc, ePointDesc, sizeof(POINTDESC) * m_iNumInstance);
@@ -131,10 +136,9 @@ public:
 	void			Set_Gravity(_bool bUseGravity) { m_ePointDesc->bUseGravity = bUseGravity; }
 	void			Set_GravityTimeZero() { m_fGravity = 0.0f; }
 	void			Set_ResetOriginPos();
+	void			Set_Dir(_fvector vDir) { m_ePointDesc->SetDir = vDir; }
 
-	void			Set_Dir(_fvector vDir) {
-		m_ePointDesc->SetDir = vDir;
-	}
+public:
 	HRESULT			Reset_Type();
 	_bool			Get_Finish() { return m_bFinish; }
 

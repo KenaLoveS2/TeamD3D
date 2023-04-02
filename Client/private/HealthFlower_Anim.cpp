@@ -35,6 +35,7 @@ HRESULT CHealthFlower_Anim::Initialize(void* pArg)
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
+	FAILED_CHECK_RETURN(SetUp_Effects(), E_FAIL);
 
 	m_bRenderActive = true;
 
@@ -129,12 +130,18 @@ HRESULT CHealthFlower_Anim::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 	}
-
+	 
 	return S_OK;
 }
 
 void CHealthFlower_Anim::ImGui_AnimationProperty()
 {
+	if (ImGui::Button("Reset Anim"))
+	{
+		m_bUsed = false;
+		m_eCurState = OPEN_LOOP;
+	}
+
 	m_pTransformCom->Imgui_RenderProperty_ForJH();
 	m_pModelCom->Imgui_RenderProperty();
 }
@@ -251,7 +258,7 @@ CHealthFlower_Anim::ANIMATION CHealthFlower_Anim::Check_State()
 				m_pKena->Get_Status()->Add_HealAmount(iHalfAmount);
 
 				/* PARTICLE */
-				m_pExplosionGravity->UpdateColor(m_pTransformCom->Get_Position());
+				m_pExplosionGravity->UpdateParticle(m_pTransformCom->Get_Position());
 			}
 
 			break;

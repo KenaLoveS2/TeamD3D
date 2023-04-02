@@ -120,35 +120,7 @@ void CEffect::Tick(_float fTimeDelta)
 #pragma endregion nouse
 
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
-	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
-		{
-			if (m_eEFfectDesc.fTimeDelta < 1.f)
-				m_eEFfectDesc.fWidthFrame++;
-			else
-				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-			m_fTimeDelta = 0.0;
-
-			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
-			{
-				if (m_eEFfectDesc.fTimeDelta < 1.f)
-					m_eEFfectDesc.fHeightFrame++;
-				else
-					m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
-
-				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-				{
-					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
-					m_bFinishSprite = true;
-				}
-			}
-
-		}
-	}
+		Tick_Sprite(m_fTimeDelta, fTimeDelta);
 
 	if (nullptr != m_pEffectTrail)
 		dynamic_cast<CEffect_Trail*>(m_pEffectTrail)->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());

@@ -50,8 +50,8 @@ HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
-	// 	if (TYPE::TYPE_KENA_STAFF && !lstrcmp(Get_ObjectCloneName(), L"Effect_Kena_Particle_0"))
-	if (!lstrcmp(Get_ObjectCloneName(), L"Test"))
+	//if (!lstrcmp(Get_ObjectCloneName(), L"Test"))
+	if (m_eType == TYPE_HEALTHFLOWER)
 		Set_OptionTool();
 	else
 		m_fLife += fTimeDelta;
@@ -62,9 +62,11 @@ void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 		m_fLife = 0.0f;
 		return;
 	}
+	else
+		m_pTransformCom->Set_Position(m_vFixPos);
 
 	/*m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && */
-	if (m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && m_eEFfectDesc.bActive == true &&  m_pVIInstancingBufferCom->Get_Finish() == true)
+	if (m_eEFfectDesc.bActive == true &&  m_pVIInstancingBufferCom->Get_Finish() == true)
 		m_eEFfectDesc.bActive = false;
 }
 
@@ -99,42 +101,51 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 {
 	CVIBuffer_Point_Instancing::POINTDESC* ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
 	m_eType = eType;
+	_float3 fMin = _float3(-1.f, -1.f, -1.f);
+	_float3 fMax = _float3(1.f, 1.f, 1.f);
 
 	switch (eType)
 	{
 	case TYPE::TYPE_DEFAULT:
 		/* 위로 터지는거 */
+		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(1.f, 1.f, 1.f, 0.2f), 0.1f,
 			_float2(0.2f, 0.2f), false);
 		break;
 
 	case TYPE::TYPE_DEAD_MONSTER:
+		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(255.f, 120.f, 120.f, 255.f) / 255.f, 0.1f,
 			_float2(0.2f, 0.2f), false);
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_BOSS_WEAPON:
+		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f, 0.4f,
 			_float2(0.3f, 0.3f), false);
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_BOSS_ATTACK:
+		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f, 0.2f,
 			_float2(0.3f, 0.3f), true, vSetDir);
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_BOSS_PARRY:
+		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 10.f, XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f, 0.2f,
 			_float2(0.3f, 0.3f), false);
 		break;
 
 	case TYPE::TYPE_DAMAGE_PULSE:
+		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(1.f, 0.5f, 1.f, 0.2f), 0.2f,
 			_float2(0.1f, 0.1f), true, vSetDir);
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_KENA_ATTACK:
-		ParticleOption_Parabola(ePointDesc, 58.f, XMVectorSet(114.f, 227.f, 255.f, 255.f) / 255.f, 0.2f,
+		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
+		ParticleOption_Parabola(ePointDesc, 58.f, XMVectorSet(114.f, 227.f, 255.f, 255.f) / 255.f, 0.1f,
 			_float2(0.3f, 0.3f), false);
 		break;
 
@@ -151,19 +162,19 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 
 		ePointDesc->fCreateRange = 1.f;
 		ePointDesc->fRange = 3.f;
-		ePointDesc->fTerm = 1.f;
+		ePointDesc->fTerm = 2.f;
 		ePointDesc->bSetDir = false;
 
-		_float3 fMin = _float3(-1.f, -1.f, -1.f);
-		_float3 fMax = _float3(1.f, 1.f, 1.f);
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		m_pVIInstancingBufferCom->Set_PSize(_float2(0.2f, 0.2f));
 		break;
 	}
 
 	case CE_P_ExplosionGravity::TYPE_HEALTHFLOWER:
-		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f, 0.2f,
-			_float2(0.3f, 0.3f), false);
+		fMin = _float3(-0.1f, -0.1f, -0.1f);
+		fMax = _float3(0.1f, 0.1f, 0.1f);
+		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(140.f, 220.f, 255.f, 255.f)/ 255.f, 0.08f,
+			_float2(0.1f, 0.1f), false);
 		break;
 
 	}
@@ -187,9 +198,6 @@ void CE_P_ExplosionGravity::ParticleOption_Parabola(CVIBuffer_Point_Instancing::
 	if(bSetDir)
 		ePointDesc->SetDir = vDir;
 
-	_float3 fMin = _float3(-1.f, -1.f, -1.f);
-	_float3 fMax = _float3(1.f, 1.f, 1.f);
-	m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 	m_pVIInstancingBufferCom->Set_PSize(pSize);
 }
 
@@ -198,6 +206,7 @@ void CE_P_ExplosionGravity::UpdateParticle(_float4 vPos, _vector vDir)
 	m_eEFfectDesc.bActive = true;
 	Reset_Type();
 
+	m_vFixPos = vPos;
 	m_pTransformCom->Set_Position(vPos);
 	m_pVIInstancingBufferCom->Set_Dir(vDir);
 }
@@ -227,7 +236,7 @@ void CE_P_ExplosionGravity::Set_OptionTool()
 		m_pShaderCom->ReCompile();
 	ImGui::SameLine();
 	if(ImGui::Button("Resize"))
-		m_pVIInstancingBufferCom->Set_PSize(_float2(0.2f, 0.2f));
+		m_pVIInstancingBufferCom->Set_PSize(_float2(0.1f, 0.1f));
 	ImGui::SameLine();
 	if (ImGui::Button("ResetTime"))
 		m_fLife = 0.0f;

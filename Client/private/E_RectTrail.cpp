@@ -88,14 +88,10 @@ void CE_RectTrail::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	if (m_eType == CE_RectTrail::OBJ_BODY_SHAMAN)
-	{
-		m_fDurationTime += fTimeDelta;
-		if (m_fDurationTime > 2.f)
-		{
-			m_eEFfectDesc.bActive = false;
-			m_fDurationTime = 0.0f;
-		}
-	}
+		TurnOffSystem(m_fDurationTime, 2.f, fTimeDelta);
+
+	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
+		Tick_Sprite(m_fTimeDelta, fTimeDelta);
 
 	Set_KenaStaffOption();
 
@@ -123,7 +119,7 @@ HRESULT CE_RectTrail::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(11);
+	m_pShaderCom->Begin(m_eEFfectDesc.iPassCnt);
 	m_pVITrailBufferCom->Render();
 
 	return S_OK;
@@ -205,6 +201,20 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 		m_eEFfectDesc.fLife = 0.5f;
 		m_eEFfectDesc.vColor = XMVectorSet(255.f, 255.f, 255.f, 255.f) / 255.f;
 		break;
+
+	case Client::CE_RectTrail::OBJ_TRAIL:
+		m_eEFfectDesc.fFrame[0] = 26.f;
+		m_eEFfectDesc.iPassCnt = 14;
+		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.fWidth = 13.f;
+		m_eEFfectDesc.vColor = XMVectorSet(255.f, 32.f, 0.f, 255.f) / 255.f;
+
+		m_eEFfectDesc.eTextureRenderType = CEffect_Base::tagEffectDesc::TEX_SPRITE;
+		m_eEFfectDesc.iSeparateWidth = 8;
+		m_eEFfectDesc.iSeparateHeight = 8;
+		m_eEFfectDesc.fTimeDelta = 0.3f;
+		break;
+
 	}
 }
 

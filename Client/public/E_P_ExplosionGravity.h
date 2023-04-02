@@ -63,6 +63,8 @@ private:
 	TYPE	m_eType = TYPE_DEFAULT;
 	_float	m_fDurationTime = 0.0f;
 
+	_vector m_vFixPos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+
 public:
 	static  CE_P_ExplosionGravity* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject*  Clone(void* pArg = nullptr) override;

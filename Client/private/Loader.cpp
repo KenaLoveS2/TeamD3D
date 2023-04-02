@@ -2281,7 +2281,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_FireBulletExplosion */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletExplosion"),
-		CE_FireBulletExplosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_FireBulletExplosion.json"))))
+		CE_FireBulletExplosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_FireBulletExplosion2.json"))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_FireBulletExplosion */

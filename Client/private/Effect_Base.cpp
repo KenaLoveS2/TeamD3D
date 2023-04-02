@@ -475,21 +475,53 @@ void CEffect_Base::TurnOffSystem(_float fDurationTime, _float fTimeDelta)
 	m_fTurnOffTime += fTimeDelta;
 	if (m_fTurnOffTime > fDurationTime)
 	{
+		m_pTransformCom->Set_PositionY(-1000.f);
 		m_eEFfectDesc.bActive = false;
 		m_fTurnOffTime = 0.0f;
 	}
 }
 
-_bool CEffect_Base::TurnOffSystem(_float fTurnoffTime, _float fDurationTime, _float fTimeDelta)
+_bool CEffect_Base::TurnOffSystem(_float& fTurnoffTime, _float fDurationTime, _float fTimeDelta)
 { 
 	fTurnoffTime += fTimeDelta;
 	if (fTurnoffTime > fDurationTime)
 	{
-		return true;
+		m_pTransformCom->Set_PositionY(-1000.f);
 		m_eEFfectDesc.bActive = false;
 		fTurnoffTime = 0.0f;
+		return true;
 	}
 	return false;
+}
+
+void CEffect_Base::Tick_Sprite(_float& fDurationTime, _float fTimeDelta)
+{
+	fDurationTime += fTimeDelta;
+	if (fDurationTime > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
+	{
+		if (m_eEFfectDesc.fTimeDelta < 1.f)
+			m_eEFfectDesc.fWidthFrame++;
+		else
+			m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+
+		fDurationTime = 0.0;
+
+		if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
+		{
+			if (m_eEFfectDesc.fTimeDelta < 1.f)
+				m_eEFfectDesc.fHeightFrame++;
+			else
+				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+
+			m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
+
+			if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
+			{
+				m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
+				m_bFinishSprite = true;
+			}
+		}
+	}
 }
 
 void CEffect_Base::Set_TrailDesc()
@@ -860,14 +892,36 @@ void CEffect_Base::ToolOption(const char* pToolTag)
 	ImGui::Begin(pToolTag);
 	static _float fHDRValue = this->m_fHDRValue;
 	static _float2 fUV = this->m_fUV;
+	static _float2 fFrame = _float2(m_eEFfectDesc.fWidthFrame, m_eEFfectDesc.fHeightFrame);
+	static _float2 iSeparate = _float2(m_eEFfectDesc.iWidthCnt, m_eEFfectDesc.iHeightCnt);
+	static _int iType = 0;
+	static _float fTimeDelta = 0.0f;
 
 	TransformView();
 
 	if (ImGui::Button("Recompile")) m_pShaderCom->ReCompile(); ImGui::SameLine();
-	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive); ImGui::SameLine();
+
+	ImGui::RadioButton("One", &iType, 0); ImGui::SameLine(); ImGui::RadioButton("Sprite", &iType, 1);
+	if (iType == 0) m_eEFfectDesc.eTextureRenderType = CEffect_Base::tagEffectDesc::TEX_ONE;
+	else if (iType == 1) m_eEFfectDesc.eTextureRenderType = CEffect_Base::tagEffectDesc::TEX_SPRITE;
+
 	ImGui::InputFloat4("DiffuseTexture", (_float*)&m_eEFfectDesc.fFrame);
 	ImGui::InputFloat4("MaskTexture", (_float*)&m_eEFfectDesc.fMaskFrame);
+	ImGui::InputFloat4("vScale", (_float*)&m_eEFfectDesc.vScale);
 	ImGui::InputInt("iPassCnt", &m_eEFfectDesc.iPassCnt);
+
+	ImGui::InputFloat2("##CntWidth, Height", (_float*)&fFrame);
+	m_eEFfectDesc.iWidthCnt = (_int)fFrame.x;
+	m_eEFfectDesc.iHeightCnt = (_int)fFrame.y;
+
+	ImGui::InputFloat2("##fSeparateWidthCnt, HeightCnt", (_float*)&iSeparate);
+	m_eEFfectDesc.iSeparateWidth = (_int)iSeparate.x;
+	m_eEFfectDesc.iSeparateHeight = (_int)iSeparate.y;
+
+	ImGui::BulletText("fTimeDelta : "); ImGui::InputFloat("##fTimeDelta", &fTimeDelta);
+	m_eEFfectDesc.fTimeDelta = fTimeDelta;
+
 	ImGui::InputFloat("HDRValue", &fHDRValue);
 	m_fHDRValue = fHDRValue;
 	ImGui::DragFloat2("UV", (_float*)&fUV, 0.01f, -1.0f, 1.0f);

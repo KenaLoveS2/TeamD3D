@@ -1097,6 +1097,36 @@ PS_OUT PS_EXPLOSIONPARTICLE(PS_IN In)
 	return Out;
 }
 
+//PS_RECTTRAIL_SPRITE
+PS_OUT PS_RECTTRAIL_SPRITE(PS_TRAILIN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* Sprite */
+	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+	In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+	In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+	/* Sprite */
+
+	/* DiffuseTexture */
+	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	albedo.a = albedo.r * 0.3f;
+
+	float3 vColor = float3(15.f, 130.f, 190.f) / 255.f;
+	albedo.rgb = float3(1.f, 1.f, 1.f) * 3.f;
+	albedo = albedo * g_vColor;
+	if (albedo.a < 0.1f)
+		discard;
+
+	// Out.vColor = albedo;
+	albedo.a = albedo.a * In.fLife;
+	Out.vColor = CalcHDRColor(albedo, g_fHDRValue);
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Effect_Dafalut // 0
@@ -1280,4 +1310,18 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_EXPLOSIONPARTICLE();
 	}
+
+	pass RectTrail_Sprite // 14
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_TRAILMAIN();
+		GeometryShader = compile gs_5_0 GS_RECTTRAIL();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_RECTTRAIL_SPRITE();
+	}
+
 }

@@ -38,6 +38,7 @@ HRESULT CE_Swipes_Charged::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Child(), E_FAIL);
 
 	m_eEFfectDesc.bActive = false;
+	m_fHDRValue = 1.6f;
 	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
 	return S_OK;
 }
@@ -79,9 +80,6 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 
 void CE_Swipes_Charged::Tick(_float fTimeDelta)
 {
-	if (m_pParent == nullptr)
-		ToolOption("CE_Swipes_Charged");
-
 	__super::Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.bActive == false)
@@ -102,35 +100,35 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 	}
 
 	m_fTimeDelta += fTimeDelta;
-	m_vecChild[0]->Set_Active(true);
-	_float3 vScaled = m_pTransformCom->Get_Scaled();
+	//m_vecChild[0]->Set_Active(true);
+	//_float3 vScaled = m_pTransformCom->Get_Scaled();
 
-	if (vScaled.x > 20.f)
-	{
-		m_eEFfectDesc.bActive = false;
-		m_pTransformCom->Set_Scaled(_float3(0.5f, 0.5f, 0.5f));
-		m_vecChild[0]->Set_Active(false);
-		m_vecChild[0]->Get_TransformCom()->Set_Scaled(_float3(0.5f, 0.5f, 0.5f));
-		m_fTimeDelta = 0.0f;
-	}
-	else
-	{
-		vScaled.x += fTimeDelta * 4.f + 0.2f;
-		vScaled.y += fTimeDelta * 4.f + 0.2f;
-		vScaled.z += fTimeDelta * 4.f + 0.2f;
-		m_pTransformCom->Set_Scaled(vScaled);
-		m_vecChild[0]->Get_TransformCom()->Set_Scaled(vScaled * 5.f);
-	}
+	//if (vScaled.x > 20.f)
+	//{
+	//	m_eEFfectDesc.bActive = false;
+	//	m_pTransformCom->Set_Scaled(_float3(0.5f, 0.5f, 0.5f));
+	//	m_vecChild[0]->Set_Active(false);
+	//	m_vecChild[0]->Get_TransformCom()->Set_Scaled(_float3(0.5f, 0.5f, 0.5f));
+	//	m_fTimeDelta = 0.0f;
+	//}
+	//else
+	//{
+	//	vScaled.x += fTimeDelta * 4.f + 0.2f;
+	//	vScaled.y += fTimeDelta * 4.f + 0.2f;
+	//	vScaled.z += fTimeDelta * 4.f + 0.2f;
+	//	m_pTransformCom->Set_Scaled(vScaled);
+	//	m_vecChild[0]->Get_TransformCom()->Set_Scaled(vScaled * 5.f);
+	//}
 
 	PxShape* pShape = nullptr;
 	m_pTransformCom->Get_ActorList()->back().pActor->getShapes(&pShape, sizeof(PxShape));
 
-	PxSphereGeometry	pGeometry;
-	if (pShape->getSphereGeometry(pGeometry))
-	{
-		pGeometry.radius = vScaled.x * 1.5f;
-		pShape->setGeometry(pGeometry);
-	}
+	//PxSphereGeometry	pGeometry;
+	//if (pShape->getSphereGeometry(pGeometry))
+	//{
+	//	pGeometry.radius = vScaled.x * 1.5f;
+	//	pShape->setGeometry(pGeometry);
+	//}
 
 	m_pTransformCom->Tick(fTimeDelta);
 }
@@ -151,8 +149,8 @@ void CE_Swipes_Charged::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_Swipes_Charged::Render()
 {
-	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
 	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
 		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
@@ -188,7 +186,6 @@ HRESULT CE_Swipes_Charged::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 	
-	m_fHDRValue = 0.0f;
 	return S_OK;
 }
 
