@@ -107,9 +107,9 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 	{
 		if (m_pSelected != nullptr)
 		{
-			if(CSkillInfo::CHECK_UNLOCKED_AVAILABLE == 
-				m_pSkills[m_iPickedIndex / 5]
-				->Check(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level(), m_pPlayer))
+			//if(CSkillInfo::CHECK_UNLOCKED_AVAILABLE == 
+			//	m_pSkills[m_iPickedIndex / 5]
+			//	->Check(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level(), m_pPlayer))
 			{
 				m_bPick = false;
 				CUI_ClientManager::GetInstance()->Call_ConfirmWindow(L"이 업그레이드를 잠금 해제하시겠습니까?", true, this);	
@@ -155,11 +155,15 @@ void CUI_CanvasUpgrade::Common_Function(_bool bResult)
 	}
 
 	/* 2. Change the States */
-	 m_pSkills[m_iPickedIndex / 5]
-	 	->UnLock(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level());
+	_uint iLevel = static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level();
+	 m_pSkills[m_iPickedIndex / 5]->UnLock(iLevel);
 	 static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->State_Change(2);
 
-	 /* 3. Update the info */
+	 /* 3. Update the Player's Info */
+	 CKena_Status::SKILLTAB eCategory = (CKena_Status::SKILLTAB)(m_iPickedIndex / 5);
+	 m_pPlayer->Get_Status()->Apply_Skill(eCategory, iLevel);
+
+	 /* 4. Update the info */
 	 Spread();
 	}
 }

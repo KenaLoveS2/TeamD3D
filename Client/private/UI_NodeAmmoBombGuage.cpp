@@ -9,13 +9,13 @@
 
 CUI_NodeAmmoBombGuage::CUI_NodeAmmoBombGuage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
-	, m_fGuage(0.f)
+	, m_fGuage(1.f)
 {
 }
 
 CUI_NodeAmmoBombGuage::CUI_NodeAmmoBombGuage(const CUI_NodeAmmoBombGuage & rhs)
 	: CUI_Node(rhs)
-	, m_fGuage(0.f)
+	, m_fGuage(1.f)
 {
 }
 

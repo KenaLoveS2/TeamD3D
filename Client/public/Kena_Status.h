@@ -18,8 +18,8 @@ private:
 	virtual ~CKena_Status() = default;
 		
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg, CGameObject * pOwner);
+	virtual HRESULT		Initialize_Prototype();
+	virtual HRESULT		Initialize(void* pArg, CGameObject * pOwner);
 	virtual void		Tick(_float fTimeDelta) override;
 	virtual void		Imgui_RenderProperty() override;
 
@@ -66,9 +66,9 @@ private:
 	void				Update_ArrowCoolTime(_float fTimeDelta);
 	void				Update_BombCoolTime(_float fTimeDelta);
 	void				Update_ShieldRecovery(_float fTimeDelta);
-	void				Apply_Skill(SKILLTAB eCategory, _uint iSlot);
 
 public:
+	void				Apply_Skill(SKILLTAB eCategory, _uint iSlot);
 	void				Under_Shield(CStatus* pEnemyStatus);
 
 public:

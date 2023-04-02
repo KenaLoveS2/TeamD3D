@@ -126,29 +126,30 @@ void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eCool = CUI_ClientManager::AMMO_BOMBCOOL;
 	CUI_ClientManager::UI_PRESENT eBombEffect = CUI_ClientManager::AMMO_BOMBEFFECT;
 	CUI_ClientManager::UI_PRESENT eReCharge = CUI_ClientManager::AMMO_BOMBRECHARGE;
-	CUI_ClientManager::UI_PRESENT eMoment = CUI_ClientManager::AMMO_BOMBMOMENT;
+	//CUI_ClientManager::UI_PRESENT eMoment = CUI_ClientManager::AMMO_BOMBMOMENT;
 
 	_float fGuage = 0.f;
 
 	if (m_iCurBombCount == m_iMaxBombCount) /* Full */
 	{
 		m_fCurBombCoolTime = 0.0f;
-		fGuage = 1.0f;
-		m_StatusDelegator.broadcast(eCool, fGuage);
 	}
 	else /* Not Full */
 	{
-		if (m_fCurBombCoolTime == 0.f ) /* Bomb Use Moment */
+		if (m_fCurBombCoolTime == 0.f) /* Bomb Use Moment */
 		{
 			_float fCount = (_float)m_iCurBombCount;
-			m_StatusDelegator.broadcast(eMoment, fGuage);
 			m_StatusDelegator.broadcast(eBomb, fCount);
+			//m_StatusDelegator.broadcast(eMoment, fGuage);
 		}
 
 
 		m_fCurBombCoolTime += fTimeDelta;
 		if (m_fCurBombCoolTime >= m_fInitBombCoolTime)
 		{
+			fGuage = 1.0f;
+			m_StatusDelegator.broadcast(eCool, fGuage);
+
 			/* Fullfilll Effect Call */
 			m_StatusDelegator.broadcast(eBombEffect, fGuage);
 
@@ -158,21 +159,28 @@ void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
 			else
 				m_fCurBombCoolTime = m_fInitBombCoolTime;
 
-			/* ReCharge */
-			_float fIndex = (_float)m_iCurBombCount - 1;
-			
-			m_StatusDelegator.broadcast(eReCharge, fIndex);
+			///* ReCharge */
+			//_float fIndex = (_float)m_iCurBombCount - 1;
+			//
+			//m_StatusDelegator.broadcast(eReCharge, fIndex);
 		}
-				fGuage = m_fCurBombCoolTime / m_fInitBombCoolTime;
-		m_StatusDelegator.broadcast(eCool, fGuage);
-
+		else
+		{
+			fGuage = m_fCurBombCoolTime / m_fInitBombCoolTime;
+			m_StatusDelegator.broadcast(eCool, fGuage);
+		}
 	}
 }
 
 void CKena_Status::Update_ShieldRecovery(_float fTimeDelta)
 {
+	CUI_ClientManager::UI_PRESENT eShield = CUI_ClientManager::HUD_SHIELD;
+
 	if (m_bShieldBreak == false)
 	{
+		if (m_fShield == m_fMaxShield)
+			return;
+
 		if (m_fShield < m_fMaxShield)
 		{
 			if (m_fCurShieldCoolTime < m_fInitShieldCoolTime)
@@ -180,15 +188,15 @@ void CKena_Status::Update_ShieldRecovery(_float fTimeDelta)
 			else
 			{
 				m_fShield += fTimeDelta * 3.f;
-
-				/* NEED : UI SHIELD GAGE UPDATE */
+				_float fGuage = m_fShield / m_fMaxShield;
+				m_StatusDelegator.broadcast(eShield, fGuage);
 			}
 		}
 		else
 		{
 			m_fShield = m_fMaxShield;
-
-			/* NEED : UI SHIELD GAGE UPDATE */
+			_float fGuage = 1.f;
+			m_StatusDelegator.broadcast(eShield, fGuage);
 		}
 	}
 	else
@@ -202,8 +210,6 @@ void CKena_Status::Update_ShieldRecovery(_float fTimeDelta)
 			m_fCurShieldCoolTime = m_fInitShieldCoolTime;
 		}
 	}
-	CUI_ClientManager::UI_PRESENT eShield = CUI_ClientManager::HUD_SHIELD;
-	m_StatusDelegator.broadcast(eShield, m_fShield);
 }
 
 void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
@@ -233,28 +239,33 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 		}
 	case CKena_Status::SKILL_BOW:
 		{
+			CUI_ClientManager::UI_PRESENT eArrowUpgrade = CUI_ClientManager::AMMO_ARROWUPRADE;
+
 			if (iSlot == 3)
 			{
 				m_iMaxArrowCount++;
 
-				/* NEED : UI ARROW COUNT UP */
+				_float fMax = (_float)m_iMaxArrowCount;
+				m_StatusDelegator.broadcast(eArrowUpgrade, fMax);
 			}
 			else if (iSlot == 4)
 			{
-				m_iMaxArrowCount++;
-
-				/* NEED : UI ARROW COUNT UP */
+				/* Skill Damage Or Speed of Arrow */
 			}
 
 			break;
 		}
 	case CKena_Status::SKILL_BOMB:
 		{
+			CUI_ClientManager::UI_PRESENT eBombUpgrade = CUI_ClientManager::AMMO_BOMBUPGRADE;
+
 			if (iSlot == 3)
 			{
 				m_iMaxBombCount++;
 
 				/* NEED : UI BOMB COUNT UP */
+				_float fMax = (_float)m_iMaxBombCount;
+				m_StatusDelegator.broadcast(eBombUpgrade, fMax);
 			}
 
 			break;

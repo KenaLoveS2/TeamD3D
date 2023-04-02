@@ -81,11 +81,12 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 	/* compare distance */
 	if (m_pPlayer != nullptr)
 	{
-		_float4 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_Position();
-		_float4 vPos = m_pTransformCom->Get_Position();
-		_float	fDist = (vPlayerPos - vPos).Length();
+		_float fDist = m_pTransformCom->Calc_Distance_XZ(m_pPlayer->Get_TransformCom());
+		//_float4 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_Position();
+		//_float4 vPos = m_pTransformCom->Get_Position();
+		//_float	fDist = (vPlayerPos - vPos).Length();
 
-		if (fDist <= 5.f)
+		if (fDist <= 3.f)
 		{
 			if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
 			{
