@@ -25,6 +25,7 @@ public:
 	{
 		m_pTarget = pTarget;
 		m_bInitSet = true;
+		m_bCloseflag = false;
 	}
 
 	class CGameObject* m_pTarget = nullptr;
@@ -32,11 +33,15 @@ public:
 
 	class CCamera*		m_pPlayerCam = nullptr;
 	_bool						m_bInitSet = false;
+	_bool						m_bCloseflag = false;
 
 public:
 	static CCameraForRot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
+
+	_bool IsClosed() { return m_bCloseflag; }	
+	void Clear();
 };
 
 END

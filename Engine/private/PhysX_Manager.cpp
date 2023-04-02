@@ -1359,3 +1359,13 @@ PxController* CPhysX_Manager::Find_Controller(const _tchar* pTag)
 
 	return Pair->second;	
 }
+
+void CPhysX_Manager::PutToSleep(PxRigidDynamic* pActor)
+{
+	pActor->putToSleep();
+}
+
+void CPhysX_Manager::WakeUp(PxRigidDynamic* pActor)
+{
+	pActor->wakeUp();
+}
