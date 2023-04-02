@@ -29,6 +29,7 @@ private:
 	static vector<CRot*> m_vecKenaConnectRot;
 	static _float4 m_vKenaPos;
 	_uint m_iThisRotIndex = 0;
+	_uint m_iBuyHatIndex = 0;
 
 	CRenderer*					m_pRendererCom = nullptr;
 	CShader*						m_pShaderCom = nullptr;
@@ -42,7 +43,8 @@ private:
 	CTransform*				m_pKenaTransform = nullptr;
 	class CRope_RotRock* m_pRopeRotRock = nullptr;
 	_float4 m_vWakeUpPosition;
-	CBone* m_pHatBone = nullptr;
+	
+	class CRotHat* m_pRotHat = nullptr;
 
 private:
 	_bool m_bWakeUp = false;	
@@ -93,6 +95,13 @@ public:
 
 	static void Set_RotUseKenaPos(_float4 vKenaPos) { memcpy(&m_vKenaPos, &vKenaPos, sizeof(_float4)); }
 	static _float4 Get_RotUseKenaPos() { return m_vKenaPos; }
+
+	void Create_Hat(_uint iHatIndex);
+	void Buy_Hat(_uint iHatIndex);
+	_bool IsBuyPossible();
+	_int Get_KenaConnectRotCount();
+	_int Get_HaveHatRotCount();
+	_int Get_NoHatRotCount();
 
 public:
 	enum ANIMATION {

@@ -292,5 +292,8 @@ public:
 	void Create_Controller(PX_CONTROLLER_CAPSULE_DESC& ControllerCapsuleDesc, PX_USER_DATA* pUserData);
 	void Move_Controller(PxController* pController, _float3 vDist);
 	PxController* Find_Controller(const _tchar* pTag);
+
+	void PutToSleep(PxRigidDynamic* pActor);
+	void WakeUp(PxRigidDynamic* pActor);
 };
 END
