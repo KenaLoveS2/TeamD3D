@@ -124,7 +124,7 @@ void CEnviromentObj::Imgui_RenderComponentProperties()
 #pragma region 예외처리
 		if (m_iImgui_ComponentOption < 0)
 			m_iImgui_ComponentOption = 0;
-		else if (m_iImgui_ComponentOption >= static_cast<COMPONENTS_OPTION>(COMPONENTS_END))
+		else if (m_iImgui_ComponentOption >= (COMPONENTS_END))
 			m_iImgui_ComponentOption = COMPONENTS_END;
 #pragma endregion
 
