@@ -65,6 +65,7 @@ HRESULT CKena_State::Initialize(CKena * pKena, CKena_Status * pStatus, CStateMac
 	FAILED_CHECK_RETURN(SetUp_State_Interact(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Jump(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Land(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_LevelUp(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Mask(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Meditate(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Pulse(), E_FAIL);
@@ -197,6 +198,7 @@ HRESULT CKena_State::SetUp_State_Idle()
 		.Init_Start(this, &CKena_State::Start_Idle)
 		.Init_Tick(this, &CKena_State::Tick_Idle)
 		.Init_End(this, &CKena_State::End_Idle)
+		.Init_Changer(L"LEVEL_UP", this, &CKena_State::LevelUp)
 		.Init_Changer(L"FALL", this, &CKena_State::Falling)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"PULSE_PARRY", this, &CKena_State::Parry, &CKena_State::KeyDown_E)
@@ -5789,6 +5791,10 @@ void CKena_State::Start_Slide_Land(_float fTimeDelta)
 void CKena_State::Start_Level_Up(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("LEVEL_UP");
+
+	m_pKena->m_bLevelUp = false;
+
+	/* NEED : UI PRINT LEVELUP */
 }
 
 void CKena_State::Start_Mask_On(_float fTimeDelta)
@@ -7892,6 +7898,11 @@ _bool CKena_State::TruePass()
 _bool CKena_State::OnGround()
 {
 	return m_pKena->m_bOnGround && !m_pKena->m_bJump;
+}
+
+_bool CKena_State::LevelUp()
+{
+	return m_pKena->m_bLevelUp;
 }
 
 _bool CKena_State::CommonHit()

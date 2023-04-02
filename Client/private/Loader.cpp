@@ -89,7 +89,8 @@
 #include "Chest_Anim.h"
 #include "HatCart.h"
 #include "E_P_Sakura.h"
-#include "Portal.h"
+#include "Frog.h"
+#include "Pet.h"
 #include "HealthFlower_Anim.h"
 /* UI */
 #include "BackGround.h"
@@ -386,13 +387,50 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Door/StoneDoor/StoneDoor_Anim_0.mdat"), PivotMatrix))))
 		return E_FAIL;
 
+	PivotMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Pet",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Pet/Pet.model"), PivotMatrix))))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pet"), CPet::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Frog",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Frog/Frog.model"), PivotMatrix))))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Frog"), CFrog::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	/*PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall03",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.model"), 
+			PivotMatrix,nullptr,false,false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.json"))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall04",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_04.model"), 
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_04.json"))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall05",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_05.model"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_05.json"))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall06",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_06.model"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_06.json"))))
+		return E_FAIL;*/
+
 #pragma  endregion ANIM_OBJ
 	
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = false;
-	_bool bFlowerCheck = true;
+	_bool bRealObject = true;
+	_bool bFlowerCheck = false;
 
 #ifdef FOR_MAPTOOL   
 
@@ -475,6 +513,7 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	/*if (FAILED(Loading_ForBJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;*/
+
 #else
 	/* Prototype_Component_Model_TeleportFlower */
 	

@@ -40,11 +40,16 @@ HRESULT CStair::Late_Initialize(void * pArg)
 	if (FAILED(__super::Late_Initialize(pArg)))
 		return E_FAIL;
 
-	if (m_pModelCom->Get_UseTriangleMeshActor())
+	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
+	{
 		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
-
-	//m_pModelCom->Create_PxTriangle(Create_PxUserData(this, true, COL_ENVIROMENT));
-	//m_pModelCom->Set_PxMatrix(m_pTransformCom->Get_WorldMatrixFloat4x4());
+	}
+	else if (m_pModelCom->Get_IStancingModel() == false && m_pModelCom->Get_UseTriangleMeshActor())
+	{
+		m_pModelCom->Create_PxTriangle(Create_PxUserData(this, false, COL_ENVIROMENT));
+	}
+	else
+		return S_OK;
 
 	return S_OK;
 }

@@ -121,7 +121,7 @@ void CCrystal::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_VecCrystal_Effect.size() == 0)
+	if (m_VecCrystal_Effect.size() == 0 || m_bRenderActive==false)
 		return;
 
 	if (static_cast<CE_PulseObject*>(m_VecCrystal_Effect[0])->Get_Finish())
@@ -149,8 +149,11 @@ void CCrystal::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	if (m_bRenderActive == false)
+		return;
+
 #ifdef FOR_MAP_GIMMICK
-	if (m_VecCrystal_Effect.size() != 0)
+	if (m_VecCrystal_Effect.size() != 0 )
 	{ 
 		for (auto& pEffectObj : m_VecCrystal_Effect)
 		{
@@ -158,17 +161,17 @@ void CCrystal::Late_Tick(_float fTimeDelta)
 				pEffectObj->Late_Tick(fTimeDelta);
 		}
 	}
+
 #endif
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	
-
-	if (m_pRendererCom && m_bRenderActive && CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 20.f))
+	if (m_pRendererCom  && CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 20.f))
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-#ifdef _DEBUG
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
-#endif
 	}
+
+
 }
 
 HRESULT CCrystal::Render()
@@ -450,7 +453,7 @@ CGameObject * CCrystal::Clone(void * pArg)
 
 void CCrystal::Free()
 {
-	
+	m_pTransformCom->Clear_Actor();
 
 	__super::Free();
 
@@ -465,7 +468,7 @@ void CCrystal::Free()
 		Safe_Release(pEffect);
 	m_VecCrystal_Effect.clear();
 
-
+	
 
 
 }

@@ -1191,6 +1191,7 @@ private:
 private:	/* Changer */
 	_bool	TruePass();
 	_bool	OnGround();
+	_bool	LevelUp();
 	_bool	CommonHit();
 	_bool	HeavyHit();
 	_bool	Shield_Small();

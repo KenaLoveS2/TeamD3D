@@ -367,7 +367,7 @@ void CCinematicCamera::Imgui_RenderProperty()
 		}
 
 
-		// �ó׸�ƽ���� ����� �÷������� �����Ұ�.
+		
 		if (ImGui::Button("CinematicPlay"))
 		{
 			m_fDeltaTime = 0.f;
