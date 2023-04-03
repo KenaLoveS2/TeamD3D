@@ -140,7 +140,7 @@ HRESULT CUI_CanvasConfirm::Bind()
 
 HRESULT CUI_CanvasConfirm::Ready_Nodes()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance =   GET_INSTANCE(CGameInstance);
 
 	{/* Yes Button */
 		CUI* pUI = nullptr;

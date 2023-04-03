@@ -805,12 +805,13 @@ void CTransform::Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivot
 	m_vPxPivot = vPivotDist;
 }
 
-void CTransform::Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivotDist)
+void CTransform::Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivotDist, _bool bRightUpLookSync)
 {
 	m_pPxActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);	
 	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActorDynamic");
 	
 	m_bIsStaticPxActor = false;
+	m_bIsRightUpLookSync = bRightUpLookSync;
 
 	m_vPxPivot = vPivotDist;
 }
@@ -904,7 +905,7 @@ void CTransform::Tick(_float fTimeDelta)
 	_float4x4 RetMatrix;
 	_matrix m;
 
-	if (m_pPxActor && m_bIsStaticPxActor == false)
+	if (m_pPxActor && m_bIsStaticPxActor == false && m_bIsRightUpLookSync == false)
 	{		
 		XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) * World);
 		m = XMLoadFloat4x4(&RetMatrix);
@@ -1010,4 +1011,39 @@ _bool CTransform::IsLook(_fvector vTargetPos, _float fCheckDegree)
 	_float fTargetRadian = acosf(XMVectorGetX(XMVector3Dot(vLook, vTargetDir)));
 
 	return fTargetRadian <= XMConvertToRadians(fCheckDegree);
+}
+
+void CTransform::Sync_ActorMatrix(_float4x4& Matrix)
+{
+	_float3 vScale = Get_Scaled();
+		
+	_matrix NewMatrix = XMLoadFloat4x4(&Matrix);
+
+	NewMatrix.r[0] = XMVector3Normalize(NewMatrix.r[0]) * vScale.x;	
+	NewMatrix.r[1] = XMVector3Normalize(NewMatrix.r[1]) * vScale.y;
+	NewMatrix.r[2] = XMVector3Normalize(NewMatrix.r[2]) * vScale.z;
+
+	if (isnan(XMVectorGetX(NewMatrix.r[0])) || isnan(XMVectorGetX(NewMatrix.r[1])) || isnan(XMVectorGetX(NewMatrix.r[2])))
+		return;
+	
+	XMStoreFloat4x4(&m_WorldMatrix, NewMatrix);
+}
+
+void CTransform::Set_PxActorSleep(_bool bSleep)
+{
+	if (m_pPhysX_Manager == nullptr) return;
+
+	if (m_bIsStaticPxActor && m_pPhysX_Manager)
+	{
+		bSleep ?
+			m_pPhysX_Manager->PutToSleep((PxRigidDynamic*)m_pPxActor) :
+			m_pPhysX_Manager->WakeUp((PxRigidDynamic*)m_pPxActor);
+	}
+
+	for (auto& ActorData : m_ActorList)
+	{
+		bSleep ?
+			m_pPhysX_Manager->PutToSleep((PxRigidDynamic*)ActorData.pActor) :
+			m_pPhysX_Manager->WakeUp((PxRigidDynamic*)ActorData.pActor);
+	}
 }

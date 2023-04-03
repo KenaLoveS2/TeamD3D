@@ -110,6 +110,9 @@ public:
 	HRESULT						SetUp_MovementTrail();
 	void								Update_MovementTrail(const char* pBoneTag);
 
+	/* Damage Particle */
+	HRESULT							SetUp_DamageParticle();
+
 protected:
 	class CGameInstance*		m_pGameInstance = nullptr;
 
@@ -128,9 +131,11 @@ protected:
 	class CEnemyWisp*			m_pEnemyWisp = nullptr;
 	static _float4					m_vKenaPos;
 
-	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
-	class CE_KenaHit*			m_pKenaHit = nullptr;
-	class CE_RectTrail*			m_pMovementTrail = nullptr;
+	class CRotForMonster*			m_pRotForMonster[8] = { nullptr, };
+	class CE_KenaHit*				m_pKenaHit = nullptr;
+	class CE_RectTrail*				m_pMovementTrail = nullptr;
+	/* Damage Particle */
+	class CE_P_ExplosionGravity*    m_pExplsionGravity = nullptr;
 
 	_uint m_iNumMeshes = 0;
 	_float m_fKenaDistance = 0.f;

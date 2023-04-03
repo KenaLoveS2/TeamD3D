@@ -196,10 +196,15 @@ HRESULT CVIBuffer_Trail::Trail_Tick(_int iObjectType,CGameObject* pGameObject, _
 		for (_uint i = 0; i < m_iNumInstance; ++i)
 			XMStoreFloat4(&m_vecInstanceInfo[i].vPosition, XMLoadFloat4(&m_vecInstanceInfo[i].vPosition) - XMLoadFloat4(&vDir) * m_pSpeeds[i] * fTimeDelta);
 	}
-	else
+	else if (iObjectType == (_int)OBJ_TRAIL)
 	{
 		_float4 vDir = pGameObject->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
 
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+			XMStoreFloat4(&m_vecInstanceInfo[i].vPosition, XMLoadFloat4(&m_vecInstanceInfo[i].vPosition) - XMLoadFloat4(&vDir) * m_pSpeeds[i] * fTimeDelta);
+	}
+	else
+	{
 		for (_uint i = 0; i < m_iNumInstance; ++i)
 			XMStoreFloat4(&m_vecInstanceInfo[i].vPosition, XMLoadFloat4(&m_vecInstanceInfo[i].vPosition));
 	}

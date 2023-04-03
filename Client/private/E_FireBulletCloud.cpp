@@ -37,9 +37,7 @@ HRESULT CE_FireBulletCloud::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_eEFfectDesc.bActive = false;
-	m_eEFfectDesc.vScale = XMVectorSet(1.5f, 1.5f, 1.5f, 1.f);
-	m_eEFfectDesc.IsBillboard = true;
+	Set_ShaderOption(m_eEFfectDesc.iPassCnt, 1.0f, _float2(0.0f, 0.0f), false);
 	m_fInitSpriteCnt = _float2(0.0f, 0.0f);
 	return S_OK;
 }

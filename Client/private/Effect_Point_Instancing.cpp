@@ -23,6 +23,14 @@ HRESULT CEffect_Point_Instancing::Set_ShapePosition()
 	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_ShapePosition();
 }
 
+HRESULT CEffect_Point_Instancing::Set_Position(_float3 fMin, _float3 fMax)
+{
+	if (m_pVIInstancingBufferCom == nullptr)
+		return E_FAIL;
+
+	return m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
+}
+
 HRESULT CEffect_Point_Instancing::Set_Trail(CEffect_Base * pEffect, const _tchar * pProtoTag)
 {
 	CEffect_Base*   pEffectTrail = nullptr;
@@ -305,8 +313,10 @@ HRESULT CEffect_Point_Instancing::SetUp_Components()
 		(CComponent**)&m_pShaderCom), E_FAIL);
 
 	/* For.Com_VIBuffer => 버퍼마다 갯수가 다르기 때문에 이름지정함 ~~ */ 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, m_szVIBufferProtoTag, TEXT("Com_VIBuffer"),
-		(CComponent**)&m_pVIInstancingBufferCom), E_FAIL);
+	if (m_pVIInstancingBufferCom == nullptr) {
+		FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, m_szVIBufferProtoTag, TEXT("Com_VIBuffer"),
+			(CComponent**)&m_pVIInstancingBufferCom), E_FAIL);
+	}
 
 	/***********
 	*  TEXTURE *
@@ -374,6 +384,7 @@ HRESULT CEffect_Point_Instancing::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fLife, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRValue", &m_fHDRValue, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fUV", &m_fUV, sizeof(_float2)), E_FAIL);
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{

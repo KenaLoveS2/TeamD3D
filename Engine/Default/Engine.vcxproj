@@ -156,6 +156,7 @@ call Copy.bat</Command>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../public/;../public/ImGui/;../public/PhysX/;../public/PhysX/characterkinematic/;../public/PhysX/collision/;../public/PhysX/common/;../public/PhysX/cooking/;../public/PhysX/cudamanager/;../public/PhysX/extensions/;../public/PhysX/filebuf/;../public/PhysX/foundation/;../public/PhysX/geometry/;../public/PhysX/geomutils/;../public/PhysX/gpu/;../public/PhysX/pvd/;../public/PhysX/solver/;../public/PhysX/task/;../public/PhysX/vehicle/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
