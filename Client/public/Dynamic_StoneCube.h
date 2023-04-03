@@ -51,6 +51,9 @@ public:
 	virtual HRESULT		RenderCine() override;
 	//virtual void					ImGui_PhysXValueProperty() override;
 
+public:
+	void				Actor_Clear();
+
 private:
 	class CShader* m_pShaderCom = nullptr;
 	class CRenderer* m_pRendererCom = nullptr;

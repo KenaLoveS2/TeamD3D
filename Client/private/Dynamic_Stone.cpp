@@ -2,7 +2,8 @@
 #include "..\public\Dynamic_Stone.h"
 #include "GameInstance.h"
 #include "Dynamic_StoneCube.h"
-
+#include "Monster.h"
+#include "Kena.h"
 CDynamic_Stone::CDynamic_Stone(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
 {
@@ -55,6 +56,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	float	layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
 	int		layerCount = 10; // 전체 레이어 개수
 
+	_float3 vColiderSize = { 0.f,0.f,0.f };
 
 	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall03")
 	{
@@ -86,15 +88,18 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_MaskShrine_Rock_09")
 	{
 		StoneCubeDesc.vSize = _float3(0.09f, 0.09f, 0.09f);
-		StoneCubeDesc.fMass = 50.f;
-		StoneCubeDesc.fLinearDamping = 3.f;
+		StoneCubeDesc.fMass = 2.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
 		boxRadius = 0.20f; // 상자 중심과 원의 중심 사이의 거리
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 9; // 전체 레이어 개수
+
+		vColiderSize = _float3( 0.19f,0.87f,0.21f ); //본체의 콜라이더 사이즈
+
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium04")
 	{
@@ -170,13 +175,20 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 			Pxpos.z += vPos.z;
 			pCreateObject = nullptr;
 
-			const _tchar* NewName = CUtile::Create_DummyString(m_szCloneObjectTag, iIndex);
+			const _tchar* NewName = CUtile::Create_DummyString(m_szCloneObjectTag, iIndex +1);
 
-			if (FAILED(pGameInst->Clone_GameObject(g_LEVEL,
+		/*	if (FAILED(pGameInst->Clone_GameObject(g_LEVEL,
 				TEXT("Layer_DynamicObj"),
 				TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 				NewName, &m_EnviromentDesc, &pCreateObject)))
-				assert(!"CImgui_MapEditor::CDynamic_Stone::Late_Initialize");
+				assert(!"CImgui_MapEditor::CDynamic_Stone::Late_Initialize");*/
+
+			pCreateObject = pGameInst->Clone_GameObject(
+				TEXT("Prototype_GameObject_Dynamic_StoneCube"),
+				NewName, &m_EnviromentDesc);
+			assert(nullptr != pCreateObject  && 
+							"CImgui_MapEditor::CDynamic_Stone::Late_Initialize");
+
 
 			pCreateObject->Get_TransformCom()->Set_State(CTransform::STATE_TRANSLATION,
 				XMVectorSet(Pxpos.x, Pxpos.y, Pxpos.z, 1.f));
@@ -190,9 +202,9 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	BoxDesc.pActortag = m_szCloneObjectTag;
-	BoxDesc.eType = BOX_DYNAMIC;		// 원래는 박스 스태틱으로 만들어야함
+	BoxDesc.eType = BOX_STATIC;		// 원래는 박스 스태틱으로 만들어야함
 	BoxDesc.vPos = CUtile::Float_4to3(vPos);
-	BoxDesc.vSize = _float3(2.74f, 0.25f, 2.45f);
+	BoxDesc.vSize = vColiderSize;
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
 	BoxDesc.isGravity = false;
@@ -208,7 +220,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	BoxDesc.fRestitution = 0.1f;
 
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_DYNAMIC_ENVIOBJ));
-	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
+	//m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 
 	
 
@@ -217,18 +229,20 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 
 void CDynamic_Stone::Tick(_float fTimeDelta)
 {
-	if(m_bTestOnce == false)
+	//if(m_bTestOnce == false)
+	//{
+	//	Late_Initialize();
+	//	m_bTestOnce = true;
+	//}
+
+	for (auto& pObj : m_pDynamicObj_List)
 	{
-		Late_Initialize();
-		m_bTestOnce = true;
+		if (pObj != nullptr)
+			pObj->Tick(fTimeDelta);
 	}
 
-	if (ImGui::Button("CreateDynamic"))
-	{
-		for (auto& pObj : m_pDynamicObj_List)
-			pObj->Late_Initialize();
-	}
 
+	//CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
 
 
 
@@ -239,7 +253,11 @@ void CDynamic_Stone::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-
+	for (auto& pObj : m_pDynamicObj_List)
+	{
+		if (pObj != nullptr)
+			pObj->Late_Tick(fTimeDelta);
+	}
 
 //	if (m_pRendererCom && m_bRenderActive)
 //	{
@@ -395,20 +413,34 @@ HRESULT CDynamic_Stone::RenderCine()
 
 _int CDynamic_Stone::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
+	if(m_iCollFirst == false)
+	{
+		m_iCollFirst = true;
+		return 0;
+	}
+
+	if (m_bOnceColl == true)		//한번만 생성되기위해서
+		return 0;
+
+	_bool bMonsterRealAttack = false;
+	_bool bPlayerWeaponAttack = false;
+	if ( ((iColliderIndex == (_int)COL_MONSTER_WEAPON && 
+			(bMonsterRealAttack = ((CMonster*)pTarget)->IsRealAttack())))
+		||  (iColliderIndex == (_int)COL_PLAYER_WEAPON && 
+			(bPlayerWeaponAttack =  dynamic_cast<CKena*>(pTarget)->Get_State(CKena::STATE_ATTACK))))
+	{
+		for (auto& pObj : m_pDynamicObj_List)
+		{
+			if (pObj != nullptr)
+				pObj->Late_Initialize();
+		}
+
+		m_bOnceColl = true;
+	}
 
 	return 0;
 }
 
-void CDynamic_Stone::ImGui_PhysXValueProperty()
-{
-	/*_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
-
-	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
-	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
-	vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
-	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
-	m_pTransformCom->Set_PxPivotScale(vPxPivotScale);*/
-}
 
 HRESULT CDynamic_Stone::Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)
 {
@@ -520,14 +552,19 @@ CGameObject* CDynamic_Stone::Clone(void* pArg)
 	return pInstance;
 }
 
-void CDynamic_Stone::Free()
+void CDynamic_Stone::Free() //예의 free 함수 호출보다 
 {
-
-
-
+	if(m_isCloned)
+	{
+		for (auto& pObj : m_pDynamicObj_List)
+		{
+			if (pObj != nullptr)
+			{
+				static_cast<CDynamic_StoneCube*>(pObj)->Actor_Clear();
+				Safe_Release(pObj);
+			}
+		}
+		m_pDynamicObj_List.clear();
+	}
 	__super::Free();
-
-
-	
-	
 }
