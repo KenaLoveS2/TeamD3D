@@ -54,7 +54,7 @@ HRESULT CSticks01::Initialize(void* pArg)
 
 	/* Create MovementTrail */
 	SetUp_MovementTrail();
-	
+		
 	return S_OK;
 }
 
@@ -146,6 +146,11 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 
 void CSticks01::Tick(_float fTimeDelta)
 {	
+	/*m_bReadySpawn = true;
+	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	m_pModelCom->Play_Animation(fTimeDelta);
+	return;*/
+
 	if (m_bDeath) return;
 	m_pMonsterStatusCom->Set_Attack(100);
 	
@@ -322,7 +327,9 @@ HRESULT CSticks01::Call_EventFunction(const string& strFuncName)
 
 void CSticks01::Push_EventFunctions()
 {
-	CMonster::Push_EventFunctions();
+	// CMonster::Push_EventFunctions();
+
+	Play_AxeSound(true, 0.f);
 }
 
 HRESULT CSticks01::SetUp_State()
@@ -353,6 +360,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("READY_SPAWN")		
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE3], 0.8f);
 		Start_Spawn();
 	})
 		.Tick([this](_float fTimeDelta)
@@ -373,6 +381,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("COMBATIDLE")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CALM], 0.8f);
 		m_fIdletoAttackTime = 0.f;
 		Set_AFType();
 	})
@@ -429,6 +438,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("CHEER")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE2], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(CHEER);
 		m_pModelCom->Set_AnimIndex(CHEER);
 	})
@@ -465,6 +475,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("STRAFELEFT")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE2], 0.7f);
 		m_fIdletoAttackTime = 0.f;
 	})
 		.Tick([this](_float fTimeDelta)
@@ -503,6 +514,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("STRAFERIGHT")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE2], 0.7f);
 		m_fIdletoAttackTime = 0.f;
 	})
 		.Tick([this](_float fTimeDelta)
@@ -542,6 +554,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("INTOCHARGE")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE1], 0.7f);
 		m_bIsFightReady = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(INTOCHARGE);
 		m_pModelCom->Set_AnimIndex(INTOCHARGE);
@@ -565,6 +578,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("CHARGE")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE1], 0.7f);
 		Set_AttackType();
 	})
 		.Tick([this](_float fTimeDelta)
@@ -630,6 +644,8 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("CHARGEATTACK")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
+		
 		m_pModelCom->ResetAnimIdx_PlayTime(CHARGEATTACK);
 		m_pModelCom->Set_AnimIndex(CHARGEATTACK);
 	})
@@ -670,6 +686,8 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("JUMPATTACK")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
+		
 		m_pModelCom->ResetAnimIdx_PlayTime(JUMPATTACK);
 		m_pModelCom->Set_AnimIndex(JUMPATTACK);
 	})
@@ -710,6 +728,8 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("ATTACK1")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
+			
 		m_pModelCom->ResetAnimIdx_PlayTime(ATTACK);
 		m_pModelCom->Set_AnimIndex(ATTACK);
 	})
@@ -750,6 +770,8 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("ATTACK2")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
+		
 		m_pModelCom->ResetAnimIdx_PlayTime(ATTACK2);
 		m_pModelCom->Set_AnimIndex(ATTACK2);
 	})
@@ -790,6 +812,8 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("COMBOATTACK")
 		.OnStart([this]()
 	{	
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
+		
 		m_pModelCom->ResetAnimIdx_PlayTime(COMBOATTACK);
 		m_pModelCom->Set_AnimIndex(COMBOATTACK);
 	})
@@ -830,6 +854,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("ROCKTHROW")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(ROCKTHROW);
 		m_pModelCom->Set_AnimIndex(ROCKTHROW);
 	})
@@ -892,6 +917,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 1.f);
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRIED);
 		m_pModelCom->Set_AnimIndex(PARRIED);
 	})
@@ -928,6 +954,8 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("TAKEDAMAGE")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 1.f);
+
 		if (m_PlayerLookAt_Dir == FRONT)
 		{
 			m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGEBIG);
@@ -978,6 +1006,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DIE], 1.f);
 		Set_Dying(DEATH);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -1273,5 +1302,35 @@ void CSticks01::Spawn_ByMaster(CMonster* pMaster, _float4 vPos)
 	m_pMaster = pMaster;
 };
 
+void CSticks01::Play_AxeSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CSticks01::Play_AxeSound);
+		return;
+	}
 
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_AXE_WOOSH], 1.f);
+}
 
+void CSticks01::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_Sticks_Tense.ogg"),
+		TEXT("Mon_Sticks_Tense2.ogg"),
+		TEXT("Mon_Sticks_Tense3.ogg"),
+		TEXT("Mon_Sticks_Calm.ogg"),
+		TEXT("Mon_Sticks_Attack.ogg"),
+		TEXT("Mon_Sticks_Hurt.ogg"),
+		TEXT("Mon_Sticks_Die.ogg"),
+		TEXT("Mon_Sticks_Axe_Whoosh.ogg"),
+	};
+	
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}

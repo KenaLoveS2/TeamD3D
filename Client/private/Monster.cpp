@@ -78,6 +78,9 @@ HRESULT CMonster::Initialize(void* pArg)
 		
 	m_bRotable = false;
 	
+	Create_CommonCopySoundKey();
+	Create_CopySoundKey();
+
 	RELEASE_INSTANCE(CGameInstance)
 	return S_OK;
 }
@@ -509,6 +512,8 @@ void CMonster::Set_Dying(_uint iDeathAnimIndex)
 	m_pExplsionGravity->UpdateParticle(m_pTransformCom->Get_Position());
 	m_bDissolve = true;
 	m_fDissolveTime = 0.f;
+
+	m_pGameInstance->Play_Sound(m_pSoundKey_Dissolve, 0.8f);
 }
 
 void CMonster::Clear_Death()
@@ -570,6 +575,7 @@ void CMonster::Start_Spawn()
 	m_bReadySpawn = true;
 	m_bDissolve = true;
 	m_fDissolveTime = 1.f;
+	m_pGameInstance->Play_Sound(m_pSoundKey_Wisp, 0.5f);
 }
 
 void CMonster::Tick_Spawn(_float fTimeDelta)
@@ -590,3 +596,18 @@ void CMonster::End_Spawn()
 	m_bDissolve = false;
 	m_fDissolveTime = 0.f;
 }
+
+void CMonster::Create_CommonCopySoundKey()
+{
+	_tchar szTemp[MAX_PATH] = {0, };
+
+	SaveBufferCopySound(TEXT("Mon_Dissolve.ogg"), szTemp, &m_pSoundKey_Dissolve);
+	SaveBufferCopySound(TEXT("Mon_Wisp.ogg"), szTemp, &m_pSoundKey_Wisp);
+}
+
+void CMonster::SaveBufferCopySound(_tchar* pOriginSoundKey, _tchar* pTempBuffer, _tchar** ppOutBuffer)
+{
+	m_pGameInstance->Copy_Sound(pOriginSoundKey, pTempBuffer);
+	*ppOutBuffer = CUtile::Create_StringAuto(pTempBuffer);
+}
+

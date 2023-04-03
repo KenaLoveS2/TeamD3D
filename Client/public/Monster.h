@@ -140,6 +140,9 @@ protected:
 	_uint m_iNumMeshes = 0;
 	_float m_fKenaDistance = 0.f;
 
+	_tchar* m_pSoundKey_Dissolve = nullptr;
+	_tchar* m_pSoundKey_Wisp = nullptr;
+
 protected:
 	_bool	m_bWeaklyHit = false;
 	_bool	m_bStronglyHit = false;
@@ -201,6 +204,10 @@ public:
 	void Start_Spawn();
 	void Tick_Spawn(_float fTimeDelta);
 	void End_Spawn();
+
+	void Create_CommonCopySoundKey();
+	void SaveBufferCopySound(_tchar* pOriginSoundKey, _tchar* pTempBuffer, _tchar** ppOutBuffer);
+	virtual void Create_CopySoundKey() {};
 };
 
 END
