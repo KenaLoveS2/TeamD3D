@@ -2068,7 +2068,6 @@ void CModel::SetUp_InstModelColider(vector<_float3> vecColiderSize)
 
 void CModel::Edit_InstModel_Collider(const _tchar * pActorName)
 {
-
 	if (m_bIsInstancing == false)
 		return;
 

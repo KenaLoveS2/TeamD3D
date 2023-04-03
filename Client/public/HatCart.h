@@ -68,7 +68,7 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void						Free() override;
 
-	void Crate_MannequinRot();
+	void Create_MannequinRot();
 	void Update_MannequinRotMatrix();
 	void Change_MannequinHat(_uint iHatIndex);
 };

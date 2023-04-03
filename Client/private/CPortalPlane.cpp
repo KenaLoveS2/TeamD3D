@@ -37,11 +37,12 @@ HRESULT CPortalPlane::Initialize(void* pArg)
 
 HRESULT CPortalPlane::Late_Initialize(void* pArg)
 {
-	m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	/* 테스트를 위한 주석  나중에 주석푸세요 */
+	/*m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 	NULL_CHECK_RETURN(m_pKena, E_FAIL);
 
 	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
-	NULL_CHECK_RETURN(m_pCamera, E_FAIL);
+	NULL_CHECK_RETURN(m_pCamera, E_FAIL);*/
 
 	
 
@@ -77,6 +78,12 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 
 void CPortalPlane::Tick(_float fTimeDelta)
 {
+	if( false==m_bTestOnce) /*삭제하세요 배치를 위한 테스트용 변수*/
+	{
+		Late_Initialize(nullptr);
+		m_bTestOnce = true;
+	}
+
 	CGameObject::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 }

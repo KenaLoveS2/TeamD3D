@@ -42,13 +42,16 @@ HRESULT CHatCart::Initialize(void* pArg)
 
 HRESULT CHatCart::Late_Initialize(void* pArg)
 {
+	// 나중에 주석푸세요
+	return S_OK;
+
 	/*Player_Need*/
 	m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 	if (m_pPlayer == nullptr) return E_FAIL;
 
 	m_pPlayer->Set_HatCartPtr(this);
 
-	Crate_MannequinRot();
+	Create_MannequinRot();
 
 	return S_OK;
 }
@@ -71,7 +74,8 @@ void CHatCart::Tick(_float fTimeDelta)
 	//if (m_bRenderCheck)
 	/*~Culling*/
 
-	m_pMannequinRot->Tick(fTimeDelta);
+	if(m_pMannequinRot != nullptr)
+		m_pMannequinRot->Tick(fTimeDelta);
 }
 
 void CHatCart::Late_Tick(_float fTimeDelta)
@@ -115,7 +119,8 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 	if (m_pRendererCom) //&& m_bRenderActive && m_bRenderCheck)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 
-	m_pMannequinRot->Late_Tick(fTimeDelta);
+	if (m_pMannequinRot != nullptr)
+		m_pMannequinRot->Late_Tick(fTimeDelta);
 }
 
 HRESULT CHatCart::Render()
@@ -346,10 +351,12 @@ void CHatCart::Free()
 	Safe_Release(m_pMannequinRot);	
 }
 
-void CHatCart::Crate_MannequinRot()
+void CHatCart::Create_MannequinRot()
 {
 	// 임시
-	m_pTransformCom->Set_Position(_float4(2.f, -1.f, 2.f, 1.f));
+	// m_pTransformCom->Set_Position(_float4(2.f, -1.f, 2.f, 1.f));
+
+	
 
 	m_pMannequinRot = (CMannequinRot*)CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_MannequinRot"), TEXT("MannequinRot"));
 	assert(m_pMannequinRot && "CHatCart::Initialize()");

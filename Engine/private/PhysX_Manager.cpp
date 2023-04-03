@@ -299,7 +299,9 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 			PxTransform ActorTrasnform = pActor->getGlobalPose();
 			_float3 vObjectPos = CUtile::ConvertPosition_PxToD3D(ActorTrasnform.p);
 
-			pUserData->pOwner->Set_Position(vObjectPos);
+			pUserData->isRightUpLookSync ? 
+				pUserData->pOwner->Sync_ActorMatrix(Get_ActorMatrix(pActor)) :
+				pUserData->pOwner->Set_Position(vObjectPos);
 		}
 	}	
 }
