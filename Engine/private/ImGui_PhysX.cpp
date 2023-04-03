@@ -40,5 +40,4 @@ void CImGui_PhysX::Free()
 {
 	__super::Free();
 	Safe_Release(m_pGameInstance);
-	Safe_Release(m_pPhysXManager);
 }

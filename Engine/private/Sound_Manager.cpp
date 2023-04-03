@@ -106,7 +106,8 @@ _int CSound_Manager::Play_Sound(const _tchar *pSoundKey, _float fVolume, _bool b
 
 			if (iPlayIndex == -1 && FMOD_Channel_IsPlaying(m_Channels[i].first, &bPlayFlag))
 			{
-				iPlayIndex = i;				
+				iPlayIndex = i;
+				break;
 			}
 		}
 	}

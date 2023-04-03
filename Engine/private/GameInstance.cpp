@@ -975,6 +975,7 @@ _uint CGameInstance::Get_CurrentPlayerRoomIndex()
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
+
 	CPostFX::GetInstance()->DestroyInstance();
 	CObject_Manager::GetInstance()->DestroyInstance();
 	CFunction_Manager::GetInstance()->DestroyInstance();
