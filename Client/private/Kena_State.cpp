@@ -4090,6 +4090,8 @@ void CKena_State::Start_Air_Attack_Slam_Into(_float fTimeDelta)
 	m_pAnimationState->State_Animation("AIR_ATTACK_SLAM_INTO");
 
 	m_pKena->m_fCurJumpSpeed = m_pKena->m_fInitJumpSpeed;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Air_Attack_Slam_Loop(_float fTimeDelta)
@@ -4097,6 +4099,8 @@ void CKena_State::Start_Air_Attack_Slam_Loop(_float fTimeDelta)
 	m_pAnimationState->State_Animation("AIR_ATTACK_SLAM_LOOP");
 
 	m_pKena->m_fCurJumpSpeed = 0.f;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Air_Attack_Slam_Finish(_float fTimeDelta)
@@ -4104,6 +4108,8 @@ void CKena_State::Start_Air_Attack_Slam_Finish(_float fTimeDelta)
 	m_pAnimationState->State_Animation("AIR_ATTACK_SLAM_FINISH");
 
 	m_pKena->m_bHeavyAttack = true;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Attack_1(_float fTimeDelta)
@@ -4217,6 +4223,8 @@ void CKena_State::Start_Bomb_Run(_float fTimeDelta)
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBomb = true;
 	m_pKena->m_bJump = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::Start_Bomb_Into(_float fTimeDelta)
@@ -4525,6 +4533,8 @@ void CKena_State::Start_Bomb_Inject(_float fTimeDelta)
 	m_pKena->m_bInjectBomb = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bomb_Inject_Run(_float fTimeDelta)
@@ -4546,6 +4556,8 @@ void CKena_State::Start_Bomb_Inject_Run_Forward(_float fTimeDelta)
 	m_pKena->m_bInjectBomb = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bomb_Inject_Run_Forward_Left(_float fTimeDelta)
@@ -4557,6 +4569,8 @@ void CKena_State::Start_Bomb_Inject_Run_Forward_Left(_float fTimeDelta)
 	m_pKena->m_bInjectBomb = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bomb_Inject_Run_Forward_Right(_float fTimeDelta)
@@ -4568,6 +4582,8 @@ void CKena_State::Start_Bomb_Inject_Run_Forward_Right(_float fTimeDelta)
 	m_pKena->m_bInjectBomb = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bomb_Inject_Run_Backward(_float fTimeDelta)
@@ -4579,6 +4595,8 @@ void CKena_State::Start_Bomb_Inject_Run_Backward(_float fTimeDelta)
 	m_pKena->m_bInjectBomb = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bomb_Inject_Run_Backward_Left(_float fTimeDelta)
@@ -4590,6 +4608,8 @@ void CKena_State::Start_Bomb_Inject_Run_Backward_Left(_float fTimeDelta)
 	m_pKena->m_bInjectBomb = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bomb_Inject_Run_Backward_Right(_float fTimeDelta)
@@ -4601,6 +4621,8 @@ void CKena_State::Start_Bomb_Inject_Run_Backward_Right(_float fTimeDelta)
 	m_pKena->m_bInjectBomb = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bomb_Inject_Run_Left(_float fTimeDelta)
@@ -4612,6 +4634,8 @@ void CKena_State::Start_Bomb_Inject_Run_Left(_float fTimeDelta)
 	m_pKena->m_bInjectBomb = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bomb_Inject_Run_Right(_float fTimeDelta)
@@ -4623,6 +4647,8 @@ void CKena_State::Start_Bomb_Inject_Run_Right(_float fTimeDelta)
 	m_pKena->m_bInjectBomb = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bomb_Air_Into(_float fTimeDelta)
@@ -5260,6 +5286,8 @@ void CKena_State::Start_Bow_Inject(_float fTimeDelta)
 	m_pKena->m_bInjectBow = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bow_Inject_Walk(_float fTimeDelta)
@@ -5269,6 +5297,8 @@ void CKena_State::Start_Bow_Inject_Walk(_float fTimeDelta)
 	m_pKena->m_bInjectBow = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::Start_Bow_Inject_Walk_Forward(_float fTimeDelta)
@@ -5280,6 +5310,8 @@ void CKena_State::Start_Bow_Inject_Walk_Forward(_float fTimeDelta)
 	m_pKena->m_bInjectBow = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bow_Inject_Walk_Forward_Left(_float fTimeDelta)
@@ -5291,6 +5323,8 @@ void CKena_State::Start_Bow_Inject_Walk_Forward_Left(_float fTimeDelta)
 	m_pKena->m_bInjectBow = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bow_Inject_Walk_Forward_Right(_float fTimeDelta)
@@ -5302,6 +5336,8 @@ void CKena_State::Start_Bow_Inject_Walk_Forward_Right(_float fTimeDelta)
 	m_pKena->m_bInjectBow = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bow_Inject_Walk_Backward(_float fTimeDelta)
@@ -5313,6 +5349,8 @@ void CKena_State::Start_Bow_Inject_Walk_Backward(_float fTimeDelta)
 	m_pKena->m_bInjectBow = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bow_Inject_Walk_Backward_Left(_float fTimeDelta)
@@ -5324,6 +5362,8 @@ void CKena_State::Start_Bow_Inject_Walk_Backward_Left(_float fTimeDelta)
 	m_pKena->m_bInjectBow = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bow_Inject_Walk_Backward_Right(_float fTimeDelta)
@@ -5335,6 +5375,8 @@ void CKena_State::Start_Bow_Inject_Walk_Backward_Right(_float fTimeDelta)
 	m_pKena->m_bInjectBow = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bow_Inject_Walk_Left(_float fTimeDelta)
@@ -5346,6 +5388,8 @@ void CKena_State::Start_Bow_Inject_Walk_Left(_float fTimeDelta)
 	m_pKena->m_bInjectBow = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bow_Inject_Walk_Right(_float fTimeDelta)
@@ -5357,6 +5401,8 @@ void CKena_State::Start_Bow_Inject_Walk_Right(_float fTimeDelta)
 	m_pKena->m_bInjectBow = true;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Bow_Inject_Loop(_float fTimeDelta)
@@ -5622,36 +5668,50 @@ void CKena_State::Start_Crouch_To_Run(_float fTimeDelta)
 void CKena_State::Start_Take_Damage_Front(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_FRONT");
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Take_Damage_Back(_float fTImeDelta)
 {
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_BACK");
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Take_Damage_Left(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_LEFT");
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Take_Damage_Right(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_RIGHT");
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Take_Damage_Heavy_Front(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_HEAVY_FRONT");
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Take_Damage_Heavy_Back(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_HEAVY_BACK");
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Take_Damage_Heavy_Air(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_HEAVY_AIR");
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Dash(_float fTimeDelta)
@@ -5665,6 +5725,8 @@ void CKena_State::Start_Dash(_float fTimeDelta)
 	CE_KenaPulse* pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
 	pPulse->Set_Active(false);
 	pPulse->Reset();
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Dash_Settle(_float fTimeDelta)
@@ -5678,11 +5740,15 @@ void CKena_State::Start_Dash_Portal(_float fTimeDelta)
 	m_pAnimationState->Set_AnimationProgress(0.055f);
 
 	m_pKena->m_pDashTarget = nullptr;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Dash_Combat_Attack_1(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("DASH_ATTACK_1");
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Dash_Combat_Attack_2(_float fTimeDelta)
@@ -5702,6 +5768,8 @@ void CKena_State::Start_Dash_Combat_Attack_2(_float fTimeDelta)
 	m_pTransform->Set_Translation(vPos, vDir * -1.f);
 
 	m_pKena->m_pDashTarget = nullptr;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Backflip(_float fTimeDelta)
@@ -5780,6 +5848,8 @@ void CKena_State::Start_Heavy_Attack_1_Release(_float fTimeDelta)
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_RELEASE");
 
 	m_pKena->m_bHeavyAttack = true;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
@@ -5788,6 +5858,8 @@ void CKena_State::Start_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
 
 	m_pKena->m_bHeavyAttack = true;
 	m_pKena->m_bPerfectAttack = true;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Heavy_Attack_1_Return(_float fTimeDelta)
@@ -5816,6 +5888,8 @@ void CKena_State::Start_Heavy_Attack_2_Release(_float fTimeDelta)
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_RELEASE");
 
 	m_pKena->m_bHeavyAttack = true;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
@@ -5824,6 +5898,8 @@ void CKena_State::Start_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
 
 	m_pKena->m_bHeavyAttack = true;
 	m_pKena->m_bPerfectAttack = true;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Heavy_Attack_2_Return(_float fTimeDelta)
@@ -5852,6 +5928,8 @@ void CKena_State::Start_Heavy_Attack_3_Release(_float fTimeDelta)
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_3_RELEASE");
 
 	m_pKena->m_bHeavyAttack = true;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
@@ -5860,6 +5938,8 @@ void CKena_State::Start_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
 
 	m_pKena->m_bHeavyAttack = true;
 	m_pKena->m_bPerfectAttack = true;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Heavy_Attack_3_Return(_float fTimeDelta)
@@ -5875,6 +5955,8 @@ void CKena_State::Start_Heavy_Attack_Combo(_float fTimeDelta)
 
 	m_pKena->m_bHeavyAttack = true;
 	m_pKena->m_bSprint = true;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Heavy_Attack_Combo_Return(_float fTimeDelta)
@@ -6037,6 +6119,8 @@ void CKena_State::Start_Into_Pulse(_float fTimeDelta)
 	pPulse->Set_Type(CE_KenaPulse::PULSE_DEFAULT);
 	pPulse->Set_Active(true);
 	pPulse->Reset();
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Into_Pulse_From_Run(_float fTimeDelta)
@@ -6049,6 +6133,8 @@ void CKena_State::Start_Into_Pulse_From_Run(_float fTimeDelta)
 	pPulse->Set_Type(CE_KenaPulse::PULSE_DEFAULT);
 	pPulse->Set_Active(true);
 	pPulse->Reset();
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Pulse(_float fTimeDelta)
@@ -6058,6 +6144,8 @@ void CKena_State::Start_Pulse(_float fTimeDelta)
 	m_pKena->m_bPulse = false;
 
 	dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"])->Set_NoActive(true);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Pulse_Loop(_float fTimeDelta)
@@ -6116,6 +6204,8 @@ void CKena_State::Start_Pulse_Parry(_float fTimeDelta)
 	m_pKena->m_pAttackObject = nullptr;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Pulse_Walk(_float fTimeDelta)
@@ -6260,6 +6350,8 @@ void CKena_State::Start_Shield_Break_Front(_float fTimeDelta)
 	
 	m_pCamera->Camera_Shake(0.005f, 5);
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Shield_Break_Back(_float fTimeDelta)
@@ -6274,6 +6366,8 @@ void CKena_State::Start_Shield_Break_Back(_float fTimeDelta)
 
 	m_pCamera->Camera_Shake(0.005f, 5);
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Spin_Attack(_float fTimeDelta)
@@ -6281,6 +6375,8 @@ void CKena_State::Start_Spin_Attack(_float fTimeDelta)
 	m_pAnimationState->State_Animation("SPIN_ATTACK");
 
 	m_pKena->m_bHeavyAttack = true;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena_State::Start_Spin_Attack_Return(_float fTimeDelta)
@@ -6584,11 +6680,16 @@ void CKena_State::Tick_Bomb_Cancel_Run(_float fTimeDelta)
 
 void CKena_State::Tick_Bomb_Inject(_float fTimeDelta)
 {
+	if (m_pAnimationState->Get_AnimationProgress() > 0.47f)
+		m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::Tick_Bomb_Inject_Run(_float fTimeDelta)
 {
 	Move(fTimeDelta, CTransform::DIR_LOOK);
+
+	if (m_pAnimationState->Get_AnimationProgress() > 0.47f)
+		m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::Tick_Bomb_Air_Into(_float fTimeDelta)
@@ -7325,16 +7426,20 @@ void CKena_State::End_Air_Attack_2(_float fTimeDelta)
 
 void CKena_State::End_Air_Attack_Slam_Into(_float fTimeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Air_Attack_Slam_Loop(_float fTimeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Air_Attack_Slam_Finish(_float fTimeDelta)
 {
 	m_pKena->m_bAttack= false;
 	m_pKena->m_bHeavyAttack = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Attack_1(_float fTimeDelta)
@@ -7458,6 +7563,8 @@ void CKena_State::End_Bomb_Inject(_float fTimeDelta)
 	m_pKena->m_bInjectBomb = false;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Bomb_Inject_Run(_float fTimeDelta)
@@ -7467,6 +7574,8 @@ void CKena_State::End_Bomb_Inject_Run(_float fTimeDelta)
 	m_pKena->m_bInjectBomb = false;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Bomb_Air_Into(_float fTimeDelta)
@@ -7573,6 +7682,8 @@ void CKena_State::End_Bow_Inject(_float fTimeDelta)
 	m_pKena->m_bInjectBow = false;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Bow_Inject_Walk(_float fTimeDelta)
@@ -7582,6 +7693,8 @@ void CKena_State::End_Bow_Inject_Walk(_float fTimeDelta)
 	m_pKena->m_bInjectBow = false;
 
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Bow_Inject_Loop(_float fTimeDelta)
@@ -7660,35 +7773,44 @@ void CKena_State::End_Crouch_To_Run(_float fTimeDelta)
 
 void CKena_State::End_Take_Damage_Front(_float fTimeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Take_Damage_Back(_float fTImeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Take_Damage_Left(_float fTimeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Take_Damage_Right(_float fTimeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Take_Damage_Heavy_Front(_float fTimeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Take_Damage_Heavy_Back(_float fTimeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Take_Damage_Heavy_Air(_float fTimeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Dash(_float fTimeDelta)
 {
 	m_pKena->m_bDash = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Dash_Settle(_float fTimeDelta)
@@ -7699,18 +7821,24 @@ void CKena_State::End_Dash_Portal(_float fTimeDelta)
 {
 	m_pKena->m_bDash = false;
 	m_pKena->m_bDashPortal = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Dash_Combat_Attack_1(_float fTimeDelta)
 {
 	m_pKena->m_bDash = false;
 	m_pKena->m_bDashAttack = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Dash_Combat_Attack_2(_float fTimeDelta)
 {
 	m_pKena->m_bDash = false;
 	m_pKena->m_bDashAttack = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Backflip(_float fTimeDelta)
@@ -7763,6 +7891,8 @@ void CKena_State::End_Heavy_Attack_1_Release(_float fTimeDelta)
 	m_pKena->m_bAttack = false;
 	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bTrailON = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
@@ -7771,6 +7901,8 @@ void CKena_State::End_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
 	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bPerfectAttack = false;
 	m_pKena->m_bTrailON = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Heavy_Attack_1_Return(_float fTimeDelta)
@@ -7791,6 +7923,8 @@ void CKena_State::End_Heavy_Attack_2_Release(_float fTimeDelta)
 	m_pKena->m_bAttack = false;
 	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bTrailON = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
@@ -7799,6 +7933,8 @@ void CKena_State::End_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
 	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bPerfectAttack = false;
 	m_pKena->m_bTrailON = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Heavy_Attack_2_Return(_float fTimeDelta)
@@ -7819,6 +7955,8 @@ void CKena_State::End_Heavy_Attack_3_Release(_float fTimeDelta)
 	m_pKena->m_bAttack = false;
 	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bTrailON = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
@@ -7827,6 +7965,8 @@ void CKena_State::End_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
 	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bPerfectAttack = false;
 	m_pKena->m_bTrailON = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Heavy_Attack_3_Return(_float fTimeDelta)
@@ -7838,6 +7978,8 @@ void CKena_State::End_Heavy_Attack_Combo(_float fTimeDelta)
 	m_pKena->m_bAttack = false;
 	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bSprint = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Heavy_Attack_Combo_Return(_float fTimeDelta)
@@ -7951,15 +8093,20 @@ void CKena_State::End_Meditate_Exit(_float fTimeDelta)
 void CKena_State::End_Into_Pulse(_float fTimeDelta)
 {
 	m_pKena->m_bPulse = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Into_Pulse_From_Run(_float fTimeDelta)
 {
 	m_pKena->m_bPulse = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Pulse(_float fTimeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Pulse_Loop(_float fTimeDelta)
@@ -7984,6 +8131,8 @@ void CKena_State::End_Pulse_Parry(_float fTimeDelta)
 	m_pKena->m_bParryLaunch = false;
 	
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Pulse_Walk(_float fTimeDelta)
@@ -8029,10 +8178,12 @@ void CKena_State::End_Shield_Impact_Big(_float fTimeDelta)
 
 void CKena_State::End_Shield_Break_Front(_float fTimeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Shield_Break_Back(_float fTimeDelta)
 {
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Spin_Attack(_float fTimeDelta)
@@ -8040,6 +8191,8 @@ void CKena_State::End_Spin_Attack(_float fTimeDelta)
 	m_pKena->m_bAttack = false;
 	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bTrailON = false;
+
+	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
 void CKena_State::End_Spin_Attack_Return(_float fTimeDelta)
