@@ -506,6 +506,9 @@ HRESULT CLoader::Loading_ForMapTool()
 	/*if (FAILED(Loading_ForBJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;*/
 
+	/*if (FAILED(Loading_ForSY((_uint)LEVEL_MAPTOOL)))
+		return E_FAIL;*/
+
 #else
 	/* Prototype_Component_Model_TeleportFlower */
 	

@@ -15,12 +15,6 @@ CDynamic_StoneCube::CDynamic_StoneCube(const CDynamic_StoneCube& rhs)
 }
 
 
-void CDynamic_StoneCube::Set_StoneCubeDesc(Dynamic_StoneCube_DESC& StoneCubeDesc)
-{
-
-	memcpy(&m_StoneCubeDesc, &StoneCubeDesc, sizeof(m_StoneCubeDesc));
-}
-
 HRESULT CDynamic_StoneCube::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -33,7 +27,7 @@ HRESULT CDynamic_StoneCube::Initialize(void* pArg)
 {
 	if(pArg!= nullptr)
 	{
-		memcpy(&m_EnviromentDesc, pArg, sizeof(m_EnviromentDesc));
+		memcpy(&m_StoneCubeDesc, pArg, sizeof(m_StoneCubeDesc));
 	}
 
 	if (FAILED(__super::Initialize(nullptr)))
@@ -49,7 +43,6 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 {
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-
 
 	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
 
@@ -76,7 +69,7 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT,true)); //뒤에 트루 써주면된다.   _bool bRightUpLookSync == true 쓰면됀다.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag,_float3(0.f,0.f,0.f),true); // Pivot 안슬거면 000 하면된다.   _bool bRightUpLookSync == true 로 주면된다. 
 
-	//m_pRendererCom->Set_PhysXRender(true);
+	m_pRendererCom->Set_PhysXRender(true);
 
 	return S_OK;
 }
@@ -221,8 +214,6 @@ HRESULT CDynamic_StoneCube::RenderShadow()
 	return S_OK;
 }
 
-
-
 HRESULT CDynamic_StoneCube::RenderCine()
 {
 	if (FAILED(__super::RenderCine()))
@@ -256,10 +247,7 @@ HRESULT CDynamic_StoneCube::RenderCine()
 
 void CDynamic_StoneCube::Actor_Clear()
 {
-	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
-
-	PxRigidActor* pActor = pPhysX->Find_DynamicActor(m_szCloneObjectTag);
-	pPhysX->Delete_Actor(pActor);
+	m_pTransformCom->Clear_Actor();
 
 }
 
@@ -283,7 +271,6 @@ void CDynamic_StoneCube::Actor_Clear()
 //	m_pTransformCom->Set_PxPivot(vPxPivot);
 //}
 
-
 HRESULT CDynamic_StoneCube::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -291,13 +278,9 @@ HRESULT CDynamic_StoneCube::SetUp_Components()
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	/* For.Com_Shader */
-	/*나중에  레벨 인덱스 수정해야됌*/
-	if (m_EnviromentDesc.iCurLevel == 0)
-		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL, m_StoneCubeDesc.pModelName, TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom,this)))
 		return E_FAIL;
 	/* For.Com_Shader */
@@ -368,5 +351,7 @@ void CDynamic_StoneCube::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+
+	
 
 }

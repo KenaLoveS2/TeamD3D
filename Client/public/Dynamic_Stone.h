@@ -36,8 +36,8 @@ private:
 
 	_bool				m_bOnceColl = false;
 
-	list<CGameObject*>	m_pDynamicObj_List;
-	_bool				m_iCollFirst = false;
+	vector<CGameObject*>	m_pDynamicObj_List;
+
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
 

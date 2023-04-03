@@ -16,17 +16,11 @@ class CDynamic_StoneCube final :public CGameObject
 public:
 	typedef struct  tag_Dynamic_StoneCube
 	{
+		_tchar pModelName[64] =L"";
 		_float3 vSize;
 		_float fLinearDamping;
 		_float fMass;
 
-		tag_Dynamic_StoneCube()
-			: fLinearDamping{ 0.f },
-			fMass{ 0.f }
-			, vSize{ _float3(1.f, 1.f, 1.f) }
-		{
-			
-		}
 
 	}Dynamic_StoneCube_DESC;
 
@@ -37,7 +31,6 @@ private:
 	virtual ~CDynamic_StoneCube() = default;
 
 public:
-	void	Set_StoneCubeDesc(Dynamic_StoneCube_DESC& StoneCubeDesc);
 
 
 public:
@@ -60,7 +53,6 @@ private:
 	class CModel* m_pModelCom = nullptr;
 
 private:
-	CEnviromentObj::ENVIROMENT_DESC							m_EnviromentDesc;
 	Dynamic_StoneCube_DESC									m_StoneCubeDesc;
 	_bool				m_bTestOnce = false;
 

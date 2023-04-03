@@ -5,7 +5,7 @@
       "0_ProtoTag": "Prototype_GameObject_Dynamic_Stone",
       "1_ModelTag": "Prototype_Component_Model_Dy_MaskShrine_Rock_09",
       "2_ShaderOption": 0,
-      "3_CloneTag": "Test",
+      "3_CloneTag": "Stone",
       "4_RoomIndex": 0,
       "5_ChapterType": 0,
       "7_Transform State": [
