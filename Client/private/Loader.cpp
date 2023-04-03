@@ -516,9 +516,9 @@ HRESULT CLoader::Loading_ForMapTool()
 	FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_TeleportFlower", CTelePort_Flower::Create(m_pDevice, m_pContext)), E_FAIL);
 
 	/* For.Prototype_Component_Model_ChestAnim*/
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_ChestAnim",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Chest_Anim/Chest.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Chest_Anim/Chest.model"), PivotMatrix))))
 		return E_FAIL;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
 

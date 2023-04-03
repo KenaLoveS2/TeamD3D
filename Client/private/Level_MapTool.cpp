@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\public\Level_MapTool.h"
+#include "../public/Level_MapTool.h"
 
 #include "GameInstance.h"
 #include "Camera_Dynamic.h"
@@ -21,7 +21,7 @@
 #include "UI.h"
 
 
-CLevel_MapTool::CLevel_MapTool(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CLevel_MapTool::CLevel_MapTool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
 {
 }
@@ -73,8 +73,8 @@ HRESULT CLevel_MapTool::Initialize()
 		MSG_BOX("Layer_ControlRoom");
 		return E_FAIL;
 	}
-	
-	
+
+
 #ifdef FOR_MAP_GIMMICK
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
 		return E_FAIL;
@@ -104,9 +104,9 @@ HRESULT CLevel_MapTool::Render()
 
 HRESULT CLevel_MapTool::Ready_Lights()
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	LIGHTDESC			LightDesc;
+	LIGHTDESC LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
@@ -120,44 +120,44 @@ HRESULT CLevel_MapTool::Ready_Lights()
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
-	
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
 
-HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
+HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 
-	CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
 	CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
-HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
+HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_DY.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
-	
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
+
 #ifdef FOR_MAP_GIMMICK
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
-#else 
+#else
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
@@ -168,10 +168,10 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_MapTool::Ready_Layer_Camera(const _tchar * pLayerTag)
+HRESULT CLevel_MapTool::Ready_Layer_Camera(const _tchar* pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	CCamera::CAMERADESC			CameraDesc;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CCamera::CAMERADESC CameraDesc;
 	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
 	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
@@ -183,10 +183,11 @@ HRESULT CLevel_MapTool::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	CCamera *pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), nullptr, &CameraDesc);
+	auto pCamera = (CCamera*)pGameInstance->Clone_GameObject(
+		TEXT("Prototype_GameObject_Camera_Dynamic"), nullptr, &CameraDesc);
 	if (pCamera == nullptr) return E_FAIL;
 	if (FAILED(pGameInstance->Add_Camera(TEXT("DEBUG_CAM_1"), pCamera, true))) return E_FAIL;
-	
+
 	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
 	CameraDesc.vEye = _float4(30.f, 7.f, 30.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
@@ -198,11 +199,13 @@ HRESULT CLevel_MapTool::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), nullptr, &CameraDesc);
+	pCamera = (CCamera*)pGameInstance->Clone_GameObject(
+		TEXT("Prototype_GameObject_Camera_Dynamic"), nullptr, &CameraDesc);
 	if (pCamera == nullptr) return E_FAIL;
 	if (FAILED(pGameInstance->Add_Camera(TEXT("DEBUG_CAM_2"), pCamera))) return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_LightCamera"), L"LightCamera")))
+	if (FAILED(
+		pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_LightCamera"), L"LightCamera")))
 		return E_FAIL;
 
 #ifdef FOR_MAP_GIMMICK
@@ -234,9 +237,9 @@ HRESULT CLevel_MapTool::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_MapTool::Ready_Layer_Player(const _tchar * pLayerTag)
+HRESULT CLevel_MapTool::Ready_Layer_Player(const _tchar* pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CGameObject* pGameObject = nullptr;
 
@@ -252,28 +255,27 @@ HRESULT CLevel_MapTool::Ready_Layer_Player(const _tchar * pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_MapTool::Ready_Layer_Monster(const _tchar * pLayerTag)
+HRESULT CLevel_MapTool::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	
-	RELEASE_INSTANCE(CGameInstance);
-
-	return S_OK;
-
-}
-
-HRESULT CLevel_MapTool::Ready_Layer_Effect(const _tchar * pLayerTag)
-{
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
 
-HRESULT CLevel_MapTool::Ready_Layer_ControlRoom(const _tchar * pLayerTag)
+HRESULT CLevel_MapTool::Ready_Layer_Effect(const _tchar* pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_MapTool::Ready_Layer_ControlRoom(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_ControlRoom"), L"ControlRoom");
 
@@ -283,10 +285,9 @@ HRESULT CLevel_MapTool::Ready_Layer_ControlRoom(const _tchar * pLayerTag)
 }
 
 
-
-CLevel_MapTool * CLevel_MapTool::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CLevel_MapTool* CLevel_MapTool::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLevel_MapTool*		pInstance = new CLevel_MapTool(pDevice, pContext);
+	auto pInstance = new CLevel_MapTool(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -300,4 +301,3 @@ void CLevel_MapTool::Free()
 {
 	__super::Free();
 }
-

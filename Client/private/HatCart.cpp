@@ -42,6 +42,9 @@ HRESULT CHatCart::Initialize(void* pArg)
 
 HRESULT CHatCart::Late_Initialize(void* pArg)
 {
+	// 나중에 주석푸세요
+	return S_OK;
+
 	/*Player_Need*/
 	m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 	if (m_pPlayer == nullptr) return E_FAIL;
@@ -352,6 +355,8 @@ void CHatCart::Create_MannequinRot()
 {
 	// 임시
 	// m_pTransformCom->Set_Position(_float4(2.f, -1.f, 2.f, 1.f));
+
+	
 
 	m_pMannequinRot = (CMannequinRot*)CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_MannequinRot"), TEXT("MannequinRot"));
 	assert(m_pMannequinRot && "CHatCart::Initialize()");
