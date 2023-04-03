@@ -245,3 +245,8 @@ void CGameObject::Set_WorldMatrix(_float4x4& vPosition)
 {
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&vPosition));
 }
+
+void CGameObject::Sync_ActorMatrix(_float4x4& Matrix)
+{
+	m_pTransformCom->Sync_ActorMatrix(Matrix);
+}
