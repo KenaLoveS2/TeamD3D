@@ -863,9 +863,8 @@ PS_OUT PS_HEAVYATTACK(PS_IN In)
 	Out.vColor.rgb = Out.vColor.rgb * 2.5f;
 	Out.vColor.a = Out.vColor.r;
 
-	if (Out.vColor.a < 0.5f)
+	if (Out.vColor.a < 0.1f)
 		discard;
-
 	return Out;
 }
 
@@ -973,6 +972,25 @@ PS_OUT PS_ROT(PS_TRAILIN In)
 
    Out.vColor = finalcolor;
    return Out;
+}
+
+PS_OUT PS_ROTBOMBTRAIL(PS_TRAILIN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+	float fLife = 2.0f;
+
+	// g_Time
+	float fTime = frac(g_Time * 0.3f);
+
+	vector   vRotrailTexture = g_DTexture_0.Sample(LinearSampler, float2(In.vTexUV.x + fTime, In.vTexUV.y));
+	vRotrailTexture.a = vRotrailTexture.r * fLife;
+
+	float4 finalcolor = vRotrailTexture;
+	float4 vColor = vector(92.0f, 141.f, 226.f, 255.f) / 255.f;
+	finalcolor.rgb = finalcolor.rgb + vColor.rgb * 2.f;
+
+	Out.vColor = finalcolor;
+	return Out;
 }
 
 PS_OUT PS_FLOWERPARTICLE(PS_IN In)
@@ -1320,6 +1338,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_RECTTRAIL_SPRITE();
+	}
+
+	pass Trail_RotBombTrail // 15
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_TRAILMAIN();
+		GeometryShader = compile gs_5_0 GS_ROTTRAIL();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_ROTBOMBTRAIL();
 	}
 
 }

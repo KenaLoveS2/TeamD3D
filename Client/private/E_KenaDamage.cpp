@@ -34,16 +34,13 @@ HRESULT CE_KenaDamage::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_eEFfectDesc.bActive = true;
-
 	for (auto& pChild : m_vecChild)
 	{
 		pChild->Set_Parent(this);
-
 		if (!lstrcmp(pChild->Get_ObjectCloneName(), L"KenaDamageCircleR_2"))
 		{
 			_matrix matrchildworld = XMMatrixIdentity();
-			_matrix	RotationMatrix = XMMatrixRotationAxis(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMConvertToRadians(180.0f));
+			_matrix	RotationMatrix = XMMatrixRotationAxis(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMConvertToRadians(90.0f));
 
 			_float3	vScale = _float3(XMVectorGetX(matrchildworld.r[0]),
 				XMVectorGetX(XMVector3Length(matrchildworld.r[1])),
@@ -60,6 +57,7 @@ HRESULT CE_KenaDamage::Initialize(void * pArg)
 			pChild->Set_InitMatrix(matrchildworld);
 		}
 	}
+	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
 
@@ -67,35 +65,28 @@ void CE_KenaDamage::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+ 	if (m_eEFfectDesc.bActive == false)
+ 		return;
+
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(m_eEFfectDesc.bActive);
 
-	if (m_eEFfectDesc.bActive == true)
-	{
-		m_fScaleTime += fTimeDelta;
-		m_fAddValue += 0.3f;
-
-		if (m_fScaleTime > 0.6f)
-		{
-			m_eEFfectDesc.vScale *= m_fAddValue;
-			m_eEFfectDesc.bActive = false;
-		}
-	}
-	else
+	Set_AddScale(fTimeDelta + 1.0f);
+	_bool bResult = TurnOffSystem(m_fScaleTime, 0.2f, fTimeDelta);
+	if (bResult == true)
 	{
 		for (auto& pChild : m_vecChild)
 			pChild->ResetSprite();
 
 		m_fAddValue = 0.0f;
-		m_fScaleTime = 0.0f;
-		m_eEFfectDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+		m_eEFfectDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	}
 }
 
 void CE_KenaDamage::Late_Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return;
+ 	if (m_eEFfectDesc.bActive == false)
+ 		return;
 
 	__super::Late_Tick(fTimeDelta);
 }

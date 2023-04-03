@@ -150,6 +150,7 @@ public:
 	void SetSprite(_float2 InitSprit) {
 		m_fInitSpriteCnt = InitSprit;
 	}
+	void Set_HDRValue(_float fHDRValue) { m_fHDRValue = fHDRValue; }
 
 	public:
 	void	TurnOffSystem(_float fDurationTime, _float fTimeDelta);

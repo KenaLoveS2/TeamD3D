@@ -340,6 +340,10 @@ PS_OUT PS_MAIN_E_HIT(PS_IN In)
 	float3 vColor = float3(215.f, 174.f, 129.f) / 255.f;
 	albedo.rgb = vColor * 1.7f;
 	Out.vColor = albedo;
+
+	if (Out.vColor.a < 0.1f)
+		discard;
+
 	return Out;
 }
 
@@ -492,6 +496,29 @@ PS_OUT PS_MAIN_E_BLINK(PS_IN In)
 	return Out;
 }
 
+//PS_MAIN_E_BLINKSPRITE
+PS_OUT PS_MAIN_E_BLINKSPRITE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* Sprite */
+	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+	In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+	In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+
+	/* DiffuseTexture */
+	vector vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vDiffuse.a = vDiffuse.r;
+
+	Out.vColor = vDiffuse + g_vColor;
+	Out.vColor = saturate(Out.vColor);
+	Out.vColor.a = (vDiffuse * g_vColor).a;
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Effect_Dafalut // 0
@@ -562,7 +589,7 @@ technique11 DefaultTechnique
 	pass Effect_Hit // 5
 	{
 		SetRasterizerState(RS_CULLNONE);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -648,5 +675,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_E_BLINK();
+	}
+
+	pass Effect_BlinkSprite // 12
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_E_BLINKSPRITE();
 	}
 }

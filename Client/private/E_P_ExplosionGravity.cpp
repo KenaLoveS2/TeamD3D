@@ -51,7 +51,7 @@ HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
 	//if (!lstrcmp(Get_ObjectCloneName(), L"Test"))
-	if (m_eType == TYPE_HEALTHFLOWER)
+	if (m_eType == TYPE_DEFAULT)
 		Set_OptionTool();
 	else
 		m_fLife += fTimeDelta;
@@ -66,7 +66,7 @@ void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_Position(m_vFixPos);
 
 	/*m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && */
-	if (m_eEFfectDesc.bActive == true &&  m_pVIInstancingBufferCom->Get_Finish() == true)
+	if (m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && m_eEFfectDesc.bActive == true &&  m_pVIInstancingBufferCom->Get_Finish() == true)
 		m_eEFfectDesc.bActive = false;
 }
 
@@ -163,7 +163,7 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 
 		ePointDesc->fCreateRange = 1.f;
 		ePointDesc->fRange = 3.f;
-		ePointDesc->fTerm = 2.f;
+		ePointDesc->fTerm = 1.f;
 		ePointDesc->bSetDir = false;
 
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);

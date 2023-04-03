@@ -2,6 +2,7 @@
 #include "..\public\E_RotBombExplosion.h"
 #include "GameInstance.h"
 #include "Effect_Mesh_T.h"
+#include "E_P_ExplosionGravity.h"
 
 CE_RotBombExplosion::CE_RotBombExplosion(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -49,7 +50,9 @@ HRESULT CE_RotBombExplosion::Initialize(void * pArg)
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Parent(this);
 
-	m_eEFfectDesc.bActive = false;
+	Set_ShaderOption(m_eEFfectDesc.iPassCnt, 1.0f, _float2(0.0f, 0.0f), false);
+	FAILED_CHECK_RETURN(SetUp_Effects(), E_FAIL);
+
 	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
 	return S_OK;
 }
@@ -89,64 +92,48 @@ void CE_RotBombExplosion::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	//if (m_bBomb) // 사라짐
+	//	TurnoffBomb(fTimeDelta);
+
+
+	//if (m_pParent == nullptr)
+	//{
+	//	ToolOption("CE_RotBombExplosion");
+	//	m_fTimeDelta += fTimeDelta;
+
+	//	ImGui::Begin("Plus");
+
+	//	if (ImGui::Button("retime"))
+	//	{
+	//		Reset();
+	//		dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_DissolveTime(0.0f);
+	//		dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_Dissolve(false);
+	//	}
+
+	//	if (ImGui::Button("Dissolve"))
+	//		m_bBomb = true;
+
+	//	ImGui::End();
+
+	//	m_vecChild[CHILD_COVER]->ToolOption("CE_RotBombExplosion_cover");
+	//	return;
+	//}
+
 	if (m_eEFfectDesc.bActive == true)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Set_Active(true);
-
-		m_fTimeDelta += fTimeDelta;
-		_float3 vScaled = m_pTransformCom->Get_Scaled();
-
-		if (vScaled.x > 3.f) // 내 스케일이 3보다 커지면 현재 크기 유지
-		{
-			m_fBombTime += fTimeDelta;
-			m_vecChild[0]->Set_Active(false); // 자식은 끄고 내 크기 유지
-
-			if (m_fBombTime > 4.f) // 현재 상태에서 4초가 지나면 
-			{
-				m_bBomb = true;	   // Bomb 상태전환
-				dynamic_cast<CEffect_Mesh_T*>(m_vecChild[0])->Set_Dissolve(true);
-			}
-		}
-		else
-		{
-			vScaled.x += fTimeDelta * 2.f;
-			vScaled.y += fTimeDelta * 2.f;
-			vScaled.z += fTimeDelta * 2.f;
-			m_pTransformCom->Set_Scaled(vScaled);
-			m_vecChild[0]->Set_AddScale(fTimeDelta * 2.f);
-		}
-	}
+		TurnonBomb(fTimeDelta);
 	else
-		Reset();
-	
-	if (m_bBomb) // 사라짐
 	{
-		m_fDissolveTime += fTimeDelta;
-		dynamic_cast<CEffect_Mesh_T*>(m_vecChild[0])->Set_DissolveTime(m_fDissolveTime);
-		if (m_fDissolveTime > 1.f)
-		{
-			m_bBomb = false;
-			dynamic_cast<CEffect_Mesh_T*>(m_vecChild[0])->Set_Dissolve(false);
-			dynamic_cast<CEffect_Mesh_T*>(m_vecChild[0])->Set_DissolveTime(0.0f);
-			m_eEFfectDesc.bActive = false;
-			m_fDissolveTime = 0.0f;
-			m_fBombTime = 0.0f;
-
-			m_pTransformCom->Set_Scaled(_float3(0.9f, 0.9f, 0.9f));
-			for (auto& pChild : m_vecChild)
-				pChild->Set_Scale(_float3(1.f, 1.f, 1.f));
-		}
+		Reset();
+		return;
 	}
+	if (m_bBomb) // 사라짐
+		TurnoffBomb(fTimeDelta);
 }
 
 void CE_RotBombExplosion::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
- 	//if (m_pParent != nullptr)
- 	//	Set_Matrix();
 
 	__super::Late_Tick(fTimeDelta);
 
@@ -173,10 +160,64 @@ HRESULT CE_RotBombExplosion::Render()
 
 void CE_RotBombExplosion::Reset()
 {
+	m_bTurnOn = false;
 	m_bBomb = false;
 	m_fTimeDelta = 0.f;
 	m_fBombTime = 0.f;
 	m_fDissolveTime = 0.f;
+}
+
+void CE_RotBombExplosion::TurnonBomb(_float fTimeDelta)
+{
+	if(m_bTurnOn == false)
+	{
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(true);
+
+		_vector vPos = m_pTransformCom->Get_Position();
+		dynamic_cast<CE_P_ExplosionGravity*>(m_vecChild[CHILD_COVER])->UpdateParticle(vPos);
+		m_bTurnOn = true;
+	}
+
+	m_fTimeDelta += fTimeDelta;
+	_float3 vScaled = m_pTransformCom->Get_Scaled();
+
+	if (vScaled.x > 3.f) // 내 스케일이 3보다 커지면 현재 크기 유지
+	{
+		m_vecChild[CHILD_COVER]->Set_Active(false); // 자식은 끄고 내 크기 유지
+		_bool bBombResult = TurnOffSystem(m_fBombTime, 4.f, fTimeDelta);
+		if (bBombResult == true)
+		{
+			m_bBomb = true;	   // Bomb 상태전환
+			dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_Dissolve(true);
+		}
+	}
+	else
+	{
+		vScaled.x += fTimeDelta * 2.f;
+		vScaled.y += fTimeDelta * 2.f;
+		vScaled.z += fTimeDelta * 2.f;
+		m_pTransformCom->Set_Scaled(vScaled);
+		m_vecChild[CHILD_COVER]->Set_AddScale(fTimeDelta * 2.f);
+	}
+}
+
+void CE_RotBombExplosion::TurnoffBomb(_float fTimeDelta)
+{
+	_bool bResult = TurnOffSystem(m_fDissolveTime, 1.f, fTimeDelta);	
+	dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_DissolveTime(m_fDissolveTime);
+
+	if (bResult == true)
+	{
+		m_bBomb = false;
+		dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_Dissolve(false);
+		dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_DissolveTime(0.0f);
+		m_fBombTime = 0.0f;
+
+		m_pTransformCom->Set_Scaled(_float3(0.9f, 0.9f, 0.9f));
+		for (auto& pChild : m_vecChild)
+			m_vecChild[CHILD_COVER]->Set_Scale(XMVectorSet(0.91f, 0.91f, 0.91f, 1.f));
+	}
 }
 
 HRESULT CE_RotBombExplosion::SetUp_ShaderResources()
@@ -196,6 +237,22 @@ void CE_RotBombExplosion::Imgui_RenderProperty()
 {
 	if (ImGui::Button("Active"))
 		m_eEFfectDesc.bActive = !m_eEFfectDesc.bActive;
+}
+
+HRESULT CE_RotBombExplosion::SetUp_Effects()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CEffect_Base* pEffectBase = nullptr;
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", L"RotBomb_P"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	dynamic_cast<CE_P_ExplosionGravity*>(pEffectBase)->Set_Option(CE_P_ExplosionGravity::TYPE_KENA_ATTACK);
+	m_vecChild.push_back(pEffectBase);
+
+	m_vecChild[CHILD_COVER]->Set_Scale(XMVectorSet(0.91f, 0.91f, 0.91f, 1.f));
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
 }
 
 CE_RotBombExplosion * CE_RotBombExplosion::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

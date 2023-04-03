@@ -53,9 +53,6 @@ HRESULT CE_FireBulletCover::Initialize(void * pArg)
 
 void CE_FireBulletCover::Tick(_float fTimeDelta)
 {
-	if (m_pParent != nullptr)
-		ToolOption("CE_FireBulletCover");
-
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 

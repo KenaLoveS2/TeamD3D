@@ -50,36 +50,20 @@ HRESULT CEffect_T::Initialize(void * pArg)
 
 void CEffect_T::Tick(_float fTimeDelta)
 {
+ 	//if (!lstrcmp(m_pParent->Get_ObjectCloneName(), L"hit") && !lstrcmp(m_szCloneObjectTag, L"HitA_0"))
+ 	//	ToolOption("HitA_0");
+
+	//if (!lstrcmp(m_pParent->Get_ObjectCloneName(), L"hit") && !lstrcmp(m_szCloneObjectTag, L"HitB_1"))
+	//	ToolOption("HitB_1");
+
+	//if (!lstrcmp(m_pParent->Get_ObjectCloneName(), L"hit") && !lstrcmp(m_szCloneObjectTag, L"KenaHit_P"))
+	//	ToolOption("KenaHit_P");
+
 	__super::Tick(fTimeDelta);
 	m_fShaderBindTime += fTimeDelta;
 
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
-	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
-		{
-			if (m_eEFfectDesc.fTimeDelta < 1.f)
-				m_eEFfectDesc.fWidthFrame++;
-			else
-				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-			m_fTimeDelta = 0.0;
-
-			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
-			{
-				if (m_eEFfectDesc.fTimeDelta < 1.f)
-					m_eEFfectDesc.fHeightFrame++;
-				else
-					m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
-
-				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
-			}
-
-		}
-	}
+		Tick_Sprite(m_fTimeDelta, fTimeDelta);
 
 #pragma region nouse
 	//if (m_eEFfectDesc.bStart == true)
@@ -156,10 +140,10 @@ void CEffect_T::Late_Tick(_float fTimeDelta)
 	if (m_pParent != nullptr)
 		Set_Matrix();
 
-	__super::Late_Tick(fTimeDelta);
-	
   	if (m_eEFfectDesc.IsBillboard == true)
 		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
+
+	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
@@ -328,8 +312,6 @@ HRESULT CEffect_T::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fShaderBindTime, sizeof(_float)), E_FAIL);
 
-	// MaxCnt == 10
-
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{
 		wstring strBindDTexture = L"g_DTexture_";
@@ -361,6 +343,7 @@ HRESULT CEffect_T::SetUp_ShaderResources()
 void CEffect_T::Imgui_RenderProperty()
 {
 	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+	ImGui::InputFloat("HDRValue", &m_fHDRValue);
 
 	ImGui::InputFloat("Width", (_float*)&m_eEFfectDesc.fWidthFrame);
 	ImGui::InputFloat("Height", (_float*)&m_eEFfectDesc.fHeightFrame);

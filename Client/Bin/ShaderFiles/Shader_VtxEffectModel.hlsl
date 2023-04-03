@@ -554,19 +554,19 @@ PS_OUT PS_PULSECOVER(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float  fDissolveAmount = 0.8f;
+	float  fDissolveAmount = 0.7f;
 
-	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	float  time = frac(g_Time * 0.6f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(0.0f, time));
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
 	half   dissolve_value = vDiffuse.r;
-
 	if (dissolve_value <= fDissolveAmount)
 		discard;
 
-	float4 vColor = g_vColor;
-	Out.vDiffuse = vDiffuse * vColor * 3.f;
-	Out.vDiffuse.a = 0.3f;
-
-	if (g_bDissolve)
+	float4 vfinalcolor = vDiffuse + g_vColor;
+	vfinalcolor = saturate(vfinalcolor);
+	if (g_fDissolveTime != 0.0f)
 	{
 		float fDissolveAmount = g_fDissolveTime;
 
@@ -578,10 +578,11 @@ PS_OUT PS_PULSECOVER(PS_IN In)
 
 		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
 		{
-			if (Out.vDiffuse.a != 0.0f)
-				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+			if (vfinalcolor.a != 0.0f)
+				vfinalcolor = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
 		}
 	}
+	Out.vDiffuse = CalcHDRColor(vfinalcolor, 1.f);
 	return Out;
 }
 
@@ -590,23 +591,19 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float  time = frac(g_Time * 1.8f);
-	float2 OffsetUV = TilingAndOffset(In.vTexUV* 5.f, float2(1.0f, 1.0f), float2(0.0f, -time));
+	float  time = frac(g_Time * 0.6f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(0.0f, time));
 
-	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
-	vDiffuse.a = vDiffuse.r;
+	float4 tex_0 = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	float4 tex_1 = g_DTexture_1.Sample(LinearSampler, OffsetUV);
+	tex_0.a = tex_0.r;
 
-	if (vDiffuse.a < 0.2f)
-		discard;
+	float4 fresnelColor = float4(0.0f, 36.f, 145.f, 255.f) / 255.f;
+	float4 fresnel = float4(fresnel_glow(3.0f, 1.5f, fresnelColor.rgb, In.vNormal.rgb, In.vViewDir), fresnelColor.a);
 
-	float4 fresnelColor = float4(0.0f, 205.f, 205.f, 255.f) / 255.f;
-	float4 fresnel = float4(fresnel_glow(5.0f, 1.5f, fresnelColor.rgb, In.vNormal.rgb, In.vViewDir), fresnelColor.a);
-
-	float4 vColor = float4(15.f, 40.f, 79.f, 0.0f) / 255.f;
-	float4 vBaseColor = lerp(vDiffuse, vColor, 0.5f);
-
-	Out.vDiffuse = vBaseColor * fresnel * 2.f;
-	Out.vDiffuse.a = 0.2f;
+	float4 finalcolor = saturate(lerp(tex_0, tex_1, 0.5f)) * fresnel;
+	finalcolor.a = (tex_0 * tex_1).a;
+	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
 
 	if (g_bDissolve)
 	{
@@ -624,8 +621,6 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
 		}
 	}
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -1057,7 +1052,7 @@ technique11 DefaultTechnique
 
 	pass Effect_PulseCover // 10
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_CW);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
