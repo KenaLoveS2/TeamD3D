@@ -48,8 +48,8 @@ protected:	/* Tool Function */
 	void		Options();
 
 protected:
-	CGameObject* m_pTarget;
-	_tchar* m_pfileName;
+	CGameObject*					m_pTarget;
+	_tchar*							m_pfileName;
 	_bool							m_bActive;
 	string							m_strEffectTag;/* From Tool Desc */
 

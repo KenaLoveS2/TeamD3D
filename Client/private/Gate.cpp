@@ -47,6 +47,7 @@ HRESULT CGate::Late_Initialize(void* pArg)
 	else
 		return S_OK;
 
+
 	return S_OK;
 }
 

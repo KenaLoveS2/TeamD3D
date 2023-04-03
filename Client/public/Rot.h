@@ -51,9 +51,6 @@ private:
 	_uint m_iCuteAnimIndex = 0;
 	_float m_fKenaToRotDistance = 2.f;
 	_float m_fTeleportDistance = 6.f;
-
-	
-
 	DESC m_Desc;
 
 	class CCameraForRot*		m_pMyCam = nullptr;
@@ -95,7 +92,8 @@ public:
 
 	static void Set_RotUseKenaPos(_float4 vKenaPos) { memcpy(&m_vKenaPos, &vKenaPos, sizeof(_float4)); }
 	static _float4 Get_RotUseKenaPos() { return m_vKenaPos; }
-
+	void			Set_WispPos(_float4 vPos);
+	void			Set_WakeUpPos(_float4 vPos);
 	void Create_Hat(_uint iHatIndex);
 	void Buy_Hat(_uint iHatIndex);
 	_bool IsBuyPossible();

@@ -11,6 +11,7 @@
 #include "Imgui_Manager.h"
 #include "String_Manager.h"
 #include "Camera_Manager.h"
+#include "CTexture_Manager.h"
 #include "PostFX.h"
 #include "Enviroment_Manager.h"
 
@@ -990,6 +991,7 @@ void CGameInstance::Release_Engine()
 	CGraphic_Device::GetInstance()->DestroyInstance();
 	CTimer_Manager::GetInstance()->DestroyInstance();
 	CSound_Manager::GetInstance()->DestroyInstance();
+	CTexture_Manager::GetInstance()->DestroyInstance();
 	CString_Manager::GetInstance()->DestroyInstance();
 	CEnviroment_Manager::GetInstance()->DestroyInstance();
 	CImgui_Manager::GetInstance()->DestroyInstance();

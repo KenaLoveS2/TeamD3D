@@ -55,6 +55,11 @@ ipch/
 !/Client/Bin/Data/
 !Client/Bin/assimp-vc140-mt.dll
 !Client/Bin/assimp-vc140-mtd.dll
+!Client/Bin/PhysX_64.dll
+!Client/Bin/PhysXCommon_64.dll
+!Client/Bin/PhysXCooking_64.dll
+!Client/Bin/PhysXFoundation_64.dll
+!Client/Bin/PhysXGpu_64.dll
 !/Client/Bin/fmod.dll
 !/Client/Bin/fmodL.dll
 /Client/Default/imgui.ini

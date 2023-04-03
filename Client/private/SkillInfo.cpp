@@ -103,7 +103,7 @@ HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pConte
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), 
-		m_pTextureProtoTag, CTexture::Create(pDevice, pContext, wstrImageFilePath.c_str(), 5))))
+		m_pTextureProtoTag, CTexture::Create(pDevice, pContext, CUtile::Create_StringAuto(wstrImageFilePath.c_str()), 5))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

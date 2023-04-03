@@ -14,6 +14,7 @@
 #include "Kena.h"
 #include "Kena_State.h"
 #include "E_KenaPulse.h"
+#include "Kena_Status.h"
 //#include "Effect_Base.h"
 
 CUI_CanvasHUD::CUI_CanvasHUD(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -125,7 +126,6 @@ HRESULT CUI_CanvasHUD::Bind()
 		return E_FAIL;
 
 	CE_KenaPulse* pShield = static_cast<CE_KenaPulse*>(pKena->Get_Effect("KenaPulse"));
-	
 	if (pShield == nullptr)
 		return E_FAIL;
 
@@ -133,6 +133,7 @@ HRESULT CUI_CanvasHUD::Bind()
 	pKena->Get_State()->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
 	pKena->m_Delegator.bind(this, &CUI_CanvasHUD::Function);
 	pShield->m_ShieldDelegator.bind(this, &CUI_CanvasHUD::Function);
+	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasHUD::Function);
 
 	m_bBindFinished = true;
 	return S_OK;
