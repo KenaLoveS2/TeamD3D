@@ -48,7 +48,7 @@ public:
 
 public:
 	void	ParticleOption_Parabola(CVIBuffer_Point_Instancing::POINTDESC* ePointDesc, _float fDiffuseIndx, _fvector vColor,
-		_float pSpeed, _float2 pSize, _bool bSetDir, _fvector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
+		_float pSpeed, _float fTerm, _float2 pSize, _bool bSetDir, _fvector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
 
 public:
 	void	UpdateParticle(_float4 vPos, _vector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));

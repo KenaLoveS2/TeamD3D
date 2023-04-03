@@ -17,6 +17,11 @@ private:
 
 	_bool m_bCollision = false;
 
+	/* Dissolve */
+	_bool m_bDissolve = false;
+	_float m_fDissolveTime = 0.0f;
+	/* Dissolve */
+
 	class CMonster* m_pOnwerMonster = nullptr;
 	_float4 m_vInvisiblePos = { -1000.f, -1000.f, -1000.f , 1.f };
 
@@ -44,6 +49,9 @@ private:
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					Set_ChildEffects();
 	
+public:
+	_bool 	Get_Dissolve() { return m_bDissolve; }
+
 public:
 	static CFireBullet*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr)  override;

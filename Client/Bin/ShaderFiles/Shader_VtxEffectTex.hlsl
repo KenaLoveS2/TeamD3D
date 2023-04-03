@@ -1,4 +1,3 @@
-
 #include "Shader_Client_Defines.h"
 
 /**********Constant Buffer*********/
@@ -231,6 +230,8 @@ PS_OUT PS_MAIN_E_PULSECLOUD(PS_IN In)
 	
 	float4 finalcolor = lerp(albedo, maskTex, maskTex.r);
 	finalcolor = finalcolor * float4(3.f, 208.f, 255.f, 84.f) / 255.f * 2.f;
+	if (finalcolor.a < 0.01f)
+		discard;
 
 	float	fHpRatio = max(0.f, g_HpRatio);
 	float	fColorRatio;
@@ -290,9 +291,15 @@ PS_OUT PS_MAIN_E_CHARGING_LIGHT(PS_IN In)
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	albedo.a = albedo.r;
 	albedo.rgb = float3(1.f, 1.f, 1.f) * 3.f;
-	albedo = albedo * g_vColor ;
+	albedo = albedo * g_vColor;
 	//albedo.a = g_vColor.a;
 
+	float fTime = min(g_Time, 1.f);
+	if (0.5f < fTime)   // Time 이상 컬러값이 내려가야함
+		albedo = albedo * (1.f - fTime);
+	else // Time 이하 컬러값이 올라가야함
+		albedo = albedo * (fTime / 1.f);
+	
 	Out.vColor = albedo;
 	return Out;
 }

@@ -51,9 +51,9 @@ HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
 	//if (!lstrcmp(Get_ObjectCloneName(), L"Test"))
-	//if (m_eType == TYPE_HEALTHFLOWER)
-	//	Set_OptionTool();
-	//else
+	if (m_eType == TYPE_HEALTHFLOWER)
+		Set_OptionTool();
+	else
 		m_fLife += fTimeDelta;
 
 	__super::Tick(fTimeDelta);
@@ -103,6 +103,7 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 	m_eType = eType;
 	_float3 fMin = _float3(-1.f, -1.f, -1.f);
 	_float3 fMax = _float3(1.f, 1.f, 1.f);
+	_float fTerm = 1.f;
 
 	switch (eType)
 	{
@@ -110,50 +111,50 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 		/* 위로 터지는거 */
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(1.f, 1.f, 1.f, 0.2f), 0.1f,
-			_float2(0.2f, 0.2f), false);
+			fTerm,	_float2(0.2f, 0.2f), false);
 		break;
 
 	case TYPE::TYPE_DEAD_MONSTER:
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
-		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(255.f, 120.f, 120.f, 255.f) / 255.f, 0.1f,
-			_float2(0.2f, 0.2f), false);
+		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(235.f, 97.f, 140.f, 255.f) / 255.f, 0.1f,
+			fTerm, _float2(0.1f, 0.1f), false);
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_BOSS_WEAPON:
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f, 0.4f,
-			_float2(0.3f, 0.3f), false);
+			fTerm, _float2(0.2f, 0.2f), false);
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_BOSS_ATTACK:
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f, 0.2f,
-			_float2(0.3f, 0.3f), true, vSetDir);
+			fTerm, _float2(0.2f, 0.2f), true, vSetDir);
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_BOSS_PARRY:
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 10.f, XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f, 0.2f,
-			_float2(0.3f, 0.3f), false);
+			fTerm, _float2(0.2f, 0.2f), false);
 		break;
 
-	case TYPE::TYPE_DAMAGE_PULSE:
+	case CE_P_ExplosionGravity::TYPE_DAMAGE_PULSE:
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(1.f, 0.5f, 1.f, 0.2f), 0.2f,
-			_float2(0.1f, 0.1f), true, vSetDir);
+			fTerm, _float2(0.1f, 0.1f), true, vSetDir);
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_KENA_ATTACK:
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 58.f, XMVectorSet(114.f, 227.f, 255.f, 255.f) / 255.f, 0.1f,
-			_float2(0.3f, 0.3f), false);
+			fTerm, _float2(0.15f, 0.15f), false);
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_KENA_ATTACK2:
 	{
 		m_eEFfectDesc.fFrame[0] = 28.f;
 		m_eEFfectDesc.iPassCnt = 3;
-		m_eEFfectDesc.vColor = XMVectorSet(1.f, 2.f, 4.f, 1.f);
+		m_eEFfectDesc.vColor = XMVectorSet(1.f, 2.f, 4.f, 0.4f);
 
 		/* Point Instance Option */
 		m_pVIInstancingBufferCom->Set_Speeds(0.1f);
@@ -166,22 +167,22 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 		ePointDesc->bSetDir = false;
 
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
-		m_pVIInstancingBufferCom->Set_PSize(_float2(0.2f, 0.2f));
+		m_pVIInstancingBufferCom->Set_PSize(_float2(0.1f, 0.1f));
 		break;
 	}
 
 	case CE_P_ExplosionGravity::TYPE_HEALTHFLOWER:
-		fMin = _float3(-0.1f, -0.1f, -0.1f);
-		fMax = _float3(0.1f, 0.1f, 0.1f);
-		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(140.f, 220.f, 255.f, 255.f)/ 255.f, 0.08f,
-			_float2(0.1f, 0.1f), false);
+		fTerm = 2.f;
+		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
+		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(0.f, 220.f, 255.f, 255.f)/ 255.f, 0.03f,
+			fTerm, _float2(0.1f, 0.1f), false);
 		break;
 
 	}
 }
 
 void CE_P_ExplosionGravity::ParticleOption_Parabola(CVIBuffer_Point_Instancing::POINTDESC* ePointDesc, _float fDiffuseIdx
-	, _fvector vColor, _float pSpeed, _float2 pSize, _bool bSetDir, _fvector vDir)
+	, _fvector vColor, _float pSpeed, _float fTerm, _float2 pSize, _bool bSetDir, _fvector vDir)
 {
 	m_eEFfectDesc.fFrame[0] = fDiffuseIdx;
 	m_eEFfectDesc.iPassCnt = 13;
@@ -193,7 +194,7 @@ void CE_P_ExplosionGravity::ParticleOption_Parabola(CVIBuffer_Point_Instancing::
 
 	ePointDesc->fCreateRange = 1.f;
 	ePointDesc->fRange = 1.f;
-	ePointDesc->fTerm = 1.f;
+	ePointDesc->fTerm = fTerm;
 	ePointDesc->bSetDir = bSetDir;
 	if(bSetDir)
 		ePointDesc->SetDir = vDir;

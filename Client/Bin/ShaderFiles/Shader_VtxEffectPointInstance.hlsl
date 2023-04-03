@@ -1117,8 +1117,6 @@ PS_OUT PS_RECTTRAIL_SPRITE(PS_TRAILIN In)
 	float3 vColor = float3(15.f, 130.f, 190.f) / 255.f;
 	albedo.rgb = float3(1.f, 1.f, 1.f) * 3.f;
 	albedo = albedo * g_vColor;
-	if (albedo.a < 0.1f)
-		discard;
 
 	// Out.vColor = albedo;
 	albedo.a = albedo.a * In.fLife;
