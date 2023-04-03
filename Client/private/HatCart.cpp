@@ -346,10 +346,10 @@ void CHatCart::Free()
 	Safe_Release(m_pMannequinRot);	
 }
 
-void CHatCart::Crate_MannequinRot()
+void CHatCart::Create_MannequinRot()
 {
 	// юс╫ц
-	m_pTransformCom->Set_Position(_float4(2.f, -1.f, 2.f, 1.f));
+	// m_pTransformCom->Set_Position(_float4(2.f, -1.f, 2.f, 1.f));
 
 	m_pMannequinRot = (CMannequinRot*)CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_MannequinRot"), TEXT("MannequinRot"));
 	assert(m_pMannequinRot && "CHatCart::Initialize()");
