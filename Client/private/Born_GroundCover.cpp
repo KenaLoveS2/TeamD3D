@@ -44,23 +44,6 @@ HRESULT CBorn_GroundCover::Late_Initialize(void* pArg)
 
 void CBorn_GroundCover::Tick(_float fTimeDelta)
 {
-	//if(!m_bOnceTest)
-	//{
-	//	Late_Initialize();
-	//	m_bOnceTest = true;
-	//}
-	/*if (ImGui::Button("Uprise"))
-	{
-		m_bUprise = true;
-
-	}
-
-	if (ImGui::Button("Reset"))
-	{
-		m_bUprise = false;
-		m_pModelCom->Instaincing_GimmkicInit(Gimmick_TYPE_FLOWER);
-	}*/
-
 
 	__super::Tick(fTimeDelta);
 
@@ -174,30 +157,31 @@ void CBorn_GroundCover::Culling(_float fTimeDelta)
 	const _vector	 vDir = camPos - vPos;
 	m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 20.f);
 
-	_float f = XMVectorGetX(XMVector4Length(vDir));
-
 	if (100.f <= XMVectorGetX(XMVector4Length(vDir)))
 		m_bRenderCheck = false;
 
-#ifdef FOR_MAP_GIMMICK
-	CGameObject* pPlayer = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena");
 
-	_vector PlayerPos =	pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	if(m_EnviromentDesc.iRoomIndex == 1)
+	{
+		if (20.f >= XMVectorGetX(XMVector4Length(vDir)))
+			m_bUprise = true;
+	}
+	else
+	{
+		CGameObject* pPlayer = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena");
+		if (pPlayer == nullptr)
+			return;
 
-	const _vector	 vPlayer_This_Dir = PlayerPos - vPos;
+		_vector PlayerPos = pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
-	if (30.f >= XMVectorGetX(XMVector4Length(vDir)))
-		m_bUprise = true;
+		const _vector	 vPlayer_This_Dir = PlayerPos - vPos;
 
-#else
-	_float fDist = XMVectorGetX(XMVector4Length(vDir));
+		if (30.f >= XMVectorGetX(XMVector4Length(vPlayer_This_Dir)))
+			m_bUprise = true;
+	}
 
-	if (20.f >= XMVectorGetX(XMVector4Length(vDir)))
-		m_bUprise = true;
-
-#endif
-	if (m_bUprise)
-		m_pModelCom->Instaincing_MoveControl(Gimmick_TYPE_FLOWER, fTimeDelta);
+	/*if ( true  == m_bUprise)
+		m_pModelCom->Instaincing_MoveControl(Gimmick_TYPE_FLOWER, fTimeDelta);*/
 }
 
 CBorn_GroundCover * CBorn_GroundCover::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

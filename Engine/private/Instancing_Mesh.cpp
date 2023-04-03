@@ -1146,17 +1146,17 @@ void CInstancing_Mesh::Free()
 		Safe_Delete_Array(m_pIndices);
 	}
 
-// 	if (m_bTriangle_Collider)
-// 	{
-// 		for (auto pStaticRigid : m_StaticRigid_List)
-// 		{
-// 			if (pStaticRigid != nullptr)
-// 			{
-// 				CPhysX_Manager::GetInstance()->Delete_Actor(pStaticRigid);
-// 			}
-// 		}
-// 		m_StaticRigid_List.clear();
-// 	}
+	if (m_bTriangle_Collider && m_isCloned==true)
+	{
+		for (auto pStaticRigid : m_StaticRigid_List)
+		{
+			if (pStaticRigid != nullptr)
+			{
+				CPhysX_Manager::GetInstance()->Delete_Actor(pStaticRigid);
+			}
+		}
+		m_StaticRigid_List.clear();
+	}
 
 
 	m_pInstancingPositions.clear();

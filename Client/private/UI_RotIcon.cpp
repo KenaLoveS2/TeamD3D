@@ -84,14 +84,12 @@ void CUI_RotIcon::Tick(_float fTimeDelta)
 	if (nullptr != m_pTarget)
 	{
 		CMonster* pMonster = dynamic_cast<CMonster*>(m_pTarget);
-
 		if (pMonster != nullptr)
 		{
 			if (pMonster->Get_Bind())
 			{
 				m_pTarget = nullptr;
 				m_bActive = false;
-
 				return;
 			}
 		}
@@ -113,8 +111,7 @@ void CUI_RotIcon::Tick(_float fTimeDelta)
 #pragma region Old
 	//if (nullptr != m_pTarget)
 	//{
-	//	CMonster* pMonster =  dynamic_cast<CMonster*>(m_pTarget);
-
+	//	CMonster* pMonster =  dynamic_cast<CMonster*>(m_pTarget);
 	//	if (pMonster != nullptr)
 	//	{
 	//		/* calculate camera */
@@ -123,7 +120,6 @@ void CUI_RotIcon::Tick(_float fTimeDelta)
 	//		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	//		_float fDistance = _float4::Distance(vCamPos, vPos);
 	//		_float4 vDir = XMVector3Normalize(vPos - vCamPos);
-
 	//		if (10.f < fDistance || (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) <= cosf(XMConvertToRadians(20.f))) || pMonster->Get_Bind())
 	//		{
 	//			m_pTarget = nullptr;

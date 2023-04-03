@@ -9,12 +9,14 @@
 CHatCart::CHatCart(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
 	, m_pPlayer(nullptr)
+	, m_pUIShown(nullptr)
 {
 }
 
 CHatCart::CHatCart(const CHatCart& rhs)
 	: CEnviromentObj(rhs)
 	, m_pPlayer(nullptr)
+	, m_pUIShown(nullptr)
 {
 }
 
@@ -37,6 +39,9 @@ HRESULT CHatCart::Initialize(void* pArg)
 	m_bRenderActive = true;
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
 
+	m_pUIShown = new _bool;
+	*m_pUIShown = false;
+
 	return S_OK;
 }
 
@@ -48,7 +53,7 @@ HRESULT CHatCart::Late_Initialize(void* pArg)
 
 	m_pPlayer->Set_HatCartPtr(this);
 
-	Crate_MannequinRot();
+	Create_MannequinRot();
 
 	return S_OK;
 }
@@ -71,41 +76,39 @@ void CHatCart::Tick(_float fTimeDelta)
 	//if (m_bRenderCheck)
 	/*~Culling*/
 
-	m_pMannequinRot->Tick(fTimeDelta);
+	if(m_pMannequinRot != nullptr)
+		m_pMannequinRot->Tick(fTimeDelta);
 }
 
 void CHatCart::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
+	//_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
 
 	/* compare distance */
 	if (m_pPlayer != nullptr)
 	{
-		_float4 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_Position();
-		_float4 vPos = m_pTransformCom->Get_Position();
-		_float	fDist = (vPlayerPos - vPos).Length();
+		_float fDist = m_pTransformCom->Calc_Distance_XZ(m_pPlayer->Get_TransformCom());
+		//_float4 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_Position();
+		//_float4 vPos = m_pTransformCom->Get_Position();
+		//_float	fDist = (vPlayerPos - vPos).Length();
 
 		if (fDist <= 5.f)
 		{
 			if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
 			{
 				CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
-				m_CartDelegator.broadcast(eCart, m_pPlayer);
-				if (m_bShowUI == false)
+				m_CartDelegator.broadcast(eCart, m_pPlayer, m_pUIShown);
+
+				if (*m_pUIShown == true) /* Cart Open */
 				{
 					Update_MannequinRotMatrix();
 					m_pMannequinRot->Start_FashiomShow();
-					m_bShowUI = true;
 				}
-				else
+				else /* Cart Close */
 				{
-					CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
-					m_CartDelegator.broadcast(eCart, m_pPlayer);
-
 					m_pMannequinRot->End_FashiomShow();
-					m_bShowUI = false;
 				}
 				
 			}
@@ -115,7 +118,8 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 	if (m_pRendererCom) //&& m_bRenderActive && m_bRenderCheck)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 
-	m_pMannequinRot->Late_Tick(fTimeDelta);
+	if (m_pMannequinRot != nullptr)
+		m_pMannequinRot->Late_Tick(fTimeDelta);
 }
 
 HRESULT CHatCart::Render()
@@ -254,11 +258,11 @@ HRESULT CHatCart::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	/*³ªÁß¿¡  ·¹º§ ÀÎµ¦½º ¼öÁ¤ÇØ¾ß‰Î*/
+	/*ï¿½ï¿½ï¿½ß¿ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = g_LEVEL;
 
-	/* For.Com_Model */ 	/*³ªÁß¿¡  ·¹º§ ÀÎµ¦½º ¼öÁ¤ÇØ¾ß‰Î*/
+	/* For.Com_Model */ 	/*ï¿½ï¿½ï¿½ß¿ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½*/
 	if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
@@ -344,12 +348,16 @@ void CHatCart::Free()
 	Safe_Release(m_pInteractionCom);
 
 	Safe_Release(m_pMannequinRot);	
+
+	Safe_Delete(m_pUIShown);
 }
 
-void CHatCart::Crate_MannequinRot()
+void CHatCart::Create_MannequinRot()
 {
-	// ÀÓ½Ã
-	m_pTransformCom->Set_Position(_float4(2.f, -1.f, 2.f, 1.f));
+	// ï¿½Ó½ï¿½
+	// m_pTransformCom->Set_Position(_float4(2.f, -1.f, 2.f, 1.f));
+
+	
 
 	m_pMannequinRot = (CMannequinRot*)CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_MannequinRot"), TEXT("MannequinRot"));
 	assert(m_pMannequinRot && "CHatCart::Initialize()");
@@ -367,7 +375,7 @@ void CHatCart::Update_MannequinRotMatrix()
 
 void CHatCart::Change_MannequinHat(_uint iHatIndex)
 {
-	if (m_bShowUI == false) return;
+	if (*m_pUIShown == false) return;
 
 	m_pMannequinRot->Change_Hat(iHatIndex);
 }

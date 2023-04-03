@@ -41,6 +41,9 @@ private:
 
 	_float					m_fTimeDelta = 0.f;
 
+
+	_bool					m_bTestOnce = false; // 
+
 private:
 	HRESULT  SetUp_Components();
 	HRESULT  SetUp_ShaderResources();

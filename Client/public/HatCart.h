@@ -39,7 +39,7 @@ public:
 	virtual _int						Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 public:
-	Delegator<CUI_ClientManager::UI_PRESENT, CKena*>		m_CartDelegator;
+	Delegator<CUI_ClientManager::UI_PRESENT, CKena*, _bool*>		m_CartDelegator;
 
 private:
 	CModel* m_pModelCom = nullptr;
@@ -61,14 +61,15 @@ private:
 	HRESULT							SetUp_ShadowShaderResources();
 
 private:
-	CKena* m_pPlayer;
-	_bool m_bShowUI = false;
+	CKena*		m_pPlayer;
+	_bool*		m_pUIShown;
+
 public:
 	static  CHatCart* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void						Free() override;
 
-	void Crate_MannequinRot();
+	void Create_MannequinRot();
 	void Update_MannequinRotMatrix();
 	void Change_MannequinHat(_uint iHatIndex);
 };

@@ -550,7 +550,7 @@
     <Filter Include="02.GameObjects\Envrioment\ControlRoom">
       <UniqueIdentifier>{cdc58b59-40df-4e45-9aba-7290005222c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\06. 3D UI\Effect_Complex">
+    <Filter Include="02.GameObjects\UI\06. 3D UI\Effect_Unit">
       <UniqueIdentifier>{8bda720b-f543-4f6b-9ca4-f5c9fabaa9aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -1394,7 +1394,6 @@
     <ClInclude Include="..\public\ControlRoom.h">
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\HealthFlower_Anim.h" />
     <ClInclude Include="..\public\Rot.h">
       <Filter>02.GameObjects\Rot</Filter>
     </ClInclude>
@@ -1430,6 +1429,19 @@
     </ClInclude>
     <ClInclude Include="..\public\CinematicCamera.h">
       <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MannequinRot.h" />
+    <ClInclude Include="..\public\Dynamic_Stone.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dynamic_StoneCube.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HealthFlower_Anim.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CEffect_Unit.h">
+      <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2258,7 +2270,6 @@
     <ClCompile Include="..\private\ControlRoom.cpp">
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
     <ClCompile Include="..\private\Rot.cpp">
       <Filter>02.GameObjects\Rot</Filter>
     </ClCompile>
@@ -2291,6 +2302,19 @@
     </ClCompile>
     <ClCompile Include="..\private\E_ShamanTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MannequinRot.cpp" />
+    <ClCompile Include="..\private\Dynamic_Stone.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dynamic_StoneCube.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HealthFlower_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="CEffect_Unit.cpp">
+      <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
