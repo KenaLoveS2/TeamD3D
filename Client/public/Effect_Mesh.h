@@ -34,6 +34,7 @@ public:
 	void			 Set_Lerp(_bool bLerp) { m_bLerp = bLerp; }
 	HRESULT			 Set_ModelCom(EFFECTDESC::MESHTYPE eMeshType);
 
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

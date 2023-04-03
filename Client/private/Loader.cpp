@@ -24,6 +24,7 @@
 #include "Saiya.h"
 #include "CameraForNpc.h"
 #include "RotWisp.h"
+#include "RotHat.h"
 
 /* Enemies*/
 #include "Moth.h"
@@ -92,6 +93,11 @@
 #include "Frog.h"
 #include "Pet.h"
 #include "HealthFlower_Anim.h"
+#include "Dynamic_Stone.h"
+#include "Dynamic_StoneCube.h"
+
+#include "MannequinRot.h"
+
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
@@ -168,6 +174,13 @@
 #include "E_Hieroglyph.h"
 #include "E_P_ShockFrontEntended.h"
 #include "E_Warrior_ShockFronExtended_Plane.h"
+#include "E_ShamanBossPlate.h"
+#include "E_ShamanBossHandPlane.h"
+#include "E_ShamanThunderCylinder.h"
+#include "E_ShamanSummons.h"
+#include "E_ShamanTrail.h"
+#include "E_ShamanSmoke.h"
+#include "E_P_ExplosionGravity.h"
 /* ~Effects */
 
 /* Components*/
@@ -279,7 +292,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
-	//FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
@@ -400,29 +413,59 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Frog"), CFrog::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
-	/*PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall03",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.model"), 
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.mdat"), 
 			PivotMatrix,nullptr,false,false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.json"))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall04",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_04.model"), 
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_04.mdat"), 
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_04.json"))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall05",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_05.model"),
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_05.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_05.json"))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall06",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_06.model"),
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_06.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_06.json"))))
-		return E_FAIL;*/
+		return E_FAIL;
+
+
+	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_MaskShrine_Rock_09",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.json"))))
+		return E_FAIL;
+
+
+	PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockMedium04",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.json"))))
+		return E_FAIL;
+
+
+	PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockMedium06",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.json"))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockMedium07",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.json"))))
+		return E_FAIL;
+
+
+
 
 #pragma  endregion ANIM_OBJ
 	
@@ -438,58 +481,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma region Test_Gimmick_OBJ
 	if (bFlowerCheck == true)
 	{
-#pragma region Born_GroundCover
-		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_BasilLarge",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilLarge.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_BasilMedium",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilMedium.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_BasilSmall",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilSmall.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Bush_02",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Bush/SK_Bush_02.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Fern_01",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_01.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Fern_02",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_02.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Fern_03",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_03.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Fern_04",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_04.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Flower_02",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_02.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Flower_03",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_03.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Flower_05",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_05.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Mushroom_01",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Mushroom/SK_Mushroom_01.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Mushroom_02",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Mushroom/SK_Mushroom_02.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Pampas",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Pampas/SK_Pampas.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Plant_05",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plant_05.mdat"), PivotMatrix, nullptr, false, true))))
-			return E_FAIL;
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Plants3",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
-			return E_FAIL;
 
-#pragma  endregion Born_GroundCover
 	}
 #pragma endregion
 
@@ -509,7 +501,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	// Prototype_Component_Model_Rot
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Rot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.model"), PivotMatrix)))) return E_FAIL;
 
 	/*if (FAILED(Loading_ForBJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;*/
@@ -524,19 +516,16 @@ HRESULT CLoader::Loading_ForMapTool()
 	FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_TeleportFlower", CTelePort_Flower::Create(m_pDevice, m_pContext)), E_FAIL);
 
 	/* For.Prototype_Component_Model_ChestAnim*/
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_ChestAnim",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Chest_Anim/Chest.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Chest_Anim/Chest.model"), PivotMatrix))))
 		return E_FAIL;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
-	/* ~��ȣ�� ��*/
 
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rope_RotRock", true, false, true))) return E_FAIL;
 	// Prototype_GameObject_CRope_RotRock
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"), CRope_RotRock::Create(m_pDevice, m_pContext)))) return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Portal"), CPortal::Create(m_pDevice, m_pContext)))) return E_FAIL;
-
+	
 
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_HealthFlower",
@@ -1435,6 +1424,18 @@ HRESULT CLoader::Loading_ForMapTool()
 		CE_P_Sakura::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+
+	/* For.Prototype_GameObject_Dynamic_Stone */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_Stone"),
+		CDynamic_Stone::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Dynamic_StoneCube */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_StoneCube"),
+		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
+
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
 	m_isFinished = true;
@@ -1738,7 +1739,8 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	lstrcpy(m_szLoadingText, TEXT("Loading SY..."));
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	
+	//Safe_AddRef(pGameInstance);
+
 	/********************************************/
 	/*				For. VIBuffer				*/
 	/********************************************/
@@ -1753,10 +1755,6 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	/*				For. ModelCom				*/
 	/********************************************/
 	
-	/* HatCart */
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VillageCart", true, true, true, false, true)))
-		assert(!"VillageCart");
-
 	/********************************************/
 	/*				For. GameObject				*/
 	/********************************************/
@@ -1774,11 +1772,6 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	/* Effect_Texture_Base  */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Texture_Base"),
 		CEffect_Texture_Base::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* HatCart */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HatCart"),
-		CHatCart::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;
@@ -1847,6 +1840,55 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BranchTosser",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix)))) return E_FAIL;
 
+	// Prototype_Component_Model_RotHat_Acorn
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Acorn",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/00_Acorn/RotHat_Acorn.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Clover
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Clover",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/01_Clover/RotHat_Clover.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Egg
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Egg",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/02_Egg/RotHat_Egg.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Mushroom
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Mushroom",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/03_Mushroom/RotHat_Mushroom.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Butterfly
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Butterfly",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/04_Butterfly/RotHat_Butterfly.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Dinosaur
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Dinosaur",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/05_Dinosaur/RotHat_Dinosaur.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_RedBow
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_RedBow",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/06_RedBow/RotHat_RedBow.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Cowboy
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Cowboy",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/07_Cowboy/RotHat_Cowboy.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Halo
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Halo",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/08_Halo/RotHat_Halo.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Acorn
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Deer",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/09_Deer/RotHat_Deer.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Pancake
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Pancake",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/10_Pancake/RotHat_Pancake.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Sunflower
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Sunflower",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/11_Sunflower/RotHat_Sunflower.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Cat
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Cat",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/12_Cat/RotHat_Cat.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Bunny
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Bunny",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/13_Bunny/RotHat_Bunny.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Crown
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Crown",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/14_Crown/RotHat_Crown.mdat"), PivotMatrix)))) return E_FAIL;
+	// Prototype_Component_Model_RotHat_Samurai
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RotHat_Samurai",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RotHat/15_Samurai/RotHat_Samurai.mdat"), PivotMatrix)))) return E_FAIL;
+	
 	/**********************************/
 	/************For.Warrior***********/
 	/**********************************/
@@ -1922,7 +1964,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_Component_Model_Rot
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Rot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.model"), PivotMatrix)))) return E_FAIL;
 
 	// Prototype_Component_Model_CorruptVillager
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_CorruptVillager",
@@ -1979,6 +2021,9 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	
 	// Prototype_GameObject_Rot
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"), CRot::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_Rot
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotHat"), CRotHat::Create(m_pDevice, m_pContext)))) return E_FAIL;
 	
 	// Prototype_GameObject_CRope_RotRock
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"), CRope_RotRock::Create(m_pDevice, m_pContext)))) return E_FAIL;
@@ -2028,12 +2073,15 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_GameObject_HunterArrow
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HunterArrow"), CHunterArrow::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
+	// Prototype_GameObject_HunterArrow
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MannequinRot"), CMannequinRot::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	
 	return S_OK;
 }
 
 HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 {
-	lstrcpyW(m_szLoadingText, TEXT("Loading 혜원..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading HO..."));
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -2069,6 +2117,11 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Trail"),
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_VIBuffer_PointInstancing */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_PointInstancing"),
+		CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, 300))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Cube */
@@ -2322,7 +2375,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_FireBulletExplosion */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletExplosion"),
-		CE_FireBulletExplosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_FireBulletExplosion.json"))))
+		CE_FireBulletExplosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_FireBulletExplosion2.json"))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_FireBulletExplosion */
@@ -2415,6 +2468,44 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CE_EnrageInto::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnrageInto.json"))))
 		return E_FAIL;
 
+	/* Shaman */
+	/* For.Prototype_GameObject_EnrageInto */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanBossPlate"),
+		CE_ShamanBossPlate::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanBossHandPlane */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanBossHandPlane"),
+		CE_ShamanBossHandPlane::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanThunderCylinder */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanThunderCylinder"),
+		CE_ShamanThunderCylinder::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanSummons */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanSummons"),
+		CE_ShamanSummons::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrail"),
+		CE_ShamanTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanSmoke */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanSmoke"),
+		CE_ShamanSmoke::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_ShamanBodyCloud.json"))))
+		return E_FAIL;
+	/* Shaman */
+
+	/* For.Prototype_GameObject_ExplosionGravity */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ExplosionGravity"),
+		CE_P_ExplosionGravity::Create(m_pDevice, m_pContext))))
+	return E_FAIL;
+
+
 #pragma endregion Effect_Object
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Effects Distortion..."));
@@ -2496,11 +2587,16 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		assert(!"Issue");
 
 	//// 임시	
+	//if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, true, true)))
+	//	assert(!"VillageCart");
 	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
 	//	CTerrain::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
 	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
 	//	CGroundMark::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HatCart"),
+	//	CHatCart::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
 	//return S_OK; 
 	
@@ -2525,6 +2621,41 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		return E_FAIL;
 
 
+	PivotMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Pet",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Pet/Pet.model"), PivotMatrix))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Frog",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Frog/Frog.model"), PivotMatrix))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockSmall03",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.json"))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockSmall04",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_04.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_04.json"))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockSmall05",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_05.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_05.json"))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockSmall06",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_06.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_06.json"))))
+		return E_FAIL;
+
+
 #pragma region Map_Four
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(-90.f));
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Sakura_Flower",
@@ -2535,6 +2666,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_CherryBlossomTreeAlive",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Sakura/CherryBlossomTreeAlive.mdat"), PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Sakura/CherryBlossomTreeAlive.json", false))))
 		return E_FAIL;
+
 
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Map4/Bell", true, true, true)))
 		assert(!"Map4/Bell");
@@ -3070,6 +3202,24 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sakura"),
 		CE_P_Sakura::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_Dynamic_Stone */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_Stone"),
+		CDynamic_Stone::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Dynamic_Stone */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_StoneCube"),
+		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pet"), CPet::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Frog"), CFrog::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+
+
 #pragma endregion HHW_OBJ
 
 	RELEASE_INSTANCE(CGameInstance);

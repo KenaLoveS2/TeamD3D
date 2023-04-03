@@ -4,6 +4,7 @@
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 #include "Kena.h"
+#include "MannequinRot.h"
 
 CHatCart::CHatCart(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -41,12 +42,16 @@ HRESULT CHatCart::Initialize(void* pArg)
 
 HRESULT CHatCart::Late_Initialize(void* pArg)
 {
-	/*Player_Need*/
-	m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->
-		Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	// ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½Ö¼ï¿½Çªï¿½ï¿½ï¿½ï¿½
+	return S_OK;
 
-	if (m_pPlayer == nullptr)
-		return E_FAIL;
+	/*Player_Need*/
+	m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	if (m_pPlayer == nullptr) return E_FAIL;
+
+	m_pPlayer->Set_HatCartPtr(this);
+
+	Create_MannequinRot();
 
 	return S_OK;
 }
@@ -69,6 +74,8 @@ void CHatCart::Tick(_float fTimeDelta)
 	//if (m_bRenderCheck)
 	/*~Culling*/
 
+	if(m_pMannequinRot != nullptr)
+		m_pMannequinRot->Tick(fTimeDelta);
 }
 
 void CHatCart::Late_Tick(_float fTimeDelta)
@@ -76,7 +83,6 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
-
 
 	/* compare distance */
 	if (m_pPlayer != nullptr)
@@ -93,14 +99,35 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 				CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
 				_bool* isOpen = new _bool;
 				m_CartDelegator.broadcast(eCart, m_pPlayer, isOpen);
+				m_bShowUI = *isOpen;
 				Safe_Delete(isOpen);
+
+				if (m_bShowUI == false)
+				{
+					Update_MannequinRotMatrix();
+					m_pMannequinRot->Start_FashiomShow();
+					m_bShowUI = true;
+				}
+				else
+				{
+					CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
+					m_CartDelegator.broadcast(eCart, m_pPlayer);
+
+					m_pMannequinRot->End_FashiomShow();
+					m_bShowUI = false;
+				}
+
+
+				
 			}
 		}
-
 	}
 
 	if (m_pRendererCom) //&& m_bRenderActive && m_bRenderCheck)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+
+	if (m_pMannequinRot != nullptr)
+		m_pMannequinRot->Late_Tick(fTimeDelta);
 }
 
 HRESULT CHatCart::Render()
@@ -115,10 +142,25 @@ HRESULT CHatCart::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		/* ÀÌ ¸ðµ¨À» ±×¸®±âÀ§ÇÑ ¼ÎÀÌ´õ¿¡ ¸ÓÅ×¸®¾ó ÅØ½ºÃÄ¸¦ Àü´ÞÇÏ³®. */
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
+
+		if (i == 0 || i == 1)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
+		}
+		else if (i == 2)
+		{
+
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ROUGHNESS, "g_RoughnessTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 14), E_FAIL);
+		}
+		else if (i == 3 || i == 4)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+		}
 	}
 
 	return S_OK;
@@ -156,6 +198,14 @@ HRESULT CHatCart::RenderShadow()
 
 void CHatCart::Imgui_RenderProperty()
 {
+
+	float fTrans[3] = { m_vRotPivotTranlation.x, m_vRotPivotTranlation.y, m_vRotPivotTranlation.z };
+	ImGui::DragFloat3("Pivot Pos", fTrans, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vRotPivotTranlation, fTrans, sizeof(_float3));
+
+	float fRot[3] = { m_vRotPivotRotation.x, m_vRotPivotRotation.y, m_vRotPivotRotation.z };
+	ImGui::DragFloat3("Pivot Rot", fRot, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vRotPivotRotation, fRot, sizeof(_float3));
 }
 
 void CHatCart::ImGui_AnimationProperty()
@@ -216,11 +266,11 @@ HRESULT CHatCart::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	/*³ªÁß¿¡  ·¹º§ ÀÎµ¦½º ¼öÁ¤ÇØ¾ß‰Î*/
+	/*ï¿½ï¿½ï¿½ß¿ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = g_LEVEL;
 
-	/* For.Com_Model */ 	/*³ªÁß¿¡  ·¹º§ ÀÎµ¦½º ¼öÁ¤ÇØ¾ß‰Î*/
+	/* For.Com_Model */ 	/*ï¿½ï¿½ï¿½ß¿ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½*/
 	if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
@@ -304,4 +354,34 @@ void CHatCart::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
+
+	Safe_Release(m_pMannequinRot);	
+}
+
+void CHatCart::Create_MannequinRot()
+{
+	// ï¿½Ó½ï¿½
+	// m_pTransformCom->Set_Position(_float4(2.f, -1.f, 2.f, 1.f));
+
+	
+
+	m_pMannequinRot = (CMannequinRot*)CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_MannequinRot"), TEXT("MannequinRot"));
+	assert(m_pMannequinRot && "CHatCart::Initialize()");
+	
+	Update_MannequinRotMatrix();
+}
+
+void CHatCart::Update_MannequinRotMatrix()
+{
+	_float4x4 Matrix;
+	XMStoreFloat4x4(&Matrix, XMMatrixRotationX(m_vRotPivotRotation.x) * XMMatrixRotationY(m_vRotPivotRotation.y) * XMMatrixRotationZ(m_vRotPivotRotation.z) *
+		XMMatrixTranslation(m_vRotPivotTranlation.x, m_vRotPivotTranlation.y, m_vRotPivotTranlation.z) * m_pTransformCom->Get_WorldMatrix());
+	m_pMannequinRot->Set_WorldMatrix(Matrix);
+}
+
+void CHatCart::Change_MannequinHat(_uint iHatIndex)
+{
+	if (m_bShowUI == false) return;
+
+	m_pMannequinRot->Change_Hat(iHatIndex);
 }

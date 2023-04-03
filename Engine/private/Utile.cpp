@@ -346,3 +346,13 @@ _tchar * CUtile::Create_DummyString(const _tchar * pBaseText, _uint iCount)
 	return Create_StringAuto(szBuf);
 }
 
+_float4 CUtile::Float3toFloat4Position(_float3 vPos)
+{
+	return _float4(vPos.x, vPos.y, vPos.z, 1.f);
+}
+
+_float4 CUtile::Float3toFloat4Look(_float3 vLook)
+{
+	return _float4(vLook.x, vLook.y, vLook.z, 0.f);
+}
+

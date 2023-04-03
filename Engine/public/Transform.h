@@ -138,7 +138,9 @@ private:
 	_float								m_fInitSpeed = 0.f;
 
 	class CPhysX_Manager* m_pPhysX_Manager = nullptr;
-	_bool							   m_bIsStaticPxActor = false;
+	_bool m_bIsStaticPxActor = false;
+	_bool m_bIsRightUpLookSync = false;
+
 	PxRigidActor* m_pPxActor = nullptr;	
 
 	_float3 m_vPxPivot = { 0.f, 0.f, 0.f };
@@ -174,7 +176,7 @@ public:
 	_float	Calc_Pitch();
 
 	void Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));
-	void Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));	
+	void Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f), _bool bIsRightUpLookSync = false);	
 	void Add_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix);
 	void Update_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix);
 
@@ -204,6 +206,8 @@ public:
 
 	_bool IsFalling();
 	_bool IsLook(_fvector vTargetPos, _float fCheckDegree);
+	void Sync_ActorMatrix(_float4x4& Matrix);
+	void Set_PxActorSleep(_bool bSleep);
 };
 
 END

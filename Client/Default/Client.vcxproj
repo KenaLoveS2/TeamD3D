@@ -178,7 +178,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Engine\public\CinematicCamera.h" />
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Defines.h" />
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
     <ClInclude Include="..\public\BackGround.h" />
@@ -200,6 +199,7 @@
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
+    <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\public\ControlRoom.h" />
     <ClInclude Include="..\public\CPortalPlane.h" />
     <ClInclude Include="..\Public\Crystal.h" />
@@ -209,6 +209,8 @@
     <ClInclude Include="..\Public\DeadZoneObj.h" />
     <ClInclude Include="..\public\Door_Anim.h" />
     <ClInclude Include="..\public\DynamicLightCamera.h" />
+    <ClInclude Include="..\public\Dynamic_Stone.h" />
+    <ClInclude Include="..\public\Dynamic_StoneCube.h" />
     <ClInclude Include="..\Public\DZ_FallenTree_Anim.h" />
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\public\Effect_Base.h" />
@@ -243,6 +245,7 @@
     <ClInclude Include="..\public\E_KenaParry.h" />
     <ClInclude Include="..\public\E_KenaParryHand.h" />
     <ClInclude Include="..\public\E_P_Explosion.h" />
+    <ClInclude Include="..\public\E_P_ExplosionGravity.h" />
     <ClInclude Include="..\public\E_P_Flower.h" />
     <ClInclude Include="..\public\E_KenaChargeImpact.h" />
     <ClInclude Include="..\public\E_KenaDamage.h" />
@@ -267,6 +270,12 @@
     <ClInclude Include="..\public\E_RotBombExplosion.h" />
     <ClInclude Include="..\public\E_RotTrail.h" />
     <ClInclude Include="..\public\E_Sapling.h" />
+    <ClInclude Include="..\public\E_ShamanBossHandPlane.h" />
+    <ClInclude Include="..\public\E_ShamanBossPlate.h" />
+    <ClInclude Include="..\public\E_ShamanSmoke.h" />
+    <ClInclude Include="..\public\E_ShamanSummons.h" />
+    <ClInclude Include="..\public\E_ShamanThunderCylinder.h" />
+    <ClInclude Include="..\public\E_ShamanTrail.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h" />
     <ClInclude Include="..\public\E_SpiritArrowPosition.h" />
     <ClInclude Include="..\public\E_SpiritArrowTrail.h" />
@@ -320,6 +329,7 @@
     <ClInclude Include="..\Public\LodObject.h" />
     <ClInclude Include="..\public\Mage.h" />
     <ClInclude Include="..\public\MainApp.h" />
+    <ClInclude Include="..\public\MannequinRot.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\Npc.h" />
@@ -470,6 +480,8 @@
     <ClCompile Include="..\Private\DeadZoneObj.cpp" />
     <ClCompile Include="..\private\Door_Anim.cpp" />
     <ClCompile Include="..\private\DynamicLightCamera.cpp" />
+    <ClCompile Include="..\private\Dynamic_Stone.cpp" />
+    <ClCompile Include="..\private\Dynamic_StoneCube.cpp" />
     <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\private\Effect_Base.cpp" />
@@ -503,6 +515,7 @@
     <ClCompile Include="..\private\E_KenaParry.cpp" />
     <ClCompile Include="..\private\E_KenaParryHand.cpp" />
     <ClCompile Include="..\private\E_P_Explosion.cpp" />
+    <ClCompile Include="..\private\E_P_ExplosionGravity.cpp" />
     <ClCompile Include="..\private\E_P_Flower.cpp" />
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
     <ClCompile Include="..\private\E_KenaDamage.cpp" />
@@ -528,6 +541,12 @@
     <ClCompile Include="..\private\E_RotBombExplosion.cpp" />
     <ClCompile Include="..\private\E_RotTrail.cpp" />
     <ClCompile Include="..\private\E_Sapling.cpp" />
+    <ClCompile Include="..\private\E_ShamanBossHandPlane.cpp" />
+    <ClCompile Include="..\private\E_ShamanBossPlate.cpp" />
+    <ClCompile Include="..\private\E_ShamanSmoke.cpp" />
+    <ClCompile Include="..\private\E_ShamanSummons.cpp" />
+    <ClCompile Include="..\private\E_ShamanThunderCylinder.cpp" />
+    <ClCompile Include="..\private\E_ShamanTrail.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowTrail.cpp" />
     <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
@@ -589,6 +608,7 @@
     <ClCompile Include="..\private\RotBomb.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />
     <ClCompile Include="..\private\RotHat.cpp" />
+    <ClCompile Include="..\private\MannequinRot.cpp" />
     <ClCompile Include="..\private\RotWisp.cpp" />
     <ClCompile Include="..\private\Saiya.cpp" />
     <ClCompile Include="..\private\ShamanTrapGeo.cpp" />

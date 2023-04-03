@@ -11,7 +11,7 @@ extern bool g_bFrameLimit;
 
 #define TERRAIN_COUNT		5
 
-#define FOR_MAP_GIMMICK
+//#define FOR_MAP_GIMMICK
 
 //#define FOR_MAPTOOL
 //#undef FOR_MAPTOOL
@@ -78,15 +78,15 @@ extern bool				g_bDayOrNight;
 
 extern unsigned int	g_LEVEL;
 
-static const _float4x4 g_IdentityFloat4x4 = {
+static const XMFLOAT4X4 g_IdentityFloat4x4 = {
 	1,0,0,0,
 	0,1,0,0,
 	0,0,1,0,
 	0,0,0,1,
 };
 
-static const _bool g_bFalse = false;
-static const _bool g_bTrue = true;
+static const bool g_bFalse = false;
+static const bool g_bTrue = true;
 
 
 using namespace Client;

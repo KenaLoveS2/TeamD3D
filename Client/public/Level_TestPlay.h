@@ -30,7 +30,7 @@ private:
 	HRESULT Ready_Layer_ControlRoom(const _tchar* pLayerTag);
 
 public:
-	_bool		m_bEnviromentInputShaderValue = false;
+	_bool	m_bEnviromentInputShaderValue = false;
 
 public:
 	static CLevel_TestPlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

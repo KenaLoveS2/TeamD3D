@@ -32,6 +32,9 @@ public:
 	virtual _int		Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 	virtual _int		Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
+public:
+	HRESULT				SetUp_Effects();
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
@@ -42,6 +45,7 @@ private:
 private:
 	class CKena*		m_pKena = nullptr;
 	class CCamera_Player* m_pCamera = nullptr;
+	class CE_P_ExplosionGravity* m_pExplosionGravity = nullptr;
 
 private:
 	_bool				m_bKenaDetected = false;

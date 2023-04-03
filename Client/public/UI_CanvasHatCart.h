@@ -3,6 +3,8 @@
 #include "UI_Canvas.h"
 #include "UI_ClientManager.h"
 
+#define MAX_HAT_COUNT		16
+
 BEGIN(Client)
 class CKena;
 class CUI_CanvasHatCart final : public CUI_Canvas
@@ -42,7 +44,7 @@ private:
 	vector<pair<wstring, _int>>		m_vecHats;
 	CKena*							m_pPlayer;
 	_int							m_iPickedIndex;
-	_int							m_iHatCount[16];
+	_int							m_iHatCount[MAX_HAT_COUNT];
 
 public:
 	static	CUI_CanvasHatCart*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

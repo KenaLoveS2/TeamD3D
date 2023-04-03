@@ -494,7 +494,7 @@ void CPostFX::PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTarg
 
 void CPostFX::Imgui_Render()
 {
-	ImGui::Checkbox("HDR On", &m_bOn);
+	ImGui::Checkbox("HDR On", &m_bOn); 
 
 	static _float2 middleGreyMinMax{ 0.f, 20.f };
 	ImGui::InputFloat2("MiddleGreyMinMax", (float*)&middleGreyMinMax);
@@ -522,7 +522,6 @@ void CPostFX::Imgui_Render()
 
 	static _float2 DOFFarRangeRcpMinMax{ 0.f, 1.f };
 	ImGui::InputFloat2("DOFFarRangeRcpMinMax", (float*)&DOFFarRangeRcpMinMax);
-	ImGui::DragFloat("DOFFarRange", &m_fDOFFarRange, 0.01f, DOFFarRangeRcpMinMax.x, DOFFarRangeRcpMinMax.y);
 
 	static _float2 BokehLumThresholdMinMax{ 0.f, 1.f };
 	ImGui::InputFloat2("BokehLumThresholdMinMax", (float*)&BokehLumThresholdMinMax);

@@ -34,14 +34,19 @@ HRESULT CE_KenaPulseDot::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_eEFfectDesc.bActive = false;
-	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-	m_pVIInstancingBufferCom->Set_PSize(_float2(0.05f, 0.05f));
+	Set_Option();
 	return S_OK;
 }
 
 void CE_KenaPulseDot::Tick(_float fTimeDelta)
 {
+	ImGui::Begin("Dot");
+
+	if (ImGui::Button("Recompile"))
+		m_pShaderCom->ReCompile();
+
+	ImGui::End();
+
 	__super::Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.bActive == true)
@@ -67,6 +72,33 @@ HRESULT CE_KenaPulseDot::Render()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CE_KenaPulseDot::Set_Option()
+{
+	m_eEFfectDesc.bActive = false;
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
+
+	//CVIBuffer_Point_Instancing::POINTDESC* ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
+	//_float3 fMin = _float3(-1.f, -1.f, -1.f);
+	//_float3 fMax = _float3(1.f, 1.f, 1.f);
+
+	//m_eEFfectDesc.fFrame[0] = 53.f;
+	//m_eEFfectDesc.iPassCnt = 1;
+	//m_eEFfectDesc.vColor = XMVectorSet(114.f, 227.f, 255.f, 255.f) / 255.f;
+
+	///* Point Instance Option */
+	//m_pVIInstancingBufferCom->Set_Speeds(0.1f);
+	//ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_GATHER;
+	//ePointDesc->bSpread = true;
+
+	//ePointDesc->fCreateRange = 1.f;
+	//ePointDesc->fRange = 1.f;
+	//ePointDesc->fTerm = 1.f;
+	//ePointDesc->bSetDir = false;
+
+	//m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
+	//m_pVIInstancingBufferCom->Set_PSize(_float2(0.3f, 0.3f));
 }
 
 CE_KenaPulseDot * CE_KenaPulseDot::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)
