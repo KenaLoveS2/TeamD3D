@@ -550,7 +550,7 @@
     <Filter Include="02.GameObjects\Envrioment\ControlRoom">
       <UniqueIdentifier>{cdc58b59-40df-4e45-9aba-7290005222c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\06. 3D UI\Effect_Complex">
+    <Filter Include="02.GameObjects\UI\06. 3D UI\Effect_Unit">
       <UniqueIdentifier>{8bda720b-f543-4f6b-9ca4-f5c9fabaa9aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -1440,6 +1440,9 @@
     <ClInclude Include="..\public\HealthFlower_Anim.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CEffect_Unit.h">
+      <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2309,6 +2312,9 @@
     </ClCompile>
     <ClCompile Include="..\private\HealthFlower_Anim.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="CEffect_Unit.cpp">
+      <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
