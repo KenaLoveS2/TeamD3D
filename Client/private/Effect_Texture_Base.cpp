@@ -466,9 +466,10 @@ void CEffect_Texture_Base::Activate_Spread(_float4 vPos, _float2 vScaleSpeed)
 
 void CEffect_Texture_Base::DeActivate()
 {
+	__super::DeActivate();
+
 	m_LocalMatrix = m_LocalMatrixOriginal;
 	m_vScaleSpeed = { 0.0f, 0.0f };
-	m_bActive = false;
 }
 
 HRESULT CEffect_Texture_Base::SetUp_Components()

@@ -39,7 +39,7 @@ public: /* Activation Function */
 	virtual void					Activate_Scaling(CGameObject* pTarget, _float2 vScaleSpeed) {};
 	virtual void					Activate_Scaling(_float4 vPos, _float2 vScaleSpeed) {};
 	virtual void					Activate_Spread(_float4 vPos, _float2 vScaleSpeed) {};
-	virtual void					DeActivate() {};
+	virtual void					DeActivate();
 
 
 

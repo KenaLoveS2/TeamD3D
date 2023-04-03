@@ -129,6 +129,16 @@ void CEffect_Base_S2::Tick(_float fTimeDelta)
 
 		m_iFrameNow[0] = (_int)m_fFrameNow % m_iFrames[0];
 		m_iFrameNow[1] = (_int)m_fFrameNow / m_iFrames[0];
+
+		//if (m_iFrameNow[0] == m_iFrames[0] - 1 && m_iFrameNow[1] == m_iFrames[1] -1 )
+		//	MSG_BOX("test");
+	}
+
+	if (true == m_bSelfStop)
+	{
+		m_fSelfStopTimeAcc += fTimeDelta;
+		if (m_fSelfStopTimeAcc > m_fSelfStopTime)
+			DeActivate();
 	}
 
 }
@@ -137,12 +147,6 @@ void CEffect_Base_S2::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (true == m_bSelfStop)
-	{
-		m_fSelfStopTimeAcc += fTimeDelta;
-		if (m_fSelfStopTimeAcc > m_fSelfStopTime)
-			DeActivate();
-	}
 }
 
 HRESULT CEffect_Base_S2::Render()
@@ -151,6 +155,21 @@ HRESULT CEffect_Base_S2::Render()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CEffect_Base_S2::DeActivate()
+{
+	m_bActive = false;
+
+	m_fDissolveAlpha = 0.0f;
+	m_iFrameNow[0] = 0;
+	m_iFrameNow[1] = 0;
+	m_fFrameNow = 0.0f;
+
+	m_fUVMove[0] = 0.0f;
+	m_fUVMove[1] = 0.0f;
+
+	m_fSelfStopTimeAcc = 0.0f;
 }
 
 _float4 CEffect_Base_S2::ColorCode()

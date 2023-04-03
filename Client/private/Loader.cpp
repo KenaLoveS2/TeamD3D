@@ -1754,8 +1754,8 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	/********************************************/
 	/*				For. ModelCom				*/
 	/********************************************/
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, true, true)))
-		assert(!"VillageCart");
+	//if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, true, true)))
+	//	assert(!"VillageCart");
 	//MSG_BOX("ModelCom VillageCart : ForSY");
 
 	
@@ -1779,9 +1779,9 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 		return E_FAIL;
 
 	/* HatCart */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HatCart"),
-		CHatCart::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HatCart"),
+	//	CHatCart::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 	//MSG_BOX("GameObject HatCart : ForSY");
 
 

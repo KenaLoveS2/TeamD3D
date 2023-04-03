@@ -429,6 +429,8 @@ void CEffect_Mesh_Base::Activate(_float4 vPos)
 {
 	m_bActive = true;
 	m_pTransformCom->Set_Position(vPos);
+
+
 }
 
 void CEffect_Mesh_Base::Activate(CGameObject* pTarget)
@@ -439,7 +441,7 @@ void CEffect_Mesh_Base::Activate(CGameObject* pTarget)
 
 void CEffect_Mesh_Base::DeActivate()
 {
-	m_bActive = false;
+	__super::DeActivate();
 }
 
 HRESULT CEffect_Mesh_Base::SetUp_Components()

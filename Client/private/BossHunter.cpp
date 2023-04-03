@@ -146,14 +146,6 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 
 void CBossHunter::Tick(_float fTimeDelta)
 {
-	ImGui::Begin("HunterTest");
-	if (ImGui::Button("ReCompile"))
-	{
-		m_pShaderCom->ReCompile();
-		m_pRendererCom->ReCompile();
-	}
-	ImGui::End();
-
 	m_pModelCom->Play_Animation(fTimeDelta);
 	Update_Collider(fTimeDelta);
 
@@ -317,7 +309,7 @@ void CBossHunter::Imgui_RenderProperty()
 
 void CBossHunter::ImGui_AnimationProperty()
 {
-	m_pTransformCom->Imgui_RenderProperty_ForJH();
+	//m_pTransformCom->Imgui_RenderProperty_ForJH();
 	//m_pArrows[m_iArrowIndex]->Get_TransformCom()->Imgui_RenderProperty_ForJH();
 
 	if (ImGui::CollapsingHeader("Effect"))
@@ -388,7 +380,7 @@ void CBossHunter::Push_EventFunctions()
 
 	ShockEffect_On(true, 0.f);
 	ShockEffect_Off(true, 0.f);
-	Test3(true, 0.f);
+	DustEffect_On(true, 0.f);
 	Test4(true, 0.f);
 
 }
@@ -1531,14 +1523,31 @@ void CBossHunter::ShockEffect_Off(_bool bIsInit, _float fTimeDelta)
 
 }
 
-void CBossHunter::Test3(_bool bIsInit, _float fTimeDelta)
+void CBossHunter::DustEffect_On(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
 	{
 		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test3);
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::DustEffect_On);
 		return;
 	}
+
+	_float4 vPos;
+
+	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_lf_ball_jnt");
+	if (pStaffBonePtr != nullptr)
+	{
+		_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+		vPos = matWorldSocket.r[3];
+	}
+	else
+		vPos = m_pTransformCom->Get_Position();
+
+
+	m_vecEffects[EFFECT_DUST_PARTICLE_BIG]->Activate(vPos);
+	m_vecEffects[EFFECT_DUST_PARTICLE_SMALL]->Activate(vPos);
+	m_vecEffects[EFFECT_DUST_MESH_DUSTPLANE]->Activate(vPos);
 }
 
 void CBossHunter::Test4(_bool bIsInit, _float fTimeDelta)
@@ -1611,6 +1620,12 @@ bool	EffectList_Getter(void* data, int index, const char** output)
 
 void CBossHunter::ImGui_EffectProperty()
 {
+	if (ImGui::Button("ReCompile"))
+	{
+		m_pShaderCom->ReCompile();
+		m_pRendererCom->ReCompile();
+	}
+
 	static vector<string> tags;
 	if (ImGui::Button("Refresh"))
 	{

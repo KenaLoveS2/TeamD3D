@@ -72,14 +72,14 @@ void CEffect_Particle_Base::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	if (m_pVIBufferCom != nullptr)
-	{
-		if (m_pVIBufferCom->Is_Finished())
-		{
-			m_bActive = false;
-			return;
-		}
-	}
+	//if (m_pVIBufferCom != nullptr)
+	//{
+	//	if (m_pVIBufferCom->Is_Finished())
+	//	{
+	//		m_bActive = false;
+	//		return;
+	//	}
+	//}
 
 	__super::Tick(fTimeDelta);
 
@@ -492,8 +492,7 @@ void CEffect_Particle_Base::Activate(CGameObject* pTarget)
 
 void CEffect_Particle_Base::DeActivate()
 {
-	m_bActive = false;
-	m_fSelfStopTimeAcc = 0.0f;
+	__super::DeActivate();
 
 	m_pVIBufferCom->Update_Buffer(nullptr);
 }
