@@ -290,7 +290,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 	CGameInstance *pGameInstance = CGameInstance::GetInstance();
 	CGameObject *pGameObject = nullptr;
 
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "HatCart_.json");
+	// CImgui_MapEditor::Load_MapObjects(g_LEVEL, "HatCart_.json");
 	
 	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BranchTosser"), L"BranchTosser_0", nullptr, &pGameObject))) return E_FAIL;
 	// if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;

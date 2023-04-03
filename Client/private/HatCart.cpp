@@ -48,7 +48,7 @@ HRESULT CHatCart::Late_Initialize(void* pArg)
 
 	m_pPlayer->Set_HatCartPtr(this);
 
-	Crate_MannequinRot();
+	Create_MannequinRot();
 
 	return S_OK;
 }
