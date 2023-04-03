@@ -24,7 +24,5 @@ CTexture* CTexture_Manager::Find_Texture(const _tchar* pFilePath)
 
 void CTexture_Manager::Free()
 {
-	for (auto& Pair : m_Textures)
-		Safe_Release(Pair.second);
 	m_Textures.clear();
 }

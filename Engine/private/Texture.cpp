@@ -15,11 +15,15 @@ CTexture::CTexture(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 
 CTexture::CTexture(const CTexture & rhs)
 	: CComponent(rhs)
-	, m_pTextures(rhs.m_pTextures)
+	// , m_pTextures(rhs.m_pTextures)
 	, m_iNumTextures(rhs.m_iNumTextures)
 {
+	m_pTextures = new ID3D11ShaderResourceView * [m_iNumTextures];
 	for (_uint i = 0; i < m_iNumTextures; ++i)
+	{
+		m_pTextures[i] = rhs.m_pTextures[i];
 		Safe_AddRef(m_pTextures[i]);
+	}		
 }
 
 HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures, _bool bddsLoad)
@@ -160,8 +164,6 @@ CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pConte
 	if (pInstance)
 	{
 		pInstance = (CTexture*)pInstance->Clone();
-		pInstance->Set_Clone(true);
-		Safe_AddRef(pInstance);
 		return  pInstance;
 	}
 	else
@@ -174,6 +176,7 @@ CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pConte
 			Safe_Release(pInstance);
 		}
 		CTexture_Manager::GetInstance()->Add_Texture(pTextureFilePath, pInstance);
+		
 		return pInstance;
 	}
 }
@@ -193,14 +196,10 @@ CComponent * CTexture::Clone(void * pArg, CGameObject * pOwner)
 
 void CTexture::Free()
 {
- 	__super::Free();
+	__super::Free();
 
-	if(!m_bCloneTexture)
-	{
-		for (_uint i = 0; i < m_iNumTextures; ++i)
-			Safe_Release(m_pTextures[i]);
-	}
+	for (_uint i = 0; i < m_iNumTextures; ++i)
+		Safe_Release(m_pTextures[i]);
 
-	if(false == m_isCloned)
-		Safe_Delete_Array(m_pTextures);
+	Safe_Delete_Array(m_pTextures);
 }

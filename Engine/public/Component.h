@@ -35,7 +35,7 @@ protected:
 
 protected:
 	_bool						m_isCloned = false;
-	wstring					m_wstrFilePath = L"";
+	wstring						m_wstrFilePath = L"";
 
 public:
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) = 0;

@@ -188,7 +188,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 
 				iMaterialIndex++;
 				m_Materials.push_back(ModelMatrial);			//  MODELMATERIAL  1개는 18개의 텍스쳐를 생성가능하다.
-																// 결국에 여기를 손봐야한다.
+																						// 결국에 여기를 손봐야한다.
 			}
 		}
 		else
@@ -1508,7 +1508,9 @@ void CModel::Free()
 	for (auto& Material : m_Materials)
 	{
 		for (_uint i = 0; i < (_uint)WJ_TEXTURE_TYPE_MAX; ++i)
+		{
 			Safe_Release(Material.pTexture[i]);
+		}
 	}
 	m_Materials.clear();
 
@@ -1538,21 +1540,13 @@ void CModel::Free()
 
 HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath)
 {
-	if (iMaterialIndex >= m_Materials.size())
-		return E_FAIL;
-
+	if (iMaterialIndex >= m_Materials.size())return E_FAIL;
 	CTexture *pTexture = CTexture::Create(m_pDevice, m_pContext, CUtile::Create_StringAuto(pTexturePath));
 	if (pTexture == nullptr) return E_FAIL;
-
-	if (m_Materials[iMaterialIndex].pTexture[eType])
-	{
-		Safe_Release(m_Materials[iMaterialIndex].pTexture[eType]);
-	}
-
+	if (m_Materials[iMaterialIndex].pTexture[eType]){Safe_Release(m_Materials[iMaterialIndex].pTexture[eType]);}
 	m_Materials[iMaterialIndex].pTexture[eType] = pTexture;
 	return S_OK;
 }
-
 
 void CModel::Create_PxTriangle(PX_USER_DATA *pUserData)
 {
@@ -1805,7 +1799,6 @@ void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
 		}
 		m_Materials.push_back(ModelMatrial);
 	}
-	
 }
 
 void CModel::Set_InstanceEffect_Info(CTransform* pParentTransform, _int iInstanceNum, _float fMinSpeed, _float fMaxSpeed)
