@@ -122,57 +122,49 @@ void CKena_Status::Update_ArrowCoolTime(_float fTimeDelta)
 
 void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
 {
-	CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
-	CUI_ClientManager::UI_PRESENT eCool = CUI_ClientManager::AMMO_BOMBCOOL;
-	CUI_ClientManager::UI_PRESENT eBombEffect = CUI_ClientManager::AMMO_BOMBEFFECT;
-	CUI_ClientManager::UI_PRESENT eReCharge = CUI_ClientManager::AMMO_BOMBRECHARGE;
-	CUI_ClientManager::UI_PRESENT eMoment = CUI_ClientManager::AMMO_BOMBMOMENT;
+	CUI_ClientManager::UI_PRESENT eBomb			= CUI_ClientManager::AMMO_BOMB;
+	CUI_ClientManager::UI_PRESENT eCool			= CUI_ClientManager::AMMO_BOMBCOOL;
+	CUI_ClientManager::UI_PRESENT eBombEffect	= CUI_ClientManager::AMMO_BOMBEFFECT;
 
-	_float fGuage = 0.f;
-
-	if (m_iCurBombCount == m_iMaxBombCount) /* Full */
+	for (_int i = 0; i < m_iMaxBombCount; ++i)
 	{
-		m_fCurBombCoolTime = 0.0f;
-		fGuage = 1.0f;
-		m_StatusDelegator.broadcast(eCool, fGuage);
-	}
-	else /* Not Full */
-	{
-		if (m_fCurBombCoolTime == 0.f ) /* Bomb Use Moment */
+		if (m_bUsed[i] == true)
 		{
-			_float fCount = (_float)m_iCurBombCount;
-			m_StatusDelegator.broadcast(eMoment, fGuage);
-			m_StatusDelegator.broadcast(eBomb, fCount);
-		}
+			m_fCurBombCoolTime[i] += fTimeDelta;
 
-
-		m_fCurBombCoolTime += fTimeDelta;
-		if (m_fCurBombCoolTime >= m_fInitBombCoolTime)
-		{
-			/* Fullfilll Effect Call */
-			m_StatusDelegator.broadcast(eBombEffect, fGuage);
-
-			++m_iCurBombCount;
-			if (m_iCurBombCount < m_iMaxBombCount)
-				m_fCurBombCoolTime = 0.0f;
+			/* FullFilled */
+			if (m_fCurBombCoolTime[i] >= m_fInitBombCoolTime)
+			{
+				++m_iCurBombCount;
+				m_fCurBombCoolTime[i] = m_fInitBombCoolTime;
+				_float fIndex = (_float)i;
+				m_StatusDelegator.broadcast(eBombEffect, fIndex);
+				m_bUsed[i] = false;
+			}
 			else
-				m_fCurBombCoolTime = m_fInitBombCoolTime;
-
-			/* ReCharge */
-			_float fIndex = (_float)m_iCurBombCount - 1;
-			
-			m_StatusDelegator.broadcast(eReCharge, fIndex);
+			{
+				_float fGuage = m_fCurBombCoolTime[i] / m_fInitBombCoolTime;
+				if (i == 1)
+					fGuage += 10.f;
+				m_StatusDelegator.broadcast(eCool, fGuage);
+			}
 		}
-				fGuage = m_fCurBombCoolTime / m_fInitBombCoolTime;
-		m_StatusDelegator.broadcast(eCool, fGuage);
-
 	}
 }
 
 void CKena_Status::Update_ShieldRecovery(_float fTimeDelta)
 {
+	CUI_ClientManager::UI_PRESENT eShield = CUI_ClientManager::HUD_SHIELD;
+
 	if (m_bShieldBreak == false)
 	{
+		if (m_fShield == m_fMaxShield)
+		{
+			_float fGuage = 1.f;
+			m_StatusDelegator.broadcast(eShield, fGuage);
+			return;
+		}
+
 		if (m_fShield < m_fMaxShield)
 		{
 			if (m_fCurShieldCoolTime < m_fInitShieldCoolTime)
@@ -180,15 +172,15 @@ void CKena_Status::Update_ShieldRecovery(_float fTimeDelta)
 			else
 			{
 				m_fShield += fTimeDelta * 3.f;
-
-				/* NEED : UI SHIELD GAGE UPDATE */
+				_float fGuage = m_fShield / m_fMaxShield;
+				m_StatusDelegator.broadcast(eShield, fGuage);
 			}
 		}
 		else
 		{
 			m_fShield = m_fMaxShield;
-
-			/* NEED : UI SHIELD GAGE UPDATE */
+			_float fGuage = 1.f;
+			m_StatusDelegator.broadcast(eShield, fGuage);
 		}
 	}
 	else
@@ -200,10 +192,13 @@ void CKena_Status::Update_ShieldRecovery(_float fTimeDelta)
 			m_bShieldBreak = false;
 			m_fCurShieldRecoveryTime = 0.f;
 			m_fCurShieldCoolTime = m_fInitShieldCoolTime;
+
 		}
+
+		_float fGuage = 0.f;
+		m_StatusDelegator.broadcast(eShield, fGuage);
+
 	}
-	CUI_ClientManager::UI_PRESENT eShield = CUI_ClientManager::HUD_SHIELD;
-	m_StatusDelegator.broadcast(eShield, m_fShield);
 }
 
 void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
@@ -233,28 +228,35 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 		}
 	case CKena_Status::SKILL_BOW:
 		{
+			CUI_ClientManager::UI_PRESENT eArrowUpgrade = CUI_ClientManager::AMMO_ARROWUPRADE;
+
 			if (iSlot == 3)
 			{
 				m_iMaxArrowCount++;
+				m_iCurArrowCount = m_iMaxArrowCount;
 
-				/* NEED : UI ARROW COUNT UP */
+				_float fMax = (_float)m_iMaxArrowCount;
+				m_StatusDelegator.broadcast(eArrowUpgrade, fMax);
 			}
 			else if (iSlot == 4)
 			{
-				m_iMaxArrowCount++;
-
-				/* NEED : UI ARROW COUNT UP */
+				/* Skill Damage Or Speed of Arrow */
 			}
 
 			break;
 		}
 	case CKena_Status::SKILL_BOMB:
 		{
+			CUI_ClientManager::UI_PRESENT eBombUpgrade = CUI_ClientManager::AMMO_BOMBUPGRADE;
+
 			if (iSlot == 3)
 			{
 				m_iMaxBombCount++;
+				m_iCurBombCount = m_iMaxBombCount;
 
 				/* NEED : UI BOMB COUNT UP */
+				_float fMax = (_float)m_iMaxBombCount;
+				m_StatusDelegator.broadcast(eBombUpgrade, fMax);
 			}
 
 			break;
@@ -334,7 +336,7 @@ HRESULT CKena_Status::Save()
 	jKenaStatus["14. m_iMaxBombCount"] = m_iMaxBombCount;
 	jKenaStatus["15. m_iCurBombCount"] = m_iCurBombCount;
 	jKenaStatus["16. m_fInitBombCoolTime"] = m_fInitBombCoolTime;
-	jKenaStatus["17. m_fCurBombCoolTime"] = m_fCurBombCoolTime;
+	jKenaStatus["17. m_fCurBombCoolTime"] = m_fCurBombCoolTime[0];
 
 	ofstream file(m_strJsonFilePath.c_str());
 	file << jKenaStatus;
@@ -370,11 +372,16 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 	jKenaStatus["14. m_iMaxBombCount"].get_to<_int>(m_iMaxBombCount);
 	jKenaStatus["15. m_iCurBombCount"].get_to<_int>(m_iCurBombCount);
 	jKenaStatus["16. m_fInitBombCoolTime"].get_to<_float>(m_fInitBombCoolTime);
-	jKenaStatus["17. m_fCurBombCoolTime"].get_to<_float>(m_fCurBombCoolTime);
+	jKenaStatus["17. m_fCurBombCoolTime"].get_to<_float>(m_fCurBombCoolTime[0]);
+	jKenaStatus["17. m_fCurBombCoolTime"].get_to<_float>(m_fCurBombCoolTime[1]);
+
 
 	m_iPipLevel = 1;
 	m_eRotState = RS_GOOD;
 	m_fArrowGuage = 1.f;
+	m_bUsed[0] = false;
+	m_bUsed[1] = false;
+
 
 	m_strJsonFilePath = strJsonFilePath;
 
@@ -461,6 +468,26 @@ void CKena_Status::Set_CurArrowCount(_int iValue)
 	_float fCount = (_float)m_iCurArrowCount;
 	m_StatusDelegator.broadcast(eArrow, fCount);
 
+}
+
+void CKena_Status::Set_CurBombCount(_int iValue)
+{
+	m_iCurBombCount = iValue;
+
+	for (_int i = 0; i < m_iMaxBombCount; ++i)
+	{
+		if (m_bUsed[i] == false)
+		{
+			m_bUsed[i] = true;
+			m_fCurBombCoolTime[i] = 0.0f;
+
+			CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
+			_float fIndex = (_float)i;
+			m_StatusDelegator.broadcast(eBomb, fIndex);
+
+			return;
+		}
+	}
 }
 
 void CKena_Status::Add_RotCount()

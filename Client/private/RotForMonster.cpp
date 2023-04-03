@@ -325,6 +325,7 @@ HRESULT CRotForMonster::SetUp_FSM()
 		if(m_pTarget != nullptr)
 		{
 			CBone* pBone = m_pTarget->Get_Model()->Get_BonePtr("BindJoint");
+			NULL_CHECK_RETURN(pBone, );
 
 			_matrix			SocketMatrix = 
 				pBone->Get_OffsetMatrix() * 

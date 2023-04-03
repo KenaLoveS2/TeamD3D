@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "..\public\UI_RotIcon.h"
 #include "GameInstance.h"
 #include "Camera.h"
@@ -80,26 +80,57 @@ void CUI_RotIcon::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
+	/* Modify Date: 230402 */
 	if (nullptr != m_pTarget)
 	{
-		CMonster* pMonster =  dynamic_cast<CMonster*>(m_pTarget);
+		CMonster* pMonster = dynamic_cast<CMonster*>(m_pTarget);
 		if (pMonster != nullptr)
 		{
-			/* calculate camera */
-			_float4 vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
-			_float4 vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			_float fDistance = _float4::Distance(vCamPos, vPos);
-			_float4 vDir = XMVector3Normalize(vPos - vCamPos);
-
-			if (10.f < fDistance || (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) <= cosf(XMConvertToRadians(20.f))) || pMonster->Get_Bind())
+			if (pMonster->Get_Bind())
 			{
 				m_pTarget = nullptr;
 				m_bActive = false;
+				return;
 			}
 		}
+
+		/* calculate camera */
+		_float4 vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+		_float4 vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_float fDistance = _float4::Distance(vCamPos, vPos);
+		_float4 vDir = XMVector3Normalize(vPos - vCamPos);
+
+		if (10.f < fDistance || (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) <= cosf(XMConvertToRadians(20.f))))
+		{
+			m_pTarget = nullptr;
+			m_bActive = false;
+		}
 	}
+
+#pragma region Old
+	//if (nullptr != m_pTarget)
+	//{
+	//	CMonster* pMonster =  dynamic_cast<CMonster*>(m_pTarget);
+	//	if (pMonster != nullptr)
+	//	{
+	//		/* calculate camera */
+	//		_float4 vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	//		_float4 vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	//		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	//		_float fDistance = _float4::Distance(vCamPos, vPos);
+	//		_float4 vDir = XMVector3Normalize(vPos - vCamPos);
+	//		if (10.f < fDistance || (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) <= cosf(XMConvertToRadians(20.f))) || pMonster->Get_Bind())
+	//		{
+	//			m_pTarget = nullptr;
+	//			m_bActive = false;
+	//		}
+	//	}
+	//}
+#pragma endregion Old
 }
+
+
 
 void CUI_RotIcon::Late_Tick(_float fTimeDelta)
 {
