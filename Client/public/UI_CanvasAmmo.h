@@ -2,6 +2,7 @@
 #include "Client_Defines.h"
 #include "UI_Canvas.h"
 #include "UI_ClientManager.h"
+#include <queue>
 
 /* This canvas give Data to Canvas Aim */
 
@@ -56,7 +57,6 @@ private:
 	virtual HRESULT			SetUp_ShaderResources()			override;
 
 private: /* Bind Functions */
-	void	Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
 	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue);
 
 private:
@@ -69,9 +69,12 @@ private:
 	_uint	m_iNumArrowNow;
 
 	/* Bomb */
-	_uint	m_iNumBombs;
-	_uint	m_iNumBombNow;
-	_int	m_Bombs[BOMB_END];
+	_uint			m_iNumBombs;
+	_uint			m_iNumBombNow;
+	_int			m_Bombs[BOMB_END];
+
+	queue<_int>		m_qLeft;
+	queue<_int>		m_qUsed;
 
 public:
 	static	CUI_CanvasAmmo*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

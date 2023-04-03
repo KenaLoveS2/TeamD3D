@@ -710,11 +710,11 @@ void CKena::Late_Tick(_float fTimeDelta)
 	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
 	//CUI_ClientManager::UI_FUNCTION funcCheck = CUI_ClientManager::FUNC_CHECK;
 
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_M))
-	//{
-	//	CKena* pPlayer = this;
-	//	m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
-	//}
+	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
+	{
+		CKena* pPlayer = this;
+		m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
+	}
 
 	//if(CGameInstance::GetInstance()->Key_Down(DIK_P))
 	//{
@@ -952,8 +952,8 @@ void CKena::Imgui_RenderProperty()
 	_int	BombCount[2] = { m_pKenaStatus->Get_CurBombCount(), m_pKenaStatus->Get_MaxBombCount() };
 	ImGui::InputInt2("Bomb Count", (_int*)&BombCount, ImGuiInputTextFlags_ReadOnly);
 
-	_float2	BombCoolTime{ m_pKenaStatus->Get_CurBombCoolTime(), m_pKenaStatus->Get_InitBombCoolTime() };
-	ImGui::InputFloat2("Bomb CoolTime", (_float*)&BombCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
+	_float3	BombCoolTime{ m_pKenaStatus->Get_CurBombCoolTime(0), m_pKenaStatus->Get_CurBombCoolTime(1), m_pKenaStatus->Get_InitBombCoolTime() };
+	ImGui::InputFloat3("Bomb CoolTime", (_float*)&BombCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
 	_float2	Shield{ m_pKenaStatus->Get_Shield(), m_pKenaStatus->Get_MaxShield() };
 	ImGui::InputFloat2("Shield", (_float*)&Shield, "%.3f", ImGuiInputTextFlags_ReadOnly);

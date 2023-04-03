@@ -11,6 +11,8 @@
 #include "UI_NodeItemBox.h"
 #include "Kena.h"
 #include "Kena_Status.h"
+#include "HatCart.h"
+
 
 CUI_CanvasHatCart::CUI_CanvasHatCart(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -107,15 +109,14 @@ HRESULT CUI_CanvasHatCart::Render()
 
 HRESULT CUI_CanvasHatCart::Bind()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
-	RELEASE_INSTANCE(CGameInstance);
+	CHatCart* pCart = dynamic_cast<CHatCart*>(CGameInstance::GetInstance()->
+		//Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"4_HatCart"));
+		Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"test"));
 
-	if (pKena == nullptr)
+	if (pCart == nullptr)
 		return E_FAIL;
 
-	pKena->m_PlayerPtrDelegator.bind(this, &CUI_CanvasHatCart::BindFunction);
+	pCart->m_CartDelegator.bind(this, &CUI_CanvasHatCart::BindFunction);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -321,12 +322,16 @@ HRESULT CUI_CanvasHatCart::SetUp_ShaderResources()
 
 }
 
-void CUI_CanvasHatCart::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, CKena * pPlayer)
+void CUI_CanvasHatCart::BindFunction(CUI_ClientManager::UI_PRESENT eType, CKena* pPlayer, _bool* Out_Open)
 {
-	m_bActive = !m_bActive;
-	m_pPlayer = pPlayer;
-	
-	static_cast<CUI_NodeCurrentCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal(m_pPlayer->Get_Status()->Get_Crystal());
+	if (eType == CUI_ClientManager::HATCART_)
+	{
+		m_bActive = !m_bActive;
+		m_pPlayer = pPlayer;
+		static_cast<CUI_NodeCurrentCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal(m_pPlayer->Get_Status()->Get_Crystal());
+
+		*Out_Open = m_bActive;
+	}
 }
 void CUI_CanvasHatCart::Picking()
 {

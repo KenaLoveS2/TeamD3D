@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "..\public\UI_CanvasTop.h"
 #include "GameInstance.h"
 #include "Kena.h"
@@ -10,6 +10,8 @@
 #include "UI_NodeRotArrow.h"
 #include "UI_NodeBossHP.h"
 #include "BossWarrior.h"
+#include "BossShaman.h"
+#include "BossHunter.h"
 
 CUI_CanvasTop::CUI_CanvasTop(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice,pContext)
@@ -108,17 +110,31 @@ HRESULT CUI_CanvasTop::Bind()
 		L"Layer_Player", L"Kena"));
 	if (pKena == nullptr)
 		return E_FAIL;
-	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
+	/* Boss Warrior Bind */
+	//CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+	//	L"Layer_Monster", L"BossWarrior_0"));
+	//if (pBossWarrior == nullptr)
+	//	return E_FAIL;
 
-	CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-		L"Layer_Monster", L"BossWarrior_0"));
-	if (pBossWarrior == nullptr)
+	///* Boss Shaman Bind */
+	//CBossShaman* pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+	//	L"Layer_Monster", L"BossShaman_0"));
+	//if (pShaman == nullptr)
+	//	return E_FAIL;
+
+	/* Boss Hunter Bind */
+	CBossHunter* pBossHunter = dynamic_cast<CBossHunter*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+		L"Layer_Monster", L"BossHunter_0"));
+	if (pBossHunter == nullptr)
 		return E_FAIL;
-	pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
 
-	RELEASE_INSTANCE(CGameInstance);
+	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	//pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	//pShaman->m_BossShamanDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	pBossHunter->m_BossHunterDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -331,13 +347,13 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 			switch (iValue)
 			{
 			case 10:
-				static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Title(L"¿ö¸®¾î");
+				static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Title(L"ì›Œë¦¬ì–´");
 				break;
 			case 20:
-				static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Title(L"°¡¸é Á¦ÀÛÀÚ");
+				static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Title(L"ê°€ë©´ ì œì‘ì");
 				break;
 			case 30:
-				static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Title(L"ÇåÅÍ");
+				static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Title(L"í—Œí„°");
 				break;
 			}
 		}
