@@ -445,7 +445,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	m_Delegator.broadcast(eRot, fRotState);
 	//m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
 
-	m_pTransformCom->Set_Position(_float4(13.f, 0.f, 9.f, 1.f));
+	const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
+	m_pTransformCom->Set_Position(vPosFloat4);
 
 	for (auto& pEffect : m_mapEffect)
 	{

@@ -479,7 +479,7 @@ HRESULT CRot::SetUp_State()
 		.AddState("TELEPORT_KENA")
 		.OnStart([this]()
 	{
-		// ÅÚ·¹Æ÷Æ® ÀÌÆåÆ® ÇÊ¿ä ¿©±â¼­ ÄÝÇÏ¸é µÈ´Ù
+		// ï¿½Ú·ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½È´ï¿½
 		_float4 vKenaLook = m_pKenaTransform->Get_State(CTransform::STATE_LOOK);
 		_float4 vTeleportPos = m_vKenaPos - vKenaLook * 1.5f + _float4(CUtile::Get_RandomFloat(0.f, 1.f), 0.f, CUtile::Get_RandomFloat(0.f, 1.f), 0.f);
 

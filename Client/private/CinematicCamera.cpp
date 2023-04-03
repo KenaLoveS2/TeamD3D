@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\public\CinematicCamera.h"
+#include "CinematicCamera.h"
 #include "GameInstance.h"
 #include "PipeLine.h"
 #include "DebugDraw.h"
@@ -125,7 +125,7 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
 	m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
 	m_pEffect = new BasicEffect(m_pDevice);
 	m_pEffect->SetVertexColorEnabled(true);
@@ -133,7 +133,7 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 	size_t         iShaderByteCodeSize;
 	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderByteCodeSize);
 	m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount, pShaderByteCode, iShaderByteCodeSize, &m_pInputLayout);
-//#endif
+#endif
 
 	return S_OK;
 }
@@ -162,12 +162,14 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 
 	if (m_bPlay &&m_iNumKeyFrames >= 4)
 	{
+		Calc_Ratio();
+
 		if (m_bInitSet)
 		{
 			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-				m_pPlayerCam = pGameInstance->Find_Camera(L"PLAYER_CAM");
+			m_pPlayerCam = pGameInstance->Find_Camera(L"PLAYER_CAM");
 			RELEASE_INSTANCE(CGameInstance)
-				m_pTransformCom->Set_WorldMatrix_float4x4(m_pPlayerCam->Get_TransformCom()->Get_WorldMatrixFloat4x4());
+			m_pTransformCom->Set_WorldMatrix_float4x4(m_pPlayerCam->Get_TransformCom()->Get_WorldMatrixFloat4x4());
 			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 			_float4 vLookAt = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 			m_keyframes.front().vPos = _float3(vPos.x, vPos.y, vPos.z);
@@ -185,35 +187,19 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 				CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 				m_iChatIndex = 0;
 				m_CinemaDelegator.broadcast(eChat, bOn, fTemp, m_vecChat[m_iChatIndex]);
-				m_iChatIndex++;
 			}
 			/* ~Call Chat */
-
 			m_bInitSet = false;
 		}
 
 		if (m_fDeltaTime <= m_keyframes.back().fTime && !m_bPausePlay)
 		{
 			m_fDeltaTime += fTimeDelta;
-			if(m_fDeltaTime >= m_keyframes.back().fTime * 0.5f)
+			_bool bOn = true;
+			if (!m_vecChat.empty())
 			{
 				CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
-				_bool bVal = true;
-
-				if (m_iChatIndex >= (int)m_vecChat.size())
-				{
-					bVal = false;
-					if (!m_vecChat.empty())
-						m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[0]);
-				}
-				else
-				{
-					if (!m_vecChat.empty())
-					{
-						m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[m_iChatIndex]);
-						m_iChatIndex++;
-					}
-				}
+				m_CinemaDelegator.broadcast(eChat, bOn, fTemp, m_vecChat[m_iChatIndex]);
 			}
 		}		
 		else
@@ -245,33 +231,13 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 				_bool bOn = false;
 				m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
 				/* ~Call CinemaUI */
+
+				CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+				m_iChatIndex = 0;
+				m_CinemaDelegator.broadcast(eChat, bOn, fTemp, m_vecChat[m_iChatIndex]);
 			}
 			m_bFinishSet = true;
 		}
-		/*else
-		{
-			if (pGameInstance->Key_Pressing(DIK_UP))
-				m_pTransformCom->Go_Straight(fTimeDelta);
-
-			if (pGameInstance->Key_Pressing(DIK_DOWN))
-				m_pTransformCom->Go_Backward(fTimeDelta);
-
-			if (pGameInstance->Key_Pressing(DIK_LEFT))
-				m_pTransformCom->Go_Left(fTimeDelta);
-
-			if (pGameInstance->Key_Pressing(DIK_RIGHT))
-				m_pTransformCom->Go_Right(fTimeDelta);
-
-			if (pGameInstance->Get_DIMouseState(DIM_RB) & 0x80)
-			{
-				long	MouseMove = 0;
-				if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
-					m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * 0.1f);
-				if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
-					m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * 0.1f);
-			}
-		}
-		CCamera::Tick(fTimeDelta);*/
 	}
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_CINEVIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
 	RELEASE_INSTANCE(CGameInstance)
@@ -289,7 +255,7 @@ void CCinematicCamera::Late_Tick(_float TimeDelta)
 
 HRESULT CCinematicCamera::Render()
 {
-//#ifdef _DEBUG
+#ifdef _DEBUG
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 	_uint    iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -328,7 +294,7 @@ HRESULT CCinematicCamera::Render()
 	for (_uint i = 0; i < m_iNumKeyFrames; ++i)
 		Safe_Delete(ppSphere[i]);
 	Safe_Delete_Array(ppSphere);
-//#endif // _DEBUG
+#endif // _DEBUG
 	return CCamera::Render();
 }
 
@@ -357,6 +323,10 @@ void CCinematicCamera::Imgui_RenderProperty()
 	if (m_keyframes.size() >= 4)
 	{
 		static _int iSelectKeyFrame = -1;
+
+		if (ImGui::Button("Reset"))
+			iSelectKeyFrame = -1;
+
 		char**         ppKeyFrameNum = new char*[m_iNumKeyFrames];
 
 		if (ImGui::SliderFloat("Duration", &m_fDeltaTime, 0.f, m_keyframes.back().fTime))
@@ -366,7 +336,12 @@ void CCinematicCamera::Imgui_RenderProperty()
 			iSelectKeyFrame = -1;
 		}
 
-
+		if (ImGui::SliderFloat("Ratio", &m_fDurationRatio, 0.f, 100.f))
+		{
+			m_bPausePlay = true;
+			m_bPlay = true;
+			iSelectKeyFrame = -1;
+		}
 		
 		if (ImGui::Button("CinematicPlay"))
 		{
@@ -403,6 +378,9 @@ void CCinematicCamera::Imgui_RenderProperty()
 			_bool bOn = false;
 			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
 			/* ~Call CinemaUI */
+			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+			m_iChatIndex = 0;
+			m_CinemaDelegator.broadcast(eChat, bOn, fTemp, m_vecChat[m_iChatIndex]);
 		}
 
 		if (ImGui::Button("DebugPlay"))
@@ -420,7 +398,7 @@ void CCinematicCamera::Imgui_RenderProperty()
 
 		ImGui::ListBox("KeyFrameList", &iSelectKeyFrame, ppKeyFrameNum, (int)m_iNumKeyFrames);
 
-		if (iSelectKeyFrame != -1)
+		if (iSelectKeyFrame != -1 && iSelectKeyFrame < (int)m_iNumKeyFrames)
 		{
 			float fPos[3] = { m_keyframes[iSelectKeyFrame].vPos.x , m_keyframes[iSelectKeyFrame].vPos.y,m_keyframes[iSelectKeyFrame].vPos.z };
 			ImGui::DragFloat3("KFPos", fPos, 0.01f, -1000.f, 1000.f);
@@ -430,8 +408,8 @@ void CCinematicCamera::Imgui_RenderProperty()
 			m_keyframes[iSelectKeyFrame].vLookAt = _float3(fLookAT[0], fLookAT[1], fLookAT[2]);
 			ImGui::DragFloat("KFTime", &m_keyframes[iSelectKeyFrame].fTime);
 
-			m_pTransformCom->Set_Position(m_keyframes[iSelectKeyFrame].vPos);
-			m_pTransformCom->Set_Look(m_keyframes[iSelectKeyFrame].vLookAt);
+			m_pTransformCom->Set_Position(CUtile::Float3toFloat4Position(m_keyframes[iSelectKeyFrame].vPos));
+			m_pTransformCom->Set_Look(CUtile::Float3toFloat4Look(m_keyframes[iSelectKeyFrame].vLookAt));
 
 			if (ImGui::Button("Erase"))
 			{
@@ -443,25 +421,6 @@ void CCinematicCamera::Imgui_RenderProperty()
 		for (_uint i = 0; i < m_iNumKeyFrames; ++i)
 			Safe_Delete_Array(ppKeyFrameNum[i]);
 		Safe_Delete_Array(ppKeyFrameNum);
-	}
-
-	if (ImGui::Button("Test Chat"))
-	{
-		if (!m_vecChat.empty())
-		{
-			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
-			_bool bVal = true;
-			if (m_iChatIndex >= (int)m_vecChat.size())
-			{
-				bVal = false;
-				m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[0]);
-			}
-			else
-			{
-				m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[m_iChatIndex]);
-				m_iChatIndex++;
-			}
-		}
 	}
 
 	if (!m_bPlay)
@@ -583,6 +542,18 @@ HRESULT CCinematicCamera::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
+}
+
+void CCinematicCamera::Calc_Ratio()
+{
+	m_fDurationRatio = m_fDeltaTime * 100.f / m_keyframes.back().fTime;
+
+	if(!m_vecChat.empty())
+	{
+		m_fNumChat = (_float)m_vecChat.size();
+		m_fChatRatio = m_fDurationRatio;
+		m_iChatIndex = static_cast<_uint>(m_fChatRatio * m_fNumChat / 100.f);
+	}
 }
 
 void CCinematicCamera::Play()
@@ -770,6 +741,17 @@ void CCinematicCamera::Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAM
 
 }
 
+_bool CCinematicCamera::CameraFinishedChecker(_float fRatio)
+{
+	/* 0 ~ 1*/
+	_float fPlayRatio = m_fDurationRatio * 0.01f;
+
+	if (fPlayRatio > fRatio)
+		return true;
+	else
+		return false;
+}
+
 CCinematicCamera* CCinematicCamera::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CCinematicCamera*      pInstance = new CCinematicCamera(pDevice, pContext);
@@ -797,11 +779,11 @@ CGameObject* CCinematicCamera::Clone(void* pArg)
 void CCinematicCamera::Free()
 {
 	CCamera::Free();
-//#ifdef _DEBUG
+#ifdef _DEBUG
 	Safe_Release(m_pInputLayout);
 	Safe_Delete(m_pBatch);
 	Safe_Delete(m_pEffect);
-//#endif // _DEBUG
+#endif // _DEBUG
 
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);

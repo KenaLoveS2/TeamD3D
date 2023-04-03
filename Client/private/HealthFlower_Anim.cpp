@@ -39,7 +39,8 @@ HRESULT CHealthFlower_Anim::Initialize(void* pArg)
 
 	m_bRenderActive = true;
 
-	m_pTransformCom->Set_Position(XMVectorSet(-10.f, 0.f, -10.f, 1.f));
+	const _float4 vPos = _float4(-10.f, 0.f, -10.f, 1.f);
+	m_pTransformCom->Set_Position(vPos);
 
 	m_pModelCom->Set_AnimIndex((_uint)CHealthFlower_Anim::OPEN_LOOP);
 

@@ -974,7 +974,6 @@ _uint CGameInstance::Get_CurrentPlayerRoomIndex()
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
-	CPhysX_Manager::GetInstance()->DestroyInstance(); // kbj physx	
 	CPostFX::GetInstance()->DestroyInstance();
 	CObject_Manager::GetInstance()->DestroyInstance();
 	CFunction_Manager::GetInstance()->DestroyInstance();
@@ -993,6 +992,7 @@ void CGameInstance::Release_Engine()
 	CString_Manager::GetInstance()->DestroyInstance();
 	CEnviroment_Manager::GetInstance()->DestroyInstance();
 	CImgui_Manager::GetInstance()->DestroyInstance();
+	CPhysX_Manager::GetInstance()->DestroyInstance(); // kbj physx	
 }
 
 void CGameInstance::Free()
