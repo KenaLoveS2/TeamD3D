@@ -49,6 +49,13 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	StoneCubeDesc.fMass = 50.f;
 	StoneCubeDesc.fLinearDamping = 3.f;
 
+	float	boxRadius = 0.20f; // 상자 중심과 원의 중심 사이의 거리
+	int		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
+	float	layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차이
+	float	layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
+	int		layerCount = 10; // 전체 레이어 개수
+
+
 	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall03")
 	{
 		StoneCubeDesc.vSize = _float3(0.29f, 0.12f, 0.13f);
@@ -82,6 +89,12 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		StoneCubeDesc.fMass = 50.f;
 		StoneCubeDesc.fLinearDamping = 3.f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
+
+		boxRadius = 0.20f; // 상자 중심과 원의 중심 사이의 거리
+		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
+		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
+		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
+		layerCount = 10; // 전체 레이어 개수
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium04")
 	{
@@ -137,11 +150,6 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 
 	/*원형 탑*/
 
-	const float boxRadius = 1.f; // 상자 중심과 원의 중심 사이의 거리
-	const int boxCountPerLayer = 4; // 한 레이어에 포함될 박스 개수
-	const float layerHeight = 0.5f; // 레이어 간 높이 차이
-	const float layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-	const int layerCount = 5; // 전체 레이어 개수
 	
 	for (int layer = 0; layer < layerCount; ++layer) 
 	{
@@ -165,7 +173,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 			const _tchar* NewName = CUtile::Create_DummyString(m_szCloneObjectTag, iIndex);
 
 			if (FAILED(pGameInst->Clone_GameObject(g_LEVEL,
-				TEXT("Layer_Enviroment"),
+				TEXT("Layer_DynamicObj"),
 				TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 				NewName, &m_EnviromentDesc, &pCreateObject)))
 				assert(!"CImgui_MapEditor::CDynamic_Stone::Late_Initialize");
@@ -174,9 +182,35 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 				XMVectorSet(Pxpos.x, Pxpos.y, Pxpos.z, 1.f));
 
 			static_cast<CDynamic_StoneCube*>(pCreateObject)->Set_StoneCubeDesc(StoneCubeDesc);
+			m_pDynamicObj_List.push_back(pCreateObject);
 		}
 	}
 
+	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	BoxDesc.pActortag = m_szCloneObjectTag;
+	BoxDesc.eType = BOX_DYNAMIC;		// 원래는 박스 스태틱으로 만들어야함
+	BoxDesc.vPos = CUtile::Float_4to3(vPos);
+	BoxDesc.vSize = _float3(2.74f, 0.25f, 2.45f);
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = false;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDensity = 0.2f;
+	BoxDesc.fMass = 150.f;
+	BoxDesc.fLinearDamping = 10.f;
+	BoxDesc.fAngularDamping = 5.f;
+	BoxDesc.bCCD = false;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
+
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_DYNAMIC_ENVIOBJ));
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
+
+	
 
 	return S_OK;
 }
@@ -188,6 +222,13 @@ void CDynamic_Stone::Tick(_float fTimeDelta)
 		Late_Initialize();
 		m_bTestOnce = true;
 	}
+
+	if (ImGui::Button("CreateDynamic"))
+	{
+		for (auto& pObj : m_pDynamicObj_List)
+			pObj->Late_Initialize();
+	}
+
 
 
 
@@ -207,6 +248,7 @@ void CDynamic_Stone::Late_Tick(_float fTimeDelta)
 //#endif
 //		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 //	}
+
 }
 
 HRESULT CDynamic_Stone::Render()
@@ -349,6 +391,23 @@ HRESULT CDynamic_Stone::RenderCine()
 	//}
 
 	return S_OK;
+}
+
+_int CDynamic_Stone::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+
+	return 0;
+}
+
+void CDynamic_Stone::ImGui_PhysXValueProperty()
+{
+	/*_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
+
+	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
+	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
+	vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
+	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
+	m_pTransformCom->Set_PxPivotScale(vPxPivotScale);*/
 }
 
 HRESULT CDynamic_Stone::Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)
