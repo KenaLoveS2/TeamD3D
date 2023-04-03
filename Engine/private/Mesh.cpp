@@ -19,9 +19,7 @@ CMesh::CMesh(const CMesh & rhs)
 	, m_pIndices(rhs.m_pIndices)
 	, m_bLodMesh(rhs.m_bLodMesh)
 {
-
 	m_Bones.reserve(rhs.m_Bones.size());
-
 	if (rhs.m_Bones.size() || m_eType == CModel::TYPE_NONANIM)
 	{
 		m_pBoneNames = new string[rhs.m_iNumBones];

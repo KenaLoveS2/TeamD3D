@@ -394,7 +394,6 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 		Safe_Release(pTexture2D);
 	}
 
-
 	m_pGameInstance->Delete_ProtoComponent(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"));
 
 	m_pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"),

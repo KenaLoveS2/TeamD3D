@@ -1,0 +1,42 @@
+[
+    {
+        "0. State Name" : "AIM_LOOK_UP",
+        "1. Blend Type": "ADDITIVE",
+        "2. Ratio Control": "MAX",
+        "3. Max Additive Ratio": 1.0,
+        "4. Root Bone Rotation": true,
+        "5. Root Bone Translation": true,
+        "6. Additive Animation": "A_Kena_Aim_LookUp",
+        "7. Joint Index": "N/A"
+    },
+    {
+        "0. State Name" : "AIM_LOOK_DOWN",
+        "1. Blend Type": "ADDITIVE",
+        "2. Ratio Control": "MAX",
+        "3. Max Additive Ratio": 1.0,
+        "4. Root Bone Rotation": true,
+        "5. Root Bone Translation": true,
+        "6. Additive Animation": "A_Kena_Aim_LookDown",
+        "7. Joint Index": "N/A"
+    },
+    {
+        "0. State Name" : "BOW_AIM_UP",
+        "1. Blend Type": "ADDITIVE",
+        "2. Ratio Control": "MAX",
+        "3. Max Additive Ratio": 1.0,
+        "4. Root Bone Rotation": true,
+        "5. Root Bone Translation": true,
+        "6. Additive Animation": "A_Kena_Bow_Aim_Up",
+        "7. Joint Index": "N/A"
+    },
+    {
+        "0. State Name" : "BOW_AIM_DOWN",
+        "1. Blend Type": "ADDITIVE",
+        "2. Ratio Control": "MAX",
+        "3. Max Additive Ratio": 1.0,
+        "4. Root Bone Rotation": true,
+        "5. Root Bone Translation": true,
+        "6. Additive Animation": "A_Kena_Bow_Aim_Down",
+        "7. Joint Index": "N/A"
+    }
+]

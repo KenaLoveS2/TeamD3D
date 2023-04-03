@@ -1754,6 +1754,10 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	/********************************************/
 	/*				For. ModelCom				*/
 	/********************************************/
+// 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, true, true)))
+// 		assert(!"VillageCart");
+	//MSG_BOX("ModelCom VillageCart : ForSY");
+
 	
 	/********************************************/
 	/*				For. GameObject				*/
@@ -1774,7 +1778,13 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 		CEffect_Texture_Base::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	//RELEASE_INSTANCE(CGameInstance);
+	/* HatCart */
+// 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HatCart"),
+// 		CHatCart::Create(m_pDevice, m_pContext))))
+// 		return E_FAIL;
+	//MSG_BOX("GameObject HatCart : ForSY");
+
+
 	return S_OK;
 }
 

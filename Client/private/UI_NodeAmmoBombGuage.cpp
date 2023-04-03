@@ -9,13 +9,13 @@
 
 CUI_NodeAmmoBombGuage::CUI_NodeAmmoBombGuage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
-	, m_fGuage(0.f)
+	, m_fGuage(1.f)
 {
 }
 
 CUI_NodeAmmoBombGuage::CUI_NodeAmmoBombGuage(const CUI_NodeAmmoBombGuage & rhs)
 	: CUI_Node(rhs)
-	, m_fGuage(0.f)
+	, m_fGuage(1.f)
 {
 }
 
@@ -45,6 +45,14 @@ void CUI_NodeAmmoBombGuage::Change_To_GuageImage()
 {
 	//m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this, TEX_DEFAULT);
 	m_iTextureIdx = TEX_DEFAULT;
+}
+
+void CUI_NodeAmmoBombGuage::Plus_Guage(_float fDiff)
+{
+	m_fGuage += fDiff;
+
+	if (m_fGuage > 1.f)
+		m_fGuage = 1.f;
 }
 
 HRESULT CUI_NodeAmmoBombGuage::Initialize_Prototype()

@@ -28,11 +28,11 @@ public:
 public:
 	void			Imgui_ImageViewer();
 
-
 private:
 	_uint															m_iNumTextures = 0;
 	ID3D11ShaderResourceView**					m_pTextures = nullptr;
 	_int															m_iSelectedTextureNum = -1;
+	_bool														m_bCloneTexture = false;
 
 public:
 	static CTexture* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures = 1,_bool bddsLoad=false);

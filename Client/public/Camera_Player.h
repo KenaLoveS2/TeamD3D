@@ -35,15 +35,17 @@ private:
 	virtual ~CCamera_Player() = default;
 
 public:
+	_long					Get_MouseMove(MOUSEMOVESTATE eState);
+	const _float&			Get_VerticalAngle() const { return m_fVerticalAngle; }
 	void					Set_Player(class CKena* pKena, CTransform* pTransform) { m_pKena = pKena; m_pKenaTransform = pTransform; Initialize_Position(); }
 	void					Set_CamOffset(CAMOFFSET eOffset);
 
 public:
-	virtual HRESULT		Initialize_Prototype() override;
-	virtual HRESULT		Initialize(void* pArg) override;
+	virtual HRESULT			Initialize_Prototype() override;
+	virtual HRESULT			Initialize(void* pArg) override;
 	virtual void			Tick(_float fTimeDelta) override;
 	virtual void			Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT		Render() override;
+	virtual HRESULT			Render() override;
 	virtual void			Imgui_RenderProperty() override;
 
 public:

@@ -353,10 +353,11 @@ void CFireBullet::Execute_Create(_float4 vCreatePos)
 
 _int CFireBullet::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	if (pTarget && m_eEFfectDesc.bActive)
+	if (iColliderIndex == (_int)COL_PLAYER && m_eEFfectDesc.bActive)
 	{
 		m_bCollision = true;
-	}	
+		m_pOnwerMonster->Set_RealAttack(true);
+	}
 
 	return 0;
 }

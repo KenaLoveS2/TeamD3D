@@ -1205,6 +1205,7 @@ private:	/* Changer */
 	_bool	Pulse_Jump();
 	_bool	Parry();
 	_bool	Teleport_Flower();
+	_bool	RotAction();
 	_bool	Interactable();
 	_bool	RotWisp_Interactable();
 	_bool	Chest_Interactable();
