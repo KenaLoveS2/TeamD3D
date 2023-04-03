@@ -444,7 +444,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 				m_fHitStopTime += 0.15f;
 
 				if (pCamera != nullptr)
-					pCamera->Camera_Shake(0.003f, 5);
+					pCamera->Camera_Shake(0.005f, 10);
 			}
 			else
 			{

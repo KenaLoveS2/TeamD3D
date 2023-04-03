@@ -893,7 +893,7 @@ void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransf
 
 		assert(pStaticRigid != nullptr && "CInstancing_Mesh::Create_PxTriangle_InstMeshActor");
 		pPhysX->Set_ActorMatrix(pStaticRigid, (matNew));		// 노말라이즈 매트릭스보내고
-		m_StaticRigid_List.push_back(pStaticRigid);
+		//m_StaticRigid_List.push_back(pStaticRigid);
 	}
 
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "..\public\UI_RotIcon.h"
 #include "GameInstance.h"
 #include "Camera.h"
@@ -128,8 +128,9 @@ void CUI_RotIcon::Tick(_float fTimeDelta)
 	//	}
 	//}
 #pragma endregion Old
-
 }
+
+
 
 void CUI_RotIcon::Late_Tick(_float fTimeDelta)
 {
