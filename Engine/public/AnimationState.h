@@ -85,6 +85,7 @@ public:
 	HRESULT			Initialize_FromFile(const string& strFilePath);
 	void			Tick(_float fTimeDelta);
 	HRESULT			State_Animation(const string& strStateName, _float fLerpDuration = -1.f);
+	HRESULT			State_AdditionalAnimation(const string& strStateName, _float fAdditiveRatio);
 	void			Play_Animation(_float fTimeDelta);
 	void			ImGui_RenderProperty();
 
@@ -93,6 +94,15 @@ public:
 	HRESULT			Add_AnimSharingPart(CModel* pModel, _bool bMeshSync);
 	HRESULT			Save(const string& strFilePath);
 	HRESULT			Load(const string& strFilePath);
+	HRESULT			Load_Additional_Animations(const string& strFilePath);
+
+	template<typename T>
+	HRESULT			Connect_AdditiveController(T* pObject, void (T::*pMemFunc)(_float))
+	{
+		NULL_CHECK_RETURN(pMemFunc, E_FAIL);
+		m_AdditiveController = [pObject, pMemFunc](_float fTimeDelta) { (pObject->*pMemFunc)(fTimeDelta); };
+		return S_OK;
+	}
 
 private:
 	CGameObject*	m_pOwner = nullptr;
@@ -105,14 +115,19 @@ private:
 	map<const string, CAnimState*>		m_mapAnimState;
 	CAnimState*		m_pCurAnim = nullptr;
 	CAnimState*		m_pPreAnim = nullptr;
-	string				m_strRootBone = "";
 
-	_float				m_fCurLerpTime = 0.f;
-	_float				m_fLerpDuration = 0.f;
+	map<const string, CAdditiveAnimation*>	m_mapAdditionalAnim;
+	CAdditiveAnimation* m_pAdditionalAnim = nullptr;
+	std::function<void(_float)>		m_AdditiveController = nullptr;
 
-	_smatrix			m_matBonesTransformation[800];
+	string			m_strRootBone = "";
 
-	_bool				m_bPreview = false;
+	_float			m_fCurLerpTime = 0.f;
+	_float			m_fLerpDuration = 0.f;
+
+	_smatrix		m_matBonesTransformation[800];
+
+	_bool			m_bPreview = false;
 
 public:
 	static CAnimationState*	Create(CGameObject* pOwner, CModel* pModelCom, const string& strRootBone, const string& strFilePath = "");
@@ -123,6 +138,11 @@ public:
 		for (auto& pAnimState : m_mapAnimState)
 			Safe_Release(pAnimState.second);
 		m_mapAnimState.clear();
+
+		m_pAdditionalAnim = nullptr;
+		for (auto& pAdditive : m_mapAdditionalAnim)
+			Safe_Release(pAdditive.second);
+		m_mapAdditionalAnim.clear();
 	}
 };
 

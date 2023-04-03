@@ -332,7 +332,8 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 void CAnimationState::Tick(_float fTimeDelta)
 {
 	/* TODO : Additive Ratio Controller */
-
+	if (m_AdditiveController != nullptr)
+		m_AdditiveController(fTimeDelta);
 }
 
 HRESULT CAnimationState::State_Animation(const string & strStateName, _float fLerpDuration)
@@ -415,6 +416,24 @@ HRESULT CAnimationState::State_Animation(const string & strStateName, _float fLe
 				pAdditiveAnim->m_fAdditiveRatio = 0.f;
 		}
 	}
+
+	return S_OK;
+}
+
+HRESULT CAnimationState::State_AdditionalAnimation(const string& strStateName, _float fAdditiveRatio)
+{
+	const auto	iter = find_if(m_mapAdditionalAnim.begin(), m_mapAdditionalAnim.end(), [&strStateName](const pair<const string, CAdditiveAnimation*>& Pair) {
+		return Pair.first == strStateName;
+		});
+
+	if (iter == m_mapAdditionalAnim.end())
+	{
+		m_pAdditionalAnim = nullptr;
+		return S_FALSE;
+	}
+
+	m_pAdditionalAnim = iter->second;
+	m_pAdditionalAnim->m_fAdditiveRatio = fAdditiveRatio;
 
 	return S_OK;
 }
@@ -726,6 +745,12 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 				}
 			}
 		}
+	}
+
+	if (m_pAdditionalAnim != nullptr)
+	{
+		m_pAdditionalAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, m_pAdditionalAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone, m_pAdditionalAnim->m_bRootBoneRotationLock, m_pAdditionalAnim->m_bRootBoneTranslationLock);
+		m_pAdditionalAnim = nullptr;
 	}
 
 	m_pModel->Compute_CombindTransformationMatrix();
@@ -1366,6 +1391,101 @@ HRESULT CAnimationState::Load(const string & strFilePath)
 	FAILED_CHECK_RETURN(Initialize_FromFile(strFilePath), E_FAIL);
 
 	m_pCurAnim = m_mapAnimState["IDLE"];
+
+	return S_OK;
+}
+
+HRESULT CAnimationState::Load_Additional_Animations(const string& strFilePath)
+{
+	Json	jStates;
+
+	ifstream file(strFilePath.c_str());
+	file >> jStates;
+	file.close();
+
+	CAdditiveAnimation* pAdditiveAnim = nullptr;
+	CAnimation*		pAnim = nullptr;
+	string			strAdditiveAnim = "";
+	string			strStateName = "";
+	string			strJoint = "";
+	string			strLockTo = "";
+
+	for (auto jAdditive : jStates)
+	{
+		pAdditiveAnim = new CAdditiveAnimation;
+
+		jAdditive["0. State Name"].get_to<string>(strStateName);
+
+		string		strBlendType = "";
+		jAdditive["1. Blend Type"].get_to<string>(strBlendType);
+
+		if (strBlendType == "ADDITIVE")
+			pAdditiveAnim->m_eAdditiveType = CAdditiveAnimation::ADDITIVE;
+		else if (strBlendType == "REPLACE")
+			pAdditiveAnim->m_eAdditiveType = CAdditiveAnimation::REPLACE;
+
+		string		strRatioType = "";
+		jAdditive["2. Ratio Control"].get_to<string>(strRatioType);
+
+		if (strRatioType == "MAX")
+			pAdditiveAnim->m_eControlRatio = CAdditiveAnimation::RATIOTYPE_MAX;
+		else if (strRatioType == "AUTO")
+			pAdditiveAnim->m_eControlRatio = CAdditiveAnimation::RATIOTYPE_AUTO;
+		else if (strRatioType == "CONTROL")
+			pAdditiveAnim->m_eControlRatio = CAdditiveAnimation::RATIOTYPE_CONTROL;
+		else
+			return E_FAIL;
+
+		jAdditive["3. Max Additive Ratio"].get_to<_float>(pAdditiveAnim->m_fMaxAdditiveRatio);
+
+		jAdditive["4. Root Bone Rotation"].get_to<_bool>(pAdditiveAnim->m_bRootBoneRotationLock);
+
+		jAdditive["5. Root Bone Translation"].get_to<_bool>(pAdditiveAnim->m_bRootBoneTranslationLock);
+
+		jAdditive["6. Additive Animation"].get_to<string>(strAdditiveAnim);
+		pAnim = m_pModel->Find_Animation(strAdditiveAnim);
+		NULL_CHECK_RETURN(pAnim, E_FAIL);
+		pAdditiveAnim->m_pAdditiveAnim = pAnim;
+
+		if (jAdditive["7. Joint Index"].is_array() == true)
+		{
+			for (auto jJoint : jAdditive["7. Joint Index"])
+			{
+				jJoint["0. Bone Name"].get_to<string>(strJoint);
+				jJoint["1. Lock To"].get_to<string>(strLockTo);
+				CBone::LOCKTO	eLockto = CBone::LOCKTO_END;
+
+				if (strLockTo == "Lock Child")
+					eLockto = CBone::LOCKTO_CHILD;
+				else if (strLockTo == "Lock Parent")
+					eLockto = CBone::LOCKTO_PARENT;
+				else if (strLockTo == "Lock Alone")
+					eLockto = CBone::LOCKTO_ALONE;
+				else if (strLockTo == "Lock Rotate")
+					eLockto = CBone::LOCKTO_ROTATE;
+				else if (strLockTo == "Lock Position")
+					eLockto = CBone::LOCKTO_POSITION;
+				else if (strLockTo == "Unlock Child")
+					eLockto = CBone::UNLOCKTO_CHILD;
+				else if (strLockTo == "Unlock Parent")
+					eLockto = CBone::UNLOCKTO_PARENT;
+				else if (strLockTo == "Unlock Alone")
+					eLockto = CBone::UNLOCKTO_ALONE;
+				else
+					return E_FAIL;
+
+				pAdditiveAnim->m_listLockedJoint.push_back(pair<string, CBone::LOCKTO>{strJoint, eLockto});
+			}
+		}
+
+		if (jAdditive.contains("99. Remove Tracks"))
+		{
+			for (_uint iIndex : jAdditive["99. Remove Tracks"])
+				pAdditiveAnim->m_listLockedBoneIndex.push_back(iIndex);
+		}
+
+		m_mapAdditionalAnim.emplace(strStateName, pAdditiveAnim);
+	}
 
 	return S_OK;
 }

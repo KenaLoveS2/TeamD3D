@@ -10,6 +10,7 @@
 #include "UI_ClientManager.h"
 #include "UI_FocusNPC.h"
 #include "CinematicCamera.h"
+#include "Rot.h"
 
 /* For. Delegator Default Value (meaningless) */
 _float		fDefaultVal = 345.f; /* Default Chat Value */
@@ -49,6 +50,10 @@ HRESULT CSaiya::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	m_pModelCom->Set_AllAnimCommonType();
+
+	CGameObject* p_game_object = nullptr;
+	CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", L"Saiya_Rot", nullptr, &p_game_object);
+	m_pRot = dynamic_cast<CRot*>(p_game_object);
 
 	return S_OK;
 }
@@ -173,8 +178,6 @@ HRESULT CSaiya::RenderShadow()
 
 void CSaiya::Imgui_RenderProperty()
 {
-	//CNpc::Imgui_RenderProperty();
-
 	ImGui::Checkbox("GoStraight", &m_bStraight);
 
 	if (ImGui::Button("Add KeyFrame"))
@@ -285,6 +288,10 @@ HRESULT CSaiya::SetUp_State()
 		.InitState("INIT_CAM")
 
 		.AddState("INIT_CAM")
+		.Tick([this](_float fTimeDelta)
+	{
+		Rot_WispSetPosition();
+	})
 		.OnExit([this]()
 	{
 		CGameInstance::GetInstance()->Work_Camera(L"NPC_CINE0");
@@ -301,13 +308,20 @@ HRESULT CSaiya::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(SAIYA_CHASINGLOOP);
+		Rot_WispSetPosition();
+	})
+		.OnExit([this]()
+	{
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(TEXT("Saiya_Rot"), this, TRIGGER_ROT, CUtile::Float_4to3(vPos), 1.f));
+		m_pRot->Set_WakeUpPos(vPos);
+		m_pRot->Get_TransformCom()->Set_Look(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * -1.f);
 	})
 		.AddTransition("ACTION_0 to ACTION_1" , "ACTION_1")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(SAIYA_CHASINGLOOP) && m_pCinecam[0]->CameraFinishedChecker();
 	})
-
 
 		.AddState("ACTION_1")
 		.Tick([this](_float fTimeDelta)
@@ -590,6 +604,25 @@ HRESULT CSaiya::Load_KeyFrame()
 	}
 
 	return S_OK;
+}
+
+void CSaiya::Rot_WispSetPosition()
+{
+	CBone* pBone = m_pModelCom->Get_BonePtr("char_spine_low_jnt");
+	_matrix			SocketMatrix =
+		pBone->Get_OffsetMatrix() *
+		pBone->Get_CombindMatrix() *
+		m_pModelCom->Get_PivotMatrix() *
+		m_pTransformCom->Get_WorldMatrix();
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+	_float4x4 pivotMatrix;
+	XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+	_float4 vRotLook = _float4(pivotMatrix._31, 0.f, pivotMatrix._33, 0.f);
+	_float4 vRotPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f) + vRotLook * -1.5f;
+	m_pRot->Set_Position(vRotPos);
+	m_pRot->Set_WispPos(vRotPos);
 }
 
 CSaiya* CSaiya::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

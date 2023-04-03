@@ -13,6 +13,14 @@ CCamera_Player::CCamera_Player(const CCamera_Player & rhs)
 {
 }
 
+_long CCamera_Player::Get_MouseMove(MOUSEMOVESTATE eState)
+{
+	if (eState == DIMS_X)
+		return m_MouseMoveX;
+	else if (eState == DIMS_Y)
+		return m_MouseMoveY;
+}
+
 void CCamera_Player::Set_CamOffset(CAMOFFSET eOffset)
 {
 	if (eOffset == CCamera_Player::CAMOFFSET_END)

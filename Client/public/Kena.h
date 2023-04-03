@@ -90,7 +90,7 @@ public:
 	virtual void				ImGui_ShaderValueProperty() override;
 	virtual void				ImGui_PhysXValueProperty() override;
 	virtual void				Update_Child() override;
-	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
+	virtual HRESULT				Call_EventFunction(const string& strFuncName) override;
 	virtual void				Push_EventFunctions() override;
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
@@ -224,6 +224,8 @@ private:
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
 	void					Update_Collider(_float fTimeDelta);
+	void					Update_AdditiveRatio(_float fTimeDelta);
+	_float					LookAnimationController(_float fTimeDelta);
 
 private:
 	DAMAGED_FROM			Calc_DirToMonster(CGameObject* pTarget);

@@ -23,6 +23,7 @@
 #include "RotForMonster.h"
 #include "E_KenaDust.h"
 #include "UI_FocusMonster.h"
+#include "CPortalPlane.h"
 
 #include "HatCart.h"
 
@@ -464,7 +465,7 @@ void CKena::Tick(_float fTimeDelta)
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 	m_pKenaStatus->Set_Attack(0);
 #endif	
-	
+	m_pKenaStatus->Set_Attack(0);
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
@@ -520,6 +521,9 @@ void CKena::Tick(_float fTimeDelta)
 
 		if(!m_bStateLock)
 			m_pStateMachine->Tick(fTimeDelta);
+
+		if (m_bAim == true)
+			m_pAnimation->Tick(fTimeDelta);
 	}
 
 	m_pKenaStatus->Tick(fTimeDelta);
@@ -710,20 +714,20 @@ void CKena::Late_Tick(_float fTimeDelta)
 	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
 	//CUI_ClientManager::UI_FUNCTION funcCheck = CUI_ClientManager::FUNC_CHECK;
 
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_M))
-	//{
-	//	CKena* pPlayer = this;
-	//	m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
-	//}
+	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
+	{
+		CKena* pPlayer = this;
+		m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
+	}
 
-	//if(CGameInstance::GetInstance()->Key_Down(DIK_P))
-	//{
-	//	/* Test Before Hit Monster */
-	//	_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
-	//	m_pKenaStatus->Plus_CurPIPGuage(0.2f);
-	//	_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
-	//	m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
-	//}
+	if(CGameInstance::GetInstance()->Key_Down(DIK_P))
+	{
+		/* Test Before Hit Monster */
+		_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
+		m_pKenaStatus->Plus_CurPIPGuage(0.2f);
+		_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
+		m_Delegator.broadcast(ePip, fCurGuage);
+	}
 
 	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
 	//{
@@ -943,6 +947,9 @@ void CKena::Imgui_RenderProperty()
 	if (ImGui::Button("m_bParryLaunch"))
 		m_bParryLaunch = !m_bParryLaunch;
 
+	_int	HP[2] = { m_pKenaStatus->Get_HP(), m_pKenaStatus->Get_MaxHP() };
+	ImGui::InputInt2("HP", (_int*)&HP, ImGuiInputTextFlags_ReadOnly);
+
 	_int	ArrowCount[2] = { m_pKenaStatus->Get_CurArrowCount(), m_pKenaStatus->Get_MaxArrowCount() };
 	ImGui::InputInt2("Arrow Count", (_int*)&ArrowCount, ImGuiInputTextFlags_ReadOnly);
 
@@ -952,8 +959,8 @@ void CKena::Imgui_RenderProperty()
 	_int	BombCount[2] = { m_pKenaStatus->Get_CurBombCount(), m_pKenaStatus->Get_MaxBombCount() };
 	ImGui::InputInt2("Bomb Count", (_int*)&BombCount, ImGuiInputTextFlags_ReadOnly);
 
-	_float2	BombCoolTime{ m_pKenaStatus->Get_CurBombCoolTime(), m_pKenaStatus->Get_InitBombCoolTime() };
-	ImGui::InputFloat2("Bomb CoolTime", (_float*)&BombCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
+	_float3	BombCoolTime{ m_pKenaStatus->Get_CurBombCoolTime(0), m_pKenaStatus->Get_CurBombCoolTime(1), m_pKenaStatus->Get_InitBombCoolTime() };
+	ImGui::InputFloat3("Bomb CoolTime", (_float*)&BombCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
 	_float2	Shield{ m_pKenaStatus->Get_Shield(), m_pKenaStatus->Get_MaxShield() };
 	ImGui::InputFloat2("Shield", (_float*)&Shield, "%.3f", ImGuiInputTextFlags_ReadOnly);
@@ -1254,6 +1261,7 @@ void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 
 	if (pTarget != nullptr)
 	{
+		m_bRotActionPossible = true;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 		if (pGameInstance->Key_Down(DIK_R))
@@ -1577,6 +1585,8 @@ HRESULT CKena::SetUp_State()
 	m_pModelCom->Set_RootBone("kena_RIG");
 	m_pModelCom->Set_BoneIndex(L"../Bin/Data/Animation/Kena BoneInfo.json");
 	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG", "../Bin/Data/Animation/Kena.json");
+	FAILED_CHECK_RETURN(m_pAnimation->Load_Additional_Animations("../Bin/Data/Animation/Kena Look Animations.json"), E_FAIL);
+	m_pAnimation->Connect_AdditiveController(this, &CKena::Update_AdditiveRatio);
 	m_pAnimation->Set_RootAnimation("IDLE");
 
 	return S_OK;
@@ -1628,6 +1638,44 @@ void CKena::Update_Collider(_float fTimeDelta)
 
 	matPivot = XMMatrixTranslation(0.f, 0.7f, 0.f);
 	m_pTransformCom->Update_Collider(L"Kena_Bump", matPivot);
+}
+
+void CKena::Update_AdditiveRatio(_float fTimeDelta)
+{
+	_float	fRatio = LookAnimationController(fTimeDelta);
+
+	if (fRatio < 0.f)
+	{
+		if (m_bBow == true)
+			m_pAnimation->State_AdditionalAnimation("BOW_AIM_DOWN", fRatio * -1.f);
+		else
+			m_pAnimation->State_AdditionalAnimation("AIM_LOOK_DOWN", fRatio * -2.f);
+	}
+	else
+	{
+		if (m_bBow == true)
+			m_pAnimation->State_AdditionalAnimation("BOW_AIM_UP", fRatio);
+		else
+			m_pAnimation->State_AdditionalAnimation("AIM_LOOK_UP", fRatio * 2.f);
+	}
+
+	return;
+}
+
+_float CKena::LookAnimationController(_float fTimeDelta)
+{
+	_float	fAdditiveRatio = 0.f;
+
+	_float	fVerticalAngle = XMConvertToDegrees(m_pCamera->Get_VerticalAngle());
+
+	if (fVerticalAngle < 90.f)
+		fAdditiveRatio = 1.f - (fVerticalAngle / 90.f);
+	else if (fVerticalAngle > 90.f && fVerticalAngle < 180.f)
+		fAdditiveRatio = (fVerticalAngle - 90.f) / 90.f * -1.f;
+
+	CUtile::Saturate<_float>(fAdditiveRatio, -1.f, 1.f);
+
+	return fAdditiveRatio;
 }
 
 CKena::DAMAGED_FROM CKena::Calc_DirToMonster(CGameObject * pTarget)
@@ -2067,6 +2115,25 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		{
 			m_bDashPortal = true;
 			m_pDashTarget = pTarget;
+
+			CPortalPlane* pPortal = dynamic_cast<CPortalPlane*>(m_pDashTarget);
+			_smatrix	matOutPortal = pPortal->Get_LinkedPortal()->Get_WorldMatrix();
+
+			_float4		vOutRight;
+			_float4		vOutLook = matOutPortal.Up();
+			vOutLook.Normalize();
+			vOutRight = XMVector3Normalize(XMVector3Cross(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_UP)), vOutLook));
+
+			_float3		vScale = m_pTransformCom->Get_Scaled();
+
+			/* �����°� ���� ���� �ʿ� */
+			m_pTransformCom->Set_State(CTransform::STATE_RIGHT, vOutRight * vScale.x);
+			m_pTransformCom->Set_State(CTransform::STATE_LOOK, vOutLook * vScale.z);
+
+			_float4		vPos = matOutPortal.Translation() + vOutLook * 0.5f;
+			vPos.y -= 4.f;
+			//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
+			m_pTransformCom->Set_Position(vPos);
 		}
 	}
 
