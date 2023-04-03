@@ -113,8 +113,8 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.bKinematic = false;
 
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT)); //뒤에 트루 써주면된다.   _bool bRightUpLookSync == true 쓰면됀다.
-	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag); // Pivot 안슬거면 000 하면된다.   _bool bRightUpLookSync == true 로 주면된다. 
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT,true)); //뒤에 트루 써주면된다.   _bool bRightUpLookSync == true 쓰면됀다.
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag,_float3(0.f,0.f,0.f),true); // Pivot 안슬거면 000 하면된다.   _bool bRightUpLookSync == true 로 주면된다. 
 
 	m_pRendererCom->Set_PhysXRender(true);
 
@@ -123,12 +123,17 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 
 void CDynamic_StoneCube::Tick(_float fTimeDelta)
 {
-	if(m_bTestOnce == false)
-	{
-		Late_Initialize();
-		m_bTestOnce = true;
-	}
 
+	/*{
+		if (m_bTestOnce == false)
+		{
+			Late_Initialize();
+			m_bTestOnce = true;
+		}
+
+	}*/
+
+	
 	__super::Tick(fTimeDelta);
 }
 
