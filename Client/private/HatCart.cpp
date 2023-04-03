@@ -71,7 +71,8 @@ void CHatCart::Tick(_float fTimeDelta)
 	//if (m_bRenderCheck)
 	/*~Culling*/
 
-	m_pMannequinRot->Tick(fTimeDelta);
+	if(m_pMannequinRot != nullptr)
+		m_pMannequinRot->Tick(fTimeDelta);
 }
 
 void CHatCart::Late_Tick(_float fTimeDelta)
@@ -115,7 +116,8 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 	if (m_pRendererCom) //&& m_bRenderActive && m_bRenderCheck)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 
-	m_pMannequinRot->Late_Tick(fTimeDelta);
+	if (m_pMannequinRot != nullptr)
+		m_pMannequinRot->Late_Tick(fTimeDelta);
 }
 
 HRESULT CHatCart::Render()
