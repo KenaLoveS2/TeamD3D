@@ -50,6 +50,11 @@ private:
 	_float								m_fEmissivePulse = 0.f;
 	_float								m_fNegativeQuantity = 1.f;
 
+	class CMannequinRot* m_pMannequinRot = nullptr;
+
+	_float3 m_vRotPivotTranlation = { -0.05f, 1.f, 1.27f };
+	_float3 m_vRotPivotRotation = { 0.f, 0.f, 0.f };
+
 private:
 	HRESULT							SetUp_Components();
 	HRESULT							SetUp_ShaderResources();
@@ -57,10 +62,14 @@ private:
 
 private:
 	CKena* m_pPlayer;
-
+	_bool m_bShowUI = false;
 public:
 	static  CHatCart* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void						Free() override;
+
+	void Crate_MannequinRot();
+	void Update_MannequinRotMatrix();
+	void Change_MannequinHat(_uint iHatIndex);
 };
 END

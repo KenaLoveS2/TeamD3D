@@ -24,7 +24,11 @@
 #include "E_KenaDust.h"
 #include "UI_FocusMonster.h"
 #include "CPortalPlane.h"
+
+#include "HatCart.h"
+
 #include "E_P_ExplosionGravity.h"
+
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -442,7 +446,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	m_Delegator.broadcast(eRot, fRotState);
 	//m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
 
-	m_pTransformCom->Set_Position(_float4(13.f, 0.f, 9.f, 1.f));
+	const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
+	m_pTransformCom->Set_Position(vPosFloat4);
 
 	for (auto& pEffect : m_mapEffect)
 	{
@@ -2178,4 +2183,19 @@ void CKena::End_LiftRotRock()
 	CTerrain* pCurTerrain = m_pTerrain[CGameInstance::GetInstance()->Get_CurrentPlayerRoomIndex()];
 	if (pCurTerrain)		
 		pCurTerrain->Set_BrushPosition(_float3(-1000.f, 0.f, 0.f));
+}
+
+void CKena::Buy_RotHat(_uint iHatIndex)
+{
+	if (m_pFirstRot == nullptr) return;
+
+	m_pFirstRot->Buy_Hat(iHatIndex);
+	m_pHatCart ? m_pHatCart->Change_MannequinHat(iHatIndex) : 0;
+}
+
+_bool CKena::IsBuyPossible_RotHat()
+{
+	if (m_pFirstRot == nullptr) false;
+
+	return m_pFirstRot->IsBuyPossible();
 }

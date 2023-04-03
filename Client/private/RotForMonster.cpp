@@ -290,6 +290,7 @@ HRESULT CRotForMonster::SetUp_FSM()
 			m_pModelCom->Set_AnimIndex(CRot::TELEPORT5);
 			break;
 		case 5:
+			m_pModelCom->ResetAnimIdx_PlayTime(CRot::TELEPORT6);
 			m_pModelCom->Set_AnimIndex(CRot::TELEPORT6);
 			break;
 		case 6:

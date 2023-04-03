@@ -231,18 +231,6 @@ HRESULT CLevel_MapTool::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 {
 	/* If the Name Of Layer is Changed, Please Change the CUI_CanvasBottom > Bind as well. */
 	{
-		vector<CCinematicCamera::CAMERAKEYFRAME> v;
-		string chatFileName;
-		CCinematicCamera::Clone_Load_Data("Test.json", v, chatFileName);
-		CGameObject* p_game_object = nullptr;
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"CINE_CAM0", &v, &p_game_object))) return E_FAIL;
-		CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
-		NULL_CHECK_RETURN(pCamera, E_FAIL);
-		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"CINE_CAM0", pCamera), E_FAIL);
-		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
-		RELEASE_INSTANCE(CGameInstance)
-			v.clear();
 	}
 
 	return S_OK;

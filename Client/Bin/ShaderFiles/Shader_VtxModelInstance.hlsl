@@ -19,6 +19,8 @@ Texture2D<float4>      g_BlendDiffuseTexture;
 Texture2D<float4>      g_DetailNormalTexture;
 Texture2D<float4>      g_MaskTexture;
 
+Texture2D<float4>       g_RoughnessTexture;
+
 struct VS_IN
 {
     float3      vPosition : POSITION;
@@ -677,6 +679,35 @@ PS_OUT_TESS PS_MAIN_CINE(PS_IN_TESS In)
     return Out;
 }//12
 
+ //SPEARATE
+PS_OUT_TESS PS_MAIN_ONLY_ROUGHNESS(PS_IN_TESS In)
+{
+    PS_OUT_TESS         Out = (PS_OUT_TESS)0;
+
+    vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+    vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    vector      vRoughness = g_RoughnessTexture.Sample(LinearSampler, In.vTexUV);
+
+    if (0.1f > vDiffuse.a)
+        discard;
+
+    float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+    float  fMetalic = 1.f - vRoughness.r;
+    float4 AO_R_M = float4(1.f, vRoughness.r, 1.f, 1.f);
+
+    float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+    float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+    vNormal = normalize(mul(vNormal, WorldMatrix));
+
+    FinalColor = vDiffuse;
+
+    Out.vDiffuse = FinalColor;
+    Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+    Out.vAmbient = AO_R_M;
+
+    return Out;
+}//14
 
 struct PS_IN_SHADOW
 {
@@ -1065,4 +1096,15 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_ERAO();
     } //13
 
+    pass OnlyRoughness
+    {
+        SetRasterizerState(RS_CULLNONE);
+        SetDepthStencilState(DS_Default, 0);
+        SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_ONLY_ROUGHNESS();
+    } //14
 }
