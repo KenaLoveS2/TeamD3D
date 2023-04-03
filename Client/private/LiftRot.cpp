@@ -326,6 +326,7 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 		m_bLiftDownEnd = false;
 		m_pTeleportRot->Set_Position(m_pTransformCom->Get_Position());
 		m_pTeleportRot->Set_Active(true);
+		m_pModelCom->ResetAnimIdx_PlayTime(CRot::TELEPORT6);
 		m_pModelCom->Set_AnimIndex(CRot::TELEPORT6);
 	})
 		.Tick([this](_float fTimeDelta)

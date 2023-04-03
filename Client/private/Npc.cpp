@@ -61,8 +61,8 @@ void CNpc::Late_Tick(_float fTimeDelta)
 {
 	CGameObject::Late_Tick(fTimeDelta);
 
-	//if (m_pRendererCom)
-	//	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
+	if (m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 }
 
 HRESULT CNpc::Render()
@@ -143,6 +143,19 @@ _bool CNpc::DistanceTrigger(_float distance)
 	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 
 	_float fDistance = _float3::Distance(vPos, vPlayerPos);
+
+	if (distance >= fDistance)
+		return true;
+	else
+		return false;
+}
+
+_bool CNpc::DistanceTrigger(_float4 v1, _float4 v2, _float distance)
+{
+	_float3 vTemp = _float3(v1.x,v1.y,v1.z);
+	_float3 vSour = _float3(v2.x, v2.y, v2.z);
+
+	_float fDistance = _float3::Distance(vTemp, vSour);
 
 	if (distance >= fDistance)
 		return true;

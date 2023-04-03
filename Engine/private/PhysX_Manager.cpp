@@ -299,7 +299,9 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 			PxTransform ActorTrasnform = pActor->getGlobalPose();
 			_float3 vObjectPos = CUtile::ConvertPosition_PxToD3D(ActorTrasnform.p);
 
-			pUserData->pOwner->Set_Position(vObjectPos);
+			pUserData->isRightUpLookSync ? 
+				pUserData->pOwner->Sync_ActorMatrix(Get_ActorMatrix(pActor)) :
+				pUserData->pOwner->Set_Position(vObjectPos);
 		}
 	}	
 }
@@ -1358,4 +1360,14 @@ PxController* CPhysX_Manager::Find_Controller(const _tchar* pTag)
 	if (Pair == m_Controllers.end()) return nullptr;
 
 	return Pair->second;	
+}
+
+void CPhysX_Manager::PutToSleep(PxRigidDynamic* pActor)
+{
+	pActor->putToSleep();
+}
+
+void CPhysX_Manager::WakeUp(PxRigidDynamic* pActor)
+{
+	pActor->wakeUp();
 }

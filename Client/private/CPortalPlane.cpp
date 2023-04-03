@@ -29,7 +29,8 @@ HRESULT CPortalPlane::Initialize(void* pArg)
 	m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-	m_pTransformCom->Set_Position(_float4(15.f, 0.f, 15.f, 1.f));
+	const _float4 vPos = _float4(15.f, 0.f, 15.f, 1.f);
+	m_pTransformCom->Set_Position(vPos);
 
 	return S_OK;
 }

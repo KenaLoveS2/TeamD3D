@@ -66,20 +66,27 @@ void CCameraForRot::Tick(_float TimeDelta)
 	if(m_pTarget != nullptr)
 	{
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-		m_vTargetPos = m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
-		/* For. At */
-		_float3 vDir = XMVector3Normalize(m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-		vDir.y += 0.4f;
-		_float3 vLerpLook = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vDir, TimeDelta);
-		_float4 vCalculatedLook = _float4(vLerpLook.x, vLerpLook.y, vLerpLook.z, 0.f);
-		m_pTransformCom->Set_Look(vCalculatedLook);
+		if (m_bCloseflag == false)
+		{	
+			m_vTargetPos = m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
-		/* For. Pos*/
-		_vector vTargetPos = XMVectorSet(m_vTargetPos.x, m_vTargetPos.y + 0.3f, m_vTargetPos.z, 1.f) + m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * 0.5f;
-		_float3 vLerpPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vTargetPos, TimeDelta);
-		_float4 vCalculatedCamPos = _float4(vLerpPos.x, vLerpPos.y, vLerpPos.z, 1.f);
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCalculatedCamPos);
+			/* For. At */
+			_float3 vDir = XMVector3Normalize(m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+			vDir.y += 0.4f;
+			_float3 vLerpLook = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vDir, TimeDelta);
+			_float4 vCalculatedLook = _float4(vLerpLook.x, vLerpLook.y, vLerpLook.z, 0.f);
+			m_pTransformCom->Set_Look(vCalculatedLook);
+
+			/* For. Pos*/
+			_vector vTargetPos = XMVectorSet(m_vTargetPos.x, m_vTargetPos.y + 0.3f, m_vTargetPos.z, 1.f) + m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * 0.5f;
+			_float3 vLerpPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vTargetPos, TimeDelta);
+			_float4 vCalculatedCamPos = _float4(vLerpPos.x, vLerpPos.y, vLerpPos.z, 1.f);
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCalculatedCamPos);
+
+			if (m_pTransformCom->IsClosed_XYZ(_float4(vTargetPos), 0.1f))
+				m_bCloseflag = true;
+		}
 
 		pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
 		RELEASE_INSTANCE(CGameInstance)
@@ -130,4 +137,10 @@ CGameObject* CCameraForRot::Clone(void* pArg)
 void CCameraForRot::Free()
 {
 	CCamera::Free();
+}
+
+void CCameraForRot::Clear()
+{
+	m_bInitSet = true;
+	m_bCloseflag = false;
 }

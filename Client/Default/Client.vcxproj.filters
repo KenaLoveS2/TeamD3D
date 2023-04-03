@@ -1283,9 +1283,6 @@
     <ClInclude Include="..\public\HunterArrow.h">
       <Filter>02.GameObjects\Monster\Hunter</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\public\CinematicCamera.h">
-      <Filter>02.GameObjects\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ShamanTrapGeo.h">
       <Filter>02.GameObjects\Monster\Shaman</Filter>
     </ClInclude>
@@ -1430,6 +1427,9 @@
     </ClInclude>
     <ClInclude Include="..\public\E_ShamanTrail.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CinematicCamera.h">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

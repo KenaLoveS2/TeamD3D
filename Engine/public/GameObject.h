@@ -107,5 +107,6 @@ public:
 
 	_uint Get_ObjectProperty() { return m_iObjectProperty; }
 	virtual void* Get_VoidMemberPtr() { return nullptr; }
+	void Sync_ActorMatrix(_float4x4& Matrix);
 };
 END

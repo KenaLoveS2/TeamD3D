@@ -453,7 +453,8 @@ CGameObject * CCrystal::Clone(void * pArg)
 
 void CCrystal::Free()
 {
-	m_pTransformCom->Clear_Actor();
+	if(m_isCloned)
+		m_pTransformCom->Clear_Actor();
 
 	__super::Free();
 
@@ -467,8 +468,4 @@ void CCrystal::Free()
 	for (auto &pEffect : m_VecCrystal_Effect)
 		Safe_Release(pEffect);
 	m_VecCrystal_Effect.clear();
-
-	
-
-
 }

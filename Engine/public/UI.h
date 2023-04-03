@@ -37,6 +37,7 @@ public: /* Get */
 	_float3					Get_OriginalSettingScale()	{ return m_vOriginalSettingScale; }
 	_uint					Get_RenderPass()			{ return m_iRenderPass; }
 	CTexture*				Get_DiffuseTexture()		{ return m_pTextureCom[TEXTURE_DIFFUSE]; }
+	_bool					Is_Active() { return m_bActive; }
 
 public: /* Set */
 	void					Set_Parent(CUI* pUI);
