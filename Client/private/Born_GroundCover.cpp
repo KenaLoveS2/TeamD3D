@@ -174,8 +174,6 @@ void CBorn_GroundCover::Culling(_float fTimeDelta)
 	const _vector	 vDir = camPos - vPos;
 	m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 20.f);
 
-	_float f = XMVectorGetX(XMVector4Length(vDir));
-
 	if (100.f <= XMVectorGetX(XMVector4Length(vDir)))
 		m_bRenderCheck = false;
 
@@ -186,18 +184,16 @@ void CBorn_GroundCover::Culling(_float fTimeDelta)
 
 	const _vector	 vPlayer_This_Dir = PlayerPos - vPos;
 
-	if (30.f >= XMVectorGetX(XMVector4Length(vDir)))
+	if (30.f >= XMVectorGetX(XMVector4Length(vPlayer_This_Dir)))
 		m_bUprise = true;
 
 #else
-	_float fDist = XMVectorGetX(XMVector4Length(vDir));
-
 	if (20.f >= XMVectorGetX(XMVector4Length(vDir)))
 		m_bUprise = true;
 
 #endif
-	if (m_bUprise)
-		m_pModelCom->Instaincing_MoveControl(Gimmick_TYPE_FLOWER, fTimeDelta);
+	//if (m_bUprise)
+	//	m_pModelCom->Instaincing_MoveControl(Gimmick_TYPE_FLOWER, fTimeDelta);
 }
 
 CBorn_GroundCover * CBorn_GroundCover::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
