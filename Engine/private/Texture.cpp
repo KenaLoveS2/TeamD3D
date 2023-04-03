@@ -2,6 +2,7 @@
 #include "..\public\Texture.h"
 #include "Shader.h"
 #include "Utile.h"
+#include "CTexture_Manager.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -150,18 +151,31 @@ void CTexture::Imgui_ImageViewer()
 	}
 }
 
-
-
 CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pTextureFilePath, _uint iNumTextures, _bool bddsLoad)
 {
-	CTexture*		pInstance = new CTexture(pDevice, pContext);
+	// 여기서 pTextureFilePath 가 있다면 클론
+	// 없으면 만들고 맵에 저장
+	CTexture* pInstance = CTexture_Manager::GetInstance()->Find_Texture(pTextureFilePath);
 
-	if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures, bddsLoad)))
+	if (pInstance)
 	{
- 		MSG_BOX("Failed to Created : CTexture");
-		Safe_Release(pInstance);
+		pInstance = (CTexture*)pInstance->Clone();
+		pInstance->Set_Clone(true);
+		Safe_AddRef(pInstance);
+		return  pInstance;
 	}
-	return pInstance;
+	else
+	{
+		pInstance = new CTexture(pDevice, pContext);
+
+		if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures, bddsLoad)))
+		{
+			MSG_BOX("Failed to Created : CTexture");
+			Safe_Release(pInstance);
+		}
+		CTexture_Manager::GetInstance()->Add_Texture(pTextureFilePath, pInstance);
+		return pInstance;
+	}
 }
 
 CComponent * CTexture::Clone(void * pArg, CGameObject * pOwner)
@@ -181,8 +195,11 @@ void CTexture::Free()
 {
  	__super::Free();
 
- 	for (_uint i = 0; i < m_iNumTextures; ++i)
-		Safe_Release(m_pTextures[i]);
+	if(!m_bCloneTexture)
+	{
+		for (_uint i = 0; i < m_iNumTextures; ++i)
+			Safe_Release(m_pTextures[i]);
+	}
 
 	if(false == m_isCloned)
 		Safe_Delete_Array(m_pTextures);
