@@ -229,6 +229,9 @@
     <Filter Include="97.Default">
       <UniqueIdentifier>{d0ac0723-89d4-4377-87cd-9923ff18a755}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Components\05.Texture\Manager">
+      <UniqueIdentifier>{b000d535-0bde-4de9-8762-06f1184482e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -544,6 +547,9 @@
     <ClInclude Include="..\public\CSSLR.h">
       <Filter>01.Utility\13. HDR</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CTexture_Manager.h">
+      <Filter>01.Utility\03.Components\05.Texture\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -813,6 +819,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CSSAO.cpp">
       <Filter>01.Utility\13. HDR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CTexture_Manager.cpp">
+      <Filter>01.Utility\03.Components\05.Texture\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

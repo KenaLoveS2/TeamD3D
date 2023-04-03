@@ -83,7 +83,7 @@ void CImGui_Rot::RotList()
 	if(ImGui::Button("CLONE_ROT"))
 	{
 		CGameObject* p_game_object = nullptr;
-		m_pGameInstance->Clone_AnimObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", CUtile::Create_StringAuto(szCloneRotTag), nullptr, &p_game_object);
+		m_pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", CUtile::Create_StringAuto(szCloneRotTag), nullptr, &p_game_object);
 		p_game_object->Late_Initialize();
 	}
 

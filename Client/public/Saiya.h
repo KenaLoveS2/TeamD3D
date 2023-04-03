@@ -124,6 +124,7 @@ private:
 	_bool									IsChatEnd();
 	HRESULT								Save_KeyFrame();
 	HRESULT								Load_KeyFrame();
+	void										Rot_WispSetPosition();
 
 private:
 	CUI_FocusNPC*							m_pFocus;
@@ -137,6 +138,7 @@ private:
 
 	_bool											m_bCinecam[5] = { false, };
 	class CCinematicCamera*			m_pCinecam[5] = { nullptr, };
+	class CRot*									m_pRot = nullptr;
 
 public:
 	static CSaiya*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

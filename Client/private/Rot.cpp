@@ -11,7 +11,6 @@
 #include "Kena_Status.h"
 #include "RotHat.h"
 
-
 _uint CRot::m_iEveryRotCount = 0;
 _uint CRot::m_iKenaFindRotCount = 0;
 vector<CRot*> CRot::m_vecKenaConnectRot;
@@ -114,12 +113,16 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	m_pMyCam = static_cast<CCameraForRot*>(pGameInstance->Find_Camera(L"ROT_CAM"));
 	RELEASE_INSTANCE(CGameInstance)
 
-	CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f));
+	if (wcscmp(m_szCloneObjectTag, TEXT("Saiya_Rot")))
+		CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f));
+	else
+		m_bWakeUp = true;
 
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
-	
-	m_pRotWisp = static_cast<CRotWisp*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp")));
+
+	wstring wstrTag = wstring(m_szCloneObjectTag) + TEXT("Wisp");
+	m_pRotWisp = static_cast<CRotWisp*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp"), CUtile::Create_StringAuto(wstrTag.c_str())));
 	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
 	return S_OK;
 }
@@ -518,6 +521,17 @@ HRESULT CRot::SetUp_Effects()
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
+}
+
+void CRot::Set_WispPos(_float4 vPos)
+{
+	if(m_pRotWisp)
+		m_pRotWisp->Set_Position(vPos);
+}
+
+void CRot::Set_WakeUpPos(_float4 vPos)
+{
+	m_vWakeUpPosition = vPos;
 }
 
 _int CRot::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
