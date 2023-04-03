@@ -521,6 +521,9 @@ void CKena::Tick(_float fTimeDelta)
 
 		if(!m_bStateLock)
 			m_pStateMachine->Tick(fTimeDelta);
+
+		if (m_bAim == true)
+			m_pAnimation->Tick(fTimeDelta);
 	}
 
 	m_pKenaStatus->Tick(fTimeDelta);
@@ -1582,6 +1585,8 @@ HRESULT CKena::SetUp_State()
 	m_pModelCom->Set_RootBone("kena_RIG");
 	m_pModelCom->Set_BoneIndex(L"../Bin/Data/Animation/Kena BoneInfo.json");
 	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG", "../Bin/Data/Animation/Kena.json");
+	FAILED_CHECK_RETURN(m_pAnimation->Load_Additional_Animations("../Bin/Data/Animation/Kena Look Animations.json"), E_FAIL);
+	m_pAnimation->Connect_AdditiveController(this, &CKena::Update_AdditiveRatio);
 	m_pAnimation->Set_RootAnimation("IDLE");
 
 	return S_OK;
@@ -1633,6 +1638,44 @@ void CKena::Update_Collider(_float fTimeDelta)
 
 	matPivot = XMMatrixTranslation(0.f, 0.7f, 0.f);
 	m_pTransformCom->Update_Collider(L"Kena_Bump", matPivot);
+}
+
+void CKena::Update_AdditiveRatio(_float fTimeDelta)
+{
+	_float	fRatio = LookAnimationController(fTimeDelta);
+
+	if (fRatio < 0.f)
+	{
+		if (m_bBow == true)
+			m_pAnimation->State_AdditionalAnimation("BOW_AIM_DOWN", fRatio * -1.f);
+		else
+			m_pAnimation->State_AdditionalAnimation("AIM_LOOK_DOWN", fRatio * -2.f);
+	}
+	else
+	{
+		if (m_bBow == true)
+			m_pAnimation->State_AdditionalAnimation("BOW_AIM_UP", fRatio);
+		else
+			m_pAnimation->State_AdditionalAnimation("AIM_LOOK_UP", fRatio * 2.f);
+	}
+
+	return;
+}
+
+_float CKena::LookAnimationController(_float fTimeDelta)
+{
+	_float	fAdditiveRatio = 0.f;
+
+	_float	fVerticalAngle = XMConvertToDegrees(m_pCamera->Get_VerticalAngle());
+
+	if (fVerticalAngle < 90.f)
+		fAdditiveRatio = 1.f - (fVerticalAngle / 90.f);
+	else if (fVerticalAngle > 90.f && fVerticalAngle < 180.f)
+		fAdditiveRatio = (fVerticalAngle - 90.f) / 90.f * -1.f;
+
+	CUtile::Saturate<_float>(fAdditiveRatio, -1.f, 1.f);
+
+	return fAdditiveRatio;
 }
 
 CKena::DAMAGED_FROM CKena::Calc_DirToMonster(CGameObject * pTarget)
