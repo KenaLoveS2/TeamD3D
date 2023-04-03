@@ -126,7 +126,7 @@ void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eCool			= CUI_ClientManager::AMMO_BOMBCOOL;
 	CUI_ClientManager::UI_PRESENT eBombEffect	= CUI_ClientManager::AMMO_BOMBEFFECT;
 
-	for (_uint i = 0; i < m_iMaxBombCount; ++i)
+	for (_int i = 0; i < m_iMaxBombCount; ++i)
 	{
 		if (m_bUsed[i] == true)
 		{
@@ -137,7 +137,8 @@ void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
 			{
 				++m_iCurBombCount;
 				m_fCurBombCoolTime[i] = m_fInitBombCoolTime;
-				m_StatusDelegator.broadcast(eBombEffect, fTimeDelta);
+				_float fIndex = (_float)i;
+				m_StatusDelegator.broadcast(eBombEffect, fIndex);
 				m_bUsed[i] = false;
 			}
 			else
@@ -232,6 +233,7 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 			if (iSlot == 3)
 			{
 				m_iMaxArrowCount++;
+				m_iCurArrowCount = m_iMaxArrowCount;
 
 				_float fMax = (_float)m_iMaxArrowCount;
 				m_StatusDelegator.broadcast(eArrowUpgrade, fMax);
@@ -250,6 +252,7 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 			if (iSlot == 3)
 			{
 				m_iMaxBombCount++;
+				m_iCurBombCount = m_iMaxBombCount;
 
 				/* NEED : UI BOMB COUNT UP */
 				_float fMax = (_float)m_iMaxBombCount;
@@ -471,7 +474,7 @@ void CKena_Status::Set_CurBombCount(_int iValue)
 {
 	m_iCurBombCount = iValue;
 
-	for (_uint i = 0; i < m_iMaxBombCount; ++i)
+	for (_int i = 0; i < m_iMaxBombCount; ++i)
 	{
 		if (m_bUsed[i] == false)
 		{
@@ -479,8 +482,8 @@ void CKena_Status::Set_CurBombCount(_int iValue)
 			m_fCurBombCoolTime[i] = 0.0f;
 
 			CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
-			_float fCount = (_float)m_iCurArrowCount;
-			m_StatusDelegator.broadcast(eBomb, fCount);
+			_float fIndex = (_float)i;
+			m_StatusDelegator.broadcast(eBomb, fIndex);
 
 			return;
 		}

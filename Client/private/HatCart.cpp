@@ -9,12 +9,14 @@
 CHatCart::CHatCart(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
 	, m_pPlayer(nullptr)
+	, m_pUIShown(nullptr)
 {
 }
 
 CHatCart::CHatCart(const CHatCart& rhs)
 	: CEnviromentObj(rhs)
 	, m_pPlayer(nullptr)
+	, m_pUIShown(nullptr)
 {
 }
 
@@ -37,14 +39,14 @@ HRESULT CHatCart::Initialize(void* pArg)
 	m_bRenderActive = true;
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
 
+	m_pUIShown = new _bool;
+	*m_pUIShown = false;
+
 	return S_OK;
 }
 
 HRESULT CHatCart::Late_Initialize(void* pArg)
 {
-	// ���߿� �ּ�Ǫ����
-	return S_OK;
-
 	/*Player_Need*/
 	m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 	if (m_pPlayer == nullptr) return E_FAIL;
@@ -82,7 +84,7 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
+	//_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
 
 	/* compare distance */
 	if (m_pPlayer != nullptr)
@@ -92,32 +94,22 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 		//_float4 vPos = m_pTransformCom->Get_Position();
 		//_float	fDist = (vPlayerPos - vPos).Length();
 
-		if (fDist <= 3.f)
+		if (fDist <= 5.f)
 		{
 			if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
 			{
 				CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
-				_bool* isOpen = new _bool;
-				m_CartDelegator.broadcast(eCart, m_pPlayer, isOpen);
-				m_bShowUI = *isOpen;
-				Safe_Delete(isOpen);
+				m_CartDelegator.broadcast(eCart, m_pPlayer, m_pUIShown);
 
-				if (m_bShowUI == false)
+				if (*m_pUIShown == true) /* Cart Open */
 				{
 					Update_MannequinRotMatrix();
 					m_pMannequinRot->Start_FashiomShow();
-					m_bShowUI = true;
 				}
-				else
+				else /* Cart Close */
 				{
-					CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
-					m_CartDelegator.broadcast(eCart, m_pPlayer);
-
 					m_pMannequinRot->End_FashiomShow();
-					m_bShowUI = false;
 				}
-
-
 				
 			}
 		}
@@ -356,6 +348,8 @@ void CHatCart::Free()
 	Safe_Release(m_pInteractionCom);
 
 	Safe_Release(m_pMannequinRot);	
+
+	Safe_Delete(m_pUIShown);
 }
 
 void CHatCart::Create_MannequinRot()
@@ -381,7 +375,7 @@ void CHatCart::Update_MannequinRotMatrix()
 
 void CHatCart::Change_MannequinHat(_uint iHatIndex)
 {
-	if (m_bShowUI == false) return;
+	if (*m_pUIShown == false) return;
 
 	m_pMannequinRot->Change_Hat(iHatIndex);
 }

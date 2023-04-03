@@ -178,6 +178,8 @@ void CBossHunter::Tick(_float fTimeDelta)
 	}
 	/* ~ For. String */
 
+	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+
 	for (auto& pArrow : m_pArrows)
 		pArrow->Tick(fTimeDelta);
 

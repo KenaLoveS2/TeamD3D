@@ -66,12 +66,12 @@ private:
 		SWORD_RENDER_END,
 	};
 
+public:
+	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossShamanDelegator;
+
 private:
 	SWORD_RENDER m_eSwordRenderState = NO_RENDER;
 	_float m_fSwordDissolveTime = 0.f;
-
-	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossShamanDelegator;
-
 
 	_float m_fIdleTimeCheck = 0.f;
 	

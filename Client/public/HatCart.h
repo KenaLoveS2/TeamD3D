@@ -61,8 +61,9 @@ private:
 	HRESULT							SetUp_ShadowShaderResources();
 
 private:
-	CKena* m_pPlayer;
-	_bool m_bShowUI = false;
+	CKena*		m_pPlayer;
+	_bool*		m_pUIShown;
+
 public:
 	static  CHatCart* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

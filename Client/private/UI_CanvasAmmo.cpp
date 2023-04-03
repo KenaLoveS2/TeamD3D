@@ -317,11 +317,7 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue
 	/* Bomb */
 	case CUI_ClientManager::AMMO_BOMB:	/* Bomb Use Moment */
 	{
-		m_iNumBombNow = (_uint)fValue;
-
-		_int iBomb = m_qLeft.front();
-		m_qLeft.pop();
-		m_qUsed.push(iBomb);
+		_int iBomb = (_int)fValue;
 
 		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iBomb]])->Set_Guage(0.f);
 		pCanvas->Set_Bomb(iBomb, 0);
@@ -340,12 +336,7 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue
 		break;
 	case CUI_ClientManager::AMMO_BOMBEFFECT: /* Bomb Guage Fullfilled */
 	{
-		if (m_qUsed.empty())
-			break;
-		
-		_int	iBomb = m_qUsed.front();
-		m_qUsed.pop();
-		m_qLeft.push(iBomb);
+		_int iBomb = (_int)fValue;
 
 		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iBomb]])->Set_Guage(1.f);
 		static_cast<CUI_NodeEffect*>(m_vecNode[UI_BOMBEFFECT])->
@@ -365,14 +356,14 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue
 		
 		m_vecNode[UI_BOMBFRAME2]->Set_Active(true);
 		m_vecNode[UI_BOMBGUAGE2]->Set_Active(true);
-		static_cast<CUI_Node*>(m_vecNode[UI_BOMBGUAGE2])->ReArrangeX();
-		static_cast<CUI_Node*>(m_vecNode[UI_BOMBFRAME2])->ReArrangeX();
+		static_cast<CUI_Node*>(m_vecNode[UI_BOMBGUAGE1])->ReArrangeX();
+		static_cast<CUI_Node*>(m_vecNode[UI_BOMBFRAME1])->ReArrangeX();
 		
 		/* initialize */
 		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Set_Guage(1.0f);
 		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Change_To_FullFilledImage();
-		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE2])->Set_Guage(1.0f);
-		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE2])->Change_To_FullFilledImage();
+		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Set_Guage(1.0f);
+		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Change_To_FullFilledImage();
 
 		pCanvas->LevelUp(CUI_ClientManager::AMMO_BOMB, 2);
 		break;
