@@ -96,10 +96,10 @@ void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//if (m_bSpawn == false) 
-	//{
-	//	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
-	//}
+	if (m_bSpawn == false) 
+	{
+		m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+	}
 
 	m_fKenaDistance = m_pTransformCom->Calc_Distance_XZ(m_vKenaPos);
 

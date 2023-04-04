@@ -53,12 +53,6 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
-	{
-		MSG_BOX("Layer_Enviroment");
-		return E_FAIL;
-	}
-
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 	{
 		MSG_BOX("Layer_Camera");
@@ -104,6 +98,12 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
 	{
 		MSG_BOX("Layer_Canvas");
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
+	{
+		MSG_BOX("Layer_Enviroment");
 		return E_FAIL;
 	}
 
@@ -439,12 +439,13 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain1_2_Monster.json");
-	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain3_Monster.json");
-	//return S_OK;
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain1_2_Monster.json");
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain3_Monster.json");
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test4.json");
+	return S_OK;
 
 	CGameInstance * pGameInstance = GET_INSTANCE(CGameInstance);
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sticks01"), L"Sticks01_0", nullptr))) return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sticks01"), L"Sticks01_0", nullptr))) return E_FAIL;
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_BossWarrior"), L"BossWarrior_0", nullptr, &pGameObject))) return E_FAIL;
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_BossShaman"), L"BossShaman_0", nullptr, &pGameObject))) return E_FAIL;
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_ShamanTrapHex"), L"ShamanTrapHex_0", nullptr, &pGameObject))) return E_FAIL;

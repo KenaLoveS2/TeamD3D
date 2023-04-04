@@ -47,7 +47,7 @@ HRESULT CHatCart::Initialize(void* pArg)
 
 HRESULT CHatCart::Late_Initialize(void* pArg)
 {
-	return S_OK; // 나중에 주석해제하셈
+	//return S_OK; // 나중에 주석해제하셈
 
 	/*Player_Need*/
 	m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));

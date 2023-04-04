@@ -145,8 +145,8 @@ HRESULT CHealthFlower_Anim::Render()
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 
-		/*if (m_bUsed == true && i == 4)
-			continue;*/
+		if (m_bUsed == true && i == 4)
+			continue;
 
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
@@ -234,7 +234,7 @@ _int CHealthFlower_Anim::Execute_TriggerTouchFound(CGameObject* pTarget, _uint i
 	if (iColliderIndex == (_uint)COL_PLAYER)
 	{
 		m_bKenaDetected = true;
-		// m_pKena->Set_ChestInteractable(true);
+		m_pKena->Set_RotActionPossible(true);
 	}
 
 	return 0;
@@ -244,8 +244,8 @@ _int CHealthFlower_Anim::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iT
 {
 	if (iColliderIndex == (_uint)COL_PLAYER)
 	{
-		m_bKenaDetected = true;
-		// m_pKena->Set_ChestInteractable(true);
+		m_bKenaDetected = false;
+		m_pKena->Set_RotActionPossible(false);
 	}
 
 	return 0;
@@ -328,7 +328,7 @@ void CHealthFlower_Anim::Update_State(_float fTimeDelta)
 	{
 	case CHealthFlower_Anim::OPEN_LOOP:
 		{
-			if (m_bUsed == false)
+			if (m_bKenaDetected == true && m_bUsed == false)
 			{
 				m_bInteractable = Check_CameraRay();
 				m_pKena->Set_RotActionPossible(m_bInteractable);
