@@ -52,6 +52,8 @@ HRESULT CE_D_Sphere::Initialize(void * pArg)
 void CE_D_Sphere::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	
 }
 
 void CE_D_Sphere::Late_Tick(_float fTimeDelta)

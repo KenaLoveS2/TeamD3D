@@ -55,9 +55,8 @@ void CE_FireBulletExplosion::Tick(_float fTimeDelta)
 	{
 		m_fDurationTime += fTimeDelta;
 		for (auto& pChild : m_vecChild)
-			pChild->Set_AddScale(fTimeDelta + 0.3f);
-
-		Set_AddScale(fTimeDelta + 0.3f);
+			pChild->Set_AddScale(fTimeDelta + 0.5f);
+		Set_AddScale(fTimeDelta + 0.5f);
 
 		if (m_fDurationTime > 0.4f)
 		{
@@ -71,15 +70,14 @@ void CE_FireBulletExplosion::Tick(_float fTimeDelta)
 			m_fDurationTime = 0.0f;
 		}
 	}
+	else
+		m_fShaderBindTime = 0.0f;
 }
 
 void CE_FireBulletExplosion::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
-	//if (m_pParent != nullptr)
-	//	Set_Matrix();
 
 	__super::Late_Tick(fTimeDelta);
 
@@ -98,6 +96,13 @@ HRESULT CE_FireBulletExplosion::Render()
 void CE_FireBulletExplosion::Imgui_RenderProperty()
 {
 
+}
+
+void CE_FireBulletExplosion::SetUp_State(_float4 vPosition)
+{
+	this->Set_Active(true);
+	this->Set_InitMatrix(XMMatrixIdentity());
+	this->Set_Position(vPosition);
 }
 
 HRESULT CE_FireBulletExplosion::SetUp_ShaderResources()

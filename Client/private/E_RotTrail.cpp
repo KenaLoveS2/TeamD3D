@@ -74,7 +74,7 @@ HRESULT CE_RotTrail::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(7);
+	m_pShaderCom->Begin(15);
 	m_pVITrailBufferCom->Render();
 
 	return S_OK;

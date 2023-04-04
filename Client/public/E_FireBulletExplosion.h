@@ -20,6 +20,9 @@ public:
 public:
 	virtual void			Imgui_RenderProperty() override;
 
+public:
+	void					SetUp_State(_float4 vPosition);
+
 private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();

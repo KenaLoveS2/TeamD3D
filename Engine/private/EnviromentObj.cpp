@@ -54,8 +54,6 @@ HRESULT CEnviromentObj::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&m_EnviromentDesc.ObjectDesc))) return E_FAIL;
 
 
-	HRESULT SetUp_Component();
-
 	return S_OK;
 }
 

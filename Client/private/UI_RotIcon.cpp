@@ -157,7 +157,7 @@ HRESULT CUI_RotIcon::Render()
 		return E_FAIL;
 	}
 
-	m_iRenderPass = 1;
+	m_iRenderPass = 18;
 	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();
 
@@ -227,6 +227,10 @@ HRESULT CUI_RotIcon::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_tDesc.ProjMatrix)))
 		return E_FAIL;
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vColor", &_float4(1.f, 1.f, 1.f, 1.f), sizeof(_float4)), E_FAIL);
+	_float fAlpha = 1.f;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fAlpha", &fAlpha, sizeof(_float)), E_FAIL);
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{

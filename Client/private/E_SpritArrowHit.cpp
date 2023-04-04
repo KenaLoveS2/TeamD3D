@@ -66,16 +66,12 @@ void CE_SpiritArrowHit::Tick(_float fTimeDelta)
 		return;
 	else // true
 	{
-		m_fTimeDelta += fTimeDelta;
 		m_eEFfectDesc.vScale *= (2.0f + fTimeDelta * 2.f);
-
-		if (m_fTimeDelta > 0.5f)
+		_bool bResult = TurnOffSystem(m_fTimeDelta, 0.5f, fTimeDelta);
+		if (bResult == true)
 		{
-			m_eEFfectDesc.fWidthFrame = 0.0;
-			m_eEFfectDesc.fHeightFrame = 0.0;
+			ResetSprite();
 			m_eEFfectDesc.vScale = _float3(2.f, 2.f, 1.f);
-		    m_eEFfectDesc.bActive = false;
-			m_fTimeDelta = 0.0f;
 		}
 	}
 }

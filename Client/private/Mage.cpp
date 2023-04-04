@@ -31,7 +31,7 @@ HRESULT CMage::Initialize(void* pArg)
 	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_UI(1.5f), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(1.8f), E_FAIL); // Mage HpBar Position
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -914,7 +914,6 @@ void CMage::Tick_Attack(_float fTimeDelta)
 	}
 }
 
-
 void CMage::Create_Sticks()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -932,8 +931,6 @@ void CMage::Create_Sticks()
 		m_pSticks[i]->Set_DeathFlag(true);
 		// m_pSticks[i]->Late_Initialize(nullptr);
 	}
-
-
 	RELEASE_INSTANCE(CGameInstance)
 }
 

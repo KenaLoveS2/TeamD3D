@@ -1216,7 +1216,10 @@ void CPhysX_Manager::Reset()
 }
 
 void CPhysX_Manager::Delete_DynamicActor(PxRigidActor* pActor)
-{	
+{
+	if (m_DynamicActors.size() == 0)
+		return;
+
 	for (auto Pair = m_DynamicActors.begin(); Pair != m_DynamicActors.end();)
 	{
 		if (Pair->second == pActor)
@@ -1303,6 +1306,25 @@ void CPhysX_Manager::Imgui_Render(const _tchar * pActorName, vector<_float3>* ve
 		Set_ScalingBox(pRigidActor, vScale);
 		(*vec_ColiderSize)[iSelectColider_Index] = vScale;
 	}
+}
+
+void CPhysX_Manager::Imgui_Render(const _tchar* pActorName)
+{
+
+	PxRigidActor* pRigidActor = Find_StaticActor(pActorName);
+	if (pRigidActor == nullptr)
+		return;
+
+
+	_float3 vScale = _float3(0.f, 0.f, 0.f);
+	static float fScale[3] = { 1.f,1.f,1.f };
+
+	ImGui::DragFloat3("Px_Scale", fScale, 0.01f, 0.1f, 100.0f);
+
+	vScale.x = fScale[0];  vScale.y = fScale[1];  vScale.z = fScale[2];
+
+	Set_ScalingBox(pRigidActor, vScale);
+
 }
 #endif
 
