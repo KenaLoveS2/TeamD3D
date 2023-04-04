@@ -1,0 +1,48 @@
+{
+    "00. RenderPass": 0,
+    "01. Color": [
+        0.4900398254394531,
+        0.04685639962553978,
+        0.04685639962553978,
+        1.0
+    ],
+    "02. MaskColor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "03. HDR Intensity": 3.5999999046325684,
+    "04. Model Index": 5,
+    "05. CutY": 0.5,
+    "06. UVScale": [
+        1.0,
+        0.20000000298023224
+    ],
+    "07. vScale": [
+        1.2999999523162842,
+        1.2999999523162842,
+        1.2999999523162842
+    ],
+    "10. DiffuseTextureIndex": 13,
+    "11. MaskTextureIndex": 20,
+    "12. DissolveTextureIndex": 4,
+    "20. Options": [
+        true,
+        false,
+        false
+    ],
+    "21. UVSpeed": [
+        0.0,
+        0.0
+    ],
+    "22. SpriteFrames": [
+        1,
+        1
+    ],
+    "23. SpriteSpeed": 0.0,
+    "24. SelfStop": false,
+    "25. SelfStopTime": 0.0,
+    "26. DissolvePass" : 3,
+    "27. DissolveSpeed" : 1.0
+}
