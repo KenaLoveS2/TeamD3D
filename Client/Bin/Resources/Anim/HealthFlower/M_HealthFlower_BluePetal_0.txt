@@ -1,0 +1,139 @@
+TwoSided = true
+bDisableDepthTest = false
+bIsMasked = false
+ReferencedTextures[3] =
+{
+    ReferencedTextures[0] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_D.T_HealthFlower_D'
+    ReferencedTextures[1] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_M_R_AO.T_HealthFlower_M_R_AO'
+    ReferencedTextures[2] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_N.T_HealthFlower_N'
+}
+Expressions[0] = {}
+CachedExpressionData =
+{
+    Parameters =
+    {
+        Entries[5] =
+        {
+            Entries[0] =
+            {
+                ParameterInfos[4] =
+                {
+                    ParameterInfos[0] = { Name=Desaturation }
+                    ParameterInfos[1] = { Name=SSS_Amount }
+                    ParameterInfos[2] = { Name=SSS_Contrast }
+                    ParameterInfos[3] = { Name=SSS_Fresnel }
+                }
+            }
+            Entries[1] =
+            {
+                ParameterInfos[2] =
+                {
+                    ParameterInfos[0] = { Name=SSS_Color }
+                    ParameterInfos[1] = { Name=Tint }
+                }
+            }
+            Entries[2] =
+            {
+                ParameterInfos[3] =
+                {
+                    ParameterInfos[0] = { Name=BaseTexture }
+                    ParameterInfos[1] = { Name=Normal }
+                    ParameterInfos[2] = { Name=M_R_AO }
+                }
+            }
+            Entries[3] = { ParameterInfos[0]={} }
+            Entries[4] = { ParameterInfos[0]={} }
+        }
+        ScalarValues[4] = { 0.6, 0.5, 0.2, 0.2 }
+        VectorValues[2] =
+        {
+            VectorValues[0] = { R=0.105638, G=0.350289, B=0.520833, A=1 }
+            VectorValues[1] = { R=0.59092, G=0.653327, B=0.793403, A=0 }
+        }
+        TextureValues[3] =
+        {
+            TextureValues[0] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_D.T_HealthFlower_D'
+            TextureValues[1] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_N.T_HealthFlower_N'
+            TextureValues[2] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_M_R_AO.T_HealthFlower_M_R_AO'
+        }
+    }
+    ReferencedTextures[3] =
+    {
+        ReferencedTextures[0] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_M_R_AO.T_HealthFlower_M_R_AO'
+        ReferencedTextures[1] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_N.T_HealthFlower_N'
+        ReferencedTextures[2] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_D.T_HealthFlower_D'
+    }
+}
+BlendMode = BLEND_Opaque (0)
+OpacityMaskClipValue = 0.333
+CollectedTextureParameters[3] =
+{
+    CollectedTextureParameters[0] =
+    {
+        Texture = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_D.T_HealthFlower_D'
+        Name = BaseTexture
+        Group = None
+    }
+    CollectedTextureParameters[1] =
+    {
+        Texture = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_N.T_HealthFlower_N'
+        Name = Normal
+        Group = None
+    }
+    CollectedTextureParameters[2] =
+    {
+        Texture = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_M_R_AO.T_HealthFlower_M_R_AO'
+        Name = M_R_AO
+        Group = None
+    }
+}
+CollectedScalarParameters[4] =
+{
+    CollectedScalarParameters[0] = { Value=0.6, Name=Desaturation, Group=None }
+    CollectedScalarParameters[1] = { Value=0.5, Name=SSS_Amount, Group=None }
+    CollectedScalarParameters[2] = { Value=0.2, Name=SSS_Contrast, Group=None }
+    CollectedScalarParameters[3] = { Value=0.2, Name=SSS_Fresnel, Group=None }
+}
+CollectedVectorParameters[2] =
+{
+    CollectedVectorParameters[0] =
+    {
+        Value = { R=0.105638, G=0.350289, B=0.520833, A=1 }
+        Name = SSS_Color
+        Group = None
+    }
+    CollectedVectorParameters[1] =
+    {
+        Value = { R=0.59092, G=0.653327, B=0.793403, A=0 }
+        Name = Tint
+        Group = None
+    }
+}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[3] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_HealthFlower_D
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_HealthFlower_M_R_AO
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_HealthFlower_N
+    }
+}

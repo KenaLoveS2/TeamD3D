@@ -533,11 +533,12 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"), CRope_RotRock::Create(m_pDevice, m_pContext)))) return E_FAIL;
 	
 
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_HealthFlower",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HealthFlower/HealthFlower.mdat"), PivotMatrix))))
-		return E_FAIL;
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_HealthFlower",
+		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/HealthFlower/HealthFlower.model", PivotMatrix)), E_FAIL);
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HealthFlower_Anim"), CHealthFlower_Anim::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+
 
 #endif 
 
@@ -591,7 +592,7 @@ HRESULT CLoader::Loading_ForMapTool()
 			assert(!"Map4/RusuHut");
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/SummoningRoom", true, true, true, false, true)))
 			assert(!"Map4/SummoningRoom");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VillageCart", true, true, true, false, true)))
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VillageCart", true, false, true, false, true)))
 			assert(!"VillageCart");
 	}
 #pragma endregion Map_Four
@@ -2734,7 +2735,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		assert(!"Map4/RusuHut");
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Map4/SummoningRoom", true, true, true, false, true)))
 		assert(!"Map4/SummoningRoom");
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, false, true)))
 		assert(!"VillageCart");
 
 #pragma endregion Map_Four

@@ -64,7 +64,13 @@ private:
 
 		EFFECT_DUST_PARTICLE_BIG,
 		EFFECT_DUST_PARTICLE_SMALL,
-		EFFECT_DUST_MESH_DUSTPLANE
+		EFFECT_DUST_MESH_DUSTPLANE,
+
+		EFFECT_STUN_MESH_GUAGE,
+		EFFECT_STUN_MESH_BASE,
+		EFFECT_STUN_MESH_BASE2,
+
+		EFFECT_END
 	};
 
 public:
@@ -177,8 +183,11 @@ public:
 
 	void ShockEffect_On(_bool bIsInit, _float fTimeDelta);
 	void ShockEffect_Off(_bool bIsInit, _float fTimeDelta);
-	void Test3(_bool bIsInit, _float fTimeDelta);
-	void Test4(_bool bIsInit, _float fTimeDelta);
+	void DustEffect_On(_bool bIsInit, _float fTimeDelta);
+	void StunEffect_On(_bool bIsInit, _float fTimeDelta);
+	void StunEffect_Off(_bool bIsInit, _float fTimeDelta);
+
+
 
 
 

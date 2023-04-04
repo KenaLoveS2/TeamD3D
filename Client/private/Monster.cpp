@@ -7,6 +7,7 @@
 #include "UI_MonsterHP.h"
 #include "E_RectTrail.h"
 #include "E_P_ExplosionGravity.h"
+#include "SpiritArrow.h"
 
 _float4 CMonster::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 
@@ -473,14 +474,25 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
+			CSpiritArrow*	 pArrow = dynamic_cast<CSpiritArrow*>(pTarget);
+
 			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(0.2f);
-			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			//m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			m_pMonsterStatusCom->UnderAttack(pArrow->Get_Damage());
 
 			m_pUIHPBar->Set_Active(true);
 			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 
-			m_bWeaklyHit = true;
-			m_bStronglyHit = false;
+			if (pArrow->Get_CurrentState() == CSpiritArrow::ARROW_INJECT_FIRE)
+			{
+				m_bStronglyHit = true;
+				m_bWeaklyHit = false;
+			}
+			else
+			{
+				m_bWeaklyHit = true;
+				m_bStronglyHit = false;
+			}
 
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);

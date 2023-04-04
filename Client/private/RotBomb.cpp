@@ -9,6 +9,7 @@
 #include "E_KenaPulse.h"
 #include "E_P_Explosion.h"
 #include "E_BombTrail.h"
+#include "Camera_Player.h"
 
 CRotBomb::CRotBomb(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -519,6 +520,9 @@ void CRotBomb::Update_State(_float fTimeDelta)
 
 void CRotBomb::Calculate_Path(_float fTimeDelta)
 {
+	if (dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr()) == nullptr)
+		return;
+
 	m_matDummy = m_pTransformCom->Get_WorldMatrix();
 
 	_float3	vCamPos = CGameInstance::GetInstance()->Get_CamPosition_Float3();

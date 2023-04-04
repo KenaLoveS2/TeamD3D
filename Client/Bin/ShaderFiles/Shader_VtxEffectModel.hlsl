@@ -603,7 +603,7 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 	float4 fresnel = float4(fresnel_glow(3.0f, 1.5f, fresnelColor.rgb, In.vNormal.rgb, In.vViewDir), fresnelColor.a);
 
 	float4 finalcolor = saturate(lerp(tex_0, tex_1, 0.5f)) * fresnel;
-	finalcolor.a = (tex_0 * tex_1).a * 0.2f;
+	finalcolor.a = (tex_0 * tex_1).a;
 
 	if (g_bDissolve)
 	{

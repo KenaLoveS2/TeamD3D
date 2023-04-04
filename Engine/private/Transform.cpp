@@ -999,6 +999,8 @@ void CTransform::Update_AllCollider(_float4x4 PivotMatrix)
 
 _bool CTransform::IsFalling()
 {
+	return false;
+
 	if (m_pPxActor == nullptr || m_bIsStaticPxActor) return false;
 
 	return m_pPhysX_Manager->IsFalling((PxRigidDynamic*)m_pPxActor);

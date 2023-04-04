@@ -1210,6 +1210,32 @@ private:	/* Changer */
 	_bool	RotWisp_Interactable();
 	_bool	Chest_Interactable();
 
+	_bool	Check_Skill_Melee_0();
+	_bool	Check_Skill_Melee_1();
+	_bool	Check_Skill_Melee_2();
+	_bool	Check_Skill_Melee_3();
+	_bool	Check_Skill_Melee_4();
+	_bool	Check_Skill_Shield_0();
+	_bool	Check_Skill_Shield_1();
+	_bool	Check_Skill_Shield_2();
+	_bool	Check_Skill_Shield_3();
+	_bool	Check_Skill_Shield_4();
+	_bool	Check_Skill_Bow_0();
+	_bool	Check_Skill_Bow_1();
+	_bool	Check_Skill_Bow_2();
+	_bool	Check_Skill_Bow_3();
+	_bool	Check_Skill_Bow_4();
+	_bool	Check_Skill_Bomb_0();
+	_bool	Check_Skill_Bomb_1();
+	_bool	Check_Skill_Bomb_2();
+	_bool	Check_Skill_Bomb_3();
+	_bool	Check_Skill_Bomb_4();
+	_bool	Check_Skill_Rot_0();
+	_bool	Check_Skill_Rot_1();
+	_bool	Check_Skill_Rot_2();
+	_bool	Check_Skill_Rot_3();
+	_bool	Check_Skill_Rot_4();
+
 	_bool	Animation_Finish();
 	_bool	Animation_Progress(_float fProgress);
 	_bool	Direction_Change();
@@ -1223,6 +1249,7 @@ private:	/* Changer */
 	_bool	Damaged_Dir_Right();
 	_bool	Check_PipCount();
 	_bool	Check_ArrowCount();
+	_bool	Check_BombCount();
 	_bool	Check_Shield();
 
 	_bool	KeyInput_None();

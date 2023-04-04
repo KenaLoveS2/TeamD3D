@@ -15,6 +15,10 @@
     "03. HDR Intensity": 1.0,
     "04. Model Index": 0,
     "05. CutY": 1.0,
+    "06. UVScale": [
+        1.0,
+        1.0
+    ],
     "10. DiffuseTextureIndex": 95,
     "11. MaskTextureIndex": 8,
     "12. DissolveTextureIndex": -1,
@@ -31,7 +35,7 @@
         8,
         8
     ],
-    "23. SpriteSpeed": 20.0,
+    "23. SpriteSpeed": 40.0,
     "24. SelfStop": true,
-    "25. SelfStopTime": 3.0
+    "25. SelfStopTime": 2.0
 }

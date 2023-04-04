@@ -351,7 +351,7 @@ PS_OUT_TESS PS_MAIN_H_R_AO(PS_IN_TESS In)
 
     Out.vDiffuse = vDiffuse;
     Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
     Out.vAmbient = vAORM;
     return Out;
 }//2

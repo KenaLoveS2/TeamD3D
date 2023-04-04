@@ -74,7 +74,7 @@ private:
 	ID3D11DepthStencilView*			m_pStaticShadowDepthStencilView = nullptr;
 	ID3D11DepthStencilView*			m_pCineDepthStencilView = nullptr;
 
-	_uint							m_iShadowWidth = 0, m_iShadowHeight = 0;
+	_uint								m_iShadowWidth = 0, m_iShadowHeight = 0;
 	_bool							m_bPhysXRenderFlag = false;
 	_bool							m_bStaticShadow = false;
 	_bool							m_bDynamicShadow = false;

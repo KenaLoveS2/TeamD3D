@@ -443,6 +443,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 {
 	Increase_Time();
 
+	CONTEXT_LOCK
+
 	if (FAILED(Render_PrevFrame()))
 		return E_FAIL;
 
