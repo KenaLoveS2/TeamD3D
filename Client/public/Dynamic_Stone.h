@@ -31,8 +31,6 @@ public:
 	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex);
 	//virtual void					ImGui_PhysXValueProperty() override;
 private:
-	
-	_bool				m_bTestOnce = false;
 
 	_bool				m_bOnceColl = false;
 

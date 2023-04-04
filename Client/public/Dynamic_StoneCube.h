@@ -18,8 +18,10 @@ public:
 	{
 		_tchar pModelName[64] =L"";
 		_float3 vSize;
+		_float3 vPos;
 		_float fLinearDamping;
 		_float fMass;
+
 
 
 	}Dynamic_StoneCube_DESC;
@@ -31,7 +33,7 @@ private:
 	virtual ~CDynamic_StoneCube() = default;
 
 public:
-
+	void				Set_CollActive();
 
 public:
 	virtual HRESULT		Initialize_Prototype() override;

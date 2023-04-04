@@ -175,9 +175,10 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 				layerHeight* layer,
 				layerRadius * std::sin(angleStep *i ));
 
-			Pxpos.x += vPos.x;
-			Pxpos.y += vPos.y;
-			Pxpos.z += vPos.z;
+			Pxpos.x += vPos.x; StoneCubeDesc.vPos.x = Pxpos.x;
+			Pxpos.y += vPos.y; StoneCubeDesc.vPos.y = Pxpos.y;
+			Pxpos.z += vPos.z; StoneCubeDesc.vPos.z = Pxpos.z;
+			
 			pCreateObject = nullptr;
 
 			const _tchar* NewName = CUtile::Create_DummyString(m_szCloneObjectTag, iIndex +1);
@@ -189,10 +190,9 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 							"CImgui_MapEditor::CDynamic_Stone::Late_Initialize");
 
 
-			pCreateObject->Get_TransformCom()->Set_State(CTransform::STATE_TRANSLATION,
-				XMVectorSet(Pxpos.x, Pxpos.y, Pxpos.z, 1.f));
+			
+			pCreateObject->Late_Initialize();
 
-		
 			m_pDynamicObj_List.push_back(pCreateObject);
 		}
 	}
@@ -218,20 +218,19 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_DYNAMIC_ENVIOBJ));
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
 	
 	/*내일 먼저 생성하고 슬립으로 바꾸기*/
+
+
+
 
 	return S_OK;
 }
 
 void CDynamic_Stone::Tick(_float fTimeDelta)
 {
-	/*if(m_bTestOnce == false)
-	{
-		Late_Initialize();
-		m_bTestOnce = true;
-	}*/
+
 
 	for (auto& pObj : m_pDynamicObj_List)
 	{
@@ -411,7 +410,7 @@ HRESULT CDynamic_Stone::RenderCine()
 
 _int CDynamic_Stone::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	if (pTarget == nullptr)
+	if (pTarget == nullptr || COL_DYNAMIC_ENVIOBJ == iColliderIndex)
 		return 0;
 
 	if (m_bOnceColl == true)		//한번만 생성되기위해서
@@ -427,7 +426,7 @@ _int CDynamic_Stone::Execute_Collision(CGameObject* pTarget, _float3 vCollisionP
 		for (auto& pObj : m_pDynamicObj_List)
 		{
 			if (pObj != nullptr)
-				pObj->Late_Initialize();
+				static_cast<CDynamic_StoneCube*>(pObj)->Set_CollActive();
 		}
 
 		m_bOnceColl = true;
