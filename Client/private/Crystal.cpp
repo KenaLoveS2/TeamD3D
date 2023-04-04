@@ -68,7 +68,9 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
-	
+	m_pTransformCom->Set_Position(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+
 	CGameInstance*	pGameInstance = CGameInstance::GetInstance();
 	CEffect_Base* pEffectObj = nullptr;
 
@@ -453,6 +455,7 @@ CGameObject * CCrystal::Clone(void * pArg)
 
 void CCrystal::Free()
 {
+	
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
