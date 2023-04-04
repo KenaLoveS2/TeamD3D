@@ -1,58 +1,5 @@
 #include "Shader_Client_Defines.h"
 
-/**********Constant Buffer*********/
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-float4			g_WorldCamPosition;
-float			g_fFar = 500.f;
-float			g_fHDRValue;
-/**********************************/
-
-/* For. Parts */
-matrix			g_SocketMatrix;
-/************/
-
-/**********Common Texture*********/
-texture2D		g_DepthTexture, g_NormalTexture;
-texture2D		g_MaskTexture, g_ReamTexture, g_DiffuseTexture;
-
-texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
-texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
-/**********************************/
-
-/**********Common Option*********/
-int		g_TextureRenderType, g_BlendType;
-bool    g_IsUseMask, g_IsUseNormal;
-int		g_SeparateWidth, g_SeparateHeight;
-uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
-float   g_WidthFrame, g_HeightFrame, g_Time;
-float4  g_vColor;
-float2  g_fUV;
-bool	g_bTimer;
-/**********************************/
-
-/**********Dissolve*********/
-bool       g_bDissolve;
-float      g_fDissolveTime;
-texture2D  g_DissolveTexture;
-float	   _DissolveSpeed = 0.2f;
-float	   _FadeSpeed = 1.5f;
-/***************************/
-
-/* Arrow */
-float	g_WaveHeight;
-float	g_Speed;
-float	g_WaveFrequency;
-float	g_UVSpeed;
-/* ~Arrow */
-
-/* HpRatio */
-float   g_HpRatio;
-float	g_DamageDurationTime;
-uint	g_PulseState;
-/* HpRatio */
-
-bool	g_bPulseRecive = false;
-
 struct VS_IN
 {
 	float3		vPosition : POSITION;
