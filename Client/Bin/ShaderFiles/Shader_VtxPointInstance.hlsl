@@ -1,11 +1,4 @@
-
 #include "Shader_Client_Defines.h"
-
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
-vector			g_vCamPosition;
-
-texture2D		g_Texture;
 
 struct VS_IN
 {
