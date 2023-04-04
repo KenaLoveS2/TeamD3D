@@ -4,6 +4,7 @@
 #include "Bone.h"
 #include "Effect_Trail.h"
 #include "Kena.h"
+#include "FireBullet.h"
 
 CE_FireBulletCover::CE_FireBulletCover(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -46,18 +47,29 @@ HRESULT CE_FireBulletCover::Initialize(void * pArg)
 	m_eEFfectDesc.vScale = XMVectorSet(0.16f, 0.16f, 0.16f, 1.f);
 	m_fHDRValue = 3.0f;
 	m_eEFfectDesc.bActive = false;
+	m_eEFfectDesc.fFrame[0] = 99.f;
 	return S_OK;
 }
 
 void CE_FireBulletCover::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_fTimeDelta += fTimeDelta;
+
+	if (dynamic_cast<CFireBullet*>(m_pParent)->Get_Dissolve() == true)
+		m_fDissolveTime += fTimeDelta;
+	else
+		m_fDissolveTime = 0.0f;
 }
 
 void CE_FireBulletCover::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
+	{
+		m_fTimeDelta = 0.0f;
+		m_fDissolveTime = 0.0f;
 		return;
+	}
 
 	if (m_pParent != nullptr)
 		Set_Matrix();
@@ -121,6 +133,9 @@ HRESULT CE_FireBulletCover::SetUp_Components()
 HRESULT CE_FireBulletCover::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+
+	if (dynamic_cast<CFireBullet*>(m_pParent)->Get_Dissolve() == true)
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
 
 	return S_OK;
 }

@@ -44,6 +44,12 @@ HRESULT CE_FireBulletCloud::Initialize(void * pArg)
 
 void CE_FireBulletCloud::Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+	{
+		m_fShaderBindTime = 0.0f;
+		return;
+	}
+
 	__super::Tick(fTimeDelta);
 }
 

@@ -9,17 +9,17 @@
                     "Child Count": 1,
                     "ChildDesc": [
                         {
+                            "Child CloneTag": "Hit",
+                            "Child ProtoTag": "Prototype_GameObject_Hit",
                             "Alpha": 0.0,
                             "Angle": 0.0,
                             "Billboard": true,
                             "Blend Type": 0,
-                            "Child CloneTag": "Hit",
-                            "Child ProtoTag": "Prototype_GameObject_Hit",
                             "Color": [
                                 0.0,
-                                0.0,
-                                0.0,
-                                0.0
+                                0.8,
+                                1.0,
+                                1.0
                             ],
                             "CreateRange": 0.0,
                             "DiffuseTexture Index": [
@@ -29,7 +29,7 @@
                                 0.0,
                                 0.0
                             ],
-                            "DurationTime": 0.4000000059604645,
+                            "DurationTime": 0.7,
                             "Effect Type": 0,
                             "FreeMove": false,
                             "Have Trail": false,
@@ -54,7 +54,7 @@
                             "MovingPosition": false,
                             "NormalTexture Index": 0.0,
                             "Particle Type": 0,
-                            "PassCnt": 5,
+                            "PassCnt": 12,
                             "Pixed Dir": [
                                 0.0,
                                 0.0,
@@ -64,10 +64,10 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
+                                0.5,
+                                0.5,
+                                0.5,
+                                0.5
                             ],
                             "SeparateHeight": 5,
                             "SeparateWidth": 5,
@@ -79,20 +79,20 @@
                             "Use Child": false,
                             "Use Mask": false,
                             "Use Normal": false,
-                            "Width Frame": 1.0,
+                            "Width Frame": 5.0,
                             "WidthCnt": 5,
                             "WorldMatrix": [
-                                0.20000000298023224,
+                                0.5,
                                 0.0,
                                 0.0,
                                 0.0,
                                 0.0,
-                                0.20000000298023224,
+                                0.5,
                                 0.0,
                                 0.0,
                                 0.0,
                                 0.0,
-                                0.20000000298023224,
+                                0.5,
                                 0.0,
                                 0.0,
                                 0.0,

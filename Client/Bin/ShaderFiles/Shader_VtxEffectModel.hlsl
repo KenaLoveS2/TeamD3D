@@ -27,12 +27,15 @@ uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
 float   g_WidthFrame, g_HeightFrame, g_Time;
 float4  g_vColor;
 float2  g_fUV;
+bool	g_bTimer;
 /**********************************/
 
 /**********Dissolve*********/
 bool       g_bDissolve;
 float      g_fDissolveTime;
 texture2D  g_DissolveTexture;
+float	   _DissolveSpeed = 0.2f;
+float	   _FadeSpeed = 1.5f;
 /***************************/
 
 /* Arrow */
@@ -470,10 +473,36 @@ PS_OUT PS_MAGEBULLET(PS_IN In)
 	/* */
 
 	vfinalblendColor = saturate(texturefresnel) + Inner;
-	Out.vDiffuse = CalcHDRColor(vfinalblendColor, g_fHDRValue);
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime + 0.4f;
+
+		// sample noise texture
+		float noiseSample = g_DTexture_0.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+		// add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		vfinalblendColor = (1 - useDissolve1) * vfinalblendColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		vfinalblendColor = (1 - useDissolve2) * vfinalblendColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+	Out.vDiffuse = CalcHDRColor(vfinalblendColor, g_fHDRValue);
 	return Out;
 }
 
@@ -482,8 +511,10 @@ PS_OUT PS_MAGEBULLETCOVER(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	float  fDissolveAmount = 0.5f;
+	float  time = frac(g_Time * 1.8f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(time, time));
 
-	float4 vDissolve = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+	float4 vDissolve = g_MaskTexture.Sample(LinearSampler, OffsetUV);
 	half   dissolve_value = vDissolve.r;
 
 	if (dissolve_value <= fDissolveAmount)
@@ -491,16 +522,31 @@ PS_OUT PS_MAGEBULLETCOVER(PS_IN In)
 
 	else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
 	{
-		if (Out.vDiffuse.a != 0.0f)
-			Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+		if (vDissolve.a != 0.0f)
+			vDissolve = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), vDissolve.a);
 	}
 
 	float4 vColor = float4(255.f, 136.f, 98.f, 255.f) / 255.f;
 	float4 finalcolor = vDissolve * vColor;
-	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
+	if (g_fDissolveTime != 0.0f)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 vDissolve = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+		half dissolve_value = vDissolve.r;
+
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			if (finalcolor.a != 0.0f)
+				finalcolor = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), finalcolor.a);
+		}
+	}
+
+	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
 	return Out;
 }
 
@@ -509,19 +555,19 @@ PS_OUT PS_PULSECOVER(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float  fDissolveAmount = 0.8f;
+	float  fDissolveAmount = 0.7f;
 
-	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	float  time = frac(g_Time * 0.6f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(0.0f, time));
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
 	half   dissolve_value = vDiffuse.r;
-
 	if (dissolve_value <= fDissolveAmount)
 		discard;
 
-	float4 vColor = g_vColor;
-	Out.vDiffuse = vDiffuse * vColor * 3.f;
-	Out.vDiffuse.a = 0.3f;
-
-	if (g_bDissolve)
+	float4 vfinalcolor = vDiffuse + g_vColor;
+	vfinalcolor = saturate(vfinalcolor);
+	if (g_fDissolveTime != 0.0f)
 	{
 		float fDissolveAmount = g_fDissolveTime;
 
@@ -533,14 +579,11 @@ PS_OUT PS_PULSECOVER(PS_IN In)
 
 		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
 		{
-			if (Out.vDiffuse.a != 0.0f)
-				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+			if (vfinalcolor.a != 0.0f)
+				vfinalcolor = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
 		}
 	}
-
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
-
+	Out.vDiffuse = CalcHDRColor(vfinalcolor, 1.f);
 	return Out;
 }
 
@@ -549,23 +592,18 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float  time = frac(g_Time * 1.8f);
-	float2 OffsetUV = TilingAndOffset(In.vTexUV* 5.f, float2(1.0f, 1.0f), float2(0.0f, -time));
+	float  time = frac(g_Time * 0.6f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(0.0f, time));
 
-	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
-	vDiffuse.a = vDiffuse.r;
+	float4 tex_0 = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	float4 tex_1 = g_DTexture_1.Sample(LinearSampler, OffsetUV);
+	tex_0.a = tex_0.r;
 
-	if (vDiffuse.a < 0.2f)
-		discard;
+	float4 fresnelColor = float4(0.0f, 36.f, 145.f, 255.f) / 255.f;
+	float4 fresnel = float4(fresnel_glow(3.0f, 1.5f, fresnelColor.rgb, In.vNormal.rgb, In.vViewDir), fresnelColor.a);
 
-	float4 fresnelColor = float4(0.0f, 205.f, 205.f, 255.f) / 255.f;
-	float4 fresnel = float4(fresnel_glow(5.0f, 1.5f, fresnelColor.rgb, In.vNormal.rgb, In.vViewDir), fresnelColor.a);
-
-	float4 vColor = float4(15.f, 40.f, 79.f, 0.0f) / 255.f;
-	float4 vBaseColor = lerp(vDiffuse, vColor, 0.5f);
-
-	Out.vDiffuse = vBaseColor * fresnel * 2.f;
-	Out.vDiffuse.a = 0.2f;
+	float4 finalcolor = saturate(lerp(tex_0, tex_1, 0.5f)) * fresnel;
+	finalcolor.a = (tex_0 * tex_1).a * 0.2f;
 
 	if (g_bDissolve)
 	{
@@ -583,9 +621,7 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
 		}
 	}
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
-
+	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
 	return Out;
 }
 
@@ -879,6 +915,26 @@ PS_OUT PS_DISTORTION_INTO(PS_IN In)
 
 	return Out;
 }
+//PS_KENADASH
+PS_OUT PS_KENADASH(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector vGradient = g_DTexture_1.Sample(LinearSampler, In.vTexUV);
+
+	float  time = frac(g_Time );
+	float2 OffsetUV = TilingAndOffset(float2(In.vTexUV.x, In.vTexUV.y / 3.f), float2(1.0f, 1.0f), float2(time, time));
+
+	vector vDiffuseTexture = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	vDiffuseTexture.a = vDiffuseTexture.r;
+
+	float4 finalcolor = vDiffuseTexture + vGradient;
+	finalcolor = saturate(finalcolor) * g_vColor;
+	finalcolor.a = (vDiffuseTexture * vGradient).r * In.vTexUV.y;
+
+	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
+	return Out;
+}
 
 technique11 DefaultTechnique
 {
@@ -1016,7 +1072,7 @@ technique11 DefaultTechnique
 
 	pass Effect_PulseCover // 10
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_CW);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
@@ -1186,4 +1242,16 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_DISTORTION_INTO();
 	}
 
+	pass KenaDash // 23
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_KENADASH();
+	}
 }

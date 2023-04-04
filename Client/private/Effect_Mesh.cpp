@@ -422,6 +422,9 @@ HRESULT CEffect_Mesh::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRValue", &m_fHDRValue, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fUV", &m_fUV, sizeof(_float2)), E_FAIL);
 
+	//m_bTimer
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bTimer", &m_bTimer, sizeof(_bool)), E_FAIL);
+
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{
 		wstring strBindDTexture = L"g_DTexture_";
