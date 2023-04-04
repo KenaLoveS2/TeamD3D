@@ -5,6 +5,7 @@
 #include "Sticks01.h"
 #include "ShamanTrapHex.h"
 #include "E_RectTrail.h"
+#include "SpiritArrow.h"
 
 CBossShaman::CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -1379,14 +1380,25 @@ _int CBossShaman::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos,
 
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
+			CSpiritArrow* pArrow = dynamic_cast<CSpiritArrow*>(pTarget);
+
 			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
-			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			//m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			m_pMonsterStatusCom->UnderAttack(pArrow->Get_Damage());
 
 			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);
 			//m_bWeaklyHit = !m_bStronglyHit;
 
-			m_bStronglyHit = true;
-			m_bWeaklyHit = false;
+			if (pArrow->Get_CurrentState() == CSpiritArrow::ARROW_INJECT_FIRE)
+			{
+				m_bStronglyHit = true;
+				m_bWeaklyHit = false;
+			}
+			else
+			{
+				m_bWeaklyHit = true;
+				m_bStronglyHit = false;
+			}
 
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);

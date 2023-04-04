@@ -19,6 +19,8 @@ _long CCamera_Player::Get_MouseMove(MOUSEMOVESTATE eState)
 		return m_MouseMoveX;
 	else if (eState == DIMS_Y)
 		return m_MouseMoveY;
+
+	return 0;
 }
 
 void CCamera_Player::Set_CamOffset(CAMOFFSET eOffset)
