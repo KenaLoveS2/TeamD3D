@@ -180,8 +180,8 @@ void CBorn_GroundCover::Culling(_float fTimeDelta)
 			m_bUprise = true;
 	}
 
-	/*if ( true  == m_bUprise)
-		m_pModelCom->Instaincing_MoveControl(Gimmick_TYPE_FLOWER, fTimeDelta);*/
+	if ( true  == m_bUprise)
+		m_pModelCom->Instaincing_MoveControl(Gimmick_TYPE_FLOWER, fTimeDelta);
 }
 
 CBorn_GroundCover * CBorn_GroundCover::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
