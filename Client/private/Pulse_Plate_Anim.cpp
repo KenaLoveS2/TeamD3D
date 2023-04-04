@@ -249,9 +249,9 @@ void CPulse_Plate_Anim::Pulse_Plate_AnimControl(_float fTimeDelta)
 		m_pModelCom->Set_AnimIndex(2);
 		if(m_EnviromentDesc.iRoomIndex == 1 && !m_bFirstCinema)
 		{
-			/*CGameInstance::GetInstance()->Work_Camera(TEXT("MAP_CINE0"));
+			CGameInstance::GetInstance()->Work_Camera(TEXT("MAP_CINE0"));
 			dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Play();
-			m_bFirstCinema = true;*/
+			m_bFirstCinema = true;
 		}
 
 		if (m_EnviromentDesc.iRoomIndex == 2 && !m_bSecondCinema)
