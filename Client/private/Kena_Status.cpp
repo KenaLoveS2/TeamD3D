@@ -2,6 +2,7 @@
 #include "..\public\Kena_Status.h"
 #include "GameInstance.h"
 #include "Kena.h"
+#include "SpiritArrow.h"
 
 CKena_Status::CKena_Status(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CStatus(pDevice, pContext)
@@ -23,6 +24,8 @@ HRESULT CKena_Status::Initialize_Prototype()
 HRESULT CKena_Status::Initialize(void* pArg, CGameObject * pOwner)
 {
 	FAILED_CHECK_RETURN(__super::Initialize(pArg, pOwner), E_FAIL);
+
+	ZeroMemory(m_bSkills, 25);
 
 	return S_OK;
 }
@@ -230,7 +233,14 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 		{
 			CUI_ClientManager::UI_PRESENT eArrowUpgrade = CUI_ClientManager::AMMO_ARROWUPRADE;
 
-			if (iSlot == 3)
+			if (iSlot == 2)
+			{
+				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
+
+				for (auto pArrow : *pArrows)
+					pArrow->Set_Damage(8);
+			}
+			else if (iSlot == 3)
 			{
 				m_iMaxArrowCount++;
 				m_iCurArrowCount = m_iMaxArrowCount;
@@ -240,7 +250,10 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 			}
 			else if (iSlot == 4)
 			{
-				/* Skill Damage Or Speed of Arrow */
+				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
+
+				for (auto pArrow : *pArrows)
+					pArrow->Set_Damage(12);
 			}
 
 			break;
@@ -254,7 +267,6 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 				m_iMaxBombCount++;
 				m_iCurBombCount = m_iMaxBombCount;
 
-				/* NEED : UI BOMB COUNT UP */
 				_float fMax = (_float)m_iMaxBombCount;
 				m_StatusDelegator.broadcast(eBombUpgrade, fMax);
 			}
@@ -527,9 +539,9 @@ void CKena_Status::Unlock_Skill(SKILLTAB eCategory, _uint iSlot)
 	if (iSlot >= 5)
 		return;
 
-	m_bSkills[eCategory][iSlot] = true;
-	
-	/* NEED : UI SKILL SLOT STATE CHANGE */
-
-	Apply_Skill(eCategory, iSlot);
+	if (m_bSkills[eCategory][iSlot] == false)
+	{
+		m_bSkills[eCategory][iSlot] = true;
+		Apply_Skill(eCategory, iSlot);
+	}
 }

@@ -55,6 +55,9 @@ public:
 	vector<_float4>*			Get_WeaponPositions() { return &m_vecWeaposPos; }
 	class CEffect_Base*			Get_Effect(const string& strKey);
 
+	vector<class CSpiritArrow*>* Get_Arrows() { return &m_vecArrow; }
+	vector<class CRotBomb*>*	Get_Bombs() { return &m_vecBomb; }
+
 	const _bool					Get_State(STATERETURN eState) const;
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }

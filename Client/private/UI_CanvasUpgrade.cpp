@@ -161,7 +161,7 @@ void CUI_CanvasUpgrade::Common_Function(_bool bResult)
 
 	 /* 3. Update the Player's Info */
 	 CKena_Status::SKILLTAB eCategory = (CKena_Status::SKILLTAB)(m_iPickedIndex / 5);
-	 m_pPlayer->Get_Status()->Apply_Skill(eCategory, iLevel);
+	 m_pPlayer->Get_Status()->Unlock_Skill(eCategory, iLevel);
 
 	 /* 4. Update the info */
 	 Spread();

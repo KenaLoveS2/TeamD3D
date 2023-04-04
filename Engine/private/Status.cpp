@@ -75,6 +75,15 @@ void CStatus::UnderAttack(CStatus* pEnemyStatus)
 	CUtile::Saturate<_int>(m_iHP, 0, m_iMaxHP);
 }
 
+void CStatus::UnderAttack(_int iDamage)
+{
+	if (iDamage <= 0)
+		return;
+
+	m_iHP -= iDamage;
+	CUtile::Saturate<_int>(m_iHP, 0, m_iMaxHP);
+}
+
 void CStatus::Add_CurrentHP(_int iValue)
 {
 	m_iHP += iValue;
