@@ -195,6 +195,12 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 
 void CWoodKnight::Tick(_float fTimeDelta)
 {
+	m_bReadySpawn = true;
+	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	m_pModelCom->Play_Animation(fTimeDelta);
+	AdditiveAnim(fTimeDelta);
+	return;
+
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -424,6 +430,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("READY_SPAWN")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE], 0.7f);
 		Start_Spawn();
 	})
 		.Tick([this](_float fTimeDelta)
@@ -742,6 +749,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("RANGEDATTACK")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(RANGEDATTACK);
 		m_pModelCom->Set_AnimIndex(RANGEDATTACK);
 	})
@@ -1282,4 +1290,20 @@ CGameObject* CWoodKnight::Clone(void* pArg)
 void CWoodKnight::Free()
 {
 	CMonster::Free();
+}
+
+void CWoodKnight::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_WoodKnight_Tense.ogg"),
+		TEXT("Mon_WoodKnight_ATTACK.ogg"),		
+
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
 }

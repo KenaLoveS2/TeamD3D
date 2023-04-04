@@ -1430,7 +1430,6 @@
     <ClInclude Include="..\public\CinematicCamera.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MannequinRot.h" />
     <ClInclude Include="..\public\Dynamic_Stone.h">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
@@ -1442,6 +1441,9 @@
     </ClInclude>
     <ClInclude Include="..\public\CEffect_Unit.h">
       <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MannequinRot.h">
+      <Filter>02.GameObjects\Rot</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2303,7 +2305,6 @@
     <ClCompile Include="..\private\E_ShamanTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MannequinRot.cpp" />
     <ClCompile Include="..\private\Dynamic_Stone.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
@@ -2315,6 +2316,9 @@
     </ClCompile>
     <ClCompile Include="CEffect_Unit.cpp">
       <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MannequinRot.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
