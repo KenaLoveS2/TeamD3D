@@ -23,6 +23,7 @@ float	g_fLife;
 bool    g_bDistanceAlpha;
 float   g_fAlpha;
 float   g_Time;
+bool	g_bTimer;
 /*********************************/
 
 /**********************************/

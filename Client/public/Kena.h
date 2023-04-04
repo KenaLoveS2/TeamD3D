@@ -251,6 +251,13 @@ private:	/* Animation Event Func */
 	void	TurnOnPulseParryHand(_bool bIsInit, _float fTimeDelta);
 	void	TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta);
 
+	/* Kena Dash */
+	void	TurnOnDashSt(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnDashLp(_bool bIsInit, _float fTimeDelta);
+	void	TurnOffDashLp(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnDashEd(_bool bIsInit, _float fTimeDelta);
+	/* Kena Dash */
+
 public:
 	//Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
 	Delegator<CUI_ClientManager::UI_PRESENT, _float>										m_Delegator;

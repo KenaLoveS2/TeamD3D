@@ -29,12 +29,12 @@ public:
 
 	virtual HRESULT		RenderCine() override;
 	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex);
-	virtual void					ImGui_PhysXValueProperty() override;
+	//virtual void					ImGui_PhysXValueProperty() override;
 private:
-	
-	_bool				m_bTestOnce = false;
 
-	list<CGameObject*>	m_pDynamicObj_List;
+	_bool				m_bOnceColl = false;
+
+	vector<CGameObject*>	m_pDynamicObj_List;
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;

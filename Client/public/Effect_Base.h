@@ -150,6 +150,7 @@ public:
 	void SetSprite(_float2 InitSprit) {
 		m_fInitSpriteCnt = InitSprit;
 	}
+	void Set_HDRValue(_float fHDRValue) { m_fHDRValue = fHDRValue; }
 
 	public:
 	void	TurnOffSystem(_float fDurationTime, _float fTimeDelta);
@@ -252,6 +253,7 @@ protected:
 	_float  m_fHDRValue = 1.0f;
 	_float  m_fTurnOffTime = 0.0f;
 	_float2 m_fUV = { 0.f,0.f };
+	_bool	m_bTimer = false;
 
 public:
 	virtual void          Free() override;

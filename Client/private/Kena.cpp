@@ -28,6 +28,7 @@
 #include "HatCart.h"
 
 #include "E_P_ExplosionGravity.h"
+#include "E_KenaDash.h"
 
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -463,7 +464,7 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	//m_pKenaStatus->Set_Attack(20);
+	m_pKenaStatus->Set_Attack(0);
 #endif	
 	
 	if (m_bAim && m_bJump)
@@ -1218,6 +1219,10 @@ void CKena::Push_EventFunctions()
 	TurnOnPulseParryHand(true, 0.f);
 	TurnOnPulseParryRange(true, 0.f);
 
+	TurnOnDashSt(true, 0.f);
+	TurnOnDashLp(true, 0.f);
+	TurnOffDashLp(true, 0.f);
+	TurnOnDashEd(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -1488,6 +1493,16 @@ HRESULT CKena::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	dynamic_cast<CE_P_ExplosionGravity*>(pEffectBase)->Set_Option(CE_P_ExplosionGravity::TYPE_KENA_ATTACK);
 	m_mapEffect.emplace("Kena_Particle", pEffectBase);
+
+	/* KenaDash  */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_DashCloud", L"KenaDash"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaDash", pEffectBase);
+
+	/* Distortion Sphere  */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_DistortionSphere", L"K_D_Sphere"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("K_D_Sphere", pEffectBase);
 
 	for (auto& pEffects : m_mapEffect)
 		pEffects.second->Set_Parent(this);
@@ -2014,6 +2029,59 @@ void CKena::TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["KenaPulse"]->Set_Active(true);
 }
 
+void CKena::TurnOnDashSt(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnDashSt);
+		return;
+	}
+	_float4 vPos = m_pTransformCom->Get_Position();
+	vPos.y += 1.f;
+
+	m_mapEffect["KenaDamage"]->Set_Position(vPos);
+	m_mapEffect["KenaDamage"]->Set_Active(true);
+}
+
+void CKena::TurnOnDashLp(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnDashLp);
+		return;
+	}
+
+	_float4 vPos = m_pTransformCom->Get_Position();
+	m_mapEffect["K_D_Sphere"]->Set_Position(vPos);
+	m_mapEffect["K_D_Sphere"]->Set_Scale(_float3(3.f, 3.f, 3.f));
+	m_mapEffect["K_D_Sphere"]->Set_Active(true);
+}
+
+void CKena::TurnOffDashLp(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffDashLp);
+		return;
+	}
+	m_mapEffect["K_D_Sphere"]->Set_Active(false);
+}
+
+void CKena::TurnOnDashEd(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnDashEd);
+		return;
+	}
+	_float4 vPos = m_pTransformCom->Get_Position();
+	dynamic_cast<CE_KenaDash*>(m_mapEffect["KenaDash"])->Tick_State(vPos);
+}
+
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CKena*	pInstance = new CKena(pDevice, pContext);
@@ -2126,7 +2194,6 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 			_float3		vScale = m_pTransformCom->Get_Scaled();
 
-			/* �����°� ���� ���� �ʿ� */
 			m_pTransformCom->Set_State(CTransform::STATE_RIGHT, vOutRight * vScale.x);
 			m_pTransformCom->Set_State(CTransform::STATE_LOOK, vOutLook * vScale.z);
 

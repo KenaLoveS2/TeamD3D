@@ -45,15 +45,6 @@ HRESULT CE_KenaHit::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	Set_Child();
-	for (auto& pChild : m_vecChild)
-	{
-		pChild->Set_Parent(this);
-		CEffect_Base::EFFECTDESC effectdesc = pChild->Get_EffectDesc();
-		effectdesc.IsBillboard = true;
-		pChild->Set_EffectDesc(effectdesc);
-		pChild->SetSprite(_float2(1.f, 0.f));
-	}
-
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	return  S_OK;
 }
@@ -64,6 +55,20 @@ void CE_KenaHit::Tick(_float fTimeDelta)
 
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(m_eEFfectDesc.bActive);
+
+	/* Change Scale */
+	Set_AddScale(fTimeDelta + 0.8f);
+	_bool bResult = TurnOffSystem(m_fScaleTime, 0.5f, fTimeDelta);
+	if (bResult == true)
+	{
+		for (auto& pChild : m_vecChild)
+			pChild->ResetSprite();
+
+		m_fAddValue = 0.0f;
+		m_eEFfectDesc.bActive = false;
+		m_eEFfectDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+	}
+	/* Change Scale */
 }
 
 void CE_KenaHit::Late_Tick(_float fTimeDelta)
@@ -72,24 +77,6 @@ void CE_KenaHit::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
-
-	if (m_eEFfectDesc.bActive == true)
-	{
-		m_fScaleTime += fTimeDelta;
-		m_fAddValue += 0.3f;
-		m_eEFfectDesc.vScale *= m_fAddValue;
-
-		if (m_fScaleTime > 0.5f)
-		{
-			for (auto& pChild : m_vecChild)
-				pChild->ResetSprite();
-
-			m_eEFfectDesc.bActive = false;
-			m_fAddValue = 0.0f;
-			m_fScaleTime = 0.0f;
-			m_eEFfectDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
-		}
-	}
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
@@ -103,6 +90,19 @@ void CE_KenaHit::Set_Child()
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit_P", L"KenaHit_P"));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
+
+	//ImGui::InputFloat2("##CntWidth, Height", (_float*)&fFrame);
+	//m_eEFfectDesc.iWidthCnt = (_int)fFrame.x;
+	//m_eEFfectDesc.iHeightCnt = (_int)fFrame.y;
+
+	for (auto& pChild : m_vecChild)
+	{
+		pChild->Set_Parent(this);
+		CEffect_Base::EFFECTDESC effectdesc = pChild->Get_EffectDesc();
+		effectdesc.IsBillboard = true;
+		pChild->Set_EffectDesc(effectdesc);
+		pChild->SetSprite(_float2(5.f, 0.f));
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 }

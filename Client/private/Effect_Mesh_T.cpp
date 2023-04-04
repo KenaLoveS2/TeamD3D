@@ -181,6 +181,8 @@ void CEffect_Mesh_T::Imgui_RenderProperty()
 	if (ImGui::Button("Reset"))
 		m_fTimeDelta = 0.0f;
 
+	ImGui::InputFloat("HDRVaule", &m_fHDRValue);
+
 	if (iType == 0)
 	{
 		m_eEFfectDesc.eTextureRenderType = CEffect_Base::tagEffectDesc::TEX_SPRITE;
@@ -497,6 +499,7 @@ HRESULT CEffect_Mesh_T::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof(_int)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRValue", &m_fHDRValue, sizeof(_float)), E_FAIL);
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{
