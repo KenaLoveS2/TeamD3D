@@ -36,10 +36,11 @@ public:
 	virtual	void					BackToNormal()				override;
 
 public:
-	virtual	void					Activate(_float4 vPos)			override;
-	virtual	void					Activate(CGameObject* pTarget)	override;
-	virtual	void					Activate_Slowly(_float4 vPos)	override;
-	virtual void					DeActivate()					override;
+	virtual	void					Activate(_float4 vPos)												override;
+	virtual	void					Activate(CGameObject* pTarget)										override;
+	virtual void					Activate_Scaling(_float4 vDir, _float4 vPos, _float2 vScaleSpeed)	override;
+	virtual	void					Activate_Slowly(_float4 vPos)										override;
+	virtual void					DeActivate()														override;
 
 private:
 	HRESULT							SetUp_Components();

@@ -9,6 +9,10 @@ CHunterArrow::CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_fTrailTimeAcc(0.f)
 	, m_bTrailOn(false)
 	, m_iTrailIndex(0)
+	, m_bShockwaveOn(false)
+	, m_fRingTime(0.0f)
+	, m_fRingTimeAcc(0.0f)
+	, m_iRingIndex(0)
 {
 }
 
@@ -18,6 +22,10 @@ CHunterArrow::CHunterArrow(const CHunterArrow& rhs)
 	, m_fTrailTimeAcc(0.f)
 	, m_bTrailOn(false)
 	, m_iTrailIndex(0)
+	, m_bShockwaveOn(false)
+	, m_fRingTime(0.0f)
+	, m_fRingTimeAcc(0.0f)
+	, m_iRingIndex(0)
 {
 }
 
@@ -53,6 +61,7 @@ HRESULT CHunterArrow::Initialize(void* pArg)
 	m_fDissolveTime = 0.f;
 	m_fTrailTime = 0.1f;
 	m_fTrailTimeAcc = 0.f;
+	m_fRingTime = 0.30f;
 
 	return S_OK;
 }
@@ -103,8 +112,12 @@ void CHunterArrow::Tick(_float fTimeDelta)
 	ArrowProc(fTimeDelta);
 	Update_Collider(fTimeDelta);
 
-	for (auto& eff : m_vecTrailEffects)
-		eff->Tick(fTimeDelta);
+	for (_uint i = 0; i < EFFECT_END; ++i)
+	{
+		for (auto& eff : m_vecEffects[i])
+			eff->Tick(fTimeDelta);
+	}
+
 }
 
 void CHunterArrow::Late_Tick(_float fTimeDelta)
@@ -114,8 +127,11 @@ void CHunterArrow::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 
-	for (auto& eff : m_vecTrailEffects)
-		eff->Late_Tick(fTimeDelta);
+	for (_uint i = 0; i < EFFECT_END; ++i)
+	{
+		for (auto& eff : m_vecEffects[i])
+			eff->Late_Tick(fTimeDelta);
+	}
 
 	m_pRendererCom&& m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
@@ -306,8 +322,11 @@ void CHunterArrow::Free()
 {
 	__super::Free();
 
-	for (auto& effect : m_vecTrailEffects)
-		Safe_Release(effect);
+	for (_uint i = 0; i < EFFECT_END; ++i)
+	{
+		for (auto& eff : m_vecEffects[i])
+			Safe_AddRef(eff);
+	}
 }
 
 void CHunterArrow::ArrowProc(_float fTimeDelta)
@@ -328,16 +347,18 @@ void CHunterArrow::ArrowProc(_float fTimeDelta)
 	}
 	case FIRE:
 	{
-
 		m_pTransformCom->Go_Straight(fTimeDelta);
 
 		Play_TrailEffect(fTimeDelta);
+
+		Play_RingEffect(fTimeDelta);
 
 		break;
 	}
 	case FINISH:
 	{
 		m_bTrailOn = false;
+		m_bShockwaveOn = false;
 
 		m_fDissolveTime += 0.5f * fTimeDelta;
 		if (m_fDissolveTime > 1.f)
@@ -367,6 +388,9 @@ void CHunterArrow::Execute_Fire()
 {
 	m_eArrowState = FIRE;
 	m_bTrailOn = true;
+
+	if (m_eFireType == SHOCK)
+		m_bShockwaveOn = true;
 }
 
 void CHunterArrow::Execute_Finish()
@@ -382,10 +406,29 @@ void CHunterArrow::Play_TrailEffect(_float fTimedelta)
 		m_fTrailTime = 0.01f;
 		if (m_fTrailTimeAcc > m_fTrailTime)
 		{
-			m_vecTrailEffects[m_iTrailIndex]->Activate(m_pTransformCom->Get_Position());
+			m_vecEffects[EFFECT_TRAIL][m_iTrailIndex]->Activate(m_pTransformCom->Get_Position());
 			m_iTrailIndex++;
 			m_iTrailIndex %= MAX_TRAIL_EFFECTS;
 			m_fTrailTimeAcc = 0.f;
+		}
+	}
+}
+
+void CHunterArrow::Play_RingEffect(_float fTimeDelta)
+{
+	if (m_bShockwaveOn)
+	{
+		m_fRingTimeAcc += fTimeDelta;
+		m_fRingTime = 0.03f;
+		if (m_fRingTimeAcc > m_fRingTime)
+		{
+			_float4 vDir = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+			_float4 vPos = m_pTransformCom->Get_Position();
+			m_vecEffects[EFFECT_RING][m_iRingIndex]->Activate_Scaling(vDir, vPos, {1.0f, 1.0f});  
+
+			m_iRingIndex++;
+			m_iRingIndex %= MAX_RING_EFFECTS;
+			m_fRingTimeAcc = 0.0f;
 		}
 	}
 }
@@ -405,11 +448,23 @@ HRESULT CHunterArrow::SetUp_Effects()
 			CUtile::Create_DummyString(), L"Particle_ArrowTrail"));
 
 		if (pEffect != nullptr)
-			m_vecTrailEffects.push_back(pEffect);
+			m_vecEffects[EFFECT_TRAIL].push_back(pEffect);
 		else
 			return E_FAIL;
 	}
 
+	for (_uint i = 0; i < MAX_RING_EFFECTS; ++i)
+	{
+		CEffect_Base_S2* pEffect = nullptr;
+
+		pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Mesh_Base",
+			CUtile::Create_DummyString(), L"Mesh_ShockRing"));
+
+		if (pEffect != nullptr)
+			m_vecEffects[EFFECT_RING].push_back(pEffect);
+		else
+			return E_FAIL;
+	}
 	return S_OK;
 }
 

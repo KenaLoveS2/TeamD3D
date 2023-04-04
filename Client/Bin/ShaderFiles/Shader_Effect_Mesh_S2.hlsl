@@ -141,7 +141,8 @@ PS_OUT PS_MAIN_ONLYCOLOR(PS_IN In)
 
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vDiffuse = g_fHDRItensity * g_vColor;
+	//Out.vDiffuse = g_fHDRItensity * g_vColor;
+	Out.vDiffuse = CalcHDRColor(g_vColor, g_fHDRItensity);
 	Out.vNormal.rgb = In.vNormal.rgb;
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
 
@@ -324,7 +325,7 @@ technique11 DefaultTechnique
 
 	pass OnlyColor // 1
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_CULLNONE);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 

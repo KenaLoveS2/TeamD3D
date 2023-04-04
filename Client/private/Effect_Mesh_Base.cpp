@@ -120,16 +120,28 @@ void CEffect_Mesh_Base::Tick(_float fTimeDelta)
 		}
 	}
 
+	if (0.0f != m_vScaleSpeed.Length())
+	{
+		_float3 vScale = m_pTransformCom->Get_Scaled();
+		vScale.x += m_vScaleSpeed.x;
+		vScale.z += m_vScaleSpeed.x;
+
+		vScale.y += m_vScaleSpeed.y;
+
+		m_pTransformCom->Set_Scaled(vScale);
+	}
+
 
 	if (3 == m_iRenderPass) /* dissolve Pass */
 	{
+		m_fDissolveSpeed = 1.f;
 		m_fDissolveAlpha += m_fDissolveSpeed * fTimeDelta;
 
 		if (m_fDissolveAlpha > 1.f)
 		{
 			m_fDissolveAlpha = 1.0f;
 
-			//DeActivate();
+			DeActivate();
 			//m_bActive = false;
 		}
 	}
@@ -423,7 +435,7 @@ HRESULT CEffect_Mesh_Base::Load_Data(_tchar* fileName)
 		for (auto fElement : jLoad["07. vScale"])
 			fElement.get_to<_float>(*((_float*)&vScale + i++));
 		m_pTransformCom->Set_Scaled(vScale);
-
+		m_vScaleOrignial = vScale;
 	}
 
 	jLoad["10. DiffuseTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_DIFFUSE]);
@@ -494,17 +506,31 @@ void CEffect_Mesh_Base::Activate(CGameObject* pTarget)
 	m_pTarget = pTarget;
 }
 
+void CEffect_Mesh_Base::Activate_Scaling(_float4 vDir, _float4 vPos, _float2 vScaleSpeed)
+{
+	m_bActive = true;
+	m_pTransformCom->Set_Position(vPos);
+
+	m_fDissolveAlpha = 0.0f;
+	m_vScaleSpeed = vScaleSpeed;
+}
+
 void CEffect_Mesh_Base::Activate_Slowly(_float4 vPos)
 {
 	m_bActive = true;
 	m_pTransformCom->Set_Position(vPos);
 	m_vTextureColors[0].w = 0.0f;
 	m_bActiveSlowly = true;
+	m_bDeActiveSlowly = false;
 }
 
 void CEffect_Mesh_Base::DeActivate()
 {
 	__super::DeActivate();
+
+	m_pTransformCom->Set_Scaled(m_vScaleOrignial);
+
+	m_vScaleSpeed = { 0.0f, 0.0f };
 }
 
 HRESULT CEffect_Mesh_Base::SetUp_Components()
@@ -672,6 +698,9 @@ HRESULT CEffect_Mesh_Base::SetUp_Model(_int iModelIndex)
 	case 7:
 		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Boss_Hunter"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
+	case 8:
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_ShockRing"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+			return E_FAIL;
 	default:
 		break;
 	}
@@ -690,6 +719,7 @@ HRESULT CEffect_Mesh_Base::Set_ModelCom()
 	ImGui::RadioButton("Cylinder", &iSelected, 5); ImGui::SameLine();
 	ImGui::RadioButton("HunterArrow", &iSelected, 6); ImGui::SameLine();
 	ImGui::RadioButton("Hunter", &iSelected, 7); ImGui::SameLine();
+	ImGui::RadioButton("Ring", &iSelected, 8); ImGui::SameLine();
 
 
 	if (ImGui::Button("Model Confirm"))

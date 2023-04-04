@@ -21,12 +21,12 @@ float	g_fEnd = 0.f;
 
 int		g_iCheck = 0;
 
-float	g_Time;
-unsigned int g_State = 0;
+float			g_Time;
+unsigned int	g_State = 0;
 
-float g_fDiffuseAlpha = 1.f;
-float g_fMaskAlpha = 0.f;
-bool g_IsGray = false;
+float	g_fDiffuseAlpha = 1.f;
+float	g_fMaskAlpha = 0.f;
+bool	g_IsGray = false;
 
 struct VS_IN
 {

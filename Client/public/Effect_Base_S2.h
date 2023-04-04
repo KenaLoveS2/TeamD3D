@@ -38,6 +38,7 @@ public: /* Activation Function */
 	virtual	void					Activate(CGameObject* pTarget) {};
 	virtual void					Activate_Scaling(CGameObject* pTarget, _float2 vScaleSpeed) {};
 	virtual void					Activate_Scaling(_float4 vPos, _float2 vScaleSpeed) {};
+	virtual void					Activate_Scaling(_float4 vDir, _float4 vPos, _float2 vScaleSpeed) {};
 	virtual void					Activate_Spread(_float4 vPos, _float2 vScaleSpeed) {};
 	virtual	void					Activate_Slowly(_float4 vPos) {};
 	virtual void					DeActivate();
@@ -88,6 +89,7 @@ protected:
 
 protected: /* For. Activation */
 	_float2							m_vScaleSpeed;
+	_float3							m_vScaleOrignial;
 
 	_bool							m_bSelfStop;
 	_float							m_fSelfStopTime;

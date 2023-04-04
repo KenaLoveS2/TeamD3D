@@ -309,7 +309,7 @@ void CBossHunter::Imgui_RenderProperty()
 
 void CBossHunter::ImGui_AnimationProperty()
 {
-	//m_pTransformCom->Imgui_RenderProperty_ForJH();
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
 	//m_pArrows[m_iArrowIndex]->Get_TransformCom()->Imgui_RenderProperty_ForJH();
 
 	if (ImGui::CollapsingHeader("Effect"))
@@ -1546,6 +1546,9 @@ void CBossHunter::DustEffect_On(_bool bIsInit, _float fTimeDelta)
 	else
 		vPos = m_pTransformCom->Get_Position();
 
+	_float4		vCenterPos = m_pTransformCom->Get_Position();
+	vPos.x = vCenterPos.x;
+	vPos.z = vCenterPos.z;
 
 	m_vecEffects[EFFECT_DUST_PARTICLE_BIG]->Activate(vPos);
 	m_vecEffects[EFFECT_DUST_PARTICLE_SMALL]->Activate(vPos);
@@ -1588,6 +1591,10 @@ void CBossHunter::StunEffect_On(_bool bIsInit, _float fTimeDelta)
 	}
 	else
 		vPos = m_pTransformCom->Get_Position();
+
+	_float4		vCenterPos = m_pTransformCom->Get_Position();
+	vPos.x = vCenterPos.x;
+	vPos.z = vCenterPos.z;
 
 	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->Activate_Slowly(vPos);
 	m_vecEffects[EFFECT_STUN_MESH_BASE]->Activate_Slowly(vPos);
