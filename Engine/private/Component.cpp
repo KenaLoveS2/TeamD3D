@@ -34,8 +34,6 @@ HRESULT CComponent::Initialize(void * pArg, CGameObject* pOwner)
 	return S_OK;
 }
 
-
-
 void CComponent::Free()
 {
 	Safe_Release(m_pDevice);

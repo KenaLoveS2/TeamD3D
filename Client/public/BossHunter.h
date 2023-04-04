@@ -84,7 +84,7 @@ private:
 
 	ATTACKTYPE m_eAttackType = (ATTACKTYPE)0;
 
-	const _float m_fIdleTime = 2.f;
+	const _float m_fIdleTime = 1.5f;
 	const _float m_fFlyHeightY = 1.5f;
 	const _float m_fKenaPosOffsetY = 0.5f;
 	const _float m_fStunTime = 3.f;

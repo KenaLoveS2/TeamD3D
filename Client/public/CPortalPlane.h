@@ -18,6 +18,9 @@ private:
 	virtual ~CPortalPlane() = default;
 
 public:
+	CPortalPlane* Get_LinkedPortal() { return m_pLinkedPortal; }
+
+public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
 	virtual HRESULT			Late_Initialize(void* pArg) override;

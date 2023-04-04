@@ -152,7 +152,10 @@ HRESULT CRotWisp::SetUp_State()
 		.OnStart([this]()
 	{
 		/* Effect */
-		m_pEffect->Set_Active(true);
+		if(!wcscmp(m_szCloneObjectTag,TEXT("Saiya_RotWisp")))
+			m_pEffect->Set_Active(false);
+		else
+			m_pEffect->Set_Active(true);
 		/* Effect */
 	})
 		.Tick([this](_float fTimeDelta)

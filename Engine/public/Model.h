@@ -195,5 +195,4 @@ public:
 	void Set_DurationRate(_uint iAnimIndex, _float fRate);
 };
 
-
 END
