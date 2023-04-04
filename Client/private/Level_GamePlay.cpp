@@ -250,13 +250,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Environment(const _tchar * pLayerTag)
 {
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "D.json");
+	
 	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Test_TelePortFlower.json");
 
 	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Chest.json");
 
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_HealthFlower_Anim", L"HealthFlower", nullptr, nullptr), E_FAIL);
+	// FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_HealthFlower_Anim", L"HealthFlower", nullptr, nullptr), E_FAIL);
 
-	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Portal_Test.json");
+	// CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Portal_Test.json");
 
 	//FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_PortalPlane"), L"Portal_0"), E_FAIL);
 

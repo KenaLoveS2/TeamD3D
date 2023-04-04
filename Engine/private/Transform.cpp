@@ -968,7 +968,8 @@ void CTransform::Set_Position(_fvector vPos)
 	}
 	else
 	{
-		Set_State(CTransform::STATE_TRANSLATION, vPos);
+		_vector vTranslation = XMVectorSetW(vPos, 1.f);
+		Set_State(CTransform::STATE_TRANSLATION, vTranslation);
 	}
 }
 
@@ -1029,11 +1030,23 @@ void CTransform::Sync_ActorMatrix(_float4x4& Matrix)
 	XMStoreFloat4x4(&m_WorldMatrix, NewMatrix);
 }
 
+void CTransform::Sync_ActorMatrixByTransformMatrix()
+{
+	_matrix m = XMLoadFloat4x4(&m_WorldMatrix);	
+	m.r[0] = XMVector3Normalize(m.r[0]);
+	m.r[1] = XMVector3Normalize(m.r[1]);
+	m.r[2] = XMVector3Normalize(m.r[2]);
+	
+	_float4x4 WorldMatrix;
+	XMStoreFloat4x4(&WorldMatrix, m);
+	m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, WorldMatrix);
+}
+
 void CTransform::Set_PxActorSleep(_bool bSleep)
 {
 	if (m_pPxActor == nullptr) return;
 
-	if (m_bIsStaticPxActor && m_pPxActor)
+	if (m_bIsStaticPxActor == false)
 	{
 		bSleep ?
 			m_pPhysX_Manager->PutToSleep((PxRigidDynamic*)m_pPxActor) :
@@ -1045,5 +1058,16 @@ void CTransform::Set_PxActorSleep(_bool bSleep)
 		bSleep ?
 			m_pPhysX_Manager->PutToSleep((PxRigidDynamic*)ActorData.pActor) :
 			m_pPhysX_Manager->WakeUp((PxRigidDynamic*)ActorData.pActor);
+	}
+}
+
+void CTransform::Set_PxActorActive(_bool bFlag)
+{
+	if (m_pPxActor == nullptr) return;
+
+	if (m_bIsStaticPxActor == false)
+	{		
+		PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
+		pUserData && (pUserData->isActive = bFlag);		
 	}
 }
