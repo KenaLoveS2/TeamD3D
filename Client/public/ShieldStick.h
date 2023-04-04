@@ -80,10 +80,17 @@ private:
 		
 	class CShieldStick_Weapon* m_pWeapon = nullptr;
 
+	enum COPY_SOUND_KEY {
+		CSK_CALM, CSK_TENSE1, CSK_ATTACK, CSK_HURT, CSK_DIE,
+		COPY_SOUND_KEY_END,
+	};
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 public:
 	static CShieldStick*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*				Clone(void* pArg = nullptr)  override;
 	virtual void								Free() override;
+	virtual void Create_CopySoundKey() override;
 };
 
 END
