@@ -1,17 +1,6 @@
-
 #include "Shader_Client_Defines.h"
 
-/***********Constant Buffers***********/
-matrix g_BoneMatrices[800];
-matrix g_WorldMatrix;
-matrix g_ViewMatrix;
-matrix g_ProjMatrix;
-float  g_fFar = 500.f;
-float4 g_vCamPosition;
-/**************************************/
-
-Texture2D<float4>		g_WPOTexture;
-Texture2D<float4>		g_DissolveAlphaTexture;
+float4x4		g_BoneMatrices[800];
 
 struct VS_IN
 {

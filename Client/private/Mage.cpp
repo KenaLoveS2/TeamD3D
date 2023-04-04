@@ -924,7 +924,7 @@ void CMage::Create_Sticks()
 			g_LEVEL, 
 			TEXT("Layer_Monster"), 
 			TEXT("Prototype_GameObject_Sticks01"), 
-			CUtile::Create_DummyString(TEXT("Summon_Stick"), i), 
+			CUtile::Create_DummyString(), 
 			nullptr, 
 			(CGameObject**)&m_pSticks[i]);
 

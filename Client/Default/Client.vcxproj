@@ -179,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Defines.h" />
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Params.h" />
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\Base_Ground.h" />

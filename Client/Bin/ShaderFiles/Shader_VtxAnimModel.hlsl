@@ -1,53 +1,6 @@
 #include "Shader_Client_Defines.h"
 
-/***********Constant Buffers***********/
-matrix g_BoneMatrices[800];
-matrix g_WorldMatrix;
-matrix g_ViewMatrix;
-matrix g_ProjMatrix;
-float  g_fFar = 500.f;
-float4 g_vCamPosition;
-/**************************************/
-
-Texture2D<float4>		g_DiffuseTexture;
-Texture2D<float4>		g_NormalTexture;
-Texture2D<float4>		g_AO_R_MTexture;
-Texture2D<float4>		g_EmissiveTexture;
-Texture2D<float4>		g_EmissiveMaskTexture;
-Texture2D<float4>		g_MaskTexture;
-Texture2D<float4>		g_SSSMaskTexture;
-
-Texture2D<float4>		g_HairDepthTexture;
-Texture2D<float4>		g_HairAlphaTexture;
-Texture2D<float4>		g_HairRootTexture;
-
-Texture2D<float4>		g_DetailNormal;
-
-/* Kena Bow_String Texture */
-Texture2D		g_NoiseTexture;
-Texture2D		g_SwipeTexture;
-Texture2D		g_GradientTexture;
-float			g_BowDurationTime;
-/* Kena Bow_String Texture */
-
-float					g_fHairLength = 1.f;
-float					g_fHairThickness = 1.f;
-
-float					g_fLashDensity = 0.5f;
-float					g_fLashWidth = 0.5f;
-float					g_fLashIntensity = 0.5f;
-
-float4					g_vAmbientEyeColor = float4(1.f, 1.f, 1.f, 1.f);
-float4					g_vAmbientColor = float4(1.f, 1.f, 1.f, 1.f);
-float4					g_vSSSColor = float4(1.f, 0.f, 0.f, 1.f);
-float					g_fSSSAmount = 1.f;
-
-bool					g_Hit = false;
-float					g_HitRimIntensity = 0.f;
-bool					g_Parry = false;
-float					g_ParryRimIntensity = 0.f;
-
-float g_Time;
+float4x4		g_BoneMatrices[800];
 
 float4 SSS(float3 position, float3 normal, float3 dir, float4 color, float2 vUV, float amount, Texture2D<float4> Texturediffuse, Texture2D<float4> sssMask)
 {
@@ -359,7 +312,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	vector		vAlpha = g_HairAlphaTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vRoot = g_HairRootTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepth = g_HairDepthTexture.Sample(LinearSampler, In.vTexUV);
-
+	
 	float fAlpha = vAlpha.r;
 
 	if (fAlpha < 0.5f)
@@ -578,6 +531,29 @@ PS_OUT PS_MAIN_CINE(PS_IN In)
 	return Out;
 }//11
 
+PS_OUT PS_PULSEPLATEANIM(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vERAODesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = vector(vERAODesc.b,vERAODesc.g,1.f, 1.f);
+
+	return Out;
+}//13
+
 struct PS_OUT_SHADOW
 {
 	vector			vLightDepth : SV_TARGET0;
@@ -763,7 +739,15 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_CINE();
 	} //12
 
-
-
-
+	pass ERAO
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_PULSEPLATEANIM();
+	} //13
  }

@@ -1,26 +1,5 @@
 #include "Shader_Client_Defines.h"
 
-/**********Constant Buffer*********/
-matrix         g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-matrix         g_SocketMatrix;
-float          g_fFar = 500.f;
-float          g_fStonePulseIntensity = 0.f;
-/**********************************/
-
-Texture2D<float4>      g_DiffuseTexture;
-Texture2D<float4>      g_NormalTexture;
-Texture2D<float4>      g_EmissiveTexture;
-
-Texture2D<float4>      g_HRAOTexture;
-Texture2D<float4>      g_MRAOTexture;
-Texture2D<float4>      g_ERAOTexture;
-
-Texture2D<float4>      g_BlendDiffuseTexture;
-Texture2D<float4>      g_DetailNormalTexture;
-Texture2D<float4>      g_MaskTexture;
-
-Texture2D<float4>       g_RoughnessTexture;
-
 struct VS_IN
 {
     float3      vPosition : POSITION;
@@ -84,7 +63,6 @@ VS_OUT VS_MAIN(VS_IN In)
     VS_OUT      Out = (VS_OUT)0;
 
     matrix      matWV, matWVP;
-
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
 
@@ -321,12 +299,6 @@ DomainOut DS_MAIN(PatchTess PatchTess, float3 uvw : SV_DomainLocation,
     Out.vBinormal = vBinormal.xyz;
     return Out;
 }
-
-
-
-
-
-
 
 struct PS_IN_TESS
 {
@@ -930,7 +902,7 @@ technique11 DefaultTechnique
     pass MESH_INStancing_Lod//
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -943,7 +915,7 @@ technique11 DefaultTechnique
     pass Comp_H_R_AO
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -956,7 +928,7 @@ technique11 DefaultTechnique
     pass Comp_M_R_AO_E
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -969,7 +941,7 @@ technique11 DefaultTechnique
     pass Comp_H_R_AO_E
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -983,7 +955,7 @@ technique11 DefaultTechnique
     pass E_R_AO
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -996,7 +968,7 @@ technique11 DefaultTechnique
     pass M_R_AO
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -1009,7 +981,7 @@ technique11 DefaultTechnique
     pass LEAF_M_R_AO
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -1022,7 +994,7 @@ technique11 DefaultTechnique
     pass RUBBLE
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -1035,7 +1007,7 @@ technique11 DefaultTechnique
     pass HRAO_DETAILNORMAL
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -1048,7 +1020,7 @@ technique11 DefaultTechnique
     pass NOAO_DETAILNORMAL
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -1061,7 +1033,7 @@ technique11 DefaultTechnique
     pass NOAO_DN_BM
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -1074,7 +1046,7 @@ technique11 DefaultTechnique
     pass Cine
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();

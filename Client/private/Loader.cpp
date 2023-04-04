@@ -418,8 +418,8 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall03",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.mdat"), 
-			PivotMatrix,nullptr,false,false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.json"))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.json"))))
 		return E_FAIL;
 
 	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
@@ -533,11 +533,12 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"), CRope_RotRock::Create(m_pDevice, m_pContext)))) return E_FAIL;
 	
 
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_HealthFlower",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HealthFlower/HealthFlower.mdat"), PivotMatrix))))
-		return E_FAIL;
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_HealthFlower",
+		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/HealthFlower/HealthFlower.model", PivotMatrix)), E_FAIL);
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HealthFlower_Anim"), CHealthFlower_Anim::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+
 
 #endif 
 
@@ -591,7 +592,7 @@ HRESULT CLoader::Loading_ForMapTool()
 			assert(!"Map4/RusuHut");
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/SummoningRoom", true, true, true, false, true)))
 			assert(!"Map4/SummoningRoom");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VillageCart", true, true, true, false, true)))
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VillageCart", true, false, true, false, true)))
 			assert(!"VillageCart");
 	}
 #pragma endregion Map_Four
@@ -2739,7 +2740,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		assert(!"Map4/RusuHut");
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Map4/SummoningRoom", true, true, true, false, true)))
 		assert(!"Map4/SummoningRoom");
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, false, true)))
 		assert(!"VillageCart");
 
 #pragma endregion Map_Four
@@ -3042,6 +3043,32 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Plants3",
 			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
 			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_MaskShrine_Rock_09",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.mdat"),
+				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.json"))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium04",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.mdat"),
+				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.json"))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium06",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.mdat"),
+				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.json"))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium07",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.mdat"),
+				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.json"))))
+			return E_FAIL;
+
+
 #pragma  endregion Born_GroundCover
 
 #pragma  region HHW_OBJ
@@ -3247,7 +3274,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pet"), CPet::Create(m_pDevice, m_pContext)))) return E_FAIL;
 

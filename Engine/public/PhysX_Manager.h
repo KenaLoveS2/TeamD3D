@@ -13,7 +13,7 @@ public:
 		const _tchar* pActortag;
 		_float3 vPos, vSize, vRotationAxis;
 		_float fDegree;
-		_bool isGravity, isTrigger;		
+		_bool isGravity, isTrigger, isSleep;		
 		_float fStaticFriction, fDynamicFriction, fRestitution;
 
 		PX_FILTER_TYPE eFilterType;
@@ -34,6 +34,7 @@ public:
 						
 			isGravity = true;
 			isTrigger = false;
+			isSleep = false;
 
 			vVelocity = { 0.f, 0.f, 0.f };
 			fDensity = 0.1f;
@@ -53,7 +54,7 @@ public:
 		const _tchar* pActortag;
 		_float3 vPos;
 		_float fRadius;
-		_bool isGravity, isTrigger;
+		_bool isGravity, isTrigger, isSleep;
 		_float fStaticFriction, fDynamicFriction, fRestitution;
 
 		PX_FILTER_TYPE eFilterType;
@@ -72,6 +73,7 @@ public:
 
 			isGravity = true;
 			isTrigger = false;
+			isSleep = false;
 
 			vVelocity = { 0.f, 0.f, 0.f };
 			fDensity = 0.1f;
@@ -89,7 +91,7 @@ public:
 		ACTOR_TYPE eType;
 		const _tchar* pActortag;
 		_float3 vPos, vRotationAxis;
-		_float fRadius, fHalfHeight;
+		_float fRadius, fHalfHeight, isSleep;
 		_float fDegree;
 		_bool isGravity, isTrigger;
 		_float fStaticFriction, fDynamicFriction, fRestitution;
@@ -113,6 +115,7 @@ public:
 
 			isGravity = true;
 			isTrigger = false;
+			isSleep = false;
 
 			vVelocity = { 0.f, 0.f, 0.f };
 			fDensity = 0.1f;

@@ -155,17 +155,20 @@ HRESULT CVIBuffer_Rect_Instancing::Tick(_float fTimeDelta)
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-	for (_uint i = 0; i < m_iNumInstance; ++i)	
+	if (SUCCEEDED(hr))
 	{
-		((VTXMATRIX*)SubResource.pData)[i].vPosition.y += _float(m_pSpeeds[i]) * fTimeDelta;
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+		{
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += _float(m_pSpeeds[i]) * fTimeDelta;
 
-		if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y > 3.f)
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 0.f;
-	}	
+			if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y > 3.f)
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 0.f;
+		}
 
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	}
 
 	return S_OK;
 }

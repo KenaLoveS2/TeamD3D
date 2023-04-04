@@ -34,9 +34,11 @@ typedef struct tagPhysXUserData
 	_bool isGravity;
 	_uint iColliderIndex;
 	_bool isRightUpLookSync;
+	_bool isActive;
+
 } PX_USER_DATA;
 
-static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner, _bool isGravity, _uint iColliderIndex, _bool isRightUpLookSync = false)
+static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner, _bool isGravity, _uint iColliderIndex, _bool isRightUpLookSync = false, _bool isActive = true)
 {
 	PX_USER_DATA* pData = new PX_USER_DATA;
 
@@ -45,6 +47,8 @@ static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner, _bool isGravit
 	pData->iColliderIndex = iColliderIndex;
 	
 	pData->isRightUpLookSync = isRightUpLookSync;
+
+	pData->isActive = isActive;
 
 	return pData;
 }
