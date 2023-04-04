@@ -138,7 +138,8 @@ void CModel::Set_PlayTime(_double dPlayTime)
 }
 
 HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix,
-	const _tchar * pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing, const char*  JsonMatrialPath, _bool bUseTriangleMeshActor)
+	const _tchar * pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing, const char*  JsonMatrialPath, _bool bUseTriangleMeshActor
+, _bool bPointBuffer)
 {
 	if (JsonMatrialPath == nullptr)
 		JsonMatrialPath = "NULL";
@@ -243,7 +244,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 			// for. Instaincing
 			if (m_bIsInstancing == true)
 			{
-				CInstancing_Mesh *pMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod, bUseTriangleMeshActor);
+				CInstancing_Mesh *pMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod, bUseTriangleMeshActor, bPointBuffer);
 				assert(nullptr != pMesh && "CModel::Initialize_Prototype _Instancing");
 				m_InstancingMeshes.push_back(pMesh);
 			}
@@ -1468,10 +1469,11 @@ HRESULT CModel::Load_BoneAnimation(HANDLE & hFile, DWORD & dwByte)
 }
 
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath,
-	_bool bIsLod, _bool bIsInstancing, const char* JsonMatrial, _bool bUseTriangleMeshActor)
+	_bool bIsLod, _bool bIsInstancing, const char* JsonMatrial, _bool bUseTriangleMeshActor, _bool bPointBuffer)
 {
 	CModel* pInstance = new CModel(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath, bIsLod, bIsInstancing, JsonMatrial, bUseTriangleMeshActor)))
+	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath, 
+		bIsLod, bIsInstancing, JsonMatrial, bUseTriangleMeshActor, bPointBuffer)))
 	{
 		MSG_BOX("Failed to Created : CModel");
 		Safe_Release(pInstance);

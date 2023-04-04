@@ -25,7 +25,6 @@ private:
 		MASK,
 		SAPLING_BOMBUP,
 		ALPHA_AO_R_M,
-		SHADOW,
 		BOSS_AO_R_M,
 		BOSS_AO_R_M_E,
 		PASS_END
@@ -69,8 +68,8 @@ private:
 	class CInteraction_Com* m_pInteractionCom = nullptr;
 	class CControlMove* m_pControlMoveCom = nullptr;
 
-	_bool		m_bOnceTest = false;
-
+	
+	_bool		m_bAnimActive = false;
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

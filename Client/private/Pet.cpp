@@ -31,7 +31,7 @@ HRESULT CPet::Initialize(void* pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
+	//CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 
 	m_bRenderActive = true;
 
@@ -69,7 +69,7 @@ void CPet::Tick(_float fTimeDelta)
 #endif
 
 
-	if (20.f >= XMVectorGetX(XMVector4Length(vDir)))
+	if (45.f >= XMVectorGetX(XMVector4Length(vDir)))
 		m_bAnimActive = true;
 
 
@@ -141,6 +141,8 @@ HRESULT CPet::SetUp_Components()
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Pet", L"Com_Model",
 		(CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+
+	
 
 	/* For.Com_Shader */
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),

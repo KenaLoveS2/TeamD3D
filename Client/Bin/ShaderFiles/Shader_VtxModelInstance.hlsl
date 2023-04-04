@@ -104,50 +104,51 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
-//struct VS_EFFECT_OUT
-//{
-//    float3      vPosition : POSITION;
-//    float4      vNormal : NORMAL;
-//    float2      vTexUV : TEXCOORD0;
-//    float4      vProjPos : TEXCOORD1;
-//    float4      vTangent : TANGENT;
-//    float3      vBinormal : BINORMAL;
-//
-//};
-//
-//VS_OUT VS_MAIN_EFFECT(VS_IN In)
-//{
-//    VS_OUT      Out = (VS_OUT)0;
-//
-//    matrix      matWV, matWVP;
-//
-//    matWV = mul(g_WorldMatrix, g_ViewMatrix);
-//    matWVP = mul(matWV, g_ProjMatrix);
-//
-//    float4x4   Transform = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
-//
-//    vector      vPosition = mul(float4(In.vPosition, 1.f), Transform);
-//    vector      vNormal = mul(float4(In.vNormal, 0.f), Transform);
-//    vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), Transform);
-//
-//    Out.vPosition = mul(vPosition.xyz, matWVP);
-//    Out.vNormal = normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
-//    Out.vTexUV = In.vTexUV;
-//    Out.vProjPos = Out.vPosition;
-//    Out.vTangent = normalize(mul(vTangent, g_WorldMatrix));
-//    Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
-//
-//    return Out;
-//}
-//
+
+struct VS_OUT_GS
+{
+    float3      vPosition : POSITION;
+    float3      vNormal : NORMAL;
+    float2      vTexUV : TEXCOORD0;
+    float4      vProjPos : TEXCOORD1;
+    float4      vTangent : TANGENT;
+    float3      vBinormal   : BINORMAL;
+};
+
+VS_OUT_GS VS_TGS_MAIN(VS_IN In)
+{
+    VS_OUT_GS      Out = (VS_OUT_GS)0;
+
+    matrix      matWV, matWVP;
+
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+
+    float4x4   Transform = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
+
+    vector      vPosition = mul(float4(In.vPosition, 1.f), Transform);
+    vector      vNormal = mul(float4(In.vNormal, 0.f), Transform);
+    vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), Transform);
+
+    Out.vPosition = vPosition.xyz;
+    Out.vNormal = vNormal.xyz;
+    Out.vTexUV = In.vTexUV;
+    Out.vProjPos = mul(float4(In.vPosition, 1.f), Transform);
+    Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
+    Out.vBinormal = normalize(cross(vNormal.xyz, Out.vTangent.xyz));
+
+    return Out;
+}
+
+
 //struct GS_IN
 //{
 //    float3      vPosition : POSITION;
-//    float4      vNormal : NORMAL;
+//    float3      vNormal : NORMAL;
 //    float2      vTexUV : TEXCOORD0;
 //    float4      vProjPos : TEXCOORD1;
 //    float4      vTangent : TANGENT;
-//    float3      vBinormal : BINORMAL;
+//    float3      vBinormal   : BINORMAL;
 //};
 //
 //struct GS_OUT
@@ -159,7 +160,13 @@ VS_OUT VS_MAIN(VS_IN In)
 //    float4      vTangent : TANGENT;
 //    float3      vBinormal : BINORMAL;
 //};
-
+//
+//[maxvertexcount(6)]
+//void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
+//{
+//    GS_OUT		Out[4];
+//}
+//
 
 
 struct PatchTess
@@ -321,12 +328,6 @@ DomainOut DS_MAIN(PatchTess PatchTess, float3 uvw : SV_DomainLocation,
     Out.vBinormal = vBinormal.xyz;
     return Out;
 }
-
-
-
-
-
-
 
 struct PS_IN_TESS
 {

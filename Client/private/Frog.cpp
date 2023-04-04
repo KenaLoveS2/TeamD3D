@@ -31,11 +31,22 @@ HRESULT CFrog::Initialize(void* pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	_int iRandNum = rand() % 2;
+
+	if(iRandNum ==0)
+	{
+		m_pModelCom->Set_AnimIndex(CRY_BIG);
+	}
+	else
+	{
+		m_pModelCom->Set_AnimIndex(LOOK_AROUND);
+	}
+
 	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 
 	m_bRenderActive = true;
 
-	m_pModelCom->Set_AnimIndex(CRotEater::ANIMATION::IDLE);
+	
 
 
 	return S_OK;
@@ -49,13 +60,47 @@ HRESULT CFrog::Late_Initialize(void* pArg)
 
 void CFrog::Tick(_float fTimeDelta)
 {
-	if (false == m_bOnceTest)
-	{
-		Late_Initialize();
-		m_bOnceTest = true;
-	}
 
 	__super::Tick(fTimeDelta);
+
+	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+#ifdef FOR_MAP_GIMMICK
+		CGameObject* pPlayer = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena");
+
+	if (pPlayer == nullptr)
+		return;
+
+	_vector vPlayerPos = pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	const _vector	 vDir = vPlayerPos - vPos;
+
+#else
+	_float4 vCamPos;
+	vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+	_vector camPos = XMLoadFloat4(&vCamPos);
+	const _vector	 vDir = camPos - vPos;
+
+#endif
+
+	_bool bPlayerCom = false;
+
+	if (8.f >= XMVectorGetX(XMVector4Length(vDir)))
+		bPlayerCom = true;
+
+	if(bPlayerCom == true)
+	{
+		if(!m_bAnimActive )
+		{
+
+			m_bAnimActive = true;
+			m_pModelCom->Set_AnimIndex(CHEER);
+		}
+	}
+
+
+	if(m_pModelCom->Get_AnimIndex() == CHEER && m_pModelCom->Get_AnimationFinish())
+	{
+		m_pModelCom->Set_AnimIndex(CRY_BIG);
+	}
 
 
 
@@ -87,7 +132,6 @@ HRESULT CFrog::Render()
 	}
 	return S_OK;
 }
-
 
 
 void CFrog::ImGui_AnimationProperty()

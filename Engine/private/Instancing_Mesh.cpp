@@ -297,11 +297,11 @@ void CInstancing_Mesh::InstaincingMesh_EffectTick(_float yLimitPos, _float fTime
 }
 
 HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod,
-	_bool bUseTriangleMeshActor, _uint iNumInstance)
+	_bool bUseTriangleMeshActor, _bool bPointBuffer, _uint iNumInstance)
 {
 	if (hFile == nullptr)
 		return S_OK;
-	m_bLodMesh = bIsLod;			// is_Lod Or NonLod????
+	m_bLodMesh = bIsLod;		 m_bPointListMesh = bPointBuffer;
 	m_bTriangle_Collider = bUseTriangleMeshActor;
 	_ulong dwByte = 0;
 	ReadFile(hFile, &m_eType, sizeof(m_eType), &dwByte, nullptr);
@@ -364,6 +364,7 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bo
 	m_BufferDesc.StructureByteStride = 0;
 	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	m_BufferDesc.MiscFlags = 0;
+
 
 	/*Origin _Mesh*/
 	m_pIndices = new FACEINDICES32[m_iOriginNumPrimitive];
@@ -788,7 +789,7 @@ _bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapter
 		}
 		else if(eChapterGimmcik == CEnviromentObj::Gimmick_TYPE_FLOWER)
 		{
-			_float fRandomSpeed = CUtile::Get_RandomFloat(0.7f, 1.6f);
+			_float fRandomSpeed = CUtile::Get_RandomFloat(0.4f, 3.0f);
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fRandomSpeed)*fTimeDelta;
 		}
 	
@@ -960,14 +961,36 @@ HRESULT CInstancing_Mesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel* 
 		m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
 	}
 
-	m_iStride = sizeof(VTXMODEL);
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-	m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
-	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	m_BufferDesc.StructureByteStride = m_iStride;
-	m_BufferDesc.CPUAccessFlags = 0;
-	m_BufferDesc.MiscFlags = 0;
+
+	if (m_bPointListMesh == true)
+	{
+		m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+		m_eIndexFormat = DXGI_FORMAT_R32_UINT;
+		m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
+		m_iNumIndicesPerPrimitive = 1;
+		m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
+
+		m_iStride = sizeof(VTXMODEL);
+	
+		m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
+		m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		m_BufferDesc.StructureByteStride = m_iStride;
+		m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		m_BufferDesc.MiscFlags = 0;
+	}
+	else
+	{
+		m_iStride = sizeof(VTXMODEL);
+		m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
+		m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		m_BufferDesc.StructureByteStride = m_iStride;
+		m_BufferDesc.CPUAccessFlags = 0;
+		m_BufferDesc.MiscFlags = 0;
+
+	}
 
 
 	_matrix	PivotMatrix = pModel->Get_PivotMatrix();
@@ -1106,10 +1129,10 @@ void CInstancing_Mesh::Calc_InstMinMax(_float* pMinX, _float* pMaxX, _float* pMi
 }
 
 CInstancing_Mesh* CInstancing_Mesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
-	HANDLE hFile, CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _uint iNumInstance)
+	HANDLE hFile, CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _bool bPointBuffer, _uint iNumInstance)
 {
 	CInstancing_Mesh* pInstance = new CInstancing_Mesh(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, bUseTriangleMeshActor, iNumInstance)))
+	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, bUseTriangleMeshActor, bPointBuffer, iNumInstance)))
 	{
 		MSG_BOX("Failed to Created : CInstancing_Mesh");
 		Safe_Release(pInstance);

@@ -483,6 +483,11 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma region Test_Gimmick_OBJ
 	if (bFlowerCheck == true)
 	{
+		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_TestGodTree",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.mdat"),
+				PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.json", false, true))))
+			return E_FAIL;
 
 	}
 #pragma endregion
@@ -2656,7 +2661,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Pet/Pet.model"), PivotMatrix))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	PivotMatrix = XMMatrixScaling(1.f, 1.f, 1.f);
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Frog",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Frog/Frog.model"), PivotMatrix))))
 		return E_FAIL;
