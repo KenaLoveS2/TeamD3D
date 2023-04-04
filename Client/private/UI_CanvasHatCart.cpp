@@ -109,9 +109,17 @@ HRESULT CUI_CanvasHatCart::Render()
 
 HRESULT CUI_CanvasHatCart::Bind()
 {
-	CHatCart* pCart = dynamic_cast<CHatCart*>(CGameInstance::GetInstance()->
-		//Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"4_HatCart"));
-		Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"test"));
+	CHatCart* pCart = nullptr;
+	if (g_LEVEL == LEVEL_GAMEPLAY)
+	{
+		pCart = dynamic_cast<CHatCart*>(CGameInstance::GetInstance()->
+			Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"test"));
+	}
+	else if(g_LEVEL == LEVEL_TESTPLAY)
+	{
+		pCart = dynamic_cast<CHatCart*>(CGameInstance::GetInstance()->
+			Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"4_HatCart"));
+	}
 
 	if (pCart == nullptr)
 		return E_FAIL;

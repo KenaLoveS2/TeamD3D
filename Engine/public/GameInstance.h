@@ -10,10 +10,11 @@
 #include "Enviroment_Manager.h"
 #include "PhysX_Manager.h"
 #include "FSMComponent.h"
+#include "Graphic_Device.h"
 #include "Animation.h"
 #include "Bone.h"
 
-
+#define CONTEXT_LOCK CContext_LockGuard _CtxLock_(CGameInstance::GetInstance()->GetContextMtx());
 #define TIMEDELTA CGameInstance::GetInstance()->GetTimeDelta()
 
 BEGIN(Engine)
@@ -45,6 +46,7 @@ public: /* For.GameInstance */
 	void Clear_Level(_uint iLevelIndex, _bool bCamreaClearFlag = false);
 
 public: /* For.Graphic_Device */
+	mutex& GetContextMtx() const;
 	HRESULT Clear_Graphic_Device(const _float4* pColor);
 	HRESULT Present();
 	HRESULT Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _bool bIsFullScreen, _bool bNeedUpdate);
@@ -246,7 +248,6 @@ public: /* For.PipeLine */
 		class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
 		class CPostFX* m_pPostFX = nullptr;
 		class CFunction_Manager*	m_pFunction_Manager = nullptr;
-
 		class CPhysX_Manager* m_pPhysX_Manager = nullptr;
 
 	public:

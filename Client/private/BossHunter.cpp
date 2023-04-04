@@ -149,7 +149,7 @@ void CBossHunter::Tick(_float fTimeDelta)
 {
 	m_pModelCom->Play_Animation(fTimeDelta);
 	Update_Collider(fTimeDelta);
-	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	 if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	/* For. String */
 	m_fUVSpeeds[0] += 0.245f * fTimeDelta;
 	m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
