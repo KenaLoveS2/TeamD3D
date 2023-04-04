@@ -5,9 +5,10 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 vector			g_vCamPosition;
 //texture2D		g_DepthTexture;
-texture2D		g_DiffuseTexture;
-texture2D		g_MaskTexture;
-texture2D		g_DissolveTexture;
+//Texture2D<float4>
+Texture2D<float4>		g_DiffuseTexture;
+Texture2D<float4>		g_MaskTexture;
+Texture2D<float4>		g_DissolveTexture;
 
 float4			g_vColor = { 1.f, 1.f, 1.f, 1.f };
 float4			g_vMaskColor = { 1.f ,1.f, 1.f, 1.f };
@@ -308,7 +309,7 @@ PS_OUT PS_MAIN_MASK_DiffuseMove(PS_IN In)
 	return Out;
 }
 
-technique11 DefaultTechnique
+technique11  DefaultTechnique
 {
 	pass Default //0
 	{
