@@ -15,18 +15,20 @@ private:
 	virtual ~CSpiritArrow() = default;
 
 public:
-	const ARROWSTATE&	Get_CurrentState() const { return m_eCurState; }
+	const ARROWSTATE&			Get_CurrentState() const { return m_eCurState; }
+	const _float&				Get_Damage() const { return m_fDamage; }
 	const _bool&				IsActive() const { return m_bActive; }
 	virtual void				Set_Active(_bool bActive) override { m_bActive = bActive; }
+	void						Set_Damage(_float fDamage) { m_fDamage = fDamage; }
 
 public:
-	virtual HRESULT			Initialize_Prototype() override;
-	virtual HRESULT			Initialize(void* pArg) override;
-	virtual HRESULT			Late_Initialize(void* pArg) override;
+	virtual HRESULT				Initialize_Prototype() override;
+	virtual HRESULT				Initialize(void* pArg) override;
+	virtual HRESULT				Late_Initialize(void* pArg) override;
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT			Render() override;
-	virtual HRESULT			RenderShadow() override;
+	virtual HRESULT				Render() override;
+	virtual HRESULT				RenderShadow() override;
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;
 	virtual void				ImGui_PhysXValueProperty() override;
@@ -38,14 +40,14 @@ public:
 
 private:
 	class CKena*				m_pKena = nullptr;
-	class CKena_Staff*		m_pStaff = nullptr;
-	class CCamera_Player*	m_pCamera = nullptr;
+	class CKena_Staff*			m_pStaff = nullptr;
+	class CCamera_Player*		m_pCamera = nullptr;
 
 private:
 	_bool						m_bActive = false;
 
-	ARROWSTATE			m_eCurState = ARROWSTATE_END;
-	ARROWSTATE			m_ePreState = ARROWSTATE_END;
+	ARROWSTATE					m_eCurState = ARROWSTATE_END;
+	ARROWSTATE					m_ePreState = ARROWSTATE_END;
 	_float						m_fScale = 1.f;
 	_float						m_fMaxScale = 2.f;
 	_float						m_fScalePosRate = 0.35f;
@@ -58,9 +60,11 @@ private:
 	_float						m_fDistance = 10.f;
 	_bool						m_bReachToAim = false;
 
-	_float4					m_vFirePosition;
-	_float4					m_vFireCamLook;
-	_float4					m_vFireCamPos;
+	_float						m_fDamage = 5.f;
+
+	_float4						m_vFirePosition;
+	_float4						m_vFireCamLook;
+	_float4						m_vFireCamPos;
 	_bool						m_bHit = false;
 
 private:
