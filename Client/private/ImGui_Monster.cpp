@@ -65,7 +65,7 @@ void CImGui_Monster::Imgui_FreeRender()
 
 void CImGui_Monster::MonsterList()
 {
-	if (ImGui::CollapsingHeader("ProtoType"))
+	if (ImGui::CollapsingHeader("ProtoType_Monster"))
 	{
 		static string FindProtoObjectlTag = "";		// ! == No Find
 		ImGui::InputText("Find_ProtoObjectlTag", &FindProtoObjectlTag);
