@@ -294,7 +294,7 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 		pActor = (PxRigidDynamic*)Pair.second;
 		pUserData = (PX_USER_DATA*)pActor->userData;
 
-		if(pUserData && pUserData->isGravity)
+		if(pUserData && pUserData->isActive)
 		{
 			PxTransform ActorTrasnform = pActor->getGlobalPose();
 			_float3 vObjectPos = CUtile::ConvertPosition_PxToD3D(ActorTrasnform.p);
@@ -475,7 +475,8 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 			m_DynamicColliders.emplace(pTag, pBox);
 		}
 
-	
+		if (Desc.isSleep) pBox->putToSleep();
+
 		m_pScene->addActor(*pBox);
 		pShape->release();
 		pMaterial->release();
@@ -558,6 +559,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 			m_DynamicColliders.emplace(pTag, pSphere);
 		}
 
+		if (Desc.isSleep) pSphere->putToSleep();
 		m_pScene->addActor(*pSphere);
 		pShape->release();
 		pMaterial->release();
@@ -643,6 +645,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 			m_DynamicColliders.emplace(pTag, pCapsule);
 		}
 
+		if (Desc.isSleep) pCapsule->putToSleep();
 		m_pScene->addActor(*pCapsule);
 		pShape->release();
 		pMaterial->release();

@@ -96,7 +96,7 @@ void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_bSpawn == false) 
+	if (m_bReadySpawn == false) 
 	{
 		m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 	}

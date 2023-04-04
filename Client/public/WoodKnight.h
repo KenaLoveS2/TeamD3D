@@ -151,10 +151,24 @@ private:
 	vector<_float3> m_vecPivotScale;
 	vector<_float3> m_vecPivotRot;
 
+	enum COPY_SOUND_KEY {
+		CSK_TENSE, CSK_ATTACK_START, CSK_ATTACK, CSK_IDLE, CSK_WOOSH, CSK_WALK, CSK_SLAM, CSK_DIE, CSK_CATCH,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 public:
 	static CWoodKnight*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*				Clone(void* pArg = nullptr)  override;
 	virtual void								Free() override;
+
+	void Create_CopySoundKey();
+
+	void Play_WoooshSound(_bool bIsInit, _float fTimeDelta);
+	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
+	void Play_SlamSound(_bool bIsInit, _float fTimeDelta);
+	void Play_CatchSound(_bool bIsInit, _float fTimeDelta);
 };
 
 END
