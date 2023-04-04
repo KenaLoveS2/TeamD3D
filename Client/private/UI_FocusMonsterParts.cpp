@@ -146,7 +146,7 @@ void CUI_FocusMonsterParts::Late_Tick(_float fTimeDelta)
 	}
 
 	if (nullptr != m_pRendererCom && m_bActive)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CUI_FocusMonsterParts::Render()

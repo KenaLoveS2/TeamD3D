@@ -553,6 +553,9 @@
     <Filter Include="02.GameObjects\UI\06. 3D UI\Effect_Unit">
       <UniqueIdentifier>{8bda720b-f543-4f6b-9ca4-f5c9fabaa9aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Dash">
+      <UniqueIdentifier>{42f6c8b2-1649-4159-8575-c3bb1cd1b146}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1430,7 +1433,6 @@
     <ClInclude Include="..\public\CinematicCamera.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MannequinRot.h" />
     <ClInclude Include="..\public\Dynamic_Stone.h">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
@@ -1442,6 +1444,18 @@
     </ClInclude>
     <ClInclude Include="..\public\CEffect_Unit.h">
       <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MannequinRot.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaDash.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Dash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaDashRing.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Dash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaDashCone.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Dash</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2303,7 +2317,6 @@
     <ClCompile Include="..\private\E_ShamanTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MannequinRot.cpp" />
     <ClCompile Include="..\private\Dynamic_Stone.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
@@ -2315,6 +2328,18 @@
     </ClCompile>
     <ClCompile Include="CEffect_Unit.cpp">
       <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MannequinRot.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaDash.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Dash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaDashRing.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Dash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaDashCone.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Dash</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

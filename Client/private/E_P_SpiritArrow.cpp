@@ -32,8 +32,9 @@ HRESULT CE_P_SpiritArrow::Initialize(void * pArg)
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.7f, 1.0f);
-	m_eEFfectDesc.bActive = false;
 
+	m_eEFfectDesc.bActive = false;
+	Set_EffectOption();
 	return S_OK;
 }
 
@@ -56,9 +57,6 @@ void CE_P_SpiritArrow::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_P_SpiritArrow::Render()
 {
-	if (m_eEFfectDesc.bActive == false)
-		return E_FAIL;
-
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
@@ -101,6 +99,12 @@ HRESULT CE_P_SpiritArrow::SetUp_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CE_P_SpiritArrow::Set_EffectOption()
+{
+	m_eEFfectDesc.vColor = XMVectorSet(1.f, 2.f, 4.f, 0.4f);
+	m_pVIInstancingBufferCom->Set_PSize(_float2(0.1f, 0.1f));
 }
 
 CE_P_SpiritArrow * CE_P_SpiritArrow::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)

@@ -100,6 +100,9 @@ HRESULT CRotBomb::Late_Initialize(void * pArg)
 
 void CRotBomb::Tick(_float fTimeDelta)
 {
+// 	if (m_szCloneObjectTag == L"RotBomb")
+// 		ToolOption("CRotBomb");
+
 	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
 	if (fTimeRate != 1.f)
 		fTimeDelta /= fTimeRate;
@@ -119,7 +122,6 @@ void CRotBomb::Tick(_float fTimeDelta)
 	pShape->setGeometry(Geometry);
 
 	m_pTransformCom->Tick(fTimeDelta);
-
 	m_pAnimation->Play_Animation(fTimeDelta);
 
 	for (auto pChild : m_vecChild)
@@ -127,7 +129,6 @@ void CRotBomb::Tick(_float fTimeDelta)
 
 	_float4	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	m_pPathTrail->Set_Position(vPos);
-	
 	m_pPathTrail->Tick(fTimeDelta);
 }
 

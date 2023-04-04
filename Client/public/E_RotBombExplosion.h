@@ -5,6 +5,14 @@ BEGIN(Client)
 
 class CE_RotBombExplosion final : public CEffect_Mesh
 {
+public:
+	enum CHILD
+	{
+		CHILD_COVER,
+		CHILD_P,
+		CHILD_END
+	};
+
 private:
 	CE_RotBombExplosion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CE_RotBombExplosion(const CE_RotBombExplosion& rhs);
@@ -17,17 +25,22 @@ public:
 	virtual void    Tick(_float fTimeDelta) override;
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	void			Reset();
 
+public:
+	void			Reset();
+	void			TurnonBomb(_float fTimeDelta);
+	void			TurnoffBomb(_float fTimeDelta);
 
 private:
 	HRESULT SetUp_ShaderResources();
 	void	Imgui_RenderProperty() override;
+	HRESULT SetUp_Effects();
 
 private:
 	_float4x4 m_SaveInitWorldMatrix;
 
 	_bool		m_bBomb = false;
+	_bool		m_bTurnOn = false;
 	_float		m_fBombTime = 0.0f;
 	_float		m_fDissolveTime = 0.0f;
 

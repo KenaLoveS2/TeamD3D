@@ -87,8 +87,7 @@ void CE_Warrior_FireSwipe::Tick(_float fTimeDelta)
 	m_pTransformCom->Tick(fTimeDelta);
 
 	_bool bTurnoff = TurnOffSystem(m_fDurationTime, 1.f, fTimeDelta);
-	if(bTurnoff == false)	
-		m_pTransformCom->Go_Backward(fTimeDelta);
+	if (bTurnoff == false)	m_pTransformCom->Go_Backward(fTimeDelta);
 }
 
 void CE_Warrior_FireSwipe::Late_Tick(_float fTimeDelta)
