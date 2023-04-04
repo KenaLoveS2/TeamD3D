@@ -475,7 +475,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = false;
+	_bool bRealObject = true;
 	_bool bFlowerCheck = false;
 
 #ifdef FOR_MAPTOOL   
@@ -507,6 +507,9 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.model"), PivotMatrix)))) return E_FAIL;
 
 	/*if (FAILED(Loading_ForBJ((_uint)LEVEL_MAPTOOL)))
+		return E_FAIL;*/
+
+	/*if (FAILED(Loading_ForSY((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;*/
 
 #else

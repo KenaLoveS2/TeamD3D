@@ -577,7 +577,6 @@ void CMesh::Free()
 
 	for (auto& pBone : m_Bones)
 		Safe_Release(pBone);
-
 	m_Bones.clear();
 
 	if (m_isCloned == false)
