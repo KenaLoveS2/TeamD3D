@@ -471,6 +471,14 @@ void CKena_Status::Set_RotCount(_int iValue)
 		m_iRotLevel++;
 }
 
+void CKena_Status::Add_CurPipGuage()
+{
+	m_fCurPIPGuage += 1.f;
+
+	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
+	m_StatusDelegator.broadcast(ePip, m_fCurPIPGuage);
+}
+
 void CKena_Status::Set_CurArrowCount(_int iValue)
 {
 	/* Should be used only when arrow shoot */

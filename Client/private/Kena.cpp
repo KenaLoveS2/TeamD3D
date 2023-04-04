@@ -121,6 +121,10 @@ const _bool CKena::Get_State(STATERETURN eState) const
 		return m_bSprint;
 		break;
 
+	case STATE_DASH:
+		return m_bDash || m_bDashAttack || m_bDashPortal;
+		break;
+
 	case STATE_MASK:
 		return m_bMask;
 		break;
@@ -199,6 +203,10 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 
 	case STATE_SPRINT:
 		m_bSprint = bValue;
+		break;
+
+	case STATE_DASH:
+		m_bDash = bValue;
 		break;
 
 	case STATE_MASK:
