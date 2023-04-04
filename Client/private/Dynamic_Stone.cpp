@@ -426,7 +426,10 @@ _int CDynamic_Stone::Execute_Collision(CGameObject* pTarget, _float3 vCollisionP
 		for (auto& pObj : m_pDynamicObj_List)
 		{
 			if (pObj != nullptr)
+			{
 				static_cast<CDynamic_StoneCube*>(pObj)->Set_CollActive();
+				// static_cast<CDynamic_StoneCube*>(pObj)->Execute_SleepEnd();
+			}				
 		}
 
 		m_bOnceColl = true;
