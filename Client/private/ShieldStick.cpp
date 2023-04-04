@@ -236,6 +236,7 @@ HRESULT CShieldStick::SetUp_State()
 		.AddState("READY_SPAWN")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE1], 0.7f);
 		Start_Spawn();
 		m_pWeapon->Show_Dissolve();
 	})
@@ -256,6 +257,7 @@ HRESULT CShieldStick::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CALM], 0.7f);
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -300,7 +302,7 @@ HRESULT CShieldStick::SetUp_State()
 		
 		.AddState("CHASE")
 		.OnStart([this]()
-	{
+	{	
 		m_pModelCom->ResetAnimIdx_PlayTime(UNARMED_WALK);
 		m_pModelCom->Set_AnimIndex(WALK);
 	})	
@@ -333,6 +335,7 @@ HRESULT CShieldStick::SetUp_State()
 		.AddState("CHARGE_ATTACK")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(CHARGEATTACK);
 		m_pModelCom->Set_AnimIndex(CHARGEATTACK);
 		m_bRealAttack = true;
@@ -361,6 +364,7 @@ HRESULT CShieldStick::SetUp_State()
 		.AddState("JUMPBACK")
 		.OnStart([this]()
 	{
+		// m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE1], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(JUMPBACK);
 		m_pModelCom->Set_AnimIndex(JUMPBACK);		
 	})	
@@ -384,6 +388,7 @@ HRESULT CShieldStick::SetUp_State()
 		.AddState("TAKEDAMAGE_OR_PARRIED")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(INTOCHARGE);
 		m_pModelCom->Set_AnimIndex(INTOCHARGE);
 	})
@@ -411,6 +416,7 @@ HRESULT CShieldStick::SetUp_State()
 		.AddState("BIND")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(BIND);
 		m_pModelCom->Set_AnimIndex(BIND);		
 	})		
@@ -427,6 +433,7 @@ HRESULT CShieldStick::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DIE], 0.7f);
 		Set_Dying(HAEDSHOT);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -558,4 +565,22 @@ void CShieldStick::Free()
 {
 	CMonster::Free();
 	Safe_Release(m_pWeapon);
+}
+
+void CShieldStick::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_ShieldStick_Calm.ogg"),
+		TEXT("Mon_ShieldStick_Tense.ogg"),
+		TEXT("Mon_ShieldStick_Attack.ogg"),
+		TEXT("Mon_ShieldStick_Hurt.ogg"),
+		TEXT("Mon_ShieldStick_Die.ogg"),		
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
 }

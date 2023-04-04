@@ -156,7 +156,7 @@ void CBossHunter::Tick(_float fTimeDelta)
 
 	m_pModelCom->Play_Animation(fTimeDelta);
 	Update_Collider(fTimeDelta);
-
+	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	/* For. String */
 	m_fUVSpeeds[0] += 0.245f * fTimeDelta;
 	m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
@@ -437,7 +437,7 @@ HRESULT CBossHunter::SetUp_State()
 	.OnStart([this]()
 	{
 	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-	m_pTransformCom->Speed_Boost(true, 0.5f);
+	m_pTransformCom->Speed_Boost(true, 0.7f);
 
 	m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
 	m_pModelCom->Set_AnimIndex(IDLE);
@@ -451,12 +451,12 @@ HRESULT CBossHunter::SetUp_State()
 
 	if (m_pTransformCom->Get_PositionY() <= m_fFlyHeightY)
 	{
-	m_pTransformCom->Go_AxisY(fTimeDelta);
-	if (m_pTransformCom->Get_PositionY() >= m_fFlyHeightY)
-	m_pTransformCom->Set_PositionY(m_fFlyHeightY);
+		m_pTransformCom->Go_AxisY(fTimeDelta);
+		if (m_pTransformCom->Get_PositionY() >= m_fFlyHeightY)
+			m_pTransformCom->Set_PositionY(m_fFlyHeightY);
 	}
 
-	m_bDodge = m_pKena->Get_State(CKena::STATE_BOW) && (rand() % 3 == 0);
+	m_bDodge = m_pKena->Get_State(CKena::STATE_BOW) && (rand() % 5 == 0);
 	})
 	.OnExit([this]()
 	{
@@ -1010,7 +1010,7 @@ HRESULT CBossHunter::SetUp_State()
 	.AddState("FLY")
 	.OnStart([this]()
 	{
-	m_pTransformCom->Speed_Boost(true, 1.3f);
+	m_pTransformCom->Speed_Boost(true, 1.5f);
 	ResetAndSet_Animation(FLY_FORWRAD_FAST);
 
 	_float4 vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);

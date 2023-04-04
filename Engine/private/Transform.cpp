@@ -1033,7 +1033,7 @@ void CTransform::Set_PxActorSleep(_bool bSleep)
 {
 	if (m_pPxActor == nullptr) return;
 
-	if (m_bIsStaticPxActor && m_pPhysX_Manager)
+	if (m_bIsStaticPxActor && m_pPxActor)
 	{
 		bSleep ?
 			m_pPhysX_Manager->PutToSleep((PxRigidDynamic*)m_pPxActor) :
