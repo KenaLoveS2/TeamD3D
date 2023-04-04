@@ -1,5 +1,5 @@
 {
-    "01. NumEffects": 9,
+    "01. NumEffects": 12,
     "02. FileName": [
         "Texture_ChargeCircle",
         "Particle_Charge",
@@ -9,6 +9,9 @@
         "Texture_ChargeLine2",
         "Particle_Dust",
         "Particle_DustSmall",
-        "Mesh_DustPlane"
+        "Mesh_DustPlane",
+        "Mesh_StunCharge",
+        "Mesh_StunChargeBase",
+        "Mesh_StunChargeBaseDark"
     ]
 }
