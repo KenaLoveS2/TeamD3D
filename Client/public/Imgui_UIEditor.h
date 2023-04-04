@@ -36,8 +36,8 @@ private:
 	CUI*							m_pUI;
 
 private: /* Effect */
-	CEffect_Base_S2*			m_pEffect;
-	vector<CEffect_Base_S2*>	m_vecEffects;
+	CEffect_Base_S2*				m_pEffect;
+	vector<CEffect_Base_S2*>		m_vecEffects;
 	vector<string>					m_vecEffectTag;
 
 public:

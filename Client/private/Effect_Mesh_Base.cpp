@@ -83,7 +83,7 @@ HRESULT CEffect_Mesh_Base::Initialize(void* pArg)
 	}
 
 	/* Temp */
-	m_pTransformCom->Set_Scaled({ 5.f, 5.f ,5.f });
+	//m_pTransformCom->Set_Scaled({ 5.f, 5.f ,5.f });
 	return S_OK;
 }
 
@@ -105,8 +105,10 @@ void CEffect_Mesh_Base::Tick(_float fTimeDelta)
 
 		if (m_fDissolveAlpha > 1.f)
 		{
-			m_fDissolveAlpha = 1.f;
-			m_bActive = false;
+			m_fDissolveAlpha = 1.0f;
+
+			DeActivate();
+			//m_bActive = false;
 		}
 	}
 
@@ -202,59 +204,66 @@ void CEffect_Mesh_Base::Imgui_RenderProperty()
 		}
 	}
 
-	/* Mesh Index */
-	static _int iMeshIndex;
-	iMeshIndex = m_iMeshIndex;
-	if (ImGui::DragInt("Mesh Index", &iMeshIndex, 1, 0, 50))
-		m_iMeshIndex = iMeshIndex;
-
-	/* RenderPass */
-	static _int iRenderPass;
-	iRenderPass = m_iRenderPass;
-	const char* renderPass[6] = { "Default", "OnlyColor", "DefaultMask", "Dissolve",
-		"HunterString", "Mask_DiffuseMove" };
-	if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 6, 5))
-		m_iRenderPass = iRenderPass;
-
-	/* Dissolve Play */
-	static _float fDissolveSpeed = 0.f;
-	fDissolveSpeed = m_fDissolveSpeed;
-	if (ImGui::DragFloat("DissolveSpeed", &fDissolveSpeed, 0.001f, -10.0f, 10.f))
-		m_fDissolveSpeed = fDissolveSpeed;
-	if (ImGui::Button("Dissolve Play"))
+	if (ImGui::CollapsingHeader("Render Info"))
 	{
-		m_bActive = true;
-		Set_DissolveState();
-	} ImGui::SameLine();
-	if (ImGui::Button("Reset normal"))
-	{
-		m_bActive = true;
-		m_fDissolveAlpha = 0.f;
+		/* Mesh Index */
+		static _int iMeshIndex;
+		iMeshIndex = m_iMeshIndex;
+		if (ImGui::DragInt("Mesh Index", &iMeshIndex, 1, 0, 50))
+			m_iMeshIndex = iMeshIndex;
+
+		/* RenderPass */
+		static _int iRenderPass;
+		iRenderPass = m_iRenderPass;
+		const char* renderPass[6] = { "Default", "OnlyColor", "DefaultMask", "Dissolve",
+			"HunterString", "Mask_DiffuseMove" };
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 6, 5))
+			m_iRenderPass = iRenderPass;
+
+		/* HDR Intensity (Diffuse) */
+		static _float fAlpha = 1.f;
+		fAlpha = m_fHDRIntensity;
+		if (ImGui::DragFloat("HDR Intensity", &fAlpha, 0.1f, 0.f, 50.f))
+			m_fHDRIntensity = fAlpha;
+
+		/* Texture Local Y Discard */
+		static _float fTest = 0.f;
+		fTest = m_fCutY;
+		if (ImGui::DragFloat("test", &fTest, 0.01f, -10.f, 10.f))
+			m_fCutY = fTest;
+
+		/* Dissolve Play */
+		static _float fDissolveSpeed = 0.f;
+		fDissolveSpeed = m_fDissolveSpeed;
+		if (ImGui::DragFloat("DissolveSpeed", &fDissolveSpeed, 0.001f, -10.0f, 10.f))
+			m_fDissolveSpeed = fDissolveSpeed;
+		if (ImGui::Button("Dissolve Play"))
+		{
+			m_bActive = true;
+			Set_DissolveState();
+		} ImGui::SameLine();
+		if (ImGui::Button("Reset normal"))
+		{
+			m_bActive = true;
+			m_fDissolveAlpha = 0.f;
+		}
+
+		static _float UVScale[2];
+		UVScale[0] = m_fUVScale[0];
+		UVScale[1] = m_fUVScale[1];
+		if (ImGui::DragFloat2("UVScale", UVScale, 0.10f, 0.0f, 100.0f))
+		{
+			m_fUVScale[0] = UVScale[0];
+			m_fUVScale[1] = UVScale[1];
+		}
+
+		if (ImGui::Button("ReCompile"))
+		{
+			m_pShaderCom->ReCompile();
+			m_pRendererCom->ReCompile();
+		}
 	}
 
-
-	/* HDR Intensity (Diffuse) */
-	static _float fAlpha = 1.f;
-	fAlpha = m_fHDRIntensity;
-	if (ImGui::DragFloat("HDR Intensity", &fAlpha, 0.1f, 0.f, 50.f))
-		m_fHDRIntensity = fAlpha;
-
-	/* Texture Local Y Discard */
-	static _float fTest = 0.f;
-	fTest = m_fCutY;
-	if (ImGui::DragFloat("test", &fTest, 0.01f, -10.f, 10.f))
-		m_fCutY = fTest;
-
-	static _float UVScale[2];
-	UVScale[0] = m_fUVScale[0];
-	UVScale[1] = m_fUVScale[1];
-	if (ImGui::DragFloat2("UVScale", UVScale, 0.10f, 0.0f, 100.0f))
-	{
-		m_fUVScale[0] = UVScale[0];
-		m_fUVScale[1] = UVScale[1];
-	}
-
-	/* ~ Render Info */
 
 	/* Options(UV Animation, Sprite Animation, etc...) */
 	Options();
@@ -307,6 +316,13 @@ HRESULT CEffect_Mesh_Base::Save_Data()
 			for (_uint i = 0; i < 2; ++i)
 				json["06. UVScale"].push_back(m_fUVScale[i]);
 
+			_float3 vScale = m_pTransformCom->Get_Scaled();
+			for (_uint i = 0; i < 3; ++i)
+			{
+				_float fElement = *((float*)&vScale + i);
+				json["07. vScale"].push_back(fElement); 
+			}  
+
 			json["10. DiffuseTextureIndex"] = m_iTextureIndices[TEXTURE_DIFFUSE];
 			json["11. MaskTextureIndex"] = m_iTextureIndices[TEXTURE_MASK];
 			json["12. DissolveTextureIndex"] = m_iTextureIndices[TEXTURE_DISSOLVE];
@@ -322,6 +338,9 @@ HRESULT CEffect_Mesh_Base::Save_Data()
 			json["23. SpriteSpeed"] = m_fFrameSpeed;
 			json["24. SelfStop"] = m_bSelfStop;
 			json["25. SelfStopTime"] = m_fSelfStopTime;
+
+			json["26. DissolvePass"] = m_iDissolvePass;
+			json["27. DissolveSpeed"] = m_fDissolveSpeed;
 
 			ofstream file(strSaveDirectory.c_str());
 			file << json;
@@ -353,6 +372,7 @@ HRESULT CEffect_Mesh_Base::Load_Data(_tchar* fileName)
 	file.close();
 
 	jLoad["00. RenderPass"].get_to<_int>(m_iRenderPass);
+	m_iRenderPassOriginal = m_iRenderPass;
 
 	int i = 0;
 	for (auto fElement : jLoad["01. Color"])
@@ -374,6 +394,15 @@ HRESULT CEffect_Mesh_Base::Load_Data(_tchar* fileName)
 			bOption.get_to<_float>(m_fUVScale[i++]);
 	}
 
+	if (jLoad.contains("07. vScale"))
+	{
+		_float3 vScale = { 0.f,0.f,0.f };
+		i = 0;
+		for (auto fElement : jLoad["07. vScale"])
+			fElement.get_to<_float>(*((_float*)&vScale + i++));
+		m_pTransformCom->Set_Scaled(vScale);
+
+	}
 
 	jLoad["10. DiffuseTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_DIFFUSE]);
 	jLoad["11. MaskTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_MASK]);
@@ -411,6 +440,12 @@ HRESULT CEffect_Mesh_Base::Load_Data(_tchar* fileName)
 	if (jLoad.contains("25. SelfStopTime"))
 		jLoad["25. SelfStopTime"].get_to<_float>(m_fSelfStopTime);
 
+	if (jLoad.contains("26. DissolvePass"))
+		jLoad["26. DissolvePass"].get_to<_int>(m_iDissolvePass);
+
+	if (jLoad.contains("27. DissolveSpeed"))
+		jLoad["27. DissolveSpeed"].get_to<_float>(m_fDissolveSpeed);
+
 	return S_OK;
 }
 
@@ -429,6 +464,8 @@ void CEffect_Mesh_Base::Activate(_float4 vPos)
 {
 	m_bActive = true;
 	m_pTransformCom->Set_Position(vPos);
+
+
 }
 
 void CEffect_Mesh_Base::Activate(CGameObject* pTarget)
@@ -439,7 +476,7 @@ void CEffect_Mesh_Base::Activate(CGameObject* pTarget)
 
 void CEffect_Mesh_Base::DeActivate()
 {
-	m_bActive = false;
+	__super::DeActivate();
 }
 
 HRESULT CEffect_Mesh_Base::SetUp_Components()

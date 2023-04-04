@@ -1,0 +1,100 @@
+TwoSided = true
+bDisableDepthTest = false
+bIsMasked = false
+ReferencedTextures[3] =
+{
+    ReferencedTextures[0] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_D.T_HealthFlower_D'
+    ReferencedTextures[1] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_M_R_AO.T_HealthFlower_M_R_AO'
+    ReferencedTextures[2] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_N.T_HealthFlower_N'
+}
+Expressions[0] = {}
+CachedExpressionData =
+{
+    Parameters =
+    {
+        Entries[5] =
+        {
+            Entries[0] =
+            {
+                ParameterInfos[5] =
+                {
+                    ParameterInfos[0] = { Name=Brightness }
+                    ParameterInfos[1] = { Name=RoughMult }
+                    ParameterInfos[2] = { Name=FlatNormal }
+                    ParameterInfos[3] = { Name=Spec }
+                    ParameterInfos[4] = { Name=Desaturate }
+                }
+            }
+            Entries[1] =
+            {
+                ParameterInfos[1] =
+                {
+                    ParameterInfos[0] = { Name=SSS_Color }
+                }
+            }
+            Entries[2] = { ParameterInfos[0]={} }
+            Entries[3] = { ParameterInfos[0]={} }
+            Entries[4] = { ParameterInfos[0]={} }
+        }
+        ScalarValues[5] = { 0.5, 0.56442, 0.566656, 0.25, 0.3 }
+        VectorValues[1] =
+        {
+            VectorValues[0] = { R=0.2, G=0.5, B=0.1, A=0 }
+        }
+        TextureValues[0] = {}
+    }
+    ReferencedTextures[3] =
+    {
+        ReferencedTextures[0] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_D.T_HealthFlower_D'
+        ReferencedTextures[1] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_M_R_AO.T_HealthFlower_M_R_AO'
+        ReferencedTextures[2] = Texture2D'/Game/Mochi/Art/Interactables/HealthFlower/Textures/T_HealthFlower_N.T_HealthFlower_N'
+    }
+}
+BlendMode = BLEND_Masked (1)
+OpacityMaskClipValue = 0.333
+CollectedTextureParameters[0] = {}
+CollectedScalarParameters[5] =
+{
+    CollectedScalarParameters[0] = { Value=0.5, Name=Brightness, Group=None }
+    CollectedScalarParameters[1] = { Value=0.56442, Name=RoughMult, Group=None }
+    CollectedScalarParameters[2] = { Value=0.566656, Name=FlatNormal, Group=None }
+    CollectedScalarParameters[3] = { Value=0.25, Name=Spec, Group=None }
+    CollectedScalarParameters[4] = { Value=0.3, Name=Desaturate, Group=None }
+}
+CollectedVectorParameters[1] =
+{
+    CollectedVectorParameters[0] =
+    {
+        Value = { R=0.2, G=0.5, B=0.1, A=0 }
+        Name = SSS_Color
+        Group = None
+    }
+}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[3] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_HealthFlower_D
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_HealthFlower_M_R_AO
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_HealthFlower_N
+    }
+}

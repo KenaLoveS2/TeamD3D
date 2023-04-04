@@ -472,9 +472,9 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(0);
+	//m_pKenaStatus->Set_Attack(0);
 #endif	
-	m_pKenaStatus->Set_Attack(0);
+	
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else

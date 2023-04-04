@@ -2,6 +2,7 @@
 #include "..\public\BossHunter.h"
 #include "GameInstance.h"
 #include "Effect_Base_S2.h"
+#include "SpiritArrow.h"
 
 CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -87,7 +88,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 HRESULT CBossHunter::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
-	// ¸öÅë
+	// ï¿½ï¿½ï¿½ï¿½
 	{
 		_float3 vPivotScale = _float3(0.5f, 0.5f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
@@ -113,7 +114,7 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 		m_pTransformCom->Add_Collider(TEXT_COL_HUNTER_BODY, g_IdentityFloat4x4);
 	}
 
-	// ¸öÅë
+	// ï¿½ï¿½ï¿½ï¿½
 	{
 		_float3 vPivotScale = _float3(0.4f, 0.4f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
@@ -146,14 +147,6 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 
 void CBossHunter::Tick(_float fTimeDelta)
 {
-	//ImGui::Begin("HunterTest");
-	//if (ImGui::Button("ReCompile"))
-	//{
-	//	m_pShaderCom->ReCompile();
-	//	m_pRendererCom->ReCompile();
-	//}
-	//ImGui::End();
-
 	m_pModelCom->Play_Animation(fTimeDelta);
 	Update_Collider(fTimeDelta);
 	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
@@ -317,7 +310,7 @@ void CBossHunter::Imgui_RenderProperty()
 
 void CBossHunter::ImGui_AnimationProperty()
 {
-	m_pTransformCom->Imgui_RenderProperty_ForJH();
+	//m_pTransformCom->Imgui_RenderProperty_ForJH();
 	//m_pArrows[m_iArrowIndex]->Get_TransformCom()->Imgui_RenderProperty_ForJH();
 
 	if (ImGui::CollapsingHeader("Effect"))
@@ -388,8 +381,10 @@ void CBossHunter::Push_EventFunctions()
 
 	ShockEffect_On(true, 0.f);
 	ShockEffect_Off(true, 0.f);
-	Test3(true, 0.f);
-	Test4(true, 0.f);
+	DustEffect_On(true, 0.f);
+	StunEffect_On(true, 0.f);
+	StunEffect_Off(true, 0.f);
+
 
 }
 
@@ -405,7 +400,7 @@ HRESULT CBossHunter::SetUp_State()
 	.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
 	.Predicator([this]()
 	{
-	// ´ë±â Á¾°á Á¶°Ç ¼öÁ¤ ÇÊ¿ä
+	// ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 	m_fSpawnRange = 5.f;
 	return DistanceTrigger(m_fSpawnRange);
 	})
@@ -414,7 +409,7 @@ HRESULT CBossHunter::SetUp_State()
 	.AddState("READY_SPAWN")
 	.OnStart([this]()
 	{
-	// µîÀå ¿¬Ãâ ÇÊ¿ä
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 	m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
 	m_pModelCom->Set_AnimIndex(IDLE);
 
@@ -762,7 +757,7 @@ HRESULT CBossHunter::SetUp_State()
 	.AddState("SINGLE_SHOT")
 	.OnStart([this]()
 	{
-	ResetAndSet_Animation(SINGLE_SHOT); // ÀÏ¹Ý È­»ì ÇÑ¹ßÀ» ³¯¸°´Ù ¾Ö´Ï¸ÞÀÌ¼Ç ³¡³¯ ¶§Âë ¹ß»ç ÇÔ¼ö È£Ãâ ÇÊ¿ä
+	ResetAndSet_Animation(SINGLE_SHOT); // ï¿½Ï¹ï¿½ È­ï¿½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½Ô¼ï¿½ È£ï¿½ï¿½ ï¿½Ê¿ï¿½
 	m_pTransformCom->LookAt(m_vKenaPos);
 	Set_NextAttack();
 	})
@@ -789,7 +784,7 @@ HRESULT CBossHunter::SetUp_State()
 	.AddState("RAPID_SHOOT")
 	.OnStart([this]()
 	{
-	ResetAndSet_Animation(RAPID_SHOOT); // ÀÏ¹Ý È­»ìÀ» ¿©·¯¹ßÀ» ³¯¸°´Ù ¾Ö´Ï¸ÞÀÌ¼Ç Áß°£Áß°£ ¹ß»ç ÇÔ¼ö È£Ãâ ÇÊ¿ä
+	ResetAndSet_Animation(RAPID_SHOOT); // ï¿½Ï¹ï¿½ È­ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ß°ï¿½ï¿½ß°ï¿½ ï¿½ß»ï¿½ ï¿½Ô¼ï¿½ È£ï¿½ï¿½ ï¿½Ê¿ï¿½
 	m_pTransformCom->LookAt(m_vKenaPos);
 	Set_NextAttack();
 	})
@@ -1081,7 +1076,7 @@ HRESULT CBossHunter::SetUp_State()
 	.AddState("DEATH_SCENE")
 	.OnStart([this]()
 	{
-	// Á×Àº ¾Ö´Ï¸ÞÀÌ¼Ç ÈÄ Á×À½ ¿¬Ãâ State
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ State
 	})
 	.AddTransition("DEATH_SCENE to DEATH", "DEATH")
 	.Predicator([this]()
@@ -1291,14 +1286,25 @@ _int CBossHunter::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos,
 
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
+			CSpiritArrow* pArrow = dynamic_cast<CSpiritArrow*>(pTarget);
+
 			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
-			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			//m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			m_pMonsterStatusCom->UnderAttack(pArrow->Get_Damage());
 
 			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);
 			//m_bWeaklyHit = !m_bStronglyHit;
 
-			m_bStronglyHit = true;
-			m_bWeaklyHit = false;
+			if (pArrow->Get_CurrentState() == CSpiritArrow::ARROW_INJECT_FIRE)
+			{
+				m_bStronglyHit = true;
+				m_bWeaklyHit = false;
+			}
+			else
+			{
+				m_bWeaklyHit = true;
+				m_bStronglyHit = false;
+			}
 
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);
@@ -1344,13 +1350,13 @@ void CBossHunter::Create_Arrow()
 	}
 }
 
-/* ÀåÀü */
+/* ï¿½ï¿½ï¿½ï¿½ */
 void CBossHunter::Ready_Arrow(CHunterArrow::FIRE_TYPE eFireType)
 {
 	m_pArrows[m_iArrowIndex]->Execute_Ready(eFireType);
 }
 
-/* ½ÇÁ¦ ½ò¶§ */
+/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ */
 void CBossHunter::Fire_Arrow(_bool bArrowIndexUpdate)
 {
 	m_pArrows[m_iArrowIndex]->Execute_Fire();
@@ -1531,24 +1537,73 @@ void CBossHunter::ShockEffect_Off(_bool bIsInit, _float fTimeDelta)
 
 }
 
-void CBossHunter::Test3(_bool bIsInit, _float fTimeDelta)
+void CBossHunter::DustEffect_On(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
 	{
 		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test3);
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::DustEffect_On);
 		return;
 	}
+
+	_float4 vPos;
+
+	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_lf_ball_jnt");
+	if (pStaffBonePtr != nullptr)
+	{
+		_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+		vPos = matWorldSocket.r[3];
+	}
+	else
+		vPos = m_pTransformCom->Get_Position();
+
+
+	m_vecEffects[EFFECT_DUST_PARTICLE_BIG]->Activate(vPos);
+	m_vecEffects[EFFECT_DUST_PARTICLE_SMALL]->Activate(vPos);
+	m_vecEffects[EFFECT_DUST_MESH_DUSTPLANE]->Activate(vPos);
 }
 
-void CBossHunter::Test4(_bool bIsInit, _float fTimeDelta)
+void CBossHunter::StunEffect_Off(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
 	{
 		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test4);
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::StunEffect_Off);
 		return;
 	}
+
+	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->DeActivate_Dissolve();
+	m_vecEffects[EFFECT_STUN_MESH_BASE]->DeActivate_Dissolve();
+	m_vecEffects[EFFECT_STUN_MESH_BASE2]->DeActivate_Dissolve();
+
+}
+
+void CBossHunter::StunEffect_On(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::StunEffect_On);
+		return;
+	}
+
+
+	_float4 vPos;
+
+	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_rt_upArmWeightSplit_1_jnt");
+	if (pStaffBonePtr != nullptr)
+	{
+		_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+		vPos = matWorldSocket.r[3];
+	}
+	else
+		vPos = m_pTransformCom->Get_Position();
+
+	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->Activate(vPos);
+	m_vecEffects[EFFECT_STUN_MESH_BASE]->Activate(vPos);
+	m_vecEffects[EFFECT_STUN_MESH_BASE2]->Activate(vPos);
 }
 
 HRESULT CBossHunter::Create_Effects()
@@ -1611,6 +1666,13 @@ bool	EffectList_Getter(void* data, int index, const char** output)
 
 void CBossHunter::ImGui_EffectProperty()
 {
+	if (ImGui::Button("ReCompile"))
+	{
+		m_pShaderCom->ReCompile();
+		m_pRendererCom->ReCompile();
+	}
+	ImGui::SameLine();
+
 	static vector<string> tags;
 	if (ImGui::Button("Refresh"))
 	{

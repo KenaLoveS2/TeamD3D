@@ -69,6 +69,7 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 	PxSphereDesc.fDynamicFriction = 0.5f;
 	PxSphereDesc.fStaticFriction = 0.5f;
 	PxSphereDesc.fRestitution = 0.1f;
+	PxSphereDesc.isTrigger = true;
 
 	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
 
@@ -123,12 +124,12 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 	//PxShape* pShape = nullptr;
 	//m_pTransformCom->Get_ActorList()->back().pActor->getShapes(&pShape, sizeof(PxShape));
 
-	//PxSphereGeometry	pGeometry;
-	//if (pShape->getSphereGeometry(pGeometry))
-	//{
-	//	pGeometry.radius = vScaled.x * 1.5f;
-	//	pShape->setGeometry(pGeometry);
-	//}
+	PxSphereGeometry	pGeometry;
+	if (pShape->getSphereGeometry(pGeometry))
+	{
+		pGeometry.radius = vScaled.x * 1.5f;
+		pShape->setGeometry(pGeometry);
+	}
 
 	m_pTransformCom->Tick(fTimeDelta);
 }

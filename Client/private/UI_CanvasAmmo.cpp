@@ -309,7 +309,7 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue
 		break;
 	case CUI_ClientManager::AMMO_ARROWUPRADE:
 		m_iNumArrows = (_uint)fValue;
-		m_iNumArrowNow = m_iNumArrowNow;
+		m_iNumArrowNow = m_iNumArrows;
 		static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(1.f);
 		pCanvas->LevelUp(CUI_ClientManager::AMMO_ARROW, 2);
 		break;

@@ -180,6 +180,7 @@ void CImgui_UIEditor::Effect_Tool()
 
 		if (m_pEffect != nullptr)
 		{
+			m_pEffect->Set_Active(true);
 			m_vecEffects.push_back(m_pEffect);
 			m_vecEffectTag.push_back(str);
 		}
