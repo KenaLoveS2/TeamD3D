@@ -24,6 +24,8 @@ private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 
+	_float					m_fDissolveTime = 0.0f;
+
 public:
 	static CE_FireBulletCover*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr)  override;

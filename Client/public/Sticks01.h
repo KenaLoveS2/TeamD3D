@@ -134,12 +134,22 @@ private:
 	class CMonster* m_pMaster = nullptr;
 	CBone* m_pWeaponBone = nullptr;
 
+	enum COPY_SOUND_KEY {
+		CSK_TENSE1, CSK_TENSE2, CSK_TENSE3, CSK_CALM, CSK_ATTACK, CSK_HURT, CSK_DIE, CSK_AXE_WOOSH,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 public:
 	static CSticks01*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
 	virtual void						Free() override;
 
 	void Spawn_ByMaster(class CMonster* pMaster, _float4 vPos);
+
+	void Play_AxeSound(_bool bIsInit, _float fTimeDelta);
+	virtual void Create_CopySoundKey() override;
 };
 
 END
