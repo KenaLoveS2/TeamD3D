@@ -36,7 +36,7 @@ HRESULT CE_P_ShockFrontEntended::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 
-	m_pVIInstancingBufferCom->Set_PSize(_float2(3.5f, 3.5f));
+	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 3.5f));
 	m_pVIInstancingBufferCom->Set_RandomSpeeds(1.0f, 5.0f);
 	return S_OK;
 }

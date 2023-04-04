@@ -121,8 +121,8 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 		m_vecChild[0]->Set_AddScale(fTimeDelta + 1.1f);
 	}
 
-	//PxShape* pShape = nullptr;
-	//m_pTransformCom->Get_ActorList()->back().pActor->getShapes(&pShape, sizeof(PxShape));
+	PxShape* pShape = nullptr;
+	m_pTransformCom->Get_ActorList()->back().pActor->getShapes(&pShape, sizeof(PxShape));
 
 	PxSphereGeometry	pGeometry;
 	if (pShape->getSphereGeometry(pGeometry))

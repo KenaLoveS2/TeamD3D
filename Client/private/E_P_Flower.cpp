@@ -42,7 +42,7 @@ HRESULT CE_P_Flower::Late_Initialize(void* pArg)
 	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 	RELEASE_INSTANCE(CGameInstance);
 
-	m_pVIInstancingBufferCom->Set_PSize(_float2(0.5f, 0.5f)); //fix
+	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.5f)); //fix
 	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 2.f);
 
 	return S_OK;

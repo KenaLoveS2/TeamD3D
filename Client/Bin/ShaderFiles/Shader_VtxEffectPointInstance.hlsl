@@ -68,6 +68,7 @@ struct VS_OUT
 	float3		vCenterPosition : TEXCOORD0;
 	float3		vRightScale : TEXCOORD1;
 	float2		vPSize : PSIZE;
+	float		fSize : TEXCOORD2;
 };
 
 /* Trail */
@@ -87,6 +88,7 @@ struct VS_TRAILOUT
 	float		fWidth : TEXCOORD1;
 	row_major   float4x4    Matrix  : WORLD;
 	uint        InstanceID  : SV_InstanceID;
+	float		fSize : TEXCOORD2;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -94,10 +96,17 @@ VS_OUT VS_MAIN(VS_IN In)
 	VS_OUT		Out = (VS_OUT)0;
 
 	vector      vPosition = mul(float4(In.vPosition, 1.f), In.Matrix);
+	float4x4    Matrix = In.Matrix;
+	Out.fSize = In.Matrix[0][3];
+
+	Matrix[0][3] = 0.f;
+	Matrix[1][3] = 0.f;
+	Matrix[2][3] = 0.f;
+	Matrix[3][3] = 1.f;
 
 	//Out.vPosition = mul(vPosition, g_WorldMatrix).xyz;
-	Out.vPosition = mul(float4(matrix_postion(In.Matrix), 1.f), g_WorldMatrix).xyz;
 	//Out.vCenterPosition = matrix_postion(g_WorldMatrix);
+	Out.vPosition = mul(float4(matrix_postion(In.Matrix), 1.f), g_WorldMatrix).xyz;
 	Out.vCenterPosition = mul(float4(0.f, 0.f, 0.f, 1.f), g_WorldMatrix).xyz;
 	Out.vRightScale = matrix_right(In.Matrix);
 	Out.vPSize = In.vPSize;
@@ -111,6 +120,7 @@ VS_TRAILOUT VS_TRAILMAIN(VS_TRAILIN In)
 	VS_TRAILOUT  Out = (VS_TRAILOUT)0;
 
 	float4x4    Matrix = In.Matrix;
+	Out.fSize = In.Matrix[0][3];
 	Out.fLife = In.Matrix[3][3];
 	Out.fWidth = In.Matrix[2][3];
 
@@ -133,6 +143,7 @@ struct GS_IN
 	float3		vCenterPosition : TEXCOORD0;
 	float3		vRightScale : TEXCOORD1;
 	float2		vPSize : PSIZE;
+	float		fSize : TEXCOORD2;
 };
 
 struct GS_OUT
@@ -150,6 +161,7 @@ struct GS_TRAILIN
 	float		fWidth : TEXCOORD1;
 	row_major   float4x4    Matrix  : WORLD;
 	uint        InstanceID  : SV_InstanceID;
+	float		fSize : TEXCOORD2;
 };
 
 struct GS_TRAILOUT
@@ -166,8 +178,8 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 
 	float3      vLook = g_vCamPosition.xyz - In[0].vPosition;
 	float3      vDir = normalize(In[0].vPosition - In[0].vCenterPosition);
-	float3      vRight = normalize(cross(vDir, vLook)) * In[0].vPSize.x * 0.5f;
-	float3      vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f * In[0].vRightScale.x;
+	float3      vRight = normalize(cross(vDir, vLook)) * In[0].fSize;
+	float3      vUp = normalize(cross(vLook, vRight)) * In[0].fSize * In[0].vRightScale.x;
 
 	matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float3      vPosition;
@@ -206,8 +218,8 @@ void GS_DEFAULT(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	GS_OUT		Out[4];
 
 	float3		vLook = g_vCamPosition.xyz - In[0].vPosition;
-	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].vPSize.x * 0.5f;
-	float3		vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f;
+	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].fSize;
+	float3		vUp = normalize(cross(vLook, vRight)) * In[0].fSize;
 
 	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float3		vPosition;
@@ -248,8 +260,8 @@ void GS_RECTTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 	matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float4x4    WorldMatrix = In[0].Matrix;
 
-	float3      vUp = matrix_up(WorldMatrix) * In[0].vPSize.y * In[0].fWidth;
-	float3		vRight = matrix_right(WorldMatrix)* In[0].vPSize.x * In[0].fWidth;
+	float3      vUp = matrix_up(WorldMatrix) * In[0].fSize * In[0].fWidth;
+	float3		vRight = matrix_right(WorldMatrix)* In[0].fSize * In[0].fWidth;
 	float3		vPosition = matrix_postion(In[0].Matrix);
 
 	float3 vResultPos;

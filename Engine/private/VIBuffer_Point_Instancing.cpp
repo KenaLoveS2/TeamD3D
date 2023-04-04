@@ -228,7 +228,6 @@ HRESULT CVIBuffer_Point_Instancing::Set_PSize(_float2 PSize)
 	}
 
 	m_pContext->Unmap(m_pVB, 0);
-
 	return S_OK;
 }
 
@@ -237,17 +236,15 @@ HRESULT CVIBuffer_Point_Instancing::Set_RandomPSize(_float2 PSizeMinMax)
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
-		((VTXPOINT*)SubResource.pData)[i].vPSize.x = CUtile::Get_RandomFloat(PSizeMinMax.x, PSizeMinMax.y);
-		((VTXPOINT*)SubResource.pData)[i].vPSize.y = CUtile::Get_RandomFloat(PSizeMinMax.x, PSizeMinMax.y);
-		m_InstanceData[i].fPSize = PSizeMinMax;
+		_float fRandom = CUtile::Get_RandomFloat(PSizeMinMax.x, PSizeMinMax.y);
+		((VTXMATRIX*)SubResource.pData)[i].vRight.w = fRandom;
 	}
 
-	m_pContext->Unmap(m_pVB, 0);
-
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
 	return S_OK;
 }
 
@@ -699,6 +696,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Haze(_float fTimeDelta)
 		}
 	}
 
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
 	m_pContext->Unmap(m_pInstanceBuffer, 0);
 	return S_OK;
 }
