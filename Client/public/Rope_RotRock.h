@@ -61,8 +61,11 @@ public:
 	virtual HRESULT Late_Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-	
-	HRESULT SetUp_Components();
+	virtual HRESULT Render() override;
+
+	virtual HRESULT SetUp_Components() override;
+	virtual HRESULT SetUp_ShaderResources() override;
+	virtual HRESULT SetUp_ShadowShaderResources() override;
 
 	virtual void Imgui_RenderProperty() override;
 	virtual HRESULT Call_EventFunction(const string& strFuncName) override;

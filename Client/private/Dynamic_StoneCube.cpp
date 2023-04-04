@@ -17,11 +17,15 @@ CDynamic_StoneCube::CDynamic_StoneCube(const CDynamic_StoneCube& rhs)
 
 void CDynamic_StoneCube::Set_CollActive()
 {
-	
-	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
-	PxRigidActor* pCurActor = (pPhysX->Find_DynamicActor(m_szCloneObjectTag));
-	assert(nullptr != pCurActor && "CDynamic_StoneCube::Set_CollActive");
-	pPhysX->WakeUp(reinterpret_cast<PxRigidDynamic*>(pCurActor));
+	m_pTransformCom->Set_PxActorActive(true);
+	m_pTransformCom->Set_Position(m_StoneCubeDesc.vPos);
+
+
+	// m_pTransformCom->Set_PxActorSleep(false);
+	// CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+	// PxRigidActor* pCurActor = (pPhysX->Find_DynamicActor(m_szCloneObjectTag));
+	// assert(nullptr != pCurActor && "CDynamic_StoneCube::Set_CollActive");
+	// pPhysX->WakeUp(reinterpret_cast<PxRigidDynamic*>(pCurActor));
 	//reinterpret_cast<PxRigidDynamic*>(pCurActor)->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false);
 	//pPhysX->WakeUp(reinterpret_cast<PxRigidDynamic*>(pCurActor));
 
@@ -48,8 +52,8 @@ HRESULT CDynamic_StoneCube::Initialize(void* pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-		XMVectorSet(m_StoneCubeDesc.vPos.x, m_StoneCubeDesc.vPos.y, m_StoneCubeDesc.vPos.z, 1.f));
+	// m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(m_StoneCubeDesc.vPos.x, m_StoneCubeDesc.vPos.y, m_StoneCubeDesc.vPos.z, 1.f));
+	m_pTransformCom->Set_Position(m_StoneCubeDesc.vPos);
 
 	return S_OK;
 }
@@ -64,7 +68,7 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	BoxDesc.pActortag = m_szCloneObjectTag;
 	BoxDesc.eType = BOX_DYNAMIC;
-	BoxDesc.vPos = CUtile::Float_4to3(vPos);
+	BoxDesc.vPos = _float3(-100.f, 0.f, -100.f);
 	BoxDesc.vSize = m_StoneCubeDesc.vSize;
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
@@ -81,20 +85,20 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.bKinematic = false;
 	
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_DYNAMIC_ENVIOBJ,true)); //뒤에 트루 써주면된다.   _bool bRightUpLookSync == true 쓰면됀다.
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_DYNAMIC_ENVIOBJ, true, false)); //뒤에 트루 써주면된다.   _bool bRightUpLookSync == true 쓰면됀다. _bool isActive == true 쓰면됀다.
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag,_float3(0.f,0.f,0.f), true); // Pivot 안슬거면 000 하면된다.   _bool bRightUpLookSync == true 로 주면된다. 
+	// m_pTransformCom->Set_PxActorSleep(true);
+
+	/*
 	PxRigidActor* pCurActor = (pPhysX->Find_DynamicActor(m_szCloneObjectTag));
 	assert(nullptr != pCurActor && "CDynamic_StoneCube::Late_Initialize");
 	pPhysX->PutToSleep(reinterpret_cast<PxRigidDynamic*>(pCurActor));
-	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag,_float3(0.f,0.f,0.f),true); // Pivot 안슬거면 000 하면된다.   _bool bRightUpLookSync == true 로 주면된다. 
-
-	m_pRendererCom->Set_PhysXRender(true);
-
+	*/
 	return S_OK;
 }
 
 void CDynamic_StoneCube::Tick(_float fTimeDelta)
 {
-
 	/*
 		if (m_bTestOnce == false)
 		{
@@ -369,7 +373,10 @@ void CDynamic_StoneCube::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+}
 
-	
-
+void CDynamic_StoneCube::Execute_SleepEnd()
+{	
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.f, 0.f), true);
+	m_pTransformCom->Set_Position(m_StoneCubeDesc.vPos);
 }
