@@ -321,6 +321,10 @@ HRESULT CEffect_Texture_Base::Save_Data()
 			json["24. SelfStop"] = m_bSelfStop;
 			json["25. SelfStopTime"] = m_fSelfStopTime;
 
+			json["26. DissolvePass"] = m_iDissolvePass;
+			json["27. DissolveSpeed"] = m_fDissolveSpeed;
+
+
 			ofstream file(strSaveDirectory.c_str());
 			file << json;
 			file.close();
@@ -354,6 +358,7 @@ HRESULT CEffect_Texture_Base::Load_Data(_tchar* fileName)
 	file.close();
 
 	jLoad["00. RenderPass"].get_to<_int>(m_iRenderPass);
+	m_iRenderPassOriginal = m_iRenderPass;
 
 	int i = 0;
 	for (auto fElement : jLoad["01. Color"])
@@ -408,6 +413,12 @@ HRESULT CEffect_Texture_Base::Load_Data(_tchar* fileName)
 
 	if (jLoad.contains("25. SelfStopTime"))
 		jLoad["25. SelfStopTime"].get_to<_float>(m_fSelfStopTime);
+
+	if (jLoad.contains("26. DissolvePass"))
+		jLoad["26. DissolvePass"].get_to<_int>(m_iDissolvePass);
+
+	if (jLoad.contains("27. DissolveSpeed"))
+		jLoad["27. DissolveSpeed"].get_to<_float>(m_fDissolveSpeed);
 
 	return S_OK;
 }

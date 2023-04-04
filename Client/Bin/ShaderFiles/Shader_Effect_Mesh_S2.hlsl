@@ -215,6 +215,9 @@ PS_OUT PS_MAIN_DISSOLVE(PS_IN In)
 	{
 		In.vTexUV.x += g_fUVSpeedX;
 		In.vTexUV.y += g_fUVSpeedY;
+
+		In.vTexUV.y *= g_UVScaleY;
+		In.vTexUV.y += g_fUVSpeedY;
 	}
 
 	float4	vMask = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
@@ -334,7 +337,7 @@ technique11 DefaultTechnique
 
 	pass DefaultMask // 2
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_CULLNONE);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 

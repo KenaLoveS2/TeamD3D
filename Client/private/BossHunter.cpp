@@ -1561,7 +1561,10 @@ void CBossHunter::StunEffect_Off(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_vecEffects[EFFECT_STUN_MESH_CYLINDER]->DeActivate();
+	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->DeActivate_Dissolve();
+	m_vecEffects[EFFECT_STUN_MESH_BASE]->DeActivate_Dissolve();
+	m_vecEffects[EFFECT_STUN_MESH_BASE2]->DeActivate_Dissolve();
+
 }
 
 void CBossHunter::StunEffect_On(_bool bIsInit, _float fTimeDelta)
@@ -1576,7 +1579,7 @@ void CBossHunter::StunEffect_On(_bool bIsInit, _float fTimeDelta)
 
 	_float4 vPos;
 
-	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_lf_ball_jnt");
+	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_rt_upArmWeightSplit_1_jnt");
 	if (pStaffBonePtr != nullptr)
 	{
 		_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
@@ -1586,9 +1589,9 @@ void CBossHunter::StunEffect_On(_bool bIsInit, _float fTimeDelta)
 	else
 		vPos = m_pTransformCom->Get_Position();
 
-
-	m_vecEffects[EFFECT_STUN_MESH_CYLINDER]->Activate(vPos);
-
+	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->Activate(vPos);
+	m_vecEffects[EFFECT_STUN_MESH_BASE]->Activate(vPos);
+	m_vecEffects[EFFECT_STUN_MESH_BASE2]->Activate(vPos);
 }
 
 HRESULT CBossHunter::Create_Effects()
@@ -1656,6 +1659,7 @@ void CBossHunter::ImGui_EffectProperty()
 		m_pShaderCom->ReCompile();
 		m_pRendererCom->ReCompile();
 	}
+	ImGui::SameLine();
 
 	static vector<string> tags;
 	if (ImGui::Button("Refresh"))

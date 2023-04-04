@@ -40,7 +40,7 @@ public: /* Activation Function */
 	virtual void					Activate_Scaling(_float4 vPos, _float2 vScaleSpeed) {};
 	virtual void					Activate_Spread(_float4 vPos, _float2 vScaleSpeed) {};
 	virtual void					DeActivate();
-
+	virtual void					DeActivate_Dissolve();
 
 
 protected:	/* Tool Function */
@@ -59,12 +59,12 @@ protected: /* Property */
 	_float4							m_vColor;
 	_float							m_fHDRIntensity;
 	_bool							m_bOptions[OPTION_END];
-	//_bool							m_bSpriteAnim;
-	//_bool							m_bUVAnim;
 
 	/* For Dissolve */
 	_float							m_fDissolveAlpha;
 	_float							m_fDissolveSpeed;
+	_int							m_iDissolvePass;
+	_int							m_iRenderPassOriginal;
 
 	/* For Sprite Animation */
 	_int							m_iFrames[2];
