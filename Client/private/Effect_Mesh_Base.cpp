@@ -99,6 +99,28 @@ void CEffect_Mesh_Base::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
+	if (m_bActiveSlowly)
+	{
+		m_vTextureColors[0].w += fTimeDelta;
+		if (m_vTextureColors[0].w > 1.0f)
+		{
+			m_vTextureColors[0].w = 1.0f;
+			m_bActiveSlowly = false;
+		}
+	}
+
+	if (m_bDeActiveSlowly)
+	{
+		m_vTextureColors[0].w -= fTimeDelta;
+		if (m_vTextureColors[0].w < 0.0f)
+		{
+			m_vTextureColors[0].w = 1.0f;
+			m_bDeActiveSlowly = false;
+			DeActivate();
+		}
+	}
+
+
 	if (3 == m_iRenderPass) /* dissolve Pass */
 	{
 		m_fDissolveAlpha += m_fDissolveSpeed * fTimeDelta;
@@ -107,7 +129,7 @@ void CEffect_Mesh_Base::Tick(_float fTimeDelta)
 		{
 			m_fDissolveAlpha = 1.0f;
 
-			DeActivate();
+			//DeActivate();
 			//m_bActive = false;
 		}
 	}
@@ -464,14 +486,20 @@ void CEffect_Mesh_Base::Activate(_float4 vPos)
 {
 	m_bActive = true;
 	m_pTransformCom->Set_Position(vPos);
-
-
 }
 
 void CEffect_Mesh_Base::Activate(CGameObject* pTarget)
 {
 	m_bActive = true;
 	m_pTarget = pTarget;
+}
+
+void CEffect_Mesh_Base::Activate_Slowly(_float4 vPos)
+{
+	m_bActive = true;
+	m_pTransformCom->Set_Position(vPos);
+	m_vTextureColors[0].w = 0.0f;
+	m_bActiveSlowly = true;
 }
 
 void CEffect_Mesh_Base::DeActivate()

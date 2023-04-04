@@ -1497,7 +1497,7 @@ void CBossHunter::ShockEffect_On(_bool bIsInit, _float fTimeDelta)
 	}
 
 	_float4 vPos = m_pArrows[m_iArrowIndex]->Get_ArrowHeadPos();
-	CGameObject* pArrow = m_pArrows[m_iArrowIndex];
+	//vPos.x += 0.30f;
 
 	m_vecEffects[EFFECT_CHARGE_PARTICLE_GATHER]->Activate(vPos);
 	m_vecEffects[EFFECT_CHARGE_TEXTURE_CIRCLE]->Activate_Scaling(vPos, { -3.f, -3.f });
@@ -1561,9 +1561,9 @@ void CBossHunter::StunEffect_Off(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->DeActivate_Dissolve();
-	m_vecEffects[EFFECT_STUN_MESH_BASE]->DeActivate_Dissolve();
-	m_vecEffects[EFFECT_STUN_MESH_BASE2]->DeActivate_Dissolve();
+	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->DeActivate_Slowly();
+	m_vecEffects[EFFECT_STUN_MESH_BASE]->DeActivate_Slowly();
+	m_vecEffects[EFFECT_STUN_MESH_BASE2]->DeActivate_Slowly();
 
 }
 
@@ -1589,9 +1589,9 @@ void CBossHunter::StunEffect_On(_bool bIsInit, _float fTimeDelta)
 	else
 		vPos = m_pTransformCom->Get_Position();
 
-	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->Activate(vPos);
-	m_vecEffects[EFFECT_STUN_MESH_BASE]->Activate(vPos);
-	m_vecEffects[EFFECT_STUN_MESH_BASE2]->Activate(vPos);
+	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->Activate_Slowly(vPos);
+	m_vecEffects[EFFECT_STUN_MESH_BASE]->Activate_Slowly(vPos);
+	m_vecEffects[EFFECT_STUN_MESH_BASE2]->Activate_Slowly(vPos);
 }
 
 HRESULT CBossHunter::Create_Effects()

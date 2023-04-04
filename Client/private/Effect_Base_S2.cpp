@@ -20,6 +20,8 @@ CEffect_Base_S2::CEffect_Base_S2(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	, m_fSelfStopTime(0.0f)
 	, m_fSelfStopTimeAcc(0.0f)
 	, m_iDissolvePass(0)
+	, m_bActiveSlowly(false)
+	, m_bDeActiveSlowly(false)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
@@ -57,6 +59,8 @@ CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2& rhs)
 	, m_fSelfStopTime(0.0f)
 	, m_fSelfStopTimeAcc(0.0f)
 	, m_iDissolvePass(0)
+	, m_bActiveSlowly(false)
+	, m_bDeActiveSlowly(false)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
@@ -176,10 +180,11 @@ void CEffect_Base_S2::DeActivate()
 	m_iRenderPass = m_iRenderPassOriginal;
 }
 
-void CEffect_Base_S2::DeActivate_Dissolve()
+void CEffect_Base_S2::DeActivate_Slowly()
 {
-	m_fDissolveAlpha = 0.0f;
-	m_iRenderPass = m_iDissolvePass;
+	m_bDeActiveSlowly = true;
+	//m_fDissolveAlpha = 0.0f;
+	//m_iRenderPass = m_iDissolvePass;
 }
 
 _float4 CEffect_Base_S2::ColorCode()
