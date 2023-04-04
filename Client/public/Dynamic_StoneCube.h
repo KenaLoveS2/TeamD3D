@@ -16,17 +16,13 @@ class CDynamic_StoneCube final :public CGameObject
 public:
 	typedef struct  tag_Dynamic_StoneCube
 	{
+		_tchar pModelName[64] =L"";
 		_float3 vSize;
+		_float3 vPos;
 		_float fLinearDamping;
 		_float fMass;
 
-		tag_Dynamic_StoneCube()
-			: fLinearDamping{ 0.f },
-			fMass{ 0.f }
-			, vSize{ _float3(1.f, 1.f, 1.f) }
-		{
-			
-		}
+
 
 	}Dynamic_StoneCube_DESC;
 
@@ -37,8 +33,7 @@ private:
 	virtual ~CDynamic_StoneCube() = default;
 
 public:
-	void	Set_StoneCubeDesc(Dynamic_StoneCube_DESC& StoneCubeDesc);
-
+	void				Set_CollActive();
 
 public:
 	virtual HRESULT		Initialize_Prototype() override;
@@ -51,13 +46,15 @@ public:
 	virtual HRESULT		RenderCine() override;
 	//virtual void					ImGui_PhysXValueProperty() override;
 
+public:
+	void				Actor_Clear();
+
 private:
 	class CShader* m_pShaderCom = nullptr;
 	class CRenderer* m_pRendererCom = nullptr;
 	class CModel* m_pModelCom = nullptr;
 
 private:
-	CEnviromentObj::ENVIROMENT_DESC							m_EnviromentDesc;
 	Dynamic_StoneCube_DESC									m_StoneCubeDesc;
 	_bool				m_bTestOnce = false;
 

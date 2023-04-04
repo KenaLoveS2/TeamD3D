@@ -1031,7 +1031,7 @@ void CTransform::Sync_ActorMatrix(_float4x4& Matrix)
 
 void CTransform::Set_PxActorSleep(_bool bSleep)
 {
-	if (m_pPhysX_Manager == nullptr) return;
+	if (m_pPxActor == nullptr) return;
 
 	if (m_bIsStaticPxActor && m_pPxActor)
 	{

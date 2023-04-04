@@ -222,6 +222,9 @@ public:
 	void	Imgui_Render();
 #ifdef _DEBUG
 	void	Imgui_Render(const _tchar* pActorName,vector<_float3>* vec_ColiderSize);
+
+	void	Imgui_Render(const _tchar* pActorName);
+
 #endif
 	PxVec3						Get_ScalingBox(PxRigidActor *pActor);
 		

@@ -55,6 +55,7 @@ HRESULT CLevel_MapTool::Initialize()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
+
 #ifdef FOR_MAP_GIMMICK
 	if (FAILED(Ready_Layer_CineCamera(TEXT("CinemaCam"))))
 	{
@@ -145,8 +146,9 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "D.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_DY.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
@@ -267,6 +269,18 @@ HRESULT CLevel_MapTool::Ready_Layer_Monster(const _tchar* pLayerTag)
 HRESULT CLevel_MapTool::Ready_Layer_Effect(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CGameObject* pGameObject = nullptr;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Test", nullptr, &pGameObject)))
+	//	return E_FAIL;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_Swipes_Charged"), L"Swipes_Charged", nullptr, &pGameObject)))
+	//	return E_FAIL;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_Warrior_FireSwipe"), L"Swipe", nullptr, &pGameObject)))
+	//	return E_FAIL;
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
