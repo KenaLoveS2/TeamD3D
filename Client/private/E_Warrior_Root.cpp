@@ -69,6 +69,7 @@ HRESULT CE_Warrior_Root::Late_Initialize(void * pArg)
 	PxBoxDesc.fDynamicFriction = 0.5f;
 	PxBoxDesc.fStaticFriction = 0.5f;
 	PxBoxDesc.fRestitution = 0.1f;
+	PxBoxDesc.isTrigger = true;
 
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
 	m_pTransformCom->Add_Collider(m_szCloneObjectTag, matPivot);

@@ -47,7 +47,7 @@ HRESULT CHatCart::Initialize(void* pArg)
 
 HRESULT CHatCart::Late_Initialize(void* pArg)
 {
-	return S_OK; // 나중에 주석해제하셈
+	//return S_OK; // 나중에 주석해제하셈
 
 	/*Player_Need*/
 	m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
@@ -96,7 +96,7 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 		//_float4 vPos = m_pTransformCom->Get_Position();
 		//_float	fDist = (vPlayerPos - vPos).Length();
 
-		if (fDist <= 5.f)
+		if (fDist <= 10.f)
 		{
 			if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
 			{
@@ -260,11 +260,10 @@ HRESULT CHatCart::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	/*���߿�  ���� �ε��� �����ؾ߉�*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = g_LEVEL;
 
-	/* For.Com_Model */ 	/*���߿�  ���� �ε��� �����ؾ߉�*/
+	/* For.Com_Model */ 	
 	if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;

@@ -119,7 +119,6 @@ void CPulse_Plate_Anim::Late_Tick(_float fTimeDelta)
 		m_bRenderCheck = false;
 	if (m_bRenderCheck == true)
 		m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 100.f);
-
 	/*~Culling*/
 
 	if (m_pRendererCom && m_bRenderActive && false == m_bRenderCheck)
@@ -138,9 +137,10 @@ HRESULT CPulse_Plate_Anim::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_AO_R_MTexture"),E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 13), E_FAIL);
 	}
 
 	return S_OK;
@@ -205,13 +205,20 @@ HRESULT CPulse_Plate_Anim::SetUp_Components()
 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
+
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (FAILED(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_PulsePlateAnim", TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
+
 	/* For.Com_Shader */
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
 		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(i, WJTextureType_COMP_E_R_AO, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/T_PulsePlate_Comp_E_R_Ao.png")), E_FAIL);
+
 	return S_OK;
 }
 
@@ -225,10 +232,8 @@ HRESULT CPulse_Plate_Anim::SetUp_ShaderResources()
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))	return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -244,9 +249,9 @@ void CPulse_Plate_Anim::Pulse_Plate_AnimControl(_float fTimeDelta)
 		m_pModelCom->Set_AnimIndex(2);
 		if(m_EnviromentDesc.iRoomIndex == 1 && !m_bFirstCinema)
 		{
-			/*CGameInstance::GetInstance()->Work_Camera(TEXT("MAP_CINE0"));
+			CGameInstance::GetInstance()->Work_Camera(TEXT("MAP_CINE0"));
 			dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Play();
-			m_bFirstCinema = true;*/
+			m_bFirstCinema = true;
 		}
 
 		if (m_EnviromentDesc.iRoomIndex == 2 && !m_bSecondCinema)

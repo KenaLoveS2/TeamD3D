@@ -95,17 +95,17 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
+	m_pCinecam[0] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CINE0")));
+	m_pCinecam[1] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CINE1")));
+
 	Load_KeyFrame();
-	if(!m_keyframes.empty())
+	if (!m_keyframes.empty())
 	{
-		const _float4 vPos = _float4( m_keyframes[m_iKeyFrame].vPos.x, m_keyframes[m_iKeyFrame].vPos.y, m_keyframes[m_iKeyFrame].vPos.z,1.f);
-		const _float4 vLook = _float4(m_keyframes[m_iKeyFrame].vLook.x, m_keyframes[m_iKeyFrame].vLook.y, m_keyframes[m_iKeyFrame].vLook.z,0.f);
+		const _float4 vPos = _float4(m_keyframes[m_iKeyFrame].vPos.x, m_keyframes[m_iKeyFrame].vPos.y, m_keyframes[m_iKeyFrame].vPos.z, 1.f);
+		const _float4 vLook = _float4(m_keyframes[m_iKeyFrame].vLook.x, m_keyframes[m_iKeyFrame].vLook.y, m_keyframes[m_iKeyFrame].vLook.z, 0.f);
 		m_pTransformCom->Set_Position(vPos);
 		m_pTransformCom->Set_Look(vLook);
 	}
-
-	m_pCinecam[0] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CINE0")));
-	m_pCinecam[1] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CINE1")));
 
 	return S_OK;
 }

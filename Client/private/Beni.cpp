@@ -93,7 +93,7 @@ void CBeni::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	Update_Collider(fTimeDelta);
 	SaiyaFunc(fTimeDelta);
-	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	AdditiveAnim(fTimeDelta);
