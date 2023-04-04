@@ -115,6 +115,9 @@ PS_OUT PS_MAIN(PS_IN In)
 	{
 		In.vTexUV.x += g_fUVSpeedX;
 		In.vTexUV.y += g_fUVSpeedY;
+
+		In.vTexUV.y *= g_UVScaleY;
+		In.vTexUV.y += g_fUVSpeedY;
 	}
 
 	Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
@@ -124,7 +127,8 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse *= g_vColor;
 	Out.vDiffuse.rgb *= g_fHDRItensity;
 
-	Out.vDiffuse.a *= abs(g_fCutY - abs(In.vInPosition.y));
+	//Out.vDiffuse.a *= abs(g_fCutY - abs(In.vInPosition.y));
+	Out.vDiffuse.a *= abs(g_fCutY - abs(In.vInPosition.y)) / g_fCutY;
 
 	//if (In.vInPosition.y > g_fCutY)
 	//	discard;
@@ -304,7 +308,7 @@ technique11 DefaultTechnique
 {
 	pass Default //0
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_CULLNONE);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
