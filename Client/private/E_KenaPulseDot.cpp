@@ -40,13 +40,6 @@ HRESULT CE_KenaPulseDot::Initialize(void * pArg)
 
 void CE_KenaPulseDot::Tick(_float fTimeDelta)
 {
-	ImGui::Begin("Dot");
-
-	if (ImGui::Button("Recompile"))
-		m_pShaderCom->ReCompile();
-
-	ImGui::End();
-
 	__super::Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.bActive == true)

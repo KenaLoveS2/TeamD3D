@@ -39,5 +39,5 @@ CImGui_PhysX* CImGui_PhysX::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 void CImGui_PhysX::Free()
 {
 	__super::Free();
-	Safe_Release(m_pGameInstance);
+	Safe_Release(m_pGameInstance);	
 }

@@ -15,10 +15,16 @@ CDynamic_StoneCube::CDynamic_StoneCube(const CDynamic_StoneCube& rhs)
 }
 
 
-void CDynamic_StoneCube::Set_StoneCubeDesc(Dynamic_StoneCube_DESC& StoneCubeDesc)
+void CDynamic_StoneCube::Set_CollActive()
 {
+	
+	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+	PxRigidActor* pCurActor = (pPhysX->Find_DynamicActor(m_szCloneObjectTag));
+	assert(nullptr != pCurActor && "CDynamic_StoneCube::Set_CollActive");
+	pPhysX->WakeUp(reinterpret_cast<PxRigidDynamic*>(pCurActor));
+	//reinterpret_cast<PxRigidDynamic*>(pCurActor)->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false);
+	//pPhysX->WakeUp(reinterpret_cast<PxRigidDynamic*>(pCurActor));
 
-	memcpy(&m_StoneCubeDesc, &StoneCubeDesc, sizeof(m_StoneCubeDesc));
 }
 
 HRESULT CDynamic_StoneCube::Initialize_Prototype()
@@ -33,7 +39,7 @@ HRESULT CDynamic_StoneCube::Initialize(void* pArg)
 {
 	if(pArg!= nullptr)
 	{
-		memcpy(&m_EnviromentDesc, pArg, sizeof(m_EnviromentDesc));
+		memcpy(&m_StoneCubeDesc, pArg, sizeof(m_StoneCubeDesc));
 	}
 
 	if (FAILED(__super::Initialize(nullptr)))
@@ -42,6 +48,9 @@ HRESULT CDynamic_StoneCube::Initialize(void* pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
+		XMVectorSet(m_StoneCubeDesc.vPos.x, m_StoneCubeDesc.vPos.y, m_StoneCubeDesc.vPos.z, 1.f));
+
 	return S_OK;
 }
 
@@ -49,47 +58,6 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 {
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-
-	//_float3 vSize = _float3(1.f, 1.f, 1.f);
-
-	/*if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall03")
-	{
-		vSize = _float3(0.29f, 0.12f, 0.13f);
-	}
-	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall04")
-	{
-		vSize = _float3(0.13f, 0.09f, 0.17f);
-	}
-	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall05")
-	{
-		vSize = _float3(0.2f, 0.21f, 0.1f);
-	}
-	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall06")
-	{
-		vSize = _float3(0.23f, 0.14f, 0.19f);
-	}
-	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_MaskShrine_Rock_09")
-	{
-		vPos.y += 0.05f;
-		vSize = _float3(0.09f, 0.09f, 0.09f);
-	}
-	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium04")
-	{
-		vSize = _float3(0.17f, 0.1f, 0.14f);
-	}
-	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium06")
-	{
-		vPos.y -= 0.03f;
-		vSize = _float3(0.15f, 0.1f, 0.2f);
-	}
-	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium07")
-	{
-		vPos.y -= 0.01f;
-		vSize = _float3(0.19f, 0.11f, 0.19f);
-	}
-	else
-		return S_OK;*/
-
 
 	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
 
@@ -112,8 +80,11 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.bKinematic = false;
-
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT,true)); //뒤에 트루 써주면된다.   _bool bRightUpLookSync == true 쓰면됀다.
+	
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_DYNAMIC_ENVIOBJ,true)); //뒤에 트루 써주면된다.   _bool bRightUpLookSync == true 쓰면됀다.
+	PxRigidActor* pCurActor = (pPhysX->Find_DynamicActor(m_szCloneObjectTag));
+	assert(nullptr != pCurActor && "CDynamic_StoneCube::Late_Initialize");
+	pPhysX->PutToSleep(reinterpret_cast<PxRigidDynamic*>(pCurActor));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag,_float3(0.f,0.f,0.f),true); // Pivot 안슬거면 000 하면된다.   _bool bRightUpLookSync == true 로 주면된다. 
 
 	m_pRendererCom->Set_PhysXRender(true);
@@ -124,14 +95,14 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 void CDynamic_StoneCube::Tick(_float fTimeDelta)
 {
 
-	/*{
+	/*
 		if (m_bTestOnce == false)
 		{
 			Late_Initialize();
 			m_bTestOnce = true;
 		}
 
-	}*/
+	*/
 
 	
 	__super::Tick(fTimeDelta);
@@ -261,8 +232,6 @@ HRESULT CDynamic_StoneCube::RenderShadow()
 	return S_OK;
 }
 
-
-
 HRESULT CDynamic_StoneCube::RenderCine()
 {
 	if (FAILED(__super::RenderCine()))
@@ -294,6 +263,12 @@ HRESULT CDynamic_StoneCube::RenderCine()
 	return S_OK;
 }
 
+void CDynamic_StoneCube::Actor_Clear()
+{
+	m_pTransformCom->Clear_Actor();
+
+}
+
 //void CDynamic_StoneCube::ImGui_PhysXValueProperty()
 //{
 //	__super::ImGui_PhysXValueProperty();
@@ -314,7 +289,6 @@ HRESULT CDynamic_StoneCube::RenderCine()
 //	m_pTransformCom->Set_PxPivot(vPxPivot);
 //}
 
-
 HRESULT CDynamic_StoneCube::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -322,14 +296,10 @@ HRESULT CDynamic_StoneCube::SetUp_Components()
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	/* For.Com_Shader */
-	/*나중에  레벨 인덱스 수정해야됌*/
-	if (m_EnviromentDesc.iCurLevel == 0)
-		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
-		(CComponent**)&m_pModelCom)))
+	if (FAILED(__super::Add_Component(g_LEVEL, m_StoneCubeDesc.pModelName, TEXT("Com_Model"),
+		(CComponent**)&m_pModelCom,this)))
 		return E_FAIL;
 	/* For.Com_Shader */
 	/* For.Com_Shader */
@@ -393,11 +363,13 @@ CGameObject* CDynamic_StoneCube::Clone(void* pArg)
 
 void CDynamic_StoneCube::Free()
 {
-	if(m_isCloned)
-		m_pTransformCom->Clear_Actor();
-
+	
 	__super::Free();
+
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+
+	
+
 }

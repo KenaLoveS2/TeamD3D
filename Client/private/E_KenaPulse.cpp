@@ -96,7 +96,7 @@ HRESULT CE_KenaPulse::Initialize(void* pArg)
     /* ~Component */
 
     Set_Child();
-    Set_ShaderOption(m_eEFfectDesc.iPassCnt, 2.0f, _float2(0.0f, 0.0f), false);
+    Set_ShaderOption(m_eEFfectDesc.iPassCnt, 1.0f, _float2(0.0f, 0.0f), false);
     m_eEFfectDesc.vColor = XMVectorSet(0.0f, 116.f, 255.f, 255.f) / 255.f;
     m_eStatus.eState = CE_KenaPulse::tagMyStatus::STATE_DEFAULT;
     memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
@@ -163,12 +163,8 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 	m_fTimeDelta += fTimeDelta;
 	if (m_bDesolve)
 	{
-		m_fDissolveTime += fTimeDelta;
-		if (m_fDissolveTime > 3.f)
-		{
-			m_bDesolve = false;
-			m_fDissolveTime = 0.0f;
-		}
+		_bool bResult = TurnOffSystem(m_fDissolveTime, 3.f, fTimeDelta);
+		if (bResult == true) m_bDesolve = false;
 	}
 	else
 		m_fDissolveTime = 0.0f;
@@ -255,6 +251,9 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 
     __super::Late_Tick(fTimeDelta);
     if (m_pExplsionGravity) m_pExplsionGravity->Late_Tick(fTimeDelta);
+    /* Day Or Night */
+    if (g_bDayOrNight) m_fHDRValue = 1.0f;
+    else m_fHDRValue = 2.5f;
 
     if (nullptr != m_pRendererCom)
     {
@@ -405,12 +404,13 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
     FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_HpRatio", &m_fHpRatio, sizeof _float), E_FAIL);
     FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_PulseState", &m_eStatus.eState, sizeof _uint), E_FAIL);
     FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_DamageDurationTime", &m_eStatus.fStateDurationTime, sizeof _float), E_FAIL);
+    FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDesolve, sizeof(_bool)), E_FAIL);
 
     if (m_bDesolve)
-    {
-        FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
-        FAILED_CHECK_RETURN(m_pDissolveTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 3), E_FAIL);
-    }
+	{
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
+		FAILED_CHECK_RETURN(m_pDissolveTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 3), E_FAIL);
+	}
 
     return S_OK;
 }

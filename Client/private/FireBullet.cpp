@@ -6,6 +6,7 @@
 #include "Monster.h"
 #include "E_RectTrail.h"
 #include "E_P_ExplosionGravity.h"
+#include "E_FireBulletExplosion.h"
 
 CFireBullet::CFireBullet(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -37,7 +38,7 @@ HRESULT CFireBullet::Initialize(void * pArg)
 	else
 		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
 
-	m_iTotalDTextureComCnt = 0;	m_iTotalMTextureComCnt = 0;
+	m_iTotalDTextureComCnt = 1;	m_iTotalMTextureComCnt = 0;
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);		
 	FAILED_CHECK_RETURN(Set_ChildEffects(), E_FAIL);
@@ -55,6 +56,7 @@ HRESULT CFireBullet::Initialize(void * pArg)
 	m_pTransformCom->Set_Position(m_vInvisiblePos);
 
 	m_eEFfectDesc.bActive = false;
+	m_eEFfectDesc.fFrame[0] = 99.f;
 	return S_OK;
 }
 
@@ -122,6 +124,12 @@ void CFireBullet::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
+	if (m_bDissolve)
+	{
+		_bool bResult = TurnOffSystem(m_fDissolveTime, 4.f, fTimeDelta);
+		if (bResult == true) m_bDissolve = false;
+	}
+
 	FireBullet_Proc(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);
 }
@@ -144,9 +152,9 @@ HRESULT CFireBullet::Render()
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		 m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		 m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_ReamTexture");
-		 m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_ReamTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 
 		m_pModelCom->Render(m_pShaderCom, i, nullptr, 8);
 	}
@@ -175,9 +183,9 @@ HRESULT CFireBullet::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Sphere", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
-	 FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/MageBullet/T_Deadzone_REAM.png")), E_FAIL);
-	 FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_SPECULAR, TEXT("../Bin/Resources/Textures/Effect/MageBullet/t_fur_noise_02.png")), E_FAIL);
-	 FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/MageBullet/T_GR_Cloud_Noise_A.png")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/MageBullet/T_Deadzone_REAM.png")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_SPECULAR, TEXT("../Bin/Resources/Textures/Effect/MageBullet/t_fur_noise_02.png")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/MageBullet/T_GR_Cloud_Noise_A.png")), E_FAIL);
 
 	return S_OK;
 }
@@ -185,6 +193,10 @@ HRESULT CFireBullet::SetUp_Components()
 HRESULT CFireBullet::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+	if (m_bDissolve)
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
 
 	return S_OK;
 }
@@ -310,16 +322,14 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 		m_vecChild[CHILD_P_TRAIL]->Set_Active(false);
 
 		// Turn On => Particle + Explosion Effect
-		m_vecChild[CHILD_EXPLOSION]->Set_InitMatrix(XMMatrixIdentity());
-		m_vecChild[CHILD_EXPLOSION]->Set_Active(true);
-		m_vecChild[CHILD_EXPLOSION]->Set_Position(m_vTargetPos);
+		m_bDissolve = true;
+		dynamic_cast<CE_FireBulletExplosion*>(m_vecChild[CHILD_EXPLOSION])->SetUp_State(m_vTargetPos);
 		dynamic_cast<CE_P_ExplosionGravity*>(m_vecChild[CHILD_P_DEAD])->UpdateParticle(m_vTargetPos);
-
 		m_eState = STATE_EXPLOSION;
 		break;
 	}
 	case STATE_EXPLOSION:
-	{	
+	{		
 		_bool bActive = m_vecChild[CHILD_EXPLOSION]->Get_Active();
 		
 		if (bActive == false)
@@ -332,6 +342,7 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	case STATE_RESET:
 	{
 		m_eEFfectDesc.bActive = false;
+		m_bDissolve = false;
 		m_bCollision = false;
 		m_pTransformCom->Set_Position(m_vInvisiblePos);
 		m_eState = STATE_WAIT;

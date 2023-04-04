@@ -902,8 +902,6 @@ void CImgui_MapEditor::Imgui_DZ_objClear()
 	}
 }
 
-
-
 #endif
 
 
@@ -911,6 +909,9 @@ void CImgui_MapEditor::Imgui_DZ_objClear()
 
 void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec, vector<_float3> vecColiderSize, CEnviromentObj::CHAPTER eChapterGimmcik)
 {
+	if (dynamic_cast<CDynamic_Stone*>(pSelectEnvioObj) != nullptr)
+		return;
+
 	CModel* pModel = dynamic_cast<CModel*>(pSelectEnvioObj->Find_Component(L"Com_Model"));
 
 	assert(nullptr != pModel && "CImgui_MapEditor::Imgui_Instacing_PosLoad");
