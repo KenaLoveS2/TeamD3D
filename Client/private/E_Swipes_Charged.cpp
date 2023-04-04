@@ -104,7 +104,7 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 	m_vecChild[0]->Set_Active(true);
 	_float3 vScaled = m_pTransformCom->Get_Scaled();
 
-	if (vScaled.x > 20.f)
+	if (vScaled.x > 10.f)
 	{
 		m_eEFfectDesc.bActive = false;
 		m_pTransformCom->Set_Scaled(_float3(0.5f, 0.5f, 0.5f));
@@ -114,11 +114,12 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 	}
 	else
 	{
-		vScaled.x += fTimeDelta * 4.f + 0.2f;
-		vScaled.y += fTimeDelta * 4.f + 0.2f;
-		vScaled.z += fTimeDelta * 4.f + 0.2f;
+		vScaled.x += fTimeDelta * 2.f + 0.2f;
+		vScaled.y += fTimeDelta * 2.f + 0.2f;
+		vScaled.z += fTimeDelta * 2.f + 0.2f;
 		m_pTransformCom->Set_Scaled(vScaled);
-		m_vecChild[0]->Get_TransformCom()->Set_Scaled(vScaled * 5.f);
+
+		m_vecChild[0]->Set_AddScale(fTimeDelta + 1.1f);
 	}
 
 	PxShape* pShape = nullptr;

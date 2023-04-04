@@ -75,12 +75,12 @@ void CStatus::UnderAttack(CStatus* pEnemyStatus)
 	CUtile::Saturate<_int>(m_iHP, 0, m_iMaxHP);
 }
 
-void CStatus::UnderAttack(_float fDamage)
+void CStatus::UnderAttack(_int iDamage)
 {
-	if (fDamage <= 0.f)
+	if (iDamage <= 0)
 		return;
 
-	m_iHP -= fDamage;
+	m_iHP -= iDamage;
 	CUtile::Saturate<_int>(m_iHP, 0, m_iMaxHP);
 }
 

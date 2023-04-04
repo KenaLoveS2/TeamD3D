@@ -16,10 +16,10 @@ private:
 
 public:
 	const ARROWSTATE&			Get_CurrentState() const { return m_eCurState; }
-	const _float&				Get_Damage() const { return m_fDamage; }
+	const _int&					Get_Damage() const { return m_iDamage; }
 	const _bool&				IsActive() const { return m_bActive; }
 	virtual void				Set_Active(_bool bActive) override { m_bActive = bActive; }
-	void						Set_Damage(_float fDamage) { m_fDamage = fDamage; }
+	void						Set_Damage(_int fDamage) { m_iDamage = fDamage; }
 
 public:
 	virtual HRESULT				Initialize_Prototype() override;
@@ -60,7 +60,7 @@ private:
 	_float						m_fDistance = 10.f;
 	_bool						m_bReachToAim = false;
 
-	_float						m_fDamage = 5.f;
+	_int						m_iDamage = 5;
 
 	_float4						m_vFirePosition;
 	_float4						m_vFireCamLook;

@@ -35,7 +35,7 @@ public:
 
 	virtual _bool IsDead();
 	virtual void UnderAttack(CStatus* pEnemyStatus);
-	virtual void UnderAttack(_float fDamage);
+	virtual void UnderAttack(_int fDamage);
 
 	virtual void Revive() { m_iHP = m_iMaxHP; }
 

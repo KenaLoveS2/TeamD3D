@@ -238,7 +238,7 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
 
 				for (auto pArrow : *pArrows)
-					pArrow->Set_Damage(8.f);
+					pArrow->Set_Damage(8);
 			}
 			else if (iSlot == 3)
 			{
@@ -253,7 +253,7 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
 
 				for (auto pArrow : *pArrows)
-					pArrow->Set_Damage(12.f);
+					pArrow->Set_Damage(12);
 			}
 
 			break;
