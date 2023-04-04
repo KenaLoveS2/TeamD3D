@@ -79,6 +79,7 @@ public:
 	void			Set_RootAnimation(const string& strStateName);
 	void			Set_AnimationPlayTime(_float fPlayTime);
 	void			Set_AnimationProgress(_float fProgress);
+	void			Set_AnimationSpeed(_float fSpeed);
 
 public:
 	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strRootBone, const string& strFilePath);

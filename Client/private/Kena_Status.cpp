@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Kena.h"
 #include "SpiritArrow.h"
+#include "RotBomb.h"
 
 CKena_Status::CKena_Status(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CStatus(pDevice, pContext)
@@ -214,13 +215,13 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 		}
 	case CKena_Status::SKILL_SHIELD:
 		{
-			if (iSlot == 2)
+			if (iSlot == 2)			/* 보호막 체력 증가 */
 			{
 				m_fMaxShield *= 1.5f;
 
 				/* NEED : UI SHILED GAGE UP */
 			}
-			else if (iSlot == 4)
+			else if (iSlot == 4)	/* 보호막 체력 증가 */
 			{
 				m_fMaxShield *= 1.5f;
 
@@ -233,14 +234,7 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 		{
 			CUI_ClientManager::UI_PRESENT eArrowUpgrade = CUI_ClientManager::AMMO_ARROWUPRADE;
 
-			if (iSlot == 2)
-			{
-				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
-
-				for (auto pArrow : *pArrows)
-					pArrow->Set_Damage(8);
-			}
-			else if (iSlot == 3)
+			if (iSlot == 2)		/* 화살 개수 증가 */
 			{
 				m_iMaxArrowCount++;
 				m_iCurArrowCount = m_iMaxArrowCount;
@@ -248,7 +242,14 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 				_float fMax = (_float)m_iMaxArrowCount;
 				m_StatusDelegator.broadcast(eArrowUpgrade, fMax);
 			}
-			else if (iSlot == 4)
+			else if (iSlot == 3)	/* 화살 데미지 증가 (8) */
+			{
+				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
+
+				for (auto pArrow : *pArrows)
+					pArrow->Set_Damage(8);
+			}
+			else if (iSlot == 4)	/* 화살 데미지 증가 (12) */
 			{
 				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
 
@@ -262,13 +263,24 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 		{
 			CUI_ClientManager::UI_PRESENT eBombUpgrade = CUI_ClientManager::AMMO_BOMBUPGRADE;
 
-			if (iSlot == 3)
+			if (iSlot == 2)		/* 폭탄 터지는 시간 감소 */
+			{
+				vector<CRotBomb*>* pBombs = dynamic_cast<CKena*>(m_pOwner)->Get_Bombs();
+
+				for (auto pBomb : *pBombs)
+					pBomb->Set_BoomTime(2.5f);
+			}
+			else if (iSlot == 3)	/* 폭탄 2개 소지 */
 			{
 				m_iMaxBombCount++;
 				m_iCurBombCount = m_iMaxBombCount;
 
 				_float fMax = (_float)m_iMaxBombCount;
 				m_StatusDelegator.broadcast(eBombUpgrade, fMax);
+			}
+			else if (iSlot == 4)
+			{
+				/* 안 해 */
 			}
 
 			break;

@@ -10,6 +10,7 @@
 #include "E_P_Explosion.h"
 #include "E_BombTrail.h"
 #include "Camera_Player.h"
+#include "Kena_Status.h"
 
 CRotBomb::CRotBomb(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -419,8 +420,13 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 		if (m_pAnimation->Get_AnimationFinish() == true && m_pAnimation->Get_CurrentAnimName() == "LAND")
 			m_pAnimation->State_Animation("LAND_LOOP");
 
-		if (m_fBoomTimer > 4.5f && m_pAnimation->Get_CurrentAnimName() == "LAND_LOOP")
+		if (m_fBoomTimer > m_fBoomTime && m_pAnimation->Get_CurrentAnimName() == "LAND_LOOP")
+		{
 			m_pAnimation->State_Animation("LAND_RUMBLE");
+
+			if (m_pKena->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOMB, 2) == true)
+				m_pAnimation->Set_AnimationSpeed(50.f);
+		}
 
 		if (m_bBoom == true)
 		{
@@ -611,7 +617,7 @@ _int CRotBomb::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 		}
 	}
 
-	if (iColliderIndex == (_uint)COL_PLAYER_ARROW && m_eCurState == CRotBomb::BOMB_LAND)
+	if (iColliderIndex == (_int)COL_PLAYER && m_eCurState == CRotBomb::BOMB_LAND && m_pKena->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOMB, 1) == true)
 		m_bBoom = true;
 
 	return 0;

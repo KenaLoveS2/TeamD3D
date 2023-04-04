@@ -2,6 +2,7 @@
 #include "..\public\E_KenaDash.h"
 #include "GameInstance.h"
 #include "E_P_ExplosionGravity.h"
+#include "E_KenaDashRing.h"
 
 CE_KenaDash::CE_KenaDash(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect(pDevice, pContext)
@@ -42,10 +43,17 @@ HRESULT CE_KenaDash::Initialize(void * pArg)
 
 void CE_KenaDash::Tick(_float fTimeDelta)
 {
+	for (_uint i = 0; i < CHILD_RING_5; ++i)
+		m_vecChild[i]->Tick(fTimeDelta);
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	__super::Tick(fTimeDelta);
+	//__super::Tick(fTimeDelta);
+
+	for (auto pChild : m_vecChild)
+		pChild->Tick(fTimeDelta);
+
 	m_fShaderBindTime += fTimeDelta;
 	
 	_bool bResult = TurnOffSystem(m_fTurnOffTime, 0.5f, fTimeDelta);
@@ -59,11 +67,19 @@ void CE_KenaDash::Tick_State(_float4 vPos)
 {
 	m_eEFfectDesc.bActive = true;
 
+	m_eEFfectDesc.vScale = XMVectorSet(0.01f, 0.01f, 0.01f, 0.f);
+	m_pTransformCom->Set_Scaled(_float3(0.01f, 0.01f, 0.01f));
+
 	_float4 vMyPos = vPos;
 	vMyPos.y = 0.0f;	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vMyPos);
 
 	for (auto& pChild : m_vecChild)
-		pChild->Set_Active(true);
+	{
+		if (dynamic_cast<CE_KenaDashRing*>(pChild) == nullptr)
+			pChild->Set_Active(true);
+	}
+		
+	m_vecChild[CHILD_RING_0]->Set_Active(true);
 
 	Tick_RingState(vMyPos); /* Ring */
 	m_vecChild[CHILD_CONE]->Set_Position(vPos);
@@ -73,19 +89,30 @@ void CE_KenaDash::Tick_State(_float4 vPos)
 void CE_KenaDash::Tick_RingState(_float4 vPos)
 {
 	auto& pChildRing = m_vecChild.begin();
-	_vector vDir = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
-	_float4 vFinalPos = XMLoadFloat4(&vPos) + vDir;
+	_vector vDir = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	vDir = XMVector3Normalize(XMVectorSetY(vDir, 0.f));
+	_float4 vFinalPos = XMLoadFloat4(&vPos) - vDir * 0.2f;
 
-	for (_uint i = 0; i < CHILD_RING_2 + 1; i++, pChildRing++)
-	{
-		(*pChildRing)->Get_TransformCom()->Set_State(CTransform::STATE_LOOK, vDir);
-		
-		vFinalPos.x += (i * 2.f);
-		vFinalPos.y += (i * 2.f);
-		vFinalPos.z += (i * 2.f);
+	m_vecChild[CHILD_RING_0]->Set_Position(vFinalPos);
+	m_vecChild[CHILD_RING_0]->Get_TransformCom()->LookAt(XMLoadFloat4(&vFinalPos) + vDir);
+	dynamic_cast<CE_KenaDashRing*>(m_vecChild[CHILD_RING_0])->Set_CurrentScale(0.01f);
+	//m_vecChild[CHILD_RING_0]->Get_TransformCom()->Set_Scaled(_float3(1.8f, 1.8f, 1.f));
 
-		(*pChildRing)->Set_Position(vFinalPos);
-	}
+	//for (_uint i = 0; i < CHILD_RING_4 + 1; i++, pChildRing++)
+	//{
+	//	//(*pChildRing)->Get_TransformCom()->Set_State(CTransform::STATE_LOOK, vDir);
+	//	
+	//	//vFinalPos.x += (i * 2.f);
+	//	//vFinalPos.y += (i * 2.f);
+	//	//vFinalPos.z += (i * 2.f);
+
+	//	vFinalPos = XMLoadFloat4(&vFinalPos) + vDir * (i + 1) * 0.5f;
+
+	//	(*pChildRing)->Set_Position(vFinalPos);
+	//	(*pChildRing)->Get_TransformCom()->LookAt(XMLoadFloat4(&vFinalPos) + vDir);
+
+	//	(*pChildRing)->Get_TransformCom()->Set_Scaled(_float3(1.8f, 1.8f, 1.f));
+	//}
 }
 
 void CE_KenaDash::Late_Tick(_float fTimeDelta)
@@ -124,13 +151,19 @@ HRESULT CE_KenaDash::SetUp_Child()
 	_tchar*			pCloneTag = nullptr;
 
 	string		strMapTag = "";
-	for (_uint i = 0; i < 3; ++i)
+	for (_uint i = 0; i < 6; ++i)
 	{
 		pCloneTag = CUtile::Create_DummyString(L"KenaDash_ring", i);
-		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_DashRing", L"KenaDash_ring"));
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_DashRing", pCloneTag));
 		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 		pEffectBase->Set_Parent(this);
 		m_vecChild.push_back(pEffectBase);
+	}
+
+	for (_uint i = 0; i < (_uint)m_vecChild.size(); ++i)
+	{
+		if (i != (_uint)m_vecChild.size() - 1)
+			dynamic_cast<CE_KenaDashRing*>(m_vecChild[i])->Set_NextRing(dynamic_cast<CE_KenaDashRing*>(m_vecChild[i + 1]));
 	}
 
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_DashCone", L"KenaDash_Cone"));
