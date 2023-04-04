@@ -159,7 +159,8 @@ void CDeadZoneObj::Change_Model(_int iDissolveTimer)
 		{ L"Prototype_Component_Model_BigTreeLog"}
 	};
 
-
+	 if (m_iDeadZoneModelID == -1)
+		 return;
 	 vector<_float4x4> New_Matrix;
 
 	 for(auto pMatrix :  *m_pModelCom->Get_InstancePos())
