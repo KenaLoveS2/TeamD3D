@@ -12,7 +12,7 @@ struct VS_OUT
 {
 	float3		vPosition		: POSITION;
 	float2		vPSize			: PSIZE;
-	float		fLife : TEXCOORD0;
+	float		fLife			: TEXCOORD0;
 	float3		vCenterPosition	: TEXCOORD1;
 };
 
@@ -157,7 +157,6 @@ void GS_MAIN_GATHER(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 
 }
 
-
 struct PS_IN
 {
 	float4		vPosition	: SV_POSITION;
@@ -170,28 +169,52 @@ struct PS_OUT
 	float4		vColor : SV_TARGET0;
 };
 
+/* Common Var */
+// g_tex_0		: DiffuseTexture
+// g_tex_1		: MaskTexture
+// g_tex_2		: DissolveTexture
+
+// g_float_0	: fHDRIntensity
+// g_float_1	: fCutY
+// g_float_2	: fDissolveAlpha
+
+// g_bool_0		: isSpriteAnim
+// g_bool_1		: isUVAnim
+
+// g_float2_0	: vUVMove
+// g_float2_1	: vUVScale
+
+// g_int_0		: XFrames
+// g_int_1		: YFrames
+// g_int_2		: XFrameNow
+// g_int_3		: YFrameNow
+
+// g_float4_0	: DiffuseColor
+// g_float4_1	: MaskColor
+// g_float4_2	: DissolveColor
+
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	if (g_IsSpriteAnim)
+	if (g_bool_0)
 	{
-		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
-		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+		In.vTexUV.x = In.vTexUV.x + g_int_2;
+		In.vTexUV.y = In.vTexUV.y + g_int_3;
 
-		In.vTexUV.x = In.vTexUV.x / g_XFrames;
-		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+		In.vTexUV.x = In.vTexUV.x / g_int_0;
+		In.vTexUV.y = In.vTexUV.y / g_int_1;
 	}
 
-	Out.vColor = g_DiffuseTexture.Sample(PointSampler, In.vTexUV);
+	Out.vColor = g_tex_0.Sample(PointSampler, In.vTexUV);
 
-	Out.vColor *= g_vColor;
+	Out.vColor *= g_float4_0;
 	Out.vColor.a *= In.fLife;
 
 	if (Out.vColor.a < 0.01f)
 		discard;
 
-	Out.vColor.rgb *= g_fHDRItensity;
+	Out.vColor.rgb *= g_float_0;
 
 	return Out;
 }
@@ -200,25 +223,25 @@ PS_OUT PS_MAIN_BLACK(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	if (g_IsSpriteAnim)
+	if (g_bool_0)
 	{
-		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
-		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+		In.vTexUV.x = In.vTexUV.x + g_int_2;
+		In.vTexUV.y = In.vTexUV.y + g_int_3;
 
-		In.vTexUV.x = In.vTexUV.x / g_XFrames;
-		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+		In.vTexUV.x = In.vTexUV.x / g_int_0;
+		In.vTexUV.y = In.vTexUV.y / g_int_1;
 	}
 
-	Out.vColor = g_DiffuseTexture.Sample(PointSampler, In.vTexUV);
+	Out.vColor = g_tex_0.Sample(PointSampler, In.vTexUV);
 
 	Out.vColor.a = Out.vColor.r;
 
-	Out.vColor *= g_vColor;
+	Out.vColor *= g_float4_0;
 
 	if (Out.vColor.a < 0.01f)
 		discard;
 
-	Out.vColor.rgb *= g_fHDRItensity;
+	Out.vColor.rgb *= g_float_0;
 
 	return Out;
 }
@@ -229,19 +252,19 @@ PS_OUT PS_MAIN_SPREAD(PS_IN In)
 
 	PS_OUT		Out = (PS_OUT)0;
 
-	if (g_IsSpriteAnim)
+	if (g_bool_0)
 	{
-		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
-		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+		In.vTexUV.x = In.vTexUV.x + g_int_2;
+		In.vTexUV.y = In.vTexUV.y + g_int_3;
 
-		In.vTexUV.x = In.vTexUV.x / g_XFrames;
-		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+		In.vTexUV.x = In.vTexUV.x / g_int_0;
+		In.vTexUV.y = In.vTexUV.y / g_int_1;
 	}
 
-	vector vDiffuse = g_DiffuseTexture.Sample(PointSampler, In.vTexUV);
+	vector vDiffuse = g_tex_0.Sample(PointSampler, In.vTexUV);
 
 	Out.vColor = vDiffuse;
-	Out.vColor.rgb *= g_vColor.rgb;
+	Out.vColor.rgb *= g_float4_0.rgb;
 	Out.vColor.a *= (1 - In.fLife);
 	//vDiffuse.a = vDiffuse.r;
 

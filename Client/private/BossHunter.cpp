@@ -149,7 +149,9 @@ void CBossHunter::Tick(_float fTimeDelta)
 {
 	m_pModelCom->Play_Animation(fTimeDelta);
 	Update_Collider(fTimeDelta);
-	 if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+
+	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+
 	/* For. String */
 	m_fUVSpeeds[0] += 0.245f * fTimeDelta;
 	m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
@@ -310,7 +312,8 @@ void CBossHunter::Imgui_RenderProperty()
 
 void CBossHunter::ImGui_AnimationProperty()
 {
-	m_pTransformCom->Imgui_RenderProperty_ForJH();
+	m_pTransformCom->Imgui_RenderProperty();
+	//m_pTransformCom->Imgui_RenderProperty_ForJH();
 	//m_pArrows[m_iArrowIndex]->Get_TransformCom()->Imgui_RenderProperty_ForJH();
 
 	if (ImGui::CollapsingHeader("Effect"))

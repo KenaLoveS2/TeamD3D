@@ -325,7 +325,7 @@ void CHunterArrow::Free()
 	for (_uint i = 0; i < EFFECT_END; ++i)
 	{
 		for (auto& eff : m_vecEffects[i])
-			Safe_AddRef(eff);
+			Safe_Release(eff);
 	}
 }
 
@@ -419,12 +419,12 @@ void CHunterArrow::Play_RingEffect(_float fTimeDelta)
 	if (m_bShockwaveOn)
 	{
 		m_fRingTimeAcc += fTimeDelta;
-		m_fRingTime = 0.03f;
+		m_fRingTime = 0.1f;
 		if (m_fRingTimeAcc > m_fRingTime)
 		{
 			_float4 vDir = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 			_float4 vPos = m_pTransformCom->Get_Position();
-			m_vecEffects[EFFECT_RING][m_iRingIndex]->Activate_Scaling(vDir, vPos, {1.0f, 1.0f});  
+			m_vecEffects[EFFECT_RING][m_iRingIndex]->Activate_Scaling(vDir, vPos, {0.1f, 0.1f});  
 
 			m_iRingIndex++;
 			m_iRingIndex %= MAX_RING_EFFECTS;
@@ -465,6 +465,7 @@ HRESULT CHunterArrow::SetUp_Effects()
 		else
 			return E_FAIL;
 	}
+
 	return S_OK;
 }
 
