@@ -63,8 +63,8 @@ HRESULT CLevel_GamePlay::Initialize()
  	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
  		return E_FAIL;
 
-// 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-// 		return E_FAIL;
+ 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+ 		return E_FAIL;
 
 	// Ready_Thread_CloneObject(TEXT(""));
 	
@@ -355,6 +355,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 
 	//Prototype_GameObject_Rot_Bomb
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot_Bomb"), L"RotBomb", nullptr, &pGameObject), E_FAIL);
+
+	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_DashCloud"), L"DashCloud", nullptr, &pGameObject), E_FAIL);
+	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_DashCone"), L"DashCone", nullptr, &pGameObject), E_FAIL);
+	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_DashRing"), L"DashRing", nullptr, &pGameObject), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

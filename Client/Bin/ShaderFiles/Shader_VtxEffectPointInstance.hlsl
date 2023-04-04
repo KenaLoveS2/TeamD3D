@@ -40,6 +40,7 @@ float   g_fAlpha;
 
 float2  g_UV;
 float   g_Time;
+bool	g_bTimer;
 /* ~Trail */
 
 /* Dissolve */

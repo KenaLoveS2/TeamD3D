@@ -200,6 +200,9 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
+#include "E_KenaDash.h"
+#include "E_KenaDashRing.h"
+#include "E_KenaDashCone.h"
 
 
 
@@ -2516,6 +2519,19 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CE_P_ExplosionGravity::Create(m_pDevice, m_pContext))))
 	return E_FAIL;
 
+	/* Kena Dash */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DashCloud"),
+		CE_KenaDash::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_DashCloud.json"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DashCone"),
+		CE_KenaDashCone::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_M_DashCone.json"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DashRing"),
+		CE_KenaDashRing::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_DashCircle.json"))))
+		return E_FAIL;
+	/* Kena Dash */
 
 #pragma endregion Effect_Object
 

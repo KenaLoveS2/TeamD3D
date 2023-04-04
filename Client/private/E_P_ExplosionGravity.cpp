@@ -66,7 +66,7 @@ void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_Position(m_vFixPos);
 
 	/*m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && */
-	if (m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && m_eEFfectDesc.bActive == true &&  m_pVIInstancingBufferCom->Get_Finish() == true)
+	if (m_eEFfectDesc.bActive == true &&  m_pVIInstancingBufferCom->Get_Finish() == true)
 		m_eEFfectDesc.bActive = false;
 }
 
@@ -172,7 +172,7 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 	}
 
 	case CE_P_ExplosionGravity::TYPE_HEALTHFLOWER:
-		fTerm = 2.f;
+		fTerm = 1.5f;
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(0.f, 220.f, 255.f, 255.f)/ 255.f, 0.03f,
 			fTerm, _float2(0.1f, 0.1f), false);

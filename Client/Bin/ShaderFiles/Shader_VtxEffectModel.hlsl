@@ -27,14 +27,15 @@ uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
 float   g_WidthFrame, g_HeightFrame, g_Time;
 float4  g_vColor;
 float2  g_fUV;
+bool	g_bTimer;
 /**********************************/
 
 /**********Dissolve*********/
 bool       g_bDissolve;
 float      g_fDissolveTime;
 texture2D  g_DissolveTexture;
-float			_DissolveSpeed = 0.2f;
-float			_FadeSpeed = 1.5f;
+float	   _DissolveSpeed = 0.2f;
+float	   _FadeSpeed = 1.5f;
 /***************************/
 
 /* Arrow */
@@ -602,8 +603,7 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 	float4 fresnel = float4(fresnel_glow(3.0f, 1.5f, fresnelColor.rgb, In.vNormal.rgb, In.vViewDir), fresnelColor.a);
 
 	float4 finalcolor = saturate(lerp(tex_0, tex_1, 0.5f)) * fresnel;
-	finalcolor.a = (tex_0 * tex_1).a;
-	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
+	finalcolor.a = (tex_0 * tex_1).a * 0.2f;
 
 	if (g_bDissolve)
 	{
@@ -621,7 +621,7 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
 		}
 	}
-
+	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
 	return Out;
 }
 
@@ -913,6 +913,26 @@ PS_OUT PS_DISTORTION_INTO(PS_IN In)
 	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
+	return Out;
+}
+//PS_KENADASH
+PS_OUT PS_KENADASH(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector vGradient = g_DTexture_1.Sample(LinearSampler, In.vTexUV);
+
+	float  time = frac(g_Time );
+	float2 OffsetUV = TilingAndOffset(float2(In.vTexUV.x, In.vTexUV.y / 3.f), float2(1.0f, 1.0f), float2(time, time));
+
+	vector vDiffuseTexture = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	vDiffuseTexture.a = vDiffuseTexture.r;
+
+	float4 finalcolor = vDiffuseTexture + vGradient;
+	finalcolor = saturate(finalcolor) * g_vColor;
+	finalcolor.a = (vDiffuseTexture * vGradient).r * In.vTexUV.y;
+
+	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
 	return Out;
 }
 
@@ -1222,4 +1242,16 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_DISTORTION_INTO();
 	}
 
+	pass KenaDash // 23
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_KENADASH();
+	}
 }

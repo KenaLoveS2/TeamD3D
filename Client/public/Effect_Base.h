@@ -253,6 +253,7 @@ protected:
 	_float  m_fHDRValue = 1.0f;
 	_float  m_fTurnOffTime = 0.0f;
 	_float2 m_fUV = { 0.f,0.f };
+	_bool	m_bTimer = false;
 
 public:
 	virtual void          Free() override;

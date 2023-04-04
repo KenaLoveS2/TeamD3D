@@ -175,7 +175,7 @@ void CE_RotBombExplosion::TurnonBomb(_float fTimeDelta)
 			pChild->Set_Active(true);
 
 		_vector vPos = m_pTransformCom->Get_Position();
-		dynamic_cast<CE_P_ExplosionGravity*>(m_vecChild[CHILD_COVER])->UpdateParticle(vPos);
+		dynamic_cast<CE_P_ExplosionGravity*>(m_vecChild[CHILD_P])->UpdateParticle(vPos);
 		m_bTurnOn = true;
 	}
 

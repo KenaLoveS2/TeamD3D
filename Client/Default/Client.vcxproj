@@ -241,6 +241,9 @@
     <ClInclude Include="..\public\E_EnemyWispBackground.h" />
     <ClInclude Include="..\public\E_EnemyWispGround.h" />
     <ClInclude Include="..\public\E_EnemyWispTrail.h" />
+    <ClInclude Include="..\public\E_KenaDash.h" />
+    <ClInclude Include="..\public\E_KenaDashCone.h" />
+    <ClInclude Include="..\public\E_KenaDashRing.h" />
     <ClInclude Include="..\public\E_KenaDust.h" />
     <ClInclude Include="..\public\E_KenaHeavyAttack_Into.h" />
     <ClInclude Include="..\public\E_KenaParry.h" />
@@ -511,6 +514,9 @@
     <ClCompile Include="..\private\E_D_Sphere.cpp" />
     <ClCompile Include="..\private\E_EnemyWispBackGround.cpp" />
     <ClCompile Include="..\private\E_EnemyWispTrail.cpp" />
+    <ClCompile Include="..\private\E_KenaDash.cpp" />
+    <ClCompile Include="..\private\E_KenaDashCone.cpp" />
+    <ClCompile Include="..\private\E_KenaDashRing.cpp" />
     <ClCompile Include="..\private\E_KenaDust.cpp" />
     <ClCompile Include="..\private\E_KenaHeavyAttack_Into.cpp" />
     <ClCompile Include="..\private\E_KenaParry.cpp" />
