@@ -97,6 +97,10 @@ const _bool CKena::Get_State(STATERETURN eState) const
 		return m_bLevelUp;
 		break;
 
+	case STATE_LEVELUP_READY:
+		return m_bLevelUp_Ready;
+		break;
+
 	case STATE_ATTACK:
 		return m_bAttack;
 		break;
@@ -179,6 +183,10 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 	{
 	case STATE_LEVELUP:
 		m_bLevelUp = bValue;
+		break;
+
+	case STATE_LEVELUP_READY:
+		m_bLevelUp_Ready = bValue;
 		break;
 
 	case STATE_ATTACK:

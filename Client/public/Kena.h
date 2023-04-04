@@ -29,7 +29,7 @@ public:
 	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
 	enum COLLIDERTYPE { COLL_BODY, COLL_STAFF, COLLIDERTYPE_END };
 	enum STATERETURN {
-		STATE_LEVELUP,
+		STATE_LEVELUP, STATE_LEVELUP_READY,
 		STATE_ATTACK, STATE_HEAVYATTACK, STATE_PERFECTATTACK,
 		STATE_COMMONHIT, STATE_HEAVYHIT,
 		STATE_SPRINT, STATE_DASH, STATE_MASK,
@@ -135,6 +135,7 @@ private:
 private:
 	/* State variables*/
 	_bool						m_bLevelUp = false;
+	_bool						m_bLevelUp_Ready = false;
 	_bool						m_bAttack = false;
 	_bool						m_bHeavyAttack = false;
 	_bool						m_bPerfectAttack = false;

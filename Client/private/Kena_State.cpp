@@ -6062,6 +6062,7 @@ void CKena_State::Start_Level_Up(_float fTimeDelta)
 	m_pAnimationState->State_Animation("LEVEL_UP");
 
 	m_pKena->m_bLevelUp = false;
+	m_pKena->m_bLevelUp_Ready = false;
 
 	/* NEED : UI PRINT LEVELUP */
 }
@@ -8251,7 +8252,7 @@ _bool CKena_State::OnGround()
 
 _bool CKena_State::LevelUp()
 {
-	return m_pKena->m_bLevelUp;
+	return m_pKena->m_bLevelUp_Ready;
 }
 
 _bool CKena_State::CommonHit()
