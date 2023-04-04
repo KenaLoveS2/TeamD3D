@@ -151,7 +151,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		
-	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
@@ -250,7 +250,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Environment(const _tchar * pLayerTag)
 {
-	// CImgui_MapEditor::Load_MapObjects(g_LEVEL, "D.json");
+	 CImgui_MapEditor::Load_MapObjects(g_LEVEL, "D.json");
 	
 	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Test_TelePortFlower.json");
 
@@ -286,12 +286,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	// CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test_Chap1.json"); return S_OK;
+	 //CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test_Chap1.json"); return S_OK;
 		
 	CGameInstance *pGameInstance = CGameInstance::GetInstance();
 	CGameObject *pGameObject = nullptr;
 
-	// CImgui_MapEditor::Load_MapObjects(g_LEVEL, "HatCart_.json");
+	 CImgui_MapEditor::Load_MapObjects(g_LEVEL, "HatCart_.json");
 	
 	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BranchTosser"), L"BranchTosser_0", nullptr, &pGameObject))) return E_FAIL;
 	// if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;

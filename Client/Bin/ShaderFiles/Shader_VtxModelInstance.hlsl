@@ -63,21 +63,25 @@ VS_OUT VS_MAIN(VS_IN In)
     VS_OUT      Out = (VS_OUT)0;
 
     matrix      matWV, matWVP;
-    matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);
+    matWV               = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP              = mul(matWV, g_ProjMatrix);
 
-    float4x4   Transform = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
+    In.vRight.w = 0.0f;
+    In.vUp.w = 0.0f;
+    In.vLook.w = 0.0f;
+    In.vTranslation = 0.0f;
+    float4x4 Transform  = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
 
-    vector      vPosition = mul(float4(In.vPosition, 1.f), Transform);
-    vector      vNormal = mul(float4(In.vNormal, 0.f), Transform);
-    vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), Transform);
+    vector vPosition    = mul(float4(In.vPosition, 1.f), Transform);
+    vector vNormal      = mul(float4(In.vNormal, 0.f), Transform);
+    vector vTangent     = mul(float4(In.vTangent.xyz, 0.f), Transform);
 
-    Out.vPosition = mul(vPosition, matWVP);
-    Out.vNormal = normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
-    Out.vTexUV = In.vTexUV;
-    Out.vProjPos = Out.vPosition;
-    Out.vTangent = normalize(mul(vTangent, g_WorldMatrix));
-    Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
+    Out.vPosition       = mul(vPosition, matWVP);
+    Out.vNormal         = normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
+    Out.vTexUV          = In.vTexUV;
+    Out.vProjPos        = Out.vPosition;
+    Out.vTangent        = normalize(mul(vTangent, g_WorldMatrix));
+    Out.vBinormal       = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 
     return Out;
 }
