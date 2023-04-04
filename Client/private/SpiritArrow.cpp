@@ -41,7 +41,8 @@ HRESULT CSpiritArrow::Initialize(void * pArg)
 	m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 	NULL_CHECK_RETURN(m_pKena, E_FAIL);
 
-	m_pStaff = dynamic_cast<CKena_Staff*>(m_pKena->Get_KenaPart(L"Kena_Staff"));	NULL_CHECK_RETURN(m_pStaff, E_FAIL);
+	m_pStaff = dynamic_cast<CKena_Staff*>(m_pKena->Get_KenaPart(L"Kena_Staff"));
+	NULL_CHECK_RETURN(m_pStaff, E_FAIL);
 	 
 	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Find_Camera(L"PLAYER_CAM"));
 	NULL_CHECK_RETURN(m_pCamera, E_FAIL);

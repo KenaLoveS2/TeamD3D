@@ -91,24 +91,44 @@ void CHealthFlower_Anim::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+#ifdef FOR_MAP_GIMMICK
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta); 
 	
-	m_pModelCom->Play_Animation(fTimeDelta);
+	
 
 	m_pTransformCom->Tick(fTimeDelta);
 	if (m_pExplosionGravity)	m_pExplosionGravity->Tick(fTimeDelta);
+#endif
+
+	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CHealthFlower_Anim::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+#ifdef FOR_MAP_GIMMICK
 	if (m_pExplosionGravity)	m_pExplosionGravity->Late_Tick(fTimeDelta);
 
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
+#endif
 
-	if (m_pRendererCom)
+	/*Culling*/
+	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+	_vector camPos = XMLoadFloat4(&vCamPos);
+	const _vector	 vDir = camPos - vPos;
+
+	_float f = XMVectorGetX(XMVector4Length(vDir));
+	if (100.f <= XMVectorGetX(XMVector4Length(vDir)))
+		m_bRenderCheck = false;
+	if (m_bRenderCheck == true)
+		m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 100.f);
+
+
+
+	if (m_pRendererCom && m_bRenderActive &&m_bRenderCheck ==false)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
@@ -124,12 +144,32 @@ HRESULT CHealthFlower_Anim::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (m_bUsed == true && i == 4)
-			continue;
+
+		/*if (m_bUsed == true && i == 4)
+			continue;*/
 
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+
+		if(i ==0 || i==1 )
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",1);
+		}
+		else if (i == 2 || i==3) 
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
+
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 2);
+		}
+		else if (i == 4)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 0);
+		}
 	}
 	 
 	return S_OK;
@@ -213,6 +253,8 @@ _int CHealthFlower_Anim::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iT
 
 HRESULT CHealthFlower_Anim::SetUp_Effects()
 {
+#ifdef FOR_MAP_GIMMICK
+
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	/// <ExplosionGravity / Particle>
@@ -223,6 +265,7 @@ HRESULT CHealthFlower_Anim::SetUp_Effects()
 	/// <ExplosionGravity / Particle>
 
 	RELEASE_INSTANCE(CGameInstance);
+#endif
 	return S_OK;
 }
 
@@ -335,9 +378,18 @@ HRESULT CHealthFlower_Anim::SetUp_Components()
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
 
+	m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_M_R_AO.png"));
+
+	m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_M_R_AO.png"));
+
+	m_pModelCom->SetUp_Material(2, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_M_R_AO.png"));
+	m_pModelCom->SetUp_Material(2, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_E.png"));
+
+	m_pModelCom->SetUp_Material(3, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_M_R_AO.png"));
+	m_pModelCom->SetUp_Material(3, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_E.png"));
 	/* For.Com_Shader */
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
-		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+		L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	return S_OK;
 }

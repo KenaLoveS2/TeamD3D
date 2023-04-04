@@ -8,6 +8,7 @@
 #include "E_Hieroglyph.h"
 #include "ControlRoom.h"
 #include "E_Warrior_FireSwipe.h"
+#include "SpiritArrow.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -1432,8 +1433,11 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
+			CSpiritArrow* pArrow = dynamic_cast<CSpiritArrow*>(pTarget);
+
 			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
-			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			//m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			m_pMonsterStatusCom->UnderAttack(pArrow->Get_Damage());
 
 			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
@@ -1442,8 +1446,16 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);
 			//m_bWeaklyHit = !m_bStronglyHit;
 
-			m_bStronglyHit = true;
-			m_bWeaklyHit = false;
+			if (pArrow->Get_CurrentState() == CSpiritArrow::ARROW_INJECT_FIRE)
+			{
+				m_bStronglyHit = true;
+				m_bWeaklyHit = false;
+			}
+			else
+			{
+				m_bWeaklyHit = true;
+				m_bStronglyHit = false;
+			}
 
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);

@@ -47,6 +47,8 @@ HRESULT CHatCart::Initialize(void* pArg)
 
 HRESULT CHatCart::Late_Initialize(void* pArg)
 {
+	return S_OK; // 나중에 주석해제하셈
+
 	/*Player_Need*/
 	m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 	if (m_pPlayer == nullptr) return E_FAIL;
@@ -137,22 +139,22 @@ HRESULT CHatCart::Render()
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 
-		if (i == 0 || i == 1)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
-		}
-		else if (i == 2)
-		{
+		//if (i == 0 || i == 1)
+		//{
+		//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
+		//	FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
+		//}
+		//else if (i == 2)
+		//{
 
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ROUGHNESS, "g_RoughnessTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 14), E_FAIL);
-		}
-		else if (i == 3 || i == 4)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
+		//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ROUGHNESS, "g_RoughnessTexture"), E_FAIL);
+		//	FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 14), E_FAIL);
+		//}
+		//else if (i == 3 || i == 4)
+	//	{
+		//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
-		}
+		//}
 	}
 
 	return S_OK;
@@ -353,7 +355,8 @@ void CHatCart::Free()
 
 void CHatCart::Create_MannequinRot()
 {
-	// �ӽ�
+	
+
 	// m_pTransformCom->Set_Position(_float4(2.f, -1.f, 2.f, 1.f));
 
 	

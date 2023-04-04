@@ -12,7 +12,7 @@ CPostFX::CPostFX()
 	m_fBloomThreshold = 0.8f;
 	m_fBloomScale = 0.4f;
 	m_fAdaptation = 0.5f;
-	m_fDOFFarStart = 150.f;
+	m_fDOFFarStart = 10000.f;
 	m_fDOFFarRange = 0.5f;
 	m_fBokehBlurThreshold = 0.5f;
 	m_fBokehLumThreshold = 0.5f;
