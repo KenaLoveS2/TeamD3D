@@ -32,7 +32,7 @@ public:
 		STATE_LEVELUP,
 		STATE_ATTACK, STATE_HEAVYATTACK, STATE_PERFECTATTACK,
 		STATE_COMMONHIT, STATE_HEAVYHIT,
-		STATE_SPRINT, STATE_MASK,
+		STATE_SPRINT, STATE_DASH, STATE_MASK,
 		STATE_AIM, STATE_BOW, STATE_INJECTBOW,
 		STATE_BOMB, STATE_INJECTBOMB, 
 		STATE_PULSE, STATE_PARRY,
@@ -194,8 +194,11 @@ private:
 	void                        RimColorValue();
 	_bool						m_bHitRim = false;
 	_bool						m_bParryRim = false;
+	_bool						m_bDashRim = false;
+
 	_float						m_fHitRimIntensity = 0.f;
 	_float						m_fParryRimIntensity = 0.f;
+	_float						m_fDashRimIntensity = 0.f;
 
 	_bool						m_bRotRockChoiceFlag = false;
 	_bool						m_bRotRockMoveFlag = false;

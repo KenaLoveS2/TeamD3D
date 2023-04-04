@@ -153,7 +153,6 @@ void CBossHunter::Tick(_float fTimeDelta)
 	//	m_pRendererCom->ReCompile();
 	//}
 	//ImGui::End();
-	int a = 0;
 
 	m_pModelCom->Play_Animation(fTimeDelta);
 	Update_Collider(fTimeDelta);

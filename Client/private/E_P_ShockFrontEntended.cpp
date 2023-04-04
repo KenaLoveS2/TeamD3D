@@ -87,7 +87,6 @@ void CE_P_ShockFrontEntended::Tick(_float fTimeDelta)
 		m_fLife = 0.0f;
 		return;
 	}
-
 	__super::Tick(fTimeDelta);
 	m_fLife += fTimeDelta;
 }

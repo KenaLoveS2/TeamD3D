@@ -105,7 +105,6 @@ HRESULT CE_KenaDash::Render()
 
 void CE_KenaDash::Reset()
 {
-	// m_eEFfectDesc.bActive = false;
 	m_fShaderBindTime = 0.0f;
 	m_bFinishSprite = false;
 

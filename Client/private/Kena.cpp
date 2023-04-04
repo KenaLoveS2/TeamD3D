@@ -121,6 +121,10 @@ const _bool CKena::Get_State(STATERETURN eState) const
 		return m_bSprint;
 		break;
 
+	case STATE_DASH:
+		return m_bDash || m_bDashAttack || m_bDashPortal;
+		break;
+
 	case STATE_MASK:
 		return m_bMask;
 		break;
@@ -199,6 +203,10 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 
 	case STATE_SPRINT:
 		m_bSprint = bValue;
+		break;
+
+	case STATE_DASH:
+		m_bDash = bValue;
 		break;
 
 	case STATE_MASK:
@@ -1347,6 +1355,18 @@ void CKena::RimColorValue()
 		}
 		m_pShaderCom->Set_RawValue("g_Hit", &m_bHitRim, sizeof(_bool));
 		m_pShaderCom->Set_RawValue("g_HitRimIntensity", &m_fHitRimIntensity, sizeof(_float));
+	}
+	// DashAttack Rim
+	{
+		if (m_fDashRimIntensity > 0.f)
+			m_fDashRimIntensity -= TIMEDELTA;
+		else
+		{
+			m_fDashRimIntensity = 0.f;
+			m_bDashRim = false;
+		}
+		m_pShaderCom->Set_RawValue("g_Dash", &m_bDashRim, sizeof(_bool));
+		m_pShaderCom->Set_RawValue("g_DashRimIntensity", &m_fDashRimIntensity, sizeof(_float));
 	}
 }
 

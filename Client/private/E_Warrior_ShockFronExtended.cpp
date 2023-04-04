@@ -107,7 +107,7 @@ void CE_Warrior_ShockFrontExtended::Tick(_float fTimeDelta)
 	m_fTimeDelta += fTimeDelta;
 	_float3 vScaled = m_pTransformCom->Get_Scaled();
 	
-	if (m_fTimeDelta > 2.f)
+	if (m_fTimeDelta > 1.5f)
 	{
 		for (auto& pChild : m_vecChild)
 			pChild->Set_Active(false);
