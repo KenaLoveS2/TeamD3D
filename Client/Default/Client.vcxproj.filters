@@ -1457,6 +1457,9 @@
     <ClInclude Include="..\public\E_KenaDashCone.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Dash</Filter>
     </ClInclude>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Params.h">
+      <Filter>97.ShaderFiles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">

@@ -1,55 +1,6 @@
 #include "Shader_Client_Defines.h"
 
-/***********Constant Buffers***********/
-matrix g_BoneMatrices[800];
-matrix g_WorldMatrix;
-matrix g_ViewMatrix;
-matrix g_ProjMatrix;
-float  g_fFar = 500.f;
-float4 g_vCamPosition;
-/**************************************/
-
-Texture2D<float4>		g_DiffuseTexture;
-Texture2D<float4>		g_NormalTexture;
-Texture2D<float4>		g_AO_R_MTexture;
-Texture2D<float4>		g_EmissiveTexture;
-Texture2D<float4>		g_EmissiveMaskTexture;
-Texture2D<float4>		g_MaskTexture;
-Texture2D<float4>		g_SSSMaskTexture;
-
-Texture2D<float4>		g_HairDepthTexture;
-Texture2D<float4>		g_HairAlphaTexture;
-Texture2D<float4>		g_HairRootTexture;
-
-Texture2D<float4>		g_DetailNormal;
-
-/* Kena Bow_String Texture */
-Texture2D		g_NoiseTexture;
-Texture2D		g_SwipeTexture;
-Texture2D		g_GradientTexture;
-float			g_BowDurationTime;
-/* Kena Bow_String Texture */
-
-float					g_fHairLength = 1.f;
-float					g_fHairThickness = 1.f;
-
-float					g_fLashDensity = 0.5f;
-float					g_fLashWidth = 0.5f;
-float					g_fLashIntensity = 0.5f;
-
-float4					g_vAmbientEyeColor = float4(1.f, 1.f, 1.f, 1.f);
-float4					g_vAmbientColor = float4(1.f, 1.f, 1.f, 1.f);
-float4					g_vSSSColor = float4(1.f, 0.f, 0.f, 1.f);
-float					g_fSSSAmount = 1.f;
-
-bool					g_Hit = false;
-float					g_HitRimIntensity = 0.f;
-bool					g_Parry = false;
-float					g_ParryRimIntensity = 0.f;
-bool					g_Dash = false;
-float					g_DashRimIntensity = 0.f;
-
-float g_Time;
+float4x4		g_BoneMatrices[800];
 
 float4 SSS(float3 position, float3 normal, float3 dir, float4 color, float2 vUV, float amount, Texture2D<float4> Texturediffuse, Texture2D<float4> sssMask)
 {
@@ -381,7 +332,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	vector		vAlpha = g_HairAlphaTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vRoot = g_HairRootTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepth = g_HairDepthTexture.Sample(LinearSampler, In.vTexUV);
-
+	
 	float fAlpha = vAlpha.r;
 
 	if (fAlpha < 0.5f)
