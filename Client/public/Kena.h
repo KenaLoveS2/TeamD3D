@@ -261,7 +261,6 @@ public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, CKena*>		m_PlayerPtrDelegator;
 	//Delegator<CUI_ClientManager::UI_PRESENT, _float, _float, _float, _float>				m_PlayerAmmoDelegator;
 
-
 	// 테스트용 임시 변수 인듯
 	_float m_fTest = 0.f;
 	_bool  m_bStateLock;

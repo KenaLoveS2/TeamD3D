@@ -51,7 +51,7 @@ void CE_KenaDash::Tick(_float fTimeDelta)
 	_bool bResult = TurnOffSystem(m_fTurnOffTime, 0.5f, fTimeDelta);
 	if (bResult == true)	Reset();
 
-	_bool bMyTurnOff = TurnOffSystem(fTime, 1.f, fTimeDelta);
+	_bool bMyTurnOff = TurnOffSystem(fTime, 0.8f, fTimeDelta);
 	if (bMyTurnOff == true)	m_eEFfectDesc.bActive = false;
 }
 
@@ -80,9 +80,9 @@ void CE_KenaDash::Tick_RingState(_float4 vPos)
 	{
 		(*pChildRing)->Get_TransformCom()->Set_State(CTransform::STATE_LOOK, vDir);
 		
-		vFinalPos.x += (i * 2.f);
-		vFinalPos.y += (i * 2.f);
-		vFinalPos.z += (i * 2.f);
+		vFinalPos.x += (i * 5.f);
+		// vFinalPos.y += (i * 5.f);
+		vFinalPos.z += (i * 5.f);
 
 		(*pChildRing)->Set_Position(vFinalPos);
 	}

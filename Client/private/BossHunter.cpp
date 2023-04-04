@@ -146,13 +146,14 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 
 void CBossHunter::Tick(_float fTimeDelta)
 {
-	ImGui::Begin("HunterTest");
-	if (ImGui::Button("ReCompile"))
-	{
-		m_pShaderCom->ReCompile();
-		m_pRendererCom->ReCompile();
-	}
-	ImGui::End();
+	//ImGui::Begin("HunterTest");
+	//if (ImGui::Button("ReCompile"))
+	//{
+	//	m_pShaderCom->ReCompile();
+	//	m_pRendererCom->ReCompile();
+	//}
+	//ImGui::End();
+	int a = 0;
 
 	m_pModelCom->Play_Animation(fTimeDelta);
 	Update_Collider(fTimeDelta);
