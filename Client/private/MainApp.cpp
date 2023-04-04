@@ -398,11 +398,14 @@ HRESULT CMainApp::Ready_BufferLock_UnLock()
 	D3D11_MAPPED_SUBRESOURCE		SubResource;
 	ZeroMemory(&SubResource, sizeof SubResource);
 
-	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);  //DX_9 Lock ==Map
+	HRESULT hr = 	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);  //DX_9 Lock ==Map
 
-	memcpy(SubResource.pData, pPixel, sizeof(_ulong) *TextureDesc.Width * TextureDesc.Height);
+	if (SUCCEEDED(hr))
+	{
+		memcpy(SubResource.pData, pPixel, sizeof(_ulong) * TextureDesc.Width * TextureDesc.Height);
 
-	m_pContext->Unmap(pTexture2D, 0);
+		m_pContext->Unmap(pTexture2D, 0);
+	}
 
 	if (FAILED(DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Terrain_Texture/Filter/FilterNew.dds"))))
 		return E_FAIL;

@@ -432,21 +432,25 @@ void CPostFX::PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTarg
 
 	// Constants
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
-	m_pContext->Map(m_pDownScaleCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
-	TDownScaleCB* pDownScale = (TDownScaleCB*)MappedResource.pData;
-	pDownScale->nWidth = m_iWidth / 4;
-	pDownScale->nHeight = m_iHeight / 4;
-	pDownScale->nTotalPixels = pDownScale->nWidth * pDownScale->nHeight;
-	pDownScale->nGroupSize = m_iDownScaleGroups;
-	pDownScale->fAdaptation = fAdaptationNorm;
-	pDownScale->fBloomThreshold = m_fBloomThreshold;
-	_float cameraFar = /**CGameInstance::GetInstance()->Get_CameraFar();*/ 500.f;
-	_float cameraNear = /**CGameInstance::GetInstance()->Get_CameraNear();*/ 0.2f;
-	float fQ = cameraFar / (cameraFar - cameraNear);
-	pDownScale->ProjectionValues[0] = -cameraNear * fQ;
-	pDownScale->ProjectionValues[1] = -fQ;
+	HRESULT hr = m_pContext->Map(m_pDownScaleCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 
-	m_pContext->Unmap(m_pDownScaleCB, 0);
+	if(SUCCEEDED(hr))
+	{
+		TDownScaleCB* pDownScale = (TDownScaleCB*)MappedResource.pData;
+		pDownScale->nWidth = m_iWidth / 4;
+		pDownScale->nHeight = m_iHeight / 4;
+		pDownScale->nTotalPixels = pDownScale->nWidth * pDownScale->nHeight;
+		pDownScale->nGroupSize = m_iDownScaleGroups;
+		pDownScale->fAdaptation = fAdaptationNorm;
+		pDownScale->fBloomThreshold = m_fBloomThreshold;
+		_float cameraFar = /**CGameInstance::GetInstance()->Get_CameraFar();*/ 500.f;
+		_float cameraNear = /**CGameInstance::GetInstance()->Get_CameraNear();*/ 0.2f;
+		float fQ = cameraFar / (cameraFar - cameraNear);
+		pDownScale->ProjectionValues[0] = -cameraNear * fQ;
+		pDownScale->ProjectionValues[1] = -fQ;
+		m_pContext->Unmap(m_pDownScaleCB, 0);
+	}
+
 	ID3D11Buffer* arrConstBuffers[1] = { m_pDownScaleCB };
 	m_pContext->CSSetConstantBuffers(0, 1, arrConstBuffers);
 
@@ -711,25 +715,28 @@ void CPostFX::FinalPass(ID3D11ShaderResourceView * pHDRSRV, ID3D11ShaderResource
 
 	// Constants
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
-	m_pContext->Map(m_pFinalPassCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
-	TFinalPassCB* pFinalPass = (TFinalPassCB*)MappedResource.pData;
-	pFinalPass->fMiddleGrey = m_fMiddleGrey;
-	pFinalPass->fLumWhiteSqr = m_fWhite;
-	pFinalPass->fLumWhiteSqr *= pFinalPass->fMiddleGrey; // Scale by the middle grey value
-	pFinalPass->fLumWhiteSqr *= pFinalPass->fLumWhiteSqr; // Square
-	pFinalPass->fBloomScale = m_fBloomScale;
+	HRESULT hr = m_pContext->Map(m_pFinalPassCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+	if (SUCCEEDED(hr))
+	{
+		TFinalPassCB* pFinalPass = (TFinalPassCB*)MappedResource.pData;
+		pFinalPass->fMiddleGrey = m_fMiddleGrey;
+		pFinalPass->fLumWhiteSqr = m_fWhite;
+		pFinalPass->fLumWhiteSqr *= pFinalPass->fMiddleGrey; // Scale by the middle grey value
+		pFinalPass->fLumWhiteSqr *= pFinalPass->fLumWhiteSqr; // Square
+		pFinalPass->fBloomScale = m_fBloomScale;
 
-	_float cameraFar = /**CGameInstance::GetInstance()->Get_CameraFar();*/ 500.f;
-	_float cameraNear = /**CGameInstance::GetInstance()->Get_CameraNear();*/ 0.2f;
+		_float cameraFar = /**CGameInstance::GetInstance()->Get_CameraFar();*/ 500.f;
+		_float cameraNear = /**CGameInstance::GetInstance()->Get_CameraNear();*/ 0.2f;
 
-	float fQ = cameraFar / (cameraFar - cameraNear);
-	pFinalPass->ProjectionValues[0] = -cameraNear * fQ;
-	pFinalPass->ProjectionValues[1] = -fQ;
-	pFinalPass->fDOFFarStart = m_fDOFFarStart;
-	m_fDOFFarRangeRcp = 1.f / max(m_fDOFFarRange, 0.001f);
-	pFinalPass->fDOFFarRangeRcp = m_fDOFFarRangeRcp;
+		float fQ = cameraFar / (cameraFar - cameraNear);
+		pFinalPass->ProjectionValues[0] = -cameraNear * fQ;
+		pFinalPass->ProjectionValues[1] = -fQ;
+		pFinalPass->fDOFFarStart = m_fDOFFarStart;
+		m_fDOFFarRangeRcp = 1.f / max(m_fDOFFarRange, 0.001f);
+		pFinalPass->fDOFFarRangeRcp = m_fDOFFarRangeRcp;
 
-	m_pContext->Unmap(m_pFinalPassCB, 0);
+		m_pContext->Unmap(m_pFinalPassCB, 0);
+	}
 	ID3D11Buffer* arrConstBuffers[1] = { m_pFinalPassCB };
 	m_pContext->PSSetConstantBuffers(0, 1, arrConstBuffers);
 

@@ -76,6 +76,9 @@ HRESULT CTree::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
+	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTreeStump_02")
+		int a = 0;
+
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 

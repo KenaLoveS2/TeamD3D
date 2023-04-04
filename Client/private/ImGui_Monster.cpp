@@ -215,7 +215,7 @@ void CImGui_Monster::Load_MonsterObjects(_uint iLevel, string JsonFileName, _boo
 		wszCloneTag = CUtile::StringToWideChar(strCloneTag);
 		pGameInstance->Add_String(wszCloneTag);
 
-		pGameInstance->Clone_AnimObject(g_LEVEL, wszLayerTag, wszProtoObjTag, wszCloneTag, &MonsterDesc, &pLoadObject);
+		pGameInstance->Clone_GameObject(g_LEVEL, wszLayerTag, wszProtoObjTag, wszCloneTag, &MonsterDesc, &pLoadObject);
 
 		strProtoObjTag = "";
 		strCloneTag = "";

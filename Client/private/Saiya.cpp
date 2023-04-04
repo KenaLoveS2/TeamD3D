@@ -55,6 +55,15 @@ HRESULT CSaiya::Initialize(void* pArg)
 	CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", L"Saiya_Rot", nullptr, &p_game_object);
 	m_pRot = dynamic_cast<CRot*>(p_game_object);
 
+	Load_KeyFrame();
+	if (!m_keyframes.empty())
+	{
+		const _float4 vPos = _float4(m_keyframes[m_iKeyFrame].vPos.x, m_keyframes[m_iKeyFrame].vPos.y, m_keyframes[m_iKeyFrame].vPos.z, 1.f);
+		const _float4 vLook = _float4(m_keyframes[m_iKeyFrame].vLook.x, m_keyframes[m_iKeyFrame].vLook.y, m_keyframes[m_iKeyFrame].vLook.z, 0.f);
+		m_pTransformCom->Set_Position(vPos);
+		m_pTransformCom->Set_Look(vLook);
+	}
+
 	return S_OK;
 }
 
@@ -93,15 +102,6 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 		m_pTransformCom->Set_PxPivotScale(vPivotScale);
 		m_pTransformCom->Set_PxPivot(vPivotPos);
-	}
-
-	Load_KeyFrame();
-	if(!m_keyframes.empty())
-	{
-		const _float4 vPos = _float4( m_keyframes[m_iKeyFrame].vPos.x, m_keyframes[m_iKeyFrame].vPos.y, m_keyframes[m_iKeyFrame].vPos.z,1.f);
-		const _float4 vLook = _float4(m_keyframes[m_iKeyFrame].vLook.x, m_keyframes[m_iKeyFrame].vLook.y, m_keyframes[m_iKeyFrame].vLook.z,0.f);
-		m_pTransformCom->Set_Position(vPos);
-		m_pTransformCom->Set_Look(vLook);
 	}
 
 	m_pCinecam[0] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CINE0")));
