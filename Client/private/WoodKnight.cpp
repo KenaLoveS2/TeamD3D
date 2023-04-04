@@ -195,11 +195,10 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 
 void CWoodKnight::Tick(_float fTimeDelta)
 {
-	m_bReadySpawn = true;
+	/*m_bReadySpawn = true;
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	m_pModelCom->Play_Animation(fTimeDelta);
-	AdditiveAnim(fTimeDelta);
-	return;
+	m_pModelCom->Play_Animation(fTimeDelta);	
+	return;*/
 
 	if (m_bDeath) return;
 
@@ -409,7 +408,12 @@ HRESULT CWoodKnight::Call_EventFunction(const string& strFuncName)
 
 void CWoodKnight::Push_EventFunctions()
 {
-	CMonster::Push_EventFunctions();
+	// CMonster::Push_EventFunctions();
+
+	Play_WoooshSound(true, 0.f);
+	Play_WalkSound(true, 0.f);
+	Play_SlamSound(true, 0.f);
+	Play_CatchSound(true, 0.f);	
 }
 
 HRESULT CWoodKnight::SetUp_State()
@@ -430,7 +434,8 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("READY_SPAWN")
 		.OnStart([this]()
 	{
-		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE], 0.7f);
+		m_pModelCom->ResetAnimIdx_PlayTime(SLEEP);
+		m_pModelCom->Set_AnimIndex(SLEEP);
 		Start_Spawn();
 	})
 		.Tick([this](_float fTimeDelta)
@@ -450,6 +455,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("ALERT")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(ALERT);
 		m_pModelCom->Set_AnimIndex(ALERT);			
 	})
@@ -462,12 +468,18 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IDLE], 0.7f);
 		m_fIdletoAttackTime = 0.f;
 	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_fIdletoAttackTime += fTimeDelta;
 		m_pModelCom->Set_AnimIndex(IDLE);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("IDLE to BIND", "BIND")
 		.Predicator([this]()
@@ -489,11 +501,7 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return TimeTrigger(m_fIdletoAttackTime, 1.f);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+		
 
 		.AddState("BLOCK_INTO")
 		.OnStart([this]()
@@ -501,16 +509,17 @@ HRESULT CWoodKnight::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(BLOCK_INTO);
 		m_pModelCom->Set_AnimIndex(BLOCK_INTO);
 	})
-		.AddTransition("BLOCK_INTO to BLOCK_LOOP", "BLOCK_LOOP")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(BLOCK_INTO);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("BLOCK_INTO to BLOCK_LOOP", "BLOCK_LOOP")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BLOCK_INTO);
+	})
+		
 
 		.AddState("BLOCK_LOOP")
 		.OnStart([this]()
@@ -558,11 +567,11 @@ HRESULT CWoodKnight::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		if (m_iBlockType == BA_FRONT)
+		if (m_iBlockType == (_int)BA_FRONT)
 			m_bBlockAfterFront = true;
-		else if (m_iBlockType == BA_BACK)
+		else if (m_iBlockType == (_int)BA_BACK)
 			m_bBlockAfterBack = true;
-		else if (m_iBlockType == BA_NONE)
+		else if (m_iBlockType == (_int)BA_NONE)
 			m_bBlockNone = true;
 	})
 		.OnExit([this]()
@@ -593,23 +602,26 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("BLOCK_COUNTERATTACK")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK_START], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(BLOCK_COUNTERATTACK);
 		m_pModelCom->Set_AnimIndex(BLOCK_COUNTERATTACK);
-	})
-		.AddTransition("BLOCK_COUNTERATTACK to IDLE", "IDLE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(BLOCK_COUNTERATTACK);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("BLOCK_COUNTERATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BLOCK_COUNTERATTACK);
+	})
+		
 
 		.AddState("BLOCKATTACK_180")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK_START], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(BLOCKATTACK_180);
 		m_pModelCom->Set_AnimIndex(BLOCKATTACK_180);
 	})
@@ -638,6 +650,11 @@ HRESULT CWoodKnight::SetUp_State()
 		.OnExit([this]()
 	{
 		Reset_Attack();
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("WALK to BIND", "BIND")
 		.Predicator([this]()
@@ -679,11 +696,7 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return m_bRealAttack && m_bUppercutAttack;
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+
 
 		.AddState("INTOCHARGE")
 		.OnStart([this]()
@@ -691,16 +704,17 @@ HRESULT CWoodKnight::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(INTOCHARGE);
 		m_pModelCom->Set_AnimIndex(INTOCHARGE);
 	})
-		.AddTransition("INTOCHARGE to CHARGEATTACK", "CHARGEATTACK")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(INTOCHARGE);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("INTOCHARGE to CHARGEATTACK", "CHARGEATTACK")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(INTOCHARGE);
+	})
+		
 
 		.AddState("INTOCHARGE_BACKUP")
 		.OnStart([this]()
@@ -708,22 +722,29 @@ HRESULT CWoodKnight::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(INTOCHARGE_BACKUP);
 		m_pModelCom->Set_AnimIndex(INTOCHARGE_BACKUP);
 	})
-		.AddTransition("INTOCHARGE_BACKUP to CHARGEATTACK", "CHARGEATTACK")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(INTOCHARGE_BACKUP);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("INTOCHARGE_BACKUP to CHARGEATTACK", "CHARGEATTACK")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(INTOCHARGE_BACKUP);
+	})
+		
 
 		.AddState("CHARGEATTACK")
 		.OnStart([this]()
-	{
+	{	
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK_START], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(CHARGEATTACK);
 		m_pModelCom->Set_AnimIndex(CHARGEATTACK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("CHARGEATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -740,18 +761,19 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(CHARGEATTACK);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+		
 
 		.AddState("RANGEDATTACK")
 		.OnStart([this]()
 	{
-		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK_START], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(RANGEDATTACK);
 		m_pModelCom->Set_AnimIndex(RANGEDATTACK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("RANGEDATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -768,17 +790,19 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(RANGEDATTACK);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+
 
 		.AddState("COMBOATTACK_LUNGE")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK_START], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(COMBOATTACK_LUNGE);
 		m_pModelCom->Set_AnimIndex(COMBOATTACK_LUNGE);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("COMBOATTACK_LUNGE to BIND", "BIND")
 		.Predicator([this]()
@@ -795,15 +819,12 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(COMBOATTACK_LUNGE);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+
 
 		.AddState("COMBOATTACK_OVERHEAD")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK_START], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(COMBOATTACK_OVERHEAD);
 		m_pModelCom->Set_AnimIndex(COMBOATTACK_OVERHEAD);
 	})
@@ -831,8 +852,14 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("DOUBLEATTACK")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK_START], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(DOUBLEATTACK);
 		m_pModelCom->Set_AnimIndex(DOUBLEATTACK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("DOUBLEATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -849,15 +876,12 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(DOUBLEATTACK);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+
 
 		.AddState("UPPERCUTATTACK")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK_START], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(UPPERCUTATTACK);
 		m_pModelCom->Set_AnimIndex(UPPERCUTATTACK);
 	})
@@ -984,6 +1008,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DIE], 0.5f);		
 		Set_Dying(DEATH);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -1296,8 +1321,14 @@ void CWoodKnight::Create_CopySoundKey()
 {
 	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
 		TEXT("Mon_WoodKnight_Tense.ogg"),
-		TEXT("Mon_WoodKnight_ATTACK.ogg"),		
-
+		TEXT("Mon_WoodKnight_AttackStart.ogg"),
+		TEXT("Mon_WoodKnight_Attack.ogg"),		
+		TEXT("Mon_WoodKnight_Idle.ogg"),
+		TEXT("Mon_WoodKnight_Woosh.ogg"),
+		TEXT("Mon_WoodKnight_Walk.ogg"),
+		TEXT("Mon_WoodKnight_Slam.ogg"),
+		TEXT("Mon_WoodKnight_Die.ogg"),
+		TEXT("Mon_WoodKnight_Catch.ogg"),
 	};
 
 	_tchar szTemp[MAX_PATH] = { 0, };
@@ -1306,4 +1337,53 @@ void CWoodKnight::Create_CopySoundKey()
 	{
 		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
 	}
+}
+
+void CWoodKnight::Play_WoooshSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CWoodKnight::Play_WoooshSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.5f);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WOOSH], 0.5f);
+}
+
+void CWoodKnight::Play_WalkSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CWoodKnight::Play_WalkSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WALK], 0.7f);
+}
+
+void CWoodKnight::Play_SlamSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CWoodKnight::Play_SlamSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_SLAM], 0.7f);
+}
+
+void CWoodKnight::Play_CatchSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CWoodKnight::Play_CatchSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CATCH], 0.7f);
 }
