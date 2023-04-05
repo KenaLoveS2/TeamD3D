@@ -78,11 +78,11 @@ void CDZ_FallenTree_Anim::Tick(_float fTimeDelta)
 		m_bColiderOn = true;
 	}
 
-	if(ImGui::Button("TEmp"))
-	{
-		m_bBossClear = true;
-		m_bColiderOn = false;
-	}
+	//if(ImGui::Button("TEmp"))
+	//{
+	//	m_bBossClear = true;
+	//	m_bColiderOn = false;
+	//}
 
 	/*Culling*/
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);

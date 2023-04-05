@@ -187,7 +187,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//0
+}
 
 PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 {
@@ -230,7 +230,7 @@ PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//1
+}
 
 PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 {
@@ -271,7 +271,7 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}//2
+}
 
 PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 {
@@ -317,7 +317,7 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}//3
+}
 
 PS_OUT PS_MAIN_FACE(PS_IN In)
 {
@@ -354,7 +354,7 @@ PS_OUT PS_MAIN_FACE(PS_IN In)
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}//4
+}
 
 PS_OUT PS_MAIN_STAFF(PS_IN In)
 {
@@ -377,7 +377,7 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}//5
+}
 
 PS_OUT PS_MAIN_HAIR(PS_IN In)
 {
@@ -437,7 +437,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//6
+}
 
 PS_OUT PS_MAIN_EYELASH(PS_IN In)
 {
@@ -475,7 +475,7 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//7
+}
 
 PS_OUT PS_MAIN_STAFF_BOWTRAIL(PS_IN In)
 {
@@ -504,7 +504,7 @@ PS_OUT PS_MAIN_STAFF_BOWTRAIL(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//8
+}
 
 PS_OUT PS_MAIN_STAFF_BOWSTRING(PS_IN In)
 {
@@ -542,7 +542,7 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//9
+}
 
 PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 {
@@ -583,7 +583,7 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//10
+}
 
 PS_OUT PS_MAIN_CINE(PS_IN In)
 {
@@ -604,7 +604,7 @@ PS_OUT PS_MAIN_CINE(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAORM;
 	return Out;
-}//11
+}
 
 PS_OUT PS_PULSEPLATEANIM(PS_IN In)
 {
@@ -627,7 +627,7 @@ PS_OUT PS_PULSEPLATEANIM(PS_IN In)
 	Out.vAmbient = vector(vERAODesc.b, vERAODesc.g, 1.f, 1.f);
 
 	return Out;
-}//13
+}
 
 struct PS_OUT_SHADOW
 {
@@ -692,7 +692,7 @@ PS_OUT PS_MAIN_MON(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//0
+}
 
 PS_OUT PS_MAIN_AO_R_M(PS_IN In)
 {
@@ -747,7 +747,7 @@ PS_OUT PS_MAIN_AO_R_M(PS_IN In)
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
-}//1
+}
 
 PS_OUT PS_MAIN_AO_R_M_E(PS_IN In)
 {
@@ -803,7 +803,7 @@ PS_OUT PS_MAIN_AO_R_M_E(PS_IN In)
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
-}//2
+}
 
  // GLOW
 PS_OUT PS_MAIN_AO_R_M_G(PS_IN In)
@@ -863,7 +863,7 @@ PS_OUT PS_MAIN_AO_R_M_G(PS_IN In)
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
-}//3
+}
 
  //OPACITY
 PS_OUT PS_MAIN_AO_R_M_O(PS_IN In)
@@ -923,7 +923,7 @@ PS_OUT PS_MAIN_AO_R_M_O(PS_IN In)
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
-}//4
+}
 
  //EMISSIVEMASK
 PS_OUT PS_MAIN_AO_R_M_EEM(PS_IN In)
@@ -982,7 +982,7 @@ PS_OUT PS_MAIN_AO_R_M_EEM(PS_IN In)
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
-}//5
+}
 
  //SPEARATE
 PS_OUT PS_MAIN_SEPARATE_AO_R_M_E(PS_IN In)
@@ -1043,7 +1043,7 @@ PS_OUT PS_MAIN_SEPARATE_AO_R_M_E(PS_IN In)
 	Out.vAmbient = AO_R_M;
 
 	return Out;
-}//6
+}
 
 PS_OUT PS_MAIN_MASK(PS_IN In)
 {
@@ -1100,7 +1100,7 @@ PS_OUT PS_MAIN_MASK(PS_IN In)
 	Out.vAmbient = AO_R_M;
 
 	return Out;
-}//7
+}
 
 PS_OUT PS_MAIN_BOMBCHARGEUP(PS_IN In)
 {
@@ -1163,7 +1163,7 @@ PS_OUT PS_MAIN_BOMBCHARGEUP(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-} //8
+} 
 
   // ALPHA, AO
 PS_OUT PS_MAIN_ALPHA_AO_R_M(PS_IN In)
@@ -1220,7 +1220,7 @@ PS_OUT PS_MAIN_ALPHA_AO_R_M(PS_IN In)
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}//9
+}
 
 PS_OUT PS_MAIN_BOSS_AO_R_M(PS_IN In)
 {
@@ -1275,7 +1275,7 @@ PS_OUT PS_MAIN_BOSS_AO_R_M(PS_IN In)
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
-}// 11
+}
 
 PS_OUT PS_MAIN_BOSS_AO_R_M_E(PS_IN In)
 {
@@ -1331,7 +1331,7 @@ PS_OUT PS_MAIN_BOSS_AO_R_M_E(PS_IN In)
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
-}// 12
+}
 
 PS_OUT PS_MAIN_HUNTER_STRING(PS_IN In)
 {
@@ -1363,7 +1363,7 @@ PS_OUT PS_MAIN_HUNTER_STRING(PS_IN In)
 		discard;
 
 	return Out;
-} // 13
+} 
 
 PS_OUT PS_MAIN_AO_R_M_DEFAULT(PS_IN In)
 {
@@ -1390,7 +1390,7 @@ PS_OUT PS_MAIN_AO_R_M_DEFAULT(PS_IN In)
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
-}//1
+}
 
 PS_OUT PS_MAIN_AO_R_M_E_DEFAULT(PS_IN In)
 {
@@ -1418,7 +1418,7 @@ PS_OUT PS_MAIN_AO_R_M_E_DEFAULT(PS_IN In)
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
-}//2
+}
 
 PS_OUT PS_MAIN_SAIYA_EYE(PS_IN In)
 {
@@ -1444,7 +1444,7 @@ PS_OUT PS_MAIN_SAIYA_EYE(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//4
+}
 
 PS_OUT PS_MAIN_BENI_EYE(PS_IN In)
 {
@@ -1470,7 +1470,7 @@ PS_OUT PS_MAIN_BENI_EYE(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//2
+}
 
 PS_OUT PS_MAIN_ROTHAIR(PS_IN In)
 {
@@ -1489,7 +1489,7 @@ PS_OUT PS_MAIN_ROTHAIR(PS_IN In)
 	Out.vAmbient = vector(1.f, 1.f, 1.f, 1.f);
 
 	return Out;
-}//2
+}
 
 PS_OUT PS_MAIN_NONNORMAL(PS_IN In)
 {
@@ -1506,7 +1506,35 @@ PS_OUT PS_MAIN_NONNORMAL(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//0
+}
+
+PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = (vector)1.f;
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse + (vDiffuse * vEmissiveDesc * g_EmissiveColor);
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc), 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}
 
 technique11 DefaultTechnique
 {
@@ -1931,4 +1959,17 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_NONNORMAL();
 	}//32
+
+	pass Emissive
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
+	}//33
 };
