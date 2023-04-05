@@ -36,9 +36,9 @@ HRESULT CE_EnemyWispTrail::Initialize(void * pArg)
 		return E_FAIL;
 
 	/* Trail Texture */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_flowTexture", (CComponent**)&m_pTrailflowTexture[0], this)))
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_flowTexture", (CComponent**)&m_pTrailflowTexture[0], this)))
 		return E_FAIL;
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_OutflowTexture", (CComponent**)&m_pTrailflowTexture[1], this)))
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_OutflowTexture", (CComponent**)&m_pTrailflowTexture[1], this)))
 		return E_FAIL;
 	/* Trail Texture */
 

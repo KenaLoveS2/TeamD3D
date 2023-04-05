@@ -432,7 +432,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 		else if (i == 7)
 			desc.vPivotPos = _float4(-2.f, 0.f, 0.f, 1.f);
 
-		if (FAILED(p_game_instance->Clone_GameObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), 
+		if (FAILED(p_game_instance->Clone_GameObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"),
 			CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
 			return E_FAIL;
 
@@ -1367,7 +1367,7 @@ HRESULT CKena::Ready_Parts()
 	NULL_CHECK_RETURN(pPart, E_FAIL);
 
 	m_vecPart.push_back(pPart);
-	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
+	pGameInstance->Add_AnimObject(g_LEVEL, pPart);
 	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")), false);
 
 	/* MainOutfit */
@@ -1380,7 +1380,7 @@ HRESULT CKena::Ready_Parts()
 	NULL_CHECK_RETURN(pPart, E_FAIL);
 
 	m_vecPart.push_back(pPart);
-	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
+	pGameInstance->Add_AnimObject(g_LEVEL, pPart);
 	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")), true);
 
 	/* Taro Mask */
@@ -1517,7 +1517,7 @@ HRESULT CKena::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Kena", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Kena", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	//For.Cloth			
 	// AO_R_M

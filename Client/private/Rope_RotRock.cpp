@@ -138,7 +138,7 @@ HRESULT CRope_RotRock::SetUp_Components()
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom))) return E_FAIL;
 
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Rope_Rock"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_Rope_Rock"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 		

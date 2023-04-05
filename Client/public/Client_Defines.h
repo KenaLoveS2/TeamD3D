@@ -78,7 +78,7 @@ extern float				g_fSkyColorIntensity;
 extern bool				g_bDayOrNight;
 
 extern unsigned int	g_LEVEL;
-
+extern unsigned int	g_LEVEL_FOR_COMPONENT;
 static const XMFLOAT4X4 g_IdentityFloat4x4 = {
 	1,0,0,0,
 	0,1,0,0,

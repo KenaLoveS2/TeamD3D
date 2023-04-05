@@ -1546,6 +1546,7 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const 
 	if (iMaterialIndex >= m_Materials.size())return E_FAIL;
 	CTexture *pTexture = CTexture::Create(m_pDevice, m_pContext, CUtile::Create_StringAuto(pTexturePath));
 	if (pTexture == nullptr) return E_FAIL;
+	Safe_AddRef(pTexture);		// 임시 추가 
 	if (m_Materials[iMaterialIndex].pTexture[eType]){Safe_Release(m_Materials[iMaterialIndex].pTexture[eType]);}
 	m_Materials[iMaterialIndex].pTexture[eType] = pTexture;
 	return S_OK;

@@ -125,7 +125,7 @@ void CCamera_Player::Tick(_float fTimeDelta)
 	
 	if (m_pKena == nullptr || m_pKenaTransform == nullptr)
 	{
-		m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(LEVEL_GAMEPLAY, L"Layer_Player", L"Kena"));
+		m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 		m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Find_Component(L"Com_Transform"));
 		Initialize_Position();
 

@@ -45,10 +45,15 @@ void CEnviroment_Manager::Tick(_float fTimeDelta)
 	{
 		return;
 	}
-	
-	_float4	fPos;
-	XMStoreFloat4(&fPos, m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
 
+	_float4	fPos;
+
+#ifdef _DEBUG
+	fPos = CGameInstance::GetInstance()->Get_CamPosition();
+	
+#else
+	XMStoreFloat4(&fPos, m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+#endif
 	if (m_RoomCheck_Array[1] ==false && fPos.z >= 78.576f)
 	{
 		m_iCurPlayer_RoomIndex = 1;
@@ -56,29 +61,29 @@ void CEnviroment_Manager::Tick(_float fTimeDelta)
 	else if (m_RoomCheck_Array[2] == false && fPos.z >= 320.f)
 	{
 
-		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 0);
-		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 1);
+		//CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 0);
+		//CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 1);
 
 		m_iCurPlayer_RoomIndex = 2;
 	}
 	else if (m_RoomCheck_Array[3] == false && fPos.z >= 602.f)
 	{
 		// 시네마틱 때 삭제하자
-		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 2);
+		//CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 2);
 
 		m_iCurPlayer_RoomIndex = 3;
 	}
 	else if (m_RoomCheck_Array[4] == false && fPos.z >= 856.f)
 	{
 
-		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 3);
+		//CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 3);
 
 		m_iCurPlayer_RoomIndex = 4;
 	}
 	else if (m_RoomCheck_Array[5] == false && fPos.z >= 1095.f)
 	{
 
-		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 4);
+		//CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 4);
 
 		m_iCurPlayer_RoomIndex = 5;
 	}

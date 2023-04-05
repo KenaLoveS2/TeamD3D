@@ -54,10 +54,6 @@ HRESULT CString_Manager::Add_String(_uint iLevelIndex, _tchar * pStr)
 
 HRESULT CString_Manager::Add_String(_tchar * pStr)
 {
-	/*
-	_tchar *pFindString = Find_String(iLevelIndex, pTag);
-	if (pFindString) return E_FAIL;
-	*/
 
 	vector<_tchar*> &vecLevel = m_LevelModelTags[m_iStaticIndex];
 	vecLevel.push_back(pStr);
@@ -80,6 +76,8 @@ _tchar* CString_Manager::Find_String(_uint iLevelIndex, _tchar * pStr)
 
 	return *iter;
 }
+
+
 
 void CString_Manager::Add_UIString(_uint iKey,const  string& str)
 {
