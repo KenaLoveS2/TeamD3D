@@ -1155,6 +1155,7 @@ void CModel::Print_Animation_Names(const string & strFilePath)
 	file.close();
 }
 
+
 void CModel::Play_Animation(_float fTimeDelta)
 {
 	if (TYPE_NONANIM == m_eType)
@@ -2218,11 +2219,33 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 
 	ResultMatrix *= InvParentMulChild;
 	XMStoreFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index], ResultMatrix);
+	
+	for (auto& pInstMesh : m_InstancingMeshes)
+		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
+
+}
+
+
+void CModel::InstanceModelPosInit()
+{
+	if (m_bIsInstancing == false)
+		return;
+
+	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
+	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
+	ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index]) * parentMatrix;
+	m_pInstanceTransform->Set_WorldMatrix(ParentMulChild);
+	m_pInstanceTransform->Imgui_RenderProperty();
+	ResultMatrix = m_pInstanceTransform->Get_WorldMatrix();
+
+	ResultMatrix *= InvParentMulChild;
+	XMStoreFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index], ResultMatrix);
 
 	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
 
 }
+
 
 void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
 {

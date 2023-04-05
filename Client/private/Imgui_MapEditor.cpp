@@ -728,6 +728,9 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
 		EnviromentDesc.iShaderPass = iShaderPath;
 
+
+
+
 		if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(),
 			wszLayerTag,
 			EnviromentDesc.szProtoObjTag.c_str(),
@@ -1056,6 +1059,8 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 		EnviromentDesc.iCurLevel = iLevel;
 		EnviromentDesc.iShaderPass = iShaderPass;
 
+		if (wszCloneTag == L"RuinStairs_8_Set_Straight")
+			_bool b = false;
 
 		if (FAILED(pGameInstance->Clone_GameObject(iLevel,
 			wszLayerTag,

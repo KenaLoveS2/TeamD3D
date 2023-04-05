@@ -72,7 +72,9 @@ public:
 	void						Update_BonesMatrix(CModel* pModel);
 	void						Set_AllAnimCommonType();
 	void						Print_Animation_Names(const string& strFilePath);
-	
+
+	void						InstanceModelPosInit();
+
 public:	
 	HRESULT 					Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, 
 		const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing , const char* JsonMatrial, _bool bUseTriangleMeshActor, _bool bPointBuffer);
