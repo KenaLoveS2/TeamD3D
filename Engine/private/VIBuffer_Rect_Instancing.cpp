@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\VIBuffer_Rect_Instancing.h"
 
+#include "GameInstance.h"
+
 CVIBuffer_Rect_Instancing::CVIBuffer_Rect_Instancing(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CVIBuffer_Instancing(pDevice, pContext)
 {
@@ -154,7 +156,7 @@ HRESULT CVIBuffer_Rect_Instancing::Tick(_float fTimeDelta)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))

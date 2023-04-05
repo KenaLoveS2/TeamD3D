@@ -50,6 +50,8 @@ HRESULT CE_RectTrail::Late_Initialize(void * pArg)
 
 void CE_RectTrail::Tick(_float fTimeDelta)
 {
+	return;
+
 #pragma region Test
 	//if( dynamic_cast<CKena_Staff*>(m_pParent))
 	//{
@@ -108,6 +110,8 @@ void CE_RectTrail::Tick(_float fTimeDelta)
 
 void CE_RectTrail::Late_Tick(_float fTimeDelta)
 {
+	return;
+
  	__super::Trail_LateTick(fTimeDelta);
 }
 
