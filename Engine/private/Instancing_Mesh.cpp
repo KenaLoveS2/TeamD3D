@@ -272,11 +272,6 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 	}
 }
 
-void CInstancing_Mesh::Set_PxTriangle(vector<_float4x4*> VecInstancingMatrix)
-{
-
-}
-
 void CInstancing_Mesh::InstaincingMesh_EffectTick(_float yLimitPos, _float fTimeDelta)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
@@ -306,11 +301,11 @@ void CInstancing_Mesh::InstaincingMesh_EffectTick(_float yLimitPos, _float fTime
 }
 
 HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod,
-	_bool bUseTriangleMeshActor, _uint iNumInstance)
+	_bool bUseTriangleMeshActor, _bool bPointBuffer, _uint iNumInstance)
 {
 	if (hFile == nullptr)
 		return S_OK;
-	m_bLodMesh = bIsLod;			// is_Lod Or NonLod????
+	m_bLodMesh = bIsLod;		 m_bPointListMesh = bPointBuffer;
 	m_bTriangle_Collider = bUseTriangleMeshActor;
 	_ulong dwByte = 0;
 	ReadFile(hFile, &m_eType, sizeof(m_eType), &dwByte, nullptr);
@@ -373,6 +368,7 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bo
 	m_BufferDesc.StructureByteStride = 0;
 	m_BufferDesc.CPUAccessFlags = 0;
 	m_BufferDesc.MiscFlags = 0;
+
 
 	/*Origin _Mesh*/
 	m_pIndices = new FACEINDICES32[m_iOriginNumPrimitive];
@@ -553,6 +549,7 @@ HRESULT CInstancing_Mesh::Render()
 
 _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat)
 {
+	return 1;
 	list<_float4x4> InstPos;
 
 	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
@@ -913,7 +910,7 @@ void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransf
 
 		assert(pStaticRigid != nullptr && "CInstancing_Mesh::Create_PxTriangle_InstMeshActor");
 		pPhysX->Set_ActorMatrix(pStaticRigid, (matNew));		// 노말라이즈 매트릭스보내고
-		//m_StaticRigid_List.push_back(pStaticRigid);
+		m_StaticRigid_List.push_back(pStaticRigid);
 	}
 
 
@@ -980,14 +977,36 @@ HRESULT CInstancing_Mesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel* 
 		m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
 	}
 
-	m_iStride = sizeof(VTXMODEL);
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-	m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
-	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	m_BufferDesc.StructureByteStride = m_iStride;
-	m_BufferDesc.CPUAccessFlags = 0;
-	m_BufferDesc.MiscFlags = 0;
+
+	if (m_bPointListMesh == true)
+	{
+		m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+		m_eIndexFormat = DXGI_FORMAT_R32_UINT;
+		m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
+		m_iNumIndicesPerPrimitive = 1;
+		m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
+
+		m_iStride = sizeof(VTXMODEL);
+	
+		m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
+		m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		m_BufferDesc.StructureByteStride = m_iStride;
+		m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		m_BufferDesc.MiscFlags = 0;
+	}
+	else
+	{
+		m_iStride = sizeof(VTXMODEL);
+		m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
+		m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		m_BufferDesc.StructureByteStride = m_iStride;
+		m_BufferDesc.CPUAccessFlags = 0;
+		m_BufferDesc.MiscFlags = 0;
+
+	}
 
 
 	_matrix	PivotMatrix = pModel->Get_PivotMatrix();
@@ -1126,10 +1145,10 @@ void CInstancing_Mesh::Calc_InstMinMax(_float* pMinX, _float* pMaxX, _float* pMi
 }
 
 CInstancing_Mesh* CInstancing_Mesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
-	HANDLE hFile, CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _uint iNumInstance)
+	HANDLE hFile, CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _bool bPointBuffer, _uint iNumInstance)
 {
 	CInstancing_Mesh* pInstance = new CInstancing_Mesh(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, bUseTriangleMeshActor, iNumInstance)))
+	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, bUseTriangleMeshActor, bPointBuffer, iNumInstance)))
 	{
 		MSG_BOX("Failed to Created : CInstancing_Mesh");
 		Safe_Release(pInstance);
@@ -1166,7 +1185,7 @@ void CInstancing_Mesh::Free()
 		Safe_Delete_Array(m_pIndices);
 	}
 
-	/*if (m_bTriangle_Collider && m_isCloned==true)
+	if (m_bTriangle_Collider && m_isCloned==true)
 	{
 		for (auto pStaticRigid : m_StaticRigid_List)
 		{
@@ -1176,7 +1195,7 @@ void CInstancing_Mesh::Free()
 			}
 		}
 		m_StaticRigid_List.clear();
-	}*/
+	}
 
 
 	m_pInstancingPositions.clear();

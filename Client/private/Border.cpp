@@ -53,6 +53,12 @@ HRESULT CBorder::Late_Initialize(void* pArg)
 void CBorder::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
 }
 
 void CBorder::Late_Tick(_float fTimeDelta)

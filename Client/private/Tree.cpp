@@ -37,6 +37,8 @@ HRESULT CTree::Initialize(void * pArg)
 
 HRESULT CTree::Late_Initialize(void * pArg)
 {
+	
+
 	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
 	{
 		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
@@ -54,6 +56,13 @@ HRESULT CTree::Late_Initialize(void * pArg)
 void CTree::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if(m_bOncePosUpdate ==false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
+
 }
 
 void CTree::Late_Tick(_float fTimeDelta)

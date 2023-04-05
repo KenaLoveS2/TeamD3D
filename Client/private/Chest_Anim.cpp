@@ -32,7 +32,7 @@ HRESULT CChest_Anim::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
-	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
+	//CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 
 	m_bRenderActive = true;
 

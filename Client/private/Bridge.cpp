@@ -53,6 +53,12 @@ HRESULT CBridge::Late_Initialize(void * pArg)
 void CBridge::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
 }
 
 void CBridge::Late_Tick(_float fTimeDelta)

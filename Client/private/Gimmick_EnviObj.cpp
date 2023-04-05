@@ -40,6 +40,12 @@ HRESULT CGimmick_EnviObj::Initialize(void * pArg)
 
 HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 {
+
+	//m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+	//m_pModelCom->Instaincing_GimmkicInit(m_EnviromentDesc.eChapterType);
+
+
+
 	m_pControlRoom = dynamic_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
 	assert(m_pControlRoom != nullptr  && "CPulse_Plate_Anim::Late_Initialize(void * pArg)");
 

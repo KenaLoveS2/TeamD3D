@@ -37,6 +37,12 @@ HRESULT CPath_Mesh::Initialize(void * pArg)
 void CPath_Mesh::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
 }
 
 void CPath_Mesh::Late_Tick(_float fTimeDelta)

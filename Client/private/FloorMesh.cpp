@@ -55,6 +55,12 @@ HRESULT CFloorMesh::Late_Initialize(void * pArg)
 void CFloorMesh::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
 }
 
 void CFloorMesh::Late_Tick(_float fTimeDelta)
