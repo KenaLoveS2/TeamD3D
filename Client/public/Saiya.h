@@ -14,6 +14,14 @@ class CSaiya final : public CNpc
 		_float3 vLook;
 	};
 
+	enum NPC_CAM
+	{
+		NPC_CINE0 = 0,
+		NPC_CINE1,
+
+		NPC_CINE_END,
+	};
+
 	enum ANIMATION
 	{
 		SAIYA_APPEAR,
@@ -136,8 +144,9 @@ private:
 	_uint												m_iNumKeyFrame = 0;
 	_uint												m_iKeyFrame = 0;
 
-	_bool											m_bCinecam[5] = { false, };
-	class CCinematicCamera*			m_pCinecam[5] = { nullptr, };
+	_bool											m_bCinecam[NPC_CINE_END] = { false, };
+	class CCinematicCamera*			m_pCinecam[NPC_CINE_END] = { nullptr, };
+	class CCameraForNpc*				m_pMainCam = nullptr;
 	class CRot*									m_pRot = nullptr;
 
 public:

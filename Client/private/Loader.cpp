@@ -251,9 +251,10 @@ _uint APIENTRY LoadingThread(void* pArg)
 HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {
 	m_eNextLevelID = eNextLevelID;
+	
 
 	g_LEVEL = eNextLevelID;
-
+	
 	InitializeCriticalSection(&m_Critical_Section);
 
 	/* Make additional flow for Loading(Thread). */
