@@ -1,5 +1,23 @@
 #include "Shader_Client_Defines.h"
 
+vector			g_vCamPosition;
+//texture2D		g_DepthTexture;
+Texture2D<float4>		g_DiffuseTexture;
+
+float4			g_vColor;
+float			g_fAlpha;
+float			g_fHDRItensity;
+
+/* Option */
+bool			g_IsSpriteAnim = false, g_IsUVAnim = false;
+
+/* UV Animation */
+float			g_fUVSpeedX = 0.f, g_fUVSpeedY = 0.f;
+
+/* Sprite Animation */
+int				g_XFrames = 1, g_YFrames = 1;
+int				g_XFrameNow = 0, g_YFrameNow = 0;
+
 struct VS_IN
 {
 	float3		vPosition		: POSITION;

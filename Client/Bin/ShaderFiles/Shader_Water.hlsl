@@ -2,7 +2,13 @@
 
 /**********Constant Buffer*********/
 //matrix			g_ReflectedViewMatrix;
+float				g_fFar = 500.f;
+float4			g_vCamPosition;
+float				g_fTime;
 /**********************************/
+
+Texture2D<float4>		g_DiffuseTexture;
+Texture2D<float4>		g_NormalTexture;
 
 struct VS_IN
 {

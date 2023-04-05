@@ -1,5 +1,8 @@
 #include "Shader_Client_Defines.h"
 
+textureCUBE		g_Texture;
+float				g_fColorIntensity;
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;

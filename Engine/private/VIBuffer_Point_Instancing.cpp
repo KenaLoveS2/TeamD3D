@@ -33,7 +33,7 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -183,7 +183,7 @@ HRESULT CVIBuffer_Point_Instancing::Set_Position(_float3 fMin, _float3 fMax)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -204,7 +204,7 @@ HRESULT CVIBuffer_Point_Instancing::Set_Pos(_float3 fMin, _float3 fMax)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -228,7 +228,7 @@ HRESULT CVIBuffer_Point_Instancing::Set_PSize(_float2 PSize)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -249,7 +249,7 @@ HRESULT CVIBuffer_Point_Instancing::Set_RandomPSize(_float2 PSizeMinMax)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -281,7 +281,7 @@ void CVIBuffer_Point_Instancing::Set_ResetOriginPos()
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -324,7 +324,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Box(_float fTimeDelta)
 	_vector    vMovePos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	_vector    vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	_float     fDistance = 0.f;
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 	if (SUCCEEDED(hr))
 	{
@@ -398,6 +398,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Stright(_float fTimeDelta)
 	_vector    vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	_float     fDistance = 0.f;
 
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 	if (SUCCEEDED(hr))
 	{
@@ -444,7 +445,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_PlaneCircle(_float fTimeDelta)
 	_vector    vMovePos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	_vector    vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	_float     fDistance = 0.f;
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -503,7 +504,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Cone(_float fTimeDelta)
 	_vector    vMovePos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	_vector    vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	_float     fDistance = 0.f;
-
+	CONTEXT_LOCK
 	HRESULT hr =m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 	if (SUCCEEDED(hr))
 	{
@@ -550,7 +551,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Explosion(_float fTimeDelta)
 	_vector    vMovePos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	_vector    vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	_float     fDistance = 0.f;
-
+	CONTEXT_LOCK
 	HRESULT hr =m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 	if (SUCCEEDED(hr))
 	{
@@ -614,7 +615,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_ExplosionGravity(_float fTimeDelta)
 	_vector    vMovePos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	_vector    vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	_float     fDistance = 0.f;
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -662,7 +663,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_PlaneCircle_Haze(_float fTimeDelta)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -703,7 +704,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Haze(_float fTimeDelta)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -744,7 +745,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Gather(_float fTimeDelta)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -809,7 +810,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Parabola(_float fTimeDelta)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -866,7 +867,7 @@ HRESULT CVIBuffer_Point_Instancing::Reset_Haze()
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 	if (SUCCEEDED(hr))
 	{
@@ -886,7 +887,7 @@ HRESULT CVIBuffer_Point_Instancing::Reset_Gather()
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 	if (SUCCEEDED(hr))
 	{
@@ -906,7 +907,7 @@ HRESULT CVIBuffer_Point_Instancing::Reset_Parabola()
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 	if (SUCCEEDED(hr))
 	{
