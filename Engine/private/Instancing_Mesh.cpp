@@ -272,11 +272,6 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 	}
 }
 
-void CInstancing_Mesh::Set_PxTriangle(vector<_float4x4*> VecInstancingMatrix)
-{
-
-}
-
 void CInstancing_Mesh::InstaincingMesh_EffectTick(_float yLimitPos, _float fTimeDelta)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
@@ -554,6 +549,7 @@ HRESULT CInstancing_Mesh::Render()
 
 _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat)
 {
+	return 1;
 	list<_float4x4> InstPos;
 
 	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();

@@ -42,7 +42,7 @@ HRESULT CFrog::Initialize(void* pArg)
 		m_pModelCom->Set_AnimIndex(LOOK_AROUND);
 	}
 
-	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
+	//CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 
 	m_bRenderActive = true;
 
@@ -134,8 +134,8 @@ HRESULT CFrog::Render()
 
 void CFrog::ImGui_AnimationProperty()
 {
-	m_pTransformCom->Imgui_RenderProperty_ForJH();
-	m_pModelCom->Imgui_RenderProperty();
+	//m_pTransformCom->Imgui_RenderProperty_ForJH();
+	//m_pModelCom->Imgui_RenderProperty();
 }
 
 
@@ -157,7 +157,7 @@ HRESULT CFrog::SetUp_Components()
 
 	/* For.Com_Shader */
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
-		L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 
 

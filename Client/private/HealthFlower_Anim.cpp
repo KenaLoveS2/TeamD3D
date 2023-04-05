@@ -249,7 +249,7 @@ HRESULT CHealthFlower_Anim::SetUp_Effects()
 {
 #ifdef FOR_MAP_GIMMICK
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
 	/// <ExplosionGravity / Particle>
 	m_pExplosionGravity = dynamic_cast<CE_P_ExplosionGravity*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", L"HealthFlower_P"));
@@ -258,7 +258,7 @@ HRESULT CHealthFlower_Anim::SetUp_Effects()
 	m_pExplosionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_HEALTHFLOWER);
 	/// <ExplosionGravity / Particle>
 
-	RELEASE_INSTANCE(CGameInstance);
+
 #endif
 	return S_OK;
 }

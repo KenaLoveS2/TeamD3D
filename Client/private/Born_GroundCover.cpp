@@ -38,6 +38,8 @@ HRESULT CBorn_GroundCover::Initialize(void * pArg)
 
 HRESULT CBorn_GroundCover::Late_Initialize(void* pArg)
 {
+	m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+
 	m_pModelCom->Instaincing_GimmkicInit(Gimmick_TYPE_FLOWER);
 	return S_OK;
 }

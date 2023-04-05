@@ -32,7 +32,7 @@ public:
 	void			Add_InstanceModel(vector<_float4x4*>VecInstancingMatrix);
 	void			InstBuffer_Update(vector<_float4x4*>VecInstancingMatrix);
 	void			InstBufferSize_Update(_int iSize);
-	void			Set_PxTriangle(vector<_float4x4*>VecInstancingMatrix);
+
 public:
 	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _bool bPointBuffer,
 		_uint iNumInstance);

@@ -2686,7 +2686,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Pet/Pet.model"), PivotMatrix))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(1.f, 1.f, 1.f);
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Frog",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Frog/Frog.model"), PivotMatrix))))
 		return E_FAIL;

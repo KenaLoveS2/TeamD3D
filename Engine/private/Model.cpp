@@ -2228,20 +2228,27 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 }
 
 
-void CModel::InstanceModelPosInit()
+void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 {
 	if (m_bIsInstancing == false)
 		return;
 
-	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
+	_matrix ParentMulChild, InvParentMulChild;
 	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
-	ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index]) * parentMatrix;
-	m_pInstanceTransform->Set_WorldMatrix(ParentMulChild);
-	m_pInstanceTransform->Imgui_RenderProperty();
-	ResultMatrix = m_pInstanceTransform->Get_WorldMatrix();
 
-	ResultMatrix *= InvParentMulChild;
-	XMStoreFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index], ResultMatrix);
+	size_t InstmatrixSize = m_pInstancingMatrix.size();
+
+	for(size_t i=0 ;i< InstmatrixSize; ++i)
+	{
+		ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[i]) * parentMatrix;
+		//m_pInstanceTransform->Set_WorldMatrix(ParentMulChild);
+		//m_pInstanceTransform->Imgui_RenderProperty();
+		//ResultMatrix = m_pInstanceTransform->Get_WorldMatrix();
+
+		ParentMulChild *= InvParentMulChild;
+		XMStoreFloat4x4(m_pInstancingMatrix[i], ParentMulChild);
+	}
+
 
 	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);

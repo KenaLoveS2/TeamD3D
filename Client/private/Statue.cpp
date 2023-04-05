@@ -34,8 +34,9 @@ HRESULT CStatue::Initialize(void * pArg)
 	return S_OK;
 }
 
-HRESULT CStatue::Late_Initialize(void * pArg)
+HRESULT CStatue::Late_Initialize(void * psArg)
 {
+	//m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
 
 	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
 	{
@@ -55,6 +56,12 @@ HRESULT CStatue::Late_Initialize(void * pArg)
 void CStatue::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
 }
 
 void CStatue::Late_Tick(_float fTimeDelta)

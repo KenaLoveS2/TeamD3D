@@ -118,8 +118,8 @@ HRESULT CPet::Render()
 
 void CPet::ImGui_AnimationProperty()
 {
-	m_pTransformCom->Imgui_RenderProperty_ForJH();
-	m_pModelCom->Imgui_RenderProperty();
+	//m_pTransformCom->Imgui_RenderProperty_ForJH();
+	//m_pModelCom->Imgui_RenderProperty();
 }
 
 

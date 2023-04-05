@@ -53,6 +53,12 @@ HRESULT CBowTarget::Late_Initialize(void* pArg)
 void CBowTarget::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
 }
 
 void CBowTarget::Late_Tick(_float fTimeDelta)

@@ -73,7 +73,7 @@ public:
 	void						Set_AllAnimCommonType();
 	void						Print_Animation_Names(const string& strFilePath);
 
-	void						InstanceModelPosInit();
+	void						InstanceModelPosInit(_fmatrix parentMatrix);
 
 public:	
 	HRESULT 					Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, 

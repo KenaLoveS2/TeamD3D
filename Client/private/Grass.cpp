@@ -35,9 +35,23 @@ HRESULT CGrass::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CGrass::Late_Initialize(void* pArg)
+{
+	//m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+
+	return S_OK;
+}
+
+
 void CGrass::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
 }
 
 void CGrass::Late_Tick(_float fTimeDelta)
