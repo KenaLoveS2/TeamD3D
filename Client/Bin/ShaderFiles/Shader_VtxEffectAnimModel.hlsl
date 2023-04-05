@@ -1,6 +1,45 @@
 #include "Shader_Client_Defines.h"
 
-float4x4		g_BoneMatrices[800];
+/**********Constant Buffer*********/
+matrix g_BoneMatrices[800];
+float  g_fFar = 500.f;
+float4 g_WorldCamPosition;
+float  g_fHDRValue;
+/**********************************/
+
+texture2D		g_DepthTexture, g_NormalTexture;
+
+/* RotBomb*/
+texture2D		g_AO_R_MTexture;
+texture2D		g_NoiseTexture;
+texture2D		g_CloudTexture;
+/* RotBomb*/
+
+/* EnemyWisp Texture */
+texture2D		g_DiffuseTexture;
+texture2D		g_ReamTexture;
+texture2D		g_LineTexture;
+texture2D		g_ShapeTexture;
+texture2D		g_SmoothTexture;
+/* ~EnemyWisp Texture */
+
+// Type
+int			g_TextureRenderType, g_BlendType;
+int			g_SeparateWidth, g_SeparateHeight;
+uint		g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
+bool		g_IsUseMask, g_IsUseNormal;
+float		g_WidthFrame, g_HeightFrame, g_Time;
+float4		g_vColor;
+float2		g_UV, g_fUV;
+bool		g_bTimer;
+// ~Type
+
+// Dissolve
+bool		g_bDissolve;
+float		g_fDissolveTime;
+float _DissolveSpeed = 0.2f;
+float _FadeSpeed = 1.5f;
+// ~Dissolve
 
 struct VS_IN
 {

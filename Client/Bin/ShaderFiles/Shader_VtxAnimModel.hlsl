@@ -1,6 +1,81 @@
 #include "Shader_Client_Defines.h"
+/***********Constant Buffers***********/
+matrix g_BoneMatrices[800];
+float  g_fFar = 500.f;
+float4 g_vCamPosition;
+/**************************************/
+Texture2D<float4>		g_DiffuseTexture;
+Texture2D<float4>		g_NormalTexture;
+Texture2D<float4>		g_AO_R_MTexture;
+Texture2D<float4>		g_EmissiveTexture;
+Texture2D<float4>		g_EmissiveMaskTexture;
+Texture2D<float4>		g_MaskTexture;
+Texture2D<float4>		g_SSSMaskTexture;
+Texture2D<float4>		g_HairDepthTexture;
+Texture2D<float4>		g_HairAlphaTexture;
+Texture2D<float4>		g_HairRootTexture;
+Texture2D<float4>		g_DetailNormal;
+Texture2D<float4>		g_AlphaTexture;
+/* Kena Bow_String Texture */
+Texture2D		g_NoiseTexture;
+Texture2D		g_SwipeTexture;
+Texture2D		g_GradientTexture;
+float				g_BowDurationTime;
+/* Kena Bow_String Texture */
 
-float4x4		g_BoneMatrices[800];
+bool					g_Hit = false;
+bool					g_Parry = false;
+bool					g_Dash = false;
+
+float					g_fHairLength = 1.f;
+float					g_fHairThickness = 1.f;
+float					g_fLashDensity = 0.5f;
+float					g_fLashWidth = 0.5f;
+float					g_fLashIntensity = 0.5f;
+float					g_fSSSAmount = 1.f;
+float					g_HitRimIntensity = 0.f;
+float					g_ParryRimIntensity = 0.f;
+float					g_DashRimIntensity = 0.f;
+float					g_Time;
+
+float4					g_vAmbientEyeColor = float4(1.f, 1.f, 1.f, 1.f);
+float4					g_vAmbientColor = float4(1.f, 1.f, 1.f, 1.f);
+float4					g_vSSSColor = float4(1.f, 0.f, 0.f, 1.f);
+
+
+Texture2D<float4>      g_GlowTexture;
+Texture2D<float4>      g_OpacityTexture;
+Texture2D<float4>      g_AOTexture;
+Texture2D<float4>      g_RoughnessTexture;
+
+float4					g_EmissiveColor = (float4)1.f;
+float						g_fHDRIntensity = 0.f;
+
+/* EnemyWisp Texture */
+Texture2D<float4>     g_ReamTexture;
+Texture2D<float4>     g_LineTexture;
+Texture2D<float4>     g_SmoothTexture;
+Texture2D<float4>     g_ShapeMaskTexture;
+float4			  g_vColor;
+/* ~EnemyWisp Texture */
+
+/* Dissolve */
+Texture2D<float4>	g_DissolveTexture;
+bool							g_bDissolve;
+float							g_fDissolveTime;
+float							_DissolveSpeed = 0.2f;
+float							_FadeSpeed = 1.5f;
+/* ~Dissolve */
+
+/* Options */
+float			g_fUVSpeedX = 0.f;
+float			g_fUVSpeedY = 0.f;
+/* ~Options */
+
+/* For. EnemyHunter */
+float			g_fStringDissolve;
+float			g_fStringHDR;
+
 
 float4 SSS(float3 position, float3 normal, float3 dir, float4 color, float2 vUV, float amount, Texture2D<float4> Texturediffuse, Texture2D<float4> sssMask)
 {

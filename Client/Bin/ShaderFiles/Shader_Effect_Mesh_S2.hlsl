@@ -1,5 +1,34 @@
 #include "Shader_Client_Defines.h"
 
+vector			g_vCamPosition;
+//texture2D		g_DepthTexture;
+Texture2D<float4>		g_DiffuseTexture;
+Texture2D<float4>		g_MaskTexture;
+Texture2D<float4>		g_DissolveTexture;
+
+float4			g_vColor = { 1.f, 1.f, 1.f, 1.f };
+float4			g_vMaskColor = { 1.f ,1.f, 1.f, 1.f };
+float4			g_vDissolveColor = { 1.f, 1.f, 1.f, 1.f };
+
+float			g_fDissolveAlpha = 0.f;
+float			g_fHDRItensity;
+
+float			g_fCutY;			 /* For. discard Y Range option */
+
+/* Option */
+bool			g_IsSpriteAnim = false, g_IsUVAnim = false;
+
+/* UV Animation */
+float			g_fUVSpeedX = 0.f, g_fUVSpeedY = 0.f;
+
+/* Sprite Animation */
+int				g_XFrames = 1, g_YFrames = 1;
+int				g_XFrameNow = 0, g_YFrameNow = 0;
+
+/* UV Scale */
+float		g_UVScaleX = 1.f;
+float		g_UVScaleY = 1.f;
+
 struct VS_IN
 {
 	float3		vPosition	: POSITION;

@@ -1616,6 +1616,8 @@ _bool CModel::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _
 
 _bool CModel::Culling_InstancingMeshs(_float fCameraDistance, _fmatrix ParentMat)
 {
+	return false;
+
 	if (m_bIsInstancing == false)
 		return false;
 

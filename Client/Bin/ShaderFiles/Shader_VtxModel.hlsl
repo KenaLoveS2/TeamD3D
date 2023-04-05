@@ -1,5 +1,31 @@
 #include "Shader_Client_Defines.h"
 
+/**********Constant Buffer*********/
+float				g_fFar = 300.f;
+float4			g_vCamPosition;
+/**********************************/
+
+Texture2D<float4>		g_DiffuseTexture;
+Texture2D<float4>		g_NormalTexture;
+Texture2D<float4>		g_MaskTexture;
+Texture2D<float4>		g_MasterBlendDiffuseTexture;
+
+Texture2D<float4> g_AO_R_MTexture;
+Texture2D<float4> g_OpacityTexture;
+Texture2D<float4> g_EmissiveTexture;
+
+float4			g_EmissiveColor = (float4)1.f;
+float				g_fHDRIntensity = 0.f;
+float4				g_vColor = 1.f;
+
+
+Texture2D<float4>		g_DissolveTexture;
+bool								g_bDissolve;
+float								g_fDissolveTime;
+float								g_DissolveSpeed = 0.2f;
+float								g_FadeSpeed = 1.5f;
+float								g_fDissolveAlpha = 0.f;
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
