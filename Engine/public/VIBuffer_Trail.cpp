@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "..\public\VIBuffer_Trail.h"
+
+#include "GameInstance.h"
 #include "Utile.h"
 #include "Shader.h"
 
@@ -142,10 +144,13 @@ HRESULT CVIBuffer_Trail::Tick(_float fTimeDelta)
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
-	memcpy(SubResource.pData, m_vecInstanceInfo.data(), sizeof(VTXMATRIX) * m_vecInstanceInfo.size());
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
-
+	CONTEXT_LOCK
+	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+	if (SUCCEEDED(hr))
+	{
+		memcpy(SubResource.pData, m_vecInstanceInfo.data(), sizeof(VTXMATRIX) * m_vecInstanceInfo.size());
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	}
 	m_iNumInstance = (_uint)m_vecInstanceInfo.size();
 
 	return S_OK;
@@ -243,11 +248,13 @@ void CVIBuffer_Trail::Refresh_InstanceCount()
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
-	memcpy(SubResource.pData, m_vecInstanceInfo.data(), sizeof(VTXMATRIX) * m_vecInstanceInfo.size());
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
-
+	CONTEXT_LOCK
+	HRESULT hr =	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+	if (SUCCEEDED(hr))
+	{
+		memcpy(SubResource.pData, m_vecInstanceInfo.data(), sizeof(VTXMATRIX) * m_vecInstanceInfo.size());
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	}
 	m_iNumInstance = (_uint)m_vecInstanceInfo.size();
 }
 

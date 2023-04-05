@@ -4,6 +4,25 @@
 
 BEGIN(Engine)
 
+class ENGINE_DLL CContext_LockGuard
+{
+public:
+	CContext_LockGuard(mutex& ContextMtx)
+		: m_ContextMtx(ContextMtx)
+	{
+		m_ContextMtx.lock();
+	}
+
+	~CContext_LockGuard()
+	{
+		m_ContextMtx.unlock();
+	}
+
+private:
+	mutex& m_ContextMtx;
+};
+
+
 class CGraphic_Device final : public CBase
 {
 	DECLARE_SINGLETON(CGraphic_Device)
@@ -15,6 +34,7 @@ public:
 public:
 	ID3D11Device*	GetDevice() { return m_pDevice; }
 	ID3D11DeviceContext* GetContext() { return m_pDeviceContext; }
+	mutex& GetContextMtx() { return m_ContextMtx; }
 
 public:
 	HRESULT Ready_Graphic_Device(HWND hWnd, GRAPHIC_DESC::WINMODE WinMode, _uint iWinCX, _uint iWinCY, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppDeviceContextOut);
@@ -36,7 +56,7 @@ private:
 	// ID3D11ShaderResourceView*	
 	ID3D11RenderTargetView*		m_pBackBufferRTV = nullptr;
 	ID3D11DepthStencilView*		m_pDepthStencilView = nullptr;
-
+	mutex									m_ContextMtx;
 private:
 	HRESULT Ready_SwapChain(HWND hWnd, GRAPHIC_DESC::WINMODE WinMode, _uint iWinCX, _uint iWinCY);
 	HRESULT Ready_BackBufferRenderTargetView();

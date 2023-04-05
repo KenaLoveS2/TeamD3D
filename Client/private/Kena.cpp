@@ -2209,7 +2209,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 _int CKena::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	if (iColliderIndex == TRIGGER_DUMMY) return 0;
+	if (iColliderIndex == TRIGGER_DUMMY || pTarget == nullptr) return 0;
 
 	_bool bRealAttack = false;
 	if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)

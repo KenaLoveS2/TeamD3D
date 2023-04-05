@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\public\GameInstance.h"
-#include "Graphic_Device.h"
 #include "Level_Manager.h"
 #include "Object_Manager.h"
 #include "Timer_Manager.h"
@@ -157,6 +156,11 @@ void CGameInstance::Clear_Level(_uint iLevelIndex, _bool bCamreaClearFlag)
 	bCamreaClearFlag && m_pCamera_Manager->Clear();
 }
 
+mutex& CGameInstance::GetContextMtx() const
+{
+	return m_pGraphic_Device->GetContextMtx();
+}
+
 HRESULT CGameInstance::Clear_Graphic_Device(const _float4 * pColor)
 {
 	if (nullptr == m_pGraphic_Device)
@@ -164,6 +168,7 @@ HRESULT CGameInstance::Clear_Graphic_Device(const _float4 * pColor)
 
 	HRESULT			hr = 0;
 
+	CONTEXT_LOCK
 	hr = m_pGraphic_Device->Clear_BackBuffer_View(*pColor);	
 	hr = m_pGraphic_Device->Clear_DepthStencil_View();
 
@@ -184,6 +189,7 @@ HRESULT CGameInstance::Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _
 	if (m_pGraphic_Device == nullptr)
 		return E_FAIL;
 
+	CONTEXT_LOCK
 	if (FAILED(m_pGraphic_Device->Update_SwapChain(hWnd, iWinCX, iWinCY, bIsFullScreen, bNeedUpdate)))
 		return E_FAIL;
 

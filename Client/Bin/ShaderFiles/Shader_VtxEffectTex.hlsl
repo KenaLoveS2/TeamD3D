@@ -1,35 +1,5 @@
 #include "Shader_Client_Defines.h"
 
-/**********Constant Buffer*********/
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-float4			g_WorldCamPosition;
-float			g_fHDRValue;
-/**********************************/
-
-/**********Common Texture*********/
-texture2D		g_DepthTexture;
-texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
-texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
-/**********************************/
-
-/**********Common Option*********/
-int		g_TextureRenderType, g_BlendType;
-bool    g_IsUseMask;
-int		g_SeparateWidth, g_SeparateHeight;
-uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
-float   g_WidthFrame, g_HeightFrame;
-float4  g_vColor;
-float   g_Time;
-float2  g_fUV;
-bool	g_bTimer;
-/**********************************/
-
-/* HpRatio */
-float   g_HpRatio;
-float	g_DamageDurationTime;
-uint	g_PulseState;
-/* HpRatio */
-
 struct VS_IN
 {
 	float3		vPosition : POSITION;

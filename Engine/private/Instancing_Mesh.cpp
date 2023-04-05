@@ -225,18 +225,21 @@ void CInstancing_Mesh::InstBuffer_Update(vector<_float4x4*> VecInstancingMatrix)
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	CONTEXT_LOCK
+	HRESULT hr =	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-	for (_uint i = 0; i < m_iNumInstance; ++i)
+	if (SUCCEEDED(hr))
 	{
-		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &VecInstancingMatrix[i]->m[0], sizeof(_float4));
-		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &VecInstancingMatrix[i]->m[1], sizeof(_float4));
-		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &VecInstancingMatrix[i]->m[2], sizeof(_float4));
-		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vPosition, &VecInstancingMatrix[i]->m[3], sizeof(_float4));
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+		{
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &VecInstancingMatrix[i]->m[0], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &VecInstancingMatrix[i]->m[1], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &VecInstancingMatrix[i]->m[2], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vPosition, &VecInstancingMatrix[i]->m[3], sizeof(_float4));
+		}
+
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
 	}
-
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
-
 }
 
 void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
@@ -245,26 +248,28 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	CONTEXT_LOCK
+	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-	for (_uint i = 0; i < m_iNumInstance; ++i)
+	if (SUCCEEDED(hr))
 	{
-		_float4 vRight = ((VTXMATRIX*)SubResource.pData)[i].vRight;
-		_float4 vUp = ((VTXMATRIX*)SubResource.pData)[i].vUp;
-		_float4 vLook = ((VTXMATRIX*)SubResource.pData)[i].vLook;
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+		{
+			_float4 vRight = ((VTXMATRIX*)SubResource.pData)[i].vRight;
+			_float4 vUp = ((VTXMATRIX*)SubResource.pData)[i].vUp;
+			_float4 vLook = ((VTXMATRIX*)SubResource.pData)[i].vLook;
 
-		XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)) * (_float)iSize);
-		XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)) * (_float)iSize);
-		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)) * (_float)iSize);
+			XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)) * (_float)iSize);
+			XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)) * (_float)iSize);
+			XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)) * (_float)iSize);
 
-		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &vRight, sizeof(_float4));
-		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &vUp, sizeof(_float4));
-		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &vLook, sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &vRight, sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &vUp, sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &vLook, sizeof(_float4));
+		}
 
-
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
 	}
-
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
 }
 
 void CInstancing_Mesh::Set_PxTriangle(vector<_float4x4*> VecInstancingMatrix)
@@ -277,23 +282,27 @@ void CInstancing_Mesh::InstaincingMesh_EffectTick(_float yLimitPos, _float fTime
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
-	for (_uint i = 0; i < m_iNumInstance; ++i)
+	CONTEXT_LOCK
+	HRESULT hr =	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	if (SUCCEEDED(hr))
 	{
-		if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y <= yLimitPos)
+		for (_uint i = 0; i < m_iNumInstance; ++i)
 		{
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_pInstancingPositions[i].y;
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pInstancingPositions[i].x;
+			if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y <= yLimitPos)
+			{
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_pInstancingPositions[i].y;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pInstancingPositions[i].x;
+			}
+			else
+			{
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.x -= m_fInstancingEffect_Speed[i] * fTimeDelta;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= m_fInstancingEffect_Speed[i] * fTimeDelta;
+			}
 		}
-		else
-		{
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.x -= m_fInstancingEffect_Speed[i] * fTimeDelta;
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= m_fInstancingEffect_Speed[i] * fTimeDelta;
-		}
+
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
 	}
-
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
-
 }
 
 HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod,
@@ -545,7 +554,6 @@ HRESULT CInstancing_Mesh::Render()
 
 _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat)
 {
-
 	list<_float4x4> InstPos;
 
 	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
@@ -576,23 +584,26 @@ _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vecto
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-	_int iIndex = 0;
-	for (auto& Iter : InstPos)
+	CONTEXT_LOCK
+	HRESULT hr =m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	if(SUCCEEDED(hr))
 	{
-		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vRight, &Iter.m[0], sizeof(_float4));
-		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vUp, &Iter.m[1], sizeof(_float4));
-		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vLook, &Iter.m[2], sizeof(_float4));
-		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex++].vPosition, &Iter.m[3], sizeof(_float4));
+		_int iIndex = 0;
+		for (auto& Iter : InstPos)
+		{
+			memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vRight, &Iter.m[0], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vUp, &Iter.m[1], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vLook, &Iter.m[2], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex++].vPosition, &Iter.m[3], sizeof(_float4));
+		}
+
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
 	}
-
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
-
 	InstPos.clear();
 
 	return 1;
-
 }
 
 _int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat)
@@ -634,6 +645,7 @@ _int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLi
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	CONTEXT_LOCK
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	_int iIndex = 0;
@@ -766,40 +778,41 @@ void CInstancing_Mesh::Set_InstanceMeshEffect(CTransform* pParentTransform, _int
 
 _bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _float fTimeDelta)
 {
-	
-	
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	CONTEXT_LOCK
+	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
-
-	_int iFinishCnt = 0;
-	for (_uint i = 0; i < m_iNumInstance; ++i)
+	if (SUCCEEDED(hr))
 	{
-		if (m_vecOriginYPos[i] <= ((VTXMATRIX*)SubResource.pData)[i].vPosition.y)
+		_int iFinishCnt = 0;
+		for (_uint i = 0; i < m_iNumInstance; ++i)
 		{
-			iFinishCnt += 0;
-			continue;
+			if (m_vecOriginYPos[i] <= ((VTXMATRIX*)SubResource.pData)[i].vPosition.y)
+			{
+				iFinishCnt += 0;
+				continue;
+			}
+
+			if (eChapterGimmcik == CEnviromentObj::Gimmick_TYPE_GO_UP)
+			{
+				_float fMaxSpeed = fmax((i + 1) * 1.5f, 3.0f);
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fMaxSpeed)*fTimeDelta;
+			}
+			else if (eChapterGimmcik == CEnviromentObj::Gimmick_TYPE_FLOWER)
+			{
+				_float fRandomSpeed = CUtile::Get_RandomFloat(0.7f, 1.6f);
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fRandomSpeed)*fTimeDelta;
+			}
+
+			iFinishCnt += 1;
 		}
 
-		if (eChapterGimmcik == CEnviromentObj::Gimmick_TYPE_GO_UP)
-		{
-			_float fMaxSpeed = fmax((i + 1) * 1.5f, 3.0f);
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fMaxSpeed)*fTimeDelta;
-		}
-		else if(eChapterGimmcik == CEnviromentObj::Gimmick_TYPE_FLOWER)
-		{
-			_float fRandomSpeed = CUtile::Get_RandomFloat(0.4f, 3.0f);
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fRandomSpeed)*fTimeDelta;
-		}
-	
-		iFinishCnt += 1;
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+
+		if (iFinishCnt == 0)
+			return true;
 	}
-
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
-
-	if (iFinishCnt == 0)
-		return true;
 
 	return false;
 }
@@ -815,30 +828,37 @@ void CInstancing_Mesh::InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChap
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	CONTEXT_LOCK
+	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
-
-	for (_uint i = 0; i < m_iNumInstance; ++i)
+	if (SUCCEEDED(hr))
 	{
-		m_vecOriginYPos.push_back(((VTXMATRIX*)SubResource.pData)[i].vPosition.y);
-		((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= fMinus_YPos;
-	}
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+		{
+			m_vecOriginYPos.push_back(((VTXMATRIX*)SubResource.pData)[i].vPosition.y);
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= fMinus_YPos;
+		}
 
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	}
 }
 
 void CInstancing_Mesh::InstaincingMesh_yPosControl(_float yPos)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	CONTEXT_LOCK
+	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
-	for (_uint i = 0; i < m_iNumInstance; ++i)
+	if (SUCCEEDED(hr))
 	{
-		((VTXMATRIX*)SubResource.pData)[i].vPosition.y = yPos;
-	}
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+		{
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = yPos;
+		}
 
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	}
 }
 
 void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransform, vector<_float4x4*> VecInstancingMatrix)

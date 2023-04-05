@@ -1,16 +1,8 @@
 #include "Shader_Client_Defines.h"
 
 /**********Constant Buffer*********/
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-matrix			g_SocketMatrix;
 //matrix			g_ReflectedViewMatrix;
-float			g_fFar = 500.f;
-float4			g_vCamPosition;
-float			g_fTime;
 /**********************************/
-
-Texture2D<float4>		g_DiffuseTexture;
-Texture2D<float4>		g_NormalTexture;
 
 struct VS_IN
 {
@@ -124,7 +116,6 @@ PS_OUT PS_PORTALMAIN(PS_IN In)
 	Out.vAmbient = (float4)1.f;
 	return Out;
 }
-
 
 technique11 DefaultTechnique
 {

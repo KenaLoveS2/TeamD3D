@@ -15,7 +15,9 @@ class CFrog final : public CEnviromentObj
 private:
 	enum Frog_ShaderPass
 	{
-		DEFAULT,
+		SHADOW = 11,
+
+		DEFAULT = 14,
 		AO_R_M,
 		AO_R_M_E,
 		AO_R_M_G,
@@ -27,6 +29,7 @@ private:
 		ALPHA_AO_R_M,
 		BOSS_AO_R_M,
 		BOSS_AO_R_M_E,
+		HUNTER_ARROW,
 		PASS_END
 	};
 

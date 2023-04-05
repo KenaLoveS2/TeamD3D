@@ -372,14 +372,15 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 		D3D11_MAPPED_SUBRESOURCE		SubResource;
 		ZeroMemory(&SubResource, sizeof SubResource);
 
-		m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
-		
-		memcpy(SubResource.pData, m_pPixel[m_iFilterCaseNum], (sizeof(_ulong) *TextureDesc.Width * TextureDesc.Height));
+		CONTEXT_LOCK
+		HRESULT hr = m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
-		m_pContext->Unmap(pTexture2D, 0);
+		if (SUCCEEDED(hr))
+		{
+			memcpy(SubResource.pData, m_pPixel[m_iFilterCaseNum], (sizeof(_ulong) * TextureDesc.Width * TextureDesc.Height));
 
-		
-
+			m_pContext->Unmap(pTexture2D, 0);
+		}
 
 		wstring wstr = TEXT("../Bin/Resources/Terrain_Texture/Filter/");
 
@@ -468,12 +469,15 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 
 	D3D11_MAPPED_SUBRESOURCE		SubResource;
 	ZeroMemory(&SubResource, sizeof SubResource);
+	CONTEXT_LOCK
+	HRESULT hr = m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
-	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+	if (SUCCEEDED(hr))
+	{
+		memcpy(SubResource.pData, m_pPixel[m_iFilterCaseNum], (sizeof(_ulong) * TextureDesc.Width * TextureDesc.Height));
 
-	memcpy(SubResource.pData, m_pPixel[m_iFilterCaseNum], (sizeof(_ulong) *TextureDesc.Width * TextureDesc.Height));
-
-	m_pContext->Unmap(pTexture2D, 0);
+		m_pContext->Unmap(pTexture2D, 0);
+	}
 
 	m_pSelectedTerrain->Erase_FilterCom();
 
@@ -571,12 +575,15 @@ void CImgui_TerrainEditor::UnDraw_FilterTexture()
 
 	D3D11_MAPPED_SUBRESOURCE		SubResource;
 	ZeroMemory(&SubResource, sizeof SubResource);
+	CONTEXT_LOCK
+	HRESULT hr =	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
-	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+	if (SUCCEEDED(hr))
+	{
+		memcpy(SubResource.pData, m_pPixel[m_iFilterCaseNum], (sizeof(_ulong) * TextureDesc.Width * TextureDesc.Height));
 
-	memcpy(SubResource.pData, m_pPixel[m_iFilterCaseNum], (sizeof(_ulong) *TextureDesc.Width * TextureDesc.Height));
-
-	m_pContext->Unmap(pTexture2D, 0);
+		m_pContext->Unmap(pTexture2D, 0);
+	}
 
 	m_pSelectedTerrain->Erase_FilterCom();
 

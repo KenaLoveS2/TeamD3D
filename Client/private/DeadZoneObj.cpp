@@ -82,7 +82,6 @@ HRESULT CDeadZoneObj::Render()
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-
 			if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
 			{
 				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
@@ -110,7 +109,7 @@ HRESULT CDeadZoneObj::Render()
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
 		}
 	}
 
@@ -126,7 +125,7 @@ HRESULT CDeadZoneObj::RenderShadow()
 		return E_FAIL;
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
+	
 	if (m_pModelCom->Get_IStancingModel())
 	{
 		for (_uint i = 0; i < iNumMeshes; ++i)
@@ -140,7 +139,7 @@ HRESULT CDeadZoneObj::RenderShadow()
 		for (_uint i = 0; i < iNumMeshes; ++i)
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 21), E_FAIL);
 		}
 	}
 
@@ -149,6 +148,9 @@ HRESULT CDeadZoneObj::RenderShadow()
 
 void CDeadZoneObj::Change_Model(_int iDissolveTimer)
 {
+	if (m_iDeadZoneModelID == -1)
+		return;
+
 	 _tchar pModelName[6][64] =
 	{
 		{ L"Prototype_Component_Model_Giant_GodTreeSmall_01"},
@@ -159,8 +161,7 @@ void CDeadZoneObj::Change_Model(_int iDissolveTimer)
 		{ L"Prototype_Component_Model_BigTreeLog"}
 	};
 
-	 if (m_iDeadZoneModelID == -1)
-		 return;
+
 	 vector<_float4x4> New_Matrix;
 
 	 for(auto pMatrix :  *m_pModelCom->Get_InstancePos())
@@ -173,12 +174,12 @@ void CDeadZoneObj::Change_Model(_int iDissolveTimer)
 	CGameObject::Delete_Component(TEXT("Com_Model"));
 	Safe_Release(m_pModelCom);
 
-	 //if (FAILED(__super::Add_Component(g_LEVEL, pModelName[m_iDeadZoneModelID], TEXT("Com_Model"),
-		// (CComponent**)&m_pModelCom)))
-		// assert(!"CDeadZoneObj::Change_Model(_int iDissolveTimer)");
+	 if (FAILED(__super::Add_Component(g_LEVEL, pModelName[m_iDeadZoneModelID], TEXT("Com_Model"),
+		 (CComponent**)&m_pModelCom)))
+		 assert(!"CDeadZoneObj::Change_Model(_int iDissolveTimer)");
 
 
-	//  m_pModelCom->Set_InstancePos(New_Matrix);
+	  m_pModelCom->Set_InstancePos(New_Matrix);
 }
 
 HRESULT CDeadZoneObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
@@ -222,22 +223,9 @@ HRESULT CDeadZoneObj::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 	/* For.Com_Shader */
-	if (m_pModelCom->Get_IStancingModel())
-	{
-		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
-			(CComponent**)&m_pShaderCom)))
-			return E_FAIL;
-
-		m_iShaderOption = 1;
-	}
-	else
-	{
-		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
-			(CComponent**)&m_pShaderCom)))
-			return E_FAIL;
-
-		m_iShaderOption = 4;
-	}
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
+		(CComponent**)&m_pShaderCom)))
+		return E_FAIL;
 
 	return S_OK;
 }

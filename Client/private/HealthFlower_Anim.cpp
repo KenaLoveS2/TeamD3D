@@ -144,34 +144,28 @@ HRESULT CHealthFlower_Anim::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
+		if (m_bUsed == true && i == 4)
+			continue;
 
-		/*if (m_bUsed == true && i == 4)
-			continue;*/
-
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"),E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"),E_FAIL);
 
 		if(i ==0 || i==1 )
 		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",1);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"),E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",27),E_FAIL);
 		}
 		else if (i == 2 || i==3) 
 		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 2);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 28),E_FAIL);
 		}
 		else if (i == 4)
 		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 0);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 0),E_FAIL);
 		}
 	}
-	 
 	return S_OK;
 }
 
@@ -234,7 +228,7 @@ _int CHealthFlower_Anim::Execute_TriggerTouchFound(CGameObject* pTarget, _uint i
 	if (iColliderIndex == (_uint)COL_PLAYER)
 	{
 		m_bKenaDetected = true;
-		// m_pKena->Set_ChestInteractable(true);
+		m_pKena->Set_RotActionPossible(true);
 	}
 
 	return 0;
@@ -244,8 +238,8 @@ _int CHealthFlower_Anim::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iT
 {
 	if (iColliderIndex == (_uint)COL_PLAYER)
 	{
-		m_bKenaDetected = true;
-		// m_pKena->Set_ChestInteractable(true);
+		m_bKenaDetected = false;
+		m_pKena->Set_RotActionPossible(false);
 	}
 
 	return 0;
@@ -328,7 +322,7 @@ void CHealthFlower_Anim::Update_State(_float fTimeDelta)
 	{
 	case CHealthFlower_Anim::OPEN_LOOP:
 		{
-			if (m_bUsed == false)
+			if (m_bKenaDetected == true && m_bUsed == false)
 			{
 				m_bInteractable = Check_CameraRay();
 				m_pKena->Set_RotActionPossible(m_bInteractable);
@@ -389,7 +383,7 @@ HRESULT CHealthFlower_Anim::SetUp_Components()
 	m_pModelCom->SetUp_Material(3, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_E.png"));
 	/* For.Com_Shader */
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
-		L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	return S_OK;
 }

@@ -17,11 +17,15 @@ CDynamic_StoneCube::CDynamic_StoneCube(const CDynamic_StoneCube& rhs)
 
 void CDynamic_StoneCube::Set_CollActive()
 {
-	
-	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
-	PxRigidActor* pCurActor = (pPhysX->Find_DynamicActor(m_szCloneObjectTag));
-	assert(nullptr != pCurActor && "CDynamic_StoneCube::Set_CollActive");
-	pPhysX->WakeUp(reinterpret_cast<PxRigidDynamic*>(pCurActor));
+	m_pTransformCom->Set_PxActorActive(true);
+	m_pTransformCom->Set_Position(m_StoneCubeDesc.vPos);
+
+
+	// m_pTransformCom->Set_PxActorSleep(false);
+	// CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+	// PxRigidActor* pCurActor = (pPhysX->Find_DynamicActor(m_szCloneObjectTag));
+	// assert(nullptr != pCurActor && "CDynamic_StoneCube::Set_CollActive");
+	// pPhysX->WakeUp(reinterpret_cast<PxRigidDynamic*>(pCurActor));
 	//reinterpret_cast<PxRigidDynamic*>(pCurActor)->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false);
 	//pPhysX->WakeUp(reinterpret_cast<PxRigidDynamic*>(pCurActor));
 
@@ -48,8 +52,8 @@ HRESULT CDynamic_StoneCube::Initialize(void* pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-		XMVectorSet(m_StoneCubeDesc.vPos.x, m_StoneCubeDesc.vPos.y, m_StoneCubeDesc.vPos.z, 1.f));
+	// m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(m_StoneCubeDesc.vPos.x, m_StoneCubeDesc.vPos.y, m_StoneCubeDesc.vPos.z, 1.f));
+	m_pTransformCom->Set_Position(m_StoneCubeDesc.vPos);
 
 	return S_OK;
 }
@@ -64,7 +68,7 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	BoxDesc.pActortag = m_szCloneObjectTag;
 	BoxDesc.eType = BOX_DYNAMIC;
-	BoxDesc.vPos = CUtile::Float_4to3(vPos);
+	BoxDesc.vPos = _float3(-100.f, 0.f, -100.f);
 	BoxDesc.vSize = m_StoneCubeDesc.vSize;
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
@@ -81,20 +85,20 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.bKinematic = false;
 	
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_DYNAMIC_ENVIOBJ,true)); //뒤에 트루 써주면된다.   _bool bRightUpLookSync == true 쓰면됀다.
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_DYNAMIC_ENVIOBJ, true, false)); //뒤에 트루 써주면된다.   _bool bRightUpLookSync == true 쓰면됀다. _bool isActive == true 쓰면됀다.
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag,_float3(0.f,0.f,0.f), true); // Pivot 안슬거면 000 하면된다.   _bool bRightUpLookSync == true 로 주면된다. 
+	// m_pTransformCom->Set_PxActorSleep(true);
+
+	/*
 	PxRigidActor* pCurActor = (pPhysX->Find_DynamicActor(m_szCloneObjectTag));
 	assert(nullptr != pCurActor && "CDynamic_StoneCube::Late_Initialize");
 	pPhysX->PutToSleep(reinterpret_cast<PxRigidDynamic*>(pCurActor));
-	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag,_float3(0.f,0.f,0.f),true); // Pivot 안슬거면 000 하면된다.   _bool bRightUpLookSync == true 로 주면된다. 
-
-	m_pRendererCom->Set_PhysXRender(true);
-
+	*/
 	return S_OK;
 }
 
 void CDynamic_StoneCube::Tick(_float fTimeDelta)
 {
-
 	/*
 		if (m_bTestOnce == false)
 		{
@@ -180,21 +184,21 @@ HRESULT CDynamic_StoneCube::Render()
 			if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
 			{
 				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 7), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 17), E_FAIL);
 			}
 			else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
 			{
 				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 8), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 18), E_FAIL);
 			}
 			else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
 			{
 				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 9), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 16), E_FAIL);
 			}
 			else
 			{
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
 			}
 		}
 	}
@@ -225,7 +229,7 @@ HRESULT CDynamic_StoneCube::RenderShadow()
 		for (_uint i = 0; i < iNumMeshes; ++i)
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 21), E_FAIL);
 		}
 	}
 
@@ -256,7 +260,7 @@ HRESULT CDynamic_StoneCube::RenderCine()
 		{
 			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 10), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 20), E_FAIL);
 		}
 	}
 
@@ -301,14 +305,11 @@ HRESULT CDynamic_StoneCube::SetUp_Components()
 	if (FAILED(__super::Add_Component(g_LEVEL, m_StoneCubeDesc.pModelName, TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom,this)))
 		return E_FAIL;
-	/* For.Com_Shader */
-	/* For.Com_Shader */
 
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
+	/* For.Com_Shader */
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-	
-
 
 	return S_OK;
 }
@@ -369,7 +370,10 @@ void CDynamic_StoneCube::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+}
 
-	
-
+void CDynamic_StoneCube::Execute_SleepEnd()
+{	
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.f, 0.f), true);
+	m_pTransformCom->Set_Position(m_StoneCubeDesc.vPos);
 }

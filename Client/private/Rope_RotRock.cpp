@@ -40,7 +40,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 
 	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
-
+	
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	BoxDesc.pActortag = m_szCloneObjectTag;
 	BoxDesc.eType = BOX_DYNAMIC;
@@ -63,7 +63,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	m_pTransformCom->Set_PxPivot(m_vInitPivot);
-	const _float4 vPos = _float4(5.f, 0.f, 5.f, 1.f);
+	const _float4 vPos = _float4(55.741f, 15.093f, 1066.333f, 1.f);
 	m_pTransformCom->Set_Position(vPos);
 	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	
@@ -77,12 +77,11 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	CLiftRot::DESC CutRotDesc;
 	CutRotDesc.eType = CLiftRot::CUTE;
 	CutRotDesc.vInitPos = _float4(-70.f, 0.f, -70.f, 1.f);
-	
-	// m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(55.741f, 15.093f, 1066.333f, 1.f));
-
 	m_pCuteLiftRot = (CLiftRot*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LiftRot"), CUtile::Create_DummyString(), &CutRotDesc);
 	if (m_pCuteLiftRot == nullptr) return E_FAIL;
-	
+
+	m_EnviromentDesc.iRoomIndex = 5;
+
 	return S_OK;
 }
 
@@ -104,7 +103,29 @@ void CRope_RotRock::Late_Tick(_float fTimeDelta)
 
 	//m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
+	if (m_pRendererCom)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 	m_pCuteLiftRot->Late_Tick(fTimeDelta);
+}
+
+HRESULT CRope_RotRock::Render()
+{
+	if (FAILED(__super::Render())) return E_FAIL;
+	if (FAILED(SetUp_ShaderResources())) return E_FAIL;
+
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
+		//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 17), E_FAIL);
+	}
+	return S_OK;
 }
 
 void CRope_RotRock::Imgui_RenderProperty()
@@ -121,12 +142,34 @@ HRESULT CRope_RotRock::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 		
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	m_iShaderOption = 4;
+	return S_OK;
+}
 
+HRESULT CRope_RotRock::SetUp_ShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CRope_RotRock::SetUp_ShadowShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -168,6 +211,9 @@ CGameObject* CRope_RotRock::Clone(void* pArg)
 
 void CRope_RotRock::Free()
 {
+	if (m_pLiftRotMaster)
+		m_pLiftRotMaster->Set_OwnerRopeRotRokPtr(nullptr);	
+
 	__super::Free();
 
 	Safe_Release(m_pCuteLiftRot);
