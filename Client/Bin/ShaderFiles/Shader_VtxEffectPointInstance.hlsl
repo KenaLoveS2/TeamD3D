@@ -1,9 +1,55 @@
 #include "Shader_Client_Defines.h"
 
-float4x4		g_KenaInfoMatrix[300];
-float4x4		g_WispInfoMatrix[300];
-float4x4		g_RotInfoMatrix[300];
+vector			g_vCamPosition;
+texture2D		g_DepthTexture;
+texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
+texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
+float			g_fHDRValue;
 
+// Type
+int		g_TextureRenderType, g_BlendType;
+bool    g_IsUseMask;
+int		g_SeparateWidth, g_SeparateHeight;
+uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
+float   g_WidthFrame, g_HeightFrame;
+float4  g_vColor;
+float2  g_fUV;
+
+/* Trail  */
+bool	  g_IsTrail;
+
+matrix    g_WispInfoMatrix[300];
+texture2D g_WispflowTexture;
+texture2D g_WispOutTexture;
+
+matrix    g_KenaInfoMatrix[300];
+texture2D g_FlowTexture;
+texture2D g_TypeTexture;
+
+matrix    g_RotInfoMatrix[300];
+matrix    g_InfoMatrix[100];
+
+float   g_InfoSize;
+float	g_fWidth = 1.f;
+float	g_fLife;
+bool    g_bDistanceAlpha;
+float   g_fAlpha;
+
+float2  g_UV;
+float   g_Time;
+bool	g_bTimer;
+/* ~Trail */
+
+/* Dissolve */
+bool  g_bDissolve;
+float g_fDissolveTime;
+float _DissolveSpeed = 0.2f;
+float _FadeSpeed = 1.5f;
+/* Dissolve */
+
+/* Option */
+bool  g_bTurn;
+/* Option */
 struct VS_IN
 {
 	float3		vPosition : POSITION;

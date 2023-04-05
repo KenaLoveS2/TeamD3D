@@ -1,5 +1,24 @@
 #include "Shader_Client_Defines.h"
 
+/**********Constant Buffer*********/
+float          g_fFar = 500.f;
+float          g_fStonePulseIntensity = 0.f;
+/**********************************/
+
+Texture2D<float4>      g_DiffuseTexture;
+Texture2D<float4>      g_NormalTexture;
+Texture2D<float4>      g_EmissiveTexture;
+
+Texture2D<float4>      g_HRAOTexture;
+Texture2D<float4>      g_MRAOTexture;
+Texture2D<float4>      g_ERAOTexture;
+
+Texture2D<float4>      g_BlendDiffuseTexture;
+Texture2D<float4>      g_DetailNormalTexture;
+Texture2D<float4>      g_MaskTexture;
+Texture2D<float4>       g_RoughnessTexture;
+
+
 struct VS_IN
 {
     float3      vPosition : POSITION;
