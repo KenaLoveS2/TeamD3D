@@ -3,8 +3,9 @@
 #include "GameInstance.h"
 #include "MonsterWeapon.h"
 
-#define MAX_TRAIL_EFFECTS		200
+#define MAX_TRAIL_EFFECTS		300
 #define MAX_RING_EFFECTS		10
+#define MAX_HIT_EFFECTS			1
 
 BEGIN(Client)
 class CEffect_Base_S2;
@@ -13,7 +14,7 @@ class CHunterArrow : public CMonsterWeapon
 public:
 	enum STATE { REDAY, FIRE, FINISH, STATE_END, };
 	enum FIRE_TYPE { CHARGE, RAPID, SHOCK, SINGLE, FIRE_TYPE_END };
-	enum EFFECT { EFFECT_TRAIL, EFFECT_RING, EFFECT_END };
+	enum EFFECT { EFFECT_TRAIL, EFFECT_RING, EFFECT_HIT, EFFECT_END };
 
 private:
 	_float4 m_vInvisiblePos = { -1000.f, -1000.f , -1000.f ,1.f };
@@ -88,11 +89,13 @@ private: /* Shockwave Ring */
 	_float						m_fRingTime;
 	_float						m_fRingTimeAcc;
 	_int						m_iRingIndex;
-
+private: /* Hit */
+	_int						m_iHitIndex;
 
 private:
-	void						Play_TrailEffect(_float fTimedelta);
-	void						Play_RingEffect(_float fTimeDelta);
+	void		Play_TrailEffect(_float fTimedelta);
+	void		Play_RingEffect(_float fTimeDelta);
+	void		Play_HitEffect(_float fTimeDelta);
 
 public:
 	void		Set_TrailActive(_bool bActive) { m_bTrailOn = bActive; }

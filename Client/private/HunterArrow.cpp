@@ -13,6 +13,7 @@ CHunterArrow::CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_fRingTime(0.0f)
 	, m_fRingTimeAcc(0.0f)
 	, m_iRingIndex(0)
+	, m_iHitIndex(0)
 {
 }
 
@@ -26,6 +27,7 @@ CHunterArrow::CHunterArrow(const CHunterArrow& rhs)
 	, m_fRingTime(0.0f)
 	, m_fRingTimeAcc(0.0f)
 	, m_iRingIndex(0)
+	, m_iHitIndex(0)
 {
 }
 
@@ -432,6 +434,14 @@ void CHunterArrow::Play_RingEffect(_float fTimeDelta)
 		}
 	}
 }
+void CHunterArrow::Play_HitEffect(_float fTimeDelta)
+{
+	m_vecEffects[EFFECT_HIT][m_iHitIndex]->Activate_Reflecting(
+		m_pTransformCom->Get_State(CTransform::STATE_LOOK), Get_ArrowHeadPos(), 80.0f);
+
+	m_iHitIndex++;
+	m_iHitIndex %= MAX_HIT_EFFECTS;
+}
 
 _float4 CHunterArrow::Get_ArrowHeadPos()
 {
@@ -466,6 +476,19 @@ HRESULT CHunterArrow::SetUp_Effects()
 			return E_FAIL;
 	}
 
+	for (_uint i = 0; i < MAX_HIT_EFFECTS; ++i)
+	{
+		CEffect_Base_S2* pEffect = nullptr;
+
+		pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base",
+			CUtile::Create_DummyString(), L"Particle_ArrowHit"));
+
+		if (pEffect != nullptr)
+			m_vecEffects[EFFECT_HIT].push_back(pEffect);
+		else
+			return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -474,6 +497,8 @@ _int CHunterArrow::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
 	if (m_eArrowState == FIRE)
 	{
 		m_eArrowState = FINISH;
+
+		Play_HitEffect(0.0f);
 	}
 	return 0;
 }

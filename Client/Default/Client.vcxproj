@@ -452,6 +452,11 @@
     <ClInclude Include="..\public\WaterPlane.h" />
     <ClInclude Include="..\public\WoodKnight.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="CUI_CanvasMap.h" />
+    <ClInclude Include="CUI_NodeInfoWindow.h" />
+    <ClInclude Include="CUI_NodeMapFrame.h" />
+    <ClInclude Include="CUI_NodeMood.h" />
+    <ClInclude Include="CUI_Weakpoint.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -727,6 +732,11 @@
     <ClCompile Include="..\private\WoodKnight.cpp" />
     <ClCompile Include="CEffect_Unit.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="CUI_CanvasMap.cpp" />
+    <ClCompile Include="CUI_NodeInfoWindow.cpp" />
+    <ClCompile Include="CUI_NodeMapFrame.cpp" />
+    <ClCompile Include="CUI_NodeMood.cpp" />
+    <ClCompile Include="CUI_Weakpoint.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

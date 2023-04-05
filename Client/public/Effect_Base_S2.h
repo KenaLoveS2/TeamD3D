@@ -40,6 +40,7 @@ public: /* Activation Function */
 	virtual void					Activate_Scaling(_float4 vPos, _float2 vScaleSpeed) {};
 	virtual void					Activate_Scaling(_float4 vDir, _float4 vPos, _float2 vScaleSpeed) {};
 	virtual void					Activate_Spread(_float4 vPos, _float2 vScaleSpeed) {};
+	virtual void					Activate_Reflecting(_float4 vDir, _float4 vPos, _float fAngle) {};
 	virtual	void					Activate_Slowly(_float4 vPos) {};
 	virtual void					DeActivate();
 	virtual void					DeActivate_Slowly();

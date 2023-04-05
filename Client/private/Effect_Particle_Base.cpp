@@ -500,6 +500,78 @@ void CEffect_Particle_Base::Activate(CGameObject* pTarget)
 	m_pTarget = pTarget;
 }
 
+void CEffect_Particle_Base::Activate_Reflecting(_float4 vLook, _float4 vPos, _float fAngle)
+{
+	/* SpreadType Recommended */
+
+	m_bActive = true;
+
+	m_pTransformCom->Set_Position(vPos);
+
+	_float4 vDir = -vLook;
+	vDir.y = 0.0f;
+	vDir.w = 0.0f;
+	vDir = -0.001f * XMVector3Normalize(vDir);
+	vDir.w = 1.0f;
+
+	CVIBuffer_Point_Instancing_S2::POINTINFO tInfo = m_pVIBufferCom->Get_Info();
+
+	tInfo.vMinPos.x = vDir.x - 0.001f;
+	tInfo.vMinPos.z = vDir.z - 0.001f;
+	tInfo.vMaxPos.x = vDir.x + 0.001f;
+	tInfo.vMaxPos.z = vDir.z + 0.001f;
+
+	if (FAILED(m_pVIBufferCom->Update_Buffer(&tInfo)))
+		MSG_BOX("Error : Effect_Particle_Base");
+
+	//_matrix matRot1 = XMMatrixRotationY(XMConvertToRadians(-fAngle * 0.5f));
+	//_matrix matRot2 = XMMatrixRotationY(XMConvertToRadians(fAngle * 0.5f));
+
+	//_float4 vDir = -vLook;
+	//vDir.y = 0.0f;
+	//vDir.w = 0.0f;
+
+	//_float4 vDir1 = 0.001f * XMVector3Normalize(XMVector3TransformNormal(vDir, matRot1));
+	//_float4 vDir2 = 0.001f * XMVector3Normalize(XMVector3TransformNormal(vDir, matRot2));
+
+	//_float fMinX = min(vDir1.x, vDir2.x);
+	//_float fMaxX = max(vDir1.x, vDir2.x);
+	//_float fMinZ = min(vDir1.z, vDir2.z);
+	//_float fMaxZ = max(vDir1.z, vDir2.z);
+
+	//tInfo.vMinPos.x = fMinX;
+	//tInfo.vMinPos.z = fMaxX;
+	//tInfo.vMaxPos.x = fMinX;
+	//tInfo.vMaxPos.z = fMaxZ;
+
+	/* Equations of Planes : dot(normal, (x-point)) = 0 */
+
+	//_float4 vNormal = -vLook;
+
+	//_float4	vNormal_XZPlane = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	//_float4 vPoint_XZPlane	= XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	///* Calculate the Angle */
+	//float fAngleOfNormals = XMVectorGetX(XMVector3AngleBetweenNormals(vNormal, vNormal_XZPlane));
+
+	//// 평면의 일부 구간을 정사영하기 위한 변환 행렬을 계산합니다.
+	//XMMATRIX proj_matrix = XMMatrixRotationY(-fAngleOfNormals);
+	//proj_matrix *= XMMatrixTranslationFromVector(-vPos);
+	//proj_matrix *= XMMatrixRotationY(fAngleOfNormals);
+
+	//// 평면의 일부 구간을 xz 평면으로 정사영합니다.
+	//XMVECTOR p1 = XMVectorSet(1.0f, 0.0f, 1.0f, 0.0f); // 평면 상의 임의의 점
+	//XMVECTOR p2 = XMVectorSet(3.0f, 0.0f, 1.0f, 0.0f); // 평면 상의 다른 임의의 점
+	//p1 = XMVector4Transform(p1, proj_matrix);
+	//p2 = XMVector4Transform(p2, proj_matrix);
+
+
+
+
+
+
+}
+
 void CEffect_Particle_Base::DeActivate()
 {
 	__super::DeActivate();
