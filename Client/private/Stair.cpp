@@ -37,6 +37,8 @@ HRESULT CStair::Initialize(void * pArg)
 
 HRESULT CStair::Late_Initialize(void * pArg)
 {
+	//m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+
 	if (FAILED(__super::Late_Initialize(pArg)))
 		return E_FAIL;
 
@@ -67,6 +69,12 @@ void CStair::Tick(_float fTimeDelta)
 	}	
 	m_pModelCom->Set_PxPosition(m_vPos);
 	*/
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
 }
 
 void CStair::Late_Tick(_float fTimeDelta)

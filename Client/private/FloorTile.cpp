@@ -37,6 +37,8 @@ HRESULT CFloorTile::Initialize(void * pArg)
 
 HRESULT CFloorTile::Late_Initialize(void * pArg)
 {
+	//m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+
 	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
 	{
 		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
@@ -54,6 +56,12 @@ HRESULT CFloorTile::Late_Initialize(void * pArg)
 void CFloorTile::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
 }
 
 void CFloorTile::Late_Tick(_float fTimeDelta)

@@ -71,8 +71,8 @@ private:
 	class CInteraction_Com* m_pInteractionCom = nullptr;
 	class CControlMove* m_pControlMoveCom = nullptr;
 
-	_bool		m_bOnceTest = false;
-
+	
+	_bool		m_bAnimActive = false;
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

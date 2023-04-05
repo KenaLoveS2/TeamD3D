@@ -37,6 +37,8 @@ HRESULT CStone::Initialize(void * pArg)
 
 HRESULT CStone::Late_Initialize(void * pArg)
 {
+	//m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+
 	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
 	{
 		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
@@ -70,6 +72,12 @@ void CStone::Tick(_float fTimeDelta)
 	if (m_fEmissivePulse >= 2.f)
 	{
 		m_bPulseTest = !m_bPulseTest;
+	}
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
 	}
 }
 

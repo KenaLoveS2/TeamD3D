@@ -37,8 +37,8 @@ HRESULT CCliff_Rock::Initialize(void * pArg)
 
 HRESULT CCliff_Rock::Late_Initialize(void * pArg)
 {
+	//m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
 
-	
 	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
 	{
 		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
@@ -56,6 +56,12 @@ HRESULT CCliff_Rock::Late_Initialize(void * pArg)
 void CCliff_Rock::Tick(_float fTimeDelta)
 { 
 	__super::Tick(fTimeDelta);
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
 }
 
 void CCliff_Rock::Late_Tick(_float fTimeDelta)
