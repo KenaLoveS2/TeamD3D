@@ -24,6 +24,7 @@ public:
 	HRESULT Loading_ForMapTool();
 	HRESULT Loading_ForTestPlay();
 	HRESULT Loading_ForTestEffect();
+	HRESULT Loading_ForFinal();
 
 	HRESULT Loading_ForWJ(_uint iLevelIndex);
 	HRESULT Loading_ForJH(_uint iLevelIndex);

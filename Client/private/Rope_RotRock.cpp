@@ -123,7 +123,7 @@ HRESULT CRope_RotRock::Render()
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 7), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 17), E_FAIL);
 	}
 	return S_OK;
 }
@@ -142,11 +142,9 @@ HRESULT CRope_RotRock::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 		
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-
-	m_iShaderOption = 4;
 
 	return S_OK;
 }

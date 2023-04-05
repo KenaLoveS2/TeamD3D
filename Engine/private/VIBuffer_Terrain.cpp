@@ -309,7 +309,7 @@ void CVIBuffer_Terrain::Culling(_fmatrix WorldMatrix)
 
 	D3D11_MAPPED_SUBRESOURCE		SubResources;
 	ZeroMemory(&SubResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	m_pContext->Map(m_pIB, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResources);
 
 	memcpy(SubResources.pData, m_pIndices, sizeof(FACEINDICES32) * iNumFaces);

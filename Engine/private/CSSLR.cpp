@@ -236,6 +236,7 @@ void CSSLR::PrepareOcclusion(ID3D11ShaderResourceView* pMiniDepthSRV)
 {
 	// Constants
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	CONTEXT_LOCK
 	m_pContext->Map(m_pOcclusionCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 	CB_OCCLUSSION* pOcclussion = (CB_OCCLUSSION*)MappedResource.pData;
 	pOcclussion->nWidth = m_nWidth;
@@ -286,6 +287,7 @@ void CSSLR::RayTrace(const _float2& vSunPosSS, const _float3& vSunColor)
 
 	// Constants
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	CONTEXT_LOCK
 	m_pContext->Map(m_pRayTraceCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 	CB_LIGHT_RAYS* pRayTrace = (CB_LIGHT_RAYS*)MappedResource.pData;
 	pRayTrace->vSunPos = _float2(0.5f * vSunPosSS.x + 0.5f, -0.5f * vSunPosSS.y + 0.5f);

@@ -225,6 +225,7 @@ void CInstancing_Mesh::InstBuffer_Update(vector<_float4x4*> VecInstancingMatrix)
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
+	CONTEXT_LOCK
 	HRESULT hr =	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -247,6 +248,7 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -280,6 +282,7 @@ void CInstancing_Mesh::InstaincingMesh_EffectTick(_float yLimitPos, _float fTime
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
+	CONTEXT_LOCK
 	HRESULT hr =	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -580,6 +583,8 @@ _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vecto
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	CONTEXT_LOCK
 	HRESULT hr =m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if(SUCCEEDED(hr))
@@ -639,6 +644,7 @@ _int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLi
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	CONTEXT_LOCK
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	_int iIndex = 0;
@@ -773,7 +779,7 @@ _bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapter
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -821,7 +827,7 @@ void CInstancing_Mesh::InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChap
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -840,7 +846,7 @@ void CInstancing_Mesh::InstaincingMesh_yPosControl(_float yPos)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))

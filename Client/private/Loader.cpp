@@ -238,7 +238,9 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_EFFECT:
 		pLoader->Loading_ForTestEffect();
 		break;
-
+	case LEVEL_FINAL:
+		pLoader->Loading_ForFinal();
+		break;
 	}
 
 	LeaveCriticalSection(&pLoader->Get_CriticalSection());
@@ -1488,6 +1490,29 @@ HRESULT CLoader::Loading_ForTestEffect()
 	
 	m_isFinished = true;
 	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForFinal()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	FAILED_CHECK_RETURN(Loading_ForWJ((_uint)LEVEL_FINAL), E_FAIL);
+
+	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_FINAL), E_FAIL);
+
+	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_FINAL), E_FAIL);
+
+	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_FINAL), E_FAIL);
+
+	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_FINAL), E_FAIL);
+
+	FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_FINAL), E_FAIL);
+
+	m_isFinished = true;
+	SetWindowText(g_hWnd, TEXT("Loading Complete!! Wait a moment"));
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 

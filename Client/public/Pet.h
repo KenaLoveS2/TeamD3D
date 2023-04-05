@@ -15,7 +15,9 @@ class CPet final : public CEnviromentObj
 private:
 	enum Pet_ShaderPass
 	{
-		DEFAULT,
+		SHADOW = 11,
+
+		DEFAULT = 14,
 		AO_R_M,
 		AO_R_M_E,
 		AO_R_M_G,
@@ -25,9 +27,9 @@ private:
 		MASK,
 		SAPLING_BOMBUP,
 		ALPHA_AO_R_M,
-		SHADOW,
 		BOSS_AO_R_M,
 		BOSS_AO_R_M_E,
+		HUNTER_ARROW,
 		PASS_END
 	};
 

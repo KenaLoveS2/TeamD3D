@@ -148,6 +148,7 @@ void CSSAO::DownscaleDepth(ID3D11ShaderResourceView* pDepthSRV, ID3D11ShaderReso
 {
 	// Constants
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	CONTEXT_LOCK
 	m_pContext->Map(m_pDownscaleCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 	TDownscaleCB* pDownscale = (TDownscaleCB*)MappedResource.pData;
 	pDownscale->nWidth = m_nWidth;
