@@ -29,6 +29,8 @@ float		 g_fLashIntensity = 0.5f;
 float		 g_fSSSAmount = 1.f;
 float		 g_HitRimIntensity = 0.f;
 float		 g_ParryRimIntensity = 0.f;
+float		 g_DashRimIntensity = 0.f;
+
 float		 g_Time;
 float		 g_BowDurationTime;
 float		 g_fHDRValue;
@@ -99,6 +101,7 @@ bool		g_IsSpriteAnim = false;
 bool		g_IsUVAnim = false;
 bool		g_Hit = false;
 bool		g_Parry = false;
+bool		g_Dash;
 bool		g_IsTrail;
 bool     g_bDistanceAlpha;
 bool	    g_bTimer;
