@@ -577,6 +577,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\InfoWindow">
       <UniqueIdentifier>{64de57e8-e29d-4d41-81f3-4b2718b74abf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Levels\06. FinalPlay">
+      <UniqueIdentifier>{be811861-a962-4e80-86a9-855d07f24d6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1496,6 +1499,9 @@
     <ClInclude Include="CUI_NodeInfoWindow.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\InfoWindow</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CLevel_Final.h">
+      <Filter>01.Levels\06. FinalPlay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2395,6 +2401,9 @@
     <ClCompile Include="CUI_NodeInfoWindow.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\InfoWindow</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\CLevel_Final.cpp">
+      <Filter>01.Levels\06. FinalPlay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2443,9 +2452,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel_Tess.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
@@ -2455,22 +2461,13 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl">
-      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl">

@@ -1,5 +1,6 @@
-
 #include "Shader_Client_Defines.h"
+
+Texture2D<float4>		g_Texture;
 
 struct VS_IN
 {

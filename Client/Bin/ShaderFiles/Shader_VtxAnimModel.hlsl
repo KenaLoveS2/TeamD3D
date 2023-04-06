@@ -1,6 +1,81 @@
 #include "Shader_Client_Defines.h"
+/***********Constant Buffers***********/
+matrix g_BoneMatrices[800];
+float  g_fFar = 500.f;
+float4 g_vCamPosition;
+/**************************************/
+Texture2D<float4>		g_DiffuseTexture;
+Texture2D<float4>		g_NormalTexture;
+Texture2D<float4>		g_AO_R_MTexture;
+Texture2D<float4>		g_EmissiveTexture;
+Texture2D<float4>		g_EmissiveMaskTexture;
+Texture2D<float4>		g_MaskTexture;
+Texture2D<float4>		g_SSSMaskTexture;
+Texture2D<float4>		g_HairDepthTexture;
+Texture2D<float4>		g_HairAlphaTexture;
+Texture2D<float4>		g_HairRootTexture;
+Texture2D<float4>		g_DetailNormal;
+Texture2D<float4>		g_AlphaTexture;
+/* Kena Bow_String Texture */
+Texture2D		g_NoiseTexture;
+Texture2D		g_SwipeTexture;
+Texture2D		g_GradientTexture;
+float				g_BowDurationTime;
+/* Kena Bow_String Texture */
 
-float4x4		g_BoneMatrices[800];
+bool					g_Hit = false;
+bool					g_Parry = false;
+bool					g_Dash = false;
+
+float					g_fHairLength = 1.f;
+float					g_fHairThickness = 1.f;
+float					g_fLashDensity = 0.5f;
+float					g_fLashWidth = 0.5f;
+float					g_fLashIntensity = 0.5f;
+float					g_fSSSAmount = 1.f;
+float					g_HitRimIntensity = 0.f;
+float					g_ParryRimIntensity = 0.f;
+float					g_DashRimIntensity = 0.f;
+float					g_Time;
+
+float4					g_vAmbientEyeColor = float4(1.f, 1.f, 1.f, 1.f);
+float4					g_vAmbientColor = float4(1.f, 1.f, 1.f, 1.f);
+float4					g_vSSSColor = float4(1.f, 0.f, 0.f, 1.f);
+
+
+Texture2D<float4>      g_GlowTexture;
+Texture2D<float4>      g_OpacityTexture;
+Texture2D<float4>      g_AOTexture;
+Texture2D<float4>      g_RoughnessTexture;
+
+float4					g_EmissiveColor = (float4)1.f;
+float						g_fHDRIntensity = 0.f;
+
+/* EnemyWisp Texture */
+Texture2D<float4>     g_ReamTexture;
+Texture2D<float4>     g_LineTexture;
+Texture2D<float4>     g_SmoothTexture;
+Texture2D<float4>     g_ShapeMaskTexture;
+float4			  g_vColor;
+/* ~EnemyWisp Texture */
+
+/* Dissolve */
+Texture2D<float4>	g_DissolveTexture;
+bool							g_bDissolve;
+float							g_fDissolveTime;
+float							_DissolveSpeed = 0.2f;
+float							_FadeSpeed = 1.5f;
+/* ~Dissolve */
+
+/* Options */
+float			g_fUVSpeedX = 0.f;
+float			g_fUVSpeedY = 0.f;
+/* ~Options */
+
+/* For. EnemyHunter */
+float			g_fStringDissolve;
+float			g_fStringHDR;
+
 
 float4 SSS(float3 position, float3 normal, float3 dir, float4 color, float2 vUV, float amount, Texture2D<float4> Texturediffuse, Texture2D<float4> sssMask)
 {
@@ -10,7 +85,7 @@ float4 SSS(float3 position, float3 normal, float3 dir, float4 color, float2 vUV,
 	// Calculate the distance that light travels through the material
 	float scatterDistance = sqrt(surfaceDistance) * amount;
 	// Calculate the diffuse term for the subsurface scattering
-	float diffuse = saturate(dot(normal, -dir)); 
+	float diffuse = saturate(dot(normal, -dir));
 	vector vDiffuse = Texturediffuse.Sample(LinearSampler, vUV);
 	// Calculate the subsurface scattering term
 	float4 scattering = (1 - exp(-scatterDistance)) * vDiffuse * diffuse;
@@ -112,7 +187,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//0
+}
 
 PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 {
@@ -137,7 +212,7 @@ PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 	if (g_Hit)
 	{
 		vector		vRimColor = float4(1.f, 0.f, 0.f, 0.f);
-		FinalColor = (vDiffuse) + (vRimColor * g_HitRimIntensity);
+		FinalColor = (vDiffuse)+(vRimColor * g_HitRimIntensity);
 	}
 	else if (g_Parry)
 	{
@@ -155,7 +230,7 @@ PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//1
+}
 
 PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 {
@@ -172,7 +247,7 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 
 	float4		FinalColor = float4(0, 0, 0, 1);
 
-	if(g_Hit)
+	if (g_Hit)
 	{
 		vector		vRimColor = float4(1.f, 0.f, 0.f, 0.f);
 		FinalColor = (vDiffuse + vEmissive) + vRimColor * g_HitRimIntensity;
@@ -190,13 +265,13 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 	if (0.1f > vDiffuse.a)
 		discard;
 
-	Out.vDiffuse = vector(FinalColor.rgb, 1.f) ;
+	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}//2
+}
 
 PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 {
@@ -204,13 +279,13 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 
 	float2		vTexUV = In.vTexUV;
 
-	vector		vAO_R_M			 = g_AO_R_MTexture.Sample(LinearSampler, vTexUV);
-	vector		vMask		 		 = g_MaskTexture.Sample(LinearSampler, vTexUV);
-	vector		vSSSMask		 	 = g_SSSMaskTexture.Sample(LinearSampler, vTexUV);
+	vector		vAO_R_M = g_AO_R_MTexture.Sample(LinearSampler, vTexUV);
+	vector		vMask = g_MaskTexture.Sample(LinearSampler, vTexUV);
+	vector		vSSSMask = g_SSSMaskTexture.Sample(LinearSampler, vTexUV);
 	vector		vEmissiveMask = g_EmissiveMaskTexture.Sample(LinearSampler, vTexUV);
-	vector		vDiffuse			 = g_DiffuseTexture.Sample(LinearSampler, vTexUV);
-	vector		vEmissive			 = g_EmissiveTexture.Sample(LinearSampler, vTexUV);
-	vector		vNormalDesc	 = g_NormalTexture.Sample(LinearSampler, vTexUV);
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, vTexUV);
+	vector		vEmissive = g_EmissiveTexture.Sample(LinearSampler, vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, vTexUV);
 
 	float3		vNormal = (vNormalDesc.xyz) * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
@@ -237,19 +312,19 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 		discard;
 
 	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
-	Out.vNormal  = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth   = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}//3
+}
 
 PS_OUT PS_MAIN_FACE(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vAO_R_M	  = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vSSSMask	  = g_SSSMaskTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vAO_R_M = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vSSSMask = g_SSSMaskTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
@@ -261,12 +336,12 @@ PS_OUT PS_MAIN_FACE(PS_IN In)
 	if (g_Hit)
 	{
 		vector		vRimColor = float4(1.f, 0.f, 0.f, 0.f);
-		FinalColor = (vDiffuse) + vRimColor * g_HitRimIntensity;
+		FinalColor = (vDiffuse)+vRimColor * g_HitRimIntensity;
 	}
 	else if (g_Parry)
 	{
 		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
-		FinalColor = (vDiffuse) + vRimColor * g_ParryRimIntensity;
+		FinalColor = (vDiffuse)+vRimColor * g_ParryRimIntensity;
 	}
 	else
 	{
@@ -279,7 +354,7 @@ PS_OUT PS_MAIN_FACE(PS_IN In)
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}//4
+}
 
 PS_OUT PS_MAIN_STAFF(PS_IN In)
 {
@@ -302,7 +377,7 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}//5
+}
 
 PS_OUT PS_MAIN_HAIR(PS_IN In)
 {
@@ -312,7 +387,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	vector		vAlpha = g_HairAlphaTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vRoot = g_HairRootTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepth = g_HairDepthTexture.Sample(LinearSampler, In.vTexUV);
-	
+
 	float fAlpha = vAlpha.r;
 
 	if (fAlpha < 0.5f)
@@ -322,7 +397,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	float3 rootPosition = vRoot.rgb;
 
 	float fDepth = vDepth.r;
-	
+
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
@@ -336,7 +411,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 
 	vDiffuse.rgb *= thickness;
 
-	float fFinalAlpha = fAlpha * saturate((fDepth - rootPosition.z)/(1.f - rootPosition.z));
+	float fFinalAlpha = fAlpha * saturate((fDepth - rootPosition.z) / (1.f - rootPosition.z));
 	fFinalAlpha = 1.f - fFinalAlpha;
 
 	float4		FinalColor = float4(0, 0, 0, 1);
@@ -344,12 +419,12 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	if (g_Hit)
 	{
 		vector		vRimColor = float4(1.f, 0.f, 0.f, 0.f);
-		FinalColor = (vDiffuse) + vRimColor * g_HitRimIntensity;
+		FinalColor = (vDiffuse)+vRimColor * g_HitRimIntensity;
 	}
 	else if (g_Parry)
 	{
 		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
-		FinalColor = (vDiffuse) + vRimColor * g_ParryRimIntensity;
+		FinalColor = (vDiffuse)+vRimColor * g_ParryRimIntensity;
 	}
 	else
 	{
@@ -358,11 +433,11 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 
 	Out.vDiffuse = float4(FinalColor.rgb, fFinalAlpha);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f , 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//6
+}
 
 PS_OUT PS_MAIN_EYELASH(PS_IN In)
 {
@@ -400,7 +475,7 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//7
+}
 
 PS_OUT PS_MAIN_STAFF_BOWTRAIL(PS_IN In)
 {
@@ -420,7 +495,7 @@ PS_OUT PS_MAIN_STAFF_BOWTRAIL(PS_IN In)
 		discard;
 
 	if (g_BowDurationTime > 4.f)
-		Out.vDiffuse.rgb = Out.vDiffuse.rgb * 4.f ;
+		Out.vDiffuse.rgb = Out.vDiffuse.rgb * 4.f;
 	else
 		Out.vDiffuse.rgb = Out.vDiffuse.rgb * g_BowDurationTime;
 
@@ -429,14 +504,14 @@ PS_OUT PS_MAIN_STAFF_BOWTRAIL(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//8
+}
 
 PS_OUT PS_MAIN_STAFF_BOWSTRING(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
 	/* Texture */
-	vector vMask  = g_MaskTexture.Sample(LinearSampler, float2(In.vTexUV.x + 1.78, In.vTexUV.y));
+	vector vMask = g_MaskTexture.Sample(LinearSampler, float2(In.vTexUV.x + 1.78, In.vTexUV.y));
 	if (vMask.g < 7 / 255.f)
 		discard;
 	vMask.r = 0.0f;
@@ -467,7 +542,7 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//9
+}
 
 PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 {
@@ -485,7 +560,7 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 	vGradient = vector(0.25f, 0.25f, 0.25f, 0.25f);
 
 	/* Color */
-	float4 TextureColor = vector(37.0f,210.f, 255.f, 50.f) / 255.f;
+	float4 TextureColor = vector(37.0f, 210.f, 255.f, 50.f) / 255.f;
 	float4 vColor = vector(0.0f, 194.f, 221.f, 0.0f) / 255.f;
 	float4 FinalDiffuseColor = vector(38.0f, 108.f, 145.f, 228.f) / 255.f;
 
@@ -497,7 +572,7 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 
 	Out.vDiffuse = lerp(vNoise, vSwipe, 1.f - fAlpha);
 	Out.vDiffuse = saturate(Out.vDiffuse * FinalDiffuseColor * 2.f) * fresnel + FinalDiffuseColor;
-	Out.vDiffuse.a = Out.vDiffuse.a*fAlpha * 0.5f;
+	Out.vDiffuse.a = Out.vDiffuse.a * fAlpha * 0.5f;
 
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 2.f;
 	if (Out.vDiffuse.a < 0.33)
@@ -508,7 +583,7 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}//10
+}
 
 PS_OUT PS_MAIN_CINE(PS_IN In)
 {
@@ -529,7 +604,7 @@ PS_OUT PS_MAIN_CINE(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAORM;
 	return Out;
-}//11
+}
 
 PS_OUT PS_PULSEPLATEANIM(PS_IN In)
 {
@@ -549,10 +624,10 @@ PS_OUT PS_PULSEPLATEANIM(PS_IN In)
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = vector(vERAODesc.b,vERAODesc.g,1.f, 1.f);
+	Out.vAmbient = vector(vERAODesc.b, vERAODesc.g, 1.f, 1.f);
 
 	return Out;
-}//13
+}
 
 struct PS_OUT_SHADOW
 {
@@ -565,6 +640,898 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN In)
 
 	Out.vLightDepth.r = In.vProjPos.w / g_fFar;
 	Out.vLightDepth.a = 1.f;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_MON(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		vDiffuse = (1 - useDissolve1) * vDiffuse + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		vDiffuse = (1 - useDissolve2) * vDiffuse + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_AO_R_M(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_AO_R_M_E(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse + (vDiffuse * vEmissiveDesc * g_EmissiveColor);
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc) + g_fHDRIntensity, 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}
+
+ // GLOW
+PS_OUT PS_MAIN_AO_R_M_G(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vGlowDesc = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	if (0.1f > vGlowDesc.a)
+		FinalColor = vDiffuse;
+	else
+		FinalColor = vDiffuse + vGlowDesc;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+		 // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vGlowDesc), 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}
+
+ //OPACITY
+PS_OUT PS_MAIN_AO_R_M_O(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vOpacityDesc = g_OpacityTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	float fOpacity = vOpacityDesc.r;
+
+	FinalColor = float4(vDiffuse.rgb, fOpacity * vDiffuse.a);
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}
+
+ //EMISSIVEMASK
+PS_OUT PS_MAIN_AO_R_M_EEM(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vEmissiveMaskDesc = g_EmissiveMaskTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse + vEmissiveDesc /** vEmissiveMaskDesc.r*/;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc /** vEmissiveMaskDesc.r*/), 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}
+
+ //SPEARATE
+PS_OUT PS_MAIN_SEPARATE_AO_R_M_E(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAODesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vRoughness = g_RoughnessTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+	float  fMetalic = 1.f - vRoughness.r;
+	float4 AO_R_M = float4(vAODesc.r, vRoughness.r, fMetalic, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse + vEmissiveDesc;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc), 0.f);
+	Out.vAmbient = AO_R_M;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_MASK(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+	float4 AO_R_M = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse * vMask.r;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = AO_R_M;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_BOMBCHARGEUP(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	float4 vNoise = g_NoiseTexture.Sample(LinearSampler, In.vTexUV);
+	//float4 vMask = g_ShapeMaskTexture.Sample(LinearSampler, In.vTexUV);
+	//vMask.a = vMask.r;
+	float4 vColor = g_ReamTexture.Sample(LinearSampler, In.vTexUV);
+	float4 vSmooth = g_SmoothTexture.Sample(LinearSampler, In.vTexUV);
+	float4 vblendColor = lerp(vColor, vSmooth, vSmooth.r);
+	float4 finalcolor = lerp(vblendColor, vNoise, vNoise.r) * float4(73.f, 24.f, 16.f, 255.f) / 255.f;
+
+	float4 vLine = g_LineTexture.Sample(LinearSampler, In.vTexUV);
+
+	// fresnel_glow(????(????? ????), )
+	float  base = dot(In.vNormal.rgb, -In.vViewDir.rgb);
+	float  exponential = /*vMask * */pow(base, 2.f);
+	float4 fresnelcolor = float4(197.f, 57.f, 57.f, 13.f) / 255.f;
+	float4 fresnel = exponential + fresnelcolor * (1.0f - exponential);
+
+	// rim
+	float  rim = dot(In.vNormal.rgb, In.vViewDir.rgb);
+	float4 vOutline = pow(1.f - rim, 5.f);
+
+	float4 FinalColor = finalcolor * vOutline * fresnel;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 2.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+} 
+
+  // ALPHA, AO
+PS_OUT PS_MAIN_ALPHA_AO_R_M(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_M = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = float4(vDiffuse.rgb, vMask.r);
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAO_R_M;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_BOSS_AO_R_M(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(255.f, 255.f, 255.f, 255.f) / 255.f;
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 127.f, 255.f, 255.f) / 255.f;
+
+		// add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_BOSS_AO_R_M_E(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse + (vDiffuse * vEmissiveDesc * g_EmissiveColor);
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime * 5.f;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(255.f, 255.f, 255.f, 255.f) / 255.f;
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 127.f, 255.f, 255.f) / 255.f;
+
+		// add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc) + g_fHDRIntensity, 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_HUNTER_STRING(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2	texUV = In.vTexUV;
+	texUV.x += g_fUVSpeedX;
+	//texUV.y += g_fUVSpeedY;
+	float2	texUV2 = In.vTexUV;
+	texUV2 -= g_fUVSpeedX;
+	float4	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, texUV2);
+	float4	vMask = g_MaskTexture.Sample(LinearSampler, texUV);
+
+	float	vDiffuseR = vDiffuse.r;
+
+	Out.vDiffuse = vDiffuse;
+	Out.vDiffuse.a = vMask.r;
+	if (0.1f > Out.vDiffuse.a)
+		discard;
+	vector      vAO_R_M = (vector)1.f;
+	Out.vDiffuse.rgb *= g_vColor.rgb;
+
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f,
+		g_fStringHDR, 0.f);
+	Out.vAmbient = vAO_R_M;
+
+	if (vDiffuseR < g_fStringDissolve)
+		discard;
+
+	return Out;
+} 
+
+PS_OUT PS_MAIN_AO_R_M_DEFAULT(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse;
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_AO_R_M_E_DEFAULT(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse + (vDiffuse * vEmissiveDesc * g_EmissiveColor);
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc), 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_SAIYA_EYE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2		vTexUV = In.vTexUV;
+	vTexUV.x -= 0.3f;
+	vTexUV.y -= 0.37f;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(EyeSampler, vTexUV * 3.f);
+	vector		vNormalDesc = g_NormalTexture.Sample(EyeSampler, vTexUV * 3.f);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_BENI_EYE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2		vTexUV = In.vTexUV;
+	vTexUV.x -= 0.33f;
+	vTexUV.y -= 0.37f;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(EyeSampler, vTexUV * 2.8f);
+	vector		vNormalDesc = g_NormalTexture.Sample(EyeSampler, vTexUV * 2.8f);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_ROTHAIR(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vAlphaDesc = g_AlphaTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4	vBaseColor = float4(0.018114f, 0.016204f, 0.020833f, 1.f);
+	Out.vDiffuse = vBaseColor;
+	Out.vNormal  = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = vector(1.f, 1.f, 1.f, 1.f);
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_NONNORMAL(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = (vector)1.f;
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse + (vDiffuse * vEmissiveDesc * g_EmissiveColor);
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc), 0.f);
+	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
 }
@@ -674,7 +1641,7 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_EYELASH();
 	}// 7
-	
+
 	pass Kena_Staff_BowTrail
 	{
 		SetRasterizerState(RS_Default);
@@ -687,8 +1654,8 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_STAFF_BOWTRAIL();
 	} // 8
-	
-	pass Kena_Staff_BowString 
+
+	pass Kena_Staff_BowString
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -700,7 +1667,7 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_STAFF_BOWSTRING();
 	} // 9
-	
+
 	pass Kena_Staff_BowString_Part2
 	{
 		SetRasterizerState(RS_Default);
@@ -750,4 +1717,259 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_PULSEPLATEANIM();
 	} //13
- }
+
+	pass MonDefault
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MON();
+	}//14
+
+	pass AO_R_M
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M();
+	}//15
+
+	pass AO_R_M_E
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_E();
+	}//16
+
+	pass AO_R_M_G
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_G();
+	}//17
+
+	pass AO_R_M_O
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_O();
+	}//18
+
+	pass AO_R_M_EEM
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_EEM();
+	}// 19
+
+	pass SEPARATE_AO_R_M_E
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SEPARATE_AO_R_M_E();
+	}// 20
+
+	pass MASK
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MASK();
+	}//21
+
+	pass Sapling_BombChargeUp
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_BOMBCHARGEUP();
+	}//22
+
+	pass ALPHA_AO_R_M
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_ALPHA_AO_R_M();
+	}//23
+
+	pass BOSS_AO_R_M
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_BOSS_AO_R_M();
+	}//24
+
+	pass BOSS_AO_R_M_E
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_BOSS_AO_R_M_E();
+	}//25
+
+	pass HUNTER_STRING
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_HUNTER_STRING();
+	}//26
+
+	pass DEFAULT_AORM
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_DEFAULT();
+	}//27
+
+	pass DEFAULT_AORM_E
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_E_DEFAULT();
+	}//28
+
+	pass BENI_EYE
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_BENI_EYE();
+	}//29
+
+	pass SAIYA_EYE
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SAIYA_EYE();
+	}//30
+
+	pass RotHair
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_ROTHAIR();
+	}//31
+
+	pass NonNormal
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_NONNORMAL();
+	}//32
+
+	pass Emissive
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
+	}//33
+};

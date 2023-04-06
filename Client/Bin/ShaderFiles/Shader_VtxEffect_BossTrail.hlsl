@@ -1,6 +1,34 @@
 #include "Shader_Client_Defines.h"
 
-float4x4		g_BossTrailInfoMatrix[300];
+/**********Constant Buffer*********/
+texture2D		g_DepthTexture;
+vector			g_vCamPosition;
+float				g_fHDRValue;
+/**********************************/
+
+/**********Trail Option_1*********/
+bool		g_IsTrail, g_IsUseMask;
+int		g_TextureRenderType, g_BlendType;
+int		g_SeparateWidth, g_SeparateHeight;
+uint		g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
+float		 g_WidthFrame, g_HeightFrame;
+float4	 g_vColor;
+/**********************************/
+/********** Trail Option_2*********/
+float   g_InfoSize;
+float	g_fWidth = 1.f;
+float	g_fLife;
+bool    g_bDistanceAlpha;
+float   g_fAlpha;
+float   g_Time;
+bool	g_bTimer;
+/*********************************/
+
+/**********************************/
+matrix    g_BossTrailInfoMatrix[300];
+texture2D g_FlowTexture;
+texture2D g_TypeTexture;
+/**********************************/
 
 struct VS_IN
 {

@@ -238,7 +238,9 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_EFFECT:
 		pLoader->Loading_ForTestEffect();
 		break;
-
+	case LEVEL_FINAL:
+		pLoader->Loading_ForFinal();
+		break;
 	}
 
 	LeaveCriticalSection(&pLoader->Get_CriticalSection());
@@ -249,9 +251,10 @@ _uint APIENTRY LoadingThread(void* pArg)
 HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {
 	m_eNextLevelID = eNextLevelID;
+	
 
 	g_LEVEL = eNextLevelID;
-
+	
 	InitializeCriticalSection(&m_Critical_Section);
 
 	/* Make additional flow for Loading(Thread). */
@@ -357,7 +360,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Terrain_Five_Filter"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain5_Filter_%d.dds"), 3))))
 		return E_FAIL;
-
 
 	/* For.Prototype_Component_Texture_Filter */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Terrain_HeightMaps"),
@@ -484,6 +486,11 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma region Test_Gimmick_OBJ
 	if (bFlowerCheck == true)
 	{
+		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_TestGodTree",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.mdat"),
+				PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.json", false, true))))
+			return E_FAIL;
 
 	}
 #pragma endregion
@@ -1488,6 +1495,29 @@ HRESULT CLoader::Loading_ForTestEffect()
 	
 	m_isFinished = true;
 	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForFinal()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	FAILED_CHECK_RETURN(Loading_ForWJ((_uint)LEVEL_FINAL), E_FAIL);
+
+	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_FINAL), E_FAIL);
+
+	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_FINAL), E_FAIL);
+
+	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_FINAL), E_FAIL);
+
+	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_FINAL), E_FAIL);
+
+	FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_FINAL), E_FAIL);
+
+	m_isFinished = true;
+	SetWindowText(g_hWnd, TEXT("Loading Complete!! Wait a moment"));
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 

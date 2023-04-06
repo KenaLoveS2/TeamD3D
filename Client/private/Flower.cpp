@@ -35,9 +35,22 @@ HRESULT CFlower::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CFlower::Late_Initialize(void* pArg)
+{
+	//m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+
+	return S_OK;
+}
+
 void CFlower::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bOncePosUpdate == false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
 }
 
 void CFlower::Late_Tick(_float fTimeDelta)
@@ -98,7 +111,7 @@ HRESULT CFlower::Render()
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
 		}
 	}
 
@@ -128,7 +141,7 @@ HRESULT CFlower::RenderShadow()
 		for (_uint i = 0; i < iNumMeshes; ++i)
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 21), E_FAIL);
 		}
 	}
 
@@ -176,22 +189,9 @@ HRESULT CFlower::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
-	if (m_pModelCom->Get_IStancingModel())
-	{
-		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
-			(CComponent**)&m_pShaderCom)))
-			return E_FAIL;
-
-		m_iShaderOption = 1;
-	}
-	else
-	{
-		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
-			(CComponent**)&m_pShaderCom)))
-			return E_FAIL;
-
-		m_iShaderOption = 4;
-	}
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
+		(CComponent**)&m_pShaderCom)))
+		return E_FAIL;
 
 	return S_OK;
 }

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "..\public\VIBuffer_Point_Instancing_S2.h"
+
+#include "GameInstance.h"
 #include "Utile.h"
 
 CVIBuffer_Point_Instancing_S2::CVIBuffer_Point_Instancing_S2(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -232,7 +234,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Haze(_float TimeDelta)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -271,7 +273,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Gather(_float TimeDelta)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -318,7 +320,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Parabola(_float TimeDelta)
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -366,7 +368,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Spread(_float TimeDelta)
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr =m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))

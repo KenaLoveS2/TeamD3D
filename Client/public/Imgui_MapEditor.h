@@ -26,7 +26,8 @@ public:
 public:
 	static				void									Load_MapObjects(_uint iLevel, string JsonFileName);
 	static				void									Load_ComTagToCreate(class CGameInstance *pGameInstace, class CGameObject* pGameObject, vector<string> vecStr);
-	static				void									Imgui_Instacing_PosLoad(CGameObject* pSelectEnvioObj, vector<_float4x4>	vecMatrixVec, vector<_float3> vecColiderSize,CEnviromentObj::CHAPTER eChapter);
+	static				void									Imgui_Instacing_PosLoad(CGameObject* pSelectEnvioObj,  CTransform* pTransform,
+		vector<_float4x4>	vecMatrixVec, vector<_float3> vecColiderSize,CEnviromentObj::CHAPTER eChapter);
 	
 
 #ifdef 	_DEBUG

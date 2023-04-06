@@ -62,7 +62,7 @@ void CDeadZoneObj::Late_Tick(_float fTimeDelta)
 
 	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
 
-	if (m_pRendererCom && m_bRenderActive&& false == m_pModelCom->Culling_InstancingMeshs(100.f, WolrdMat))
+	if (m_pRendererCom && m_bRenderActive&& false /*== m_pModelCom->Culling_InstancingMeshs(100.f, WolrdMat)*/)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
@@ -82,7 +82,6 @@ HRESULT CDeadZoneObj::Render()
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-
 			if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
 			{
 				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
@@ -110,7 +109,7 @@ HRESULT CDeadZoneObj::Render()
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
 		}
 	}
 
@@ -126,7 +125,7 @@ HRESULT CDeadZoneObj::RenderShadow()
 		return E_FAIL;
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
+	
 	if (m_pModelCom->Get_IStancingModel())
 	{
 		for (_uint i = 0; i < iNumMeshes; ++i)
@@ -140,7 +139,7 @@ HRESULT CDeadZoneObj::RenderShadow()
 		for (_uint i = 0; i < iNumMeshes; ++i)
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 21), E_FAIL);
 		}
 	}
 
@@ -224,22 +223,9 @@ HRESULT CDeadZoneObj::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 	/* For.Com_Shader */
-	if (m_pModelCom->Get_IStancingModel())
-	{
-		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
-			(CComponent**)&m_pShaderCom)))
-			return E_FAIL;
-
-		m_iShaderOption = 1;
-	}
-	else
-	{
-		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
-			(CComponent**)&m_pShaderCom)))
-			return E_FAIL;
-
-		m_iShaderOption = 4;
-	}
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
+		(CComponent**)&m_pShaderCom)))
+		return E_FAIL;
 
 	return S_OK;
 }

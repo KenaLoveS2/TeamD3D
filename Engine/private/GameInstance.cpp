@@ -169,7 +169,6 @@ HRESULT CGameInstance::Clear_Graphic_Device(const _float4 * pColor)
 	HRESULT			hr = 0;
 
 	CONTEXT_LOCK
-
 	hr = m_pGraphic_Device->Clear_BackBuffer_View(*pColor);	
 	hr = m_pGraphic_Device->Clear_DepthStencil_View();
 

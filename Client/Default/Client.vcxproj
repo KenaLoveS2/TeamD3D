@@ -202,6 +202,7 @@
     <ClInclude Include="..\public\CEffect_Unit.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\CinematicCamera.h" />
+    <ClInclude Include="..\public\CLevel_Final.h" />
     <ClInclude Include="..\public\ControlRoom.h" />
     <ClInclude Include="..\public\CPortalPlane.h" />
     <ClInclude Include="..\Public\Crystal.h" />
@@ -482,6 +483,7 @@
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\private\CinematicCamera.cpp" />
+    <ClCompile Include="..\private\CLevel_Final.cpp" />
     <ClCompile Include="..\private\ControlRoom.cpp" />
     <ClCompile Include="..\private\CPortalPlane.cpp" />
     <ClCompile Include="..\Private\Crystal.cpp" />
@@ -761,9 +763,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Particle_S2.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
@@ -774,7 +773,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel_Tess.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl" />

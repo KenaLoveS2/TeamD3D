@@ -230,7 +230,7 @@ HRESULT CBossHunter::Render()
 			// ArrowString (Have to another Texture) Pause render until then
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 13), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", HUNTER_ARROW), E_FAIL);
 		}
 		else if (i == 3) //Hair
 		{
