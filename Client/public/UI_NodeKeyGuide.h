@@ -23,16 +23,17 @@ private:
 	virtual ~CUI_NodeKeyGuide() = default;
 
 public:
-	virtual HRESULT			Initialize_Prototype()			override;
-	virtual HRESULT			Initialize(void* pArg)			override;
-	virtual HRESULT			Late_Initialize(void* pArg = nullptr) override;
-	virtual void			Tick(_float fTimeDelta)			override;
-	virtual void			Late_Tick(_float fTimeDelta)	override;
-	virtual HRESULT			Render()						override;
+	virtual HRESULT			Initialize_Prototype()					override;
+	virtual HRESULT			Initialize(void* pArg)					override;
+	virtual HRESULT			Late_Initialize(void* pArg = nullptr)	override;
+	virtual void			Tick(_float fTimeDelta)					override;
+	virtual void			Late_Tick(_float fTimeDelta)			override;
+	virtual HRESULT			Render()								override;
 
 private:
-	virtual HRESULT			SetUp_Components() override;
-	virtual HRESULT			SetUp_ShaderResources() override;
+	virtual HRESULT			SetUp_Components()						override;
+	virtual HRESULT			SetUp_ShaderResources()					override;
+	HRESULT					SetUp_Keys();
 
 private:
 	vector<CUI_NodeKey*>	m_vecKeys;

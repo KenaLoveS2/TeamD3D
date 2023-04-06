@@ -2,7 +2,7 @@
 #include "UI_NodeKeyGuide.h"
 #include "GameInstance.h"
 #include "UI_Event_Fade.h"
-#include "UI_NodeMood.h"
+#include "UI_NodeKey.h"
 
 
 CUI_NodeKeyGuide::CUI_NodeKeyGuide(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -109,6 +109,11 @@ HRESULT CUI_NodeKeyGuide::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CUI_NodeKeyGuide::SetUp_Keys()
+{
 	return S_OK;
 }
 

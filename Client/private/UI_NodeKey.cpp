@@ -34,7 +34,7 @@ HRESULT CUI_NodeKey::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	//m_bActive = true;
+	m_bActive = true;
 
 	/* event */
 	m_vecEvents.push_back(CUI_Event_Fade::Create(0.08f, 0.5f));
@@ -69,6 +69,22 @@ HRESULT CUI_NodeKey::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
+
+	{
+		_float4 vPos;
+		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f + 35.0f, g_iWinSizeY * 0.5f - vPos.y - 15.0f};
+		m_szKeyDesc = L"부식령 날리기";
+		if (m_szKeyDesc != nullptr)
+		{
+			//Font_Jangmi0 //Font_JungE0 // Font_SR0
+			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szKeyDesc,
+				vNewPos /* position */,
+				0.f, _float2(0.7f, 0.7f)/* size */,
+				XMVectorSet(1.f, 1.f, 1.f, 1.f));
+					//static_cast<CUI_Event_Fade*>(m_vecEvents[0])->Get_Alpha())/* color */);
+		}
+	}
 
 	return S_OK;
 }

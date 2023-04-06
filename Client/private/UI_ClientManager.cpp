@@ -58,6 +58,7 @@
 #include "UI_CanvasBottom.h"
 #include "UI_NodeLetterBox.h"
 #include "UI_NodeChat.h"
+#include "UI_NodeKey.h"
 
 /* Top */
 #include "UI_CanvasTop.h"
@@ -547,7 +548,13 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 
 
 
-
+	/********************************************/
+	/*				For. Keys					*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_KeyIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/02. KeyboardIcon/key_%d.png"), 5))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_KeyIcon");
 
 
 
@@ -825,6 +832,10 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Chat"), CUI_NodeChat::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Chat");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Key"), CUI_NodeKey::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Key");
 
 
 	/********************************************/

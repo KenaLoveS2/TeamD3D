@@ -1499,9 +1499,6 @@
     <ClInclude Include="..\public\UI_CanvasInfo.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\11. InfoWindow</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_NodeKeyGuide.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\KeyGuide</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_NodeKey.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\KeyGuide</Filter>
     </ClInclude>
@@ -2406,9 +2403,6 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasInfo.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\11. InfoWindow</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeKeyGuide.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\KeyGuide</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeKey.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\KeyGuide</Filter>

@@ -431,7 +431,6 @@
     <ClInclude Include="..\public\UI_NodeItemBox.h" />
     <ClInclude Include="..\public\UI_NodeKarma.h" />
     <ClInclude Include="..\public\UI_NodeKey.h" />
-    <ClInclude Include="..\public\UI_NodeKeyGuide.h" />
     <ClInclude Include="..\public\UI_NodeLetterBox.h" />
     <ClInclude Include="..\public\UI_NodeLvUp.h" />
     <ClInclude Include="..\public\UI_NodeMapFrame.h" />
@@ -714,7 +713,6 @@
     <ClCompile Include="..\private\UI_NodeItemBox.cpp" />
     <ClCompile Include="..\private\UI_NodeKarma.cpp" />
     <ClCompile Include="..\private\UI_NodeKey.cpp" />
-    <ClCompile Include="..\private\UI_NodeKeyGuide.cpp" />
     <ClCompile Include="..\private\UI_NodeLetterBox.cpp" />
     <ClCompile Include="..\private\UI_NodeLvUp.cpp" />
     <ClCompile Include="..\private\UI_NodeMapFrame.cpp" />
