@@ -38,11 +38,16 @@ HRESULT CBombPlatform::Initialize(void* pArg)
 HRESULT CBombPlatform::Late_Initialize(void* pArg)
 {
 	m_vInitPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+	_vector		vScale, vTrans;
+	XMMatrixDecompose(&vScale, (_vector*)&m_vInitQuat, &vTrans, m_pTransformCom->Get_WorldMatrix());
+
 	m_vMovingPos = _float4(1.f, 10.f, 1.f, 1.f);
-	m_fTimer = 3.f;
+	m_vMovingQuat = XMQuaternionIdentity();
+	m_fReturnTime = 3.f;
 
 	_float3	vPos = m_vInitPos;
-	_float3	vPivotScale = _float3(3.54f, 3.25f, 1.42f);
+	_float3	vPivotScale = _float3(3.2f, 1.45f, 3.51f);
 	_float3	vPivotPos = _float3(0.f, 0.f, 0.f);
 
 	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
@@ -60,7 +65,7 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxBoxDesc.fDensity = 1.f;
 	PxBoxDesc.fAngularDamping = 0.5f;
-	PxBoxDesc.fMass = 10.f;
+	PxBoxDesc.fMass = 0.1f;
 	PxBoxDesc.fLinearDamping = 10.f;
 	PxBoxDesc.bCCD = false;
 	PxBoxDesc.fDynamicFriction = 0.5f;
@@ -117,6 +122,13 @@ HRESULT CBombPlatform::Render()
 void CBombPlatform::Imgui_RenderProperty()
 {
 	ImGui_PhysXValueProperty();
+
+	if (ImGui::Button("Reset Platform"))
+	{
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_vInitPos);
+		m_fTimer = 0.f;
+		m_eCurState = CBombPlatform::STATE_SLEEP;
+	}
 }
 
 void CBombPlatform::ImGui_PhysXValueProperty()
@@ -229,12 +241,30 @@ void CBombPlatform::Update_State(_float fTimeDelta)
 			_float		fMaxLength = (m_vMovingPos - m_vInitPos).Length();
 			_float		fCurLength = (vPos - m_vInitPos).Length();
 			_float		fRatio = fCurLength / fMaxLength;
-			CUtile::Saturate<_float>(fRatio, 0.f, 1.f);
+			//CUtile::Saturate<_float>(fRatio, 0.f, 1.f);
 
 			if (fRatio <= 1.f)
 			{
 				_float4		vDir = XMVector3Normalize(m_vMovingPos - m_vInitPos);
 				vPos += vDir;
+
+				_vector		vScale, vQuat, vTrans;
+				_vector		vCurQuat = XMQuaternionSlerp(m_vInitQuat, m_vMovingQuat, fRatio);
+				_matrix		matWorld = m_pTransformCom->Get_WorldMatrix();
+				XMMatrixDecompose(&vScale, &vQuat, &vTrans, matWorld);
+				matWorld = XMMatrixAffineTransformation(vScale, XMQuaternionIdentity(), vCurQuat, vTrans);
+				m_pTransformCom->Set_WorldMatrix(matWorld);
+			}
+			else
+			{
+				vPos = m_vMovingPos;
+				fRatio = 1.f;
+
+				_vector		vScale, vQuat, vTrans;
+				_matrix		matWorld = m_pTransformCom->Get_WorldMatrix();
+				XMMatrixDecompose(&vScale, &vQuat, &vTrans, matWorld);
+				matWorld = XMMatrixAffineTransformation(vScale, XMQuaternionIdentity(), m_vMovingQuat, vTrans);
+				m_pTransformCom->Set_WorldMatrix(matWorld);
 			}
 
 			//vPos = _float4::Lerp(m_vInitPos, m_vMovingPos, fRatio);
@@ -257,12 +287,30 @@ void CBombPlatform::Update_State(_float fTimeDelta)
 			_float		fMaxLength = (m_vMovingPos - m_vInitPos).Length();
 			_float		fCurLength = (m_vMovingPos - vPos).Length();
 			_float		fRatio = fCurLength / fMaxLength;
-			CUtile::Saturate<_float>(fRatio, 0.f, 1.f);
+			//CUtile::Saturate<_float>(fRatio, 0.f, 1.f);
 
 			if (fRatio <= 1.f)
 			{
 				_float4		vDir = XMVector3Normalize(m_vInitPos - m_vMovingPos);
 				vPos += vDir;
+
+				_vector		vScale, vQuat, vTrans;
+				_vector		vCurQuat = XMQuaternionSlerp(m_vMovingQuat, m_vInitQuat, fRatio);
+				_matrix		matWorld = m_pTransformCom->Get_WorldMatrix();
+				XMMatrixDecompose(&vScale, &vQuat, &vTrans, matWorld);
+				matWorld = XMMatrixAffineTransformation(vScale, XMQuaternionIdentity(), vCurQuat, vTrans);
+				m_pTransformCom->Set_WorldMatrix(matWorld);
+			}
+			else
+			{
+				vPos = m_vInitPos;
+				fRatio = 1.f;
+
+				_vector		vScale, vQuat, vTrans;
+				_matrix		matWorld = m_pTransformCom->Get_WorldMatrix();
+				XMMatrixDecompose(&vScale, &vQuat, &vTrans, matWorld);
+				matWorld = XMMatrixAffineTransformation(vScale, XMQuaternionIdentity(), m_vInitQuat, vTrans);
+				m_pTransformCom->Set_WorldMatrix(matWorld);
 			}
 
 			//vPos = _float4::Lerp(m_vMovingPos, m_vInitPos, fRatio);
