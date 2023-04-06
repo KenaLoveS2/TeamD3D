@@ -101,6 +101,7 @@ public:
 	void		Set_TrailActive(_bool bActive) { m_bTrailOn = bActive; }
 	_float4		Get_ArrowHeadPos();
 	HRESULT		SetUp_Effects();
+	void		Reset_Effects();
 
 
 

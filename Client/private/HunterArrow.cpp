@@ -327,7 +327,10 @@ void CHunterArrow::Free()
 	for (_uint i = 0; i < EFFECT_END; ++i)
 	{
 		for (auto& eff : m_vecEffects[i])
+		{
 			Safe_Release(eff);
+			m_vecEffects[i].clear();
+		}
 	}
 }
 
@@ -426,7 +429,7 @@ void CHunterArrow::Play_RingEffect(_float fTimeDelta)
 		{
 			_float4 vDir = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 			_float4 vPos = m_pTransformCom->Get_Position();
-			m_vecEffects[EFFECT_RING][m_iRingIndex]->Activate_Scaling(vDir, vPos, {0.1f, 0.1f});  
+			m_vecEffects[EFFECT_RING][m_iRingIndex]->Activate_Scaling(vDir, vPos, {0.05f, 0.05f});  
 
 			m_iRingIndex++;
 			m_iRingIndex %= MAX_RING_EFFECTS;
@@ -490,6 +493,21 @@ HRESULT CHunterArrow::SetUp_Effects()
 	}
 
 	return S_OK;
+}
+
+void CHunterArrow::Reset_Effects()
+{
+	for(_uint i=0;i<EFFECT_END;++i)
+	{
+		for (auto& eff : m_vecEffects[i])
+		{
+			Safe_Release(eff);
+			m_vecEffects[i].clear();
+		}
+
+	}
+
+	SetUp_Effects();
 }
 
 _int CHunterArrow::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)

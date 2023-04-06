@@ -1704,6 +1704,15 @@ void CBossHunter::ImGui_EffectProperty()
 			tags.push_back(str);
 		}
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("Reset Arrow Effects"))
+	{
+		for(auto& arrow : m_pArrows)
+		{
+			arrow->Reset_Effects();
+		}
+	}
+
 
 	static _int iSelectedEffect;
 	_int iSelectedBefore = iSelectedEffect;

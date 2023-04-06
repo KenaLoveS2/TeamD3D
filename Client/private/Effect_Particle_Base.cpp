@@ -441,8 +441,7 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 	for (auto fElement : jLoad["17. maxPos"])
 		fElement.get_to<float>(*((float*)&tInfo.vMaxPos + i++));
 
-	float fValue;
-	jLoad["18. fPlaySpeed"].get_to<float>(fValue);
+	jLoad["18. fPlaySpeed"].get_to<float>(tInfo.fPlaySpeed);
 
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_PtInstancing_S2"), TEXT("Com_VIBuffer")
 		, (CComponent**)&m_pVIBufferCom, &tInfo)))
@@ -508,68 +507,38 @@ void CEffect_Particle_Base::Activate_Reflecting(_float4 vLook, _float4 vPos, _fl
 
 	m_pTransformCom->Set_Position(vPos);
 
+	CVIBuffer_Point_Instancing_S2::POINTINFO tInfo = m_pVIBufferCom->Get_Info();
+
 	_float4 vDir = -vLook;
 	vDir.y = 0.0f;
 	vDir.w = 0.0f;
-	vDir = -0.001f * XMVector3Normalize(vDir);
-	vDir.w = 1.0f;
+	vDir = XMVector3Normalize(vDir);
 
-	CVIBuffer_Point_Instancing_S2::POINTINFO tInfo = m_pVIBufferCom->Get_Info();
+	if(vDir.Length() != 0.0f)
+	{
+		_matrix matRot1 = XMMatrixRotationY(XMConvertToRadians(-fAngle * 0.5f));
+		_matrix matRot2 = XMMatrixRotationY(XMConvertToRadians(fAngle * 0.5f));
 
-	tInfo.vMinPos.x = vDir.x - 0.001f;
-	tInfo.vMinPos.z = vDir.z - 0.001f;
-	tInfo.vMaxPos.x = vDir.x + 0.001f;
-	tInfo.vMaxPos.z = vDir.z + 0.001f;
+		_float4 vDir1 = 0.0001f * XMVector3Normalize(XMVector3TransformNormal(vDir, matRot1));
+		_float4 vDir2 = 0.0001f * XMVector3Normalize(XMVector3TransformNormal(vDir, matRot2));
+
+		tInfo.vMinPos.x = min(vDir1.x, vDir2.x);
+		tInfo.vMaxPos.x = max(vDir1.x, vDir2.x);
+		tInfo.vMinPos.z = min(vDir1.z, vDir2.z);
+		tInfo.vMaxPos.z = max(vDir1.z, vDir2.z);
+
+		//_float3 vSpeedPlus = 3 * XMVector3Normalize(-vLook);
+		//tInfo.vSpeedMax = tInfo.vSpeedMax + vSpeedPlus;
+		//tInfo.vSpeedMin = tInfo.vSpeedMin + vSpeedPlus;
+	}
+	else /* Axis Y */
+	{
+		tInfo.vMinPos = _float3{ -0.0010f, tInfo.vMinPos.y, 0.0010f };
+		tInfo.vMaxPos = _float3{ -0.0010f, tInfo.vMinPos.y, 0.0010f };
+	}
 
 	if (FAILED(m_pVIBufferCom->Update_Buffer(&tInfo)))
 		MSG_BOX("Error : Effect_Particle_Base");
-
-	//_matrix matRot1 = XMMatrixRotationY(XMConvertToRadians(-fAngle * 0.5f));
-	//_matrix matRot2 = XMMatrixRotationY(XMConvertToRadians(fAngle * 0.5f));
-
-	//_float4 vDir = -vLook;
-	//vDir.y = 0.0f;
-	//vDir.w = 0.0f;
-
-	//_float4 vDir1 = 0.001f * XMVector3Normalize(XMVector3TransformNormal(vDir, matRot1));
-	//_float4 vDir2 = 0.001f * XMVector3Normalize(XMVector3TransformNormal(vDir, matRot2));
-
-	//_float fMinX = min(vDir1.x, vDir2.x);
-	//_float fMaxX = max(vDir1.x, vDir2.x);
-	//_float fMinZ = min(vDir1.z, vDir2.z);
-	//_float fMaxZ = max(vDir1.z, vDir2.z);
-
-	//tInfo.vMinPos.x = fMinX;
-	//tInfo.vMinPos.z = fMaxX;
-	//tInfo.vMaxPos.x = fMinX;
-	//tInfo.vMaxPos.z = fMaxZ;
-
-	/* Equations of Planes : dot(normal, (x-point)) = 0 */
-
-	//_float4 vNormal = -vLook;
-
-	//_float4	vNormal_XZPlane = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	//_float4 vPoint_XZPlane	= XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-
-	///* Calculate the Angle */
-	//float fAngleOfNormals = XMVectorGetX(XMVector3AngleBetweenNormals(vNormal, vNormal_XZPlane));
-
-	//// 평면의 일부 구간을 정사영하기 위한 변환 행렬을 계산합니다.
-	//XMMATRIX proj_matrix = XMMatrixRotationY(-fAngleOfNormals);
-	//proj_matrix *= XMMatrixTranslationFromVector(-vPos);
-	//proj_matrix *= XMMatrixRotationY(fAngleOfNormals);
-
-	//// 평면의 일부 구간을 xz 평면으로 정사영합니다.
-	//XMVECTOR p1 = XMVectorSet(1.0f, 0.0f, 1.0f, 0.0f); // 평면 상의 임의의 점
-	//XMVECTOR p2 = XMVectorSet(3.0f, 0.0f, 1.0f, 0.0f); // 평면 상의 다른 임의의 점
-	//p1 = XMVector4Transform(p1, proj_matrix);
-	//p2 = XMVector4Transform(p2, proj_matrix);
-
-
-
-
-
-
 }
 
 void CEffect_Particle_Base::DeActivate()
