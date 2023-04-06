@@ -67,6 +67,7 @@
 #include "UI_NodeRotArrow.h"
 #include "UI_NodeLvUp.h"
 #include "UI_NodeBossHP.h"
+#include "UI_NodeMood.h"
 
 /* HatCart */
 #include "UI_CanvasHatCart.h"
@@ -609,6 +610,8 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "NoDiffuseColorGuage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "OnlyAlphaWithColorTexture");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "HDR");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "SwapMask");
+
 
 	
 
@@ -850,6 +853,10 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotLvUpCard"), CUI_NodeLvUp::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotLvUpCard");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Mood"), CUI_NodeMood::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Mood");
 
 	/********************************************/
 	/*				For. HatCart				*/
