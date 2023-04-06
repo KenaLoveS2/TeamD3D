@@ -312,11 +312,16 @@ void CMonster::Call_MonsterFocusIcon()
 	if (nullptr == m_pKena || !m_bSpawn || m_bDying || m_bDeath)
 		return;
 
-	if (m_pTransformCom->Calc_Distance_XZ(CGameInstance::GetInstance()->Get_CamPosition()) > 10.f)
+	if (m_pTransformCom->Calc_Distance_XZ(CGameInstance::GetInstance()->Get_CamPosition()) > 5.f)
 		return;
 
-	CCamera*		pCamera = CGameInstance::GetInstance()->Get_WorkCameraPtr();
-	if (pCamera->Get_TransformCom()->Calc_InRange(XMConvertToRadians(120.f), m_pTransformCom) == true)
+// 	CCamera*		pCamera = CGameInstance::GetInstance()->Get_WorkCameraPtr();
+// 	if (pCamera->Get_TransformCom()->Calc_InRange(XMConvertToRadians(120.f), m_pTransformCom) == true)
+// 		m_pKena->Smooth_Targeting(this);
+
+	CTransform* pKenaTransform = m_pKena->Get_TransformCom();
+	if (pKenaTransform->Calc_Distance_XZ(m_pTransformCom) < 5.f &&
+		pKenaTransform->Calc_InRange(XMConvertToRadians(60.f), m_pTransformCom) == true)
 		m_pKena->Smooth_Targeting(this);
 }
 

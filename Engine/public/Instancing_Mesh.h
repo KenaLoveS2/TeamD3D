@@ -29,18 +29,18 @@ public:
 		return m_iMaterialIndex;
 	}
 public:
-	void			Add_InstanceModel(vector<_float4x4*>VecInstancingMatrix);
-	void			InstBuffer_Update(vector<_float4x4*>VecInstancingMatrix);
+	void			Add_InstanceModel(vector<_float4x4*>& VecInstancingMatrix);
+	void			InstBuffer_Update(vector<_float4x4*>& VecInstancingMatrix);
 	void			InstBufferSize_Update(_int iSize);
-	void			Set_PxTriangle(vector<_float4x4*>VecInstancingMatrix);
+	void			Set_PxTriangle(vector<_float4x4*>& VecInstancingMatrix);
 public:
 	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _uint iNumInstance);
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Tick(_float fTimeDelta) override;
 	virtual HRESULT Render();
 
-	_int	Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat);
-	_int	Occlusion_Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat);
+	_int	Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*>& InstanceMatrixVec, _fmatrix ParentMat);
+	_int	Occlusion_Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*>& InstanceMatrixVec, _fmatrix ParentMat);
 
 public:
 	_bool	Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
@@ -48,7 +48,7 @@ public:
 	void	InstaincingMesh_yPosControl(_float yPos);
 	void	InstaincingMesh_EffectTick(_float yLimitPos,_float fTimeDelta);
 
-	void	Create_PxTriangle_InstMeshActor(CTransform* pParentTransform, vector<_float4x4*> VecInstancingMatrix);
+	void	Create_PxTriangle_InstMeshActor(CTransform* pParentTransform, vector<_float4x4*>& VecInstancingMatrix);
 
 public:
 	HRESULT SetUp_BonePtr(CModel* pModel);

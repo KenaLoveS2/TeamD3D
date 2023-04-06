@@ -66,6 +66,8 @@ void CE_KenaDashRing::Tick(_float fTimeDelta)
 		m_pNextRing->Get_TransformCom()->Set_Position(vPos + vLook * 1.2f);
 		m_pNextRing->Get_TransformCom()->LookAt(vPos + vLook * 1.5f);
 		m_pNextRing->Set_Active(true);
+		
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Dash_Attack_Effect_Ring.ogg", 1.f, false);
 	}
 
 	if (m_fCurScale > m_fInitScale + 2.4f)

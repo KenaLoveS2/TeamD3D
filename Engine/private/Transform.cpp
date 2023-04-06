@@ -784,7 +784,7 @@ _bool CTransform::Calc_InRange(_float fRadian, CTransform * pTargetTransformCom)
 	_float		fMaxAngle = XM_2PI - fRadian * 0.5f;
 	_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirToTarget), XMVector3Normalize(vLook))));
 
-	if (fAngle < fMinAngle || fAngle > fMaxAngle)
+	if (fAngle < fMinAngle/* || fAngle > fMaxAngle*/)
 		return true;
 
 	return false;

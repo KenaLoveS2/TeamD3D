@@ -391,6 +391,9 @@ public:
 	static	CKena_State		NullFunc;
 
 public:
+	const CTransform::DIRECTION& Get_CurrentDirection() const { return m_eDir; }
+
+public:
 	HRESULT					Initialize(class CKena* pKena, class CKena_Status* pStatus, CStateMachine* pStateMachine, CModel* pModel, CAnimationState* pAnimation, CTransform* pTransform, class CCamera_Player* pCamera);
 	void						Tick(_double dTimeDelta);
 	void						Late_Tick(_double dTimeDelta);

@@ -80,6 +80,7 @@ void CE_KenaDash::Tick_State(_float4 vPos)
 	}
 		
 	m_vecChild[CHILD_RING_0]->Set_Active(true);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Dash_Attack_Effect_Ring.ogg", 1.f, false);
 
 	Tick_RingState(vMyPos); /* Ring */
 	m_vecChild[CHILD_CONE]->Set_Position(vPos);

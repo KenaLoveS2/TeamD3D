@@ -77,16 +77,16 @@ public:
 	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
-	virtual HRESULT			Initialize_Prototype() override;
-	virtual HRESULT			Initialize(void* pArg) override;
-	virtual HRESULT			Late_Initialize(void* pArg) override;
+	virtual HRESULT				Initialize_Prototype() override;
+	virtual HRESULT				Initialize(void* pArg) override;
+	virtual HRESULT				Late_Initialize(void* pArg) override;
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT			Render() override;
-	virtual HRESULT			RenderShadow() override;
+	virtual HRESULT				Render() override;
+	virtual HRESULT				RenderShadow() override;
 
-	virtual HRESULT		RenderCine() override;
-	HRESULT					SetUp_CineShaderResources();
+	virtual HRESULT				RenderCine() override;
+	HRESULT						SetUp_CineShaderResources();
 
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_AnimationProperty() override;
@@ -107,21 +107,21 @@ public:
 	void						Dead_FocusRotIcon(CGameObject* pTarget);
 
 private:
-	CRenderer*				m_pRendererCom = nullptr;
+	CRenderer*					m_pRendererCom = nullptr;
 	CShader*					m_pShaderCom = nullptr;
-	CModel*					m_pModelCom = nullptr;
-	CStateMachine*			m_pStateMachine = nullptr;
-	CAnimationState*		m_pAnimation = nullptr;
-	class CKena_State*		m_pKenaState = nullptr;
-	class CKena_Status*		m_pKenaStatus = nullptr;
+	CModel*						m_pModelCom = nullptr;
+	CStateMachine*				m_pStateMachine = nullptr;
+	CAnimationState*			m_pAnimation = nullptr;
+	class CKena_State*			m_pKenaState = nullptr;
+	class CKena_Status*			m_pKenaStatus = nullptr;
 
-	class CCamera_Player*	m_pCamera = nullptr;
-	class CTerrain* m_pTerrain[TERRAIN_COUNT] = { nullptr, };
-	class CRope_RotRock*	m_pRopeRotRock = nullptr;
-	class CRot*				m_pFirstRot = nullptr;
-	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
-	class CMonster* m_pTargetMonster = nullptr;
-	class CHatCart* m_pHatCart = nullptr;
+	class CCamera_Player*		m_pCamera = nullptr;
+	class CTerrain*				m_pTerrain[TERRAIN_COUNT] = { nullptr, };
+	class CRope_RotRock*		m_pRopeRotRock = nullptr;
+	class CRot*					m_pFirstRot = nullptr;
+	class CRotForMonster*		m_pRotForMonster[8] = { nullptr, };
+	class CMonster*				m_pTargetMonster = nullptr;
+	class CHatCart*				m_pHatCart = nullptr;
 
 private:
 	vector<class CKena_Parts*>					m_vecPart;
@@ -205,10 +205,10 @@ private:
 	_bool						m_bRotRockMoveFlag = false;
 
 public:
-	const  _bool&					Get_HitRim() const { return m_bHitRim; }
-	const  _float&					Get_HitRimIntensity() const { return m_fHitRimIntensity; }
-	const  _bool&					Get_ParryRim() const { return m_bParryRim; }
-	const  _float&					Get_ParryRimIntensity() const { return m_fParryRimIntensity; }
+	const  _bool&				Get_HitRim() const { return m_bHitRim; }
+	const  _float&				Get_HitRimIntensity() const { return m_fHitRimIntensity; }
+	const  _bool&				Get_ParryRim() const { return m_bParryRim; }
+	const  _float&				Get_ParryRimIntensity() const { return m_fParryRimIntensity; }
 
 
 private:
@@ -217,25 +217,33 @@ private:
 	CUI_FocusMonster*			m_pUI_FocusMonster;
 
 private:
-	HRESULT					Ready_Parts();
-	HRESULT					Ready_Arrows();
-	HRESULT					Ready_Bombs();
-	HRESULT					Ready_Effects();
-	HRESULT					SetUp_Components();
-	HRESULT					SetUp_ShaderResources();
-	HRESULT					SetUp_ShadowShaderResources();
+	HRESULT						Ready_Parts();
+	HRESULT						Ready_Arrows();
+	HRESULT						Ready_Bombs();
+	HRESULT						Ready_Effects();
+	HRESULT						SetUp_Components();
+	HRESULT						SetUp_ShaderResources();
+	HRESULT						SetUp_ShadowShaderResources();
 
-	HRESULT					SetUp_State();
-	HRESULT					SetUp_UI();
-	void					Update_Collider(_float fTimeDelta);
-	void					Update_AdditiveRatio(_float fTimeDelta);
-	_float					LookAnimationController(_float fTimeDelta);
+	HRESULT						SetUp_State();
+	HRESULT						SetUp_UI();
+	void						Update_Collider(_float fTimeDelta);
+	_float						Update_TimeRate();
+	void						Check_Damaged();
+	void						Update_State_Status(_float fTimeDelta);
+	void						Update_AdditiveRatio(_float fTimeDelta);
+	void						Check_TimeRate_Changed(_float& fTimeDelta, _float fTimeRate);
+	void						Play_Animation(_float fTimeDelta, _float fTimeRate);
+	void						Push_WeaponPosition();
+	void						Run_Smooth_Targeting(_float fTimeDelta);
+	void						Check_Smooth_Targeting();
+	_float						LookAnimationController(_float fTimeDelta);
 
 private:
-	DAMAGED_FROM			Calc_DirToMonster(CGameObject* pTarget);
-	DAMAGED_FROM			Calc_DirToMonster(const _float3& vCollisionPos);
+	DAMAGED_FROM				Calc_DirToMonster(CGameObject* pTarget);
+	DAMAGED_FROM				Calc_DirToMonster(const _float3& vCollisionPos);
 
-private:	/* Animation Event Func */
+private:	/* Effect Event Func */
 	void	TurnOnAttack(_bool bIsInit, _float fTimeDelta);
 	void	TurnOffAttack(_bool bIsInit, _float fTimeDelta);
 	void	TurnOnTrail(_bool bIsInit, _float fTimeDelta);
@@ -252,12 +260,30 @@ private:	/* Animation Event Func */
 	void	TurnOnPulseParryHand(_bool bIsInit, _float fTimeDelta);
 	void	TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta);
 
-	/* Kena Dash */
 	void	TurnOnDashSt(_bool bIsInit, _float fTimeDelta);
 	void	TurnOnDashLp(_bool bIsInit, _float fTimeDelta);
 	void	TurnOffDashLp(_bool bIsInit, _float fTimeDelta);
 	void	TurnOnDashEd(_bool bIsInit, _float fTimeDelta);
-	/* Kena Dash */
+
+private:	/* Sound Event Func */
+	void	PlaySound_Jump(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_PulseJump(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Land(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Dodge(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Dodge_End(_bool bIsInit, _float fTimeDelta);
+
+	void	PlaySound_Pulse_Intro(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Pulse_Outro(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Dash(_bool bIsInit, _float fTimeDelta);
+
+	void	PlaySound_Attack_Voice(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Attack_1(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Attack_2(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Attack_3(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Attack_4(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_HeavyAttack_Charge(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_HeavyAttack_Spark(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_HeavyAttack_Release_Perfect(_bool bIsInit, _float fTimeDelta);
 
 public:
 	//Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
@@ -272,25 +298,25 @@ public:
 	_float m_fLinearDamping = KENA_LINEAR_DAMING, m_fAngularDamping = KENA_ANGULAR_DAMING, m_fMass = KENA_MASS;
 
 public:
-	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*	Clone(void* pArg = nullptr) override;
-	virtual void			Free() override;
+	static CKena*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject*		Clone(void* pArg = nullptr) override;
+	virtual void				Free() override;
 
-	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
-	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
-	virtual _int Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+	virtual _int				Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual _int				Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+	virtual _int				Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
-	void LiftRotRockProc();
-	void Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
-	void Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
+	void						LiftRotRockProc();
+	void						Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
+	void						Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
 	
-	class CKena_Status*	Get_KenaStatusPtr() { return m_pKenaStatus; }
+	class CKena_Status*			Get_KenaStatusPtr() { return m_pKenaStatus; }
 
-	void Setup_TerrainPtr();
-	void End_LiftRotRock();
-	void Buy_RotHat(_uint iHatIndex);
-	_bool IsBuyPossible_RotHat();
-	void Set_HatCartPtr(class CHatCart* pHatCart) { m_pHatCart = pHatCart; }
+	void						Setup_TerrainPtr();
+	void						End_LiftRotRock();
+	void						Buy_RotHat(_uint iHatIndex);
+	_bool						IsBuyPossible_RotHat();
+	void						Set_HatCartPtr(class CHatCart* pHatCart) { m_pHatCart = pHatCart; }
 };
 
 END

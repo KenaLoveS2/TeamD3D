@@ -1457,6 +1457,7 @@
     <ClInclude Include="..\public\E_KenaDashCone.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Dash</Filter>
     </ClInclude>
+    <ClInclude Include="BombPlatform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2341,6 +2342,7 @@
     <ClCompile Include="..\private\E_KenaDashCone.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Dash</Filter>
     </ClCompile>
+    <ClCompile Include="BombPlatform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

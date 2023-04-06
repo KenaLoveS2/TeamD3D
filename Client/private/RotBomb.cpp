@@ -601,7 +601,7 @@ void CRotBomb::Throw(_float fTimeDelta)
 
 _int CRotBomb::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	if (pTarget == nullptr || iColliderIndex == (_int)COLLISON_DUMMY || iColliderIndex == (_int)COL_MONSTER || iColliderIndex == (_int)COL_ELETE_MONSTER || iColliderIndex == (_int)COL_BOSS_MONSTER)
+	if (pTarget == nullptr || iColliderIndex == (_int)COLLISON_DUMMY || iColliderIndex == (_int)COL_MONSTER || iColliderIndex == (_int)COL_ELETE_MONSTER || iColliderIndex == (_int)COL_BOSS_MONSTER || iColliderIndex == (_int)COL_ENVIROMENT)
 	{
 		if (m_bHit == false)
 		{
