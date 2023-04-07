@@ -302,8 +302,5 @@ public:
 
 	void PutToSleep(PxRigidDynamic* pActor);
 	void WakeUp(PxRigidDynamic* pActor);
-
-
-	void	Scene_Change_Clear_All_Actor();
 };
 END
