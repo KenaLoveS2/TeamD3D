@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\public\HatCart.h"
+#include "HatCart.h"
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
@@ -264,7 +264,7 @@ HRESULT CHatCart::SetUp_Components()
 		m_EnviromentDesc.iCurLevel = g_LEVEL;
 
 	/* For.Com_Model */ 	
-	if (FAILED(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_M4_VillageCart", TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_M4_VillageCart", TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
 

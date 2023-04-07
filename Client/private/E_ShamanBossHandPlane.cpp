@@ -218,8 +218,8 @@ HRESULT CE_ShamanBossHandPlane::SetUp_ShaderResources()
 HRESULT CE_ShamanBossHandPlane::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxBossModel"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_EffectShaman"), TEXT("Com_ShamanTexture"), (CComponent**)&m_pShamanTextureCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_BossHandPlate"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_EffectShaman"), TEXT("Com_ShamanTexture"), (CComponent**)&m_pShamanTextureCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_BossHandPlate"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
 	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_ETC;
 
 	return S_OK;

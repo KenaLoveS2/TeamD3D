@@ -50,8 +50,7 @@ private:
 		AT_JUMPATTACK,
 		AT_ATTACK1,
 		AT_ATTACK2,
-		AT_COMBOATTACK,
-		AT_ROCKTHROW,
+		AT_COMBOATTACK,		
 		ATTACKTYPE_END
 	};
 
@@ -117,8 +116,7 @@ private:
 	_bool   m_bAttack1 = false;
 	_bool	m_bAttack2 = false;
 	_bool	m_bComboAttack = false;
-	_bool	m_bThrowRock = false;
-
+	
 	_int	m_iAfterAttackType = AFTYPE_END;
 	_bool	m_bCheer = false;
 	_bool	m_bStrafeLeft = false;
@@ -135,7 +133,7 @@ private:
 	CBone* m_pWeaponBone = nullptr;
 
 	enum COPY_SOUND_KEY {
-		CSK_TENSE1, CSK_TENSE2, CSK_TENSE3, CSK_CALM, CSK_ATTACK, CSK_HURT, CSK_DIE, CSK_AXE_WOOSH,
+		CSK_TENSE1, CSK_TENSE2, CSK_TENSE3, CSK_CALM, CSK_ATTACK, CSK_HURT, CSK_DIE, CSK_AXE_WOOSH, CSK_IMPACT, CSK_WALK,
 		COPY_SOUND_KEY_END,
 	};
 
@@ -148,8 +146,10 @@ public:
 
 	void Spawn_ByMaster(class CMonster* pMaster, _float4 vPos);
 
-	void Play_AxeSound(_bool bIsInit, _float fTimeDelta);
 	virtual void Create_CopySoundKey() override;
+	void Play_AxeSound(_bool bIsInit, _float fTimeDelta);
+	void Play_ImpactSound(_bool bIsInit, _float fTimeDelta);
+	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
 };
 
 END

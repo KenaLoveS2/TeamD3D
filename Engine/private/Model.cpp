@@ -16,12 +16,12 @@
 #include "GameInstance.h"
 #include "Channel.h"
 
-CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
 {
 }
 
-CModel::CModel(const CModel & rhs)
+CModel::CModel(const CModel& rhs)
 	: CComponent(rhs)
 	, m_eType(rhs.m_eType)
 	, m_wstrModelFilePath(rhs.m_wstrModelFilePath)
@@ -70,12 +70,12 @@ CModel::CModel(const CModel & rhs)
 	}
 }
 
-CBone * CModel::Get_BonePtr(const char * pBoneName)
+CBone* CModel::Get_BonePtr(const char* pBoneName)
 {
 	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
-	{
-		return !strcmp(pBoneName, pBone->Get_Name());
-	});
+		{
+			return !strcmp(pBoneName, pBone->Get_Name());
+		});
 
 	if (iter == m_Bones.end())
 		return nullptr;
@@ -83,12 +83,12 @@ CBone * CModel::Get_BonePtr(const char * pBoneName)
 	return *iter;
 }
 
-CBone * CModel::Get_BonePtr(_int iBoneIndex)
+CBone* CModel::Get_BonePtr(_int iBoneIndex)
 {
 	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
-	{
-		return pBone->Get_BoneIndex() == iBoneIndex;
-	});
+		{
+			return pBone->Get_BoneIndex() == iBoneIndex;
+		});
 
 	if (iter == m_Bones.end())
 		return nullptr;
@@ -101,7 +101,7 @@ const _double& CModel::Get_PlayTime() const
 	return m_Animations[m_iCurrentAnimIndex]->Get_PlayTime();
 }
 
-const _double & CModel::Get_LastPlayTime() const
+const _double& CModel::Get_LastPlayTime() const
 {
 	return m_Animations[m_iCurrentAnimIndex]->Get_LastPlayTime();
 }
@@ -116,17 +116,17 @@ const _double CModel::Get_AnimationDuration() const
 	return m_Animations[m_iCurrentAnimIndex]->Get_AnimationDuration();
 }
 
-const _bool & CModel::Get_AnimationFinish() const
+const _bool& CModel::Get_AnimationFinish() const
 {
 	return m_Animations[m_iCurrentAnimIndex]->IsFinished();
 }
 
-vector<KEYFRAME>* CModel::Get_KeyFrames(const char * pBoneName)
+vector<KEYFRAME>* CModel::Get_KeyFrames(const char* pBoneName)
 {
 	CBone* pBone = Get_BonePtr(pBoneName);
 	NULL_CHECK_RETURN(pBone, nullptr);
 
-	CChannel*		pChannel = m_Animations[m_iCurrentAnimIndex]->Find_Channel(pBone);
+	CChannel* pChannel = m_Animations[m_iCurrentAnimIndex]->Find_Channel(pBone);
 	NULL_CHECK_RETURN(pChannel, nullptr);
 
 	return pChannel->Get_KeyFrames();
@@ -137,14 +137,14 @@ void CModel::Set_PlayTime(_double dPlayTime)
 	m_Animations[m_iCurrentAnimIndex]->Set_PlayTime(dPlayTime);
 }
 
-HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix,
-	const _tchar * pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing, const char*  JsonMatrialPath, _bool bUseTriangleMeshActor
-, _bool bPointBuffer)
+HRESULT CModel::Initialize_Prototype(const _tchar* pModelFilePath, _fmatrix PivotMatrix,
+	const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing, const char* JsonMatrialPath, _bool bUseTriangleMeshActor
+	, _bool bPointBuffer)
 {
 	if (JsonMatrialPath == nullptr)
 		JsonMatrialPath = "NULL";
 
-	m_bIsInstancing = bIsInstancing;			/* ÇöÀç ¸ðµ¨ÀÌ ÀÎ½ºÅÏ½ÌÀÎ°¡?*/
+	m_bIsInstancing = bIsInstancing;			/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½Î°ï¿½?*/
 	m_bIsLodModel = bIsLod;
 	m_bUseTriangleMeshActor = bUseTriangleMeshActor;
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
@@ -188,8 +188,8 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 				}
 
 				iMaterialIndex++;
-				m_Materials.push_back(ModelMatrial);			//  MODELMATERIAL  1°³´Â 18°³ÀÇ ÅØ½ºÃÄ¸¦ »ý¼º°¡´ÉÇÏ´Ù.
-																						// °á±¹¿¡ ¿©±â¸¦ ¼ÕºÁ¾ßÇÑ´Ù.
+				m_Materials.push_back(ModelMatrial);			//  MODELMATERIAL  1ï¿½ï¿½ï¿½ï¿½ 18ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½ï¿½Ä¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
+																						// ï¿½á±¹ï¿½ï¿½ ï¿½ï¿½ï¿½â¸¦ ï¿½Õºï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 			}
 		}
 		else
@@ -219,7 +219,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 			}
 
 
-			// °á±¹¿¡ ¿©±â¸¦ ¼ÕºÁ¾ßÇÑ´Ù.
+			// ï¿½á±¹ï¿½ï¿½ ï¿½ï¿½ï¿½â¸¦ ï¿½Õºï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 
 		}
 
@@ -244,13 +244,13 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 			// for. Instaincing
 			if (m_bIsInstancing == true)
 			{
-				CInstancing_Mesh *pMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod, bUseTriangleMeshActor, bPointBuffer);
+				CInstancing_Mesh* pMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod, bUseTriangleMeshActor, bPointBuffer);
 				assert(nullptr != pMesh && "CModel::Initialize_Prototype _Instancing");
 				m_InstancingMeshes.push_back(pMesh);
 			}
 			else   // For.origin Mesh
 			{
-				CMesh *pMesh = CMesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod, bUseTriangleMeshActor);
+				CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod, bUseTriangleMeshActor);
 				if (pMesh == nullptr) return E_FAIL;
 
 				m_Meshes.push_back(pMesh);
@@ -260,7 +260,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		ReadFile(hFile, &m_iNumAnimations, sizeof(_uint), &dwByte, nullptr);
 		for (_uint i = 0; i < m_iNumAnimations; i++)
 		{
-			CAnimation *pAnimation = CAnimation::Create(hFile, this);
+			CAnimation* pAnimation = CAnimation::Create(hFile, this);
 			if (pAnimation == nullptr) return E_FAIL;
 			pAnimation->Set_AnimIndex(i);
 
@@ -270,12 +270,12 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		CloseHandle(hFile);
 	}
 	else if (!lstrcmp(wszExt, L".model"))
- 		FAILED_CHECK_RETURN(Load_MeshMaterial(m_wstrModelFilePath), E_FAIL);
+		FAILED_CHECK_RETURN(Load_MeshMaterial(m_wstrModelFilePath), E_FAIL);
 
 	return S_OK;
 }
 
-HRESULT CModel::Initialize(void * pArg, CGameObject * pOwner)
+HRESULT CModel::Initialize(void* pArg, CGameObject* pOwner)
 {
 	FAILED_CHECK_RETURN(__super::Initialize(pArg, pOwner), E_FAIL);
 
@@ -312,6 +312,13 @@ HRESULT CModel::Initialize(void * pArg, CGameObject * pOwner)
 	{
 		m_pInstanceTransform = static_cast<CTransform*>(CGameInstance::GetInstance()->
 			Clone_Component(CGameInstance::Get_StaticLevelIndex(), CGameInstance::m_pPrototypeTransformTag));
+
+	/*	_float pMinX, pMaxX, pMinY, pMaxY, pMinZ, pMaxZ;
+
+		Calc_InstMinMax(&pMinX, &pMaxX, &pMinY, &pMaxY, &pMinZ, &pMaxZ);
+
+		m_vIncreateDir = _float3( pMaxX - pMinX, pMaxY - pMinY,pMaxZ - pMinZ );*/
+
 	}
 #endif
 
@@ -377,11 +384,11 @@ void CModel::Imgui_RenderProperty()
 			static _int	iSelectFunction = -1;
 			static _int	iSelectEvent = -1;
 			static _bool	bAddEvent = false;
-			CAnimation*	pAnimation = nullptr;
-			char**			ppAnimationTag = new char*[m_iNumAnimations];
+			CAnimation* pAnimation = nullptr;
+			char** ppAnimationTag = new char* [m_iNumAnimations];
 			static string	strSearchTag = "";
 			_bool			bSearchMode = false;
-			char**			ppFunctionTags = nullptr;
+			char** ppFunctionTags = nullptr;
 
 			string			LastSearchTag = strSearchTag;
 			ImGui::InputText("Search", &strSearchTag);
@@ -583,16 +590,16 @@ void CModel::Imgui_RenderProperty()
 				}
 
 				ImGui::Separator();
-				const _uint&		iChannelCount = pAnimation->Get_ChannelCount();
+				const _uint& iChannelCount = pAnimation->Get_ChannelCount();
 				ImGui::InputInt("Num of Channel", (_int*)&iChannelCount, 0, 0, ImGuiInputTextFlags_ReadOnly);
 				ImGui::Separator();
-				_double&	dPlayTime = pAnimation->Get_PlayTime();
+				_double& dPlayTime = pAnimation->Get_PlayTime();
 				ImGui::InputDouble("Current Play Time", &dPlayTime, 0.0, 0.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
-				_double&	dDuration = pAnimation->Get_AnimationDuration();
+				_double& dDuration = pAnimation->Get_AnimationDuration();
 				ImGui::InputDouble("Duration", &dDuration, 0.0, 0.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
 				_float		fProgress = _float(dPlayTime / dDuration);
 				ImGui::InputFloat("Progress", &fProgress, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_ReadOnly);
-				_float&	fBlendDuration = pAnimation->Get_BlendDuration();
+				_float& fBlendDuration = pAnimation->Get_BlendDuration();
 				ImGui::InputFloat("Blend Duration", &fBlendDuration, 0.01f, 0.05f, "%.3f");
 				ImGui::SameLine();
 				if (ImGui::SmallButton("reset"))
@@ -600,7 +607,7 @@ void CModel::Imgui_RenderProperty()
 
 				ImGui::Separator();
 				ImGui::BulletText("Animation Type");
-				CAnimation::ANIMTYPE&		eAnimType = pAnimation->Get_AnimationType();
+				CAnimation::ANIMTYPE& eAnimType = pAnimation->Get_AnimationType();
 				if (ImGui::RadioButton("Common", eAnimType == CAnimation::ANIMTYPE_COMMON))
 					eAnimType = CAnimation::ANIMTYPE_COMMON;
 				ImGui::SameLine();
@@ -617,7 +624,7 @@ void CModel::Imgui_RenderProperty()
 
 				ImGui::Separator();
 				ImGui::BulletText("Animation Speed");
-				_double&	dTickPerSecond = pAnimation->Get_AnimationTickPerSecond();
+				_double& dTickPerSecond = pAnimation->Get_AnimationTickPerSecond();
 				ImGui::InputDouble("Input Speed", &dTickPerSecond, 0.5, 1.0);
 				ImGui::SameLine();
 				if (ImGui::Button("Reset"))
@@ -733,10 +740,10 @@ HRESULT CModel::SetUp_ClonedMeshes()
 	for (_uint i = 0; i < m_iNumMeshes; i++)
 	{
 		/*For. Origin*/
-		if (false == m_bIsInstancing  && FAILED(m_Meshes[i]->SetUp_BonePtr(this)))
+		if (false == m_bIsInstancing && FAILED(m_Meshes[i]->SetUp_BonePtr(this)))
 			return E_FAIL;
 		/*For. Instaincing*/
-		else if (true == m_bIsInstancing &&FAILED(m_InstancingMeshes[i]->SetUp_BonePtr(this)))
+		else if (true == m_bIsInstancing && FAILED(m_InstancingMeshes[i]->SetUp_BonePtr(this)))
 			return E_FAIL;
 		else continue;
 	}
@@ -744,11 +751,11 @@ HRESULT CModel::SetUp_ClonedMeshes()
 	return S_OK;
 }
 
-CAnimation * CModel::Find_Animation(const string & strAnimName)
+CAnimation* CModel::Find_Animation(const string& strAnimName)
 {
 	const auto	iter = find_if(m_Animations.begin(), m_Animations.end(), [&strAnimName](const CAnimation* pAnim) {
 		return !strcmp(pAnim->Get_Name(), strAnimName.c_str());
-	});
+		});
 
 	if (iter == m_Animations.end())
 		return nullptr;
@@ -756,7 +763,7 @@ CAnimation * CModel::Find_Animation(const string & strAnimName)
 	return (*iter);
 }
 
-CAnimation * CModel::Find_Animation(_uint iAnimIndex)
+CAnimation* CModel::Find_Animation(_uint iAnimIndex)
 {
 	if (iAnimIndex >= m_iNumAnimations)
 		return nullptr;
@@ -764,7 +771,7 @@ CAnimation * CModel::Find_Animation(_uint iAnimIndex)
 	return m_Animations[iAnimIndex];
 }
 
-void CModel::Set_InstancePos(vector<_float4x4> InstanceMatrixVec)
+void CModel::Set_InstancePos(vector<_float4x4>& InstanceMatrixVec)
 {
 	if (m_bIsInstancing == false)
 		return;
@@ -785,7 +792,7 @@ void CModel::Set_InstancePos(vector<_float4x4> InstanceMatrixVec)
 }
 
 
-HRESULT CModel::Save_Model(const wstring & wstrSaveFileDirectory)
+HRESULT CModel::Save_Model(const wstring& wstrSaveFileDirectory)
 {
 	DWORD	dwByte = 0;
 	HANDLE	hFile = CreateFileW(wstrSaveFileDirectory.c_str(), GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
@@ -841,7 +848,7 @@ HRESULT CModel::Save_Model(const wstring & wstrSaveFileDirectory)
 			{
 				WriteFile(hFile, &i, sizeof(_uint), &dwByte, nullptr);
 
-				const _tchar*	wszFilePath = tMaterial.pTexture[i]->Get_FilePath().c_str();
+				const _tchar* wszFilePath = tMaterial.pTexture[i]->Get_FilePath().c_str();
 				_uint				iFilePathLength = (_uint)tMaterial.pTexture[i]->Get_FilePath().length() + 1;
 
 				WriteFile(hFile, &iFilePathLength, sizeof(_uint), &dwByte, nullptr);
@@ -850,7 +857,7 @@ HRESULT CModel::Save_Model(const wstring & wstrSaveFileDirectory)
 		}
 	}
 
-	/* ÆÄÀÏ À§Ä¡ Æ÷ÀÎÅÍ ¹Þ¾Æ¼­ ÀúÀåÇÏ±â */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ */
 	m_dwBeginBoneData = SetFilePointer(hFile, 0, nullptr, FILE_CURRENT);
 
 	/* Bones */
@@ -898,7 +905,7 @@ HRESULT CModel::Save_Model(const wstring & wstrSaveFileDirectory)
 	return S_OK;
 }
 
-HRESULT CModel::Animation_Synchronization(CModel * pModelCom, const string & strRootNodeName)
+HRESULT CModel::Animation_Synchronization(CModel* pModelCom, const string& strRootNodeName)
 {
 	NULL_CHECK_RETURN(pModelCom, E_FAIL);
 
@@ -922,7 +929,7 @@ HRESULT CModel::Animation_Synchronization(CModel * pModelCom, const string & str
 	return S_OK;
 }
 
-HRESULT CModel::Synchronization_MeshBone(CModel * pModelCom)
+HRESULT CModel::Synchronization_MeshBone(CModel* pModelCom)
 {
 	NULL_CHECK_RETURN(pModelCom, E_FAIL);
 
@@ -931,7 +938,7 @@ HRESULT CModel::Synchronization_MeshBone(CModel * pModelCom)
 		FAILED_CHECK_RETURN(pMesh->Synchronization_BonePtr(this), E_FAIL);
 	}
 
-	char**		ppBoneName = new char*[pModelCom->m_iNumBones];
+	char** ppBoneName = new char* [pModelCom->m_iNumBones];
 	_uint		iLength = 0;
 
 	for (_uint i = 0; i < pModelCom->m_iNumBones; ++i)
@@ -945,12 +952,12 @@ HRESULT CModel::Synchronization_MeshBone(CModel * pModelCom)
 	//	Safe_Release(pBone);
 
 	_uint j = 0;
-	CBone*	pRootBone = nullptr;
+	CBone* pRootBone = nullptr;
 	for (auto iter = pModelCom->m_Bones.begin(); iter != pModelCom->m_Bones.end();)
 	{
 		Safe_Release(*iter);
 
-		CBone*	pBone = Get_BonePtr(ppBoneName[j++]);
+		CBone* pBone = Get_BonePtr(ppBoneName[j++]);
 		if (pBone == nullptr)
 		{
 			// 			if (pRootBone != nullptr)
@@ -1005,11 +1012,11 @@ void CModel::Set_AnimIndex(_uint iAnimIndex)
 	m_iCurrentAnimIndex = iAnimIndex;
 }
 
-void CModel::Set_BoneLocked(const char * pBoneName, _bool bLock)
+void CModel::Set_BoneLocked(const char* pBoneName, _bool bLock)
 {
 	const auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone) {
 		return !strcmp(pBone->Get_Name(), pBoneName);
-	});
+		});
 
 	if (iter == m_Bones.end())
 		return;
@@ -1023,7 +1030,7 @@ void CModel::Set_AllBonesUnlock()
 		pBone->Set_BoneLocked(false);
 }
 
-HRESULT CModel::Set_BoneIndex(const _tchar * pFilePath)
+HRESULT CModel::Set_BoneIndex(const _tchar* pFilePath)
 {
 	Json	jBoneInfo;
 
@@ -1031,7 +1038,7 @@ HRESULT CModel::Set_BoneIndex(const _tchar * pFilePath)
 	file >> jBoneInfo;
 	file.close();
 
-	CBone*	pBone = nullptr;
+	CBone* pBone = nullptr;
 	string	strBoneName = "";
 	_uint	i = 0;
 
@@ -1069,7 +1076,7 @@ void CModel::Play_AdditiveAnimForMonster(_float fTimeDelta, _float fRatio, const
 	}
 }
 
-HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
+HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string& strFuncName)
 {
 	if (iAnimIndex >= m_iNumAnimations)
 		return E_FAIL;
@@ -1079,7 +1086,7 @@ HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & str
 	return S_OK;
 }
 
-void CModel::Call_Event(const string & strFuncName)
+void CModel::Call_Event(const string& strFuncName)
 {
 	m_pOwner->Call_EventFunction(strFuncName);
 }
@@ -1090,9 +1097,9 @@ void CModel::Compute_CombindTransformationMatrix()
 		pBone->Compute_CombindTransformationMatrix();
 }
 
-void CModel::Compute_CombindTransformationMatrix(const string & RootBone)
+void CModel::Compute_CombindTransformationMatrix(const string& RootBone)
 {
-	CBone*	pRootBone = nullptr;
+	CBone* pRootBone = nullptr;
 
 	for (auto pBone : m_Bones)
 	{
@@ -1109,7 +1116,7 @@ void CModel::Compute_CombindTransformationMatrix(const string & RootBone)
 	pRootBone->Compute_CombindTransformationMatrix_Child();
 }
 
-void CModel::Update_BonesMatrix(CModel * pModel)
+void CModel::Update_BonesMatrix(CModel* pModel)
 {
 	const char* pBoneName = nullptr;
 	for (auto pBone : m_Bones)
@@ -1139,7 +1146,7 @@ void CModel::Set_AllAnimCommonType()
 	}
 }
 
-void CModel::Print_Animation_Names(const string & strFilePath)
+void CModel::Print_Animation_Names(const string& strFilePath)
 {
 	Json	jAnimName;
 
@@ -1183,7 +1190,7 @@ void CModel::Play_Animation(_float fTimeDelta)
 	}
 }
 
-HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, aiTextureType eType, const char * pConstantName)
+HRESULT CModel::Bind_Material(CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName)
 {
 	if (iMeshIndex >= m_iNumMeshes)
 		return E_FAIL;
@@ -1223,7 +1230,7 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 		m_InstancingMeshes[iMeshIndex]->Render();
 	}
 	/*For.Origin*/
-	else  if (false == m_bIsInstancing	&& nullptr != m_Meshes[iMeshIndex])
+	else  if (false == m_bIsInstancing && nullptr != m_Meshes[iMeshIndex])
 	{
 		if (nullptr != pBoneConstantName)
 		{
@@ -1248,71 +1255,71 @@ void CModel::Imgui_MaterialPath()
 			if (m_Materials[i].pTexture[j] == nullptr)
 				continue;
 
-			if (j == WJTextureType_NONE)
+			if (j == (_uint)WJTextureType_NONE)
 			{
 				ImGui::Text("WJTextureType_NONE");
 			}
-			else if (j == WJTextureType_DIFFUSE)
+			else if (j == (_uint)WJTextureType_DIFFUSE)
 			{
 				ImGui::Text("WJTextureType_DIFFUSE");
 			}
-			else if (j == WJTextureType_SPECULAR)
+			else if (j == (_uint)WJTextureType_SPECULAR)
 			{
 				ImGui::Text("WJTextureType_SPECULAR");
 			}
-			else if (j == WJTextureType_AMBIENT)
+			else if (j == (_uint)WJTextureType_AMBIENT)
 			{
 				ImGui::Text("WJTextureType_AMBIENT");
 			}
-			else if (j == WJTextureType_EMISSIVE)
+			else if (j == (_uint)WJTextureType_EMISSIVE)
 			{
 				ImGui::Text("WJTextureType_EMISSIVE");
 			}
-			else if (j == WJTextureType_EMISSIVEMASK)
+			else if (j == (_uint)WJTextureType_EMISSIVEMASK)
 			{
 				ImGui::Text("WJTextureType_EMISSIVEMASK");
 			}
-			else if (j == WJTextureType_NORMALS)
+			else if (j == (_uint)WJTextureType_NORMALS)
 			{
 				ImGui::Text("WJTextureType_NORMALS");
 			}
-			else if (j == WJTextureType_MASK)
+			else if (j == (_uint)WJTextureType_MASK)
 			{
 				ImGui::Text("WJTextureType_MASK");
 			}
-			else if (j == WJTextureType_SSS_MASK)
+			else if (j == (_uint)WJTextureType_SSS_MASK)
 			{
 				ImGui::Text("WJTextureType_BLEND_DIFFUSE");
 			}
-			else if (j == WJTextureType_SPRINT_EMISSIVE)
+			else if (j == (_uint)WJTextureType_SPRINT_EMISSIVE)
 			{
 				ImGui::Text("WJTextureType_BLEND_MASK");
 			}
-			else if (j == WJTextureType_HAIR_DEPTH)
+			else if (j == (_uint)WJTextureType_HAIR_DEPTH)
 			{
 				ImGui::Text("WJTextureType_BLEND_NORMAL");
 			}
-			else if (j == WJTextureType_HAIR_ROOT)
+			else if (j == (_uint)WJTextureType_HAIR_ROOT)
 			{
 				ImGui::Text("WJTextureType_PULSE_GLOW_MAP");
 			}
-			else if (j == WJTextureType_COMP_MSK_CURV)
+			else if (j == (_uint)WJTextureType_COMP_MSK_CURV)
 			{
 				ImGui::Text("WJTextureType_COMP_MSK_CURV");
 			}
-			else if (j == WJTextureType_COMP_H_R_AO)
+			else if (j == (_uint)WJTextureType_COMP_H_R_AO)
 			{
 				ImGui::Text("WJTextureType_COMP_H_R_AO");
 			}
-			else if (j == WJTextureType_COMP_E_R_AO)
+			else if (j == (_uint)WJTextureType_COMP_E_R_AO)
 			{
 				ImGui::Text("WJTextureType_COMP_E_R_AO");
 			}
-			else if (j == WJTextureType_ROUGHNESS)
+			else if (j == (_uint)WJTextureType_ROUGHNESS)
 			{
 				ImGui::Text("WJTextureType_ROUGHNESS");
 			}
-			else if (j == WJTextureType_AMBIENT_OCCLUSION)
+			else if (j == (_uint)WJTextureType_AMBIENT_OCCLUSION)
 			{
 				ImGui::Text("WJTextureType_AMBIENT_OCCLUSION");
 			}
@@ -1324,7 +1331,7 @@ void CModel::Imgui_MaterialPath()
 }
 
 
-HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
+HRESULT CModel::Load_MeshMaterial(const wstring& wstrModelFilePath)
 {
 	DWORD	dwByte = 0;
 	HANDLE	hFile = CreateFileW(wstrModelFilePath.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -1340,7 +1347,7 @@ HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 		m_InstancingMeshes.reserve(m_iNumMeshes);
 		for (_uint i = 0; i < m_iNumMeshes; ++i)
 		{
-			CInstancing_Mesh*		pInstanceMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, nullptr, this);
+			CInstancing_Mesh* pInstanceMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, nullptr, this);
 			NULL_CHECK_RETURN(pInstanceMesh, E_FAIL);
 			pInstanceMesh->Load_Mesh(hFile, dwByte);
 			m_InstancingMeshes.push_back(pInstanceMesh);
@@ -1352,7 +1359,7 @@ HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 		m_Meshes.reserve(m_iNumMeshes);
 		for (_uint i = 0; i < m_iNumMeshes; ++i)
 		{
-			CMesh*		pMesh = CMesh::Create(m_pDevice, m_pContext, nullptr, this);
+			CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, nullptr, this);
 			NULL_CHECK_RETURN(pMesh, E_FAIL);
 
 			pMesh->Load_Mesh(hFile, dwByte);
@@ -1361,7 +1368,7 @@ HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 		}
 	}
 
-	/* Materials	 ¿©±â¸¦ ¼ÕºÁ¾ßÇÑ´Ù.		*/
+	/* Materials	 ï¿½ï¿½ï¿½â¸¦ ï¿½Õºï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.		*/
 	ReadFile(hFile, &m_iNumMaterials, sizeof(_uint), &dwByte, nullptr);
 	m_Materials.reserve(m_iNumMaterials);
 
@@ -1381,7 +1388,7 @@ HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 			_uint		iFilePathLength = 0;
 			ReadFile(hFile, &iFilePathLength, sizeof(_uint), &dwByte, nullptr);
 
-			_tchar	*	pFilePath = new _tchar[iFilePathLength];
+			_tchar* pFilePath = new _tchar[iFilePathLength];
 			ReadFile(hFile, pFilePath, sizeof(_tchar) * iFilePathLength, &dwByte, nullptr);
 
 			tMaterial.pTexture[j] = CTexture::Create(m_pDevice, m_pContext, CUtile::Create_StringAuto(pFilePath));
@@ -1400,7 +1407,7 @@ HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 	return S_OK;
 }
 
-HRESULT CModel::Load_BoneAnimation(HANDLE & hFile, DWORD & dwByte)
+HRESULT CModel::Load_BoneAnimation(HANDLE& hFile, DWORD& dwByte)
 {
 	/* Bones */
 	ReadFile(hFile, &m_iNumBones, sizeof(_uint), &dwByte, nullptr);
@@ -1458,7 +1465,7 @@ HRESULT CModel::Load_BoneAnimation(HANDLE & hFile, DWORD & dwByte)
 
 	for (_uint i = 0; i < m_iNumAnimations; ++i)
 	{
-		CAnimation*	pAnimation = CAnimation::Create(nullptr, this);
+		CAnimation* pAnimation = CAnimation::Create(nullptr, this);
 		NULL_CHECK_RETURN(pAnimation, E_FAIL);
 		FAILED_CHECK_RETURN(pAnimation->Load_Animation(hFile, dwByte), E_FAIL);
 		pAnimation->Set_AnimIndex(i);
@@ -1473,7 +1480,7 @@ CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, con
 	_bool bIsLod, _bool bIsInstancing, const char* JsonMatrial, _bool bUseTriangleMeshActor, _bool bPointBuffer)
 {
 	CModel* pInstance = new CModel(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath, 
+	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath,
 		bIsLod, bIsInstancing, JsonMatrial, bUseTriangleMeshActor, bPointBuffer)))
 	{
 		MSG_BOX("Failed to Created : CModel");
@@ -1482,9 +1489,9 @@ CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, con
 	return pInstance;
 }
 
-CComponent * CModel::Clone(void * pArg, CGameObject * pOwner)
+CComponent* CModel::Clone(void* pArg, CGameObject* pOwner)
 {
-	CModel*		pInstance = new CModel(*this);
+	CModel* pInstance = new CModel(*this);
 
 	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
@@ -1529,7 +1536,7 @@ void CModel::Free()
 			Safe_Release(pInstMesh);
 		m_InstancingMeshes.clear();
 
-		for (auto &pInstMatrix : m_pInstancingMatrix)
+		for (auto& pInstMatrix : m_pInstancingMatrix)
 		{
 			Safe_Delete(pInstMatrix);
 		}
@@ -1541,17 +1548,17 @@ void CModel::Free()
 	}
 }
 
-HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath)
+HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar* pTexturePath)
 {
 	if (iMaterialIndex >= m_Materials.size())return E_FAIL;
-	CTexture *pTexture = CTexture::Create(m_pDevice, m_pContext, CUtile::Create_StringAuto(pTexturePath));
+	CTexture* pTexture = CTexture::Create(m_pDevice, m_pContext, CUtile::Create_StringAuto(pTexturePath));
 	if (pTexture == nullptr) return E_FAIL;
-	if (m_Materials[iMaterialIndex].pTexture[eType]){Safe_Release(m_Materials[iMaterialIndex].pTexture[eType]);}
+	if (m_Materials[iMaterialIndex].pTexture[eType]) { Safe_Release(m_Materials[iMaterialIndex].pTexture[eType]); }
 	m_Materials[iMaterialIndex].pTexture[eType] = pTexture;
 	return S_OK;
 }
 
-void CModel::Create_PxTriangle(PX_USER_DATA *pUserData)
+void CModel::Create_PxTriangle(PX_USER_DATA* pUserData)
 {
 	if (m_Meshes.size() == 0)
 	{
@@ -1559,7 +1566,7 @@ void CModel::Create_PxTriangle(PX_USER_DATA *pUserData)
 		return;
 	}
 
-	for (auto &iter : m_Meshes)
+	for (auto& iter : m_Meshes)
 	{
 		iter->Create_PxTriangleMeshActor(pUserData);
 	}
@@ -1567,7 +1574,7 @@ void CModel::Create_PxTriangle(PX_USER_DATA *pUserData)
 
 void CModel::Set_PxPosition(_float3 vPosition)
 {
-	for (auto &iter : m_Meshes)
+	for (auto& iter : m_Meshes)
 	{
 		iter->Set_PxPosition(vPosition);
 	}
@@ -1575,7 +1582,7 @@ void CModel::Set_PxPosition(_float3 vPosition)
 
 void CModel::Set_PxMatrix(_float4x4& Matrix)
 {
-	for (auto &iter : m_Meshes)
+	for (auto& iter : m_Meshes)
 	{
 		iter->Set_PxMatrix(Matrix);
 	}
@@ -1586,7 +1593,7 @@ void CModel::Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik)
 	if (m_bIsInstancing == false)
 		return;
 
-	for (auto &pInstMesh : m_InstancingMeshes)
+	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->InstaincingMesh_GimmkicInit(eChapterGimmcik);
 }
 
@@ -1597,7 +1604,7 @@ _bool CModel::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _
 
 	_bool bGimmickFinishCheck = false;
 	_int	iGimmickFinishCheck = 0;
-	for (auto &pInstMesh : m_InstancingMeshes)
+	for (auto& pInstMesh : m_InstancingMeshes)
 	{
 		bGimmickFinishCheck = pInstMesh->Instaincing_MoveControl(eChapterGimmcik, fTimeDelta);
 
@@ -1633,7 +1640,7 @@ _bool CModel::Culling_InstancingMeshs(_float fCameraDistance, _fmatrix ParentMat
 	return false;
 }
 
-void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
+void CModel::MODELMATERIAL_Create_Model(const char* jSonPath)
 {
 	ifstream      file(jSonPath);
 	Json			  jLoadMatrial;
@@ -1800,7 +1807,7 @@ void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
 				ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT_OCCLUSION] = CTexture::Create(m_pDevice, m_pContext, CUtile::Create_StringAuto(wstrTextureFilePath.c_str()), 1);
 			else
 				ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT_OCCLUSION] = nullptr;
-			
+
 		}
 		m_Materials.push_back(ModelMatrial);
 	}
@@ -1811,9 +1818,9 @@ void CModel::Set_InstanceEffect_Info(CTransform* pParentTransform, _int iInstanc
 	if (m_bIsInstancing == false)
 		return;
 
-	for(auto &pInstmesh : m_InstancingMeshes)
+	for (auto& pInstmesh : m_InstancingMeshes)
 	{
-		pInstmesh->Set_InstanceMeshEffect(pParentTransform,iInstanceNum, fMinSpeed, fMaxSpeed);
+		pInstmesh->Set_InstanceMeshEffect(pParentTransform, iInstanceNum, fMinSpeed, fMaxSpeed);
 	}
 
 }
@@ -1828,7 +1835,7 @@ void CModel::Instaincing_mesh_Effect_tick(_float yLimitPos, _float fTimeDelta)
 	}
 }
 
-void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ)
+void CModel::Calc_MinMax(_float* pMinX, _float* pMaxX, _float* pMinY, _float* pMaxY, _float* pMinZ, _float* pMaxZ)
 {
 	_float Xmin = (_float)INT_MAX, Xmax = (_float)INT_MIN, Ymin = (_float)INT_MAX, Ymax = (_float)INT_MIN, Zmin = (_float)INT_MAX, Zmax = (_float)INT_MIN;
 
@@ -1888,7 +1895,7 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 	BoxDesc.eType = BOX_STATIC;
 	BoxDesc.pActortag = pActorName;
 	BoxDesc.vPos = CUtile::Float_4to3(vPos);
-	BoxDesc.vSize = _float3(fLenX *(fXSize*0.5f*0.5f), fLenY*(fYSize*0.5f*0.5f), fLenZ*(fZSize*0.5f *0.5f));
+	BoxDesc.vSize = _float3(fLenX * (fXSize * 0.5f * 0.5f), fLenY * (fYSize * 0.5f * 0.5f), fLenZ * (fZSize * 0.5f * 0.5f));
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
 	BoxDesc.isGravity = false;
@@ -1907,11 +1914,11 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 	memcpy(&matNew.m[2], &vLook, sizeof(_float4));
 	memcpy(&matNew.m[3], &vPos, sizeof(_float4));
 
-	PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
-	pPhysX->Set_ActorMatrix(pActor, matNew); // Å©±âÁ¤º¸¸¦ »©°í ³Ö´Â´Ù.
+	PxRigidActor* pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
+	pPhysX->Set_ActorMatrix(pActor, matNew); // Å©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Â´ï¿½.
 }
 
-void CModel::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _float * pMaxY, _float * pMinZ, _float * pMaxZ)
+void CModel::Calc_InstMinMax(_float* pMinX, _float* pMaxX, _float* pMinY, _float* pMaxY, _float* pMinZ, _float* pMaxZ)
 {
 	_float Xmin = (_float)INT_MAX, Xmax = (_float)INT_MIN, Ymin = (_float)INT_MAX, Ymax = (_float)INT_MIN, Zmin = (_float)INT_MAX, Zmax = INT_MIN;
 
@@ -1940,7 +1947,7 @@ void CModel::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _fl
 	*pMaxZ = Zmax;
 }
 
-void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConnectTransform, _uint iColliderIndex, _float3 vSize, _float3 _vPos, _bool bRotation)
+void CModel::Create_InstModelPxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex, _float3 vSize, _float3 _vPos, _bool bRotation)
 {
 	_float fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
 
@@ -1986,7 +1993,7 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 			BoxDesc.vSize = m_VecInstancingColiderSize[i];
 		else
 		{
-			BoxDesc.vSize = _float3(fLenX *(fXSize*(0.5f))* vSize.x, fLenY*(fYSize*0.5f) * vSize.y, fLenZ*(fZSize*0.5f) * vSize.z);
+			BoxDesc.vSize = _float3(fLenX * (fXSize * (0.5f)) * vSize.x, fLenY * (fYSize * 0.5f) * vSize.y, fLenZ * (fZSize * 0.5f) * vSize.z);
 			m_VecInstancingColiderSize.push_back(BoxDesc.vSize);
 		}
 		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
@@ -2023,19 +2030,19 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 
 		if (bRotation == false)
 		{
-			PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
-			pPhysX->Set_ActorMatrix(pActor, matNew); // Å©±âÁ¤º¸¸¦ »©°í ³Ö´Â´Ù.
+			PxRigidActor* pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
+			pPhysX->Set_ActorMatrix(pActor, matNew); // Å©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Â´ï¿½.
 		}
 	}
 
 }
 
-void CModel::Create_PxTriangle(const _tchar * szCloneName, CTransform * pParentTransform, PX_USER_DATA* pUserData)
+void CModel::Create_PxTriangle(const _tchar* szCloneName, CTransform* pParentTransform, PX_USER_DATA* pUserData)
 {
 	if (m_Meshes.size() == 0)
 		return;
 
-	for (auto &iter : m_Meshes)
+	for (auto& iter : m_Meshes)
 	{
 		iter->Create_PxTriangle_size(szCloneName, pParentTransform, pUserData);
 	}
@@ -2048,7 +2055,7 @@ void CModel::Create_Px_InstTriangle(CTransform* pParentTransform)
 		return;
 	}
 
-	for (auto &iter : m_InstancingMeshes)
+	for (auto& iter : m_InstancingMeshes)
 	{
 		iter->Create_PxTriangle_InstMeshActor(pParentTransform, m_pInstancingMatrix);
 	}
@@ -2064,7 +2071,7 @@ void CModel::SetUp_InstModelColider(vector<_float3> vecColiderSize)
 
 #ifdef _DEBUG
 
-void CModel::Edit_InstModel_Collider(const _tchar * pActorName)
+void CModel::Edit_InstModel_Collider(const _tchar* pActorName)
 {
 	if (m_bIsInstancing == false)
 		return;
@@ -2080,59 +2087,127 @@ void CModel::InitPhysxData()
 void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix,
 	_bool bPickingTerrain, _int iGroundCoverNum, _float fBetween, _bool IsMultipleCheck, _float fRaduis)
 {
-	if (ImGui::BeginListBox("##"))			// ³»Çà·Ä * ºÎ¸ðÇà·Ä(¿øº» À§Ä¡)
+
+	_float3 vIncreateDIrRatio = m_vIncreateDir;
+
+
+	if (m_bXYZRatioUse[0]) {
+		vIncreateDIrRatio.y = 0; vIncreateDIrRatio.z = 0; m_bXYZRatioUse[1] = m_bXYZRatioUse[2] = false;
+	}
+	else if (m_bXYZRatioUse[1]) {
+		vIncreateDIrRatio.x = 0; vIncreateDIrRatio.z = 0; m_bXYZRatioUse[0] = m_bXYZRatioUse[2] = false;
+	}
+	else if (m_bXYZRatioUse[2]) {
+		vIncreateDIrRatio.x = 0; vIncreateDIrRatio.y = 0; m_bXYZRatioUse[0] = m_bXYZRatioUse[1] = false;
+	}
+	else if (!m_bXYZRatioUse[0] && !m_bXYZRatioUse[1] && !m_bXYZRatioUse[2])
 	{
-		_int iIndex = 0;
-		for (auto& ProtoPair : m_pInstancingMatrix)
+		vIncreateDIrRatio.x = 0; vIncreateDIrRatio.y = 0;  vIncreateDIrRatio.z = 0;
+	}
+
+	if (m_bUseEditOrder == true)
+	{
+		if (bPickingTerrain == true)
 		{
-			const bool bSelected = false;
+			m_vSortStartPos = CUtile::Float_4to3(vPickingPos);
+		}
 
-			char szViewName[512];
-
-			sprintf_s(szViewName, sizeof(szViewName), " Instancing_ %d _ Index ", iIndex);
-
-			if (ImGui::Selectable(szViewName, bSelected))
+		if (m_bSort_MeshCreate == true)
+		{
+			if (ImGui::Button("Create SortPos"))
 			{
-				m_iSelectMeshInstace_Index = iIndex;
+				for (auto& pInstMesh : m_InstancingMeshes)
+				{
+					pInstMesh->Create_InstanceModel_InstanceAngle_Pos_Model(m_pInstancingMatrix,
+						m_vSortObj_CreateNum, m_vSortStartPos, m_vSortAngle, vIncreateDIrRatio);
+				}
 			}
 
-			++iIndex;
+			if(bPickingTerrain)
+			{
+				for (auto& pInstMesh : m_InstancingMeshes)
+				{
+					pInstMesh->Create_InstanceModel_InstanceAngle_Pos_Model(m_pInstancingMatrix,
+						m_vSortObj_CreateNum, m_vSortStartPos, m_vSortAngle, vIncreateDIrRatio);
+				}
+			}
+
 		}
-
-		ImGui::EndListBox();
-	}
-	ImGui::Text("Cur Index : %d", m_iSelectMeshInstace_Index);
-
-
-	if (bPickingTerrain == false)
-	{
-		if (ImGui::Button("Instancing Num Increase"))
+		else if(m_bExistEdit == true && bPickingTerrain==false)
 		{
-			_float4x4* Temp = new _float4x4;
-			XMStoreFloat4x4(Temp, XMMatrixIdentity());
-			m_pInstancingMatrix.push_back(Temp);
+			static _int EditStartIndex = 0;
+			static _int EdiEndIndex = 0;
 
-			for (auto& pInstMesh : m_InstancingMeshes)
-				pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+			ImGui::InputInt("Edit StartNum ", &EditStartIndex);
+			ImGui::InputInt("Edit EndNum ", &EdiEndIndex);
+
+
+			if (ImGui::Button("Edit ExistNums SortPos"))
+			{
+				for (auto& pInstMesh : m_InstancingMeshes)
+					pInstMesh->Edit_InstanceAngle_Pos_Model(m_pInstancingMatrix,
+						EditStartIndex, EdiEndIndex, m_vSortStartPos, m_vSortAngle );
+				// ï¿½ï¿½ï¿½â¼­ï¿½ï¿½ m_vSortStartPos-> EditPos
+			}
 		}
+
+
+		return;
 	}
 	else
 	{
-		if (IsMultipleCheck)
+		if (bPickingTerrain == false)
 		{
-			/*	_float fMaxX = vPickingPos.x + fRaduis *0.5f;
-				_float fMaxZ = vPickingPos.z + fRaduis *0.5f;
-				_float fxRatio = 0.f , fzRatio =0.f;*/
+			if (ImGui::BeginListBox("##"))			// ï¿½ï¿½ï¿½ï¿½ï¿?* ï¿½Î¸ï¿½ï¿½ï¿½ï¿?ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡)
+			{
+				_int iIndex = 0;
+				for (auto& ProtoPair : m_pInstancingMatrix)
+				{
+					const bool bSelected = false;
 
-			for (_int i = 0; i < iGroundCoverNum; ++i)
+					char szViewName[512];
+
+					sprintf_s(szViewName, sizeof(szViewName), " Instancing_ %d _ Index ", iIndex);
+
+					if (ImGui::Selectable(szViewName, bSelected))
+					{
+						m_iSelectMeshInstace_Index = iIndex;
+					}
+
+					++iIndex;
+				}
+
+				ImGui::EndListBox();
+			}
+			ImGui::Text("Cur Index : %d", m_iSelectMeshInstace_Index);
+
+			if (ImGui::Button("Instancing Num Increase"))
 			{
 				_float4x4* Temp = new _float4x4;
 				XMStoreFloat4x4(Temp, XMMatrixIdentity());
+				m_pInstancingMatrix.push_back(Temp);
+
+				for (auto& pInstMesh : m_InstancingMeshes)
+					pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+			}
+
+		}
+		else
+		{	/* ï¿½ï¿½ï¿½ï¿½ */
+			if (IsMultipleCheck)
+			{
+				for (_int i = 0; i < iGroundCoverNum; ++i)
+				{
+					_float4x4* Temp = new _float4x4;
+					XMStoreFloat4x4(Temp, XMMatrixIdentity());
 
 
-				_float4 RenewalPos = vPickingPos;
+					_float4 RenewalPos = vPickingPos;
 
-#pragma region »ç°¢Çü
+#pragma region ï¿½ç°¢ï¿½ï¿½
+					/*	_float fMaxX = vPickingPos.x + fRaduis *0.5f;
+				_float fMaxZ = vPickingPos.z + fRaduis *0.5f;
+				_float fxRatio = 0.f , fzRatio =0.f;*/
 				/*
 				RenewalPos.x = vPickingPos.x - (fRaduis *0.5f);
 				RenewalPos.z = vPickingPos.z - (fRaduis *0.5f);
@@ -2146,34 +2221,39 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 				RenewalPos.x += fxRatio;
 				RenewalPos.z += fzRatio;
 				fxRatio += fBetween;*/
-#pragma  endregion »ç°¢Çü
+#pragma  endregion ï¿½ç°¢ï¿½ï¿½
 
-				_float fRandX = CUtile::Get_RandomFloat(vPickingPos.x - fRaduis *0.5f, (vPickingPos.x + fRaduis * 0.5f));
-				_float fRandZ = CUtile::Get_RandomFloat(vPickingPos.z - fRaduis *0.5f, (vPickingPos.z + fRaduis * 0.5f));
+					_float fRandX = CUtile::Get_RandomFloat(vPickingPos.x - fRaduis * 0.5f, (vPickingPos.x + fRaduis * 0.5f));
+					_float fRandZ = CUtile::Get_RandomFloat(vPickingPos.z - fRaduis * 0.5f, (vPickingPos.z + fRaduis * 0.5f));
 
-				RenewalPos.x = fRandX;
-				RenewalPos.z = fRandZ;
+					RenewalPos.x = fRandX;
+					RenewalPos.z = fRandZ;
 
-				memcpy(&Temp->m[3], &RenewalPos, sizeof(_float4));
+					memcpy(&Temp->m[3], &RenewalPos, sizeof(_float4));
+					m_pInstancingMatrix.push_back(Temp);
+					for (auto& pInstMesh : m_InstancingMeshes)
+						pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+				}
+
+			}
+			else
+			{
+
+
+
+				_float4x4* Temp = new _float4x4;
+				XMStoreFloat4x4(Temp, XMMatrixIdentity());
+
+				memcpy(&Temp->m[3], &vPickingPos, sizeof(_float4));
+
 				m_pInstancingMatrix.push_back(Temp);
+
 				for (auto& pInstMesh : m_InstancingMeshes)
 					pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+
 			}
 
 		}
-		else
-		{
-			_float4x4* Temp = new _float4x4;
-			XMStoreFloat4x4(Temp, XMMatrixIdentity());
-
-			memcpy(&Temp->m[3], &vPickingPos, sizeof(_float4));
-
-			m_pInstancingMatrix.push_back(Temp);
-
-			for (auto& pInstMesh : m_InstancingMeshes)
-				pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
-		}
-
 	}
 
 	if (ImGui::Button("Instancing Num Delete"))
@@ -2207,11 +2287,10 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 			pInstMesh->InstBufferSize_Update(iSize);
 	}
 
-
 	if (m_iSelectMeshInstace_Index == -1)
 		return;
 
-	/*¼öÁ¤ ºÎºÐ*/
+	/*ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½*/
 	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
 	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
 	ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index]) * parentMatrix;
@@ -2221,12 +2300,39 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 
 	ResultMatrix *= InvParentMulChild;
 	XMStoreFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index], ResultMatrix);
-	
+
 	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
 
 }
 
+void CModel::Imgui_Mesh_InstancingSort_EditOrCreate()
+{
+	ImGui::Checkbox("Use_Edit Or Craete Oreder_Instancing", &m_bUseEditOrder);
+
+	if (m_bUseEditOrder == false)
+		return;
+
+	ImGui::Checkbox("Sort_Obj Create", &m_bSort_MeshCreate);
+	ImGui::Checkbox("ExistEdit", &m_bExistEdit);
+
+	static float SortPos[3] = { 0.f,0.f,0.f }; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	static float SortAngle[3] = { 0.f,0.f,0.f }; // ï¿½ï¿½ ï¿½Þ±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
+
+
+	ImGui::InputInt("Create_SortNum", &m_vSortObj_CreateNum);
+	ImGui::InputFloat3("SortPos", SortPos);
+	ImGui::InputFloat3("SortAngle", SortAngle);
+	
+	
+	 m_vSortStartPos = _float3(SortPos[0], SortPos[1], SortPos[2]);
+	 m_vSortAngle = _float3(SortAngle[0], SortAngle[1], SortAngle[2]);
+
+	 ImGui::Checkbox("X_Ratio Use", &m_bXYZRatioUse[0]);
+	 ImGui::Checkbox("Y_Ratio Use", &m_bXYZRatioUse[1]);
+	 ImGui::Checkbox("Z_Ratio Use", &m_bXYZRatioUse[2]);
+}
 
 void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 {
@@ -2238,7 +2344,7 @@ void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 
 	size_t InstmatrixSize = m_pInstancingMatrix.size();
 
-	for(size_t i=0 ;i< InstmatrixSize; ++i)
+	for (size_t i = 0; i < InstmatrixSize; ++i)
 	{
 		ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[i]) * parentMatrix;
 		//m_pInstanceTransform->Set_WorldMatrix(ParentMulChild);
@@ -2270,4 +2376,11 @@ void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
 void CModel::Set_DurationRate(_uint iAnimIndex, _float fRate)
 {
 	m_Animations[iAnimIndex]->Set_DurationRate(fRate);
+}
+
+void CModel::Init_AnimIndex(_uint iAnimIndex)
+{
+	if (iAnimIndex >= m_iNumAnimations) return;
+
+	m_iCurrentAnimIndex = iAnimIndex;
 }

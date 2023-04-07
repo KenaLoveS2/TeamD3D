@@ -85,6 +85,8 @@ wstring CUtile::stringToWString(string str)
 	return wstr.assign(str.begin(), str.end());
 }
 
+
+
 char * CUtile::Split_String(char * pSour, char szSymbol)
 {
 	_uint	iSourLength = (_uint)strlen(pSour) + 1;
@@ -342,6 +344,22 @@ _tchar * CUtile::Create_DummyString(const _tchar * pBaseText, _uint iCount)
 {
 	_tchar		szBuf[MAX_PATH] = L"";
 	swprintf_s(szBuf, L"%s_%d", pBaseText, iCount);	
+
+	return Create_StringAuto(szBuf);
+}
+
+_tchar* CUtile::Create_DummyString(const _tchar* pBaseText, const _tchar* pSubBaseText, _uint iCount)
+{
+	_tchar		szBuf[MAX_PATH] = L"";
+	swprintf_s(szBuf, L"%s_%s_%d", pBaseText, pSubBaseText, iCount);
+
+	return Create_StringAuto(szBuf);
+}
+
+_tchar* CUtile::Create_CombinedString(const _tchar* pBaseText, const _tchar* pSubBaseText)
+{
+	_tchar		szBuf[MAX_PATH] = L"";
+	swprintf_s(szBuf, L"%s_%s", pBaseText, pSubBaseText);
 
 	return Create_StringAuto(szBuf);
 }

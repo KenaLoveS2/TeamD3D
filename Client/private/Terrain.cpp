@@ -68,8 +68,6 @@ HRESULT CTerrain::Late_Initialize(void * pArg)
 	m_pGroundMark = (CGroundMark*)pGameInst->Clone_GameObject(L"Prototype_GameObject_GroundMark");
 	if (m_pGroundMark == nullptr) return E_FAIL;
 
-	// if (m_TerrainDesc.iHeightBmpNum == 0) return S_OK;
-
 	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat4x4();
 	m_pVIBufferCom->Create_PxTriangleMeshActor(Create_PxUserData(this, true, COL_GROUND));
 	m_pVIBufferCom->Set_PxMatrix(WorldMatrix);
@@ -221,22 +219,22 @@ HRESULT CTerrain::SetUp_Components()
 	};
 
 	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(g_LEVEL, szTemp[m_TerrainDesc.iHeightBmpNum], TEXT("Com_VIBuffer"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, szTemp[m_TerrainDesc.iHeightBmpNum], TEXT("Com_VIBuffer"),
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(g_LEVEL, m_TerrainDesc.wstrDiffuseTag.c_str(), TEXT("Com_Texture"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_TerrainDesc.wstrDiffuseTag.c_str(), TEXT("Com_Texture"),
 		(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
 		return E_FAIL;
 	/* For.Com_Filter */
-	if (FAILED(__super::Add_Component(g_LEVEL, m_TerrainDesc.wstrFilterTag.c_str(), TEXT("Com_Filter"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_TerrainDesc.wstrFilterTag.c_str(), TEXT("Com_Filter"),
 		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
 		return E_FAIL;
 
 	/* For.Com_Brush*/								
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_GroundMark"), TEXT("Com_Brush"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_GroundMark"), TEXT("Com_Brush"),
 		(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
 		return E_FAIL;
 

@@ -15,6 +15,8 @@ public:
 	HRESULT Add_Texture(const _tchar* pTextureFilePath, class CTexture* p_teuxtre);
 	class CTexture* Find_Texture(const _tchar* pFilePath);
 
+	HRESULT Scene_Chane_Clear();
+
 private:
 	map<const _tchar*, class CTexture*>			m_Textures;
 

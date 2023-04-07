@@ -45,6 +45,7 @@ HRESULT CSapling::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
+	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	/* Create MovementTrail */
 	SetUp_MovementTrail();
@@ -96,6 +97,12 @@ HRESULT CSapling::Late_Initialize(void * pArg)
 
 void CSapling::Tick(_float fTimeDelta)
 {
+	//m_bReadySpawn = true;
+	//m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	//m_pModelCom->Play_Animation(fTimeDelta);
+	//return;
+
+	
 	if (m_bDeath) return;
 
 	/* Update MovementTrail */
@@ -134,9 +141,9 @@ HRESULT CSapling::Render()
 
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
-	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
+	
 
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		if (i == 3 && !m_bBombUp) 
 			continue;
@@ -178,9 +185,7 @@ HRESULT CSapling::RenderShadow()
 	if (FAILED(SetUp_ShadowShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", SHADOW);
 
 	return S_OK;
@@ -246,7 +251,10 @@ HRESULT CSapling::Call_EventFunction(const string& strFuncName)
 
 void CSapling::Push_EventFunctions()
 {
-	CMonster::Push_EventFunctions();
+	// CMonster::Push_EventFunctions();
+
+	Play_WalkSound(true, 0.f);
+	Play_ExplosionSound(true, 0.f);
 }
 
 HRESULT CSapling::SetUp_State()
@@ -268,7 +276,8 @@ HRESULT CSapling::SetUp_State()
 
 		.AddState("READY_SPAWN")		
 		.OnStart([this]()
-	{
+	{	
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		Start_Spawn();
 	})
 		.Tick([this](_float fTimeDelta)
@@ -289,6 +298,8 @@ HRESULT CSapling::SetUp_State()
 		.AddState("WISPOUT")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE], 0.5f);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(WISPOUT);
 		m_pModelCom->Set_AnimIndex(WISPOUT);
 	})
@@ -299,6 +310,11 @@ HRESULT CSapling::SetUp_State()
 	})
 
 		.AddState("IDLE")
+		.OnStart([this]()
+	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IDLE], 0.5f);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);		
+	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_fIdletoAttack += fTimeDelta;
@@ -323,6 +339,7 @@ HRESULT CSapling::SetUp_State()
 		.AddState("TAKEDAMAGE_OR_PARRIED")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGE);
 		m_pModelCom->Set_AnimIndex(TAKEDAMAGE);
 	})
@@ -345,6 +362,7 @@ HRESULT CSapling::SetUp_State()
 		.AddState("ALERTED")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(ALERTED);
 		m_pModelCom->Set_AnimIndex(ALERTED);
 	})
@@ -368,6 +386,7 @@ HRESULT CSapling::SetUp_State()
 		.AddState("BOMBCHARGEUP")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IDLE], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(BOMBCHARGEUP);
 		m_pModelCom->Set_AnimIndex(BOMBCHARGEUP);
 		m_bBombUp = true;
@@ -413,18 +432,17 @@ HRESULT CSapling::SetUp_State()
 		.AddState("CHARGEATTACK")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.5f);
 		m_bRealAttack = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(CHARGEATTACK);
 		m_pModelCom->Set_AnimIndex(CHARGEATTACK);
-
-		/* Effect */
-		m_pEffects->Set_Active(true);
-		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		m_pEffects->Set_Position(vPos);
 	})
 		.OnExit([this]()
 	{
-		m_bRealAttack = false;
+		m_pEffects->Set_Active(true);
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		m_pEffects->Set_Position(vPos);
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_EXPLOSION], 1.f);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -435,12 +453,9 @@ HRESULT CSapling::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
-		Set_Dying(WISPOUT);
-
-		/* Effect */
-		m_pEffects->Set_Active(true);
-		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		m_pEffects->Set_Position(vPos);
+		m_bRealAttack = false;
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DIE], 0.5f);
+		Set_Dying(WISPOUT);	
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -472,7 +487,6 @@ HRESULT CSapling::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_Sapling.json");
-
 
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -584,3 +598,48 @@ void CSapling::Free()
 
 	Safe_Release(m_pEffects);
 }
+
+void CSapling::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_Sapling_Tense.ogg"),
+		TEXT("Mon_Sapling_Attack.ogg"),
+		TEXT("Mon_Sapling_Idle.ogg"),
+		TEXT("Mon_Walk_S.ogg"),
+		TEXT("Mon_Sapling_Explosion.ogg"),
+		TEXT("Mon_Sapling_Hurt.ogg"),
+		TEXT("Mon_Sapling_Die.ogg"),
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}
+
+void CSapling::Play_WalkSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CSapling::Play_WalkSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WALK], 1.f);
+}
+
+void CSapling::Play_ExplosionSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CSapling::Play_ExplosionSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_EXPLOSION], 1.f);
+}
+

@@ -20,6 +20,7 @@
 
 #include "UI_ClientManager.h"
 #include "UI.h"
+#include "Level_Loading.h"
 
 CLevel_TestPlay::CLevel_TestPlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -130,6 +131,18 @@ void CLevel_TestPlay::Tick(_float fTimeDelta)
 void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (GetKeyState(VK_F2) & 0x8000)
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		pGameInstance->Clear_ImguiObjects();
+		CPhysX_Manager::GetInstance()->Clear(true);
+		pGameInstance->Scene_EnviMgr_Change();
+		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_GIMMICK)))))
+			return;
+		Safe_Release(pGameInstance);
+	}
 }
 
 HRESULT CLevel_TestPlay::Render()
@@ -152,9 +165,9 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(0.2f, 0.2f, 0.2f, 1.f);
-	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
-	LightDesc.vSpecular = _float4(0.0f, 0.0f, 0.0f, 1.f);
+	LightDesc.vDiffuse = _float4(0.3f, 0.3f, 0.3f, 1.f);
+	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.vSpecular = _float4(1.0f, 1.0f, 1.0f, 1.f);
 	LightDesc.vPosition = _float4(-100.f, 100.f, -100.f, 1.f);
 	LightDesc.szLightName = "DIRECTIONAL";
 
@@ -166,9 +179,9 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	LightDesc.isEnable = true;
 	LightDesc.vPosition = _float4(13.f, 5.f, 9.f, 1.f);
 	LightDesc.fRange = 20.0f;
-	LightDesc.vDiffuse = _float4(10.f, 0.f, 0.f, 1.f);
+	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(1.f, 0.f, 0.f, 1.f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 0.f);
 	LightDesc.szLightName = "Point_0";
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
@@ -201,8 +214,8 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
+	/*CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");*/
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -210,18 +223,17 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);	
-
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
+	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");*/
 
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr), E_FAIL);
-
 	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 
@@ -362,7 +374,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraForNpc", L"CameraForNpc", &CameraDesc));
+	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraForNpc", L"NPC_CAM", &CameraDesc));
 	NULL_CHECK_RETURN(pCamera, E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"NPC_CAM", pCamera), E_FAIL);
 
@@ -379,8 +391,9 @@ HRESULT CLevel_TestPlay::Ready_Layer_CineCamera(const _tchar * pLayerTag)
 		CCinematicCamera::Clone_Load_Data("MAP_CINE0.json", v, chatFileName);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"MAP_CINE0", &v, &p_game_object))) return E_FAIL;
-		CCamera *pCamera = dynamic_cast<CCamera*>(p_game_object);
+		CCamera* pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"MAP_CINE0", &v));
+		//	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"MAP_CINE0", &v, &p_game_object))) return E_FAIL;
+		//CCamera *pCamera = dynamic_cast<CCamera*>(p_game_object);
 		NULL_CHECK_RETURN(pCamera, E_FAIL);
 		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"MAP_CINE0", pCamera), E_FAIL);
 		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
@@ -394,8 +407,9 @@ HRESULT CLevel_TestPlay::Ready_Layer_CineCamera(const _tchar * pLayerTag)
 		CCinematicCamera::Clone_Load_Data("NPC_CINE0.json", v, chatFileName);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"NPC_CINE0", &v, &p_game_object))) return E_FAIL;
-		CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
+		CCamera* pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"NPC_CINE0", &v));
+		//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"NPC_CINE0", &v, &p_game_object))) return E_FAIL;
+		//CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
 		NULL_CHECK_RETURN(pCamera, E_FAIL);
 		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"NPC_CINE0", pCamera), E_FAIL);
 		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
@@ -409,8 +423,9 @@ HRESULT CLevel_TestPlay::Ready_Layer_CineCamera(const _tchar * pLayerTag)
 		CCinematicCamera::Clone_Load_Data("NPC_CINE1.json", v, chatFileName);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"NPC_CINE1", &v, &p_game_object))) return E_FAIL;
-		CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
+			CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"NPC_CINE1", &v));
+		//	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"NPC_CINE1", &v, &p_game_object))) return E_FAIL;
+		//CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
 		NULL_CHECK_RETURN(pCamera, E_FAIL);
 		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"NPC_CINE1", pCamera), E_FAIL);
 		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);

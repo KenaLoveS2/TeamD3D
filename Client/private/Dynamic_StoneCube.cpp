@@ -270,7 +270,6 @@ HRESULT CDynamic_StoneCube::RenderCine()
 void CDynamic_StoneCube::Actor_Clear()
 {
 	m_pTransformCom->Clear_Actor();
-
 }
 
 //void CDynamic_StoneCube::ImGui_PhysXValueProperty()
@@ -302,7 +301,7 @@ HRESULT CDynamic_StoneCube::SetUp_Components()
 
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL, m_StoneCubeDesc.pModelName, TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_StoneCubeDesc.pModelName, TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom,this)))
 		return E_FAIL;
 

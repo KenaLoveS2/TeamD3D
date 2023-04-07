@@ -106,14 +106,14 @@ void CVIBuffer::Free()
 		Safe_Delete_Array(m_pPxVertices);
 		Safe_Delete_Array(m_pPxIndicies);
 	}
-	else
+	/*else
 	{
 		if (m_pPxActor != nullptr)
 		{
 			CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
 			pPhysX->Delete_Actor(m_pPxActor);
 		}
-	}
+	}*/
 	
 
 }

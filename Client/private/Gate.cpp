@@ -58,11 +58,13 @@ void CGate::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+
 	if (m_bOncePosUpdate == false && m_bRenderActive)
 	{
 		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
 		m_bOncePosUpdate = true;
 	}
+
 }
 
 void CGate::Late_Tick(_float fTimeDelta)
@@ -190,7 +192,7 @@ HRESULT CGate::SetUp_Components()
 	/* For.Com_Shader */
 	/*나중에  레벨 인덱스 수정해야됌*/
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 	/* For.Com_Shader */

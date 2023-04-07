@@ -1189,26 +1189,6 @@ void CBossHunter::AdditiveAnim(_float fTimeDelta)
 	CMonster::AdditiveAnim(fTimeDelta);
 }
 
-void CBossHunter::Set_AttackType()
-{
-}
-
-void CBossHunter::Reset_Attack()
-{
-}
-
-void CBossHunter::Tick_Attack(_float fTimeDelta)
-{
-}
-
-void CBossHunter::Set_AFType()
-{
-}
-
-void CBossHunter::Reset_AF()
-{
-}
-
 CBossHunter* CBossHunter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CBossHunter* pInstance = new CBossHunter(pDevice, pContext);
@@ -1799,3 +1779,17 @@ void CBossHunter::Update_Trail(const char* pBoneTag)
 //	MSG_BOX("Test");
 //
 //}
+
+void CBossHunter::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}

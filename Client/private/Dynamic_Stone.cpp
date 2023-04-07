@@ -161,6 +161,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	/*¿øÇü Å¾*/
 
 	
+	_uint iTemp = 0;
 	for (int layer = 0; layer < layerCount; ++layer) 
 	{
 		float layerRadius = boxRadius + layerRadiusStep * layer;
@@ -169,8 +170,6 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 
 		for (int i = 0; i < boxCount; ++i)
 		{
-			_int iIndex = (layer* layerCount) + i;
-
 			PxVec3 Pxpos(layerRadius * std::cos(angleStep * i),
 				layerHeight* layer,
 				layerRadius * std::sin(angleStep *i ));
@@ -181,16 +180,14 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 			
 			pCreateObject = nullptr;
 
-			const _tchar* NewName = CUtile::Create_DummyString(m_szCloneObjectTag, iIndex +1);
+			const _tchar* NewName = CUtile::Create_DummyString(m_szCloneObjectTag, iTemp++);
 
 			pCreateObject = pGameInst->Clone_GameObject(
 				TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 				NewName, &StoneCubeDesc);
 			assert(nullptr != pCreateObject  && 
 							"CImgui_MapEditor::CDynamic_Stone::Late_Initialize");
-
-
-			
+						
 			pCreateObject->Late_Initialize();
 
 			m_pDynamicObj_List.push_back(pCreateObject);

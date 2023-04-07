@@ -90,10 +90,10 @@ void CRotWisp::ImGui_AnimationProperty()
 HRESULT CRotWisp::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimRotWispModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_RotWisp", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Texture_Effect", L"Com_Texture", (CComponent**)&m_pTextureCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_RotWisp", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Texture_Effect", L"Com_Texture", (CComponent**)&m_pTextureCom, nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom, nullptr, this), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Texture_T_GR_Noise_Smooth_A", L"Com_WPOTexture", (CComponent**)&m_pWPOTextureCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Texture_T_GR_Noise_Smooth_A", L"Com_WPOTexture", (CComponent**)&m_pWPOTextureCom, nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Texture_RotWispDissolve", L"Com_DissolveTexture", (CComponent**)&m_pDissolveAlphaTextureCom, nullptr, this), E_FAIL);
 	return S_OK;
 }

@@ -11,6 +11,7 @@ END
 
 BEGIN(Client)
 class CControlRoom;
+
 class CPulse_Plate_Anim final : public CEnviromentObj
 {
 private:
@@ -19,7 +20,6 @@ private:
 		COLL_PLAYER = 0,
 		COLL_END,
 	};
-
 
 private:
 	CPulse_Plate_Anim(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -67,6 +67,7 @@
 #include "Bridge.h"
 #include "Path_Mesh.h"
 #include "FloorTile.h"
+#include "FloorMesh.h"
 #include "Pulse_PlateForm.h"
 #include "Gate.h"
 #include "Rot.h"
@@ -97,6 +98,7 @@
 #include "Dynamic_StoneCube.h"
 
 #include "MannequinRot.h"
+#include "Meditation_Spot.h"
 
 /* UI */
 #include "BackGround.h"
@@ -198,6 +200,7 @@
 
 unsigned int	g_LEVEL = 0;
 
+
 #include "Json/json.hpp"
 #include <fstream>
 #include "E_KenaDash.h"
@@ -239,6 +242,9 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_EFFECT:
 		pLoader->Loading_ForTestEffect();
 		break;
+	case LEVEL_GIMMICK:
+		pLoader->Loading_ForMiniGame();
+		break;
 	case LEVEL_FINAL:
 		pLoader->Loading_ForFinal();
 		break;
@@ -252,9 +258,10 @@ _uint APIENTRY LoadingThread(void* pArg)
 HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {
 	m_eNextLevelID = eNextLevelID;
+	
 
 	g_LEVEL = eNextLevelID;
-
+	
 	InitializeCriticalSection(&m_Critical_Section);
 
 	/* Make additional flow for Loading(Thread). */
@@ -1251,7 +1258,10 @@ HRESULT CLoader::Loading_ForMapTool()
 		
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/RotCarry_Piece", true, true,true, false, true)))
 			assert(!"Issue");
-		
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "MeditationStump", true, false, true, false, true)))
+			assert(!"Issue");
+
 #pragma endregion ~Start_Forest_Room
 		}
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
@@ -1366,6 +1376,10 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorTile"),
 		CFloorTile::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	/* For.Prototype_GameObject_FloorTile */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorMesh"),
+		CFloorMesh::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	/* For.Prototype_GameObject_Pulse_PlateForm */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pulse_PlateForm"),
 		CPulse_PlateForm::Create(m_pDevice, m_pContext))))
@@ -1394,6 +1408,11 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneObj"),
 		CDeadZoneObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	/* For.Prototype_GameObject_Meditation_Spot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Meditation_Spot"),
+		CMeditation_Spot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_DeadZoneObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
 		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
@@ -1450,6 +1469,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	
 
+
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
 	m_isFinished = true;
@@ -1465,15 +1485,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 	Safe_AddRef(pGameInstance);
 
 	FAILED_CHECK_RETURN(Loading_ForWJ((_uint)LEVEL_TESTPLAY), E_FAIL);
-	
 	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_TESTPLAY), E_FAIL);
-
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_TESTPLAY), E_FAIL);
-
 	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_TESTPLAY), E_FAIL);
-		
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_TESTPLAY), E_FAIL);
-
 	FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_TESTPLAY), E_FAIL);
 
 	m_isFinished = true;
@@ -1498,26 +1513,25 @@ HRESULT CLoader::Loading_ForTestEffect()
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_ForFinal()
+HRESULT CLoader::Loading_ForMiniGame()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	lstrcpy(m_szLoadingText, TEXT("Loading..."));
 
-	FAILED_CHECK_RETURN(Loading_ForWJ((_uint)LEVEL_FINAL), E_FAIL);
-
-	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_FINAL), E_FAIL);
-
-	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_FINAL), E_FAIL);
-
-	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_FINAL), E_FAIL);
-
-	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_FINAL), E_FAIL);
-
-	FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_FINAL), E_FAIL);
+	Sleep(4000);
 
 	m_isFinished = true;
 	SetWindowText(g_hWnd, TEXT("Loading Complete!! Wait a moment"));
-	Safe_Release(pGameInstance);
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForFinal()
+{
+	lstrcpy(m_szLoadingText, TEXT("Loading..."));
+
+	Sleep(4000);
+
+	m_isFinished = true;
+	SetWindowText(g_hWnd, TEXT("Loading Complete!! Wait a moment"));
 	return S_OK;
 }
 
@@ -1874,7 +1888,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_Component_Model_VillageGuard
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_VillageGuard",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageGuard.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageGuard.model"), PivotMatrix)))) return E_FAIL;
 
 	// Prototype_Component_Model_WoodKnight
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_WoodKnight",
@@ -2020,7 +2034,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_Component_Model_Moth
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Moth",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Moth/Moth.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Moth/Moth.model"), PivotMatrix)))) return E_FAIL;
 		
 	// Prototype_GameObject_CameraForRot
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"), CCameraForRot::Create(m_pDevice, m_pContext)))) return E_FAIL;
@@ -3010,7 +3024,9 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rot/RotCarry_Piece", true, true,true)))
 		assert(!"Issue");
-	
+
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "MeditationStump", true, false, true, false, true)))
+		assert(!"Issue");
 
 #pragma region GroundCover
 		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "GroundCover/Branches", true, true, true, true)))
@@ -3229,6 +3245,9 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CFloorTile::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorMesh"),
+		CFloorMesh::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* For.Prototype_GameObject_Pulse_PlateForm */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pulse_PlateForm"),
@@ -3269,7 +3288,12 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneObj"),
 		CDeadZoneObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
+
+	/* For.Prototype_GameObject_Meditation_Spot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Meditation_Spot"),
+		CMeditation_Spot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	/* For.Prototype_GameObject_DeadZoneObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
@@ -3301,7 +3325,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
 		CGroundMark::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
 
 	/* For.Prototype_GameObject_ControlRoom */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ControlRoom"),
@@ -3331,6 +3354,9 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	
+
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pet"), CPet::Create(m_pDevice, m_pContext)))) return E_FAIL;
 

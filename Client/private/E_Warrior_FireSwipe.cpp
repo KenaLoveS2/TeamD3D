@@ -69,7 +69,7 @@ HRESULT CE_Warrior_FireSwipe::Late_Initialize(void * pArg)
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(m_pParent, false, COL_MONSTER_WEAPON));
 	m_pTransformCom->Add_Collider(m_szCloneObjectTag, matPivot);
 
-	_tchar* pDummyTag = CUtile::Create_StringAuto(L"Warrior_FireSwipe_Dummy");
+	_tchar* pDummyTag = CUtile::Create_CombinedString (m_szCloneObjectTag, L"Warrior_FireSwipe");
 	PxBoxDesc.pActortag = pDummyTag;
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COLLISON_DUMMY));
 	m_pTransformCom->Add_Collider(pDummyTag, matPivot);
@@ -166,7 +166,7 @@ HRESULT CE_Warrior_FireSwipe::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_FireSwipe"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_FireSwipe"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
 
 	return S_OK;
 }

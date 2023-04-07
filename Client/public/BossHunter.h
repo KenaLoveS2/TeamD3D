@@ -106,6 +106,13 @@ private:
 
 	_bool m_bDodge = false;
 
+	enum COPY_SOUND_KEY {
+		CSK_ATTACK, CSK_THROW, CSK_DIE, CSK_IDLE, CSK_PAIN, CSK_TENSE1, CSK_TENSE2, CSK_IMPACT, CSK_WALK,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 private:
 	CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBossHunter(const CBossHunter& rhs);
@@ -188,6 +195,8 @@ public:
 
 	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
 	void TUrnOffTrail(_bool bIsInit, _float fTimeDelta);
+
+	virtual void Create_CopySoundKey() override;
 
 	/********************************************/
 	/*			For. Shader & Effect			*/

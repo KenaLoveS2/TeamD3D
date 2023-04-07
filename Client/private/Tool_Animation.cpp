@@ -81,7 +81,12 @@ CGameObject * CTool_Animation::Find_GameObject(_int iIndex)
 	auto	iter = m_mapAnimObject->begin();
 
 	for (_int i = 0; i < iIndex; ++i)
+	{
+		if (iter == m_mapAnimObject->end())
+			return nullptr;
+
 		++iter;
+	}
 
 	return iter->second;
 }

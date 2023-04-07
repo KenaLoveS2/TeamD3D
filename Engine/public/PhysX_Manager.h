@@ -237,7 +237,7 @@ public:
 	void Update_Trasnform(_float fTimeDelta);
 
 	void createDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity);
-	void Clear();
+	void Clear(_bool bReCreateGround = false);
 
 	PxRigidStatic * Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction = 0.5f, _float fDynamicFriction = 0.5f, _float fRestitution = 0.1f, _float3 vScale=_float3(0.f,0.f,0.f));
 	
@@ -262,7 +262,8 @@ public:
 	PxRigidActor* Find_StaticActor(const _tchar* pActorTag);
 	PxRigidActor* Find_DynamicActor(const _tchar* pActorTag);
 	PxRigidActor* Find_DynamicCollider(const _tchar* pActorTag);
-	
+	PxRigidActor* Find_Trigger(const _tchar* pActorTag);
+
 	_bool Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut = nullptr, CGameObject** pObjectOut = nullptr);
 	_bool Raycast_CollisionTarget(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut, CGameObject* pTarget);
 	_bool IsMouseOver(HWND hWnd, CGameObject *pTargetObject, _float fRange, _float3* pPositionOut = nullptr);
@@ -301,5 +302,7 @@ public:
 
 	void PutToSleep(PxRigidDynamic* pActor);
 	void WakeUp(PxRigidDynamic* pActor);
+	void Delete_TriggerActor(const _tchar* pTag);
+	void Create_PlaneGround();
 };
 END
