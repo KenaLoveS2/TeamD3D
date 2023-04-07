@@ -130,6 +130,18 @@ CPhysX_Manager::CPhysX_Manager()
 void CPhysX_Manager::Free()
 {
 	Clear();
+
+	Px_Safe_Release(m_pControlllerManager);
+	Px_Safe_Release(m_pCooking);
+	Px_Safe_Release(m_pScene);
+	Px_Safe_Release(m_pDispatcher);
+	Px_Safe_Release(m_pPhysics);
+
+	PxPvdTransport* pTransport = m_pPvd->getTransport();
+	Px_Safe_Release(m_pPvd);
+	Px_Safe_Release(pTransport);
+	Px_Safe_Release(m_pFoundation);
+
 #ifdef _DEBUG
 	Safe_Release(m_pInputLayout);
 	Safe_Delete(m_pBatch);
@@ -316,26 +328,20 @@ void CPhysX_Manager::createDynamic(const PxTransform& t, const PxGeometry& geome
 
 void CPhysX_Manager::Clear()
 {	
-	Px_Safe_Release(m_pControlllerManager);
-	Px_Safe_Release(m_pCooking);	
-	Px_Safe_Release(m_pScene);
-	Px_Safe_Release(m_pDispatcher);
-	Px_Safe_Release(m_pPhysics);
-		
-	PxPvdTransport* pTransport = m_pPvd->getTransport();
-	Px_Safe_Release(m_pPvd);
-	Px_Safe_Release(pTransport);	
-	Px_Safe_Release(m_pFoundation);
+	Reset();
 
-	for (auto &iter : m_UserDataes)
-	{
+	for (auto& iter : m_UserDataes)
 		Safe_Delete(iter);
-	}
+	m_UserDataes.clear();
 
-	for (auto &iter : m_TriggerDataes)
-	{
+	for (auto& iter : m_TriggerDataes)
 		Safe_Delete(iter);
-	}
+	m_TriggerDataes.clear();
+
+	m_StaticActors.clear();
+	m_DynamicActors.clear();
+	m_DynamicColliders.clear();
+	m_Triggers.clear();
 }
 
 

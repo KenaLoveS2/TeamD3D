@@ -313,11 +313,11 @@ HRESULT CModel::Initialize(void* pArg, CGameObject* pOwner)
 		m_pInstanceTransform = static_cast<CTransform*>(CGameInstance::GetInstance()->
 			Clone_Component(CGameInstance::Get_StaticLevelIndex(), CGameInstance::m_pPrototypeTransformTag));
 
-		_float pMinX, pMaxX, pMinY, pMaxY, pMinZ, pMaxZ;
+	/*	_float pMinX, pMaxX, pMinY, pMaxY, pMinZ, pMaxZ;
 
 		Calc_InstMinMax(&pMinX, &pMaxX, &pMinY, &pMaxY, &pMinZ, &pMaxZ);
 
-		m_vIncreateDir = _float3( pMaxX - pMinX, pMaxY - pMinY,pMaxZ - pMinZ );
+		m_vIncreateDir = _float3( pMaxX - pMinX, pMaxY - pMinY,pMaxZ - pMinZ );*/
 
 	}
 #endif
@@ -2337,8 +2337,7 @@ void CModel::Imgui_Mesh_InstancingSort_EditOrCreate()
 
 void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 {
-	return; // ∏ ¬Ô¿ª∂ß∏∏ ∏Æ≈œ«œ±‚
-
+	
 	if (m_bIsInstancing == false)
 		return;
 

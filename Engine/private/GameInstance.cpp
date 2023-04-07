@@ -984,6 +984,12 @@ _uint CGameInstance::Get_CurrentPlayerRoomIndex()
 	return m_pEnviroment_Manager->Get_CurrentPlayerRoomIndex();
 }
 
+void CGameInstance::Scene_EnviMgr_Change()
+{
+	assert(nullptr != m_pEnviroment_Manager && "CGameInstance::Scene_EnviMgr_Change");
+	m_pEnviroment_Manager->Clear();
+}
+
 HRESULT CGameInstance::Texture_Manager_SceneChange()
 {
 	assert(nullptr != m_pTexture_Manager && "CGameInstance::Texture_Manager_SceneChange");
