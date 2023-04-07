@@ -28,6 +28,11 @@ _bool CEnviroment_Manager::Is_Render_TerrainIndex(_uint iTerrainRoomIndex)
 	return iTerrainRoomIndex == m_iCurPlayer_RoomIndex || iTerrainRoomIndex == m_iCurPlayer_RoomIndex+1;
 }
 
+void CEnviroment_Manager::Clear()
+{
+	m_pPlayer = nullptr;
+}
+
 CEnviroment_Manager::CEnviroment_Manager()
 {
 	m_RoomCheck_Array.fill(false);

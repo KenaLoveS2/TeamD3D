@@ -327,7 +327,7 @@ void CPhysX_Manager::createDynamic(const PxTransform& t, const PxGeometry& geome
 }
 
 void CPhysX_Manager::Clear()
-{
+{	
 	Reset();
 
 	for (auto& iter : m_UserDataes)

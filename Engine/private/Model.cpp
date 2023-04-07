@@ -144,7 +144,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar* pModelFilePath, _fmatrix Pivo
 	if (JsonMatrialPath == nullptr)
 		JsonMatrialPath = "NULL";
 
-	m_bIsInstancing = bIsInstancing;			/* ÇöÀç ¸ðµ¨ÀÌ ÀÎ½ºÅÏ½ÌÀÎ°¡?*/
+	m_bIsInstancing = bIsInstancing;			/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½Î°ï¿½?*/
 	m_bIsLodModel = bIsLod;
 	m_bUseTriangleMeshActor = bUseTriangleMeshActor;
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
@@ -188,8 +188,8 @@ HRESULT CModel::Initialize_Prototype(const _tchar* pModelFilePath, _fmatrix Pivo
 				}
 
 				iMaterialIndex++;
-				m_Materials.push_back(ModelMatrial);			//  MODELMATERIAL  1°³´Â 18°³ÀÇ ÅØ½ºÃÄ¸¦ »ý¼º°¡´ÉÇÏ´Ù.
-																						// °á±¹¿¡ ¿©±â¸¦ ¼ÕºÁ¾ßÇÑ´Ù.
+				m_Materials.push_back(ModelMatrial);			//  MODELMATERIAL  1ï¿½ï¿½ï¿½ï¿½ 18ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½ï¿½Ä¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
+																						// ï¿½á±¹ï¿½ï¿½ ï¿½ï¿½ï¿½â¸¦ ï¿½Õºï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 			}
 		}
 		else
@@ -219,7 +219,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar* pModelFilePath, _fmatrix Pivo
 			}
 
 
-			// °á±¹¿¡ ¿©±â¸¦ ¼ÕºÁ¾ßÇÑ´Ù.
+			// ï¿½á±¹ï¿½ï¿½ ï¿½ï¿½ï¿½â¸¦ ï¿½Õºï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 
 		}
 
@@ -313,11 +313,12 @@ HRESULT CModel::Initialize(void* pArg, CGameObject* pOwner)
 		m_pInstanceTransform = static_cast<CTransform*>(CGameInstance::GetInstance()->
 			Clone_Component(CGameInstance::Get_StaticLevelIndex(), CGameInstance::m_pPrototypeTransformTag));
 
-		//_float pMinX, pMaxX, pMinY, pMaxY, pMinZ, pMaxZ;
-		//
-		//Calc_InstMinMax(&pMinX, &pMaxX, &pMinY, &pMaxY, &pMinZ, &pMaxZ);
-		//
-		//m_vIncreateDir = _float3( pMaxX - pMinX, pMaxY - pMinY,pMaxZ - pMinZ );
+	/*	_float pMinX, pMaxX, pMinY, pMaxY, pMinZ, pMaxZ;
+
+		Calc_InstMinMax(&pMinX, &pMaxX, &pMinY, &pMaxY, &pMinZ, &pMaxZ);
+
+		m_vIncreateDir = _float3( pMaxX - pMinX, pMaxY - pMinY,pMaxZ - pMinZ );*/
+
 	}
 #endif
 
@@ -856,7 +857,7 @@ HRESULT CModel::Save_Model(const wstring& wstrSaveFileDirectory)
 		}
 	}
 
-	/* ÆÄÀÏ À§Ä¡ Æ÷ÀÎÅÍ ¹Þ¾Æ¼­ ÀúÀåÇÏ±â */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ */
 	m_dwBeginBoneData = SetFilePointer(hFile, 0, nullptr, FILE_CURRENT);
 
 	/* Bones */
@@ -1367,7 +1368,7 @@ HRESULT CModel::Load_MeshMaterial(const wstring& wstrModelFilePath)
 		}
 	}
 
-	/* Materials	 ¿©±â¸¦ ¼ÕºÁ¾ßÇÑ´Ù.		*/
+	/* Materials	 ï¿½ï¿½ï¿½â¸¦ ï¿½Õºï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.		*/
 	ReadFile(hFile, &m_iNumMaterials, sizeof(_uint), &dwByte, nullptr);
 	m_Materials.reserve(m_iNumMaterials);
 
@@ -1914,7 +1915,7 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 	memcpy(&matNew.m[3], &vPos, sizeof(_float4));
 
 	PxRigidActor* pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
-	pPhysX->Set_ActorMatrix(pActor, matNew); // Å©±âÁ¤º¸¸¦ »©°í ³Ö´Â´Ù.
+	pPhysX->Set_ActorMatrix(pActor, matNew); // Å©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Â´ï¿½.
 }
 
 void CModel::Calc_InstMinMax(_float* pMinX, _float* pMaxX, _float* pMinY, _float* pMaxY, _float* pMinZ, _float* pMaxZ)
@@ -2030,7 +2031,7 @@ void CModel::Create_InstModelPxBox(const _tchar* pActorName, CTransform* pConnec
 		if (bRotation == false)
 		{
 			PxRigidActor* pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
-			pPhysX->Set_ActorMatrix(pActor, matNew); // Å©±âÁ¤º¸¸¦ »©°í ³Ö´Â´Ù.
+			pPhysX->Set_ActorMatrix(pActor, matNew); // Å©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Â´ï¿½.
 		}
 	}
 
@@ -2146,7 +2147,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 				for (auto& pInstMesh : m_InstancingMeshes)
 					pInstMesh->Edit_InstanceAngle_Pos_Model(m_pInstancingMatrix,
 						EditStartIndex, EdiEndIndex, m_vSortStartPos, m_vSortAngle );
-				// ¿©±â¼­´Â m_vSortStartPos-> EditPos
+				// ï¿½ï¿½ï¿½â¼­ï¿½ï¿½ m_vSortStartPos-> EditPos
 			}
 		}
 
@@ -2157,7 +2158,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	{
 		if (bPickingTerrain == false)
 		{
-			if (ImGui::BeginListBox("##"))			// ³»Çà·Ä * ºÎ¸ðÇà·Ä(¿øº» À§Ä¡)
+			if (ImGui::BeginListBox("##"))			// ï¿½ï¿½ï¿½ï¿½ï¿½ * ï¿½Î¸ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡)
 			{
 				_int iIndex = 0;
 				for (auto& ProtoPair : m_pInstancingMatrix)
@@ -2192,7 +2193,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 
 		}
 		else
-		{	/* »ý¼º */
+		{	/* ï¿½ï¿½ï¿½ï¿½ */
 			if (IsMultipleCheck)
 			{
 				for (_int i = 0; i < iGroundCoverNum; ++i)
@@ -2203,7 +2204,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 
 					_float4 RenewalPos = vPickingPos;
 
-#pragma region »ç°¢Çü
+#pragma region ï¿½ç°¢ï¿½ï¿½
 					/*	_float fMaxX = vPickingPos.x + fRaduis *0.5f;
 				_float fMaxZ = vPickingPos.z + fRaduis *0.5f;
 				_float fxRatio = 0.f , fzRatio =0.f;*/
@@ -2220,7 +2221,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 				RenewalPos.x += fxRatio;
 				RenewalPos.z += fzRatio;
 				fxRatio += fBetween;*/
-#pragma  endregion »ç°¢Çü
+#pragma  endregion ï¿½ç°¢ï¿½ï¿½
 
 					_float fRandX = CUtile::Get_RandomFloat(vPickingPos.x - fRaduis * 0.5f, (vPickingPos.x + fRaduis * 0.5f));
 					_float fRandZ = CUtile::Get_RandomFloat(vPickingPos.z - fRaduis * 0.5f, (vPickingPos.z + fRaduis * 0.5f));
@@ -2289,7 +2290,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	if (m_iSelectMeshInstace_Index == -1)
 		return;
 
-	/*¼öÁ¤ ºÎºÐ*/
+	/*ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½*/
 	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
 	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
 	ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index]) * parentMatrix;
@@ -2315,8 +2316,8 @@ void CModel::Imgui_Mesh_InstancingSort_EditOrCreate()
 	ImGui::Checkbox("Sort_Obj Create", &m_bSort_MeshCreate);
 	ImGui::Checkbox("ExistEdit", &m_bExistEdit);
 
-	static float SortPos[3] = { 0.f,0.f,0.f }; // Æ÷½º ¸¸Å­ Â÷°îÂ÷°î ½ÎÀÓ
-	static float SortAngle[3] = { 0.f,0.f,0.f }; // ÀÌ ¾Þ±ÛÀ» ³ÖÀ½
+	static float SortPos[3] = { 0.f,0.f,0.f }; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	static float SortAngle[3] = { 0.f,0.f,0.f }; // ï¿½ï¿½ ï¿½Þ±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 
 
@@ -2335,8 +2336,8 @@ void CModel::Imgui_Mesh_InstancingSort_EditOrCreate()
 
 void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 {
-	//return; // ¸ÊÂïÀ»¶§¸¸ ¸®ÅÏÇÏ±â
-
+	//return; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
+	
 	if (m_bIsInstancing == false)
 		return;
 
