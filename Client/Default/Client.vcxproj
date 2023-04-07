@@ -184,6 +184,7 @@
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\Base_Ground.h" />
     <ClInclude Include="..\public\Beni.h" />
+    <ClInclude Include="..\public\BombGimmickObj.h" />
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\public\BossHunter.h" />
@@ -461,6 +462,7 @@
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Base_Ground.cpp" />
     <ClCompile Include="..\private\Beni.cpp" />
+    <ClCompile Include="..\private\BombGimmickObj.cpp" />
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\private\BossHunter.cpp" />

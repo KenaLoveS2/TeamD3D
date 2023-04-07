@@ -40,20 +40,19 @@ void CEnviroment_Manager::Free()
 
 void CEnviroment_Manager::Tick(_float fTimeDelta)
 {
+	_float4	fPos;
+
 	// 플레이어 z 비교로 룸인덱스 계산
 	if (m_pPlayer == nullptr)
 	{
-		return;
+		fPos = CGameInstance::GetInstance()->Get_CamPosition();
 	}
-
-	_float4	fPos;
-
-#ifdef _DEBUG
-	fPos = CGameInstance::GetInstance()->Get_CamPosition();
+	else
+	{
+		XMStoreFloat4(&fPos, m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+	}
 	
-#else
-	XMStoreFloat4(&fPos, m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
-#endif
+
 	if (m_RoomCheck_Array[1] ==false && fPos.z >= 78.576f)
 	{
 		m_iCurPlayer_RoomIndex = 1;

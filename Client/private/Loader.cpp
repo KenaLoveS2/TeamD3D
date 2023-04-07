@@ -97,6 +97,7 @@
 #include "Dynamic_StoneCube.h"
 
 #include "MannequinRot.h"
+#include "BombGimmickObj.h"
 
 /* UI */
 #include "BackGround.h"
@@ -1448,7 +1449,12 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	/* For.Prototype_GameObject_BombGimmickObj */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BombGimmickObj"),
+		CBombGimmickObj::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	
+
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
@@ -3299,6 +3305,12 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_BombGimmickObj */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BombGimmickObj"),
+		CBombGimmickObj::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pet"), CPet::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
