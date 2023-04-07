@@ -45,7 +45,7 @@ HRESULT CLevel_Gimmick::Initialize()
 	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-
+	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
@@ -137,6 +137,7 @@ void CLevel_Gimmick::Late_Tick(_float fTimeDelta)
 		Safe_AddRef(pGameInstance);
 		pGameInstance->Clear_ImguiObjects();
 		CPhysX_Manager::GetInstance()->Clear(true);
+		pGameInstance->Clear();
 		pGameInstance->Scene_EnviMgr_Change();
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
 			return;
@@ -182,8 +183,8 @@ HRESULT CLevel_Gimmick::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
+		return E_FAIL;
 
 	//_uint iCreateWindCount = 10;
 	//_tchar szCloneRotTag[32] = { 0, };
