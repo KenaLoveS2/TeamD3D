@@ -151,7 +151,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		
-	// CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
@@ -341,9 +341,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	CGameObject* pGameObject = nullptr;
 	
-	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ShamanBossPlate"), L"ShamanBossPlate", nullptr, &pGameObject), E_FAIL);
+	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ShamanBossPlate"), L"ShamanBossPlate", nullptr, &pGameObject), E_FAIL);
 	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Warrior_ShockFrontExtended"), L"Test", nullptr, &pGameObject), E_FAIL);
-	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Test2", nullptr, &pGameObject), E_FAIL);
+	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Test2", nullptr, &pGameObject), E_FAIL);
 	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Swipes_Charged"), L"Swipes_Charged", nullptr, &pGameObject), E_FAIL);
 	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Warrior_FireSwipe"), L"Swipe", nullptr, &pGameObject), E_FAIL);
 	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_FireBullet"), L"FireBullet", nullptr, &pGameObject), E_FAIL);
