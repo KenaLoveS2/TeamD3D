@@ -29,9 +29,18 @@ public:
 		return m_iMaterialIndex;
 	}
 public:
-	void			Add_InstanceModel(vector<_float4x4*>VecInstancingMatrix);
-	void			InstBuffer_Update(vector<_float4x4*>VecInstancingMatrix);
+	void			Add_InstanceModel(vector<_float4x4*>& VecInstancingMatrix);
+	void			InstBuffer_Update(vector<_float4x4*>& VecInstancingMatrix);
 	void			InstBufferSize_Update(_int iSize);
+
+
+	void			Edit_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix,
+		_int EditStartIndex, _int EditEndIndex, _float3 vPos , _float3 vAngle);
+
+
+	void			Create_InstanceModel_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix,
+		_int iCreateNum, _float3 vPos, _float3 vAngle, _float3 vDirRatio);
+
 
 public:
 	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _bool bPointBuffer,

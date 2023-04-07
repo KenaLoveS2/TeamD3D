@@ -1396,3 +1396,52 @@ void CPhysX_Manager::WakeUp(PxRigidDynamic* pActor)
 {
 	pActor->wakeUp();
 }
+
+void CPhysX_Manager::Scene_Change_Clear_All_Actor()
+{
+	
+	for (auto& StaticActor : m_StaticActors)
+	{
+		Delete_Actor(StaticActor.second);
+		StaticActor.second = nullptr;
+	}
+	m_StaticActors.clear();
+
+	for (auto& DynamicActor : m_DynamicActors)
+	{
+		m_pScene->removeActor(*(DynamicActor).second);
+		DynamicActor.second = nullptr;
+	}
+	m_DynamicActors.clear();
+
+	for (auto& DynamicColider : m_DynamicColliders)
+	{
+		m_pScene->removeActor(*(DynamicColider).second);
+		DynamicColider.second = nullptr;
+	}
+	m_DynamicColliders.clear();
+
+	for (auto& Trigger : m_Triggers)
+	{
+		m_pScene->removeActor(*(Trigger).second);
+		Trigger.second = nullptr;
+	}
+	m_Triggers.clear();
+
+	for (auto& iter : m_UserDataes)
+	{
+		Safe_Delete(iter);
+	}
+	m_UserDataes.clear();
+
+	for (auto& iter : m_TriggerDataes)
+	{
+		Safe_Delete(iter);
+	}
+	m_TriggerDataes.clear();
+
+	
+
+	
+
+}

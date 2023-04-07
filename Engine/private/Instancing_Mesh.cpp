@@ -147,7 +147,7 @@ HRESULT CInstancing_Mesh::Load_Mesh(HANDLE& hFile, DWORD& dwByte)
 	return S_OK;
 }
 
-void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>	VecInstancingMatrix)
+void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>& VecInstancingMatrix)
 {
 	m_iNumInstance = m_iNumInstance_Origin = (_uint)VecInstancingMatrix.size();
 	m_iNumPrimitive = m_iOriginNumPrimitive * m_iNumInstance;
@@ -219,7 +219,7 @@ void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>	VecInstancingMatrix)
 	Safe_Delete_Array(pInstanceVertices);
 }
 
-void CInstancing_Mesh::InstBuffer_Update(vector<_float4x4*> VecInstancingMatrix)
+void CInstancing_Mesh::InstBuffer_Update(vector<_float4x4*>& VecInstancingMatrix)
 {
 	/*메쉬_인스턴싱_이펙트 일때 여기 사용*/
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
@@ -270,6 +270,84 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 
 		m_pContext->Unmap(m_pInstanceBuffer, 0);
 	}
+}
+
+void CInstancing_Mesh::Edit_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix, _int EditStartIndex,
+	_int EditEndIndex, _float3 vPos, _float3 vAngle )
+{
+	if (EditEndIndex <= 0 || EditEndIndex >= m_iNumInstance)
+		return;
+
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	_float4x4 Temp;
+	_matrix		m_matWorld, matScale, matRotX, matRotY, matRotZ, matTrans;
+	_float4 OldPos;
+	
+	CONTEXT_LOCK
+		HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	if (SUCCEEDED(hr))
+	{
+		for (_int i = EditStartIndex; i <= EditEndIndex; ++i)
+		{
+			matScale = XMMatrixScaling(1.f, 1.f, 1.f);
+			matRotX = XMMatrixRotationX(XMConvertToRadians(vAngle.x));
+			matRotY = XMMatrixRotationY(XMConvertToRadians(vAngle.y));
+			matRotZ = XMMatrixRotationZ(XMConvertToRadians(vAngle.z));
+
+			memcpy(&OldPos, &((VTXMATRIX*)SubResource.pData)[i].vPosition, sizeof(_float4));
+
+
+			matTrans = XMMatrixTranslation(OldPos.x + vPos.x , OldPos.y + vPos.y ,
+				OldPos.z + vPos.z );
+
+			m_matWorld = matScale * matRotX * matRotY * matRotZ * matTrans;
+			XMStoreFloat4x4(&Temp, m_matWorld);
+
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &Temp.m[0], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &Temp.m[1], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &Temp.m[2], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vPosition, &Temp.m[3], sizeof(_float4));
+
+			*VecInstancingMatrix[i] = Temp;
+		}
+
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	}
+}
+
+
+void CInstancing_Mesh::Create_InstanceModel_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix,
+	_int iCreateNum, _float3 vPos, _float3 vAngle, _float3 vDirRatio)
+{
+	_float4 vCreatePos;
+
+	for(_uint i=0 ;i< iCreateNum; ++i)
+	{
+		_float4x4* Temp = new _float4x4;
+		XMStoreFloat4x4(Temp, XMMatrixIdentity());
+
+
+		_matrix		m_matWorld, matScale, matRotX, matRotY, matRotZ, matTrans;
+
+		matScale = XMMatrixScaling(1.f, 1.f, 1.f);
+		matRotX = XMMatrixRotationX(XMConvertToRadians(vAngle.x));
+		matRotY = XMMatrixRotationY(XMConvertToRadians(vAngle.y));
+		matRotZ = XMMatrixRotationZ(XMConvertToRadians(vAngle.z));
+		matTrans = XMMatrixTranslation(vPos.x + vDirRatio.x * i, vPos.y + vDirRatio.y *i , vPos.z+ vDirRatio.z *i);
+
+		m_matWorld = matScale * matRotX * matRotY * matRotZ * matTrans;
+		XMStoreFloat4x4(Temp, m_matWorld);
+
+		VecInstancingMatrix.push_back(Temp);
+	}
+
+
+	Add_InstanceModel(VecInstancingMatrix);
+
+
 }
 
 void CInstancing_Mesh::InstaincingMesh_EffectTick(_float yLimitPos, _float fTimeDelta)

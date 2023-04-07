@@ -21,13 +21,15 @@ private:
 public:
 	HRESULT					Add_Camera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
 	HRESULT					Work_Camera(const _tchar* pCameraTag);
-	class CCamera*		Find_Camera(const _tchar* pCameraTag);
+	class CCamera*			Find_Camera(const _tchar* pCameraTag);
 
 	HRESULT					Add_LightCamera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
 	HRESULT					Work_LightCamera(const _tchar* pCameraTag);
-	class CCamera*		Find_LightCamera(const _tchar* pCameraTag);
+	class CCamera*			Find_LightCamera(const _tchar* pCameraTag);
 
 public:
+	void					Scene_Change_Clear();
+
 	_float* Get_CameraNear();
 	_float* Get_CameraFar();
 	_float* Get_CameraFov();

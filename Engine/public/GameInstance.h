@@ -209,7 +209,7 @@ public: /* For.PipeLine */
 		_float*		Get_CameraFov();
 		map<const _tchar*, class CCamera*>*	Get_CameraContainer();
 		_bool IsWorkCamera(const _tchar * pCameraTag);
-
+		HRESULT Camera_SceneClear();
 	public:		/* For Function Manager */
 		template<typename T>
 		HRESULT		Add_Function(T* pObj, const _tchar* pFuncName, void (T::*memFunc)(_bool, _float)) {
@@ -224,6 +224,8 @@ public: /* For.PipeLine */
 		_bool	Is_Render_TerrainIndex(_uint iTerrainRoomIndex);
 		_uint Get_CurrentPlayerRoomIndex();
 
+public:
+	HRESULT	   Texture_Manager_SceneChange();
 	private:
 		static _uint m_iStaticLevelIndex;
 		HWND m_hClientWnd = NULL;
@@ -249,7 +251,7 @@ public: /* For.PipeLine */
 		class CPostFX* m_pPostFX = nullptr;
 		class CFunction_Manager*	m_pFunction_Manager = nullptr;
 		class CPhysX_Manager* m_pPhysX_Manager = nullptr;
-
+		class CTexture_Manager* m_pTexture_Manager = nullptr;
 	public:
 		static void Release_Engine();
 
