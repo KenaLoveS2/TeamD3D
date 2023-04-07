@@ -1459,3 +1459,17 @@ void CBossShaman::LookAt_Kena(_bool bIsInit, _float fTimeDelta)
 
 	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 }
+
+void CBossShaman::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+	
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}

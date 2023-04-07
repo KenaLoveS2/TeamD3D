@@ -77,7 +77,6 @@ public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossHunterDelegator;
 
 private:
-
 	CBone* m_pBodyBone = nullptr;
 	_float4x4 m_BodyPivotMatrix;
 	_float3 m_vBodyPivotTrans = { 0.f, 0.f, -0.7f };
@@ -105,6 +104,13 @@ private:
 	_bool m_bFlyEnd = false;
 
 	_bool m_bDodge = false;
+
+	enum COPY_SOUND_KEY {
+		CSK_ATTACK, CSK_THROW, CSK_DIE, CSK_IDLE, CSK_PAIN, CSK_TENSE1, CSK_TENSE2, CSK_IMPACT, CSK_WALK,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
 
 private:
 	CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -135,15 +141,6 @@ protected:
 private:
 	void Update_Collider(_float fTimeDelta) override;
 	void AdditiveAnim(_float fTimeDelta) override;
-
-private:
-private:
-	void Set_AttackType();
-	void Reset_Attack();
-	void Tick_Attack(_float fTimeDelta);
-
-	void Set_AFType();
-	void Reset_AF();
 
 private:
 	vector<_float3> m_vecPivot;
@@ -188,11 +185,7 @@ public:
 	void StunEffect_Off(_bool bIsInit, _float fTimeDelta);
 
 
-
-
-
-
-
+	virtual void Create_CopySoundKey() override;
 
 	/********************************************/
 	/*			For. Shader & Effect			*/

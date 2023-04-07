@@ -42,11 +42,11 @@ HRESULT CBranchTosser::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
+	m_pModelCom->Init_AnimIndex(IDLE);
 
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
-	m_bRotable = true;
-
+	
 	return S_OK;
 }
 
@@ -56,7 +56,7 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(0.f, 5.f, -15.f);
-		_float3 vPivotScale = _float3(0.45f, 0.1f, 0.1f);
+		_float3 vPivotScale = _float3(0.5f, 0.1f, 0.1f);
 		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
@@ -90,9 +90,6 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 	m_Desc.WorldMatrix._42 += 3.2f;
 	m_Desc.WorldMatrix._43 += 0.2f;
 
-	m_pModelCom->Set_DurationRate(ATTACK, 0.6f);
-	m_pModelCom->Set_DurationRate(DEATH, 3.f);
-
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 	m_pEnemyWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f));
 
@@ -101,6 +98,11 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 
 void CBranchTosser::Tick(_float fTimeDelta)
 {
+	// m_bReadySpawn = true;
+	// Update_Collider(fTimeDelta);
+	// m_pModelCom->Play_Animation(fTimeDelta);
+	// return;
+
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -117,7 +119,6 @@ void CBranchTosser::Tick(_float fTimeDelta)
 	m_pTree->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
@@ -272,7 +273,14 @@ HRESULT CBranchTosser::Call_EventFunction(const string& strFuncName)
 
 void CBranchTosser::Push_EventFunctions()
 {
-	CMonster::Push_EventFunctions();
+	// CMonster::Push_EventFunctions();
+
+	Play_AttackSound(true, 0.f);
+	Play_ThrowSound(true, 0.f);
+	Play_PainSound(true, 0.f);
+	Play_WalkSound(true, 0.f);
+	Play_Tense1Sound(true, 0.f);
+	Play_Tense2Sound(true, 0.f);
 }
 
 HRESULT CBranchTosser::SetUp_State()
@@ -294,6 +302,7 @@ HRESULT CBranchTosser::SetUp_State()
 		.AddState("READY_SPAWN")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE1], 0.5f);
 		Start_Spawn();		
 	})
 		.Tick([this](_float fTimeDelta)
@@ -312,7 +321,7 @@ HRESULT CBranchTosser::SetUp_State()
 
 		.AddState("IDLE")
 		.OnStart([this]()
-	{		
+	{	
 		m_fIdleToAttack = 0.f;
 	})
 		.Tick([this](_float fTimeDelta)
@@ -329,12 +338,7 @@ HRESULT CBranchTosser::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("To BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("IDLE to ATTACK", "TAUNT")
 		.Predicator([this]()
 	{
@@ -358,6 +362,7 @@ HRESULT CBranchTosser::SetUp_State()
 		.OnExit([this]()
 	{
 		m_pWeapon[m_iAttackCount++]->Set_GoStraight(true);
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT], 0.5f);
 		m_bRealAttack = false;
 	})
 		.AddTransition("To DYING", "DYING")
@@ -369,12 +374,7 @@ HRESULT CBranchTosser::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("To BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
@@ -384,6 +384,7 @@ HRESULT CBranchTosser::SetUp_State()
 		.AddState("TAUNT")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IDLE], 0.5f);
 		m_iAttackCount = 0;		
 		m_pModelCom->ResetAnimIdx_PlayTime(TAUNT4);
 		m_pModelCom->Set_AnimIndex(TAUNT4);
@@ -397,12 +398,7 @@ HRESULT CBranchTosser::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("To BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})	
 		.AddTransition("TAUNT to IDLE", "IDLE")
 		.Predicator([this]()
 	{
@@ -412,8 +408,8 @@ HRESULT CBranchTosser::SetUp_State()
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGE);
-		m_pModelCom->Set_AnimIndex(TAKEDAMAGE);
+		m_pModelCom->ResetAnimIdx_PlayTime(BIND);
+		m_pModelCom->Set_AnimIndex(BIND);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -423,28 +419,13 @@ HRESULT CBranchTosser::SetUp_State()
 		.AddTransition("PARRIED to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(TAKEDAMAGE);
-	})
-
-
-		.AddState("BIND")
-		.OnStart([this]()
-	{
-		Start_Bind(BIND);
-	})
-		.OnExit([this]()
-	{	
-		End_Bind();
-	})
-		.AddTransition("BIND to IDLE", "IDLE")
-		.Predicator([this]()
-	{
 		return AnimFinishChecker(BIND);
 	})
 		
 		.AddState("DYING")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DIE], 0.7f);
 		Set_Dying(DEATH);		
 		
 		m_pTree->Set_ShaderPassIndex(5);
@@ -508,13 +489,15 @@ HRESULT CBranchTosser::SetUp_Components()
 	for (_uint i = 0; i < BRANCH_TOSSER_WEAPON_COUNT; i++)
 	{
 		m_pWeapon[i] = (CBranchTosser_Weapon*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserWeapon"), 
-			CUtile::Create_DummyString(L"BranchTosserWeapon", i), &WeaponDesc);
+			CUtile::Create_DummyString(m_szCloneObjectTag, TEXT("Weapon"), i), &WeaponDesc);
 
 		assert(m_pWeapon[i] && "BranchTosser Weapon is nullptr");		
 		m_pWeapon[i]->Late_Initialize(nullptr);
 	}
 				
-	m_pTree = (CBranchTosser_Tree*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserTree"), L"BranchTosserTree");
+	m_pTree = (CBranchTosser_Tree*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserTree"), 
+		CUtile::Create_DummyString(m_szCloneObjectTag, TEXT("Tree"), 0));
+
 	assert(m_pTree && "BranchTosser Tree is nullptr");
 	m_pTree->Set_OwnerBranchTosser(this);
 
@@ -594,4 +577,99 @@ void CBranchTosser::Free()
 		Safe_Release(m_pWeapon[i]);
 	
 	Safe_Release(m_pTree);
+}
+
+
+void CBranchTosser::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {		
+		TEXT("Mon_BranchTosser_Attack.ogg"),
+		TEXT("Mon_BranchTosser_Throw.ogg"),
+		TEXT("Mon_BranchTosser_Die.ogg"),		
+		TEXT("Mon_BranchTosser_Idle.ogg"),
+		TEXT("Mon_BranchTosser_Pain.ogg"),
+		TEXT("Mon_BranchTosser_Tense1.ogg"),	
+		TEXT("Mon_BranchTosser_Tense2.ogg"),
+		TEXT("Mon_BranchTosser_Impact.ogg"),
+		TEXT("Mon_Walk_M.ogg"),
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}
+
+void CBranchTosser::Play_AttackSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBranchTosser::Play_AttackSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.5f);
+}
+
+void CBranchTosser::Play_ThrowSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBranchTosser::Play_ThrowSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_THROW], 0.7f);
+}
+
+void CBranchTosser::Play_PainSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBranchTosser::Play_PainSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_PAIN], 0.7f);
+}
+
+void CBranchTosser::Play_WalkSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBranchTosser::Play_WalkSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WALK], 0.7f);
+}
+
+void CBranchTosser::Play_Tense1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBranchTosser::Play_Tense1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE1], 0.7f);
+}
+
+void CBranchTosser::Play_Tense2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBranchTosser::Play_Tense2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE2], 0.7f);
 }

@@ -397,8 +397,11 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 {
 	if (Desc.eType == BOX_STATIC)
 	{	
-		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
+		PxRigidActor* pTemp = Find_StaticActor(Desc.pActortag);
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Box() -> Created Tag Name!!");
 
+		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
+		
 		/*
 		PxQuat Rotation = PxQuat(XMConvertToRadians(Desc.fDegree), CUtile::ConvertPosition_D3DToPx(Desc.vRotationAxis));
 		Transform.q = Rotation;
@@ -438,6 +441,14 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 	}
 	else if (Desc.eType == BOX_DYNAMIC)
 	{	
+		PxRigidActor* pTemp = nullptr;
+		if(pUserData->isGravity)
+			pTemp = Find_DynamicActor(Desc.pActortag);
+		else
+			pTemp = Find_DynamicCollider(Desc.pActortag);
+
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Box() -> Created Tag Name!!");
+
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic* pBox = m_pPhysics->createRigidDynamic(Transform);
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
@@ -493,6 +504,9 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 {
 	if (Desc.eType == SPHERE_STATIC)
 	{
+		PxRigidActor* pTemp = Find_StaticActor(Desc.pActortag);
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Sphere() -> Created Tag Name!!");
+
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic* pSphere = m_pPhysics->createRigidStatic(Transform);		
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
@@ -523,6 +537,13 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 	}
 	else if (Desc.eType == SPHERE_DYNAMIC)
 	{
+		PxRigidActor* pTemp = nullptr;
+		if (pUserData->isGravity)
+			pTemp = Find_DynamicActor(Desc.pActortag);
+		else
+			pTemp = Find_DynamicCollider(Desc.pActortag);
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Sphere() -> Created Tag Name!!");
+
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic* pSphere = m_pPhysics->createRigidDynamic(Transform);
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
@@ -576,6 +597,9 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 {
 	if (Desc.eType == CAPSULE_STATIC)
 	{
+		PxRigidActor* pTemp = Find_StaticActor(Desc.pActortag);
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Capsule() -> Created Tag Name!!");
+
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic *pCapsule = m_pPhysics->createRigidStatic(Transform);
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
@@ -609,6 +633,13 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 	}
 	else if (Desc.eType == CAPSULE_DYNAMIC)
 	{
+		PxRigidActor* pTemp = nullptr;
+		if (pUserData->isGravity)
+			pTemp = Find_DynamicActor(Desc.pActortag);
+		else
+			pTemp = Find_DynamicCollider(Desc.pActortag);
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Capsule() -> Created Tag Name!!");
+
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic *pCapsule = m_pPhysics->createRigidDynamic(Transform);		
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
@@ -763,6 +794,14 @@ PxRigidActor * CPhysX_Manager::Find_DynamicCollider(const _tchar * pActorTag)
 {
 	auto Pair = find_if(m_DynamicColliders.begin(), m_DynamicColliders.end(), CTag_Finder(pActorTag));
 	if (Pair == m_DynamicColliders.end()) return nullptr;
+
+	return Pair->second;
+}
+
+PxRigidActor* CPhysX_Manager::Find_Trigger(const _tchar* pActorTag)
+{
+	auto Pair = find_if(m_Triggers.begin(), m_Triggers.end(), CTag_Finder(pActorTag));
+	if (Pair == m_Triggers.end()) return nullptr;
 
 	return Pair->second;
 }
@@ -1157,6 +1196,9 @@ void CPhysX_Manager::Create_Trigger(PX_TRIGGER_DATA* pTriggerData)
 {
 	if (pTriggerData == nullptr) return;
 
+	PxRigidActor* pTemp = Find_Trigger(pTriggerData->pActortag);
+	assert(pTemp == nullptr && "CPhysX_Manager::Create_Trigger() -> Created Tag Name!!");
+
 	PxTransform Transform(CUtile::ConvertPosition_D3DToPx(pTriggerData->vPos));
 
 	pTriggerData->pTriggerStatic = m_pPhysics->createRigidStatic(Transform);
@@ -1214,14 +1256,19 @@ void CPhysX_Manager::Reset()
 	PxActorTypeFlags actorTypes = PxActorTypeFlag::eRIGID_STATIC | PxActorTypeFlag::eRIGID_DYNAMIC;
 
 	PxU32 numActors = m_pScene->getNbActors(actorTypes);
-	PxActor** actors = nullptr;
-	m_pScene->getActors(actorTypes, actors, numActors, 0);
+	PxActor** pActors = new PxActor * [numActors];
+	for (PxU32 i = 0; i < numActors; i++)
+		pActors[i] = nullptr;
 
-	for (PxU32 i = 0; i < numActors; i++) 
+	m_pScene->getActors(actorTypes, pActors, numActors, 0);
+
+	for (PxU32 i = 0; i < numActors; i++)
 	{
-		m_pScene->removeActor(*actors[i]);
-		actors[i]->release();
+		m_pScene->removeActor(*pActors[i]);
+		pActors[i]->release();
 	}
+
+	Safe_Delete_Array(pActors);
 }
 
 void CPhysX_Manager::Delete_DynamicActor(PxRigidActor* pActor)
@@ -1401,53 +1448,4 @@ void CPhysX_Manager::PutToSleep(PxRigidDynamic* pActor)
 void CPhysX_Manager::WakeUp(PxRigidDynamic* pActor)
 {
 	pActor->wakeUp();
-}
-
-void CPhysX_Manager::Scene_Change_Clear_All_Actor()
-{
-	
-	for (auto& StaticActor : m_StaticActors)
-	{
-		Delete_Actor(StaticActor.second);
-		StaticActor.second = nullptr;
-	}
-	m_StaticActors.clear();
-
-	for (auto& DynamicActor : m_DynamicActors)
-	{
-		m_pScene->removeActor(*(DynamicActor).second);
-		DynamicActor.second = nullptr;
-	}
-	m_DynamicActors.clear();
-
-	for (auto& DynamicColider : m_DynamicColliders)
-	{
-		m_pScene->removeActor(*(DynamicColider).second);
-		DynamicColider.second = nullptr;
-	}
-	m_DynamicColliders.clear();
-
-	for (auto& Trigger : m_Triggers)
-	{
-		m_pScene->removeActor(*(Trigger).second);
-		Trigger.second = nullptr;
-	}
-	m_Triggers.clear();
-
-	for (auto& iter : m_UserDataes)
-	{
-		Safe_Delete(iter);
-	}
-	m_UserDataes.clear();
-
-	for (auto& iter : m_TriggerDataes)
-	{
-		Safe_Delete(iter);
-	}
-	m_TriggerDataes.clear();
-
-	
-
-	
-
 }

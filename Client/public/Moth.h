@@ -9,6 +9,13 @@ private:
 	CBone* m_pWeaponBone = nullptr;
 	_float m_fIdletoAttackTime = 0.f;
 
+	enum COPY_SOUND_KEY {
+		CSK_TENSE, CSK_FLY, CSK_ATTACK, CSK_DIE, CSK_WINGFLAP1, CSK_WINGFLAP2,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 private:
 	CMoth(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMoth(const CMoth& rhs);
@@ -41,6 +48,11 @@ public:
 	static CMoth*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr)  override;
 	virtual void					Free() override;
+
+	void Create_CopySoundKey();
+	void Play_AttackSound(_bool bIsInit, _float fTimeDelta);
+	void Play_WingFlap1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_WingFlap2Sound(_bool bIsInit, _float fTimeDelta);
 
 private:
 	enum ANIMATION

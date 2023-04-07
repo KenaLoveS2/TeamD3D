@@ -48,10 +48,9 @@ HRESULT CSticks01::Initialize(void* pArg)
 
 	m_pModelCom->Set_AllAnimCommonType();
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
-
+	m_pModelCom->Set_AnimIndex(COMBATIDLE);
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
-	m_bRotable = true;
-
+	
 	/* Create MovementTrail */
 	SetUp_MovementTrail();
 		
@@ -146,14 +145,13 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 
 void CSticks01::Tick(_float fTimeDelta)
 {	
-	/*m_bReadySpawn = true;
-	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	m_pModelCom->Play_Animation(fTimeDelta);
-	return;*/
+	// m_bReadySpawn = true;
+	// m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	// m_pModelCom->Play_Animation(fTimeDelta);
+	// return;
 
 	if (m_bDeath) return;
-	m_pMonsterStatusCom->Set_Attack(100);
-	
+		
 	/* Update MovementTrail */
 	Update_MovementTrail("char_weightSpine_c_jnt");
 
@@ -330,6 +328,8 @@ void CSticks01::Push_EventFunctions()
 	// CMonster::Push_EventFunctions();
 
 	Play_AxeSound(true, 0.f);
+	Play_ImpactSound(true, 0.f);
+	Play_WalkSound(true, 0.f);
 }
 
 HRESULT CSticks01::SetUp_State()
@@ -403,12 +403,7 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("COMBATIDLE to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("COMBATIDLE to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
@@ -428,11 +423,6 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdletoAttackTime, 1.f) && m_bStrafeRight;
-	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("CHEER")
@@ -455,11 +445,6 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("CHEER to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
 	})
 		.AddTransition("CHEER to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
@@ -494,12 +479,7 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("STRAFELEFT to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("STRAFELEFT to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
@@ -533,18 +513,12 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("STRAFERIGHT to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("STRAFERIGHT to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
 		return m_bStronglyHit;
 	})
-
 		.AddTransition("STRAFERIGHT to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
@@ -599,12 +573,7 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("CHARGE to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("CHARGE to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
@@ -635,11 +604,6 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return m_bRealAttack && m_bComboAttack;
 	})
-		.AddTransition("CHARGE to ROCKTHROW", "ROCKTHROW")
-		.Predicator([this]()
-	{
-		return m_bRealAttack && m_bThrowRock;
-	})
 
 		.AddState("CHARGEATTACK")
 		.OnStart([this]()
@@ -666,12 +630,7 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("CHARGEATTACK to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("CHARGEATTACK to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
@@ -708,12 +667,7 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("JUMPATTACK to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("JUMPATTACK to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
@@ -750,12 +704,7 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("ATTACK to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("ATTACK to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
@@ -792,12 +741,7 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("ATTACK2 to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("ATTACK2 to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
@@ -834,12 +778,7 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return IsParried();
-	})
-		.AddTransition("COMBOATTACK to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("COMBOATTACK to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
@@ -850,68 +789,6 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return AnimFinishChecker(COMBOATTACK);
 	})
-
-		.AddState("ROCKTHROW")
-		.OnStart([this]()
-	{
-		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
-		m_pModelCom->ResetAnimIdx_PlayTime(ROCKTHROW);
-		m_pModelCom->Set_AnimIndex(ROCKTHROW);
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-	})
-		.OnExit([this]()
-	{
-		m_bRealAttack = false;
-	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-		.AddTransition("To PARRIED", "PARRIED")
-		.Predicator([this]()
-	{
-		return IsParried();
-	})
-		.AddTransition("ROCKTHROW to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
-		.AddTransition("ROCKTHROW to TAKEDAMAGE", "TAKEDAMAGE")
-		.Predicator([this]()
-	{
-		return m_bStronglyHit;
-	})
-		.AddTransition("ROCKTHROW to COMBATIDLE", "COMBATIDLE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(ROCKTHROW);
-	})
-
-		.AddState("BIND")
-		.OnStart([this]()
-	{
-		Start_Bind(BIND);
-	})
-		.OnExit([this]()
-	{
-		End_Bind();
-	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-		.AddTransition("BIND to INTOCHARGE", "INTOCHARGE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(BIND);
-	})
-	
 
 		// 어느 타이밍에 패링이 되는지?
 		.AddState("PARRIED")
@@ -982,12 +859,7 @@ HRESULT CSticks01::SetUp_State()
 		// 맞는 애니메이션일때도 맞는가?
 		m_bStronglyHit = false;
 		Reset_Attack();
-	})
-		.AddTransition("TAKEDAMAGE to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("TAKEDAMAGE to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
@@ -1137,7 +1009,7 @@ void CSticks01::AdditiveAnim(_float fTimeDelta)
 
 void CSticks01::Set_AttackType()
 {
-	m_iAttackType = rand() % 6;
+	m_iAttackType = rand() % ATTACKTYPE_END;
 
 	m_bChargeAttack = false;
 	m_bJumpAttack = false;
@@ -1145,8 +1017,7 @@ void CSticks01::Set_AttackType()
 	m_bAttack2 = false;
 	m_bComboAttack = false;
 	m_bRealAttack = false;
-	m_bThrowRock = false;
-
+	
 	// ATTACKTYPE 이 정해지면 거기까지 달려가기
 	switch (m_iAttackType)
 	{
@@ -1164,9 +1035,7 @@ void CSticks01::Set_AttackType()
 		break;
 	case AT_COMBOATTACK:
 		m_bComboAttack = true;
-		break;
-	case AT_ROCKTHROW:
-		m_bThrowRock = true;
+		break;	
 	default:
 		break;
 	}
@@ -1178,8 +1047,7 @@ void CSticks01::Reset_Attack()
 	m_bJumpAttack = false;
 	m_bAttack1 = false;
 	m_bAttack2 = false;
-	m_bComboAttack = false;
-	m_bThrowRock = false;
+	m_bComboAttack = false;	
 	m_iAttackType = ATTACKTYPE_END;
 }
 
@@ -1211,11 +1079,7 @@ void CSticks01::Tick_Attack(_float fTimeDelta)
 		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
 		if (DistanceTrigger(3.f))
 			m_bRealAttack = true;
-		break;
-	case AT_ROCKTHROW:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
-		if (DistanceTrigger(3.f))
-			m_bRealAttack = true;
+		break;	
 	default:
 		break;
 	}
@@ -1302,6 +1166,29 @@ void CSticks01::Spawn_ByMaster(CMonster* pMaster, _float4 vPos)
 	m_pMaster = pMaster;
 };
 
+void CSticks01::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_Sticks_Tense.ogg"),
+		TEXT("Mon_Sticks_Tense2.ogg"),
+		TEXT("Mon_Sticks_Tense3.ogg"),
+		TEXT("Mon_Sticks_Calm.ogg"),
+		TEXT("Mon_Sticks_Attack.ogg"),
+		TEXT("Mon_Sticks_Hurt.ogg"),
+		TEXT("Mon_Sticks_Die.ogg"),
+		TEXT("Mon_Sticks_Axe_Whoosh.ogg"),
+		TEXT("Mon_Attack_Impact.ogg"),
+		TEXT("Mon_Walk_S.ogg"),
+	};
+	
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}
+
 void CSticks01::Play_AxeSound(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
@@ -1314,23 +1201,26 @@ void CSticks01::Play_AxeSound(_bool bIsInit, _float fTimeDelta)
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_AXE_WOOSH], 1.f);
 }
 
-void CSticks01::Create_CopySoundKey()
+void CSticks01::Play_ImpactSound(_bool bIsInit, _float fTimeDelta)
 {
-	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
-		TEXT("Mon_Sticks_Tense.ogg"),
-		TEXT("Mon_Sticks_Tense2.ogg"),
-		TEXT("Mon_Sticks_Tense3.ogg"),
-		TEXT("Mon_Sticks_Calm.ogg"),
-		TEXT("Mon_Sticks_Attack.ogg"),
-		TEXT("Mon_Sticks_Hurt.ogg"),
-		TEXT("Mon_Sticks_Die.ogg"),
-		TEXT("Mon_Sticks_Axe_Whoosh.ogg"),
-	};
-	
-	_tchar szTemp[MAX_PATH] = { 0, };
-
-	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	if (bIsInit == true)
 	{
-		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CSticks01::Play_ImpactSound);
+		return;
 	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT], 0.2f);
+}
+
+void CSticks01::Play_WalkSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CSticks01::Play_WalkSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WALK], 1.f);
 }

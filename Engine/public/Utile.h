@@ -55,6 +55,8 @@ public:
 
 	static _tchar* Create_DummyString();
 	static _tchar* Create_DummyString(const _tchar* pBaseText, _uint iCount);
+	static _tchar* Create_DummyString(const _tchar* pBaseText, const _tchar* pSubBaseText, _uint iCount);
+	static _tchar* Create_CombinedString(const _tchar* pBaseText, const _tchar* pSubBaseText);
 
 	static _float4 Float3toFloat4Position(_float3 vPos);
 	static _float4 Float3toFloat4Look(_float3 vLook);

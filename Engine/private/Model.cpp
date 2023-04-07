@@ -2379,3 +2379,10 @@ void CModel::Set_DurationRate(_uint iAnimIndex, _float fRate)
 {
 	m_Animations[iAnimIndex]->Set_DurationRate(fRate);
 }
+
+void CModel::Init_AnimIndex(_uint iAnimIndex)
+{
+	if (iAnimIndex >= m_iNumAnimations) return;
+
+	m_iCurrentAnimIndex = iAnimIndex;
+}
