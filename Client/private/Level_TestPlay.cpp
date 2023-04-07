@@ -137,7 +137,7 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
 		pGameInstance->Clear_ImguiObjects();
-		CPhysX_Manager::GetInstance()->Clear();
+		CPhysX_Manager::GetInstance()->Clear(true);
 		pGameInstance->Scene_EnviMgr_Change();
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
 			return;

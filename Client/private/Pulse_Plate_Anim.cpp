@@ -63,8 +63,11 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	BoxDesc.pActortag = m_szCloneObjectTag;
 	BoxDesc.eType = BOX_STATIC;		// 원래는 박스 스태틱으로 만들어야함
 	BoxDesc.vPos = vPos;
+
 	if (m_EnviromentDesc.iRoomIndex == 1)
 		BoxDesc.vPos.y = -0.25f;
+	else if (m_EnviromentDesc.iRoomIndex == 2)
+		BoxDesc.vPos.y += 0.25f;
 
 	BoxDesc.vSize = _float3(2.74f, 0.25f, 2.45f);
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);

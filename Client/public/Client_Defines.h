@@ -11,7 +11,7 @@ extern bool g_bFrameLimit;
 
 #define TERRAIN_COUNT		5
 
-//#define FOR_MAP_GIMMICK
+#define FOR_MAP_GIMMICK
 
 //#define FOR_MAPTOOL
 //#undef FOR_MAPTOOL
@@ -20,8 +20,8 @@ extern bool g_bFrameLimit;
 #define FIRST_ROT			0
 
 #define MONSTER_LINEAR_DAMING		1.f
-#define MONSTER_ANGULAR_DAMING		0.5f
-#define MONSTER_MASS				25000.f
+#define MONSTER_ANGULAR_DAMING	0.5f
+#define MONSTER_MASS							25000.f
 
 namespace Client
 {
