@@ -867,9 +867,6 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	Out.vDiffuse = vDiffuseTexture * g_vColor;
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 3.f;
 
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
-
 	return Out;
 }
 
@@ -906,9 +903,7 @@ PS_OUT PS_DISTORTION_INTO(PS_IN In)
 	Out.vDiffuse = finalcolor * g_vColor * 2.f;
 	Out.vDiffuse.a = Out.vDiffuse.a * fAlpha;
 
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
-
+	Out.vDiffuse = CalcHDRColor(Out.vDiffuse, 1.5f);
 	return Out;
 }
 //PS_KENADASH

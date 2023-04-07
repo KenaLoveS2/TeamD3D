@@ -94,6 +94,14 @@ public:
 	virtual HRESULT Render();
 
 public:
+	HRESULT			SetUp_Box();
+	HRESULT			SetUp_Stright();
+	HRESULT			SetUp_PlaneCircle();
+	HRESULT			SetUp_Cone();
+	HRESULT			SetUp_Explosion();
+	HRESULT			SetUp_ExplosionGravity();
+
+public:
 	HRESULT			Tick_Box(_float fTimeDelta);
 	HRESULT			Tick_Stright(_float fTimeDelta);
 	HRESULT			Tick_PlaneCircle(_float fTimeDelta);
@@ -131,6 +139,8 @@ public:
 	HRESULT			Set_RandomPSize(_float2 PSizeMinMax);
 	HRESULT			Set_ShapePosition();
 	HRESULT			Set_Position(_float3 fMin, _float3 fMax);
+	HRESULT			Set_Position(_vector vPos);
+
 	void			Set_Speeds(_double pSpeed);
 	void			Set_RandomSpeeds(_float fmin, _float fmax);
 	void			Set_Gravity(_bool bUseGravity) { m_ePointDesc->bUseGravity = bUseGravity; }
