@@ -83,7 +83,8 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	PulseObj_Desc.vResetSize = _float3(0.25f, 0.25f, 0.25f);
 	PulseObj_Desc.vResetPos = _float4(vPos.x, vPos.y+1.5f, vPos.z, vPos.w);
 	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
-		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Recived_PulseE"));
+		Clone_GameObject(L"Prototype_GameObject_PulseObject", CUtile::Create_CombinedString(m_szCloneObjectTag, TEXT("Crystal_Recived_PulseE"))));
+	
 	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
 	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
 	m_VecCrystal_Effect.push_back(pEffectObj);
@@ -96,7 +97,8 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	PulseObj_Desc.vResetSize = _float3(1.f, 1.f, 1.f);
 	PulseObj_Desc.vResetPos = vPos;
 	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
-		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Deliver_PulseE"));
+		Clone_GameObject(L"Prototype_GameObject_PulseObject", CUtile::Create_CombinedString(m_szCloneObjectTag, TEXT("Crystal_Deliver_PulseE"))));
+
 	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
 	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
 	m_VecCrystal_Effect.push_back(pEffectObj);

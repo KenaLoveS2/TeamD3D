@@ -54,7 +54,7 @@ HRESULT CMoth::Late_Initialize(void * pArg)
 	{
 		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 		PxSphereDesc.eType = SPHERE_DYNAMIC;
-		PxSphereDesc.pActortag = TEXT("Moth_Collider_0");
+		PxSphereDesc.pActortag = CUtile::Create_CombinedString(m_szCloneObjectTag, TEXT("Moth_Collider_0"));
 		PxSphereDesc.vPos = {0.f, 0.f, 0.f};
 		PxSphereDesc.fRadius = 0.5f;		
 		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
@@ -74,7 +74,7 @@ HRESULT CMoth::Late_Initialize(void * pArg)
 	{
 		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 		PxSphereDesc.eType = SPHERE_DYNAMIC;
-		PxSphereDesc.pActortag = TEXT("Moth_Collider_1");
+		PxSphereDesc.pActortag = CUtile::Create_CombinedString(m_szCloneObjectTag, TEXT("Moth_Collider_1"));
 		PxSphereDesc.vPos = { 0.f, 0.f, 0.f };
 		PxSphereDesc.fRadius = 0.3f;
 		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
