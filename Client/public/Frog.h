@@ -15,7 +15,9 @@ class CFrog final : public CEnviromentObj
 private:
 	enum Frog_ShaderPass
 	{
-		DEFAULT,
+		SHADOW = 11,
+
+		DEFAULT = 14,
 		AO_R_M,
 		AO_R_M_E,
 		AO_R_M_G,
@@ -25,9 +27,9 @@ private:
 		MASK,
 		SAPLING_BOMBUP,
 		ALPHA_AO_R_M,
-		SHADOW,
 		BOSS_AO_R_M,
 		BOSS_AO_R_M_E,
+		HUNTER_ARROW,
 		PASS_END
 	};
 
@@ -69,8 +71,8 @@ private:
 	class CInteraction_Com* m_pInteractionCom = nullptr;
 	class CControlMove* m_pControlMoveCom = nullptr;
 
-	_bool		m_bOnceTest = false;
-
+	
+	_bool		m_bAnimActive = false;
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

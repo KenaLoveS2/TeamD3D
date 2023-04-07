@@ -31,7 +31,7 @@ HRESULT CPet::Initialize(void* pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
+	//CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 
 	m_bRenderActive = true;
 
@@ -69,7 +69,7 @@ void CPet::Tick(_float fTimeDelta)
 #endif
 
 
-	if (20.f >= XMVectorGetX(XMVector4Length(vDir)))
+	if (45.f >= XMVectorGetX(XMVector4Length(vDir)))
 		m_bAnimActive = true;
 
 
@@ -98,20 +98,17 @@ HRESULT CPet::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"),E_FAIL);
 		if (i == 0)
 		{
-			
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", DEFAULT);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", DEFAULT),E_FAIL);
 		}
-
-		if (i == 1)
+		else	if (i == 1)
 		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-		
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_E);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"),E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_E), E_FAIL);
 		}
 	}
 	return S_OK;
@@ -121,8 +118,8 @@ HRESULT CPet::Render()
 
 void CPet::ImGui_AnimationProperty()
 {
-	m_pTransformCom->Imgui_RenderProperty_ForJH();
-	m_pModelCom->Imgui_RenderProperty();
+	//m_pTransformCom->Imgui_RenderProperty_ForJH();
+	//m_pModelCom->Imgui_RenderProperty();
 }
 
 
@@ -139,12 +136,14 @@ HRESULT CPet::SetUp_Components()
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Pet", L"Com_Model",
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Pet", L"Com_Model",
 		(CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+
+	
 
 	/* For.Com_Shader */
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
-		L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Pet/rh_body_AO_R_M.png"));
 	m_pModelCom->SetUp_Material(1, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Pet/T_Black.png"));

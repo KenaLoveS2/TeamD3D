@@ -97,6 +97,7 @@
 #include "Dynamic_StoneCube.h"
 
 #include "MannequinRot.h"
+#include "BombGimmickObj.h"
 
 /* UI */
 #include "BackGround.h"
@@ -198,6 +199,7 @@
 
 unsigned int	g_LEVEL = 0;
 
+
 #include "Json/json.hpp"
 #include <fstream>
 #include "E_KenaDash.h"
@@ -239,7 +241,9 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_EFFECT:
 		pLoader->Loading_ForTestEffect();
 		break;
-
+	case LEVEL_FINAL:
+		pLoader->Loading_ForFinal();
+		break;
 	}
 
 	LeaveCriticalSection(&pLoader->Get_CriticalSection());
@@ -250,9 +254,10 @@ _uint APIENTRY LoadingThread(void* pArg)
 HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {
 	m_eNextLevelID = eNextLevelID;
+	
 
 	g_LEVEL = eNextLevelID;
-
+	
 	InitializeCriticalSection(&m_Critical_Section);
 
 	/* Make additional flow for Loading(Thread). */
@@ -359,7 +364,6 @@ HRESULT CLoader::Loading_ForMapTool()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain5_Filter_%d.dds"), 3))))
 		return E_FAIL;
 
-
 	/* For.Prototype_Component_Texture_Filter */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Terrain_HeightMaps"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_%d.bmp"), 15))))
@@ -419,8 +423,8 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall03",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.mdat"), 
-			PivotMatrix,nullptr,false,false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.json"))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.json"))))
 		return E_FAIL;
 
 	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
@@ -485,6 +489,11 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma region Test_Gimmick_OBJ
 	if (bFlowerCheck == true)
 	{
+		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_TestGodTree",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.mdat"),
+				PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.json", false, true))))
+			return E_FAIL;
 
 	}
 #pragma endregion
@@ -1442,7 +1451,12 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	/* For.Prototype_GameObject_BombGimmickObj */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BombGimmickObj"),
+		CBombGimmickObj::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	
+
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
@@ -1489,6 +1503,29 @@ HRESULT CLoader::Loading_ForTestEffect()
 	
 	m_isFinished = true;
 	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForFinal()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	//FAILED_CHECK_RETURN(Loading_ForWJ((_uint)LEVEL_FINAL), E_FAIL);
+
+	//FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_FINAL), E_FAIL);
+
+	//FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_FINAL), E_FAIL);
+
+	//FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_FINAL), E_FAIL);
+
+	//FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_FINAL), E_FAIL);
+
+	//FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_FINAL), E_FAIL);
+
+	m_isFinished = true;
+	SetWindowText(g_hWnd, TEXT("Loading Complete!! Wait a moment"));
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
@@ -3051,6 +3088,32 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Plants3",
 			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
 			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_MaskShrine_Rock_09",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.mdat"),
+				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.json"))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium04",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.mdat"),
+				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.json"))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium06",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.mdat"),
+				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.json"))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium07",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.mdat"),
+				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.json"))))
+			return E_FAIL;
+
+
 #pragma  endregion Born_GroundCover
 
 #pragma  region HHW_OBJ
@@ -3255,6 +3318,11 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	/* For.Prototype_GameObject_Dynamic_Stone */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_BombGimmickObj */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BombGimmickObj"),
+		CBombGimmickObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 

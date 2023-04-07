@@ -32,9 +32,19 @@ public:
 	void			Add_InstanceModel(vector<_float4x4*>& VecInstancingMatrix);
 	void			InstBuffer_Update(vector<_float4x4*>& VecInstancingMatrix);
 	void			InstBufferSize_Update(_int iSize);
-	void			Set_PxTriangle(vector<_float4x4*>& VecInstancingMatrix);
+
+
+	void			Edit_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix,
+		_int EditStartIndex, _int EditEndIndex, _float3 vPos , _float3 vAngle);
+
+
+	void			Create_InstanceModel_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix,
+		_int iCreateNum, _float3 vPos, _float3 vAngle, _float3 vDirRatio);
+
+
 public:
-	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _uint iNumInstance);
+	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _bool bPointBuffer,
+		_uint iNumInstance);
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Tick(_float fTimeDelta) override;
 	virtual HRESULT Render();
@@ -73,7 +83,7 @@ private:				/*For.OriginMeshData*/
 
 private:		/*for.Lod */
 	_bool								m_bLodMesh = false;
-
+	_bool								m_bPointListMesh = false;
 private:		/*For.Instancing*/
 	vector<_float4>						m_pInstancingPositions;				// Instancing 한 포지션들의 벡터			
 	_uint								m_iOriginNumPrimitive = 0;			// 기존 NumPrimitive Data
@@ -87,6 +97,7 @@ private:		/*For.Instancing*/
 	_float* m_fInstancingEffect_Speed = nullptr;
 	list<PxRigidStatic*>				m_StaticRigid_List;
 	_bool								m_bTriangle_Collider = false;
+	
 private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
 	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);
@@ -98,7 +109,7 @@ private:
 
 public:
 	static CInstancing_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, 
-		HANDLE hFile, class CModel* pModel, _bool bIsLod = false, _bool bUseTriangleMeshActor = false, _uint iNumInstance =1 );
+		HANDLE hFile, class CModel* pModel, _bool bIsLod = false, _bool bUseTriangleMeshActor = false,_bool bPointBuffer=false, _uint iNumInstance =1 );
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free();
 	

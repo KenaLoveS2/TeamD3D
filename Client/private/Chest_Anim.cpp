@@ -32,7 +32,7 @@ HRESULT CChest_Anim::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
-	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
+	//CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 
 	m_bRenderActive = true;
 
@@ -310,7 +310,7 @@ HRESULT CChest_Anim::SetUp_Components()
 		m_EnviromentDesc.iCurLevel = g_LEVEL;
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_ChestAnim"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_ChestAnim"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
 

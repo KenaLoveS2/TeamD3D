@@ -472,11 +472,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if(m_bSSAO)
 	{
-		if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SSAO"))))
-			return E_FAIL;
 		if (FAILED(Render_SSAO()))
-			return E_FAIL;
-		if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_SSAO"))))
 			return E_FAIL;
 	}
 
@@ -545,7 +541,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_PrevFrame"));
 	}
 #endif
-
 	return S_OK;
 }
 
@@ -756,6 +751,9 @@ HRESULT CRenderer::Render_LightAcc()
 
 HRESULT CRenderer::Render_SSAO()
 {
+	if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SSAO"))))
+		return E_FAIL;
+
 	if (FAILED(m_pShader_SSAO->Set_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	
@@ -786,7 +784,10 @@ HRESULT CRenderer::Render_SSAO()
 
 	m_pShader_SSAO->Begin(0);
 	m_pVIBuffer->Render();
-		
+
+	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_SSAO"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 

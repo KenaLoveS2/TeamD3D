@@ -1,15 +1,13 @@
 #include "Shader_Client_Defines.h"
 
 /**********Constant Buffer*********/
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-matrix			g_SocketMatrix;
 float				g_fFar = 300.f;
 float4			g_vCamPosition;
 /**********************************/
 
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
-texture2D<float4>		g_MaskTexture;
+Texture2D<float4>		g_MaskTexture;
 Texture2D<float4>		g_MasterBlendDiffuseTexture;
 
 Texture2D<float4> g_AO_R_MTexture;
@@ -21,12 +19,12 @@ float				g_fHDRIntensity = 0.f;
 float4				g_vColor = 1.f;
 
 
-texture2D		g_DissolveTexture;
-bool				g_bDissolve;
-float				g_fDissolveTime;
-float				g_DissolveSpeed = 0.2f;
-float				g_FadeSpeed = 1.5f;
-float				g_fDissolveAlpha = 0.f;
+Texture2D<float4>		g_DissolveTexture;
+bool								g_bDissolve;
+float								g_fDissolveTime;
+float								g_DissolveSpeed = 0.2f;
+float								g_FadeSpeed = 1.5f;
+float								g_fDissolveAlpha = 0.f;
 
 struct VS_IN
 {

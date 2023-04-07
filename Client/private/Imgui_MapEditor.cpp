@@ -728,6 +728,9 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
 		EnviromentDesc.iShaderPass = iShaderPath;
 
+
+
+
 		if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(),
 			wszLayerTag,
 			EnviromentDesc.szProtoObjTag.c_str(),
@@ -735,9 +738,12 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
 
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
-		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
+		CTransform* pLoadObjTrnasform = nullptr;
+		pLoadObjTrnasform = static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"));
+		pLoadObjTrnasform->Set_WorldMatrix_float4x4(fWroldMatrix);
+
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComponentVec);
-		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, SaveInstColiderSize,EnviromentDesc.eChapterType);
+		Imgui_Instacing_PosLoad(pLoadObject, pLoadObjTrnasform, vecInstnaceMatrixVec, SaveInstColiderSize,EnviromentDesc.eChapterType);
 		pGameInstance->Add_ShaderValueObject(g_LEVEL, pLoadObject); // Ãß°¡
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
@@ -812,7 +818,10 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 	ImGui::DragInt("iNum GroundCover", &m_iNum_GroundCoverObj, 1, 1, 200);
 	ImGui::DragFloat("Between", &m_fBetween, 0.1f, 0.1f, 10.f);
 	ImGui::DragFloat("Radius", &m_fRadius, 0.5f, 1.f, 10.f);
-	
+
+
+	pModel->Imgui_Mesh_InstancingSort_EditOrCreate();
+
 	_float4 vPickingPos;
 	_matrix TerrainMatrix = XMMatrixIdentity();
 	if (m_bIstancingObjPicking == true && m_pSelectedTerrain != nullptr)
@@ -907,7 +916,7 @@ void CImgui_MapEditor::Imgui_DZ_objClear()
 
 
 
-void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> & vecMatrixVec, vector<_float3> & vecColiderSize, CEnviromentObj::CHAPTER eChapterGimmcik)
+void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, CTransform* pTransform,vector<_float4x4> & vecMatrixVec, vector<_float3> & vecColiderSize, CEnviromentObj::CHAPTER eChapterGimmcik)
 {
 	if (dynamic_cast<CDynamic_Stone*>(pSelectEnvioObj) != nullptr)
 		return;
@@ -921,13 +930,13 @@ void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, ve
 
 	pModel->Set_InstancePos(vecMatrixVec);
 
-	if (vecMatrixVec.size() > 0)
-		pModel->SetUp_InstModelColider(vecColiderSize);
+	//pModel->InstanceModelPosInit(pTransform->Get_WorldMatrix());
 
 	if (dynamic_cast<CGimmick_EnviObj*>(pSelectEnvioObj) != nullptr)
 	{
 		pModel->Instaincing_GimmkicInit(eChapterGimmcik);
 	}
+	
 }
 
 
@@ -1056,6 +1065,8 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 		EnviromentDesc.iCurLevel = iLevel;
 		EnviromentDesc.iShaderPass = iShaderPass;
 
+		if (wszCloneTag == L"RuinStairs_8_Set_Straight")
+			_bool b = false;
 
 		if (FAILED(pGameInstance->Clone_GameObject(iLevel,
 			wszLayerTag,
@@ -1065,14 +1076,16 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
 
-		if (dynamic_cast<CPulse_Plate_Anim*>(pLoadObject) != nullptr)
+		/*if (dynamic_cast<CPulse_Plate_Anim*>(pLoadObject) != nullptr)
 		{
 			pGameInstance->Add_AnimObject(g_LEVEL, pLoadObject);
-		}
+		}*/
 
-		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
+		CTransform* pLoadObjTrnasform = nullptr;
+		pLoadObjTrnasform = static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"));
+		pLoadObjTrnasform->Set_WorldMatrix_float4x4(fWroldMatrix);
 		//Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
-		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, SaveInstColiderSize, EnviromentDesc.eChapterType);
+		Imgui_Instacing_PosLoad(pLoadObject, pLoadObjTrnasform,vecInstnaceMatrixVec, SaveInstColiderSize, EnviromentDesc.eChapterType);
 
 		for (_int iModelId : jLoadChild["8_DeadZoneModel_ID"])
 		{

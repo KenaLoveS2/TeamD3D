@@ -207,7 +207,7 @@ HRESULT CPulse_Plate_Anim::SetUp_Components()
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_PulsePlateAnim", TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_PulsePlateAnim", TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
 
@@ -249,7 +249,7 @@ void CPulse_Plate_Anim::Pulse_Plate_AnimControl(_float fTimeDelta)
 		m_pModelCom->Set_AnimIndex(2);
 		if(m_EnviromentDesc.iRoomIndex == 1 && !m_bFirstCinema)
 		{
-			CGameInstance::GetInstance()->Work_Camera(TEXT("MAP_CINE0"));
+			FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Work_Camera(TEXT("MAP_CINE0")), );
 			dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Play();
 			m_bFirstCinema = true;
 		}

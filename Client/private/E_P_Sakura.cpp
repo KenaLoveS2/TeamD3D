@@ -58,10 +58,10 @@ void CE_P_Sakura::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);	
 
 	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
-	m_bStart_InstMove = m_pModelCom->Culling_InstancingMeshs(100.f, WolrdMat);
+	//m_bStart_InstMove = m_pModelCom->Culling_InstancingMeshs(100.f, WolrdMat);
 
-	if(!m_bStart_InstMove)
-		m_pModelCom->Instaincing_mesh_Effect_tick(0.f, fTimeDelta);
+	//if(!m_bStart_InstMove)
+	//	m_pModelCom->Instaincing_mesh_Effect_tick(0.f, fTimeDelta);
 
 }
 
@@ -104,7 +104,7 @@ HRESULT CE_P_Sakura::SetUp_Components()
 
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Sakura_Flower", TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Sakura_Flower", TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

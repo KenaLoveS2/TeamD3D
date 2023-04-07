@@ -1,10 +1,7 @@
-
 #include "Shader_Client_Defines.h"
 
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
-texture2D		g_DiffuseTexture;
-texture2D		g_MaskTexture;
+Texture2D<float4>		g_DiffuseTexture;
+Texture2D<float4>		g_MaskTexture;
 
 float			g_fHDRItensity;
 
@@ -26,8 +23,6 @@ int				g_XFrameNow = 0, g_YFrameNow = 0;
 //texture2D		g_Texture;
 //texture2D		g_DepthTexture;
 //texture2D		g_NoiseTexture;
-
-
 //int		g_XFrameNow = 0, g_YFrameNow = 0;	/* Current Sprite frame */
 //int		g_XFrames = 1, g_YFrames = 1;		/* the number of sprites devided each side */
 //float	g_fSpeedX = 0.f, g_fSpeedY = 0.f;	/* UV Move Speed */
@@ -37,7 +32,6 @@ int				g_XFrameNow = 0, g_YFrameNow = 0;
 //float	g_fAlpha = 1.f;
 //float	g_fAmount = 1.f; /* Guage Data (normalized) */
 //float	g_fEnd = 0.f;
-
 
 struct VS_IN
 {

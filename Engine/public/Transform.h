@@ -208,6 +208,9 @@ public:
 	_bool IsLook(_fvector vTargetPos, _float fCheckDegree);
 	void Sync_ActorMatrix(_float4x4& Matrix);
 	void Set_PxActorSleep(_bool bSleep);
+
+	void Sync_ActorMatrixByTransformMatrix();
+	void Set_PxActorActive(_bool bFlag);
 };
 
 END

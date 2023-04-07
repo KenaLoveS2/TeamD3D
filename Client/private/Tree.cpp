@@ -37,6 +37,8 @@ HRESULT CTree::Initialize(void * pArg)
 
 HRESULT CTree::Late_Initialize(void * pArg)
 {
+	
+
 	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
 	{
 		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
@@ -54,6 +56,13 @@ HRESULT CTree::Late_Initialize(void * pArg)
 void CTree::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if(m_bOncePosUpdate ==false && m_bRenderActive)
+	{
+		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+		m_bOncePosUpdate = true;
+	}
+
 }
 
 void CTree::Late_Tick(_float fTimeDelta)
@@ -209,7 +218,7 @@ HRESULT CTree::Render()
 			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
 		}
 	}
 
@@ -242,7 +251,7 @@ HRESULT CTree::RenderShadow()
 		for (_uint i = 0; i < iNumMeshes; ++i)
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 21);
 		}
 	}
 
@@ -273,7 +282,7 @@ HRESULT CTree::RenderCine()
 		{
 			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 10), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 20), E_FAIL);
 		}
 	}
 
@@ -334,26 +343,13 @@ HRESULT CTree::SetUp_Components()
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 	/* For.Com_Shader */
-	if (m_pModelCom->Get_IStancingModel())
-	{
-		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
-			(CComponent**)&m_pShaderCom)))
-			return E_FAIL;
-
-		m_iShaderOption = 1;
-	}
-	else
-	{
-		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
-			(CComponent**)&m_pShaderCom)))
-			return E_FAIL;
-
-		m_iShaderOption = 4;
-	}
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
+		(CComponent**)&m_pShaderCom)))
+		return E_FAIL;
 
 	return S_OK;
 }

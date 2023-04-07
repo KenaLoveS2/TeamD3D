@@ -13,7 +13,7 @@
 #include "CTexture_Manager.h"
 #include "PostFX.h"
 #include "Enviroment_Manager.h"
-
+#include "CTexture_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -169,7 +169,6 @@ HRESULT CGameInstance::Clear_Graphic_Device(const _float4 * pColor)
 	HRESULT			hr = 0;
 
 	CONTEXT_LOCK
-
 	hr = m_pGraphic_Device->Clear_BackBuffer_View(*pColor);	
 	hr = m_pGraphic_Device->Clear_DepthStencil_View();
 
@@ -947,6 +946,12 @@ _bool CGameInstance::IsWorkCamera(const _tchar * pCameraTag)
 	return m_pCamera_Manager->IsWorkCamera(pCameraTag);
 }
 
+HRESULT CGameInstance::Camera_SceneClear()
+{
+	NULL_CHECK_RETURN(m_pCamera_Manager, S_OK);
+	return m_pCamera_Manager->Clear();
+}
+
 HRESULT CGameInstance::Call_Function(CBase * pObj, const _tchar * pFuncName, _float fTimeDelta)
 {
 	NULL_CHECK_RETURN(m_pFunction_Manager, E_FAIL);
@@ -977,6 +982,18 @@ _uint CGameInstance::Get_CurrentPlayerRoomIndex()
 {
 	assert(nullptr != m_pEnviroment_Manager && "CGameInstance::Set_PlayerPtr");
 	return m_pEnviroment_Manager->Get_CurrentPlayerRoomIndex();
+}
+
+void CGameInstance::Scene_EnviMgr_Change()
+{
+	assert(nullptr != m_pEnviroment_Manager && "CGameInstance::Scene_EnviMgr_Change");
+	m_pEnviroment_Manager->Clear();
+}
+
+HRESULT CGameInstance::Texture_Manager_SceneChange()
+{
+	assert(nullptr != m_pTexture_Manager && "CGameInstance::Texture_Manager_SceneChange");
+	return m_pTexture_Manager->Scene_Chane_Clear();
 }
 
 void CGameInstance::Release_Engine()

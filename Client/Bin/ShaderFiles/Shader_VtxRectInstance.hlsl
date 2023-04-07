@@ -1,9 +1,6 @@
-
 #include "Shader_Client_Defines.h"
 
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
-texture2D		g_Texture;
+Texture2D<float4>		g_Texture;
 
 struct VS_IN
 {

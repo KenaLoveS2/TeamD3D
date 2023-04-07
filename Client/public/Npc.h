@@ -17,12 +17,12 @@ class CNpc : public CGameObject
 protected:
 	enum NpcShaderPass
 	{
-		DEFAULT,
-		SHADOW,
-		BENI_EYE,
-		AORM,
-		SAIYA_EYE,
-		CINE,
+		DEFAULT = 0,
+		SHADOW = 11, 
+		CINE = 12,
+		AORM = 27,
+		BENI_EYE = 29,
+		SAIYA_EYE = 30,
 		PASS_END
 	};
 

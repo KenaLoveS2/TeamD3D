@@ -1,20 +1,18 @@
-
 #include "Shader_Client_Defines.h"
 
 /**********Constant Buffer*********/
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_DepthTexture;
 vector			g_vCamPosition;
-float			g_fHDRValue;
+float				g_fHDRValue;
 /**********************************/
 
 /**********Trail Option_1*********/
-bool	g_IsTrail, g_IsUseMask;
+bool		g_IsTrail, g_IsUseMask;
 int		g_TextureRenderType, g_BlendType;
 int		g_SeparateWidth, g_SeparateHeight;
-uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
-float   g_WidthFrame, g_HeightFrame;
-float4  g_vColor;
+uint		g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
+float		 g_WidthFrame, g_HeightFrame;
+float4	 g_vColor;
 /**********************************/
 /********** Trail Option_2*********/
 float   g_InfoSize;

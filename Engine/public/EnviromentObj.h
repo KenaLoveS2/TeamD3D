@@ -80,6 +80,8 @@ protected:
 	class CShader*							m_pShaderCom = nullptr;
 	class CRenderer*						m_pRendererCom = nullptr;
 
+	_bool									m_bOncePosUpdate=false;
+
 private:/*For.ImguiTool*/
 	string										m_str_Imgui_ComTag = "";
 	_int											m_iImgui_ComponentOption = 0;

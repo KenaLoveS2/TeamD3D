@@ -1,29 +1,19 @@
 #include "Shader_Client_Defines.h"
 
 /**********Constant Buffer***********/
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 vector			g_vBrushPos;
 float			g_fBrushRange = 5.f;
 float			g_fFar = 500.f;
 /*************************************/
 /* 재질정보 */
 
-//Texture2D<float4>		g_DiffuseTexture;
-//
-//Texture2D<float4>		g_FilterOneTexture;
-//Texture2D<float4>		g_FilterTwoTexture;
-//Texture2D<float4>		g_FilterThreeTexture;
-
 Texture2D<float4>		g_BaseTexture;
-//Texture2D<float4>		g_DiffuseTexture[7];
-
 Texture2D<float4>		g_DiffuseTexture_0;
 Texture2D<float4>		g_DiffuseTexture_1;
 Texture2D<float4>		g_DiffuseTexture_2;
 
 /* 지형 셰이딩 */
 Texture2D<float4>		g_BrushTexture;
-
 Texture2D<float4>		g_FilterTexture[3];
 
 struct VS_IN

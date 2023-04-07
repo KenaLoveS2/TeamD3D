@@ -155,10 +155,10 @@ void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*> & VecInstancingMatri
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 	m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
-	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	m_BufferDesc.StructureByteStride = 0;
-	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	m_BufferDesc.CPUAccessFlags = 0;
 	m_BufferDesc.MiscFlags = 0;
 
 	/*Instancing_ Mesh*/
@@ -229,6 +229,7 @@ void CInstancing_Mesh::InstBuffer_Update(vector<_float4x4*> & VecInstancingMatri
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
+	CONTEXT_LOCK
 	HRESULT hr =	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -255,6 +256,7 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -278,8 +280,81 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 	}
 }
 
-void CInstancing_Mesh::Set_PxTriangle(vector<_float4x4*> & VecInstancingMatrix)
+void CInstancing_Mesh::Edit_InstanceAngle_Pos_Model(vector<_float4x4*> & VecInstancingMatrix, _int EditStartIndex,
+	_int EditEndIndex, _float3 vPos, _float3 vAngle )
 {
+	if (EditEndIndex <= 0 || EditEndIndex >= m_iNumInstance)
+		return;
+
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	_float4x4 Temp;
+	_matrix		m_matWorld, matScale, matRotX, matRotY, matRotZ, matTrans;
+	_float4 OldPos;
+	
+	CONTEXT_LOCK
+		HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	if (SUCCEEDED(hr))
+	{
+		for (_int i = EditStartIndex; i <= EditEndIndex; ++i)
+		{
+			matScale = XMMatrixScaling(1.f, 1.f, 1.f);
+			matRotX = XMMatrixRotationX(XMConvertToRadians(vAngle.x));
+			matRotY = XMMatrixRotationY(XMConvertToRadians(vAngle.y));
+			matRotZ = XMMatrixRotationZ(XMConvertToRadians(vAngle.z));
+
+			memcpy(&OldPos, &((VTXMATRIX*)SubResource.pData)[i].vPosition, sizeof(_float4));
+
+
+			matTrans = XMMatrixTranslation(OldPos.x + vPos.x , OldPos.y + vPos.y ,
+				OldPos.z + vPos.z );
+
+			m_matWorld = matScale * matRotX * matRotY * matRotZ * matTrans;
+			XMStoreFloat4x4(&Temp, m_matWorld);
+
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &Temp.m[0], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &Temp.m[1], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &Temp.m[2], sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vPosition, &Temp.m[3], sizeof(_float4));
+
+			*VecInstancingMatrix[i] = Temp;
+		}
+
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	}
+}
+
+
+void CInstancing_Mesh::Create_InstanceModel_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix,
+	_int iCreateNum, _float3 vPos, _float3 vAngle, _float3 vDirRatio)
+{
+	_float4 vCreatePos;
+
+	for(_uint i=0 ;i< iCreateNum; ++i)
+	{
+		_float4x4* Temp = new _float4x4;
+		XMStoreFloat4x4(Temp, XMMatrixIdentity());
+
+
+		_matrix		m_matWorld, matScale, matRotX, matRotY, matRotZ, matTrans;
+
+		matScale = XMMatrixScaling(1.f, 1.f, 1.f);
+		matRotX = XMMatrixRotationX(XMConvertToRadians(vAngle.x));
+		matRotY = XMMatrixRotationY(XMConvertToRadians(vAngle.y));
+		matRotZ = XMMatrixRotationZ(XMConvertToRadians(vAngle.z));
+		matTrans = XMMatrixTranslation(vPos.x + vDirRatio.x * i, vPos.y + vDirRatio.y *i , vPos.z+ vDirRatio.z *i);
+
+		m_matWorld = matScale * matRotX * matRotY * matRotZ * matTrans;
+		XMStoreFloat4x4(Temp, m_matWorld);
+
+		VecInstancingMatrix.push_back(Temp);
+	}
+
+
+	Add_InstanceModel(VecInstancingMatrix);
+
 
 }
 
@@ -288,6 +363,7 @@ void CInstancing_Mesh::InstaincingMesh_EffectTick(_float yLimitPos, _float fTime
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
+	CONTEXT_LOCK
 	HRESULT hr =	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -311,11 +387,11 @@ void CInstancing_Mesh::InstaincingMesh_EffectTick(_float yLimitPos, _float fTime
 }
 
 HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod,
-	_bool bUseTriangleMeshActor, _uint iNumInstance)
+	_bool bUseTriangleMeshActor, _bool bPointBuffer, _uint iNumInstance)
 {
 	if (hFile == nullptr)
 		return S_OK;
-	m_bLodMesh = bIsLod;			// is_Lod Or NonLod????
+	m_bLodMesh = bIsLod;		 m_bPointListMesh = bPointBuffer;
 	m_bTriangle_Collider = bUseTriangleMeshActor;
 	_ulong dwByte = 0;
 	ReadFile(hFile, &m_eType, sizeof(m_eType), &dwByte, nullptr);
@@ -373,11 +449,12 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bo
 #pragma region INDEX_BUFFER
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 	m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
-	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	m_BufferDesc.StructureByteStride = 0;
-	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	m_BufferDesc.CPUAccessFlags = 0;
 	m_BufferDesc.MiscFlags = 0;
+
 
 	/*Origin _Mesh*/
 	m_pIndices = new FACEINDICES32[m_iOriginNumPrimitive];
@@ -558,6 +635,7 @@ HRESULT CInstancing_Mesh::Render()
 
 _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> & InstanceMatrixVec, _fmatrix ParentMat)
 {
+	return 1;
 	list<_float4x4> InstPos;
 
 	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
@@ -588,6 +666,8 @@ _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vecto
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	CONTEXT_LOCK
 	HRESULT hr =m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if(SUCCEEDED(hr))
@@ -647,6 +727,7 @@ _int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLi
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	CONTEXT_LOCK
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	_int iIndex = 0;
@@ -694,10 +775,10 @@ void CInstancing_Mesh::Set_InstanceMeshEffect(CTransform* pParentTransform, _int
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 	m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
-	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	m_BufferDesc.StructureByteStride = 0;
-	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	m_BufferDesc.CPUAccessFlags = 0;
 	m_BufferDesc.MiscFlags = 0;
 
 	/*Instancing_ Mesh*/
@@ -781,7 +862,7 @@ _bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapter
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -829,7 +910,7 @@ void CInstancing_Mesh::InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChap
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -848,7 +929,7 @@ void CInstancing_Mesh::InstaincingMesh_yPosControl(_float yPos)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -915,7 +996,7 @@ void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransf
 
 		assert(pStaticRigid != nullptr && "CInstancing_Mesh::Create_PxTriangle_InstMeshActor");
 		pPhysX->Set_ActorMatrix(pStaticRigid, (matNew));		// 노말라이즈 매트릭스보내고
-		//m_StaticRigid_List.push_back(pStaticRigid);
+		m_StaticRigid_List.push_back(pStaticRigid);
 	}
 
 
@@ -982,14 +1063,36 @@ HRESULT CInstancing_Mesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel* 
 		m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
 	}
 
-	m_iStride = sizeof(VTXMODEL);
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-	m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
-	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	m_BufferDesc.StructureByteStride = m_iStride;
-	m_BufferDesc.CPUAccessFlags = 0;
-	m_BufferDesc.MiscFlags = 0;
+
+	if (m_bPointListMesh == true)
+	{
+		m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+		m_eIndexFormat = DXGI_FORMAT_R32_UINT;
+		m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
+		m_iNumIndicesPerPrimitive = 1;
+		m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
+
+		m_iStride = sizeof(VTXMODEL);
+	
+		m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
+		m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		m_BufferDesc.StructureByteStride = m_iStride;
+		m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		m_BufferDesc.MiscFlags = 0;
+	}
+	else
+	{
+		m_iStride = sizeof(VTXMODEL);
+		m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
+		m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		m_BufferDesc.StructureByteStride = m_iStride;
+		m_BufferDesc.CPUAccessFlags = 0;
+		m_BufferDesc.MiscFlags = 0;
+
+	}
 
 
 	_matrix	PivotMatrix = pModel->Get_PivotMatrix();
@@ -1128,10 +1231,10 @@ void CInstancing_Mesh::Calc_InstMinMax(_float* pMinX, _float* pMaxX, _float* pMi
 }
 
 CInstancing_Mesh* CInstancing_Mesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
-	HANDLE hFile, CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _uint iNumInstance)
+	HANDLE hFile, CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _bool bPointBuffer, _uint iNumInstance)
 {
 	CInstancing_Mesh* pInstance = new CInstancing_Mesh(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, bUseTriangleMeshActor, iNumInstance)))
+	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, bUseTriangleMeshActor, bPointBuffer, iNumInstance)))
 	{
 		MSG_BOX("Failed to Created : CInstancing_Mesh");
 		Safe_Release(pInstance);
@@ -1168,7 +1271,7 @@ void CInstancing_Mesh::Free()
 		Safe_Delete_Array(m_pIndices);
 	}
 
-	/*if (m_bTriangle_Collider && m_isCloned==true)
+	if (m_bTriangle_Collider && m_isCloned==true)
 	{
 		for (auto pStaticRigid : m_StaticRigid_List)
 		{
@@ -1178,7 +1281,7 @@ void CInstancing_Mesh::Free()
 			}
 		}
 		m_StaticRigid_List.clear();
-	}*/
+	}
 
 
 	m_pInstancingPositions.clear();

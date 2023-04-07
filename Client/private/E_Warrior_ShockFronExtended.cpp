@@ -201,7 +201,7 @@ HRESULT CE_Warrior_ShockFrontExtended::SetUp_ShaderResources()
 HRESULT CE_Warrior_ShockFrontExtended::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_ShockFront_Extended"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_ShockFront_Extended"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
 	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_ETC;
 
 	m_eEFfectDesc.fFrame[0] = 38.f;

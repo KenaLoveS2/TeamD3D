@@ -85,6 +85,8 @@ wstring CUtile::stringToWString(string str)
 	return wstr.assign(str.begin(), str.end());
 }
 
+
+
 char * CUtile::Split_String(char * pSour, char szSymbol)
 {
 	_uint	iSourLength = (_uint)strlen(pSour) + 1;

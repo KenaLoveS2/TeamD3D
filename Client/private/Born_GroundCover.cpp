@@ -38,6 +38,8 @@ HRESULT CBorn_GroundCover::Initialize(void * pArg)
 
 HRESULT CBorn_GroundCover::Late_Initialize(void* pArg)
 {
+	m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
+
 	m_pModelCom->Instaincing_GimmkicInit(Gimmick_TYPE_FLOWER);
 	return S_OK;
 }
@@ -120,7 +122,7 @@ HRESULT CBorn_GroundCover::SetUp_Components()
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
@@ -180,8 +182,10 @@ void CBorn_GroundCover::Culling(_float fTimeDelta)
 			m_bUprise = true;
 	}
 
+#ifdef FOR_MAP_GIMMICK
 	if ( true  == m_bUprise)
 		m_pModelCom->Instaincing_MoveControl(Gimmick_TYPE_FLOWER, fTimeDelta);
+#endif
 }
 
 CBorn_GroundCover * CBorn_GroundCover::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

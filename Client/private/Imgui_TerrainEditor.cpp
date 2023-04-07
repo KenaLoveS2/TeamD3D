@@ -372,6 +372,7 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 		D3D11_MAPPED_SUBRESOURCE		SubResource;
 		ZeroMemory(&SubResource, sizeof SubResource);
 
+		CONTEXT_LOCK
 		HRESULT hr = m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
 		if (SUCCEEDED(hr))
@@ -468,7 +469,7 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 
 	D3D11_MAPPED_SUBRESOURCE		SubResource;
 	ZeroMemory(&SubResource, sizeof SubResource);
-
+	CONTEXT_LOCK
 	HRESULT hr = m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -574,7 +575,7 @@ void CImgui_TerrainEditor::UnDraw_FilterTexture()
 
 	D3D11_MAPPED_SUBRESOURCE		SubResource;
 	ZeroMemory(&SubResource, sizeof SubResource);
-
+	CONTEXT_LOCK
 	HRESULT hr =	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
