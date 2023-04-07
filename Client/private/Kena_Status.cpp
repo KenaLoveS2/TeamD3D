@@ -451,24 +451,24 @@ void CKena_Status::Set_RotCount(_int iValue)
 {
 	/* NEED : ADD_ROTCOUNT() 수정 후에 이 함수는 비워줘. */
 
-	m_iCurrentRotCount = iValue;
+	//m_iCurrentRotCount = iValue;
 
-	CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
-	CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
-	CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
+	//CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
+	//CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
+	//CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
 
-	_float fRotMax = (_float)Get_RotMax();
-	_float fRotNow = (_float)m_iCurrentRotCount;
-	_float fGuage = fRotNow / fRotMax;
+	//_float fRotMax = (_float)Get_RotMax();
+	//_float fRotNow = (_float)m_iCurrentRotCount;
+	//_float fGuage = fRotNow / fRotMax;
 
-	m_StatusDelegator.broadcast(eNow, fRotNow);
-	m_StatusDelegator.broadcast(eMax, fRotMax);
-	m_StatusDelegator.broadcast(eGet, fGuage);
+	//m_StatusDelegator.broadcast(eNow, fRotNow);
+	//m_StatusDelegator.broadcast(eMax, fRotMax);
+	//m_StatusDelegator.broadcast(eGet, fGuage);
 
 
-	/* think later */
-	if (Get_RotMax() == m_iCurrentRotCount)
-		m_iRotLevel++;
+	///* think later */
+	//if (Get_RotMax() == m_iCurrentRotCount)
+	//	m_iRotLevel++;
 }
 
 void CKena_Status::Set_CurArrowCount(_int iValue)
@@ -528,6 +528,25 @@ void CKena_Status::Add_RotCount()
 
 		/* NEED : UI MAX PIP COUNT INCREASE */
 		/* NEED : UI ROT COUNT GAGE RESET */
+		/* 230407 */
+		CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
+		CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
+		CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
+
+		_float fRotMax = (_float)Get_RotMax();
+		_float fRotNow = (_float)m_iCurrentRotCount;
+		_float fGuage = fRotNow / fRotMax;
+
+		m_StatusDelegator.broadcast(eNow, fRotNow);
+		m_StatusDelegator.broadcast(eMax, fRotMax);
+		m_StatusDelegator.broadcast(eGet, fGuage);
+
+
+		/* think later */
+		//if (Get_RotMax() == m_iCurrentRotCount)
+		//	m_iRotLevel++;
+
+
 	}
 }
 

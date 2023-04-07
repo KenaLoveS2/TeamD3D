@@ -1587,14 +1587,79 @@ PS_OUT PS_MAIN_HUNTER_HAIR(PS_IN In)
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	if(In.vTexUV.y < 0.5f)
-		Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,
-			length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 2.f), 0.f);
-	else
+
+	if (vEmissiveDesc.r < 0.0001f)
 	{
 		Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,
-			length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 5.f), 0.f);
+			length(vEmissiveDesc) + (g_fHDRIntensity), 0.f);
 	}
+	else
+	{
+		if (In.vTexUV.y < 0.5f)
+		{
+			Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,
+				length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 4.f), 0.f);
+		}
+		else
+		{
+			float4 vColor = float4(237, 152, 196, 1) / 255;
+			Out.vDiffuse.rgb *= vColor.rgb;
+
+			if (In.vTexUV.x > 0.2f)
+			{
+				Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,
+					length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 7.f), 0.f);
+			}
+			else
+			{
+				if (vEmissiveDesc.r < 0.2f)
+				{
+					Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,
+						length(vEmissiveDesc) + 0.5f, 0.f);
+				}
+				else
+				{
+					Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,
+						length(vEmissiveDesc) + 4.f, 0.f);
+				}
+			}
+		}
+	}
+	//if (In.vTexUV.y < 0.5f)
+	//{
+	//	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,
+	//		length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 4.f), 0.f);
+	//}
+	//else
+	//{
+	//	if (In.vTexUV.y < 0.1f)
+
+	//}
+
+	//if (vEmissiveDesc.r < 0.01f)
+	//{
+	//	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,
+	//		length(vEmissiveDesc) + g_fHDRIntensity, 0.f);
+	//}
+	//else if (vEmissiveDesc.r < 0.2f)
+	//{
+	//	if (In.vTexUV.y > 0.5f)
+	//	{
+	//		float4 vColor = float4( 240, 104, 175, 1.f ) / 255;
+	//		Out.vDiffuse.rgb *= vColor.rgb;
+
+	//		Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,
+	//			length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 20.f), 0.f);
+	//	}
+	//	else
+	//	{
+	//		Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,
+	//			length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 4.f), 0.f);
+	//	}
+	//}
+
+
+
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
