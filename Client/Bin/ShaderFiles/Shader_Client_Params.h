@@ -50,7 +50,6 @@ float4	g_float4_2;
 float4	g_float4_3;
 float4	g_float4_4;
 
-//bool
 bool		g_bool_0;
 bool		g_bool_1;
 bool		g_bool_2;

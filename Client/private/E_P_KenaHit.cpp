@@ -36,7 +36,7 @@ HRESULT CE_P_KenaHit::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-	m_pVIInstancingBufferCom->Set_PSize(_float2(0.05f, 0.05f));
+	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.2f));
 	return S_OK;
 }
 

@@ -71,8 +71,8 @@ void CE_KenaDamage::Tick(_float fTimeDelta)
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(m_eEFfectDesc.bActive);
 
-	Set_AddScale(fTimeDelta + 1.0f);
-	_bool bResult = TurnOffSystem(m_fScaleTime, 0.2f, fTimeDelta);
+	Set_AddScale(fTimeDelta + 2.0f);
+	_bool bResult = TurnOffSystem(m_fScaleTime, 0.3f, fTimeDelta);
 	if (bResult == true)
 	{
 		for (auto& pChild : m_vecChild)
