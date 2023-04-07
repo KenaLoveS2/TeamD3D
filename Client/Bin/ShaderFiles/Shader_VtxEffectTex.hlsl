@@ -498,12 +498,11 @@ PS_OUT PS_MAIN_E_BLINK(PS_IN In)
 	Out.vColor = saturate(Out.vColor.r * g_vColor) * 2.5f;
 	Out.vColor.rgb = Out.vColor.rgb * 2.f;
 
-	float fTime = min(g_Time, 5.f);
-
-	if (2.5f < fTime)   // Time 이상 컬러값이 내려가야함
-		Out.vColor.a = Out.vColor.a * (5.f - fTime);
+	float fTime = min(g_Time, 3.f);
+	if (1.5f < fTime)   // Time 이상 컬러값이 내려가야함
+		Out.vColor.a = Out.vColor.a * (3.f - fTime);
 	else // Time 이하 컬러값이 올라가야함
-		Out.vColor.a = Out.vColor.a * (fTime / 5.f);
+		Out.vColor.a = Out.vColor.a * (fTime / 3.f);
 
 	return Out;
 }

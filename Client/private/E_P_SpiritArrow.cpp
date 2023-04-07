@@ -104,7 +104,7 @@ HRESULT CE_P_SpiritArrow::SetUp_ShaderResources()
 void CE_P_SpiritArrow::Set_EffectOption()
 {
 	m_eEFfectDesc.vColor = XMVectorSet(1.f, 2.f, 4.f, 0.4f);
-	m_pVIInstancingBufferCom->Set_PSize(_float2(0.1f, 0.1f));
+	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.2f));
 }
 
 CE_P_SpiritArrow * CE_P_SpiritArrow::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)

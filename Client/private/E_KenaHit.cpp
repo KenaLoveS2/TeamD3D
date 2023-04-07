@@ -51,10 +51,10 @@ HRESULT CE_KenaHit::Initialize(void * pArg)
 
 void CE_KenaHit::Tick(_float fTimeDelta)
 {	
-	__super::Tick(fTimeDelta);
+	if (m_eEFfectDesc.bActive == false)
+		return;
 
-	for (auto& pChild : m_vecChild)
-		pChild->Set_Active(m_eEFfectDesc.bActive);
+	__super::Tick(fTimeDelta);
 
 	/* Change Scale */
 	Set_AddScale(fTimeDelta + 0.8f);
@@ -69,6 +69,9 @@ void CE_KenaHit::Tick(_float fTimeDelta)
 		m_eEFfectDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
 	}
 	/* Change Scale */
+
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Active(m_eEFfectDesc.bActive);
 }
 
 void CE_KenaHit::Late_Tick(_float fTimeDelta)

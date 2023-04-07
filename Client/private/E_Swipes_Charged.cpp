@@ -96,7 +96,6 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 		}
 
 		m_pTransformCom->Tick(fTimeDelta);
-
 		return;
 	}
 

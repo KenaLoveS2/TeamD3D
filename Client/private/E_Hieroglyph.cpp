@@ -43,20 +43,20 @@ HRESULT CE_Hieroglyph::Initialize(void * pArg)
 
 HRESULT CE_Hieroglyph::Late_Initialize(void * pArg)
 {	
-
 	return S_OK;
 }
 
 void CE_Hieroglyph::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
  	if (m_eEFfectDesc.bActive == false)
  		return;
 
-	m_fShaderBindTime += fTimeDelta;
-	if (m_fShaderBindTime > 5.f)
+	__super::Tick(fTimeDelta);
+
+	/* TurnOff System */
+	if (m_fShaderBindTime > 3.f)
 	{
+		m_pTransformCom->Set_PositionY(-1000.f);
 		m_eEFfectDesc.bActive = false;
 		m_fShaderBindTime = 0.0f;
 	}
@@ -67,24 +67,18 @@ void CE_Hieroglyph::Late_Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	//if (m_pParent != nullptr)
-	//	Set_Matrix();
-
 	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CE_Hieroglyph::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
 	return S_OK;
 }
 
-_int CE_Hieroglyph::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+_int CE_Hieroglyph::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	return 0;
 }

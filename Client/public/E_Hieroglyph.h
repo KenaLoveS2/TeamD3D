@@ -33,7 +33,8 @@ private:
 
 private:
 	_float4x4				m_SaveInitWorldMatrix;
-	
+	_float					m_fTime = 0.0f;
+
 public:
 	static  CE_Hieroglyph* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject*	   Clone(void* pArg = nullptr) override;

@@ -4,6 +4,13 @@
 BEGIN(Client)
 class CE_ShamanSmoke final : public CEffect
 {
+public:
+	enum STATE
+	{
+		STATE_IDLE, 
+		STATE_TELEPORT, 
+		STATE_END
+	};
 private:
 	CE_ShamanSmoke(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CE_ShamanSmoke(const CE_ShamanSmoke& rhs);
@@ -17,9 +24,15 @@ public:
 	virtual HRESULT Render() override;
 	virtual void	Imgui_RenderProperty() override;
 
+public:
+	void			Set_State(STATE eState, _float4 vPos);
+
 private:
 	HRESULT			SetUp_Components();
 	HRESULT			SetUp_ShaderResources();
+
+private:
+	STATE			m_eState = STATE_IDLE;
 
 public:
 	static CE_ShamanSmoke*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath =nullptr);

@@ -486,7 +486,7 @@ _bool CEffect_Base::TurnOffSystem(_float& fTurnoffTime, _float fDurationTime, _f
 	fTurnoffTime += fTimeDelta;
 	if (fTurnoffTime > fDurationTime)
 	{
-		//m_pTransformCom->Set_PositionY(-1000.f);
+		m_pTransformCom->Set_PositionY(-1000.f);
 		m_eEFfectDesc.bActive = false;
 		fTurnoffTime = 0.0f;
 		return true;

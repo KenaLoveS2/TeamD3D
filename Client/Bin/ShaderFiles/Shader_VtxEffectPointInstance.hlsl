@@ -64,6 +64,8 @@ struct VS_OUT
 	float3		vCenterPosition : TEXCOORD0;
 	float3		vRightScale : TEXCOORD1;
 	float2		vPSize : PSIZE;
+	float		fSize : TEXCOORD2;
+	float		fLife : TEXCOORD3;
 };
 
 /* Trail */
@@ -90,10 +92,18 @@ VS_OUT VS_MAIN(VS_IN In)
 	VS_OUT		Out = (VS_OUT)0;
 
 	vector      vPosition = mul(float4(In.vPosition, 1.f), In.Matrix);
+	float4x4    Matrix = In.Matrix;
+	Out.fLife = In.Matrix[3][3];
+	Out.fSize = In.Matrix[0][3];
+
+	Matrix[0][3] = 0.f;
+	Matrix[1][3] = 0.f;
+	Matrix[2][3] = 0.f;
+	Matrix[3][3] = 1.f;
 
 	//Out.vPosition = mul(vPosition, g_WorldMatrix).xyz;
-	Out.vPosition = mul(float4(matrix_postion(In.Matrix), 1.f), g_WorldMatrix).xyz;
 	//Out.vCenterPosition = matrix_postion(g_WorldMatrix);
+	Out.vPosition = mul(float4(matrix_postion(In.Matrix), 1.f), g_WorldMatrix).xyz;
 	Out.vCenterPosition = mul(float4(0.f, 0.f, 0.f, 1.f), g_WorldMatrix).xyz;
 	Out.vRightScale = matrix_right(In.Matrix);
 	Out.vPSize = In.vPSize;
@@ -129,12 +139,15 @@ struct GS_IN
 	float3		vCenterPosition : TEXCOORD0;
 	float3		vRightScale : TEXCOORD1;
 	float2		vPSize : PSIZE;
+	float		fSize : TEXCOORD2;
+	float		fLife : TEXCOORD3;
 };
 
 struct GS_OUT
 {
 	float4		vPosition : SV_POSITION;
 	float2		vTexUV : TEXCOORD0;
+	float		fLife : TEXCOORD1;
 };
 
 /* Trail */
@@ -162,8 +175,8 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 
 	float3      vLook = g_vCamPosition.xyz - In[0].vPosition;
 	float3      vDir = normalize(In[0].vPosition - In[0].vCenterPosition);
-	float3      vRight = normalize(cross(vDir, vLook)) * In[0].vPSize.x * 0.5f;
-	float3      vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f * In[0].vRightScale.x;
+	float3      vRight = normalize(cross(vDir, vLook)) * In[0].fSize * 0.5f;
+	float3      vUp = normalize(cross(vLook, vRight)) * In[0].fSize * 0.5f * In[0].vRightScale.x;
 
 	matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float3      vPosition;
@@ -171,18 +184,22 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	vPosition = In[0].vPosition + vRight + vUp;
 	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[0].vTexUV = float2(0.f, 0.f);
+	Out[0].fLife = In[0].fLife;
 
 	vPosition = In[0].vPosition - vRight + vUp;
 	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[1].vTexUV = float2(1.f, 0.f);
+	Out[1].fLife = In[0].fLife;
 
 	vPosition = In[0].vPosition - vRight - vUp;
 	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[2].vTexUV = float2(1.f, 1.f);
+	Out[2].fLife = In[0].fLife;
 
 	vPosition = In[0].vPosition + vRight - vUp;
 	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[3].vTexUV = float2(0.f, 1.f);
+	Out[3].fLife = In[0].fLife;
 
 	Vertices.Append(Out[0]);
 	Vertices.Append(Out[1]);
@@ -202,8 +219,8 @@ void GS_DEFAULT(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	GS_OUT		Out[4];
 
 	float3		vLook = g_vCamPosition.xyz - In[0].vPosition;
-	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].vPSize.x * 0.5f;
-	float3		vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f;
+	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].fSize * 0.5f;
+	float3		vUp = normalize(cross(vLook, vRight)) * In[0].fSize * 0.5f;
 
 	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float3		vPosition;
@@ -211,18 +228,22 @@ void GS_DEFAULT(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	vPosition = In[0].vPosition + vRight + vUp;
 	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[0].vTexUV = float2(0.f, 0.f);
+	Out[0].fLife = In[0].fLife;
 
 	vPosition = In[0].vPosition - vRight + vUp;
 	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[1].vTexUV = float2(1.f, 0.f);
+	Out[1].fLife = In[0].fLife;
 
 	vPosition = In[0].vPosition - vRight - vUp;
 	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[2].vTexUV = float2(1.f, 1.f);
+	Out[2].fLife = In[0].fLife;
 
 	vPosition = In[0].vPosition + vRight - vUp;
 	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[3].vTexUV = float2(0.f, 1.f);
+	Out[3].fLife = In[0].fLife;
 
 	Vertices.Append(Out[0]);
 	Vertices.Append(Out[1]);
@@ -245,7 +266,7 @@ void GS_RECTTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 	float4x4    WorldMatrix = In[0].Matrix;
 
 	float3      vUp = matrix_up(WorldMatrix) * In[0].vPSize.y * In[0].fWidth;
-	float3		vRight = matrix_right(WorldMatrix)* In[0].vPSize.x * In[0].fWidth;
+	float3		vRight = matrix_right(WorldMatrix) * In[0].vPSize.x * In[0].fWidth;
 	float3		vPosition = matrix_postion(In[0].Matrix);
 
 	float3 vResultPos;
@@ -284,7 +305,7 @@ void GS_RECTTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 [maxvertexcount(6)]
 void GS_KENATRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices)
 {
-	GS_TRAILOUT		Out[4] = 
+	GS_TRAILOUT		Out[4] =
 	{
 		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } },
 		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } },
@@ -300,7 +321,7 @@ void GS_KENATRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 	float3		vLook = matrix_look(WorldMatrix);
 	float3		vPosition = matrix_postion(In[0].Matrix);
 
-	if (In[0].InstanceID == 0) 
+	if (In[0].InstanceID == 0)
 	{
 		float3  vResultPos;
 		vResultPos = vPosition;
@@ -329,7 +350,7 @@ void GS_KENATRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 		matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
 
 		float3		vPrelook = matrix_look(PreWorldMatrix);
-		float3		vPreUp = matrix_up(PreWorldMatrix)* fCurWidth;
+		float3		vPreUp = matrix_up(PreWorldMatrix) * fCurWidth;
 
 		float3 vResultPos;
 		vResultPos = matrix_postion(PreWorldMatrix);
@@ -655,6 +676,7 @@ struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
 	float2		vTexUV : TEXCOORD0;
+	float       fLife : TEXCOORD1;
 };
 
 struct PS_TRAILIN
@@ -1035,31 +1057,27 @@ PS_OUT PS_FLOWERPARTICLE(PS_IN In)
 //PS_FRONTVIEWBLINK
 PS_OUT PS_FRONTVIEWBLINK(PS_IN In)
 {
-	PS_OUT			Out = (PS_OUT)0;
+   PS_OUT         Out = (PS_OUT)0;
 
-	if (g_TextureRenderType == 1)
-	{
-		In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
-		In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+   if (g_TextureRenderType == 1)
+   {
+      In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+      In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
 
-		In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
-		In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+      In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+      In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
 
-	}
+   }
 
-	vector	 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	vDiffuse.a = vDiffuse.r;
+   vector    vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+   vDiffuse *= /** (float3)0.f */g_vColor;
 
-	vDiffuse.rgb = vDiffuse.rgb * (float3)0.f + g_vColor.rgb;
-	vDiffuse.a = vDiffuse.a * 0.4f;
+   Out.vColor = vDiffuse/* * 1.5f*/;
 
-	Out.vColor = vDiffuse * 1.5f;
+   //float ftime = min(g_time, 2.f);
+   //out.vcolor.a = out.vcolor.a * (2.f - ftime);
 
-	float fTime = min(g_Time, 2.f);
-	if (1.f < fTime)
-		Out.vColor.a = Out.vColor.a * (2.f - fTime);
-
-	return Out;
+   return Out;
 }
 
 //PS_SAPLING
@@ -1083,7 +1101,9 @@ PS_OUT PS_RECTTRAIL(PS_TRAILIN In)
 	if (vDiffuse.a < 0.1f)
 		discard;
 	Out.vColor = vDiffuse + g_vColor;
-	Out.vColor.a = Out.vColor.a * In.fLife;
+	Out.vColor.a *= (1 - In.fLife);
+
+	// Out.vColor.a = Out.vColor.a * In.fLife;
 	return Out;
 }
 
@@ -1109,6 +1129,7 @@ PS_OUT PS_EXPLOSIONPARTICLE(PS_IN In)
 		discard;
 
 	Out.vColor = finalcolor + g_vColor;
+	Out.vColor.a *= (1 - In.fLife);
 	return Out;
 }
 
@@ -1134,8 +1155,9 @@ PS_OUT PS_RECTTRAIL_SPRITE(PS_TRAILIN In)
 	albedo = albedo * g_vColor;
 
 	// Out.vColor = albedo;
-	albedo.a = albedo.a * In.fLife;
+	//albedo.a = albedo.a * In.fLife;
 	Out.vColor = CalcHDRColor(albedo, g_fHDRValue);
+	Out.vColor.a *= (1 - In.fLife);
 
 	return Out;
 }
@@ -1301,7 +1323,7 @@ technique11 DefaultTechnique
 	pass frontviewblink // 12
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();

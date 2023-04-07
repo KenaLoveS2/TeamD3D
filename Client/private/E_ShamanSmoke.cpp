@@ -46,12 +46,7 @@ void CE_ShamanSmoke::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	m_fDurationTime += fTimeDelta;
-	if (m_fDurationTime > 2.f)
-	{
-		m_eEFfectDesc.bActive = false;
-		m_fDurationTime = 0.0f;
-	}
+	TurnOffSystem(m_fDurationTime, 2.f, fTimeDelta);
 }
 
 void CE_ShamanSmoke::Late_Tick(_float fTimeDelta)
@@ -76,6 +71,20 @@ HRESULT CE_ShamanSmoke::Render()
 void CE_ShamanSmoke::Imgui_RenderProperty()
 {
 
+}
+
+void CE_ShamanSmoke::Set_State(STATE eState, _float4 vPos)
+{
+	m_eState = eState;
+	m_eEFfectDesc.bActive = true;
+	m_pTransformCom->Set_Position(vPos);
+
+	if(m_eState == CE_ShamanSmoke::STATE_IDLE)
+	{
+		/* IDLE 상태에서만 손에 연기 나옴*/
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(true);
+	}
 }
 
 HRESULT CE_ShamanSmoke::SetUp_Components()

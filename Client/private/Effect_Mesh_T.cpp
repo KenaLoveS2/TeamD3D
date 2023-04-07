@@ -178,6 +178,8 @@ void CEffect_Mesh_T::Imgui_RenderProperty()
 	ImGui::RadioButton("Sprite", &iType, 0);
 	ImGui::RadioButton("One", &iType, 1);
 
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+
 	if (ImGui::Button("Reset"))
 		m_fTimeDelta = 0.0f;
 
