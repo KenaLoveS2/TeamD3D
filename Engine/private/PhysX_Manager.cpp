@@ -1256,14 +1256,19 @@ void CPhysX_Manager::Reset()
 	PxActorTypeFlags actorTypes = PxActorTypeFlag::eRIGID_STATIC | PxActorTypeFlag::eRIGID_DYNAMIC;
 
 	PxU32 numActors = m_pScene->getNbActors(actorTypes);
-	PxActor** actors = nullptr;
-	m_pScene->getActors(actorTypes, actors, numActors, 0);
+	PxActor** pActors = new PxActor * [numActors];
+	for (PxU32 i = 0; i < numActors; i++)
+		pActors[i] = nullptr;
 
-	for (PxU32 i = 0; i < numActors; i++) 
+	m_pScene->getActors(actorTypes, pActors, numActors, 0);
+
+	for (PxU32 i = 0; i < numActors; i++)
 	{
-		m_pScene->removeActor(*actors[i]);
-		actors[i]->release();
+		m_pScene->removeActor(*pActors[i]);
+		pActors[i]->release();
 	}
+
+	Safe_Delete_Array(pActors);
 }
 
 void CPhysX_Manager::Delete_DynamicActor(PxRigidActor* pActor)
