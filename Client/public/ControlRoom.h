@@ -22,7 +22,9 @@ public:
 	CGameObject*		Get_Find_TriggerObj(const _tchar * pCloneTag);
 	void				Add_Gimmick_TrggerObj(const _tchar*pCloneTag, CGameObject* pTriggerObj);
 	void				Add_GimmickObj(_int iRoomNumber, CGameObject* pGimmickObj,CEnviromentObj::CHAPTER GimmickType);
-	
+
+	void				Clear_Static_ShadowList();
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;

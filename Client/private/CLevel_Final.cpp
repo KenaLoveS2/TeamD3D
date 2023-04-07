@@ -108,11 +108,11 @@ HRESULT CLevel_Final::Initialize()
 	//	return E_FAIL;
 	//}
 
-	/*if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
+	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
 	{
 		MSG_BOX("Layer_ControlRoom");
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_FINAL)))
 		return E_FAIL;
@@ -145,15 +145,15 @@ HRESULT CLevel_Final::Render()
 
 HRESULT CLevel_Final::Ready_Lights()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
-	LIGHTDESC			LightDesc;
+	LIGHTDESC         LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(0.3f, 0.3f, 0.3f, 1.f);
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(1.0f, 1.0f, 1.0f, 1.f);
 	LightDesc.vPosition = _float4(-100.f, 100.f, -100.f, 1.f);
@@ -161,8 +161,6 @@ HRESULT CLevel_Final::Ready_Lights()
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -186,11 +184,11 @@ HRESULT CLevel_Final::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_EffectFlower"), L"flower")))
 	//	return E_FAIL;
 
-	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -202,9 +200,9 @@ HRESULT CLevel_Final::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 	//CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_0.json");
 	//CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_1.json");
 	//CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_2.json");
-	/*CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_3.json");
+	CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_3.json");
 	CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_4.json");
-	CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_5.json");*/
+	CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_5.json");
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

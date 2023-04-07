@@ -34,6 +34,13 @@ void CControlRoom::Add_GimmickObj(_int iRoomNumber, CGameObject* pGimmickObj, CE
 
 }
 
+void CControlRoom::Clear_Static_ShadowList()
+{
+	if (CGameInstance::GetInstance()->Get_CurLevelIndex() == LEVEL_TESTPLAY
+		|| CGameInstance::GetInstance()->Get_CurLevelIndex() == LEVEL_GIMMICK)
+		m_pRendererCom->EraseAllStaticShadowObject();
+}
+
 HRESULT CControlRoom::Initialize_Prototype()
 {
 	return CGameObject::Initialize_Prototype();
@@ -126,6 +133,7 @@ void CControlRoom::Imgui_RenderProperty()
 
 void CControlRoom::ImGui_PhysXValueProperty()
 {
+
 }
 
 void CControlRoom::PulsePlate_Down_Active(_int iRoomIndex,_bool bTriggerActive)
@@ -226,7 +234,7 @@ CGameObject* CControlRoom::Clone(void* pArg)
 
 void CControlRoom::Free()
 {
-	m_pRendererCom->EraseAllStaticShadowObject();
+
 
 	CGameObject::Free();
 	Safe_Release(m_pRendererCom);

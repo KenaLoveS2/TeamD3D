@@ -2344,6 +2344,9 @@ void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 
 	size_t InstmatrixSize = m_pInstancingMatrix.size();
 
+	if (InstmatrixSize == 0)
+		return;
+
 	for (size_t i = 0; i < InstmatrixSize; ++i)
 	{
 		ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[i]) * parentMatrix;
