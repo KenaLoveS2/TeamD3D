@@ -29,14 +29,8 @@ public:
 	virtual HRESULT Render() override;
 	virtual void Imgui_RenderProperty() override;
 
-	void Set_Target(class CGameObject* pTarget, _uint iOffsetType, _float fOffsetY, _float fOffsetMulLook, _float fTime = 1.3f)
-	{
-		m_pTarget = pTarget;
-		m_bInitSet = true;
-		m_iOffsetType   = iOffsetType;
-		m_fLerpTime = fTime;
-	}
-
+	void Set_Target(class CGameObject* pTarget, _uint iOffsetType, _float3 vOffset, _float3 vLookOffset, _float fTime = 1.3f);
+	
 	class CGameObject* m_pTarget = nullptr;
 	_float4						m_vTargetPos;
 
@@ -44,8 +38,8 @@ public:
 	_bool						m_bInitSet = false;
 
 	_uint							m_iOffsetType = OFFSET_END;
-	_float						m_fOffsetY = 0.4f;
-	_float						m_fOffsetMulLook = 1.f;
+	_float3						m_vOffset  = _float3(0.f, 0.5f, 1.f);
+	_float3						m_vLookOffset = _float3(0.f, 0.4f, 0.f);
 	_float						m_fLerpTime = 1.3f;
 
 public:

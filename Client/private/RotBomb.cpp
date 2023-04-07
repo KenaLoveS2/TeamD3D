@@ -259,11 +259,11 @@ void CRotBomb::Set_Child()
 
 	m_vecChild.reserve(CHILD_END);
 
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotBombExplosion", L"RotBombExplosion"));
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotBombExplosion", CUtile::Create_CombinedString(m_szCloneObjectTag, L"RotBombExplosion") ));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 	
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Explosion_p", L"RotBombExplosion_P"));
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Explosion_p", CUtile::Create_CombinedString(m_szCloneObjectTag, L"RotBombExplosion_P")));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 
@@ -271,7 +271,7 @@ void CRotBomb::Set_Child()
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Position(vPos);
 
-	m_pPathTrail = dynamic_cast<CE_BombTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_BombTrail", L"RotBombTrail"));
+	m_pPathTrail = dynamic_cast<CE_BombTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_BombTrail", CUtile::Create_CombinedString(m_szCloneObjectTag, L"RotBombTrail")));
 	NULL_CHECK_RETURN(m_pPathTrail, );
 	m_pPathTrail->Set_Position(vPos);
 

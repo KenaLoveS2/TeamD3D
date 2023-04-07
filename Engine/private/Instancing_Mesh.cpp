@@ -1277,6 +1277,4 @@ void CInstancing_Mesh::Free()
 
 
 	m_pInstancingPositions.clear();
-
-
 }

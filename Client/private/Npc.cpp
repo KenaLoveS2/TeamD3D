@@ -46,9 +46,6 @@ HRESULT CNpc::Initialize(void* pArg)
 
 HRESULT CNpc::Late_Initialize(void* pArg)
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-	m_pMyCam = static_cast<CCameraForNpc*>(pGameInstance->Find_Camera(L"NPC_CAM"));
-	RELEASE_INSTANCE(CGameInstance)
 	return S_OK;
 }
 

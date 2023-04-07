@@ -42,8 +42,7 @@ HRESULT CShieldStick::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
-	m_bRotable = true;
-
+	
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	return S_OK;
@@ -277,12 +276,7 @@ HRESULT CShieldStick::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_bStronglyHit || IsParried();
-	})
-		.AddTransition("IDLE to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("IDLE to JUMPBACK", "JUMPBACK")
 		.Predicator([this]()
 	{
@@ -400,36 +394,13 @@ HRESULT CShieldStick::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
-	})
-		.AddTransition("TAKEDAMAGE_OR_PARRIED to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
+	})		
 		.AddTransition("TAKEDAMAGE_OR_PARRIED to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return m_pModelCom->Get_AnimationFinish();
 	})
-			
-
-		.AddState("BIND")
-		.OnStart([this]()
-	{
-		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.7f);
-		m_pModelCom->ResetAnimIdx_PlayTime(BIND);
-		m_pModelCom->Set_AnimIndex(BIND);		
-	})		
-		.OnExit([this]()
-	{
-		m_bBind = false;		
-	})
-		.AddTransition("BIND to IDLE", "IDLE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(BIND);
-	})
-		
+				
 		.AddState("DYING")
 		.OnStart([this]()
 	{

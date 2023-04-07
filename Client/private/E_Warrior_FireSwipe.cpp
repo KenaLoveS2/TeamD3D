@@ -69,7 +69,7 @@ HRESULT CE_Warrior_FireSwipe::Late_Initialize(void * pArg)
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(m_pParent, false, COL_MONSTER_WEAPON));
 	m_pTransformCom->Add_Collider(m_szCloneObjectTag, matPivot);
 
-	_tchar* pDummyTag = CUtile::Create_StringAuto(L"Warrior_FireSwipe_Dummy");
+	_tchar* pDummyTag = CUtile::Create_CombinedString (m_szCloneObjectTag, L"Warrior_FireSwipe");
 	PxBoxDesc.pActortag = pDummyTag;
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COLLISON_DUMMY));
 	m_pTransformCom->Add_Collider(pDummyTag, matPivot);

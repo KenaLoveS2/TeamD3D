@@ -137,16 +137,12 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
 		pGameInstance->Clear_ImguiObjects();
+		CPhysX_Manager::GetInstance()->Clear(true);
 		pGameInstance->Scene_EnviMgr_Change();
-		CPhysX_Manager::GetInstance()->Scene_Change_Clear_All_Actor();
-
-		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
+		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_GIMMICK)))))
 			return;
 		Safe_Release(pGameInstance);
 	}
-
-	
-
 }
 
 HRESULT CLevel_TestPlay::Render()
@@ -169,9 +165,9 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(0.2f, 0.2f, 0.2f, 1.f);
-	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
-	LightDesc.vSpecular = _float4(0.0f, 0.0f, 0.0f, 1.f);
+	LightDesc.vDiffuse = _float4(0.3f, 0.3f, 0.3f, 1.f);
+	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.vSpecular = _float4(1.0f, 1.0f, 1.0f, 1.f);
 	LightDesc.vPosition = _float4(-100.f, 100.f, -100.f, 1.f);
 	LightDesc.szLightName = "DIRECTIONAL";
 
@@ -183,9 +179,9 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	LightDesc.isEnable = true;
 	LightDesc.vPosition = _float4(13.f, 5.f, 9.f, 1.f);
 	LightDesc.fRange = 20.0f;
-	LightDesc.vDiffuse = _float4(10.f, 0.f, 0.f, 1.f);
+	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(1.f, 0.f, 0.f, 1.f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 0.f);
 	LightDesc.szLightName = "Point_0";
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
@@ -227,8 +223,6 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);	
-
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
@@ -236,9 +230,10 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");*/
 
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr), E_FAIL);
-
 	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 
@@ -459,8 +454,8 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain1_2_Monster.json");
-	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain3_Monster.json");
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain1_2_Monster.json");
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain3_Monster.json");
 	return S_OK;
 
 	CGameInstance * pGameInstance = GET_INSTANCE(CGameInstance);

@@ -80,11 +80,11 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 
 void CPortalPlane::Tick(_float fTimeDelta)
 {
-	if( false==m_bTestOnce) /*삭제하세요 배치를 위한 테스트용 변수*/
-	{
-		Late_Initialize(nullptr);
-		m_bTestOnce = true;
-	}
+	//if( false==m_bTestOnce) /*삭제하세요 배치를 위한 테스트용 변수*/
+	//{
+	//	Late_Initialize(nullptr);
+	//	m_bTestOnce = true;
+	//}
 
 	CGameObject::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;

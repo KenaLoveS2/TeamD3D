@@ -144,6 +144,9 @@ private:
 	_uint												m_iNumKeyFrame = 0;
 	_uint												m_iKeyFrame = 0;
 
+	_float3											m_vCamOffset;
+	
+
 	_bool											m_bCinecam[NPC_CINE_END] = { false, };
 	class CCinematicCamera*			m_pCinecam[NPC_CINE_END] = { nullptr, };
 	class CCameraForNpc*				m_pMainCam = nullptr;

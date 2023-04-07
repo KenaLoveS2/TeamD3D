@@ -587,6 +587,9 @@ void CMonster::Start_Spawn()
 	m_bReadySpawn = true;
 	m_bDissolve = true;
 	m_fDissolveTime = 1.f;
+
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+
 	m_pGameInstance->Play_Sound(m_pSoundKey_Wisp, 0.5f);
 }
 
@@ -622,4 +625,3 @@ void CMonster::SaveBufferCopySound(_tchar* pOriginSoundKey, _tchar* pTempBuffer,
 	m_pGameInstance->Copy_Sound(pOriginSoundKey, pTempBuffer);
 	*ppOutBuffer = CUtile::Create_StringAuto(pTempBuffer);
 }
-

@@ -154,6 +154,11 @@ HRESULT CMage::Late_Initialize(void * pArg)
 
 void CMage::Tick(_float fTimeDelta)
 {
+	//m_bReadySpawn = true;
+	//m_pModelCom->Play_Animation(fTimeDelta);
+
+	//return;
+
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -337,9 +342,10 @@ HRESULT CMage::Call_EventFunction(const string& strFuncName)
 
 void CMage::Push_EventFunctions()
 {
-	 CMonster::Push_EventFunctions();
-
+	 // CMonster::Push_EventFunctions();
 	TurnOnFireBullet(true, 0.0f);
+	Play_AttackSound(true, 0.f);
+	Play_ImpactSound(true, 0.f);		
 }
 
 HRESULT CMage::SetUp_State()
@@ -361,6 +367,7 @@ HRESULT CMage::SetUp_State()
 		.AddState("READY_SPAWN")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_SPAWN], 0.7f);
 		Start_Spawn();
 	})
 		.Tick([this](_float fTimeDelta)
@@ -380,9 +387,9 @@ HRESULT CMage::SetUp_State()
 		
 		.AddState("SPAWN")
 		.OnStart([this]()
-	{
+	{	
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MAGIC1], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(ENTER);
-
 		m_pModelCom->Set_AnimIndex(ENTER);
 	})		
 		.AddTransition("SPAWN to IDLE", "IDLE")
@@ -393,7 +400,8 @@ HRESULT CMage::SetUp_State()
 
 		.AddState("IDLE")
 		.OnStart([this]()
-	{
+	{	
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IDLE], 0.5f);
 		m_fIdletoAttackTime = 0.f;
 		m_iIdletoDash++;
 		Set_AttackType();
@@ -432,7 +440,7 @@ HRESULT CMage::SetUp_State()
 		.AddTransition("IDLE to ENTER", "ENTER")
 		.Predicator([this]()
 	{
-		return	m_iIdletoDash >= 3;
+		return m_iIdletoDash >= 3;
 	})
 		.AddTransition("IDLE to DASH" , "DASH")
 		.Predicator([this]()
@@ -463,6 +471,7 @@ HRESULT CMage::SetUp_State()
 		.AddState("SUMMON")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_SUMMON], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(SUMMON);
 		m_pModelCom->Set_AnimIndex(SUMMON); // 3마리 생성
 		Summon();
@@ -490,7 +499,7 @@ HRESULT CMage::SetUp_State()
 
 		.AddState("RANGEDATTACK")
 		.OnStart([this]()
-	{
+	{		
 		m_pModelCom->ResetAnimIdx_PlayTime(RANGEDATTACK);
 		m_pModelCom->Set_AnimIndex(RANGEDATTACK);
 	})
@@ -521,13 +530,13 @@ HRESULT CMage::SetUp_State()
 		.AddTransition("RANGEDATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-			return AnimFinishChecker(RANGEDATTACK);
+		return AnimFinishChecker(RANGEDATTACK);
 	})
 	
 
 		.AddState("CLOSEATTACK")
 		.OnStart([this]()
-	{
+	{	
 		m_pModelCom->ResetAnimIdx_PlayTime(CLOSEATTACK);
 		m_pModelCom->Set_AnimIndex(CLOSEATTACK);
 	})
@@ -565,6 +574,7 @@ HRESULT CMage::SetUp_State()
 		.AddState("DASH")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE], 1.f);
 		m_pModelCom->ResetAnimIdx_PlayTime(DASH_B);
 		m_pModelCom->ResetAnimIdx_PlayTime(DASH_F);
 		m_pModelCom->ResetAnimIdx_PlayTime(DASH_L);
@@ -612,6 +622,7 @@ HRESULT CMage::SetUp_State()
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRY);
 		m_pModelCom->Set_AnimIndex(PARRY);
 	})
@@ -630,6 +641,7 @@ HRESULT CMage::SetUp_State()
 		.AddState("ENTER")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MAGIC1], 0.7f);
 		m_iIdletoDash = 0;
 		m_pModelCom->ResetAnimIdx_PlayTime(EXIT);
 		m_pModelCom->Set_AnimIndex(EXIT);
@@ -649,6 +661,7 @@ HRESULT CMage::SetUp_State()
 		.AddState("EXIT")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MAGIC2], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(ENTER);
 		m_pModelCom->Set_AnimIndex(ENTER);
 		_float4 vPos = CUtile::Get_RandomVector(m_vKenaPos - _float3(2.f, 2.f, 2.f), m_vKenaPos - _float3(2.f, 2.f, 2.f));
@@ -681,6 +694,7 @@ HRESULT CMage::SetUp_State()
 		.AddState("TAKEDAMAGE")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(STAGGER);
 		m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_B);
 		m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_L);
@@ -721,6 +735,7 @@ HRESULT CMage::SetUp_State()
 		.AddState("BIND")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.7f);
 		Start_Bind(COMMAND);
 	})
 		.OnExit([this]()
@@ -737,6 +752,8 @@ HRESULT CMage::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HIT], 0.4f);
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DIE], 1.f);
 		Set_Dying(DEATH);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -961,6 +978,7 @@ void CMage::TurnOnFireBullet(_bool bIsInit, _float fTimeDelta)
 	
 	_matrix SocketMatrix = m_pMageHaneBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();		
 	m_pFireBullet->Execute_Create(SocketMatrix.r[3]);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.4f);
 }
 
 CMage* CMage::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1006,3 +1024,53 @@ void CMage::Clear_ByMinion(CMonster* pMinion)
 			iter++;
 	}
 }
+
+void CMage::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {		
+		TEXT("Mon_Mage_Die.ogg"),
+		TEXT("Mon_Mage_Hurt.ogg"),		
+		TEXT("Mon_Mage_Hit.ogg"),
+		TEXT("Mon_Mage_Move.ogg"),
+		TEXT("Mon_Mage_Summon.ogg"),
+		TEXT("Mon_Mage_Magic1.ogg"),
+		TEXT("Mon_Mage_Magic2.ogg"),
+		TEXT("Mon_Mage_Attack.ogg"),	
+		TEXT("Mon_Mage_Spawn.ogg"),
+		TEXT("Mon_Mage_Impact.ogg"),
+		TEXT("Mon_Mage_Idle.ogg"),
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}
+
+void CMage::Play_AttackSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CMage::Play_AttackSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
+}
+
+void CMage::Play_ImpactSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CMage::Play_ImpactSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT], 0.8f);
+}
+
+
