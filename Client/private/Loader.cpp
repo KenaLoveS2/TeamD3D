@@ -240,6 +240,9 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_EFFECT:
 		pLoader->Loading_ForTestEffect();
 		break;
+	case LEVEL_GIMMICK:
+		pLoader->Loading_ForMiniGame();
+		break;
 	case LEVEL_FINAL:
 		pLoader->Loading_ForFinal();
 		break;
@@ -1497,6 +1500,17 @@ HRESULT CLoader::Loading_ForTestEffect()
 	
 	m_isFinished = true;
 	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForMiniGame()
+{
+	lstrcpy(m_szLoadingText, TEXT("Loading..."));
+
+	Sleep(4000);
+
+	m_isFinished = true;
+	SetWindowText(g_hWnd, TEXT("Loading Complete!! Wait a moment"));
 	return S_OK;
 }
 

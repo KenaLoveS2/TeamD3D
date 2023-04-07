@@ -559,6 +559,9 @@
     <Filter Include="01.Levels\06. FinalPlay">
       <UniqueIdentifier>{be811861-a962-4e80-86a9-855d07f24d6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Levels\07. Gimmick">
+      <UniqueIdentifier>{209510b0-f1a9-4366-96a9-f2b8a6281b13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1467,6 +1470,9 @@
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BombGimmickObj.h" />
+    <ClInclude Include="..\public\Level_Gimmick.h">
+      <Filter>01.Levels\07. Gimmick</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2355,6 +2361,9 @@
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BombGimmickObj.cpp" />
+    <ClCompile Include="..\private\Level_Gimmick.cpp">
+      <Filter>01.Levels\07. Gimmick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

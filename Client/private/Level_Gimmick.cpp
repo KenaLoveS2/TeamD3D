@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CLevel_Final.h"
+#include "Level_Gimmick.h"
 #include "GameInstance.h"
 
 #include "Camera_Dynamic.h"
@@ -22,12 +22,12 @@
 #include "UI.h"
 #include "Level_Loading.h"
 
-CLevel_Final::CLevel_Final(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CLevel(pDevice, pContext)
+CLevel_Gimmick::CLevel_Gimmick(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	:CLevel(pDevice, pContext)
 {
 }
 
-HRESULT CLevel_Final::Initialize()
+HRESULT CLevel_Gimmick::Initialize()
 {
 	CGameInstance* p_game_instance = CGameInstance::GetInstance();
 
@@ -113,36 +113,48 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 	}*/
 
-	if (FAILED(p_game_instance->Late_Initialize(LEVEL_FINAL)))
+	if (FAILED(p_game_instance->Late_Initialize(LEVEL_GIMMICK)))
 		return E_FAIL;
 
 	// p_game_instance->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
 
-	
+
 	return S_OK;
 }
 
-void CLevel_Final::Tick(_float fTimeDelta)
+void CLevel_Gimmick::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CLevel_Final::Late_Tick(_float fTimeDelta)
+void CLevel_Gimmick::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (GetKeyState(VK_F2) & 0x8000)
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		pGameInstance->Clear_ImguiObjects();
+		CPhysX_Manager::GetInstance()->Clear(true);
+		pGameInstance->Scene_EnviMgr_Change();
+		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
+			return;
+		Safe_Release(pGameInstance);
+	}
 }
 
-HRESULT CLevel_Final::Render()
+HRESULT CLevel_Gimmick::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	SetWindowText(g_hWnd, TEXT("Level : Final"));
+	SetWindowText(g_hWnd, TEXT("Level : MiniGame"));
 
 	return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Lights()
+HRESULT CLevel_Gimmick::Ready_Lights()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -166,7 +178,7 @@ HRESULT CLevel_Final::Ready_Lights()
 	return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Layer_BackGround(const _tchar* pLayerTag)
+HRESULT CLevel_Gimmick::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -195,7 +207,7 @@ HRESULT CLevel_Final::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Layer_Enviroment(const _tchar* pLayerTag)
+HRESULT CLevel_Gimmick::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	//CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_0.json");
@@ -208,7 +220,7 @@ HRESULT CLevel_Final::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Layer_Camera(const _tchar* pLayerTag)
+HRESULT CLevel_Gimmick::Ready_Layer_Camera(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	CCamera::CAMERADESC			CameraDesc;
@@ -355,7 +367,7 @@ HRESULT CLevel_Final::Ready_Layer_Camera(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Layer_CineCamera(const _tchar* pLayerTag)
+HRESULT CLevel_Gimmick::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 {
 	/* If the Name Of Layer is Changed, Please Change the CUI_CanvasBottom > Bind as well. */
 	{
@@ -364,7 +376,7 @@ HRESULT CLevel_Final::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 		CCinematicCamera::Clone_Load_Data("MAP_CINE0.json", v, chatFileName);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"MAP_CINE0", &v, &p_game_object))) return E_FAIL;
+			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"MAP_CINE0", &v, &p_game_object))) return E_FAIL;
 		CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
 		NULL_CHECK_RETURN(pCamera, E_FAIL);
 		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"MAP_CINE0", pCamera), E_FAIL);
@@ -379,7 +391,7 @@ HRESULT CLevel_Final::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 		CCinematicCamera::Clone_Load_Data("NPC_CINE0.json", v, chatFileName);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"NPC_CINE0", &v, &p_game_object))) return E_FAIL;
+			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"NPC_CINE0", &v, &p_game_object))) return E_FAIL;
 		CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
 		NULL_CHECK_RETURN(pCamera, E_FAIL);
 		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"NPC_CINE0", pCamera), E_FAIL);
@@ -394,7 +406,7 @@ HRESULT CLevel_Final::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 		CCinematicCamera::Clone_Load_Data("NPC_CINE1.json", v, chatFileName);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"NPC_CINE1", &v, &p_game_object))) return E_FAIL;
+			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"NPC_CINE1", &v, &p_game_object))) return E_FAIL;
 		CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
 		NULL_CHECK_RETURN(pCamera, E_FAIL);
 		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"NPC_CINE1", pCamera), E_FAIL);
@@ -406,13 +418,13 @@ HRESULT CLevel_Final::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Layer_Player(const _tchar* pLayerTag)
+HRESULT CLevel_Gimmick::Ready_Layer_Player(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CGameObject* pGameObject = nullptr;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
 		return E_FAIL;
 
 	CGameInstance::GetInstance()->Set_PlayerPtr(pGameObject);
@@ -422,34 +434,34 @@ HRESULT CLevel_Final::Ready_Layer_Player(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Layer_Monster(const _tchar* pLayerTag)
+HRESULT CLevel_Gimmick::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
-	CImGui_Monster::Load_MonsterObjects(LEVEL_FINAL, "Terrain1_2_Monster.json");
-	CImGui_Monster::Load_MonsterObjects(LEVEL_FINAL, "Terrain3_Monster.json");
+	CImGui_Monster::Load_MonsterObjects(LEVEL_GIMMICK, "Terrain1_2_Monster.json");
+	CImGui_Monster::Load_MonsterObjects(LEVEL_GIMMICK, "Terrain3_Monster.json");
 	return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Layer_Rot(const _tchar* pLayerTag)
+HRESULT CLevel_Gimmick::Ready_Layer_Rot(const _tchar* pLayerTag)
 {
 	CImGui_Rot::Load_RotObjects(LEVEL_FINAL, "Test_Chap1.json");
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_LiftRot_Master"), L"LiftRot_Master", nullptr), E_FAIL);
-	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr), E_FAIL);
+	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_LiftRot_Master"), L"LiftRot_Master", nullptr), E_FAIL);
+	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance)
 		return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Layer_Effect(const _tchar* pLayerTag)
+HRESULT CLevel_Gimmick::Ready_Layer_Effect(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Test", nullptr)))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Test", nullptr)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_Swipes_Charged"), L"Swipes_Charged", nullptr)))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Swipes_Charged"), L"Swipes_Charged", nullptr)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_Warrior_FireSwipe"), L"Swipe", nullptr)))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Warrior_FireSwipe"), L"Swipe", nullptr)))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -457,7 +469,7 @@ HRESULT CLevel_Final::Ready_Layer_Effect(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Layer_UI(const _tchar* pLayerTag)
+HRESULT CLevel_Gimmick::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -471,7 +483,7 @@ HRESULT CLevel_Final::Ready_Layer_UI(const _tchar* pLayerTag)
 		tDesc.fileName = (*pCanvasCloneTags)[i].c_str();
 
 		CUI_Canvas* pCanvas = nullptr;
-		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, L"Layer_Canvas",
+		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, L"Layer_Canvas",
 			(*pCanvasProtoTags)[i].c_str(), (*pCanvasCloneTags)[i].c_str(), &tDesc, (CGameObject**)&pCanvas)))
 			MSG_BOX("Failed To Clone Canvas : UIEditor");
 
@@ -484,36 +496,36 @@ HRESULT CLevel_Final::Ready_Layer_UI(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Layer_NPC(const _tchar* pLayerTag)
+HRESULT CLevel_Gimmick::Ready_Layer_NPC(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_Beni"), L"Beni");
-	pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_Saiya"), L"Saiya");
+	pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Beni"), L"Beni");
+	pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Saiya"), L"Saiya");
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
-HRESULT CLevel_Final::Ready_Layer_ControlRoom(const _tchar* pLayerTag)
+HRESULT CLevel_Gimmick::Ready_Layer_ControlRoom(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_ControlRoom"), L"ControlRoom");
+	pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_ControlRoom"), L"ControlRoom");
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
-CLevel_Final* CLevel_Final::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CLevel_Gimmick* CLevel_Gimmick::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLevel_Final* pInstance = new CLevel_Final(pDevice, pContext);
+	CLevel_Gimmick* pInstance = new CLevel_Gimmick(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX("Failed to Created : CLevel_Final");
+		MSG_BOX("Failed to Created : CLevel_Gimmick");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CLevel_Final::Free()
+void CLevel_Gimmick::Free()
 {
 	__super::Free();
 }

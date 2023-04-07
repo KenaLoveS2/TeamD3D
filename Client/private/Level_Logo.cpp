@@ -147,14 +147,13 @@ HRESULT CLevel_Logo::Ready_For_LevelName()
 	//arrLevel[LEVEL_MAPTOOL] = "LEVEL_MAPTOOL";
 	//arrLevel[LEVEL_TESTPLAY] = "LEVEL_TESTPLAY";
 
-	arrLevel.reserve(5);
+	arrLevel.reserve(4);
 
 	arrLevel.push_back("LEVEL_GAMEPLAY");
 	arrLevel.push_back("LEVEL_MAPTOOL");
 	arrLevel.push_back("LEVEL_TESTPLAY");
 	arrLevel.push_back("LEVEL_TEST_EFFECT");
-	arrLevel.push_back("LEVEL_FINAL");
-	return S_OK;
+		return S_OK;
 }
 
 void CLevel_Logo::ChoseLevel()
