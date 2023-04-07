@@ -165,6 +165,9 @@ void CE_RotBombExplosion::Reset()
 	m_fTimeDelta = 0.f;
 	m_fBombTime = 0.f;
 	m_fDissolveTime = 0.f;
+
+	PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+	CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, 0.001f);
 }
 
 void CE_RotBombExplosion::TurnonBomb(_float fTimeDelta)
@@ -200,6 +203,9 @@ void CE_RotBombExplosion::TurnonBomb(_float fTimeDelta)
 		m_pTransformCom->Set_Scaled(vScaled);
 		m_vecChild[CHILD_COVER]->Set_AddScale(fTimeDelta * 2.f);
 	}
+
+	PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+	CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, vScaled.x);
 }
 
 void CE_RotBombExplosion::TurnoffBomb(_float fTimeDelta)
@@ -217,6 +223,9 @@ void CE_RotBombExplosion::TurnoffBomb(_float fTimeDelta)
 		m_pTransformCom->Set_Scaled(_float3(0.9f, 0.9f, 0.9f));
 		for (auto& pChild : m_vecChild)
 			m_vecChild[CHILD_COVER]->Set_Scale(XMVectorSet(0.91f, 0.91f, 0.91f, 1.f));
+
+		PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+		CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, 0.001f);
 	}
 }
 

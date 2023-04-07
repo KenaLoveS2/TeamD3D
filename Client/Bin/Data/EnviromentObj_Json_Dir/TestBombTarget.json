@@ -1,1 +1,57 @@
-{"0_LayerTag":"Layer_Enviroment","1_Data":[{"0_ProtoTag":"Prototype_GameObject_RuinsKit_BombPlatForm","1_ModelTag":"Prototype_Component_Model_RuinsKit_BombPlatForm","2_ShaderOption":0,"3_CloneTag":"Bomb_Platform_0","4_RoomIndex":0,"5_ChapterType":0,"7_Transform State":[0.7578433752059937,-0.03181586414575577,-0.6516522169113159,0.0,-0.6513885259628296,0.019551191478967667,-0.7584912180900574,0.0,0.036872733384370804,0.9992990493774414,-0.005907766055315733,0.0,45.00242614746094,1.220299243927002,29.515432357788086,1.0]}]}
+{
+    "0_LayerTag": "Layer_Enviroment",
+    "1_Data": [
+        {
+            "0_ProtoTag": "Prototype_GameObject_RuinsKit_BombPlatForm",
+            "1_ModelTag": "Prototype_Component_Model_RuinsKit_BombPlatForm",
+            "2_ShaderOption": 0,
+            "3_CloneTag": "Bomb_Platform_0",
+            "4_RoomIndex": 0,
+            "5_ChapterType": 0,
+            "7_Transform State": [
+                0.7578433752059937,
+                -0.03181586414575577,
+                -0.6516522169113159,
+                0.0,
+                -0.6513885259628296,
+                0.019551191478967667,
+                -0.7584912180900574,
+                0.0,
+                0.036872733384370804,
+                0.9992990493774414,
+                -0.005907766055315733,
+                0.0,
+                45.00242614746094,
+                1.220299243927002,
+                29.515432357788086,
+                1.0
+            ]
+        },
+        {
+            "0_ProtoTag": "Prototype_GameObject_RuinsKit_BombPlatForm",
+            "1_ModelTag": "Prototype_Component_Model_RuinsKit_BombPlatForm",
+            "2_ShaderOption": 0,
+            "3_CloneTag": "Bomb_Platform_1",
+            "4_RoomIndex": 0,
+            "5_ChapterType": 0,
+            "7_Transform State": [
+                0.7578433752059937,
+                -0.03181586414575577,
+                -0.6516522169113159,
+                0.0,
+                -0.6513885259628296,
+                0.019551191478967667,
+                -0.7584912180900574,
+                0.0,
+                0.036872733384370804,
+                0.9992990493774414,
+                -0.005907766055315733,
+                0.0,
+                48.00242614746094,
+                1.620299243927002,
+                32.515432357788086,
+                1.0
+            ]
+        }
+    ]
+}

@@ -42,6 +42,7 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	_vector		vScale, vTrans;
 	XMMatrixDecompose(&vScale, (_vector*)&m_vInitQuat, &vTrans, m_pTransformCom->Get_WorldMatrix());
 
+	/* CloneTag로 m_vMovingPos 다르게 주면 돼 */
 	m_vMovingPos = _float4(1.f, 10.f, 1.f, 1.f);
 	m_vMovingQuat = XMQuaternionIdentity();
 	m_fReturnTime = 3.f;
@@ -153,6 +154,9 @@ _int CBombPlatform::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPo
 {
 	if (iColliderIndex == (_int)COL_PLAYER_BOMB && m_pDetectedBomb == nullptr)
 		m_pDetectedBomb = dynamic_cast<CRotBomb*>(pTarget);
+
+	if (iColliderIndex == (_int)COL_PLAYER_BOMB_EXPLOSION && m_eCurState == CBombPlatform::STATE_SLEEP)
+		m_eCurState = CBombPlatform::STATE_OPEN;
 
 	return 0;
 }

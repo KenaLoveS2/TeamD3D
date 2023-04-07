@@ -2609,7 +2609,6 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 			_float4		vPos = matOutPortal.Translation() + vOutLook * 0.5f;
 			vPos.y -= 4.f;
-			//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
 			m_pTransformCom->Set_Position(vPos);
 		}
 	}
