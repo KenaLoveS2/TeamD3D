@@ -1,11 +1,8 @@
-
 #include "Shader_Client_Defines.h"
-
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 vector			g_vCamPosition;
 //texture2D		g_DepthTexture;
-texture2D		g_DiffuseTexture;
+Texture2D<float4>		g_DiffuseTexture;
 
 float4			g_vColor;
 float			g_fAlpha;

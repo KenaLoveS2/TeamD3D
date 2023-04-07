@@ -2,10 +2,6 @@
 
 /***********Constant Buffers***********/
 matrix g_BoneMatrices[800];
-matrix g_WorldMatrix;
-matrix g_WorldMatrixInv;
-matrix g_ViewMatrix;
-matrix g_ProjMatrix;
 float  g_fFar = 500.f;
 float4 g_vCamPosition;
 /**************************************/
@@ -23,18 +19,18 @@ Texture2D<float4>		g_RoughnessTexture;
 Texture2D<float4>		g_MaskTexture;
 
 /* EnemyWisp Texture */
-texture2D		g_NoiseTexture;
-texture2D		g_ReamTexture;
-texture2D		g_LineTexture;
-texture2D		g_SmoothTexture;
-texture2D		g_ShapeMaskTexture;
-float4			g_vColor;
+Texture2D<float4>		g_NoiseTexture;
+Texture2D<float4>		g_ReamTexture;
+Texture2D<float4>		g_LineTexture;
+Texture2D<float4>		g_SmoothTexture;
+Texture2D<float4>		g_ShapeMaskTexture;
+float4							g_vColor;
 /* ~EnemyWisp Texture */
 
 /* Dissolve */
-texture2D		g_DissolveTexture;
-bool			g_bDissolve;
-float			g_fDissolveTime;
+Texture2D<float4>		g_DissolveTexture;
+bool								g_bDissolve;
+float								g_fDissolveTime;
 /* ~Dissolve */
 
 

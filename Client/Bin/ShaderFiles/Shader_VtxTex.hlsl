@@ -1,13 +1,9 @@
-
 #include "Shader_Client_Defines.h"
 
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
-texture2D		g_Texture;
-texture2D		g_DepthTexture;
-texture2D		g_MaskTexture;
-texture2D		g_NoiseTexture;
-
+Texture2D<float4>		g_Texture;
+Texture2D<float4>		g_DepthTexture;
+Texture2D<float4>		g_MaskTexture;
+Texture2D<float4>		g_NoiseTexture;
 
 int		g_XFrameNow = 0, g_YFrameNow = 0;	/* Current Sprite frame */
 int		g_XFrames = 1, g_YFrames = 1;		/* the number of sprites devided each side */
@@ -44,7 +40,6 @@ struct VS_OUT
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
-
 
 	matrix		matWV, matWVP;
 

@@ -55,7 +55,6 @@ void CEnviroment_Manager::Tick(_float fTimeDelta)
 	}
 	else if (m_RoomCheck_Array[2] == false && fPos.z >= 320.f)
 	{
-
 		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 0);
 		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 1);
 
@@ -64,8 +63,6 @@ void CEnviroment_Manager::Tick(_float fTimeDelta)
 	else if (m_RoomCheck_Array[3] == false && fPos.z >= 602.f)
 	{
 		// 시네마틱 때 삭제하자
-
-
 		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 2);
 
 		m_iCurPlayer_RoomIndex = 3;

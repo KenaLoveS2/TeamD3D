@@ -1,15 +1,10 @@
 #include "Shader_Client_Defines.h"
 
 /**********Constant Buffer*********/
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 float4			g_WorldCamPosition;
 float			g_fFar = 500.f;
 float			g_fHDRValue;
 /**********************************/
-
-/* For. Parts */
-matrix			g_SocketMatrix;
-/************/
 
 /**********Common Texture*********/
 texture2D		g_DepthTexture, g_NormalTexture;
@@ -52,6 +47,7 @@ uint	g_PulseState;
 /* HpRatio */
 
 bool	g_bPulseRecive = false;
+
 
 struct VS_IN
 {

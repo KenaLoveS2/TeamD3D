@@ -2,9 +2,6 @@
 
 /**********Constant Buffer*********/
 matrix g_BoneMatrices[800];
-matrix g_WorldMatrix;
-matrix g_ViewMatrix;
-matrix g_ProjMatrix;
 float  g_fFar = 500.f;
 float4 g_WorldCamPosition;
 float  g_fHDRValue;

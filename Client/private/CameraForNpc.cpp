@@ -63,28 +63,42 @@ void CCameraForNpc::Tick(_float TimeDelta)
 		m_bInitSet = false;
 	}
 
-	// 변수로 던질 수 있게 바꾸자ㅇㅇ
-
 	if (m_pTarget != nullptr)
 	{
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-			m_vTargetPos = m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		if (m_iOffsetType == OFFSET_FRONT_LERP)
+		{
+			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+				m_vTargetPos = m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
-		/* For. At */
-		_float3 vDir = XMVector3Normalize(m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-		vDir.y += 0.4f;
-		_float3 vLerpLook = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vDir, TimeDelta * 1.3f);
-		_float4 vCalculatedLook = _float4(vLerpLook.x, vLerpLook.y, vLerpLook.z, 0.f);
-		m_pTransformCom->Set_Look(vCalculatedLook);
+			/* For. At */
+			_float3 vDir = XMVector3Normalize(m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) * m_fOffsetMulLook;
+			vDir.y += m_fOffsetY;
+			_float3 vLerpLook = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vDir, TimeDelta * m_fLerpTime);
+			_float4 vCalculatedLook = _float4(vLerpLook.x, vLerpLook.y, vLerpLook.z, 0.f);
+			m_pTransformCom->Set_Look(vCalculatedLook);
 
-		/* For. Pos*/
-		_vector vTargetPos = XMVectorSet(m_vTargetPos.x, m_vTargetPos.y + 0.5f, m_vTargetPos.z, 1.f) + m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
-		_float3 vLerpPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vTargetPos, TimeDelta * 1.3f);
-		_float4 vCalculatedCamPos = _float4(vLerpPos.x, vLerpPos.y, vLerpPos.z, 1.f);
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCalculatedCamPos);
+			/* For. Pos*/
+			_vector vTargetPos = XMVectorSet(m_vTargetPos.x, m_vTargetPos.y + 0.5f, m_vTargetPos.z, 1.f) + m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+			_float3 vLerpPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vTargetPos, TimeDelta * m_fLerpTime);
+			_float4 vCalculatedCamPos = _float4(vLerpPos.x, vLerpPos.y, vLerpPos.z, 1.f);
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCalculatedCamPos);
 
-		pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
-		RELEASE_INSTANCE(CGameInstance)
+			pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
+			RELEASE_INSTANCE(CGameInstance)
+		}
+		else if(m_iOffsetType == OFFSET_FRONT)
+		{
+			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+				m_vTargetPos = m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+			_float3 vDir = XMVector3Normalize(m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) * m_fOffsetMulLook;
+			vDir.y += m_fOffsetY;
+			m_pTransformCom->Set_Look(vDir);
+			_vector vTargetPos = XMVectorSet(m_vTargetPos.x, m_vTargetPos.y + 0.5f, m_vTargetPos.z, 1.f) + m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vTargetPos);
+			pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
+			RELEASE_INSTANCE(CGameInstance)
+		}
 	}
 }
 

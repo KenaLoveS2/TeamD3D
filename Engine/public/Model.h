@@ -72,10 +72,12 @@ public:
 	void						Update_BonesMatrix(CModel* pModel);
 	void						Set_AllAnimCommonType();
 	void						Print_Animation_Names(const string& strFilePath);
-	
+
+	void						InstanceModelPosInit(_fmatrix parentMatrix);
+
 public:	
 	HRESULT 					Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, 
-		const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing , const char* JsonMatrial, _bool bUseTriangleMeshActor);
+		const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing , const char* JsonMatrial, _bool bUseTriangleMeshActor, _bool bPointBuffer);
 	virtual HRESULT		Initialize(void* pArg, class CGameObject* pOwner);
 	virtual void				Imgui_RenderProperty() override;
 
@@ -150,7 +152,7 @@ private:
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 		const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath = nullptr, 
-		_bool bIsLod = false, _bool bIsInstancing = false, const char* JsonMatrial = nullptr, _bool bUseTriangleMeshActor = false);
+		_bool bIsLod = false, _bool bIsInstancing = false, const char* JsonMatrial = nullptr, _bool bUseTriangleMeshActor = false, _bool bPointBuffer=false);
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 

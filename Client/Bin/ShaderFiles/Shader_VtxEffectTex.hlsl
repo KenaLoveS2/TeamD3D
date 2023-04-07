@@ -1,7 +1,6 @@
 #include "Shader_Client_Defines.h"
 
 /**********Constant Buffer*********/
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 float4			g_WorldCamPosition;
 float			g_fHDRValue;
 /**********************************/
@@ -29,6 +28,7 @@ float   g_HpRatio;
 float	g_DamageDurationTime;
 uint	g_PulseState;
 /* HpRatio */
+
 
 struct VS_IN
 {

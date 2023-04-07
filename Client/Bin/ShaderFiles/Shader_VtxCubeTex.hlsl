@@ -1,10 +1,6 @@
-
 #include "Shader_Client_Defines.h"
 
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
 textureCUBE		g_Texture;
-
 float				g_fColorIntensity;
 
 struct VS_IN
@@ -53,7 +49,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector FinalColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	vector FinalColor = g_SkyTexture.Sample(LinearSampler, In.vTexUV);
 
 	FinalColor.rgb *= g_fColorIntensity;
 

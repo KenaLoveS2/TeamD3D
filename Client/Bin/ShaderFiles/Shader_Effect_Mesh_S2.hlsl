@@ -1,13 +1,10 @@
-
 #include "Shader_Client_Defines.h"
-
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 vector			g_vCamPosition;
 //texture2D		g_DepthTexture;
-texture2D		g_DiffuseTexture;
-texture2D		g_MaskTexture;
-texture2D		g_DissolveTexture;
+Texture2D<float4>		g_DiffuseTexture;
+Texture2D<float4>		g_MaskTexture;
+Texture2D<float4>		g_DissolveTexture;
 
 float4			g_vColor = { 1.f, 1.f, 1.f, 1.f };
 float4			g_vMaskColor = { 1.f ,1.f, 1.f, 1.f };
@@ -104,11 +101,11 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	if (g_IsSpriteAnim)
 	{
-		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
-		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+		In.vTexUV.x = In.vTexUV.x + (float)g_XFrameNow;
+		In.vTexUV.y = In.vTexUV.y + (float)g_YFrameNow;
 
-		In.vTexUV.x = In.vTexUV.x / g_XFrames;
-		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+		In.vTexUV.x = In.vTexUV.x / (float)g_XFrames;
+		In.vTexUV.y = In.vTexUV.y / (float)g_YFrames;
 	}
 
 	if (g_IsUVAnim)
@@ -321,6 +318,7 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
+
 
 	pass OnlyColor // 1
 	{

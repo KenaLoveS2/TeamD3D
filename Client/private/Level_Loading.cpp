@@ -6,7 +6,7 @@
 #include "Level_Logo.h"
 #include "Level_GamePlay.h"
 #include "Level_TestPlay.h"
-
+#include "CLevel_Final.h"
 
 #include "Level_MapTool.h"
 #include "Level_TestPlay.h"
@@ -86,6 +86,9 @@ void CLevel_Loading::Late_Tick(_float fTimeDelta)
 				pLevel = CLevel_EffectTest::Create(m_pDevice, m_pContext);
 				break;
 
+			case LEVEL_FINAL:
+				pLevel = CLevel_Final::Create(m_pDevice, m_pContext);
+				break;
 			}
 
 			if (nullptr == pLevel)
