@@ -1396,3 +1396,14 @@ void CPhysX_Manager::WakeUp(PxRigidDynamic* pActor)
 {
 	pActor->wakeUp();
 }
+
+void CPhysX_Manager::Delete_TriggerActor(const _tchar* pTag)
+{
+	for(auto& pTri : m_TriggerDataes)
+	{	
+		if(!wcscmp(pTri->pActortag, pTag))
+		{
+			Delete_Actor(pTri->pTriggerStatic);
+		}
+	}
+}

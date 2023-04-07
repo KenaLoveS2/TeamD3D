@@ -60,7 +60,7 @@ enum ON_TRIGGER_PARAM {
 	ON_TRIGGER_PARAM_END,
 };
 
-typedef struct tagPhysXTriggerData
+typedef  struct  ENGINE_DLL tagPhysXTriggerData
 {
 	_tchar* pActortag;
 	CGameObject* pOwner;

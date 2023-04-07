@@ -5,11 +5,10 @@ matrix			g_ProjMatrixInv, g_ViewMatrixInv;
 matrix			g_LightViewMatrix, g_LightProjMatrix;
 matrix			g_DynamicLightViewMatrix;
 
-
 vector			g_vLightDir;
 vector			g_vLightPos;
-float			g_fLightRange;
-float			g_fFar = 500.f; // 카메라의 FAR
+float				g_fLightRange;
+float				g_fFar = 500.f; // 카메라의 FAR
 vector			g_vLightDiffuse;
 vector			g_vLightAmbient;
 vector			g_vLightSpecular;
@@ -201,116 +200,54 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vDepthDesc     = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAmbientDesc = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV);
 
-	float		fViewZ = vDepthDesc.y * g_fFar;
+	float			fViewZ = vDepthDesc.y * g_fFar;
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-	vector		vWorldPos;
 
+	Out.vShade = g_vLightDiffuse * 5.f * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient));
+	Out.vShade.a = 1.f;
+
+	/* For Specular */
+	vector		vWorldPos;
 	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
 	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
 	vWorldPos.z = vDepthDesc.x; /* 0 ~ 1 */
 	vWorldPos.w = 1.0f;
 	vWorldPos *= fViewZ;
-
 	vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
 	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
-
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
 	vector		vLook = normalize(vWorldPos - g_vCamPosition);
 
-	float			fAO = vAmbientDesc.r;
-	float			fRoughness = vAmbientDesc.g;
-	float			fMetalic = vAmbientDesc.b;
+	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
+	Out.vSpecular.a = 0.f;
 
-	float3 N = normalize(vNormal.xyz);
-	float3 V = normalize(vLook.xyz) * -1.f;
-	float3 L = normalize(g_vLightDir.xyz) * -1.f;
-	float3 H = normalize(V + L);
-
-	/* first algorithm */
-	/* float3		Lo = (float3)0.f;
-	float3		P = vWorldPos.xyz;
-	float3		V = normalize(vLook.xyz);
-	float3		N = normalize(vNormal.xyz);
-	float3		F0 = lerp(float3(0.04f, 0.04f, 0.04f), vDiffuse.rgb, fMetalic);
-	float3 LightColor = g_vLightDiffuse.rgb;
-	//LightColor *= min(174.25f/* / 255.f, length(LightColor));
-	float3 L = normalize(g_vLightDir.xyz);
-	float3 H = normalize(V + L);
-	float  cosTheta = max(dot(H, V), 0.0f);
-	float  distance = length(g_vLightPos - vWorldPos); 
-	float attenuation = 1 / (distance * distance);
-	float3 radiance = LightColor * attenuation;
-	float3 F = FresnelSchlick(dot(H, V), F0);
-	float NDF = DistributionGGX(N, H, clamp(fRoughness, 0.3f, 1.f));
-	float G = GeometrySmith(N, V, L, fRoughness);
-	float3 numerator = NDF * G * F;
-	float denomenator = (4 * max(0.0f, dot(N, L)) * max(0.0f, dot(N, V)));
-	float3 specular = numerator / (denomenator + 0.0001f);
-	float3 kS = F;
-	float3 kD = (float3)1.f - kS;
-	kD *= 1.f - fMetalic;
-	float nl = max(0.f, dot(N, L));
-	Lo += (kD * vDiffuse.xyz / PI + specular) * radiance * nl;
-	kS = FresnelSchlick(max(dot(N, V), 0.f), F0);
-	kD = (float3)1.f - kS;
-	float3 irradiance = float3(1.f, 1.f, 1.f); // 환경맵
-	float3 diffuse = irradiance * vDiffuse.xyz;
-	float3 ambient = kD * diffuse;
-	float4 color = float4(ambient + Lo, 1.f);
-	float gamma = 2.2f;
-	color = color / (color + (float4)1.f);
-	color = pow(color, (float4)(1.f / gamma));
-	Out.vShade = color + (vSSAODesc.r * fAO);
-	Out.vShade.a = vDiffuse.a;
-	Out.vSpecular = float4(specular, 0.f);
-	Out.vSpecular.a = 0.f; */
-
-	/* second algorithm */
-	//float3 diffuse = CalculateDiffuse(vDiffuse.rgb, vNormal, g_vLightDiffuse.rgb, g_vLightDir);
-	//float3 specular = CalculateSpecular(vLook.xyz, g_vLightDir.xyz, vNormal.xyz, vAmbientDesc.g, vAmbientDesc.b, vDiffuse.rgb, g_vLightSpecular.rgb);
-	//Out.vShade = float4(diffuse, vDiffuse.a);
-	//Out.vSpecular = float4(specular, 0.f);
-
-	/* third algorithm*/
-	/*Out.vShade = ComputeLighting(vWorldPos.xyz, vNormal.xyz, g_vLightDir.xyz, vLook.xyz, g_vLightPos.xyz, g_vLightDiffuse.rgb, fRoughness, vDiffuse.rgb, g_vLightAmbient.rgb);
-	Out.vShade.a = vDiffuse.a;
-	Out.vSpecular = (float4)1.f;*/
-
-	/* fourth algorithm */
-	//Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz, fMetalic, fRoughness,
-	//		g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular)
-	//		* vSSAODesc.r * fAO;
-	//Out.vShade.a = vDiffuse.a;
-	//Out.vSpecular = (float4)1.f;
-
-	/* five algorithm */
-	float4 DiffuseLight = g_vLightDiffuse;
-	float4 AmbientLight = g_vLightAmbient;
-
-	DiffuseLight *= 5.f;
-	AmbientLight *= 5.f;
-
-	float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), DiffuseLight.rgb, fMetalic);
-
-	// Fresnel term
-	float3 F = F0 + (1.0 - F0) * pow(1.0 - dot(V, H), 5.0);
-
-	// Roughness term
-	float alpha = fRoughness * fRoughness;
-
-	// Geometric attenuation
-	float G = smith_G1(V, N, alpha) * smith_G1(N, L, alpha);
-
-	// Specular (reflection) term
-	float3 D = disney_D(H, N, L, alpha, fMetalic);
-	float3 specular = (F * G * D) / (4.0 * dot(V, N) * dot(N, L));
-
-	// Diffuse (Lambertian) term
-	float3 diffuse = D *  DiffuseLight.rgb / PI;
-
-	// Final color
-	Out.vShade = (float4(diffuse, 1.f) + saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (AmbientLight)));
-	Out.vSpecular = float4((specular) * dot(N, L), 1.f) * g_vLightSpecular;
+	//float			fAO = vAmbientDesc.r;
+	//float			fRoughness = vAmbientDesc.g;
+	//float			fMetalic = vAmbientDesc.b;
+	//float3 N = normalize(vNormal.xyz);
+	//float3 V = normalize(vLook.xyz) * -1.f;
+	//float3 L = normalize(g_vLightDir.xyz) * -1.f;
+	//float3 H = normalize(V + L);
+	///* algorithm */
+	//float4 DiffuseLight = g_vLightDiffuse;
+	//float4 AmbientLight = g_vLightAmbient;
+	//DiffuseLight *= 5.f;
+	//AmbientLight *= 5.f;
+	//float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), DiffuseLight.rgb, fMetalic);
+	//// Fresnel term
+	//float3 F = F0 + (1.0 - F0) * pow(1.0 - dot(V, H), 5.0);
+	//// Roughness term
+	//float alpha = fRoughness * fRoughness;
+	//// Geometric attenuation
+	//float G = smith_G1(V, N, alpha) * smith_G1(N, L, alpha);
+	//// Specular (reflection) term
+	//float3 D = disney_D(H, N, L, alpha, fMetalic);
+	//float3 specular = (F * G * D) / (4.0 * dot(V, N) * dot(N, L));
+	//// Diffuse (Lambertian) term
+	//float3 diffuse = D *  DiffuseLight.rgb / PI;
+	//// Final color
+	//Out.vShade = (float4(diffuse, 1.f) + saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (AmbientLight)));
+	//Out.vSpecular = float4((specular) * dot(N, L), 1.f) * g_vLightSpecular;
 
 	return Out;
 }
@@ -351,13 +288,13 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 
 	float		fAtt = max((g_fLightRange - fDistance), 0.f) / g_fLightRange;
 
-	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
+	Out.vShade = g_vLightDiffuse * 5.f * saturate(saturate(dot(normalize(vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
 	Out.vShade.a = 1.f;	
 
 	vector		vReflect = reflect(normalize(vLightDir), normalize(vNormal));
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 30.f) * fAtt;
+	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f) * fAtt;
 	Out.vSpecular.a = 0.f;
 
 	return Out;
@@ -374,11 +311,10 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vSSAODesc		 = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
 
 	/* expect specular... i don't know use it */
-
 	if(g_bSSAO)
-		Out.vColor =	CalcHDRColor(vDiffuse * vShade, vDepthDesc.b)  * vSSAODesc.r;
+		Out.vColor =	CalcHDRColor(vDiffuse * vShade , vDepthDesc.b)  * vSSAODesc.r + vSpecular;
 	else
-		Out.vColor = CalcHDRColor(vDiffuse * vShade, vDepthDesc.b);
+		Out.vColor = CalcHDRColor(vDiffuse * vShade, vDepthDesc.b) + vSpecular;
 
 	if (Out.vColor.a == 0.0f)
 		discard;

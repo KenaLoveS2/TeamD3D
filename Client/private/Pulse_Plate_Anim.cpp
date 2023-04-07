@@ -82,9 +82,9 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	BoxDesc.fRestitution = 0.1f;
 
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PULSE_PLATE));
+	m_pTransformCom->Connect_PxActor_Static(m_szCloneObjectTag);
 
-	CPhysX_Manager::GetInstance()->Create_Trigger(
-		Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE_PLATE, vPos, 4.f));
+	CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE_PLATE, vPos, 4.f));
 
 	m_pControlRoom =dynamic_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
 	assert(m_pControlRoom != nullptr  && "CPulse_Plate_Anim::Late_Initialize(void * pArg)");
@@ -327,6 +327,9 @@ CGameObject * CPulse_Plate_Anim::Clone(void * pArg)
 
 void CPulse_Plate_Anim::Free()
 {
+	m_pTransformCom->Clear_Actor();
+	CPhysX_Manager::GetInstance()->Delete_TriggerActor(m_szCloneObjectTag);
+
 	__super::Free();
 
 	Safe_Release(m_pModelCom);

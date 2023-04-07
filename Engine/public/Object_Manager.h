@@ -18,14 +18,11 @@ public:
 
 	map<const _tchar*, class CGameObject*>*	Get_AnimObjects(_uint iLevelIndex) { return &m_mapAnimModel[iLevelIndex]; }
 	map<const _tchar*, class CGameObject*>*	Get_ShaderValueObjects(_uint iLevelIndex) { return &m_mapShaderValueModel[iLevelIndex]; }
-
 	map <const _tchar*, class CGameObject*>* Get_GameObjects(_uint iLevelIndex, const _tchar* pLayerTag);
 
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototypes = 0);
 	HRESULT Clear(_uint iLevelIndex);
-
-	
 
 public:
 	HRESULT					Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
@@ -74,7 +71,7 @@ private: /*For.Imgui*/
 
 	/* For. Stop Gameplay And Activate Specific Layer */
 	CLayer*			m_pSingleLayer = nullptr;
-	_bool			m_bCheckLateTick = false;
+	_bool				m_bCheckLateTick = false;
 
 private:
 	class CGameObject* Find_Prototype(const _tchar* pPrototypeTag);

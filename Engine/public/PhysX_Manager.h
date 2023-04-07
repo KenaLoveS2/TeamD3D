@@ -301,5 +301,6 @@ public:
 
 	void PutToSleep(PxRigidDynamic* pActor);
 	void WakeUp(PxRigidDynamic* pActor);
+	void Delete_TriggerActor(const _tchar* pTag);
 };
 END
