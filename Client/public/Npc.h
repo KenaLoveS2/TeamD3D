@@ -60,7 +60,6 @@ protected:
 	CModel*							m_pModelCom = nullptr;
 	CFSMComponent*			m_pFSM = nullptr;
 	class CKena*					m_pKena = nullptr;
-	class CCameraForNpc*	m_pMyCam = nullptr;
 	_bool								m_bStraight = false;
 
 protected:

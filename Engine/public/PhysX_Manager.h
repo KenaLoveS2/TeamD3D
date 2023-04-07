@@ -237,7 +237,7 @@ public:
 	void Update_Trasnform(_float fTimeDelta);
 
 	void createDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity);
-	void Clear();
+	void Clear(_bool bReCreateGround = false);
 
 	PxRigidStatic * Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction = 0.5f, _float fDynamicFriction = 0.5f, _float fRestitution = 0.1f, _float3 vScale=_float3(0.f,0.f,0.f));
 	
@@ -302,5 +302,7 @@ public:
 
 	void PutToSleep(PxRigidDynamic* pActor);
 	void WakeUp(PxRigidDynamic* pActor);
+	void Delete_TriggerActor(const _tchar* pTag);
+	void Create_PlaneGround();
 };
 END

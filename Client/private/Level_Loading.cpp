@@ -11,6 +11,7 @@
 #include "Level_MapTool.h"
 #include "Level_TestPlay.h"
 #include "Level_EffectTest.h"
+#include "Level_Gimmick.h"
 
 
 CLevel_Loading::CLevel_Loading(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -77,13 +78,16 @@ void CLevel_Loading::Late_Tick(_float fTimeDelta)
 				pLevel = CLevel_TestPlay::Create(m_pDevice, m_pContext);
 				break;
 
-
 			case LEVEL_MAPTOOL:
 				pLevel = CLevel_MapTool::Create(m_pDevice, m_pContext);
 				break;
 
 			case LEVEL_EFFECT:
 				pLevel = CLevel_EffectTest::Create(m_pDevice, m_pContext);
+				break;
+
+			case LEVEL_GIMMICK:
+				pLevel = CLevel_Gimmick::Create(m_pDevice, m_pContext);
 				break;
 
 			case LEVEL_FINAL:

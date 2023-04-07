@@ -52,9 +52,9 @@ HRESULT CBranchTosser::Initialize(void* pArg)
 
 HRESULT CBranchTosser::Late_Initialize(void * pArg)
 {
-
 	// ¸öÅë
 	{
+
 		_float3 vPos = _float3(0.f, 5.f, -15.f);
 		_float3 vPivotScale = _float3(0.5f, 0.1f, 0.1f);
 		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
@@ -81,7 +81,10 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 		XMStoreFloat4x4(&Temp, XMMatrixTranslation(0.f, 0.5f, 0.f));
 		m_pTransformCom->Add_Collider(m_szCloneObjectTag, Temp);
 	}
-	
+
+	if (FAILED(SetUp_Weapon()))
+		return E_FAIL;
+
 	_float4 vPos = { m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f };
 	m_pTree->Set_Position(vPos);
 	m_pTree->Late_Initialize(nullptr);
@@ -92,7 +95,7 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 	m_pEnemyWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f));
-
+	
 	return S_OK;
 }
 
@@ -464,7 +467,7 @@ HRESULT CBranchTosser::SetUp_Components()
 {
 	__super::SetUp_Components();
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_BranchTosser", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_BranchTosser", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_BranshTosser.json");
@@ -476,30 +479,6 @@ HRESULT CBranchTosser::SetUp_Components()
 	}
 
 	m_pModelCom->Set_RootBone("BranchTosser");
-
-	CBranchTosser_Weapon::MONSTERWEAPONDESC		WeaponDesc;
-	ZeroMemory(&WeaponDesc, sizeof(CBranchTosser_Weapon::MONSTERWEAPONDESC));
-	XMStoreFloat4x4(&WeaponDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
-	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
-	WeaponDesc.pTargetTransform = m_pTransformCom;
-	WeaponDesc.pOwnerMonster = this;
-	Safe_AddRef(WeaponDesc.pSocket);
-	Safe_AddRef(m_pTransformCom);
-
-	for (_uint i = 0; i < BRANCH_TOSSER_WEAPON_COUNT; i++)
-	{
-		m_pWeapon[i] = (CBranchTosser_Weapon*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserWeapon"), 
-			CUtile::Create_DummyString(m_szCloneObjectTag, TEXT("Weapon"), i), &WeaponDesc);
-
-		assert(m_pWeapon[i] && "BranchTosser Weapon is nullptr");		
-		m_pWeapon[i]->Late_Initialize(nullptr);
-	}
-				
-	m_pTree = (CBranchTosser_Tree*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserTree"), 
-		CUtile::Create_DummyString(m_szCloneObjectTag, TEXT("Tree"), 0));
-
-	assert(m_pTree && "BranchTosser Tree is nullptr");
-	m_pTree->Set_OwnerBranchTosser(this);
 
 	return S_OK;
 }
@@ -525,6 +504,35 @@ HRESULT CBranchTosser::SetUp_ShadowShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"))) return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)))) return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)))) return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CBranchTosser::SetUp_Weapon()
+{
+	CBranchTosser_Weapon::MONSTERWEAPONDESC		WeaponDesc;
+	ZeroMemory(&WeaponDesc, sizeof(CBranchTosser_Weapon::MONSTERWEAPONDESC));
+	XMStoreFloat4x4(&WeaponDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
+	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
+	WeaponDesc.pTargetTransform = m_pTransformCom;
+	WeaponDesc.pOwnerMonster = this;
+	Safe_AddRef(WeaponDesc.pSocket);
+	Safe_AddRef(m_pTransformCom);
+
+	for (_uint i = 0; i < BRANCH_TOSSER_WEAPON_COUNT; i++)
+	{
+		m_pWeapon[i] = (CBranchTosser_Weapon*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserWeapon"),
+			CUtile::Create_DummyString(m_szCloneObjectTag, TEXT("Weapon"), i), &WeaponDesc);
+
+		assert(m_pWeapon[i] && "BranchTosser Weapon is nullptr");
+		m_pWeapon[i]->Late_Initialize(nullptr);
+	}
+
+	m_pTree = (CBranchTosser_Tree*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserTree"),
+		CUtile::Create_DummyString(m_szCloneObjectTag, TEXT("Tree"), 0));
+
+	assert(m_pTree && "BranchTosser Tree is nullptr");
+	m_pTree->Set_OwnerBranchTosser(this);
 
 	return S_OK;
 }

@@ -73,6 +73,7 @@ protected:
 	virtual	HRESULT			SetUp_Components() override;
 	virtual	HRESULT			SetUp_ShaderResources() override;
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;
+	virtual  HRESULT			SetUp_Weapon();
 
 private:
 	void	Update_Collider(_float fTimeDelta) override;

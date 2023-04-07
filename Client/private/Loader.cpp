@@ -240,6 +240,9 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_EFFECT:
 		pLoader->Loading_ForTestEffect();
 		break;
+	case LEVEL_GIMMICK:
+		pLoader->Loading_ForMiniGame();
+		break;
 	case LEVEL_FINAL:
 		pLoader->Loading_ForFinal();
 		break;
@@ -1472,15 +1475,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 	Safe_AddRef(pGameInstance);
 
 	FAILED_CHECK_RETURN(Loading_ForWJ((_uint)LEVEL_TESTPLAY), E_FAIL);
-	
 	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_TESTPLAY), E_FAIL);
-
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_TESTPLAY), E_FAIL);
-
 	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_TESTPLAY), E_FAIL);
-		
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_TESTPLAY), E_FAIL);
-
 	FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_TESTPLAY), E_FAIL);
 
 	m_isFinished = true;
@@ -1505,26 +1503,25 @@ HRESULT CLoader::Loading_ForTestEffect()
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_ForFinal()
+HRESULT CLoader::Loading_ForMiniGame()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	lstrcpy(m_szLoadingText, TEXT("Loading..."));
 
-	//FAILED_CHECK_RETURN(Loading_ForWJ((_uint)LEVEL_FINAL), E_FAIL);
-
-	//FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_FINAL), E_FAIL);
-
-	//FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_FINAL), E_FAIL);
-
-	//FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_FINAL), E_FAIL);
-
-	//FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_FINAL), E_FAIL);
-
-	//FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_FINAL), E_FAIL);
+	Sleep(4000);
 
 	m_isFinished = true;
 	SetWindowText(g_hWnd, TEXT("Loading Complete!! Wait a moment"));
-	Safe_Release(pGameInstance);
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForFinal()
+{
+	lstrcpy(m_szLoadingText, TEXT("Loading..."));
+
+	Sleep(4000);
+
+	m_isFinished = true;
+	SetWindowText(g_hWnd, TEXT("Loading Complete!! Wait a moment"));
 	return S_OK;
 }
 
@@ -3276,7 +3273,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
 		CGroundMark::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
 
 	/* For.Prototype_GameObject_ControlRoom */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ControlRoom"),

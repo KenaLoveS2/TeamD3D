@@ -63,8 +63,11 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	BoxDesc.pActortag = m_szCloneObjectTag;
 	BoxDesc.eType = BOX_STATIC;		// 원래는 박스 스태틱으로 만들어야함
 	BoxDesc.vPos = vPos;
+
 	if (m_EnviromentDesc.iRoomIndex == 1)
 		BoxDesc.vPos.y = -0.25f;
+	else if (m_EnviromentDesc.iRoomIndex == 2)
+		BoxDesc.vPos.y += 0.25f;
 
 	BoxDesc.vSize = _float3(2.74f, 0.25f, 2.45f);
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
@@ -82,9 +85,9 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	BoxDesc.fRestitution = 0.1f;
 
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PULSE_PLATE));
+	m_pTransformCom->Connect_PxActor_Static(m_szCloneObjectTag);
 
-	CPhysX_Manager::GetInstance()->Create_Trigger(
-		Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE_PLATE, vPos, 4.f));
+	CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE_PLATE, vPos, 4.f));
 
 	m_pControlRoom =dynamic_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
 	assert(m_pControlRoom != nullptr  && "CPulse_Plate_Anim::Late_Initialize(void * pArg)");
