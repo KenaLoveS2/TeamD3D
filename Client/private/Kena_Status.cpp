@@ -218,7 +218,8 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 			{
 				m_fMaxShield *= 1.5f;
 
-				/* NEED : UI SHILED GAGE UP */
+				/* NEED : UI SHILED GAGE UP  */
+				/* ÇÏ±â ½Ã·¯À× */
 			}
 			else if (iSlot == 4)
 			{
@@ -526,8 +527,12 @@ void CKena_Status::Add_RotCount()
 		else if (m_iRotLevel == 4)
 			m_iRotCountMax = 10;
 
-		/* NEED : UI MAX PIP COUNT INCREASE */
-		/* NEED : UI ROT COUNT GAGE RESET */
+		/* Rot LEvel Up */
+		/* Pip Level Up */
+
+	}
+	else
+	{
 		/* 230407 */
 		CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
 		CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
@@ -540,13 +545,6 @@ void CKena_Status::Add_RotCount()
 		m_StatusDelegator.broadcast(eNow, fRotNow);
 		m_StatusDelegator.broadcast(eMax, fRotMax);
 		m_StatusDelegator.broadcast(eGet, fGuage);
-
-
-		/* think later */
-		//if (Get_RotMax() == m_iCurrentRotCount)
-		//	m_iRotLevel++;
-
-
 	}
 }
 
