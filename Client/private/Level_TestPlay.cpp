@@ -379,7 +379,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraForNpc", L"CameraForNpc", &CameraDesc));
+	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraForNpc", L"NPC_CAM", &CameraDesc));
 	NULL_CHECK_RETURN(pCamera, E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"NPC_CAM", pCamera), E_FAIL);
 
@@ -459,8 +459,8 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain1_2_Monster.json");
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain3_Monster.json");
+	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain1_2_Monster.json");
+	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain3_Monster.json");
 	return S_OK;
 
 	CGameInstance * pGameInstance = GET_INSTANCE(CGameInstance);

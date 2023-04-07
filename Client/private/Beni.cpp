@@ -213,7 +213,7 @@ HRESULT CBeni::SetUp_State()
 		.AddTransition("ACTION_0 to ACTION_1", "ACTION_1")
 		.Predicator([this]()
 	{
-		return m_strState == "ACTION_1" && AnimFinishChecker(BENI_CHASINGLOOP);
+		return m_strState == "ACTION_1";
 	})
 
 

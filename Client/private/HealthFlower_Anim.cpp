@@ -95,8 +95,6 @@ void CHealthFlower_Anim::Tick(_float fTimeDelta)
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta); 
 	
-	
-
 	m_pTransformCom->Tick(fTimeDelta);
 	if (m_pExplosionGravity)	m_pExplosionGravity->Tick(fTimeDelta);
 #endif
@@ -126,8 +124,6 @@ void CHealthFlower_Anim::Late_Tick(_float fTimeDelta)
 	if (m_bRenderCheck == true)
 		m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 100.f);
 
-
-
 	if (m_pRendererCom && m_bRenderActive &&m_bRenderCheck ==false)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
@@ -144,25 +140,20 @@ HRESULT CHealthFlower_Anim::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (m_bUsed == true && i == 4)
+		if (i == 4)
 			continue;
 
-		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"),E_FAIL);
-		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"),E_FAIL);
-
-		if(i ==0 || i==1 )
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"),E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",27),E_FAIL);
-		}
 		else if (i == 2 || i==3) 
 		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 28),E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 33),E_FAIL);
 		}
-		else if (i == 4)
+		else
 		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 0),E_FAIL);
 		}
 	}
@@ -257,7 +248,6 @@ HRESULT CHealthFlower_Anim::SetUp_Effects()
 	m_pExplosionGravity->Set_Parent(this);
 	m_pExplosionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_HEALTHFLOWER);
 	/// <ExplosionGravity / Particle>
-
 
 #endif
 	return S_OK;
@@ -372,15 +362,9 @@ HRESULT CHealthFlower_Anim::SetUp_Components()
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
 
-	m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_M_R_AO.png"));
-
-	m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_M_R_AO.png"));
-
-	m_pModelCom->SetUp_Material(2, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_M_R_AO.png"));
 	m_pModelCom->SetUp_Material(2, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_E.png"));
-
-	m_pModelCom->SetUp_Material(3, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_M_R_AO.png"));
 	m_pModelCom->SetUp_Material(3, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_E.png"));
+
 	/* For.Com_Shader */
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
 		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
@@ -402,8 +386,6 @@ HRESULT CHealthFlower_Anim::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-
-
 
 	RELEASE_INSTANCE(CGameInstance);
 
