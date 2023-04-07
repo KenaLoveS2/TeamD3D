@@ -89,17 +89,26 @@ void CKena_Staff::Tick_TrailOption(_float4 vPosition)
 	m_mapEffect["KenaRectTrail"]->Set_Active(true);
 	dynamic_cast<CE_RectTrail*>(m_mapEffect["KenaRectTrail"])->Trail_InputRandomPos(vPosition);
 
-	for (auto& Pair : m_mapEffect)
+	vector<_float4>* vecWeaponPos = m_pPlayer->Get_WeaponPositions();
+	_vector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	if ((_int)vecWeaponPos->size() == 2)
 	{
-		if (dynamic_cast<CE_P_ExplosionGravity*>(Pair.second))
+		vDir = vecWeaponPos->back() - vecWeaponPos->front();
+
+		for (auto& Pair : m_mapEffect)
 		{
-			if (Pair.second->Get_Active() == false)
+			if (dynamic_cast<CE_P_ExplosionGravity*>(Pair.second))
 			{
-				dynamic_cast<CE_P_ExplosionGravity*>(Pair.second)->Set_Option(CE_P_ExplosionGravity::TYPE_KENA_ATTACK);
-				dynamic_cast<CE_P_ExplosionGravity*>(Pair.second)->UpdateParticle(vPosition);
+				if (Pair.second->Get_Active() == false)
+				{
+					dynamic_cast<CE_P_ExplosionGravity*>(Pair.second)->Set_Option(CE_P_ExplosionGravity::TYPE_KENA_ATTACK);
+					dynamic_cast<CE_P_ExplosionGravity*>(Pair.second)->UpdateParticle(vPosition, vDir);
+				}
 			}
 		}
 	}
+
 #pragma region Test
 	// 		CAnimationState*	pAnimation = m_pPlayer->Get_AnimationStateMachine();
 	// 

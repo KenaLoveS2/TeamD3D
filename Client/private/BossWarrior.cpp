@@ -65,6 +65,7 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 		
 	XMStoreFloat4x4(&m_RightLegPivotMatrix, XMMatrixTranslation(m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z));
 
+	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 	return S_OK;
 }
 
@@ -1310,9 +1311,6 @@ void CBossWarrior::TurnOnEnrage_Into(_bool bIsInit, _float fTimeDelta)
 
 	m_mapEffect["W_Enrageinto"]->Set_Position(vWarriorPos);
 	m_mapEffect["W_Enrageinto"]->Set_Active(true);
-
-	if (m_mapEffect["W_Enrageinto"]->Get_Active() == false)
-		m_mapEffect["W_DistortionPlane"]->Set_Active(true);
 }
 
 void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
@@ -1323,6 +1321,13 @@ void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnEnrage_Attck);
 		return;
 	}
+	_matrix WarriorMatrix = m_pTransformCom->Get_WorldMatrix();
+
+	_float4 vPosition = WarriorMatrix.r[3];
+	vPosition.y += 1.f;
+
+	m_mapEffect["W_DistortionPlane"]->Set_Position(vPosition);
+	m_mapEffect["W_DistortionPlane"]->Set_Active(true);
 
 	// 기둥이랑 먼지가 전역적으로 나와야 함 
 }
@@ -1337,7 +1342,7 @@ void CBossWarrior::TurnOnCamShake(_bool bIsInit, _float fTimeDelta)
 	}
 	CCamera_Player* pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
 	if (pCamera != nullptr)
-		pCamera->Camera_Shake(0.003f, 5);
+		pCamera->Camera_Shake(0.005f, 30);
 }
 
 CBossWarrior* CBossWarrior::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

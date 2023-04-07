@@ -37,6 +37,8 @@ HRESULT CE_Warrior_ShockFrontExtended::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Child(), E_FAIL);
 
+	_float3 vScaled = m_pTransformCom->Get_Scaled(); vScaled.y = 3.f;
+	m_pTransformCom->Set_Scaled(vScaled);
 	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
@@ -77,6 +79,9 @@ HRESULT CE_Warrior_ShockFrontExtended::Late_Initialize(void * pArg)
 	// 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COLLISON_DUMMY));
 	// 	m_pTransformCom->Add_Collider(pDummyTag, matPivot);
 
+	for (auto& pChild : m_vecChild)
+		pChild->Late_Initialize(nullptr);
+
 	return S_OK;
 }
 
@@ -106,7 +111,7 @@ void CE_Warrior_ShockFrontExtended::Tick(_float fTimeDelta)
 
 	m_fTimeDelta += fTimeDelta;
 	_float3 vScaled = m_pTransformCom->Get_Scaled();
-	
+
 	if (m_fTimeDelta > 1.5f)
 	{
 		for (auto& pChild : m_vecChild)

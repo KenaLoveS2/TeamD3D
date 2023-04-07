@@ -50,8 +50,6 @@ HRESULT CE_RectTrail::Late_Initialize(void * pArg)
 
 void CE_RectTrail::Tick(_float fTimeDelta)
 {
-	return;
-
 #pragma region Test
 	//if( dynamic_cast<CKena_Staff*>(m_pParent))
 	//{
@@ -110,18 +108,13 @@ void CE_RectTrail::Tick(_float fTimeDelta)
 
 void CE_RectTrail::Late_Tick(_float fTimeDelta)
 {
-	return;
-
  	__super::Trail_LateTick(fTimeDelta);
 }
 
 HRESULT CE_RectTrail::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
 	m_pShaderCom->Begin(m_eEFfectDesc.iPassCnt);
 	m_pVITrailBufferCom->Render();
@@ -140,9 +133,7 @@ HRESULT CE_RectTrail::SetUp_ShaderResources()
 
 	//if (FAILED(m_pVITrailBufferCom->Bind_ShaderResouce(m_pShaderCom, "g_InfoMatrix")))
 	//	return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float)), E_FAIL);
 
 	return S_OK;
 }
@@ -177,6 +168,22 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 		break;
 
 	case Client::CE_RectTrail::OBJ_B_SHAMAN: // snow
+		m_eEFfectDesc.fFrame[0] = 31.f;
+		m_eEFfectDesc.iPassCnt = 13;
+		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.fWidth = 2.f;
+		m_eEFfectDesc.vColor = XMVectorSet(255.f, 255.f, 255.f, 255.f) / 255.f;
+		break;
+
+	case Client::CE_RectTrail::OBJ_W_SHAMAN:
+		m_eEFfectDesc.fFrame[0] = 26.f;
+		m_eEFfectDesc.iPassCnt = 13;
+		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.fWidth = 2.f;
+		m_eEFfectDesc.vColor = XMVectorSet(255.f, 255.f, 255.f, 60.f) / 255.f;
+		break;
+
+	case Client::CE_RectTrail::OBJ_B_HUNTER: 
 		m_eEFfectDesc.fFrame[0] = 31.f;
 		m_eEFfectDesc.iPassCnt = 13;
 		m_eEFfectDesc.fLife = 0.5f;

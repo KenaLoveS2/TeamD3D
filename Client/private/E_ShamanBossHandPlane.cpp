@@ -67,9 +67,8 @@ void CE_ShamanBossHandPlane::Tick(_float fTimeDelta)
 		m_fTimeDelta = 0.0f;
 		return;
 	}
-	else
-		m_fTimeDelta += fTimeDelta;
 
+	m_fTimeDelta += fTimeDelta;
 	__super::Tick(fTimeDelta);
 }
 

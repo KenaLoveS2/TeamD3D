@@ -32,7 +32,6 @@ HRESULT CE_P_Flower::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
 	m_eEFfectDesc.bActive = true;
-
 	return S_OK;
 }
 
@@ -44,23 +43,15 @@ HRESULT CE_P_Flower::Late_Initialize(void* pArg)
 
 	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.5f)); //fix
 	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 2.f);
-
 	return S_OK;
 }
 
 void CE_P_Flower::Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return;
-
 	__super::Tick(fTimeDelta);
 
 	if(m_pKena == nullptr)
-	{
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		m_pKena = (CKena*)	pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-		RELEASE_INSTANCE(CGameInstance);
-	}
+		m_pKena = (CKena*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 
 	_float4 vKenaPos = m_pKena->Get_TransformCom()->Get_Position();
 	_float4 vMyPos = m_pTransformCom->Get_Position();

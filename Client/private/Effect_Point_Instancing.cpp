@@ -205,41 +205,21 @@ HRESULT CEffect_Point_Instancing::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PARTICLE;
-	Set_ShapePosition();
 	return S_OK;
 }
 
 void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 {
+	if (m_bStartUpdate == false)SetUp_StartUpdate();
+
 	__super::Tick(fTimeDelta);
 
 	m_pVIInstancingBufferCom->Get_PointDesc()->fTimeDelta = fTimeDelta;
 
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
-	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
-		{
-			if (m_eEFfectDesc.fTimeDelta < 1.f)
-				m_eEFfectDesc.fWidthFrame++;
-			else
-				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-			m_fTimeDelta = 0.0;
-
-			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
-			{
-				if (m_eEFfectDesc.fTimeDelta < 1.f)
-					m_eEFfectDesc.fHeightFrame++;
-				else
-					m_eEFfectDesc.fHeightFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-				m_eEFfectDesc.fWidthFrame = 0.f;
-
-				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-					m_eEFfectDesc.fHeightFrame = 0.f;
-			}
-		}
-	}
+		Tick_Sprite(m_fTimeDelta, fTimeDelta);
+	
+	m_pVIInstancingBufferCom->Tick(fTimeDelta);
 
 	//if (m_eEFfectDesc.fAngle != 0.0f)
 	//{
@@ -264,17 +244,11 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 	//	}
 	//}
 
-	m_pVIInstancingBufferCom->Tick(fTimeDelta);
 }
 
 void CEffect_Point_Instancing::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	//if (m_eEFfectDesc.IsBillboard == true)
-	//	BillBoardSetting(m_eEFfectDesc.vScale);
-	//else
-	//	m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
 	if (m_vecTrailEffect.size() != 0)
 	{
@@ -413,6 +387,12 @@ HRESULT CEffect_Point_Instancing::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
+}
+
+void CEffect_Point_Instancing::SetUp_StartUpdate()
+{
+	m_pVIInstancingBufferCom->Set_ShapePosition();
+	m_bStartUpdate = true;
 }
 
 void CEffect_Point_Instancing::Free()

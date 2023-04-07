@@ -61,7 +61,7 @@ HRESULT CRot::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = m_iEveryRotCount;
+		m_Desc.WorldMatrix._41 = (_float)m_iEveryRotCount;
 		m_Desc.WorldMatrix._43 = -5.f;
 	}
 

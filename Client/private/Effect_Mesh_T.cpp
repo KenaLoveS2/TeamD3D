@@ -178,6 +178,8 @@ void CEffect_Mesh_T::Imgui_RenderProperty()
 	ImGui::RadioButton("Sprite", &iType, 0);
 	ImGui::RadioButton("One", &iType, 1);
 
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+
 	if (ImGui::Button("Reset"))
 		m_fTimeDelta = 0.0f;
 
@@ -403,8 +405,10 @@ HRESULT CEffect_Mesh_T::Set_ModelCom(EFFECTDESC::MESHTYPE eMeshType)
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_CYLINDER:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cylinder"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_BossPlate"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
+		//if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cylinder"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		//	return E_FAIL;
 		break;
 	}
 	return S_OK;

@@ -238,6 +238,7 @@
     <ClInclude Include="..\public\E_FireBulletCover.h" />
     <ClInclude Include="..\public\E_FireBulletExplosion.h" />
     <ClInclude Include="..\public\E_Hieroglyph.h" />
+    <ClInclude Include="..\public\E_HunterTrail.h" />
     <ClInclude Include="..\public\E_InteractStaff.h" />
     <ClInclude Include="..\public\E_D_Sphere.h" />
     <ClInclude Include="..\public\E_EnemyWispBackground.h" />
@@ -513,6 +514,7 @@
     <ClCompile Include="..\private\E_FireBulletCover.cpp" />
     <ClCompile Include="..\private\E_FireBulletExplosion.cpp" />
     <ClCompile Include="..\private\E_Hieroglyph.cpp" />
+    <ClCompile Include="..\private\E_HunterTrail.cpp" />
     <ClCompile Include="..\private\E_InteractStaff.cpp" />
     <ClCompile Include="..\private\E_D_Sphere.cpp" />
     <ClCompile Include="..\private\E_EnemyWispBackGround.cpp" />
@@ -755,6 +757,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl" />
