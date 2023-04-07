@@ -73,7 +73,7 @@ public:
 	void						Set_ChestInteractable(_bool bInteractable) { m_bChestInteractable = bInteractable; }
 	void						Add_HitStopTime(_float fTime) { m_fHitStopTime += fTime; }
 
-	const _bool&				Is_StateLock() const{ return m_bStateLock; }
+	const _bool&		Is_StateLock() const{ return m_bStateLock; }
 	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:

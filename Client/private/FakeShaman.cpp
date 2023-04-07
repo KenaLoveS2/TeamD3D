@@ -46,9 +46,11 @@ HRESULT CFakeShaman::Late_Initialize(void* pArg)
 		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
+		_tchar* pActorTag = CUtile::Create_DummyString();
+
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
-		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
+		PxCapsuleDesc.pActortag = pActorTag;
 		PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fRadius = vPivotScale.x;
 		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
@@ -63,7 +65,7 @@ HRESULT CFakeShaman::Late_Initialize(void* pArg)
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER));
-		m_pTransformCom->Add_Collider(m_szCloneObjectTag, g_IdentityFloat4x4);
+		m_pTransformCom->Add_Collider(pActorTag, g_IdentityFloat4x4);
 	}
 
 	return CGameObject::Late_Initialize(pArg);
