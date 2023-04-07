@@ -212,7 +212,7 @@ HRESULT CHunterArrow::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Boss_Hunter_Arrow"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_Boss_Hunter_Arrow"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
 	m_pModelCom->SetUp_Material(0, aiTextureType::WJTextureType_DIFFUSE, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/E_Effect_20.png"));

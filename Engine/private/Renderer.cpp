@@ -67,6 +67,12 @@ void CRenderer::EraseStaticShadowObject(CGameObject * pObject)
 	}
 }
 
+void CRenderer::EraseAllStaticShadowObject()
+{
+	m_RenderObjects[RENDER_STATIC_SHADOW].clear();
+
+}
+
 HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGameObject)
 {
 	if (nullptr == pGameObject || 

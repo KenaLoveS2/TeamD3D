@@ -502,7 +502,7 @@ HRESULT CEffect_Texture_Base::SetUp_Components()
 	/* For Com_Texture */
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), m_TextureComName[i],
+		if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_Effect"), m_TextureComName[i],
 			(CComponent**)&m_pTextureCom[i])))
 			return E_FAIL;
 	}

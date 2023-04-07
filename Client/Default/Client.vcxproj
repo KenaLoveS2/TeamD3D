@@ -342,7 +342,6 @@
     <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\Pet.h" />
-    <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\public\RotBomb.h" />
     <ClInclude Include="..\public\RotForMonster.h" />
     <ClInclude Include="..\public\RotHat.h" />
@@ -618,7 +617,6 @@
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\Pet.cpp" />
-    <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\private\RotBomb.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />
     <ClCompile Include="..\private\RotHat.cpp" />

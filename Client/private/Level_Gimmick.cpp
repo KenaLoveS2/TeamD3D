@@ -107,11 +107,11 @@ HRESULT CLevel_Gimmick::Initialize()
 	//	return E_FAIL;
 	//}
 
-	/*if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
+	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
 	{
 		MSG_BOX("Layer_ControlRoom");
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_GIMMICK)))
 		return E_FAIL;
@@ -197,7 +197,7 @@ HRESULT CLevel_Gimmick::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_EffectFlower"), L"flower")))
 	//	return E_FAIL;
 
-	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
@@ -210,12 +210,9 @@ HRESULT CLevel_Gimmick::Ready_Layer_BackGround(const _tchar* pLayerTag)
 HRESULT CLevel_Gimmick::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	//CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_0.json");
-	//CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_1.json");
-	//CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_2.json");
-	/*CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_3.json");
-	CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_4.json");
-	CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_5.json");*/
+
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "MiniGameMap.json");
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

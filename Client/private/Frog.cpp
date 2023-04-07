@@ -65,7 +65,7 @@ void CFrog::Tick(_float fTimeDelta)
 
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 #ifdef FOR_MAP_GIMMICK
-		CGameObject* pPlayer = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena");
+		CGameObject* pPlayer = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL_FOR_COMPONENT, L"Layer_Player", L"Kena");
 
 	if (pPlayer == nullptr)
 		return;

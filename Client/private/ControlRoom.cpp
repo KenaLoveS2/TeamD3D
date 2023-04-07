@@ -226,6 +226,8 @@ CGameObject* CControlRoom::Clone(void* pArg)
 
 void CControlRoom::Free()
 {
+	m_pRendererCom->EraseAllStaticShadowObject();
+
 	CGameObject::Free();
 	Safe_Release(m_pRendererCom);
 }

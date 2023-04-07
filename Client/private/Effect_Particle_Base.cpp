@@ -445,7 +445,7 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 	float fValue;
 	jLoad["18. fPlaySpeed"].get_to<float>(fValue);
 
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_PtInstancing_S2"), TEXT("Com_VIBuffer")
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_VIBuffer_PtInstancing_S2"), TEXT("Com_VIBuffer")
 		, (CComponent**)&m_pVIBufferCom, &tInfo)))
 		return E_FAIL;
 
@@ -521,7 +521,7 @@ HRESULT CEffect_Particle_Base::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), TEXT("Com_DiffuseTexture"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_Effect"), TEXT("Com_DiffuseTexture"),
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
@@ -603,7 +603,7 @@ HRESULT CEffect_Particle_Base::SetUp_Buffer()
 	tInfo.vMinPos = { -3.0f, 0.0f, -3.0f };
 	tInfo.vMaxPos = { 3.0f, 0.0f, 3.0f };
 
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_PtInstancing_S2"), TEXT("Com_VIBuffer")
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_VIBuffer_PtInstancing_S2"), TEXT("Com_VIBuffer")
 		, (CComponent**)&m_pVIBufferCom, &tInfo)))
 		return E_FAIL;
 
