@@ -1472,3 +1472,17 @@ void CBossWarrior::Attack_End(_uint* pAttackIndex, _uint iMaxAttackIndex, _uint 
 
 	CMonster::Attack_End(iAnimIndex);
 }
+
+void CBossWarrior::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}

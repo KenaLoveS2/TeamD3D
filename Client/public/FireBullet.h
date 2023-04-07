@@ -25,6 +25,13 @@ private:
 	class CMonster* m_pOnwerMonster = nullptr;
 	_float4 m_vInvisiblePos = { -1000.f, -1000.f, -1000.f , 1.f };
 
+	enum COPY_SOUND_KEY {
+		CSK_FIRE_START, CSK_FIRE_CHASE, CSK_FIRE_EXPLOSION,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 private:
 	CFireBullet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CFireBullet(const CFireBullet& rhs);

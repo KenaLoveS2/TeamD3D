@@ -93,10 +93,25 @@ private:
 	_int	 m_iDropType = DROP_1;
 	_float m_fIdleToAttack = 0.f;
 
+	enum COPY_SOUND_KEY {
+		CSK_ATTACK, CSK_THROW, CSK_DIE, CSK_IDLE, CSK_PAIN, CSK_TENSE1, CSK_TENSE2, CSK_IMPACT, CSK_WALK,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 public:
 	static CBranchTosser*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*				Clone(void* pArg = nullptr)  override;
 	virtual void								Free() override;
+
+	virtual void Create_CopySoundKey() override;
+	void Play_AttackSound(_bool bIsInit, _float fTimeDelta);
+	void Play_ThrowSound(_bool bIsInit, _float fTimeDelta);
+	void Play_PainSound(_bool bIsInit, _float fTimeDelta);
+	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
+	void Play_Tense1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Tense2Sound(_bool bIsInit, _float fTimeDelta);
 };
 
 END

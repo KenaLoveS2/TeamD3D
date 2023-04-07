@@ -57,8 +57,8 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 	// 몸통
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
-		_float3 vPivotScale = _float3(0.45f, 0.6f, 1.f);
-		_float3 vPivotPos = _float3(0.f, 1.1f, 0.f);
+		_float3 vPivotScale = _float3(0.6f, 0.7f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 1.3f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
@@ -92,7 +92,7 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 		m_vecColliderName.push_back(WeaponPivot);
 		_float3 vWeaponPivot = _float3(-1.65f, 0.f, -1.75f);
 		m_vecPivot.push_back(vWeaponPivot);
-		_float3 vWeaponScalePivot = _float3(0.25f, 0.6f, 0.1f);
+		_float3 vWeaponScalePivot = _float3(0.25f, 0.8f, 0.1f);
 		m_vecPivotScale.push_back(vWeaponScalePivot);
 		_float3 vWeaponRotPivot = _float3(1.6f, 0.f, 0.f);
 		m_vecPivotRot.push_back(vWeaponRotPivot);
@@ -195,10 +195,11 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 
 void CWoodKnight::Tick(_float fTimeDelta)
 {
-	/*m_bReadySpawn = true;
-	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	m_pModelCom->Play_Animation(fTimeDelta);	
-	return;*/
+	//m_bReadySpawn = true;
+	//m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	//m_pModelCom->Play_Animation(fTimeDelta);	
+
+	//return;
 
 	if (m_bDeath) return;
 
@@ -414,6 +415,8 @@ void CWoodKnight::Push_EventFunctions()
 	Play_WalkSound(true, 0.f);
 	Play_SlamSound(true, 0.f);
 	Play_CatchSound(true, 0.f);	
+	Play_HurtSound(true, 0.f);
+	LookAt_Kena(true, 0.f);
 }
 
 HRESULT CWoodKnight::SetUp_State()
@@ -434,6 +437,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("READY_SPAWN")
 		.OnStart([this]()
 	{
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(SLEEP);
 		m_pModelCom->Set_AnimIndex(SLEEP);
 		Start_Spawn();
@@ -469,12 +473,17 @@ HRESULT CWoodKnight::SetUp_State()
 		.OnStart([this]()
 	{
 		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IDLE], 0.7f);
-		m_fIdletoAttackTime = 0.f;
+		
+		m_fIdletoAttackTime = m_fIdletoAttackTime * m_bBlock;
+		m_bBlock = false;			
 	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_fIdletoAttackTime += fTimeDelta;
 		m_pModelCom->Set_AnimIndex(IDLE);
+
+		if (TimeTrigger(m_fIdletoAttackTime, 1.f) == false && m_pKena->Get_State(CKena::STATE_ATTACK) && DistanceTrigger(2.f))
+			m_bBlock = true;
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -506,6 +515,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("BLOCK_INTO")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(BLOCK_INTO);
 		m_pModelCom->Set_AnimIndex(BLOCK_INTO);
 	})
@@ -548,21 +558,21 @@ HRESULT CWoodKnight::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(BLOCK_EXIT);
 		m_pModelCom->Set_AnimIndex(BLOCK_EXIT);
 	})
-		.AddTransition("BLOCK_LOOP to BLOCK_EXIT", "BLOCK_AFTER")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(BLOCK_EXIT);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("BLOCK_LOOP to BLOCK_EXIT", "BLOCK_AFTER")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BLOCK_EXIT);
+	})
+	
 
 		.AddState("BLOCK_AFTER")
 		.OnStart([this]()
-	{
-		m_bBlock = false;
+	{	
 		Set_BlockAfterType();
 	})
 		.Tick([this](_float fTimeDelta)
@@ -908,30 +918,15 @@ HRESULT CWoodKnight::SetUp_State()
 
 		.AddState("BIND")
 		.OnStart([this]()
-	{
-		// set
-
-		m_pModelCom->ResetAnimIdx_PlayTime(BIND);
-		m_pModelCom->Set_AnimIndex(BIND);
+	{			
+		Start_Bind(BIND);
 		m_bStronglyHit = false;
-		// 묶인 상태에서 맞았을때는 ADDITIVE 실행
-		for (_uint i = 0; i < 8; ++i)
-		{
-			if (m_pRotForMonster[i])
-				m_pRotForMonster[i]->Bind(true, this);
-		}
 	})
 		.OnExit([this]()
 	{
 		// 맞는 애니메이션일때도 맞는가?
-		m_bBind = false;
 		Reset_Attack();
-		for (_uint i = 0; i < 8; ++i)
-		{
-			if (m_pRotForMonster[i])
-				m_pRotForMonster[i]->Bind(false, this);
-		}
-		ZeroMemory(&m_pRotForMonster, sizeof(m_pRotForMonster));
+		End_Bind();
 	})
 		.AddTransition("BIND to INTOCHARGE_BACKUP", "INTOCHARGE_BACKUP")
 		.Predicator([this]()
@@ -965,6 +960,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("TAKEDAMAGE")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_ALT);
 		m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_B);
 		m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_L);
@@ -1042,7 +1038,6 @@ HRESULT CWoodKnight::SetUp_Components()
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_WoodKnight.json");
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes() - 1;
-
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(i, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight_AO_R_M_1k.png")), E_FAIL);
@@ -1053,7 +1048,7 @@ HRESULT CWoodKnight::SetUp_Components()
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/Props_AO_R_M_1k.png")), E_FAIL);
 
 	m_pModelCom->Set_RootBone("WoodKnight");
-
+	
 	return S_OK;
 }
 
@@ -1325,10 +1320,11 @@ void CWoodKnight::Create_CopySoundKey()
 		TEXT("Mon_WoodKnight_Attack.ogg"),		
 		TEXT("Mon_WoodKnight_Idle.ogg"),
 		TEXT("Mon_WoodKnight_Woosh.ogg"),
-		TEXT("Mon_WoodKnight_Walk.ogg"),
+		TEXT("Mon_Walk_L.ogg"),
 		TEXT("Mon_WoodKnight_Slam.ogg"),
 		TEXT("Mon_WoodKnight_Die.ogg"),
 		TEXT("Mon_WoodKnight_Catch.ogg"),
+		TEXT("Mon_WoodKnight_Hurt.ogg"),		
 	};
 
 	_tchar szTemp[MAX_PATH] = { 0, };
@@ -1387,3 +1383,29 @@ void CWoodKnight::Play_CatchSound(_bool bIsInit, _float fTimeDelta)
 
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CATCH], 0.7f);
 }
+
+void CWoodKnight::Play_HurtSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CWoodKnight::Play_HurtSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.5f);
+}
+
+void CWoodKnight::LookAt_Kena(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CWoodKnight::LookAt_Kena);
+		return;
+	}
+
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+}
+
+

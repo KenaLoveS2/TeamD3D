@@ -1878,7 +1878,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_Component_Model_VillageGuard
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_VillageGuard",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageGuard.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageGuard.model"), PivotMatrix)))) return E_FAIL;
 
 	// Prototype_Component_Model_WoodKnight
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_WoodKnight",
@@ -2024,7 +2024,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_Component_Model_Moth
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Moth",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Moth/Moth.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Moth/Moth.model"), PivotMatrix)))) return E_FAIL;
 		
 	// Prototype_GameObject_CameraForRot
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"), CCameraForRot::Create(m_pDevice, m_pContext)))) return E_FAIL;

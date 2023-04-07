@@ -587,6 +587,9 @@ void CMonster::Start_Spawn()
 	m_bReadySpawn = true;
 	m_bDissolve = true;
 	m_fDissolveTime = 1.f;
+
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+
 	m_pGameInstance->Play_Sound(m_pSoundKey_Wisp, 0.5f);
 }
 

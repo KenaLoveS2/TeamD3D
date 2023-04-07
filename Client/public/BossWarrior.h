@@ -156,6 +156,13 @@ private:
 	_float m_fIdleTimeCheck = 0.f;
 	const _float m_fIdleTime = 1.f;
 
+	enum COPY_SOUND_KEY {
+		CSK_ATTACK, CSK_THROW, CSK_DIE, CSK_IDLE, CSK_PAIN, CSK_TENSE1, CSK_TENSE2, CSK_IMPACT, CSK_WALK,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 public:
 	static CBossWarrior*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
@@ -164,6 +171,8 @@ public:
 	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 
 	void Attack_End(_uint* pAttackIndex, _uint iMaxAttackIndex, _uint iAnimIndex);
+
+	void Create_CopySoundKey();
 };
 
 END
