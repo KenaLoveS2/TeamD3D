@@ -114,6 +114,8 @@ void CVIBuffer::Free()
 			pPhysX->Delete_Actor(m_pPxActor);
 		}
 	}*/
+	
+
 }
 
 // kbj physx

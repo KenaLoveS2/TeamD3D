@@ -73,6 +73,11 @@ CCamera* CCamera_Manager::Find_LightCamera(const _tchar* pCameraTag)
 	return Pair->second;
 }
 
+void CCamera_Manager::Scene_Change_Clear()
+{
+
+}
+
 _float * CCamera_Manager::Get_CameraNear()
 {
 	if (m_pWorkCamera == nullptr)		return nullptr;

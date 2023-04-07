@@ -172,7 +172,7 @@ HRESULT CFieldBecon_Anim::SetUp_Components()
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_FieldBeaconAnim"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_FieldBeaconAnim"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom,nullptr,this)))
 		return E_FAIL;
 

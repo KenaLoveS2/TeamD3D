@@ -51,7 +51,7 @@ HRESULT CRotBomb::Initialize(void * pArg)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
 	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-	assert(m_pKena != nullptr && "CFireBullet::Initialize()");
+	assert(m_pKena != nullptr && "CRotBomb::Initialize()");
 
 	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
 	m_eEFfectDesc.bActive = false;
@@ -282,7 +282,7 @@ HRESULT CRotBomb::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxEffectAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Rot_Bomb", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Rot_Bomb", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	/* Texture */
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();

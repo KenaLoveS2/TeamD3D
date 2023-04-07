@@ -90,13 +90,13 @@ HRESULT CE_Wind::SetUp_Components()
 	switch (iModelType)
 	{
 	case 0 :
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Wind"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_Wind"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		m_pTransformCom->Rotation(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), XMConvertToRadians(-90.f));
 		break;
 
 	case 1:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_WindLoop"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_WindLoop"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	}
