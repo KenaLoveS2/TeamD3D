@@ -78,11 +78,11 @@ void CDZ_FallenTree_Anim::Tick(_float fTimeDelta)
 		m_bColiderOn = true;
 	}
 
-	//if(ImGui::Button("TEmp"))
-	//{
-	//	m_bBossClear = true;
-	//	m_bColiderOn = false;
-	//}
+	if(ImGui::Button("Fallen Tree Test"))
+	{
+		m_bBossClear = true;
+		m_bColiderOn = false;
+	}
 
 	/*Culling*/
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -325,7 +325,7 @@ HRESULT CDZ_FallenTree_Anim::SetUp_Components()
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_DeadZoneTree"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_DeadZoneTree"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom,nullptr,this)))
 		return E_FAIL;
 

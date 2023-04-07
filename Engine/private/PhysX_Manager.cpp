@@ -337,7 +337,7 @@ void CPhysX_Manager::Clear()
 	for (auto& iter : m_TriggerDataes)
 		Safe_Delete(iter);
 	m_TriggerDataes.clear();
-	
+
 	m_StaticActors.clear();
 	m_DynamicActors.clear();
 	m_DynamicColliders.clear();

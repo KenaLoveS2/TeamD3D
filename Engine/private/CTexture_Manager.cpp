@@ -19,7 +19,17 @@ CTexture* CTexture_Manager::Find_Texture(const _tchar* pFilePath)
 	auto	iter = find_if(m_Textures.begin(), m_Textures.end(), CTag_Finder(pFilePath));
 	if (iter == m_Textures.end())
 		return nullptr;
+
+	
+
 	return iter->second;
+}
+
+HRESULT CTexture_Manager::Scene_Chane_Clear()
+{
+	m_Textures.clear();
+
+	return S_OK;
 }
 
 void CTexture_Manager::Free()

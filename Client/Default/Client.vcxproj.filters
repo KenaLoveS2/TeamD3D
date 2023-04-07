@@ -1466,6 +1466,7 @@
     <ClInclude Include="..\public\CLevel_Final.h">
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BombGimmickObj.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2353,6 +2354,7 @@
     <ClCompile Include="..\private\CLevel_Final.cpp">
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\BombGimmickObj.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

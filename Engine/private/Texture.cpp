@@ -198,8 +198,11 @@ void CTexture::Free()
 {
 	__super::Free();
 
+	
 	for (_uint i = 0; i < m_iNumTextures; ++i)
 		Safe_Release(m_pTextures[i]);
 
 	Safe_Delete_Array(m_pTextures);
+
+	
 }

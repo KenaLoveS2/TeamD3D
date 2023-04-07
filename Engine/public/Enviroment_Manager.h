@@ -15,6 +15,9 @@ public:
 		assert(pPlayer != nullptr && "CEnviroment_Manager_Set_PlayerPtr");
 		m_pPlayer = pPlayer;}
 
+public:
+	void Clear();
+
 private:
 	_uint m_iCurPlayer_RoomIndex = 0;
 	_float m_fRenderRange = 0.f;
