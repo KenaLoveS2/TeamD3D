@@ -260,11 +260,18 @@ void CRotBomb::Set_Child()
 
 	m_vecChild.reserve(CHILD_END);
 
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotBombExplosion", L"RotBombExplosion"));
+	wstring strCloneTag = m_szCloneObjectTag;
+	strCloneTag += L"_RotBombExplosion";
+
+	_tchar* pTag = CUtile::Create_StringAuto(strCloneTag.c_str());
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotBombExplosion", pTag));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 	
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Explosion_p", L"RotBombExplosion_P"));
+	strCloneTag = m_szCloneObjectTag;
+	strCloneTag += L"_RotBombExplosion";
+	pTag = CUtile::Create_StringAuto(strCloneTag.c_str());
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Explosion_p", pTag));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 
@@ -443,7 +450,10 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 	else if (m_eCurState == CRotBomb::BOMB_BOOM)
 	{
 		if (m_vecChild[CHILD_COVER]->Get_Active() == false)
+		{
+			eState = CRotBomb::BOMBSTATE_END;
 			Reset();
+		}
 	}
 
 	return eState;

@@ -59,7 +59,7 @@ HRESULT CE_RotBombExplosion::Initialize(void * pArg)
 
 HRESULT CE_RotBombExplosion::Late_Initialize(void * pArg)
 {	
-	_float3 vPos = _float3(0.f, 0.f, 0.f);
+	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float3 vPivotScale = _float3(1.f, 0.f, 1.f);
 	_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
 
@@ -82,7 +82,7 @@ HRESULT CE_RotBombExplosion::Late_Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER_BOMB_EXPLOSION));
 
-	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+	_smatrix	matPivot = XMMatrixIdentity();
 	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 
 	return S_OK;
@@ -91,6 +91,8 @@ HRESULT CE_RotBombExplosion::Late_Initialize(void * pArg)
 void CE_RotBombExplosion::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	m_pTransformCom->Tick(fTimeDelta);
 
 	//if (m_bBomb) // 사라짐
 	//	TurnoffBomb(fTimeDelta);
@@ -119,15 +121,18 @@ void CE_RotBombExplosion::Tick(_float fTimeDelta)
 	//	return;
 	//}
 
-	if (m_eEFfectDesc.bActive == true)
-		TurnonBomb(fTimeDelta);
-	else
-	{
-		Reset();
+	if (m_eEFfectDesc.bActive == false)
 		return;
+
+	TurnonBomb(fTimeDelta);
+
+	if (m_bBomb)
+	{
+		m_fDissolveTime += fTimeDelta;
+		dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_DissolveTime(m_fDissolveTime);
+		if (m_fDissolveTime > 1.f)
+			Reset();
 	}
-	if (m_bBomb) // 사라짐
-		TurnoffBomb(fTimeDelta);
 }
 
 void CE_RotBombExplosion::Late_Tick(_float fTimeDelta)
@@ -136,7 +141,7 @@ void CE_RotBombExplosion::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
-
+	
 	if (nullptr != m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
@@ -160,11 +165,21 @@ HRESULT CE_RotBombExplosion::Render()
 
 void CE_RotBombExplosion::Reset()
 {
-	m_bTurnOn = false;
+	m_pTransformCom->Set_Position(XMVectorSet(0.f, -100.f, 0.f, 1.f));
+	m_pTransformCom->Set_Scaled(_float3(0.9f, 0.9f, 0.9f));
+	for (auto& pChild : m_vecChild)
+		m_vecChild[CHILD_COVER]->Set_Scale(XMVectorSet(0.91f, 0.91f, 0.91f, 0.f));
+
+	dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_Dissolve(false);
+	dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_DissolveTime(0.0f);
+
+	m_eEFfectDesc.bActive = false;
+
 	m_bBomb = false;
+	m_bTurnOn = false;
 	m_fTimeDelta = 0.f;
 	m_fBombTime = 0.f;
-	m_fDissolveTime = 0.f;
+	m_fDissolveTime = 0.0f;
 
 	PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
 	CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, 0.001f);
@@ -188,10 +203,11 @@ void CE_RotBombExplosion::TurnonBomb(_float fTimeDelta)
 	if (vScaled.x > 3.f) // 내 스케일이 3보다 커지면 현재 크기 유지
 	{
 		m_vecChild[CHILD_COVER]->Set_Active(false); // 자식은 끄고 내 크기 유지
-		_bool bBombResult = TurnOffSystem(m_fBombTime, 4.f, fTimeDelta);
-		if (bBombResult == true)
+		m_fBombTime += fTimeDelta;
+		if (m_fBombTime > 2.f)
 		{
-			m_bBomb = true;	   // Bomb 상태전환
+			m_bBomb = true;      // Bomb 상태전환
+			m_fBombTime = 0.0f;
 			dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_Dissolve(true);
 		}
 	}
@@ -205,7 +221,7 @@ void CE_RotBombExplosion::TurnonBomb(_float fTimeDelta)
 	}
 
 	PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
-	CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, vScaled.x);
+	CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, vScaled.x * 1.7f);
 }
 
 void CE_RotBombExplosion::TurnoffBomb(_float fTimeDelta)
@@ -222,7 +238,7 @@ void CE_RotBombExplosion::TurnoffBomb(_float fTimeDelta)
 
 		m_pTransformCom->Set_Scaled(_float3(0.9f, 0.9f, 0.9f));
 		for (auto& pChild : m_vecChild)
-			m_vecChild[CHILD_COVER]->Set_Scale(XMVectorSet(0.91f, 0.91f, 0.91f, 1.f));
+			m_vecChild[CHILD_COVER]->Set_Scale(XMVectorSet(0.91f, 0.91f, 0.91f, 0.f));
 
 		PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
 		CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, 0.001f);
@@ -246,6 +262,13 @@ void CE_RotBombExplosion::Imgui_RenderProperty()
 {
 	if (ImGui::Button("Active"))
 		m_eEFfectDesc.bActive = !m_eEFfectDesc.bActive;
+
+	ImGui_PhysXValueProperty();
+}
+
+void CE_RotBombExplosion::ImGui_PhysXValueProperty()
+{
+	__super::ImGui_PhysXValueProperty();
 }
 
 HRESULT CE_RotBombExplosion::SetUp_Effects()

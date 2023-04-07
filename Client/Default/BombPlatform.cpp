@@ -43,9 +43,9 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	XMMatrixDecompose(&vScale, (_vector*)&m_vInitQuat, &vTrans, m_pTransformCom->Get_WorldMatrix());
 
 	/* CloneTag로 m_vMovingPos 다르게 주면 돼 */
-	m_vMovingPos = _float4(1.f, 10.f, 1.f, 1.f);
+	m_vMovingPos = _float4(50.f, 1.f, 35.f, 1.f);
 	m_vMovingQuat = XMQuaternionIdentity();
-	m_fReturnTime = 3.f;
+	m_fReturnTime = 5.f;
 
 	_float3	vPos = m_vInitPos;
 	_float3	vPivotScale = _float3(3.2f, 1.45f, 3.51f);
@@ -67,7 +67,7 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	PxBoxDesc.fDensity = 1.f;
 	PxBoxDesc.fAngularDamping = 0.5f;
 	PxBoxDesc.fMass = 0.1f;
-	PxBoxDesc.fLinearDamping = 10.f;
+	PxBoxDesc.fLinearDamping = 0.1f;
 	PxBoxDesc.bCCD = false;
 	PxBoxDesc.fDynamicFriction = 0.5f;
 	PxBoxDesc.fStaticFriction = 0.5f;

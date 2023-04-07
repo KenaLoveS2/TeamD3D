@@ -292,7 +292,7 @@ public:
 	//Delegator<CUI_ClientManager::UI_PRESENT, _float, _float, _float, _float>				m_PlayerAmmoDelegator;
 
 
-	// 테스트용 임시 변수 인듯
+	// 테스트용 임시 변수 인듯	
 	_float m_fTest = 0.f;
 	_bool  m_bStateLock;
 	_float m_fLinearDamping = KENA_LINEAR_DAMING, m_fAngularDamping = KENA_ANGULAR_DAMING, m_fMass = KENA_MASS;
