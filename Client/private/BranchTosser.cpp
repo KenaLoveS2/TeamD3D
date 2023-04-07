@@ -489,13 +489,15 @@ HRESULT CBranchTosser::SetUp_Components()
 	for (_uint i = 0; i < BRANCH_TOSSER_WEAPON_COUNT; i++)
 	{
 		m_pWeapon[i] = (CBranchTosser_Weapon*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserWeapon"), 
-			CUtile::Create_DummyString(L"BranchTosserWeapon", i), &WeaponDesc);
+			CUtile::Create_DummyString(m_szCloneObjectTag, TEXT("Weapon"), i), &WeaponDesc);
 
 		assert(m_pWeapon[i] && "BranchTosser Weapon is nullptr");		
 		m_pWeapon[i]->Late_Initialize(nullptr);
 	}
 				
-	m_pTree = (CBranchTosser_Tree*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserTree"), L"BranchTosserTree");
+	m_pTree = (CBranchTosser_Tree*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserTree"), 
+		CUtile::Create_DummyString(m_szCloneObjectTag, TEXT("Tree"), 0));
+
 	assert(m_pTree && "BranchTosser Tree is nullptr");
 	m_pTree->Set_OwnerBranchTosser(this);
 

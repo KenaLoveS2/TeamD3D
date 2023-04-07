@@ -346,6 +346,22 @@ _tchar * CUtile::Create_DummyString(const _tchar * pBaseText, _uint iCount)
 	return Create_StringAuto(szBuf);
 }
 
+_tchar* CUtile::Create_DummyString(const _tchar* pBaseText, const _tchar* pSubBaseText, _uint iCount)
+{
+	_tchar		szBuf[MAX_PATH] = L"";
+	swprintf_s(szBuf, L"%s_%s_%d", pBaseText, pSubBaseText, iCount);
+
+	return Create_StringAuto(szBuf);
+}
+
+_tchar* CUtile::Create_CombinedString(const _tchar* pBaseText, const _tchar* pSubBaseText)
+{
+	_tchar		szBuf[MAX_PATH] = L"";
+	swprintf_s(szBuf, L"%s_%s", pBaseText, pSubBaseText);
+
+	return Create_StringAuto(szBuf);
+}
+
 _float4 CUtile::Float3toFloat4Position(_float3 vPos)
 {
 	return _float4(vPos.x, vPos.y, vPos.z, 1.f);
