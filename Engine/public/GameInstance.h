@@ -223,7 +223,7 @@ public: /* For.PipeLine */
 		_bool	Is_RenderIndex(_uint iObjRoomIndex);
 		_bool	Is_Render_TerrainIndex(_uint iTerrainRoomIndex);
 		_uint Get_CurrentPlayerRoomIndex();
-
+		void	Scene_EnviMgr_Change();
 public:
 	HRESULT	   Texture_Manager_SceneChange();
 	private:
