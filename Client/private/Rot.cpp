@@ -585,7 +585,7 @@ _int CRot::Get_KenaConnectRotCount()
 { 
 	if (m_iThisRotIndex != FIRST_ROT) return -1;
 
-	return m_vecKenaConnectRot.size();
+	return (_int)m_vecKenaConnectRot.size();
 }
 
 _int CRot::Get_HaveHatRotCount()
@@ -599,5 +599,5 @@ _int CRot::Get_NoHatRotCount()
 {
 	if (m_iThisRotIndex != FIRST_ROT) return -1;
 
-	return m_vecKenaConnectRot.size() - m_iBuyHatIndex;
+	return (_int)m_vecKenaConnectRot.size() - m_iBuyHatIndex;
 }
