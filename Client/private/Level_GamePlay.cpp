@@ -264,6 +264,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Environment(const _tchar * pLayerTag)
 
 	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "TestBombTarget.json");
 
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_BowTarget", L"BowTarget", nullptr, nullptr), E_FAIL);
+
 	return S_OK;
 }
 

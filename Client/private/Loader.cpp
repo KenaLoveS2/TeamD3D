@@ -205,7 +205,7 @@ unsigned int	g_LEVEL = 0;
 #include "E_KenaDash.h"
 #include "E_KenaDashRing.h"
 #include "E_KenaDashCone.h"
-#include "..\Default\BombPlatform.h"
+#include "BombPlatform.h"
 
 
 
@@ -1318,9 +1318,9 @@ HRESULT CLoader::Loading_ForMapTool()
 		CCrystal::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	/* For.Prototype_GameObject_BowTarget */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
-		CBowTarget::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+// 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
+// 		CBowTarget::Create(m_pDevice, m_pContext))))
+// 		return E_FAIL;
 	/* For.Prototype_GameObject_PulseStone */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulseStone"),
 		CPulseStone::Create(m_pDevice, m_pContext))))
@@ -1738,6 +1738,16 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	/* Prototype_Component_Model_Taro_Mask */
 	FAILED_CHECK_RETURN(LoadNonAnimFolderModel(iLevelIndex, "Taro_Mask", false, false, false), E_FAIL);
 
+	/* Prototype_Component_Model_BowTarget */
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BowTarget", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/BowTarget/BowTarget.model", PivotMatrix)), E_FAIL);
+
+	/* Prototype_Component_Model_BowTarget_Husk */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BowTarget_Husk", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/BowTarget/BowTarget_Husk.mdat", PivotMatrix)), E_FAIL);
+
+	/* Prototype_Component_Model_Broken_BowTarget */
+	FAILED_CHECK_RETURN(LoadNonAnimFolderModel(iLevelIndex, "Broken_BowTarget", false, false, false), E_FAIL);
+
 	/* GAMEOBJECTS */
 	/* Prototype_GameObject_Kena */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Kena", CKena::Create(m_pDevice, m_pContext)), E_FAIL);
@@ -1773,6 +1783,9 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	/* Prototype_GameObject_HealthFlower */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_HealthFlower_Anim", CHealthFlower_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
 	
+	/* Prototype_GameObject_BowTarget */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_BowTarget", CBowTarget::Create(m_pDevice, m_pContext)), E_FAIL);
+
 	/* Prototype_GameObject_Player_Camera */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Camera_Player", CCamera_Player::Create(m_pDevice, m_pContext)), E_FAIL);
 
@@ -3141,9 +3154,9 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	
 
 	/* For.Prototype_GameObject_BowTarget */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
-		CBowTarget::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+// 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
+// 		CBowTarget::Create(m_pDevice, m_pContext))))
+// 		return E_FAIL;
 	
 
 	/* For.Prototype_GameObject_PulseStone */

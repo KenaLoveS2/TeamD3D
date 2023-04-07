@@ -283,7 +283,7 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 void CInstancing_Mesh::Edit_InstanceAngle_Pos_Model(vector<_float4x4*> & VecInstancingMatrix, _int EditStartIndex,
 	_int EditEndIndex, _float3 vPos, _float3 vAngle )
 {
-	if (EditEndIndex <= 0 || EditEndIndex >= m_iNumInstance)
+	if (EditEndIndex <= 0 || EditEndIndex >= (_int)m_iNumInstance)
 		return;
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
@@ -332,7 +332,7 @@ void CInstancing_Mesh::Create_InstanceModel_InstanceAngle_Pos_Model(vector<_floa
 {
 	_float4 vCreatePos;
 
-	for(_uint i=0 ;i< iCreateNum; ++i)
+	for(_int i = 0 ;i < iCreateNum; ++i)
 	{
 		_float4x4* Temp = new _float4x4;
 		XMStoreFloat4x4(Temp, XMMatrixIdentity());

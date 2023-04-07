@@ -185,6 +185,7 @@
     <ClInclude Include="..\Public\Base_Ground.h" />
     <ClInclude Include="..\public\Beni.h" />
     <ClInclude Include="..\public\BombGimmickObj.h" />
+    <ClInclude Include="..\public\BombPlatform.h" />
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\public\BossHunter.h" />
@@ -453,7 +454,6 @@
     <ClInclude Include="..\Public\Wall.h" />
     <ClInclude Include="..\public\WaterPlane.h" />
     <ClInclude Include="..\public\WoodKnight.h" />
-    <ClInclude Include="BombPlatform.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -464,6 +464,7 @@
     <ClCompile Include="..\Private\Base_Ground.cpp" />
     <ClCompile Include="..\private\Beni.cpp" />
     <ClCompile Include="..\private\BombGimmickObj.cpp" />
+    <ClCompile Include="..\private\BombPlatform.cpp" />
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\private\BossHunter.cpp" />
@@ -730,7 +731,6 @@
     <ClCompile Include="..\Private\Wall.cpp" />
     <ClCompile Include="..\private\WaterPlane.cpp" />
     <ClCompile Include="..\private\WoodKnight.cpp" />
-    <ClCompile Include="BombPlatform.cpp" />
     <ClCompile Include="CEffect_Unit.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">

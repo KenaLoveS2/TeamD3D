@@ -175,6 +175,8 @@ CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pConte
 			MSG_BOX("Failed to Created : CTexture");
 			Safe_Release(pInstance);
 		}
+
+		Safe_AddRef(pInstance);
 		CTexture_Manager::GetInstance()->Add_Texture(pTextureFilePath, pInstance);
 		
 		return pInstance;

@@ -728,9 +728,6 @@
     <ClInclude Include="..\Public\ControlMove.h">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BowTarget.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Crystal.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
@@ -1460,7 +1457,6 @@
     <ClInclude Include="..\public\E_KenaDashCone.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Dash</Filter>
     </ClInclude>
-    <ClInclude Include="BombPlatform.h" />
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Params.h">
       <Filter>97.ShaderFiles</Filter>
     </ClInclude>
@@ -1468,6 +1464,12 @@
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BombGimmickObj.h" />
+    <ClInclude Include="..\public\BombPlatform.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BowTarget.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1613,9 +1615,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\ControlMove.cpp">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BowTarget.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Cliff_Rock.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
@@ -2352,11 +2351,16 @@
     <ClCompile Include="..\private\E_KenaDashCone.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Dash</Filter>
     </ClCompile>
-    <ClCompile Include="BombPlatform.cpp" />
     <ClCompile Include="..\private\CLevel_Final.cpp">
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BombGimmickObj.cpp" />
+    <ClCompile Include="..\private\BombPlatform.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BowTarget.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
