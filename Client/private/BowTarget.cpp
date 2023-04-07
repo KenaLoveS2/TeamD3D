@@ -41,6 +41,33 @@ HRESULT CBowTarget::Initialize(void* pArg)
 
 HRESULT CBowTarget::Late_Initialize(void* pArg)
 {
+	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float3 vPivotScale = _float3(0.2f, 0.f, 1.f);
+	_float3 vPivotPos = _float3(0.03f, 0.13f, 0.01f);
+
+	// Capsule X == radius , Y == halfHeight
+	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	PxSphereDesc.eType = SPHERE_DYNAMIC;
+	PxSphereDesc.pActortag = m_szCloneObjectTag;
+	PxSphereDesc.vPos = vPos;
+	PxSphereDesc.fRadius = vPivotScale.x;
+	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxSphereDesc.fDensity = 1.f;
+	PxSphereDesc.fAngularDamping = 0.5f;
+	PxSphereDesc.fMass = 59.f;
+	PxSphereDesc.fLinearDamping = 1.f;
+	PxSphereDesc.bCCD = true;
+	PxSphereDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	PxSphereDesc.fDynamicFriction = 0.5f;
+	PxSphereDesc.fStaticFriction = 0.5f;
+	PxSphereDesc.fRestitution = 0.1f;
+
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_BOWTARGET));
+
+	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+
 	return S_OK;
 }
 
@@ -52,6 +79,8 @@ void CBowTarget::Tick(_float fTimeDelta)
 	Update_State(fTimeDelta);
 
 	m_pModelCom->Play_Animation(fTimeDelta);
+
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CBowTarget::Late_Tick(_float fTimeDelta)
@@ -96,6 +125,26 @@ void CBowTarget::ImGui_AnimationProperty()
 
 void CBowTarget::ImGui_PhysXValueProperty()
 {
+	PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+	PxShape* pShape = nullptr;
+	pActor->getShapes(&pShape, sizeof(PxShape));
+	PxSphereGeometry& Geometry = pShape->getGeometry().sphere();
+	_float& fScaleX = Geometry.radius;
+	ImGui::BulletText("Radius Setting");
+	ImGui::DragFloat("Radius", &fScaleX, 0.01f);
+	pShape->setGeometry(Geometry);
+
+	CTransform::ActorData* pActorData = m_pTransformCom->FindActorData(m_szCloneObjectTag);
+	_smatrix		matPivot = pActorData->PivotMatrix;
+	_float4		vScale, vRot, vTrans;
+	ImGuizmo::DecomposeMatrixToComponents((_float*)&matPivot, (_float*)&vTrans, (_float*)&vRot, (_float*)&vScale);
+
+	ImGui::DragFloat3("Rotate", (_float*)&vRot, 0.01f);
+	ImGui::DragFloat3("Translation", (_float*)&vTrans, 0.01f);
+
+	ImGuizmo::RecomposeMatrixFromComponents((_float*)&vTrans, (_float*)&vRot, (_float*)&vScale, (_float*)&matPivot);
+
+	pActorData->PivotMatrix = matPivot;
 }
 
 HRESULT CBowTarget::Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)
@@ -121,6 +170,34 @@ _int CBowTarget::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIn
 CBowTarget::ANIMATION CBowTarget::Check_State()
 {
 	ANIMATION	eState = m_ePreState;
+
+	switch (eState)
+	{
+		case CBowTarget::REST:
+		{
+			break;
+		}
+
+		case CBowTarget::LAUNCH:
+		{
+			break;
+		}
+
+		case CBowTarget::LOOP:
+		{
+			break;
+		}
+
+		case CBowTarget::HIT:
+		{
+			break;
+		}
+
+		case CBowTarget::FAIL_LOOP:
+		{
+			break;
+		}
+	}
 
 	return eState;
 }

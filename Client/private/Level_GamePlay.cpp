@@ -134,12 +134,11 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(0.3f, 0.3f, 0.3f, 1.f);
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(1.0f, 1.0f, 1.0f, 1.f);
 	LightDesc.vPosition = _float4(-100.f, 100.f, -100.f, 1.f);
 	LightDesc.szLightName = "DIRECTIONAL";
-
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;

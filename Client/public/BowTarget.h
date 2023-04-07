@@ -14,7 +14,7 @@ BEGIN(Client)
 class CBowTarget  final : public CEnviromentObj
 {
 public:
-	enum ANIMATION { ANIMATION_END };
+	enum ANIMATION { FAIL_LOOP, HIT, LAUNCH, LOOP, REST, ANIMATION_END };
 
 private:
 	CBowTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -47,6 +47,8 @@ private:
 private:
 	_bool							m_bKenaDetected = false;
 	_bool							m_bArrowHit = false;
+
+	_float4							m_vInitPosition;
 
 	ANIMATION						m_eCurState = ANIMATION_END;
 	ANIMATION						m_ePreState = ANIMATION_END;
