@@ -15,6 +15,7 @@ class CRenderer;
 class CShader;
 class CStateMachine;
 class CAnimationState;
+class CLight;
 END
 
 BEGIN(Client)
@@ -212,26 +213,31 @@ public:
 	const  _bool&					Get_ParryRim() const { return m_bParryRim; }
 	const  _float&					Get_ParryRimIntensity() const { return m_fParryRimIntensity; }
 
-
 private:
 	/* UI */
 	CUI_RotIcon*				m_pUI_FocusRot;
-	CUI_FocusMonster*			m_pUI_FocusMonster;
+	CUI_FocusMonster*		m_pUI_FocusMonster;
+
+	_float4						m_vStaffLightPos;
+	CLight*						m_pStaffLight = nullptr;
 
 private:
 	HRESULT					Ready_Parts();
 	HRESULT					Ready_Arrows();
 	HRESULT					Ready_Bombs();
 	HRESULT					Ready_Effects();
+	HRESULT					Ready_Lights();
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
 
+
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
-	void					Update_Collider(_float fTimeDelta);
-	void					Update_AdditiveRatio(_float fTimeDelta);
-	_float					LookAnimationController(_float fTimeDelta);
+	void							Update_LightPos(_float fTimeDelta);
+	void							Update_Collider(_float fTimeDelta);
+	void							Update_AdditiveRatio(_float fTimeDelta);
+	_float						LookAnimationController(_float fTimeDelta);
 
 private:
 	DAMAGED_FROM			Calc_DirToMonster(CGameObject* pTarget);

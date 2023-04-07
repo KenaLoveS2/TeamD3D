@@ -389,11 +389,19 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
 	float4		FinalColor = float4(0, 0, 0, 1);
-	FinalColor = vDiffuse + vEmissive;
+	if(max(max(vDiffuse.r, vDiffuse.g),vDiffuse.b) == vDiffuse.b)
+	{
+		FinalColor = vDiffuse + vEmissive * 3.f;
+		Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 5.f, 0.f);
+	}
+	else
+	{
+		FinalColor = vDiffuse + vEmissive;
+		Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	}
 
 	Out.vDiffuse = vector(FinalColor.rgb, vDiffuse.a);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
