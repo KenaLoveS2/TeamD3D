@@ -2337,7 +2337,8 @@ void CModel::Imgui_Mesh_InstancingSort_EditOrCreate()
 
 void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 {
-	
+	return;		// ∏ ¬Ô¿ª∂ß∏∏ return
+
 	if (m_bIsInstancing == false)
 		return;
 

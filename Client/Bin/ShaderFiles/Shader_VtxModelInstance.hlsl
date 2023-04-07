@@ -712,7 +712,7 @@ technique11 DefaultTechnique
 
     pass MeshInst_Effect
     {
-          SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+          SetRasterizerState(RS_CULLNONE); //RS_Default , RS_Wireframe
         SetDepthStencilState(DS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
       VertexShader = compile vs_5_0 VS_MAIN_INSTANCE();
@@ -825,4 +825,18 @@ technique11 DefaultTechnique
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }//21
+
+    pass Comp_H_R_AO_CULLNONE
+    {
+        SetRasterizerState(RS_CULLNONE); //RS_Default , RS_Wireframe
+        SetDepthStencilState(DS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN_INSTANCE();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_H_R_AO();
+    }//22
+
 }

@@ -559,6 +559,9 @@
     <Filter Include="01.Levels\06. FinalPlay">
       <UniqueIdentifier>{be811861-a962-4e80-86a9-855d07f24d6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Envrioment\MeditionSpot">
+      <UniqueIdentifier>{0b2cae64-b2a3-483a-9ce9-d9b9c751a7ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1466,7 +1469,9 @@
     <ClInclude Include="..\public\CLevel_Final.h">
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BombGimmickObj.h" />
+    <ClInclude Include="..\public\Meditation_Spot.h">
+      <Filter>02.GameObjects\Envrioment\MeditionSpot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2354,7 +2359,9 @@
     <ClCompile Include="..\private\CLevel_Final.cpp">
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BombGimmickObj.cpp" />
+    <ClCompile Include="..\private\Meditation_Spot.cpp">
+      <Filter>02.GameObjects\Envrioment\MeditionSpot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
