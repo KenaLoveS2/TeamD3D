@@ -184,7 +184,6 @@
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\Base_Ground.h" />
     <ClInclude Include="..\public\Beni.h" />
-    <ClInclude Include="..\public\BombGimmickObj.h" />
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\public\BossHunter.h" />
@@ -240,6 +239,7 @@
     <ClInclude Include="..\public\E_FireBulletCover.h" />
     <ClInclude Include="..\public\E_FireBulletExplosion.h" />
     <ClInclude Include="..\public\E_Hieroglyph.h" />
+    <ClInclude Include="..\public\E_HunterTrail.h" />
     <ClInclude Include="..\public\E_InteractStaff.h" />
     <ClInclude Include="..\public\E_D_Sphere.h" />
     <ClInclude Include="..\public\E_EnemyWispBackground.h" />
@@ -338,6 +338,7 @@
     <ClInclude Include="..\public\Mage.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\MannequinRot.h" />
+    <ClInclude Include="..\public\Meditation_Spot.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\Npc.h" />
@@ -463,7 +464,6 @@
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Base_Ground.cpp" />
     <ClCompile Include="..\private\Beni.cpp" />
-    <ClCompile Include="..\private\BombGimmickObj.cpp" />
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\private\BossHunter.cpp" />
@@ -517,6 +517,7 @@
     <ClCompile Include="..\private\E_FireBulletCover.cpp" />
     <ClCompile Include="..\private\E_FireBulletExplosion.cpp" />
     <ClCompile Include="..\private\E_Hieroglyph.cpp" />
+    <ClCompile Include="..\private\E_HunterTrail.cpp" />
     <ClCompile Include="..\private\E_InteractStaff.cpp" />
     <ClCompile Include="..\private\E_D_Sphere.cpp" />
     <ClCompile Include="..\private\E_EnemyWispBackGround.cpp" />
@@ -614,6 +615,7 @@
     <ClCompile Include="..\Private\LodObject.cpp" />
     <ClCompile Include="..\private\Mage.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
+    <ClCompile Include="..\private\Meditation_Spot.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
@@ -759,6 +761,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl" />

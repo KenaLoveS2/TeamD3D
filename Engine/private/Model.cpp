@@ -2158,7 +2158,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	{
 		if (bPickingTerrain == false)
 		{
-			if (ImGui::BeginListBox("##"))			// ����� * �θ����(���� ��ġ)
+			if (ImGui::BeginListBox("##"))			// �����?* �θ����?���� ��ġ)
 			{
 				_int iIndex = 0;
 				for (auto& ProtoPair : m_pInstancingMatrix)
@@ -2336,8 +2336,6 @@ void CModel::Imgui_Mesh_InstancingSort_EditOrCreate()
 
 void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 {
-	//return; // ���������� �����ϱ�
-	
 	if (m_bIsInstancing == false)
 		return;
 

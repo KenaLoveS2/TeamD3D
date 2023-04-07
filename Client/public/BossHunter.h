@@ -77,6 +77,7 @@ public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossHunterDelegator;
 
 private:
+	CBone* m_pWeaponTrailBone = nullptr;
 	CBone* m_pBodyBone = nullptr;
 	_float4x4 m_BodyPivotMatrix;
 	_float3 m_vBodyPivotTrans = { 0.f, 0.f, -0.7f };
@@ -143,6 +144,14 @@ private:
 	void AdditiveAnim(_float fTimeDelta) override;
 
 private:
+	void Set_AttackType();
+	void Reset_Attack();
+	void Tick_Attack(_float fTimeDelta);
+
+	void Set_AFType();
+	void Reset_AF();
+
+private:
 	vector<_float3> m_vecPivot;
 	vector<_float3> m_vecPivotScale;
 	vector<_float3> m_vecPivotRot;
@@ -184,6 +193,8 @@ public:
 	void StunEffect_On(_bool bIsInit, _float fTimeDelta);
 	void StunEffect_Off(_bool bIsInit, _float fTimeDelta);
 
+	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
+	void TUrnOffTrail(_bool bIsInit, _float fTimeDelta);
 
 	virtual void Create_CopySoundKey() override;
 
@@ -192,9 +203,11 @@ public:
 	/********************************************/
 private:
 	HRESULT Create_Effects();
+	HRESULT Create_Trail();
 
 private:
 	vector<CEffect_Base_S2*>		m_vecEffects;
+	class CE_HunterTrail* m_pHunterTrail = nullptr;
 
 private: /* For. String */
 	_float							m_fUVSpeeds[2];
@@ -205,10 +218,12 @@ private: /* For. String */
 
 private: /* For. Tool */
 	void							ImGui_EffectProperty();
+
+private:
+	void							Update_Trail(const char* pBoneTag);
+
 private:
 	CEffect_Base_S2* m_pSelectedEffect;
-
-
 
 };
 

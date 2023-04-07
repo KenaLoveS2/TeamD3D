@@ -104,6 +104,7 @@ private:
 	class CShamanTrapHex* m_pShamanTapHex = nullptr;
 
 	CBone* m_pWeaponBone = nullptr;
+	CBone* m_pWeaponTrailBone = nullptr;
 	_float4x4 m_WeaponPivotMatrix;
 	_float3 m_vWeaPonPivotRot = { 0.f, 0.f, 0.f };
 	_float3 m_vWeaPonPivotTrans = { -1.2f, -0.59f, -1.3f };
@@ -124,30 +125,30 @@ public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
 	virtual HRESULT			Late_Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual HRESULT			RenderShadow() override;
-	virtual void					Imgui_RenderProperty() override;
-	virtual void					ImGui_AnimationProperty() override;
-	virtual void					ImGui_ShaderValueProperty() override;
-	virtual void					ImGui_PhysXValueProperty() override;
+	virtual void			Imgui_RenderProperty() override;
+	virtual void			ImGui_AnimationProperty() override;
+	virtual void			ImGui_ShaderValueProperty() override;
+	virtual void			ImGui_PhysXValueProperty() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
-	virtual void					Push_EventFunctions() override;
+	virtual void			Push_EventFunctions() override;
 
 protected:
-	virtual  HRESULT			SetUp_State() override;
-	virtual	HRESULT			SetUp_Components() override;
-	virtual	HRESULT			SetUp_ShaderResources() override;
-	virtual  HRESULT			SetUp_ShadowShaderResources() override;
+	virtual  HRESULT		SetUp_State() override;
+	virtual  HRESULT		SetUp_Components() override;
+	virtual  HRESULT		SetUp_ShaderResources() override;
+	virtual  HRESULT		SetUp_ShadowShaderResources() override;
 
 private:
 	void	Update_Collider(_float fTimeDelta) override;
 	void	AdditiveAnim(_float fTimeDelta) override;
 
-	public:
-		HRESULT Ready_Effects();
-		void	Update_Trail(const char* pBoneTag);
+public:
+	HRESULT Ready_Effects();
+	void	Update_Trail(const char* pBoneTag);
 
 private:
 	void Set_AttackType();
@@ -166,19 +167,26 @@ private:	/* Animation Event Func */
 	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
 	void TurnOffTrail(_bool bIsInit, _float fTimeDelta);
 	void TurnOffMoveMentTrail(_bool bIsInit, _float fTimeDelta);
+	void TurnOnWeaponCloudTrail(_bool bIsInit, _float fTimeDelta);
+	void TurnOffWeaponCloudTrail(_bool bIsInit, _float fTimeDelta);
 
+	/* 소환 이펙트 => 손에 나오는 이펙트 */
 	void TurnOnHandSummons(_bool bIsInit, _float fTimeDelta);
 	void TurnOffHandSummons(_bool bIsInit, _float fTimeDelta);
-
-	void TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta);
-
-	void TurnOnTeleport(_bool bIsInit, _float fTimeDelta);
-
+	/* 바닥 */
 	void TurnOnSummons(_bool bIsInit, _float fTimeDelta);
 	void TurnOffSummons(_bool bIsInit, _float fTimeDelta);
 
+	void TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta);
+
+	/* 텔레포트 이펙트 */
+	void TurnOnTeleport(_bool bIsInit, _float fTimeDelta);
+
+	void TurnOnCameraShake(_bool bIsInit, _float fTimeDelta);
+
 private:
 	map<const string, class CEffect_Base*>	m_mapEffect;
+	_bool	m_bTrail = false;
 
 public:
 	static CBossShaman* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

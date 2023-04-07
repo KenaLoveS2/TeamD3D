@@ -217,6 +217,10 @@ protected:
 
 	EFFECTDESC			        m_eEFfectDesc;
 
+	/* For.VtxPointInstancing Update*/
+protected:
+	_bool	m_bStartUpdate = false;
+		
 protected:
 	/* Child */
 	_uint						m_iHaveChildCnt = 0;

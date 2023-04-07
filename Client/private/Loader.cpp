@@ -67,6 +67,7 @@
 #include "Bridge.h"
 #include "Path_Mesh.h"
 #include "FloorTile.h"
+#include "FloorMesh.h"
 #include "Pulse_PlateForm.h"
 #include "Gate.h"
 #include "Rot.h"
@@ -97,7 +98,7 @@
 #include "Dynamic_StoneCube.h"
 
 #include "MannequinRot.h"
-#include "BombGimmickObj.h"
+#include "Meditation_Spot.h"
 
 /* UI */
 #include "BackGround.h"
@@ -205,6 +206,7 @@ unsigned int	g_LEVEL = 0;
 #include "E_KenaDash.h"
 #include "E_KenaDashRing.h"
 #include "E_KenaDashCone.h"
+#include "E_HunterTrail.h"
 
 
 
@@ -1256,7 +1258,10 @@ HRESULT CLoader::Loading_ForMapTool()
 		
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/RotCarry_Piece", true, true,true, false, true)))
 			assert(!"Issue");
-		
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "MeditationStump", true, false, true, false, true)))
+			assert(!"Issue");
+
 #pragma endregion ~Start_Forest_Room
 		}
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
@@ -1371,6 +1376,10 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorTile"),
 		CFloorTile::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	/* For.Prototype_GameObject_FloorTile */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorMesh"),
+		CFloorMesh::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	/* For.Prototype_GameObject_Pulse_PlateForm */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pulse_PlateForm"),
 		CPulse_PlateForm::Create(m_pDevice, m_pContext))))
@@ -1399,6 +1408,11 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneObj"),
 		CDeadZoneObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	/* For.Prototype_GameObject_Meditation_Spot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Meditation_Spot"),
+		CMeditation_Spot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_DeadZoneObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
 		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
@@ -1452,10 +1466,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	/* For.Prototype_GameObject_Dynamic_StoneCube */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	/* For.Prototype_GameObject_BombGimmickObj */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BombGimmickObj"),
-		CBombGimmickObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
 
@@ -2166,6 +2176,11 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/shapetype/E_Type_%d.png"), 11))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_EffectShaman */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_EffectShaman"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Boss/Shaman/E_Shaman_%d.png"), 50))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Trail"),
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
@@ -2239,6 +2254,26 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_Component_Model_ShockFront_Extended */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShockFront_Extended",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/ShockFront_Extended.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_BossPlate */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BossPlate",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/BossPlate.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_BossHandPlate */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BossHandPlate",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/BossHandPlate.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_MonsterPlate */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_MonsterPlate",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/MonsterPlate.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_ThunderCylinder */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ThunderCylinder",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/ThunderCylinder.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 #pragma endregion EFFECT_COMPONENT
@@ -2548,8 +2583,9 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_ShamanSmoke */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanSmoke"),
-		CE_ShamanSmoke::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_ShamanBodyCloud.json"))))
+		CE_ShamanSmoke::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_ShamanIdle.json"))))
 		return E_FAIL;
+	// E_ShamanBodyCloud
 	/* Shaman */
 
 	/* For.Prototype_GameObject_ExplosionGravity */
@@ -2570,6 +2606,12 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CE_KenaDashRing::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_DashCircle.json"))))
 		return E_FAIL;
 	/* Kena Dash */
+
+	/* For.Prototype_GameObject_HunterTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HunterTrail"),
+		CE_HunterTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 #pragma endregion Effect_Object
 
@@ -2982,7 +3024,9 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rot/RotCarry_Piece", true, true,true)))
 		assert(!"Issue");
-	
+
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "MeditationStump", true, false, true, false, true)))
+		assert(!"Issue");
 
 #pragma region GroundCover
 		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "GroundCover/Branches", true, true, true, true)))
@@ -3201,6 +3245,9 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CFloorTile::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorMesh"),
+		CFloorMesh::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* For.Prototype_GameObject_Pulse_PlateForm */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pulse_PlateForm"),
@@ -3241,7 +3288,12 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneObj"),
 		CDeadZoneObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
+
+	/* For.Prototype_GameObject_Meditation_Spot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Meditation_Spot"),
+		CMeditation_Spot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	/* For.Prototype_GameObject_DeadZoneObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
@@ -3303,10 +3355,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_BombGimmickObj */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BombGimmickObj"),
-		CBombGimmickObj::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	
 
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pet"), CPet::Create(m_pDevice, m_pContext)))) return E_FAIL;
