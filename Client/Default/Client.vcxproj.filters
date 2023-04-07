@@ -1469,7 +1469,6 @@
     <ClInclude Include="..\public\CLevel_Final.h">
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BombGimmickObj.h" />
     <ClInclude Include="..\public\BombPlatform.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
@@ -1482,6 +1481,7 @@
     <ClInclude Include="..\public\Meditation_Spot.h">
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_HunterTrail.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2366,7 +2366,6 @@
     <ClCompile Include="..\private\CLevel_Final.cpp">
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BombGimmickObj.cpp" />
     <ClCompile Include="..\private\BombPlatform.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
@@ -2379,6 +2378,7 @@
     <ClCompile Include="..\private\Meditation_Spot.cpp">
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_HunterTrail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2475,5 +2475,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\SSLR.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl" />
   </ItemGroup>
 </Project>
