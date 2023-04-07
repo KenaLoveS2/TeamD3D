@@ -193,6 +193,8 @@ public:
 	void SetUp_InstModelColider(vector<_float3> vecColiderSize);
 	
 	void Set_DurationRate(_uint iAnimIndex, _float fRate);
+
+	void Init_AnimIndex(_uint iAnimIndex);
 };
 
 END

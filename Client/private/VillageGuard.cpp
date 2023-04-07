@@ -37,12 +37,14 @@ HRESULT CVillageGuard::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = -16.f;
-		m_Desc.WorldMatrix._43 = -16.f;
+		m_Desc.WorldMatrix._41 = -10.f;
+		m_Desc.WorldMatrix._43 = -10.f;
 	}
-
+		
 	m_pModelCom->Set_AllAnimCommonType();
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();	
+	m_pModelCom->Set_AnimIndex(IDLE);
+
 	m_bRotable = true;
 	
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("Weapon_Root_Jnt");
@@ -120,6 +122,11 @@ HRESULT CVillageGuard::Late_Initialize(void * pArg)
 
 void CVillageGuard::Tick(_float fTimeDelta)
 {
+	//m_bReadySpawn = true;
+	//Update_Collider(fTimeDelta);
+	//m_pModelCom->Play_Animation(fTimeDelta);
+	//return;
+
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -228,18 +235,25 @@ HRESULT CVillageGuard::Call_EventFunction(const string& strFuncName)
 
 void CVillageGuard::Push_EventFunctions()
 {
-	CMonster::Push_EventFunctions();
+	// CMonster::Push_EventFunctions();
+
+	LookAt_Kena(true, 0.f);
+	Play_WalkSound(true, 0.f);	
+	Play_Attack1Sound(true, 0.f);
+	Play_Attack2Sound(true, 0.f);
+	Play_Attack3Sound(true, 0.f);
+	Play_Sword1Sound(true, 0.f);
+	Play_Sword2Sound(true, 0.f);
+	Play_ImpactSound(true, 0.f);	
+	Play_HurtSound(true, 0.f);
+	Play_PainSound(true, 0.f);
 }
 
 HRESULT CVillageGuard::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("SLEEP")
-		.AddState("SLEEP")
-		.Tick([this](_float fTimeDelta)
-	{
-		
-	})
+		.AddState("SLEEP")		
 		.OnExit([this]()
 	{
 		m_pEnemyWisp->IsActiveState();
@@ -274,9 +288,15 @@ HRESULT CVillageGuard::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
+		m_fIdleTimeCheck = 0.f;
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IDLE], 0.7f);
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
 		m_pModelCom->Set_AnimIndex(IDLE);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fIdleTimeCheck += fTimeDelta;
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -296,27 +316,27 @@ HRESULT CVillageGuard::SetUp_State()
 		.AddTransition("IDLE to JUMP_BACK", "JUMP_BACK")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(0.8f);
+		return TimeTrigger(m_fIdleTimeCheck, 1.f) && DistanceTrigger(0.8f);
 	})
 		.AddTransition("IDLE to BLOCK_ATTACK", "BLOCK_ATTACK")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(3.f);
+		return TimeTrigger(m_fIdleTimeCheck, 1.f) && DistanceTrigger(3.f);
 	})
 		.AddTransition("IDLE to WALL_JUMP_ATTACK", "WALL_JUMP_ATTACK")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(4.f);
+		return TimeTrigger(m_fIdleTimeCheck, 1.f) && DistanceTrigger(4.f);
 	})
 		.AddTransition("IDLE to ROLL_ATTACK", "ROLL_ATTACK")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(6.f);
+		return TimeTrigger(m_fIdleTimeCheck, 1.f) && DistanceTrigger(6.f);
 	})				
-		.AddTransition("IDLE to ATTACK", "ATTACK")
+		.AddTransition("IDLE to DASH_ATTACK", "DASH_ATTACK")
 		.Predicator([this]()
 	{
-		return false;
+		return TimeTrigger(m_fIdleTimeCheck, 1.f) && DistanceTrigger(8.f);
 	})
 		.AddTransition("IDLE to CHASE", "CHASE")
 		.Predicator([this]()
@@ -356,17 +376,17 @@ HRESULT CVillageGuard::SetUp_State()
 		.AddTransition("CHASE to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(5.f);
+		return DistanceTrigger(6.f);
 	})
 
 		.AddState("BLOCK_ATTACK")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(BLOCK_ATTACK);
+		Attack_Start(BLOCK_ATTACK);		
 	})
 		.OnExit([this]()
 	{
-		m_pModelCom->Set_AnimIndex(IDLE);
+		m_bRealAttack = false;
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -382,12 +402,7 @@ HRESULT CVillageGuard::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_bBind;
-	})
-		.AddTransition("PARRIED", "PARRIED")
-		.Predicator([this]()
-	{
-		return IsParried();
-	})
+	})	
 		.AddTransition("BLOCK_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
@@ -397,11 +412,11 @@ HRESULT CVillageGuard::SetUp_State()
 		.AddState("ROLL_ATTACK")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(ROLLATTACK);
+		Attack_Start(ROLLATTACK);		
 	})
 		.OnExit([this]()
 	{
-		m_pModelCom->Set_AnimIndex(IDLE);
+		m_bRealAttack = false;
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -428,11 +443,11 @@ HRESULT CVillageGuard::SetUp_State()
 		.AddState("WALL_JUMP_ATTACK")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(WALLJUMP_ATTACK);
+		Attack_Start(WALLJUMP_ATTACK);		
 	})
 		.OnExit([this]()
 	{
-		m_pModelCom->Set_AnimIndex(IDLE);
+		m_bRealAttack = false;
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -455,16 +470,44 @@ HRESULT CVillageGuard::SetUp_State()
 		return AnimFinishChecker(WALLJUMP_ATTACK);
 	})
 		
+
+		.AddState("DASH_ATTACK")
+		.OnStart([this]()
+	{
+		Attack_Start(DASHATTACK);
+	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})	
+		.AddTransition("DASH_ATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DASHATTACK);
+	})
+
+
 		.AddState("JUMP_BACK")
 		.OnStart([this]()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(JUMPBACK);
 		m_pModelCom->Set_AnimIndex(JUMPBACK);
 	})
-		.OnExit([this]()
-	{
-		m_pModelCom->Set_AnimIndex(IDLE);
-	})		
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
@@ -488,7 +531,7 @@ HRESULT CVillageGuard::SetUp_State()
 	
 		.AddState("BIND")
 		.OnStart([this]()
-	{
+	{	
 		Start_Bind(BIND);
 	})
 		.OnExit([this]()
@@ -504,6 +547,7 @@ HRESULT CVillageGuard::SetUp_State()
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_PAIN], 0.7f);
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRIED);
 		m_pModelCom->Set_AnimIndex(PARRIED);
 	})
@@ -526,6 +570,7 @@ HRESULT CVillageGuard::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DIE], 0.7f);
 		Set_Dying(DEATH);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -666,4 +711,148 @@ void CVillageGuard::ImGui_PhysXValueProperty()
 	float fWeaponRot[3] = { m_vPivotRotation.x, m_vPivotRotation.y, m_vPivotRotation.z };
 	ImGui::DragFloat3("WeaponPivotRot", fWeaponRot, 0.5f, 0.01f, 365.0f);
 	memcpy(&m_vPivotRotation, fWeaponRot, sizeof(_float3));
+}
+
+void CVillageGuard::LookAt_Kena(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CVillageGuard::LookAt_Kena);
+		return;
+	}
+
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+}
+
+void CVillageGuard::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_Walk_M.ogg"),
+		TEXT("Mon_VillageGuard_Idle.ogg"),
+		TEXT("Mon_VillageGuard_Hult.ogg"),
+		TEXT("Mon_VillageGuard_Pain.ogg"),
+		TEXT("Mon_VillageGuard_Die.ogg"),		
+		TEXT("Mon_VillageGuard_Attack1.ogg"),
+		TEXT("Mon_VillageGuard_Attack2.ogg"),
+		TEXT("Mon_VillageGuard_Attack3.ogg"),
+		TEXT("Mon_Sword1.ogg"),
+		TEXT("Mon_Sword2.ogg"),
+		TEXT("Mon_Attack_Impact.ogg"),
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}
+
+void CVillageGuard::Play_WalkSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CVillageGuard::Play_WalkSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WALK], 0.7f);
+}
+
+void CVillageGuard::Play_Attack1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CVillageGuard::Play_Attack1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK1], 0.7f);
+}
+
+void CVillageGuard::Play_Attack2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CVillageGuard::Play_Attack2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK2], 0.7f);
+}
+
+void CVillageGuard::Play_Attack3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CVillageGuard::Play_Attack3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK3], 0.7f);
+}
+
+void CVillageGuard::Play_Sword1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CVillageGuard::Play_Sword1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_SWORD1], 1.f);
+}
+
+void CVillageGuard::Play_Sword2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CVillageGuard::Play_Sword2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_SWORD2], 1.f);
+}
+
+void CVillageGuard::Play_ImpactSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CVillageGuard::Play_ImpactSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT], 0.8f);
+}
+
+void CVillageGuard::Play_HurtSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CVillageGuard::Play_HurtSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.8f);
+}
+
+void CVillageGuard::Play_PainSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CVillageGuard::Play_PainSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_PAIN], 0.8f);
 }

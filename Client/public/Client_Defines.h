@@ -19,7 +19,7 @@ extern bool g_bFrameLimit;
 #define LIFT_ROT_COUNT		6
 #define FIRST_ROT			0
 
-#define MONSTER_LINEAR_DAMING		1.f
+#define MONSTER_LINEAR_DAMING		2.0f
 #define MONSTER_ANGULAR_DAMING		0.5f
 #define MONSTER_MASS				25000.f
 
@@ -27,7 +27,7 @@ namespace Client
 {
 	enum LEVEL { LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_MAPTOOL, LEVEL_TESTPLAY, LEVEL_EFFECT, LEVEL_END };
 
-	enum SOUND { SOUND_BGM, SOUND_UI, SOUND_END };
+	enum SOUND { SOUND_BGM, SOUND_UI, SOUND_PLAYER_VOICE, SOUND_PLAYER_SFX, SOUND_END };
 
 	static void Set_FrameLimit(bool bLimitFlag)
 	{

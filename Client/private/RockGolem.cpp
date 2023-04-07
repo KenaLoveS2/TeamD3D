@@ -22,7 +22,7 @@ HRESULT CRockGolem::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.5f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
@@ -41,6 +41,7 @@ HRESULT CRockGolem::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
+	m_pCrystalBone = m_pModelCom->Get_BonePtr("RG_Crystal_Jnt");
 	
 	return S_OK;
 }
@@ -50,7 +51,7 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 	// 몸통
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
-		_float3 vPivotScale = _float3(2.f, 0.12f, 1.f);
+		_float3 vPivotScale = _float3(2.5f, 0.12f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 1.95f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
@@ -98,10 +99,8 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 
 		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER));
 
-		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.		
-		_float4x4 PivotMatrix;
-		XMStoreFloat4x4(&PivotMatrix, XMMatrixTranslation(0.f, 4.7f, 0.f));		
-		m_pTransformCom->Add_Collider(m_szCloneObjectTag, PivotMatrix);
+		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.				
+		m_pTransformCom->Add_Collider(m_szCloneObjectTag, g_IdentityFloat4x4);
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
@@ -112,6 +111,12 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 
 void CRockGolem::Tick(_float fTimeDelta)
 {
+	/*m_pModelCom->Play_Animation(fTimeDelta);
+	Update_Collider(fTimeDelta);
+	return;*/
+
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
@@ -126,6 +131,8 @@ void CRockGolem::Tick(_float fTimeDelta)
 
 void CRockGolem::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	CMonster::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)
@@ -182,6 +189,10 @@ void CRockGolem::Imgui_RenderProperty()
 		if(m_pFSM->IsCompareState("EXPLODEATTACK"))
 			m_bHit = true;
 	}
+
+	float fPos[3] = { m_vPivotTranslation.x, m_vPivotTranslation.y, m_vPivotTranslation.z };
+	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vPivotTranslation, fPos, sizeof(_float3));
 }
 
 void CRockGolem::ImGui_AnimationProperty()
@@ -231,7 +242,13 @@ HRESULT CRockGolem::Call_EventFunction(const string& strFuncName)
 
 void CRockGolem::Push_EventFunctions()
 {
-	CMonster::Push_EventFunctions();
+	// CMonster::Push_EventFunctions();
+
+	Play_WalkSound(true, 0.f);
+	Play_ImpactSound(true, 0.f);
+	Play_AttackSound(true, 0.f);
+	Play_ChargeSound(true, 0.f);
+	Play_PainSound(true, 0.f);
 }
 
 void CRockGolem::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -252,6 +269,7 @@ HRESULT CRockGolem::SetUp_State()
 		})
 		.OnExit([this]()
 		{
+			m_bReadySpawn = true;
 			m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		})
 			.AddTransition("SLEEPIDLE to WISPIN", "WISPIN")
@@ -261,9 +279,10 @@ HRESULT CRockGolem::SetUp_State()
 			m_bSpawn = DistanceTrigger(m_fSpawnRange);
 			return m_bSpawn;
 		})
+
 			.AddState("WISPIN")
 			.OnStart([this]()
-		{
+		{	
 			m_pModelCom->ResetAnimIdx_PlayTime(WISPIN);
 			m_pModelCom->Set_AnimIndex(WISPIN);
 		})
@@ -276,6 +295,7 @@ HRESULT CRockGolem::SetUp_State()
 			.AddState("IDLE")
 			.OnStart([this]()
 		{
+			m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE], 0.7f);
 			m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 			m_fIdletoAttackTime = 0.f;
 		})
@@ -292,7 +312,7 @@ HRESULT CRockGolem::SetUp_State()
 			.AddTransition("To PARRIED", "TAKEDAMAGE_OR_PARRIED")
 			.Predicator([this]()
 		{
-			return IsParried();
+			return IsParried() || m_bStronglyHit;
 		})
 			.AddTransition("IDLE to WALK", "WALK")
 			.Predicator([this]()
@@ -308,8 +328,7 @@ HRESULT CRockGolem::SetUp_State()
 		})
 			.Tick([this](_float fTimeDelta)
 		{
-			m_pModelCom->Set_AnimIndex(WALK);
-			m_pTransformCom->Chase(m_vKenaPos, fTimeDelta);
+			m_pModelCom->Set_AnimIndex(WALK);			
 			Tick_Attack(fTimeDelta);
 		})
 			.OnExit([this]()
@@ -324,7 +343,7 @@ HRESULT CRockGolem::SetUp_State()
 			.AddTransition("To PARRIED", "TAKEDAMAGE_OR_PARRIED")
 			.Predicator([this]()
 		{
-			return IsParried();
+			return IsParried() || m_bStronglyHit;
 		})
 			.AddTransition("WALK to EXPLODEATTACK", "EXPLODEATTACK")
 			.Predicator([this]()
@@ -367,13 +386,13 @@ HRESULT CRockGolem::SetUp_State()
 
 			.AddState("SLAMATTACK")
 			.OnStart([this]()
-		{
+		{	
 			m_bRealAttack = true;
 			m_pModelCom->ResetAnimIdx_PlayTime(CHARGESLAM);
 			m_pModelCom->Set_AnimIndex(CHARGESLAM);
 		})
 			.OnExit([this]()
-		{
+		{	
 			m_bRealAttack = false;
 			m_iAttackType++;
 			m_iSlamAttackCount = 0;
@@ -386,13 +405,13 @@ HRESULT CRockGolem::SetUp_State()
 			.AddTransition("To PARRIED", "TAKEDAMAGE_OR_PARRIED")
 			.Predicator([this]()
 		{
-			return IsParried();
+			return IsParried() || m_bStronglyHit;
 		})
 			.AddTransition("SLAMATTACK to IDLE", "IDLE")
 			.Predicator([this]()
 		{
 			if (AnimFinishChecker(CHARGESLAM))
-			{
+			{	
 				m_iSlamAttackCount++;
 				m_pModelCom->ResetAnimIdx_PlayTime(CHARGESLAM);
 				m_pModelCom->Set_AnimIndex(CHARGESLAM);
@@ -403,7 +422,7 @@ HRESULT CRockGolem::SetUp_State()
 			
 			.AddState("EXPLODEATTACK")
 			.OnStart([this]()
-		{
+		{	
 			m_pUIHPBar->Set_Active(true);
 			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 			m_bRealAttack = true;
@@ -412,7 +431,7 @@ HRESULT CRockGolem::SetUp_State()
 			m_pModelCom->Set_AnimIndex(EXPLODE);
 		})
 			.OnExit([this]()
-		{
+		{	
 			m_pUIHPBar->Set_Active(false);
 			m_bRealAttack = false;
 			m_bExplodeAttack = false;			
@@ -437,9 +456,18 @@ HRESULT CRockGolem::SetUp_State()
 
 			.AddState("TAKEDAMAGE_OR_PARRIED")
 			.OnStart([this]()
+		{	
+			m_pUIHPBar->Set_Active(true);
+			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
+			m_bStronglyHit = false;	
+			m_bExplodeAttack = true;
+			m_pModelCom->ResetAnimIdx_PlayTime(EXPLODE);
+			m_pModelCom->Set_AnimIndex(EXPLODE);
+		})
+			.OnExit([this]()
 		{
-			m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGE);
-			m_pModelCom->Set_AnimIndex(TAKEDAMAGE);
+			m_pUIHPBar->Set_Active(false);
+			m_bExplodeAttack = false;
 		})
 			.AddTransition("To DYING", "DYING")
 			.Predicator([this]()
@@ -449,12 +477,13 @@ HRESULT CRockGolem::SetUp_State()
 			.AddTransition("TAKEDAMAGE to IDLE", "IDLE")
 			.Predicator([this]()
 		{
-			return AnimFinishChecker(TAKEDAMAGE);
+			return AnimFinishChecker(EXPLODE);
 		})
 
 			.AddState("INTOSLEEP")
 			.OnStart([this]()
 		{
+			m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT], 0.7f);
 			m_pModelCom->ResetAnimIdx_PlayTime(INTOSLEEP);
 			m_pModelCom->Set_AnimIndex(INTOSLEEP);
 		})
@@ -486,6 +515,7 @@ HRESULT CRockGolem::SetUp_State()
 			.AddState("DYING")
 			.OnStart([this]()
 		{	
+			m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DIE], 0.7f);
 			Set_Dying(DEPTH);
 		})
 			.Tick([this](_float fTimeDelta)
@@ -562,12 +592,25 @@ HRESULT CRockGolem::SetUp_ShadowShaderResources()
 
 void CRockGolem::Update_Collider(_float fTimeDelta)
 {
+	{
+		_matrix SocketMatrix = m_pCrystalBone->Get_OffsetMatrix() * m_pCrystalBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+		_float4x4 PivotMatrix;
+		XMStoreFloat4x4(&PivotMatrix, XMMatrixTranslation(m_vPivotTranslation.x, m_vPivotTranslation.y, m_vPivotTranslation.z) * SocketMatrix);
+		m_pTransformCom->Update_AllCollider(PivotMatrix);
+	}
+	
 	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CRockGolem::AdditiveAnim(_float fTimeDelta)
 {
 	_float fRatio = Calc_PlayerLookAtDirection();
+	if (isnan(fRatio)) return;
+
 	if (fRatio >= 0.f)
 	{
 		fRatio *= 1.5f;
@@ -619,12 +662,12 @@ void CRockGolem::Tick_Attack(_float fTimeDelta)
 	switch (m_iAttackType)
 	{
 	case AT_EXPLODE:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 10.f);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta);
 		if (DistanceTrigger(10.f))
 			m_bRealAttack = true;
 		break;
 	case AT_CHARGESLAM:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 5.f);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta);
 		if (DistanceTrigger(3.f))
 			m_bRealAttack = true;
 		break;	
@@ -688,3 +731,87 @@ _int CRockGolem::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos,
 
 	return 0;
 }
+
+void CRockGolem::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_RockGolem_Pain.ogg"),
+		TEXT("Mon_RockGolem_Die.ogg"),
+		TEXT("Mon_RockGolem_Walk.ogg"),
+		TEXT("Mon_RockGolem_Impact.ogg"),
+		TEXT("Mon_RockGolem_Charge.ogg"),
+		TEXT("Mon_RockGolem_Tense.ogg"),
+		TEXT("Mon_RockGolem_Attack.ogg"),		
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}
+
+void CRockGolem::Play_WalkSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CRockGolem::Play_WalkSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WALK], 0.5f);
+}
+
+void CRockGolem::Play_ImpactSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CRockGolem::Play_ImpactSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT], 0.8f);
+}
+
+void CRockGolem::Play_AttackSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CRockGolem::Play_AttackSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.8f);
+}
+
+void CRockGolem::Play_ChargeSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CRockGolem::Play_ChargeSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CHARGE], 0.7f);
+}
+
+void CRockGolem::Play_PainSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CRockGolem::Play_PainSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_PAIN], 0.7f);
+}
+
+
+
+

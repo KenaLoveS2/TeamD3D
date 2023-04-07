@@ -36,7 +36,7 @@ HRESULT CMainApp::Initialize()
 	GraphicDesc.iViewportSizeY = g_iWinSizeY;
 	GraphicDesc.eWindowMode = GRAPHIC_DESC::WINMODE_WIN;
 	GraphicDesc.pSoundFileTag = "../Bin/Resources/Sound/";
-	GraphicDesc.iNumManualSounds = 10;
+	GraphicDesc.iNumManualSounds = 20;
 	GraphicDesc.iNumCopyPrototypes = 0;
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, GraphicDesc, &m_pDevice, &m_pContext)))

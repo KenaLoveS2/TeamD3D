@@ -108,6 +108,13 @@ private:
 	_float3 m_vWeaPonPivotRot = { 0.f, 0.f, 0.f };
 	_float3 m_vWeaPonPivotTrans = { -1.2f, -0.59f, -1.3f };
 
+	enum COPY_SOUND_KEY {
+		CSK_ATTACK, CSK_THROW, CSK_DIE, CSK_IDLE, CSK_PAIN, CSK_TENSE1, CSK_TENSE2, CSK_IMPACT, CSK_WALK,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 private:
 	CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBossShaman(const CBossShaman& rhs);
@@ -188,6 +195,8 @@ public:
 
 public:	
 	void LookAt_Kena(_bool bIsInit, _float fTimeDelta);
+
+	void Create_CopySoundKey();
 };
 
 END

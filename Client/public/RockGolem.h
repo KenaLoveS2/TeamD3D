@@ -1,8 +1,11 @@
 #pragma once
 #include "Monster.h"
 
-BEGIN(Client)
+BEGIN(Engine)
+class CBone;
+END
 
+BEGIN(Client)
 class CRockGolem : public CMonster
 {
 private:
@@ -91,12 +94,30 @@ private:
 
 	_int m_iSlamAttackCount = 0;
 
+	CBone* m_pCrystalBone = nullptr;
+	_float3 m_vPivotTranslation = { 0.f, 0.16f, -2.93f };
+
+	enum COPY_SOUND_KEY {
+		CSK_PAIN, CSK_DIE, CSK_WALK, CSK_IMPACT, CSK_CHARGE, CSK_TENSE, CSK_ATTACK,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 public:
 	static CRockGolem*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*			Clone(void* pArg = nullptr)  override;
 	virtual void							Free() override;
 
 	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+
+	void Create_CopySoundKey();
+
+	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
+	void Play_ImpactSound(_bool bIsInit, _float fTimeDelta);
+	void Play_AttackSound(_bool bIsInit, _float fTimeDelta);
+	void Play_ChargeSound(_bool bIsInit, _float fTimeDelta);
+	void Play_PainSound(_bool bIsInit, _float fTimeDelta);
 };
 
 END

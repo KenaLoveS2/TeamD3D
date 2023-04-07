@@ -43,8 +43,8 @@ HRESULT CMoth::Initialize(void* pArg)
 
 	m_pModelCom->Set_AllAnimCommonType();
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
-
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("Moth_RIG");
+	m_pModelCom->Set_AnimIndex(TAUNT2);
 
 	return S_OK;
 }
@@ -99,6 +99,12 @@ HRESULT CMoth::Late_Initialize(void * pArg)
 
 void CMoth::Tick(_float fTimeDelta)
 {
+	/*m_bReadySpawn = true;
+	Update_Collider(fTimeDelta);
+	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	m_pModelCom->Play_Animation(fTimeDelta);
+	return;*/
+
 	if (m_bDeath) return;
 	__super::Tick(fTimeDelta);
 	
@@ -108,6 +114,7 @@ void CMoth::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	
 	m_pModelCom->Play_Animation(fTimeDelta);
+
 }
 
 void CMoth::Late_Tick(_float fTimeDelta)
@@ -196,7 +203,10 @@ HRESULT CMoth::Call_EventFunction(const string& strFuncName)
 
 void CMoth::Push_EventFunctions()
 {
-	CMonster::Push_EventFunctions();
+	// CMonster::Push_EventFunctions();
+	Play_AttackSound(true, 0.f);
+	Play_WingFlap1Sound(true, 0.f);
+	Play_WingFlap2Sound(true, 0.f);
 }
 
 HRESULT CMoth::SetUp_State()
@@ -238,6 +248,7 @@ HRESULT CMoth::SetUp_State()
 		.AddState("SPAWN")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(WISPIN);
 		m_pModelCom->Set_AnimIndex(WISPIN);
 	})
@@ -251,6 +262,7 @@ HRESULT CMoth::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_FLY], 0.5f);
 		m_fIdletoAttackTime = 0.f;
 		m_pTransformCom->LookAt(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(COMBATIDLE);
@@ -289,11 +301,19 @@ HRESULT CMoth::SetUp_State()
 		.AddState("BACK")
 		.OnStart([this]()
 	{
+		m_pTransformCom->Speed_Boost(true, 0.5f);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+		m_pModelCom->ResetAnimIdx_PlayTime(WALK);
 		m_pModelCom->Set_AnimIndex(WALK);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pTransformCom->Go_Backward(fTimeDelta);
+	})
+		.OnExit([this]()
+	{
+		m_pTransformCom->Speed_Boost(true, 1.f);	
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -305,10 +325,10 @@ HRESULT CMoth::SetUp_State()
 	{
 		return IsParried();
 	})
-		.AddTransition("BACK to IDLE", "IDLE")
+		.AddTransition("BACK to DOWN", "DOWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(3.f);
+		return !DistanceTrigger(3.1f);
 	})
 
 		.AddState("CHASE")
@@ -334,7 +354,7 @@ HRESULT CMoth::SetUp_State()
 		.AddTransition("CHASE to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(3.f);
+		return DistanceTrigger(2.8f);
 	})
 
 		.AddState("MELEE_ATTACK")
@@ -346,7 +366,6 @@ HRESULT CMoth::SetUp_State()
 	})		
 		.OnExit([this]()
 	{	
-		m_pModelCom->Set_AnimIndex(MELEEATTACK_RETURN);
 		m_bRealAttack = false;		
 	})
 		.AddTransition("To DYING", "DYING")
@@ -368,12 +387,12 @@ HRESULT CMoth::SetUp_State()
 		.AddState("MELEE_RETURN")
 		.OnStart([this]()
 	{	
+		m_pModelCom->ResetAnimIdx_PlayTime(MELEEATTACK_RETURN);
 		m_pModelCom->Set_AnimIndex(MELEEATTACK_RETURN);
 	})
 		.OnExit([this]()
 	{
-		m_bRealAttack = false;
-		m_pModelCom->Set_AnimIndex(WALK);
+		m_bRealAttack = false;		
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -385,12 +404,44 @@ HRESULT CMoth::SetUp_State()
 	{
 		return IsParried();
 	})
-		.AddTransition("MELEE_RETURN to IDLE", "IDLE")
+		.AddTransition("MELEE_RETURN to DOWN", "DOWN")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(MELEEATTACK_RETURN);
 	})
-		
+
+
+		.AddState("DOWN")
+		.OnStart([this]()
+	{
+		m_pTransformCom->Speed_Boost(true, 0.5f);
+		m_pModelCom->ResetAnimIdx_PlayTime(WALK);
+		m_pModelCom->Set_AnimIndex(WALK);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->Go_AxisNegY(fTimeDelta);
+	})
+		.OnExit([this]()
+	{
+		m_pTransformCom->Speed_Boost(true, 1.f);		
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("DOWN to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return m_pTransformCom->Get_PositionY() < 1.4f;
+	})
+
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
@@ -406,7 +457,7 @@ HRESULT CMoth::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("PARRIED To IDLE", "IDLE")
+		.AddTransition("PARRIED To DOWN", "DOWN")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(PARRY);
@@ -415,6 +466,7 @@ HRESULT CMoth::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DIE], 0.5f);
 		Set_Dying(DEATHSIM);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -528,4 +580,59 @@ CGameObject* CMoth::Clone(void* pArg)
 void CMoth::Free()
 {
 	CMonster::Free();
+}
+
+void CMoth::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_Moth_Tense.ogg"),
+		TEXT("Mon_Moth_Fly.ogg"),
+		TEXT("Mon_Moth_Attack.ogg"),
+		TEXT("Mon_Moth_Die.ogg"),
+		TEXT("Mon_Moth_WingFlap1.ogg"),
+		TEXT("Mon_Moth_WingFlap2.ogg"),
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}
+
+void CMoth::Play_AttackSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CMoth::Play_AttackSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK], 0.7f);
+}
+
+void CMoth::Play_WingFlap1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CMoth::Play_WingFlap1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WINGFLAP1], 0.4f);
+}
+
+void CMoth::Play_WingFlap2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CMoth::Play_WingFlap2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WINGFLAP2], 0.2f);
 }

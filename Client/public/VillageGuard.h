@@ -12,6 +12,15 @@ private:
 	_float4x4 m_vPivotMatrix;
 	CBone* m_pWeaponBone = nullptr;
 
+	_float m_fIdleTimeCheck = 0.f;
+
+	enum COPY_SOUND_KEY {
+		CSK_WALK, CSK_IDLE, CSK_HURT, CSK_PAIN, CSK_DIE, CSK_ATTACK1, CSK_ATTACK2, CSK_ATTACK3, CSK_SWORD1, CSK_SWORD2, CSK_IMPACT,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 private:
 	CVillageGuard(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CVillageGuard(const CVillageGuard& rhs);
@@ -48,6 +57,19 @@ public:
 
 	virtual void					ImGui_PhysXValueProperty() override;
 	
+	void LookAt_Kena(_bool bIsInit, _float fTimeDelta);
+
+	virtual void Create_CopySoundKey() override;
+	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Sword1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Sword2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_ImpactSound(_bool bIsInit, _float fTimeDelta);
+	void Play_HurtSound(_bool bIsInit, _float fTimeDelta);
+	void Play_PainSound(_bool bIsInit, _float fTimeDelta);
+
 private:
 	enum ANIMATION
 	{
