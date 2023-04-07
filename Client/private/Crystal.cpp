@@ -441,9 +441,6 @@ CGameObject * CCrystal::Clone(void * pArg)
 
 void CCrystal::Free()
 {
-	if (m_isCloned)
-		m_pTransformCom->Clear_Actor();
-
 	__super::Free();
 
 	Safe_Release(m_pModelCom);

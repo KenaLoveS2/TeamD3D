@@ -622,4 +622,3 @@ void CMonster::SaveBufferCopySound(_tchar* pOriginSoundKey, _tchar* pTempBuffer,
 	m_pGameInstance->Copy_Sound(pOriginSoundKey, pTempBuffer);
 	*ppOutBuffer = CUtile::Create_StringAuto(pTempBuffer);
 }
-

@@ -42,6 +42,8 @@ void CEnviroment_Manager::Tick(_float fTimeDelta)
 {
 	_float4	fPos;
 
+	m_pPlayer = nullptr;
+
 	// 플레이어 z 비교로 룸인덱스 계산
 	if (m_pPlayer == nullptr)
 	{

@@ -327,9 +327,6 @@ CGameObject * CPulse_Plate_Anim::Clone(void * pArg)
 
 void CPulse_Plate_Anim::Free()
 {
-	m_pTransformCom->Clear_Actor();
-	CPhysX_Manager::GetInstance()->Delete_TriggerActor(m_szCloneObjectTag);
-
 	__super::Free();
 
 	Safe_Release(m_pModelCom);

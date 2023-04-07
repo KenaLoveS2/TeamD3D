@@ -137,16 +137,12 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
 		pGameInstance->Clear_ImguiObjects();
-	
-		CPhysX_Manager::GetInstance()->Scene_Change_Clear_All_Actor();
-
+		CPhysX_Manager::GetInstance()->Clear();
+		// ¸Ê ±â¹Í·¹º§
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
 			return;
 		Safe_Release(pGameInstance);
 	}
-
-	
-
 }
 
 HRESULT CLevel_TestPlay::Render()
@@ -234,9 +230,10 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");*/
 
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr), E_FAIL);
-
 	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 

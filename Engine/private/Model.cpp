@@ -313,12 +313,11 @@ HRESULT CModel::Initialize(void* pArg, CGameObject* pOwner)
 		m_pInstanceTransform = static_cast<CTransform*>(CGameInstance::GetInstance()->
 			Clone_Component(CGameInstance::Get_StaticLevelIndex(), CGameInstance::m_pPrototypeTransformTag));
 
-		_float pMinX, pMaxX, pMinY, pMaxY, pMinZ, pMaxZ;
-
-		Calc_InstMinMax(&pMinX, &pMaxX, &pMinY, &pMaxY, &pMinZ, &pMaxZ);
-
-		m_vIncreateDir = _float3( pMaxX - pMinX, pMaxY - pMinY,pMaxZ - pMinZ );
-
+		//_float pMinX, pMaxX, pMinY, pMaxY, pMinZ, pMaxZ;
+		//
+		//Calc_InstMinMax(&pMinX, &pMaxX, &pMinY, &pMaxY, &pMinZ, &pMaxZ);
+		//
+		//m_vIncreateDir = _float3( pMaxX - pMinX, pMaxY - pMinY,pMaxZ - pMinZ );
 	}
 #endif
 
@@ -1553,7 +1552,6 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const 
 	if (iMaterialIndex >= m_Materials.size())return E_FAIL;
 	CTexture* pTexture = CTexture::Create(m_pDevice, m_pContext, CUtile::Create_StringAuto(pTexturePath));
 	if (pTexture == nullptr) return E_FAIL;
-	Safe_AddRef(pTexture);		// 임시 추가 
 	if (m_Materials[iMaterialIndex].pTexture[eType]) { Safe_Release(m_Materials[iMaterialIndex].pTexture[eType]); }
 	m_Materials[iMaterialIndex].pTexture[eType] = pTexture;
 	return S_OK;
@@ -2337,7 +2335,7 @@ void CModel::Imgui_Mesh_InstancingSort_EditOrCreate()
 
 void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 {
-	return; // 맵찍을때만 리턴하기
+	//return; // 맵찍을때만 리턴하기
 
 	if (m_bIsInstancing == false)
 		return;
