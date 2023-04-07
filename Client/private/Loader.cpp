@@ -67,6 +67,7 @@
 #include "Bridge.h"
 #include "Path_Mesh.h"
 #include "FloorTile.h"
+#include "FloorMesh.h"
 #include "Pulse_PlateForm.h"
 #include "Gate.h"
 #include "Rot.h"
@@ -97,7 +98,7 @@
 #include "Dynamic_StoneCube.h"
 
 #include "MannequinRot.h"
-#include "BombGimmickObj.h"
+#include "Meditation_Spot.h"
 
 /* UI */
 #include "BackGround.h"
@@ -1256,7 +1257,10 @@ HRESULT CLoader::Loading_ForMapTool()
 		
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/RotCarry_Piece", true, true,true, false, true)))
 			assert(!"Issue");
-		
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "MeditationStump", true, false, true, false, true)))
+			assert(!"Issue");
+
 #pragma endregion ~Start_Forest_Room
 		}
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
@@ -1371,6 +1375,10 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorTile"),
 		CFloorTile::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	/* For.Prototype_GameObject_FloorTile */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorMesh"),
+		CFloorMesh::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	/* For.Prototype_GameObject_Pulse_PlateForm */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pulse_PlateForm"),
 		CPulse_PlateForm::Create(m_pDevice, m_pContext))))
@@ -1399,6 +1407,11 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneObj"),
 		CDeadZoneObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	/* For.Prototype_GameObject_Meditation_Spot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Meditation_Spot"),
+		CMeditation_Spot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_DeadZoneObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
 		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
@@ -1452,10 +1465,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	/* For.Prototype_GameObject_Dynamic_StoneCube */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	/* For.Prototype_GameObject_BombGimmickObj */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BombGimmickObj"),
-		CBombGimmickObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
 
@@ -2982,7 +2991,9 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rot/RotCarry_Piece", true, true,true)))
 		assert(!"Issue");
-	
+
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "MeditationStump", true, false, true, false, true)))
+		assert(!"Issue");
 
 #pragma region GroundCover
 		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "GroundCover/Branches", true, true, true, true)))
@@ -3201,6 +3212,9 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CFloorTile::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorMesh"),
+		CFloorMesh::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* For.Prototype_GameObject_Pulse_PlateForm */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pulse_PlateForm"),
@@ -3241,7 +3255,12 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneObj"),
 		CDeadZoneObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
+
+	/* For.Prototype_GameObject_Meditation_Spot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Meditation_Spot"),
+		CMeditation_Spot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	/* For.Prototype_GameObject_DeadZoneObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
@@ -3303,10 +3322,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_BombGimmickObj */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BombGimmickObj"),
-		CBombGimmickObj::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	
 
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pet"), CPet::Create(m_pDevice, m_pContext)))) return E_FAIL;
