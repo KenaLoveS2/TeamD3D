@@ -336,6 +336,36 @@ void CBossShaman::Push_EventFunctions()
 
 	TurnOnSummons(true, 0.0f);
 	TurnOffSummons(true, 0.0f);
+
+	// Sound CallBack
+	Play_Attack1Sound(true, 0.0f);
+	Play_Attack2Sound(true, 0.0f);
+	Play_Attack3Sound(true, 0.0f);
+	Play_Attack4Sound(true, 0.0f);
+	Play_Attack5Sound(true, 0.0f);
+	Play_Attack6Sound(true, 0.0f);
+	Play_Attack7Sound(true, 0.0f);
+	Play_Attack8Sound(true, 0.0f);
+
+	Play_Hit1Sound(true, 0.0f);
+	Play_Hit2Sound(true, 0.0f);
+	Play_Hit3Sound(true, 0.0f);
+	Play_Hit4Sound(true, 0.0f);
+
+	Play_Hurt1Sound(true, 0.0f);
+	Play_Hurt2Sound(true, 0.0f);
+	Play_Hurt3Sound(true, 0.0f);
+	Play_Hurt4Sound(true, 0.0f);
+	Play_Hurt5Sound(true, 0.0f);
+	Play_Hurt6Sound(true, 0.0f);
+	Play_Hurt7Sound(true, 0.0f);
+
+	Play_Move1Sound(true, 0.0f);
+	Play_Move2Sound(true, 0.0f);
+	Play_Move3Sound(true, 0.0f);
+	Play_Move4Sound(true, 0.0f);
+	Play_Move5Sound(true, 0.0f);
+	Play_Move6Sound(true, 0.0f);
 }
 
 HRESULT CBossShaman::SetUp_State()
@@ -1463,7 +1493,35 @@ void CBossShaman::LookAt_Kena(_bool bIsInit, _float fTimeDelta)
 void CBossShaman::Create_CopySoundKey()
 {
 	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
-	
+		TEXT("Mon_BossShaman_Attack1"),
+		TEXT("Mon_BossShaman_Attack2"),
+		TEXT("Mon_BossShaman_Attack3"),		
+		TEXT("Mon_BossShaman_Attack4"),
+		TEXT("Mon_BossShaman_Attack5"),
+		TEXT("Mon_BossShaman_Attack6"),
+		TEXT("Mon_BossShaman_Attack7"),
+		TEXT("Mon_BossShaman_Attack8"),
+		TEXT("Mon_BossShaman_Hit1"),
+		TEXT("Mon_BossShaman_Hit2"),
+		TEXT("Mon_BossShaman_Hit3"),
+		TEXT("Mon_BossShaman_Hit4"),
+		TEXT("Mon_BossShaman_Hurt1"),
+		TEXT("Mon_BossShaman_Hurt2"),
+		TEXT("Mon_BossShaman_Hurt3"),
+		TEXT("Mon_BossShaman_Hurt4"),
+		TEXT("Mon_BossShaman_Hurt5"),
+		TEXT("Mon_BossShaman_Hurt6"),		
+		TEXT("Mon_BossShaman_Hurt7"),
+		TEXT("Mon_BossShaman_Move1"),
+		TEXT("Mon_BossShaman_Move2"),
+		TEXT("Mon_BossShaman_Move3"),
+		TEXT("Mon_BossShaman_Move4"),
+		TEXT("Mon_BossShaman_Move5"),
+		TEXT("Mon_BossShaman_Move6"),
+		TEXT("Mon_BossShaman_Tense1"),
+		TEXT("Mon_BossShaman_Tense2"),
+		TEXT("Mon_BossShaman_Tense3"),
+		TEXT("Mon_BossShaman_Tense4"),
 	};
 
 	_tchar szTemp[MAX_PATH] = { 0, };
@@ -1472,4 +1530,305 @@ void CBossShaman::Create_CopySoundKey()
 	{
 		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
 	}
+}
+
+
+void CBossShaman::Play_Attack1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Attack1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK1], 0.5f);
+}
+
+void CBossShaman::Play_Attack2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Attack2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK2], 0.5f);
+}
+
+void CBossShaman::Play_Attack3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Attack3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK3], 0.5f);
+}
+
+void CBossShaman::Play_Attack4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Attack4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK4], 0.5f);
+}
+
+void CBossShaman::Play_Attack5Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Attack5Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK5], 0.5f);
+}
+
+void CBossShaman::Play_Attack6Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Attack6Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK6], 0.5f);
+}
+
+void CBossShaman::Play_Attack7Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Attack7Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK7], 0.5f);
+}
+
+void CBossShaman::Play_Attack8Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Attack8Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK8], 0.5f);
+}
+
+void CBossShaman::Play_Hit1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Hit1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HIT1], 0.5f);
+}
+
+void CBossShaman::Play_Hit2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Hit2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HIT2], 0.5f);
+}
+
+void CBossShaman::Play_Hit3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Hit3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HIT3], 0.5f);
+}
+
+void CBossShaman::Play_Hit4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Hit4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HIT4], 0.5f);
+}
+
+void CBossShaman::Play_Hurt1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Hurt1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT1], 0.5f);
+}
+
+void CBossShaman::Play_Hurt2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Hurt2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT2], 0.5f);
+}
+
+void CBossShaman::Play_Hurt3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Hurt3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT3], 0.5f);
+}
+
+void CBossShaman::Play_Hurt4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Hurt4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT4], 0.5f);
+}
+
+void CBossShaman::Play_Hurt5Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Hurt5Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT5], 0.5f);
+}
+
+void CBossShaman::Play_Hurt6Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Hurt6Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT6], 0.5f);
+}
+
+void CBossShaman::Play_Hurt7Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Hurt7Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT7], 0.5f);
+}
+
+void CBossShaman::Play_Move1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Move1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE1], 0.5f);
+}
+
+void CBossShaman::Play_Move2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Move2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE2], 0.5f);
+}
+
+void CBossShaman::Play_Move3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Move3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE3], 0.5f);
+}
+
+void CBossShaman::Play_Move4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Move4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE4], 0.5f);
+}
+
+void CBossShaman::Play_Move5Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Move5Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE5], 0.5f);
+}
+
+void CBossShaman::Play_Move6Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Move6Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE6], 0.5f);
 }
