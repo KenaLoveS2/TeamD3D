@@ -59,7 +59,7 @@ void CE_KenaDash::Tick(_float fTimeDelta)
 	_bool bResult = TurnOffSystem(m_fTurnOffTime, 0.5f, fTimeDelta);
 	if (bResult == true)	Reset();
 
-	_bool bMyTurnOff = TurnOffSystem(fTime, 1.f, fTimeDelta);
+	_bool bMyTurnOff = TurnOffSystem(fTime, 0.8f, fTimeDelta);
 	if (bMyTurnOff == true)	m_eEFfectDesc.bActive = false;
 }
 
@@ -133,7 +133,6 @@ HRESULT CE_KenaDash::Render()
 
 void CE_KenaDash::Reset()
 {
-	// m_eEFfectDesc.bActive = false;
 	m_fShaderBindTime = 0.0f;
 	m_bFinishSprite = false;
 

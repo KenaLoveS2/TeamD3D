@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\public\HatCart.h"
+#include "HatCart.h"
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"

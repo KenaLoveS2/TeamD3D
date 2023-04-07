@@ -270,7 +270,6 @@ HRESULT CDynamic_StoneCube::RenderCine()
 void CDynamic_StoneCube::Actor_Clear()
 {
 	m_pTransformCom->Clear_Actor();
-
 }
 
 //void CDynamic_StoneCube::ImGui_PhysXValueProperty()

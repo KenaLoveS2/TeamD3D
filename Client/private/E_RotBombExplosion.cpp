@@ -226,23 +226,6 @@ void CE_RotBombExplosion::TurnonBomb(_float fTimeDelta)
 
 void CE_RotBombExplosion::TurnoffBomb(_float fTimeDelta)
 {
-	_bool bResult = TurnOffSystem(m_fDissolveTime, 1.f, fTimeDelta);	
-	dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_DissolveTime(m_fDissolveTime);
-
-	if (bResult == true)
-	{
-		m_bBomb = false;
-		dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_Dissolve(false);
-		dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_DissolveTime(0.0f);
-		m_fBombTime = 0.0f;
-
-		m_pTransformCom->Set_Scaled(_float3(0.9f, 0.9f, 0.9f));
-		for (auto& pChild : m_vecChild)
-			m_vecChild[CHILD_COVER]->Set_Scale(XMVectorSet(0.91f, 0.91f, 0.91f, 0.f));
-
-		PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
-		CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, 0.001f);
-	}
 }
 
 HRESULT CE_RotBombExplosion::SetUp_ShaderResources()

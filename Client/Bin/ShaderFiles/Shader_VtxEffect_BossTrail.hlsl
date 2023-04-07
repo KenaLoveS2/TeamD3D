@@ -203,7 +203,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 technique11 DefaultTechnique
 {
-	pass Warrior_Trail // 0
+	pass Boss_Trail // 0
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);

@@ -996,7 +996,7 @@ void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransf
 
 		assert(pStaticRigid != nullptr && "CInstancing_Mesh::Create_PxTriangle_InstMeshActor");
 		pPhysX->Set_ActorMatrix(pStaticRigid, (matNew));		// 노말라이즈 매트릭스보내고
-		m_StaticRigid_List.push_back(pStaticRigid);
+		//m_StaticRigid_List.push_back(pStaticRigid);
 	}
 
 
@@ -1271,7 +1271,7 @@ void CInstancing_Mesh::Free()
 		Safe_Delete_Array(m_pIndices);
 	}
 
-	if (m_bTriangle_Collider && m_isCloned==true)
+	/*if (m_bTriangle_Collider && m_isCloned==true)
 	{
 		for (auto pStaticRigid : m_StaticRigid_List)
 		{
@@ -1281,10 +1281,8 @@ void CInstancing_Mesh::Free()
 			}
 		}
 		m_StaticRigid_List.clear();
-	}
+	}*/
 
 
 	m_pInstancingPositions.clear();
-
-
 }

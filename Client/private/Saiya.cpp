@@ -189,6 +189,19 @@ void CSaiya::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
 
+	if(ImGui::Button("NpcCam"))
+	{
+		CGameInstance::GetInstance()->Work_Camera(m_pMainCam->Get_ObjectCloneName());
+		const _float3 vOffset = _float3(0.f, 0.5f, 1.f);
+		const _float3 vLookOffset = _float3(0.f, 0.4f, 0.f);
+		m_pMainCam->Set_Target(this, CCameraForNpc::OFFSET_FRONT, vOffset, vLookOffset);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("PlayerCam"))
+	{
+		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
+	}
+
 	ImGui::Checkbox("GoStraight", &m_bStraight);
 
 	if (ImGui::Button("Add KeyFrame"))
@@ -324,7 +337,9 @@ HRESULT CSaiya::SetUp_State()
 		.OnExit([this]()
 	{
 		CGameInstance::GetInstance()->Work_Camera(m_pMainCam->Get_ObjectCloneName());
-		m_pMainCam->Set_Target(this, CCameraForNpc::OFFSET_FRONT, 0.4f, 2.f);
+		const _float3 vOffset = _float3(0.f, 0.5f, 1.f);
+		const _float3 vLookOffset = _float3(0.f, 0.4f, 0.f);
+		m_pMainCam->Set_Target(this, CCameraForNpc::OFFSET_FRONT, vOffset, vLookOffset);
 		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(TEXT("Saiya_Rot"), this, TRIGGER_ROT, CUtile::Float_4to3(vPos), 1.f));
 		m_pRot->Set_WakeUpPos(vPos);
@@ -480,21 +495,105 @@ HRESULT CSaiya::SetUp_State()
 			m_pTransformCom->Set_Look(CUtile::Float3toFloat4Look(m_keyframes[6].vLook));
 		}
 	})
-		.AddTransition("ACTION_8 to ACTION_9", "ACTION_9")
+		.AddTransition("ACTION_8 to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(SAIYA_TELEPORT);
 	})
 
-		.AddState("ACTION_9")
+		.AddState("IDLE")
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
 	})
+		.AddTransition("IDLE to CHEER", "CHEER")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(5.f);
+	})
+
+		/* Cheer */
+		.AddState("CHEER")
+		.OnStart([this]()
+	{
+			CGameInstance::GetInstance()->Work_Camera(m_pMainCam->Get_ObjectCloneName());
+			const _float3 vOffset = _float3(0.f, 0.7f, 0.f);
+			const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
+			m_pMainCam->Set_Target(this, CCameraForNpc::OFFSET_FRONT_LERP, vOffset, vLookOffset);
+			m_bMeetPlayer = true;
+			m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_CHEER);
+			m_pModelCom->Set_AnimIndex(SAIYA_CHEER);
+			CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
+
+			CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+			if (pKena != nullptr)
+				pKena->Set_StateLock(true);
+	})
+
+		.OnExit([this]()
+	{
+		CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_1"));
+		m_pRendererCom->ShootStaticShadow();
+	})
+		.AddTransition("CHEER to ACTION_9", "ACTION_9")
+		.Predicator([this]()
+	{
+		return  AnimFinishChecker(SAIYA_CHEER);
+	})
+
+		.AddState("ACTION_9")
+		.OnStart([this]()
+	{
+		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+		_bool bVal = true;
+		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][0]);
+		m_iLineIndex++;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+
+		if (CGameInstance::GetInstance()->Key_Down(DIK_E))
+		{
+			if (m_iLineIndex == (int)m_vecChat[m_iChatIndex].size())
+			{
+				m_iLineIndex++;
+				return;
+			}
+			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+			_bool bVal = true;
+			m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][m_iLineIndex]);
+			m_iLineIndex++;
+		}
+	})
+		.OnExit([this]()
+	{
+		/* Chat End */
+		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+		_bool bVal = false;
+		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
+
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+		if (pKena != nullptr)
+			pKena->Set_StateLock(false);
+
+		m_iLineIndex = 0;
+		m_iChatIndex++;
+
+		/* Quest Start */
+		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+		CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
+		_bool bStart = true;
+		m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
+		_float fQuestIdx = 0.f;
+		m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fQuestIdx, wstrDefault);
+		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
+		CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+	})
 		.AddTransition("ACTION_9 to ACTION_10", "ACTION_10")
 		.Predicator([this]()
 	{
-		return true; // 여기서 대화해야댐 대화끝나면 true가 되야됨
+		return IsChatEnd(); // 여기서 대화해야댐 대화끝나면 true가 되야됨
 	})
 
 		.AddState("ACTION_10")

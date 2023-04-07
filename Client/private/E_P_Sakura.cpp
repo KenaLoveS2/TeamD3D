@@ -58,10 +58,10 @@ void CE_P_Sakura::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);	
 
 	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
-	//m_bStart_InstMove = m_pModelCom->Culling_InstancingMeshs(100.f, WolrdMat);
+	m_bStart_InstMove = m_pModelCom->Culling_InstancingMeshs(100.f, WolrdMat);
 
-	//if(!m_bStart_InstMove)
-	//	m_pModelCom->Instaincing_mesh_Effect_tick(0.f, fTimeDelta);
+	if(!m_bStart_InstMove)
+		m_pModelCom->Instaincing_mesh_Effect_tick(0.f, fTimeDelta);
 
 }
 

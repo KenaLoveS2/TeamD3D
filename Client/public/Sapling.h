@@ -58,10 +58,21 @@ private:
 	_float m_fIdletoAttack = 0.f;
 	class CE_Sapling*	m_pEffects = nullptr;
 
+	enum COPY_SOUND_KEY {
+		CSK_TENSE, CSK_ATTACK, CSK_IDLE, CSK_WALK, CSK_EXPLOSION, CSK_HURT, CSK_DIE,
+		COPY_SOUND_KEY_END,
+	};
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 public:
 	static CSapling*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
 	virtual void						Free() override;
+
+	void Create_CopySoundKey();
+
+	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
+	void Play_ExplosionSound(_bool bIsInit, _float fTimeDelta);
 };
 
 END

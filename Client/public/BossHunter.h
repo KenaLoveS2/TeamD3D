@@ -77,7 +77,7 @@ public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossHunterDelegator;
 
 private:
-
+	CBone* m_pWeaponTrailBone = nullptr;
 	CBone* m_pBodyBone = nullptr;
 	_float4x4 m_BodyPivotMatrix;
 	_float3 m_vBodyPivotTrans = { 0.f, 0.f, -0.7f };
@@ -105,6 +105,13 @@ private:
 	_bool m_bFlyEnd = false;
 
 	_bool m_bDodge = false;
+
+	enum COPY_SOUND_KEY {
+		CSK_ATTACK, CSK_THROW, CSK_DIE, CSK_IDLE, CSK_PAIN, CSK_TENSE1, CSK_TENSE2, CSK_IMPACT, CSK_WALK,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
 
 private:
 	CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -136,7 +143,6 @@ private:
 	void Update_Collider(_float fTimeDelta) override;
 	void AdditiveAnim(_float fTimeDelta) override;
 
-private:
 private:
 	void Set_AttackType();
 	void Reset_Attack();
@@ -187,21 +193,21 @@ public:
 	void StunEffect_On(_bool bIsInit, _float fTimeDelta);
 	void StunEffect_Off(_bool bIsInit, _float fTimeDelta);
 
+	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
+	void TUrnOffTrail(_bool bIsInit, _float fTimeDelta);
 
-
-
-
-
-
+	virtual void Create_CopySoundKey() override;
 
 	/********************************************/
 	/*			For. Shader & Effect			*/
 	/********************************************/
 private:
 	HRESULT Create_Effects();
+	HRESULT Create_Trail();
 
 private:
 	vector<CEffect_Base_S2*>		m_vecEffects;
+	class CE_HunterTrail* m_pHunterTrail = nullptr;
 
 private: /* For. String */
 	_float							m_fUVSpeeds[2];
@@ -212,10 +218,12 @@ private: /* For. String */
 
 private: /* For. Tool */
 	void							ImGui_EffectProperty();
+
+private:
+	void							Update_Trail(const char* pBoneTag);
+
 private:
 	CEffect_Base_S2* m_pSelectedEffect;
-
-
 
 };
 

@@ -125,10 +125,23 @@ private:
 	vector<_float3> m_vecPivot;
 	vector<_float3> m_vecPivotScale;
 
+	enum COPY_SOUND_KEY {
+		CSK_WALK, CSK_TENSE, CSK_ATTACK1, CSK_ATTACK2, CSK_WAKEUP, CSK_HURT, CSK_DIE, CSK_BACK,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
 public:
 	static CRotEater*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*			Clone(void* pArg = nullptr)  override;
 	virtual void							Free() override;
+
+	virtual void Create_CopySoundKey() override;
+	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_BackSound(_bool bIsInit, _float fTimeDelta);
 };
 
 END

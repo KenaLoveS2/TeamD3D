@@ -1257,6 +1257,18 @@ void CKena::RimColorValue()
 		m_pShaderCom->Set_RawValue("g_Hit", &m_bHitRim, sizeof(_bool));
 		m_pShaderCom->Set_RawValue("g_HitRimIntensity", &m_fHitRimIntensity, sizeof(_float));
 	}
+	// DashAttack Rim
+	{
+		if (m_fDashRimIntensity > 0.f)
+			m_fDashRimIntensity -= TIMEDELTA;
+		else
+		{
+			m_fDashRimIntensity = 0.f;
+			m_bDashRim = false;
+		}
+		m_pShaderCom->Set_RawValue("g_Dash", &m_bDashRim, sizeof(_bool));
+		m_pShaderCom->Set_RawValue("g_DashRimIntensity", &m_fDashRimIntensity, sizeof(_float));
+	}
 }
 
 HRESULT CKena::Ready_Parts()

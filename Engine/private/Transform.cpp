@@ -977,7 +977,10 @@ void CTransform::Clear_Actor()
 {
 	if (m_pPxActor)
 	{
-		m_pPhysX_Manager->Delete_DynamicActor(m_pPxActor);		
+		if (m_bIsStaticPxActor)
+			m_pPhysX_Manager->Delete_Actor(m_pPxActor);
+		else
+			m_pPhysX_Manager->Delete_DynamicActor(m_pPxActor);
 	}
 	
 	for (auto& iter : m_ActorList)
@@ -987,6 +990,7 @@ void CTransform::Clear_Actor()
 
 	m_pPxActor = nullptr;
 	m_pPhysX_Manager = nullptr;
+	m_ActorList.clear();
 }
 
 void CTransform::Update_AllCollider(_float4x4 PivotMatrix)

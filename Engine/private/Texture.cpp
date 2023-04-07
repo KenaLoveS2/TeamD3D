@@ -178,7 +178,6 @@ CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pConte
 
 		Safe_AddRef(pInstance);
 		CTexture_Manager::GetInstance()->Add_Texture(pTextureFilePath, pInstance);
-		
 		return pInstance;
 	}
 }

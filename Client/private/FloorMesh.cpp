@@ -4,6 +4,7 @@
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 
+/*미니게임을 위한 플로어 매쉬임*/
 
 CFloorMesh::CFloorMesh(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -91,7 +92,7 @@ HRESULT CFloorMesh::Render()
 			if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
 			{
 				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 22), E_FAIL);
 			}
 			else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
 			{

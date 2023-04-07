@@ -36,7 +36,7 @@ HRESULT CMainApp::Initialize()
 	GraphicDesc.iViewportSizeY = g_iWinSizeY;
 	GraphicDesc.eWindowMode = GRAPHIC_DESC::WINMODE_WIN;
 	GraphicDesc.pSoundFileTag = "../Bin/Resources/Sound/";
-	GraphicDesc.iNumManualSounds = 10;
+	GraphicDesc.iNumManualSounds = 20;
 	GraphicDesc.iNumCopyPrototypes = 0;
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, GraphicDesc, &m_pDevice, &m_pContext)))
@@ -209,6 +209,11 @@ HRESULT CMainApp::Ready_Prototype_Component()
 	/* For.Prototype_Component_Shader_Water*/
 	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Water"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Water.hlsl"), VTXMODEL_DECLARATION::Elements, VTXMODEL_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxBossModel*/
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxBossModel"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxBossModel.hlsl"), VTXMODEL_DECLARATION::Elements, VTXMODEL_DECLARATION::iNumElements))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxEffectAnimModel*/

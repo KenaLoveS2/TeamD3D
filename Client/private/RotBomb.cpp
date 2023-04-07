@@ -279,7 +279,7 @@ void CRotBomb::Set_Child()
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Position(vPos);
 
-	m_pPathTrail = dynamic_cast<CE_BombTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_BombTrail", L"RotBombTrail"));
+	m_pPathTrail = dynamic_cast<CE_BombTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_BombTrail", CUtile::Create_CombinedString(m_szCloneObjectTag, L"RotBombTrail")));
 	NULL_CHECK_RETURN(m_pPathTrail, );
 	m_pPathTrail->Set_Position(vPos);
 

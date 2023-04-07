@@ -20,8 +20,6 @@ CTexture* CTexture_Manager::Find_Texture(const _tchar* pFilePath)
 	if (iter == m_Textures.end())
 		return nullptr;
 
-	
-
 	return iter->second;
 }
 
@@ -31,7 +29,7 @@ HRESULT CTexture_Manager::Scene_Chane_Clear()
 		Safe_Release(Pair.second);
 
 	m_Textures.clear();
-
+	
 	return S_OK;
 }
 

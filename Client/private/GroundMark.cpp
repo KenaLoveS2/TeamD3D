@@ -68,7 +68,7 @@ HRESULT CGroundMark::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_GroundMark"), TEXT("Com_Texture"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_GroundMark"), TEXT("Com_Texture"),
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 

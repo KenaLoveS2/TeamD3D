@@ -43,8 +43,7 @@ HRESULT CRotEater::Initialize(void* pArg)
 	}
 		
 	m_pModelCom->Set_AllAnimCommonType();
-
-	m_bRotable = true;
+	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	return S_OK;
 }
@@ -126,6 +125,12 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 
 void CRotEater::Tick(_float fTimeDelta)
 {
+	//m_bReadySpawn = true;
+	//Update_Collider(fTimeDelta);
+	//m_pModelCom->Play_Animation(fTimeDelta);
+	//return;
+
+
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -166,9 +171,7 @@ HRESULT CRotEater::Render()
 
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
-	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
@@ -196,9 +199,7 @@ HRESULT CRotEater::RenderShadow()
 	if (FAILED(SetUp_ShadowShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",SHADOW);
 
 	return S_OK;
@@ -304,7 +305,11 @@ HRESULT CRotEater::Call_EventFunction(const string& strFuncName)
 
 void CRotEater::Push_EventFunctions()
 {
-	CMonster::Push_EventFunctions();
+	// CMonster::Push_EventFunctions();
+	Play_WalkSound(true, 0.f);
+	Play_Attack1Sound(true, 0.f);
+	Play_Attack2Sound(true, 0.f);
+	Play_BackSound(true, 0.f);
 }
 
 HRESULT CRotEater::SetUp_State()
@@ -347,22 +352,22 @@ HRESULT CRotEater::SetUp_State()
 		.AddState("AWAKE")
 		.OnStart([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
-		m_pModelCom->ResetAnimIdx_PlayTime(AWAKEALT);
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WAKEUP], 0.5f);
+		m_iAwakeType = AWAKE;
 
-		m_iAwakeType = rand() % 2;
-		
-		m_pModelCom->Set_AnimIndex(AWAKE + m_iAwakeType);
+		m_pModelCom->ResetAnimIdx_PlayTime(m_iAwakeType);
+		m_pModelCom->Set_AnimIndex(m_iAwakeType);
 	})
 		.AddTransition("AWAKE to IDLE" , "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(AWAKE) || AnimFinishChecker(AWAKEALT);
+		return AnimFinishChecker(m_iAwakeType);
 	})
 
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE], 0.5f);
 		m_fIdletoAttackTime = 0.f;
 	})
 		.Tick([this](_float fTimeDelta)
@@ -374,11 +379,6 @@ HRESULT CRotEater::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
-	})
-		.AddTransition("IDLE to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
 	})
 		.AddTransition("IDLE to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
@@ -410,11 +410,6 @@ HRESULT CRotEater::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
-	})
-		.AddTransition("RUN to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
 	})
 		.AddTransition("RUN to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
@@ -457,11 +452,6 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("SWIPEATTACK to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
 		.AddTransition("SWIPEATTACK to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
@@ -490,11 +480,6 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("JUMPBACK to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
 		.AddTransition("JUMPBACK to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
@@ -521,11 +506,6 @@ HRESULT CRotEater::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
-	})
-		.AddTransition("JUMPATTACK to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
 	})
 		.AddTransition("JUMPATTACK to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
@@ -554,11 +534,6 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("LONGRANGEATTACK to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
 		.AddTransition("LONGRANGEATTACK to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
@@ -569,33 +544,12 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return AnimFinishChecker(ATTACK_LONGRANGE);
 	})
-
-
-		.AddState("BIND")
-		.OnStart([this]()
-	{
-		Start_Bind(BIND);
-	})
-		.OnExit([this]()
-	{	
-		Reset_Attack();
-		End_Bind();
-	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-		.AddTransition("BIND to IDLE", "IDLE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(BIND);
-	})
 		
 
 		.AddState("TAKEDAMAGE_OR_PARRIED")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(STTAGER_FRONT);
 		m_pModelCom->ResetAnimIdx_PlayTime(STTAGER_BACK);
 		m_pModelCom->ResetAnimIdx_PlayTime(STTAGER_LEFT);
@@ -621,11 +575,6 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("TAKEDAMAGE_OR_PARRIED to BIND", "BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
 		.AddTransition("TAKEDAMAGE_OR_PARRIED to IDLE", "IDLE")
 		.Predicator([this]()
 	{
@@ -638,6 +587,7 @@ HRESULT CRotEater::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DIE], 0.5f);
 		_uint iAnimIndex = (m_PlayerLookAt_Dir == FRONT) ? DEATH3 : (m_PlayerLookAt_Dir == BACK) ? DEATH : DEATH;
 		
 		Set_Dying(iAnimIndex);
@@ -851,4 +801,73 @@ CGameObject* CRotEater::Clone(void* pArg)
 void CRotEater::Free()
 {
 	CMonster::Free();
+}
+
+void CRotEater::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_Walk_M.ogg"),
+		TEXT("Mon_RotEater_Tense.ogg"),		
+		TEXT("Mon_RotEater_Attack1.ogg"),
+		TEXT("Mon_RotEater_Attack2.ogg"),
+		TEXT("Mon_RotEater_Wakeup.ogg"),
+		TEXT("Mon_RotEater_Hurt.ogg"),
+		TEXT("Mon_RotEater_Die.ogg"),
+		TEXT("Mon_RotEater_Back.ogg"),
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}
+
+void CRotEater::Play_WalkSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CRotEater::Play_WalkSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WALK], 1.f);
+}
+
+void CRotEater::Play_Attack1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CRotEater::Play_Attack1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK1], 0.4f);
+}
+
+void CRotEater::Play_Attack2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CRotEater::Play_Attack2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK2], 0.5f);
+}
+
+void CRotEater::Play_BackSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CRotEater::Play_BackSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_BACK], 0.5f);
 }
