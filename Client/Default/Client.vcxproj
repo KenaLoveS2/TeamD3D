@@ -199,7 +199,6 @@
     <ClInclude Include="..\public\CameraForRot.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
-    <ClInclude Include="..\public\CEffect_Unit.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\public\CLevel_Final.h" />
@@ -230,6 +229,7 @@
     <ClInclude Include="..\public\Effect_Texture_Base.h" />
     <ClInclude Include="..\public\Effect_Trail.h" />
     <ClInclude Include="..\public\Effect_Trail_T.h" />
+    <ClInclude Include="..\public\Effect_Unit.h" />
     <ClInclude Include="..\public\EnemyWisp.h" />
     <ClInclude Include="..\public\Enviroment_Interaction.h" />
     <ClInclude Include="..\public\E_BombTrail.h" />
@@ -356,7 +356,9 @@
     <ClInclude Include="..\Public\TelePort_Flower.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
     <ClInclude Include="..\public\UI_CanvasHatCart.h" />
+    <ClInclude Include="..\public\UI_CanvasInfo.h" />
     <ClInclude Include="..\public\UI_CanvasItemBar.h" />
+    <ClInclude Include="..\public\UI_CanvasMap.h" />
     <ClInclude Include="..\public\UI_CanvasTop.h" />
     <ClInclude Include="..\public\UI_Event_Fade.h" />
     <ClInclude Include="..\public\UI_Event_LoopAct.h" />
@@ -430,8 +432,11 @@
     <ClInclude Include="..\public\UI_NodeHUDShieldBar.h" />
     <ClInclude Include="..\public\UI_NodeItemBox.h" />
     <ClInclude Include="..\public\UI_NodeKarma.h" />
+    <ClInclude Include="..\public\UI_NodeKey.h" />
     <ClInclude Include="..\public\UI_NodeLetterBox.h" />
     <ClInclude Include="..\public\UI_NodeLvUp.h" />
+    <ClInclude Include="..\public\UI_NodeMapFrame.h" />
+    <ClInclude Include="..\public\UI_NodeMood.h" />
     <ClInclude Include="..\public\UI_NodeNumRots.h" />
     <ClInclude Include="..\public\UI_NodeRotArrow.h" />
     <ClInclude Include="..\public\UI_NodeRotCnt.h" />
@@ -450,6 +455,7 @@
     <ClInclude Include="..\public\UI_NodeSkillVideo.h" />
     <ClInclude Include="..\public\UI_NodeTitle.h" />
     <ClInclude Include="..\public\UI_RotIcon.h" />
+    <ClInclude Include="..\public\UI_Weakpoint.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
     <ClInclude Include="..\Public\Wall.h" />
     <ClInclude Include="..\public\WaterPlane.h" />
@@ -507,6 +513,7 @@
     <ClCompile Include="..\private\Effect_Texture_Base.cpp" />
     <ClCompile Include="..\private\Effect_Trail.cpp" />
     <ClCompile Include="..\private\Effect_Trail_T.cpp" />
+    <ClCompile Include="..\private\Effect_Unit.cpp" />
     <ClCompile Include="..\private\EnemyWisp.cpp" />
     <ClCompile Include="..\private\Enviroment_Interaction.cpp" />
     <ClCompile Include="..\private\E_BombTrail.cpp" />
@@ -633,7 +640,9 @@
     <ClCompile Include="..\Private\TelePort_Flower.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
     <ClCompile Include="..\private\UI_CanvasHatCart.cpp" />
+    <ClCompile Include="..\private\UI_CanvasInfo.cpp" />
     <ClCompile Include="..\private\UI_CanvasItemBar.cpp" />
+    <ClCompile Include="..\private\UI_CanvasMap.cpp" />
     <ClCompile Include="..\private\UI_CanvasTop.cpp" />
     <ClCompile Include="..\private\UI_Event_Fade.cpp" />
     <ClCompile Include="..\private\UI_Event_LoopAct.cpp" />
@@ -707,8 +716,11 @@
     <ClCompile Include="..\private\UI_NodeHUDShieldBar.cpp" />
     <ClCompile Include="..\private\UI_NodeItemBox.cpp" />
     <ClCompile Include="..\private\UI_NodeKarma.cpp" />
+    <ClCompile Include="..\private\UI_NodeKey.cpp" />
     <ClCompile Include="..\private\UI_NodeLetterBox.cpp" />
     <ClCompile Include="..\private\UI_NodeLvUp.cpp" />
+    <ClCompile Include="..\private\UI_NodeMapFrame.cpp" />
+    <ClCompile Include="..\private\UI_NodeMood.cpp" />
     <ClCompile Include="..\private\UI_NodeNumRots.cpp" />
     <ClCompile Include="..\private\UI_NodeRotArrow.cpp" />
     <ClCompile Include="..\private\UI_NodeRotCnt.cpp" />
@@ -727,11 +739,11 @@
     <ClCompile Include="..\private\UI_NodeSkillVideo.cpp" />
     <ClCompile Include="..\private\UI_NodeTitle.cpp" />
     <ClCompile Include="..\private\UI_RotIcon.cpp" />
+    <ClCompile Include="..\private\UI_Weakpoint.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />
     <ClCompile Include="..\Private\Wall.cpp" />
     <ClCompile Include="..\private\WaterPlane.cpp" />
     <ClCompile Include="..\private\WoodKnight.cpp" />
-    <ClCompile Include="CEffect_Unit.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -556,8 +556,26 @@
     <Filter Include="02.GameObjects\Effect\Object\Kena\Dash">
       <UniqueIdentifier>{42f6c8b2-1649-4159-8575-c3bb1cd1b146}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\PlayerMood">
+      <UniqueIdentifier>{bcba9470-030a-446c-8406-289a3b2e1c53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. WorldUI\Boss_Weakpoint">
+      <UniqueIdentifier>{5fb8ef12-ee23-4ac3-9f2e-ddf3a154133a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\09. Bottom\KeyGuide">
+      <UniqueIdentifier>{fcaebbde-cb02-4893-97b3-4d6b06f4ef9b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Levels\06. FinalPlay">
       <UniqueIdentifier>{be811861-a962-4e80-86a9-855d07f24d6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\12. Map">
+      <UniqueIdentifier>{30cb5773-b27b-4e7a-b661-d1817c7365a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\12. Map\Frame">
+      <UniqueIdentifier>{1a7a3a9f-53cf-415c-9add-a8c61db26bfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\11. InfoWindow">
+      <UniqueIdentifier>{efaa76b7-5840-4489-8605-62bf3055ba0f}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Levels\07. Gimmick">
       <UniqueIdentifier>{209510b0-f1a9-4366-96a9-f2b8a6281b13}</UniqueIdentifier>
@@ -1448,9 +1466,6 @@
     <ClInclude Include="..\public\HealthFlower_Anim.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\CEffect_Unit.h">
-      <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\MannequinRot.h">
       <Filter>1004.알아서해라</Filter>
     </ClInclude>
@@ -1468,6 +1483,27 @@
     </ClInclude>
     <ClInclude Include="..\public\CLevel_Final.h">
       <Filter>01.Levels\06. FinalPlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Unit.h">
+      <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeMapFrame.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\12. Map\Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeMood.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\PlayerMood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasMap.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\12. Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Weakpoint.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Boss_Weakpoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasInfo.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\11. InfoWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeKey.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\KeyGuide</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Level_Gimmick.h">
       <Filter>01.Levels\07. Gimmick</Filter>
@@ -2341,9 +2377,6 @@
     <ClCompile Include="..\private\HealthFlower_Anim.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
-    <ClCompile Include="CEffect_Unit.cpp">
-      <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\MannequinRot.cpp">
       <Filter>1004.알아서해라</Filter>
     </ClCompile>
@@ -2358,6 +2391,27 @@
     </ClCompile>
     <ClCompile Include="..\private\CLevel_Final.cpp">
       <Filter>01.Levels\06. FinalPlay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Unit.cpp">
+      <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeMood.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\PlayerMood</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeMapFrame.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\12. Map\Frame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasMap.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\12. Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Weakpoint.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Boss_Weakpoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasInfo.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\11. InfoWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeKey.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\KeyGuide</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Level_Gimmick.cpp">
       <Filter>01.Levels\07. Gimmick</Filter>

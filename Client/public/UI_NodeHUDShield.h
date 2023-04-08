@@ -14,6 +14,8 @@ private:
 
 public:
 	void	Set_Guage(_float fGuage);
+public:
+	void	Upgrade();
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -26,6 +28,13 @@ private:
 	virtual HRESULT			SetUp_Components() override;
 	virtual HRESULT			SetUp_ShaderResources() override;
 
+private: /* For. Upgrade */
+	_bool	m_bUpgrade;
+	_float	m_fSpeed;
+	_float	m_fSourScaleX;
+	_float	m_fDestScaleX;
+	_float	m_fSourTransX;
+	_float	m_fDestTransX;
 
 public:
 	static	CUI_NodeHUDShield*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

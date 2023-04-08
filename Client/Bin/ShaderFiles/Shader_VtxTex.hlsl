@@ -1,4 +1,32 @@
+
 #include "Shader_Client_Defines.h"
+//
+//matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+//
+//texture2D		g_Texture;
+//texture2D		g_DepthTexture;
+//texture2D		g_MaskTexture;
+//texture2D		g_NoiseTexture;
+//
+//
+//int		g_XFrameNow = 0, g_YFrameNow = 0;	/* Current Sprite frame */
+//int		g_XFrames = 1, g_YFrames = 1;		/* the number of sprites devided each side */
+//float	g_fSpeedX = 0.f, g_fSpeedY = 0.f;	/* UV Move Speed */
+//float4	g_vColor = { 1.f, 1.f, 1.f, 1.f };
+//float4	g_vMinColor = { 0.f, 0.f, 0.f,0.f };
+//
+//float	g_fAlpha = 1.f;
+//float	g_fAmount = 1.f; /* Guage Data (normalized) */
+//float	g_fEnd = 0.f;
+//
+//int		g_iCheck = 0;
+//
+//float			g_Time;
+//unsigned int	g_State = 0;
+//
+//float	g_fDiffuseAlpha = 1.f;
+//float	g_fMaskAlpha = 0.f;
+//bool	g_IsGray = false;
 
 Texture2D<float4>		g_Texture;
 Texture2D<float4>		g_DepthTexture;
@@ -41,6 +69,7 @@ VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
 
+
 	matrix		matWV, matWVP;
 
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
@@ -78,7 +107,7 @@ PS_OUT PS_MAIN(PS_IN In)
 PS_OUT PS_MAIN_MASKALPHATEST(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
-
+	 
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 
 	Out.vColor.a = Out.vColor.r;
@@ -569,6 +598,20 @@ PS_OUT PS_MAIN_MASKALPHA(PS_IN In)
 
 	return Out;
 }
+
+PS_OUT PS_MAIN_SWAPMASK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+	float4 vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+
+	Out.vColor.rgb = g_vColor.rgb;
+	Out.vColor.a = g_fAmount * (1-vMask.r) * g_fAlpha;
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Rect // 0
@@ -881,6 +924,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_HDR();
+	}
+
+	pass SwapMask // 24
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SWAPMASK();
 	}
 
 }
