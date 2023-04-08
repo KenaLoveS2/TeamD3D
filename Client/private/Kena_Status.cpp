@@ -466,7 +466,6 @@ const _bool CKena_Status::Get_SkillState(SKILLTAB eCategory, _uint iSlot) const
 
 void CKena_Status::Set_RotCount(_int iValue)
 {
-	/* NEED : ADD_ROTCOUNT() 수정 후에 이 함수는 비워줘. */
 
 	//m_iCurrentRotCount = iValue;
 

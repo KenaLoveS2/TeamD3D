@@ -9,6 +9,8 @@ CEffect_Particle_Base::CEffect_Particle_Base(ID3D11Device* pDevice, ID3D11Device
 	, m_pShaderCom(nullptr)
 	, m_pTextureCom(nullptr)
 	, m_pVIBufferCom(nullptr)
+	, m_fTime(0.0f)
+	, m_fTimeAcc(0.0f)
 {
 }
 
@@ -18,6 +20,8 @@ CEffect_Particle_Base::CEffect_Particle_Base(const CEffect_Particle_Base& rhs)
 	, m_pShaderCom(nullptr)
 	, m_pTextureCom(nullptr)
 	, m_pVIBufferCom(nullptr)
+	, m_fTime(0.0f)
+	, m_fTimeAcc(0.0f)
 {
 }
 
@@ -253,16 +257,18 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		if (ImGui::DragFloat3("vWorldPosition", (_float*)&vPosition, 0.10f, -1000.0f, 1000.0f, "%.3f"))
 			m_pTransformCom->Set_Position(vPosition);
 	}
+
+	/* For. Hint (Trial) */
+	RecordPath();
+
 	
 	/* SelfStop */
 	ImGui::Separator();
 	ImGui::Checkbox("IsSelfStop", &m_bSelfStop);
 
 	if (m_bSelfStop)
-	{
 		ImGui::DragFloat("SelfStopDuration", &m_fSelfStopTime, 0.0f, 30.0f);
-	}
-
+	
 	ImGui::Separator();
 	Save_Data();
 
@@ -643,6 +649,53 @@ HRESULT CEffect_Particle_Base::SetUp_Buffer()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CEffect_Particle_Base::RecordPath()
+{
+	if(ImGui::CollapsingHeader("RecordPath"))
+	{
+		if (ImGui::DragFloat("Time Interval", &m_fTime, 0.01f, 0.0f, 5.0f))
+			m_fTimeAcc = 0.0f;
+
+		static bool bStart = false;
+		static bool bPlay = false;
+
+		/* UIs */
+		if (ImGui::Button("Record"))
+		{
+			bStart = true;
+			m_vecPos.clear();
+			m_fTimeAcc = 0.0f;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Stop"))
+			bStart = false;
+		ImGui::SameLine();
+		if (bStart)
+			ImGui::Text("Recording...");
+		if (ImGui::Button("Play"))
+			bPlay = !bPlay;
+
+		/* Functions */
+		if (bStart)
+		{
+			m_fTimeAcc += 0.001f;
+			if (m_fTimeAcc > m_fTime)
+			{
+				m_vecPos.push_back(m_pTransformCom->Get_Position());
+				m_fTimeAcc = 0.0f;
+			}
+		}
+
+		if (bPlay)
+		{
+			for (auto& vPos : m_vecPos)
+				m_pTransformCom->Set_Position(vPos);
+		}
+
+
+	}
 }
 
 CEffect_Particle_Base* CEffect_Particle_Base::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
