@@ -472,7 +472,8 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(100);
+	m_pKenaStatus->Set_Attack(10);
+	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
 
 	if (m_bAim && m_bJump)
@@ -2205,22 +2206,29 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_pDashTarget = pTarget;
 
 			CPortalPlane* pPortal = dynamic_cast<CPortalPlane*>(m_pDashTarget);
-			_smatrix	matOutPortal = pPortal->Get_LinkedPortal()->Get_WorldMatrix();
+			CPortalPlane* pLinkedPortal = pPortal->Get_LinkedPortal();
 
-			_float4		vOutRight;
-			_float4		vOutLook = matOutPortal.Up();
-			vOutLook.Normalize();
-			vOutRight = XMVector3Normalize(XMVector3Cross(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_UP)), vOutLook));
+			if (pLinkedPortal != nullptr)
+			{
+				m_bDashPortal = true;
+				m_pDashTarget = pTarget;
 
-			_float3		vScale = m_pTransformCom->Get_Scaled();
+				_smatrix   matOutPortal = pLinkedPortal->Get_WorldMatrix();
 
-			m_pTransformCom->Set_State(CTransform::STATE_RIGHT, vOutRight * vScale.x);
-			m_pTransformCom->Set_State(CTransform::STATE_LOOK, vOutLook * vScale.z);
+				_float4      vOutRight;
+				_float4      vOutLook = matOutPortal.Up();
+				vOutLook.Normalize();
+				vOutRight = XMVector3Normalize(XMVector3Cross(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_UP)), vOutLook));
 
-			_float4		vPos = matOutPortal.Translation() + vOutLook * 0.5f;
-			vPos.y -= 4.f;
-			//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
-			m_pTransformCom->Set_Position(vPos);
+				_float3      vScale = m_pTransformCom->Get_Scaled();
+
+				m_pTransformCom->Set_State(CTransform::STATE_RIGHT, vOutRight * vScale.x);
+				m_pTransformCom->Set_State(CTransform::STATE_LOOK, vOutLook * vScale.z);
+
+				_float4      vPos = matOutPortal.Translation() + vOutLook * 0.5f;
+				vPos.y -= 4.f;
+				m_pTransformCom->Set_Position(vPos);
+			}
 		}
 	}
 

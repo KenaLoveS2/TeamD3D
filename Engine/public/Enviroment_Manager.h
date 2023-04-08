@@ -25,7 +25,7 @@ private:
 
 	class CTransform*	m_pTargetTransform = nullptr;
 	class CGameObject*  m_pPlayer = nullptr;
-	
+	class CGameObject*  m_pControllRoom = nullptr;
 	array<_bool, 6>		m_RoomCheck_Array;
 
 private:

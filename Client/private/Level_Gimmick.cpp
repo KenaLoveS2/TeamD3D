@@ -21,6 +21,7 @@
 #include "UI_ClientManager.h"
 #include "UI.h"
 #include "Level_Loading.h"
+#include "ControlRoom.h"
 
 CLevel_Gimmick::CLevel_Gimmick(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CLevel(pDevice, pContext)
@@ -77,17 +78,7 @@ HRESULT CLevel_Gimmick::Initialize()
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	{
-		MSG_BOX("Layer_Monster");
-		return E_FAIL;
-	}
-
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
-	{
-		MSG_BOX("Layer_NPC");
-		return E_FAIL;
-	}
+	/*
 
 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 	{
@@ -99,19 +90,20 @@ HRESULT CLevel_Gimmick::Initialize()
 	{
 		MSG_BOX("Layer_Effect");
 		return E_FAIL;
-	}*/
+	}
 
-	//if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas"))))
-	//{
-	//	MSG_BOX("Layer_Canvas");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas"))))
+	{
+		MSG_BOX("Layer_Canvas");
+		return E_FAIL;
+	}
+	*/
 
-	/*if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
+	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
 	{
 		MSG_BOX("Layer_ControlRoom");
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_GIMMICK)))
 		return E_FAIL;
@@ -134,7 +126,11 @@ void CLevel_Gimmick::Late_Tick(_float fTimeDelta)
 	if (GetKeyState(VK_F2) & 0x8000)
 	{
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
+
+		CControlRoom* pControllRoom = dynamic_cast<CControlRoom*>(pGameInstance->Get_GameObjectPtr(LEVEL_GIMMICK, L"Layer_ControlRoom", L"ControlRoom"));
+		assert(nullptr != pControllRoom && "Scene_Change");
+		(pControllRoom)->Clear_Static_ShadowList();
+
 		pGameInstance->Clear_ImguiObjects();
 		CPhysX_Manager::GetInstance()->Clear(true);
 		pGameInstance->Clear();
@@ -142,7 +138,7 @@ void CLevel_Gimmick::Late_Tick(_float fTimeDelta)
 
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
 			return;
-		Safe_Release(pGameInstance);
+		
 	}
 }
 
@@ -158,15 +154,15 @@ HRESULT CLevel_Gimmick::Render()
 
 HRESULT CLevel_Gimmick::Ready_Lights()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
-	LIGHTDESC			LightDesc;
+	LIGHTDESC         LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(0.3f, 0.3f, 0.3f, 1.f);
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(1.0f, 1.0f, 1.0f, 1.f);
 	LightDesc.vPosition = _float4(-100.f, 100.f, -100.f, 1.f);
@@ -175,7 +171,6 @@ HRESULT CLevel_Gimmick::Ready_Lights()
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -199,7 +194,7 @@ HRESULT CLevel_Gimmick::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_EffectFlower"), L"flower")))
 	//	return E_FAIL;
 
-	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
@@ -212,12 +207,9 @@ HRESULT CLevel_Gimmick::Ready_Layer_BackGround(const _tchar* pLayerTag)
 HRESULT CLevel_Gimmick::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	//CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_0.json");
-	//CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_1.json");
-	//CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_2.json");
-	/*CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_3.json");
-	CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_4.json");
-	CImgui_MapEditor::Load_MapObjects(LEVEL_FINAL, "Instancing_Forest_map_5.json");*/
+
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "MiniGameMap.json");
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

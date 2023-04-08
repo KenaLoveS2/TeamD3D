@@ -92,7 +92,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	/*Deliver_PulseE*/
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER; // 1번  :PULSE_OBJ_DELIVER
-	PulseObj_Desc.fIncreseRatio = 1.05f;
+	PulseObj_Desc.fIncreseRatio = 1.03f;
 	PulseObj_Desc.fPulseMaxSize = 10.f;
 	PulseObj_Desc.vResetSize = _float3(1.f, 1.f, 1.f);
 	PulseObj_Desc.vResetPos = vPos;
@@ -118,6 +118,8 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 		m_pControlRoom->Add_Gimmick_TrggerObj(m_szCloneObjectTag, this);
 	}
 	
+
+
 	return S_OK;
 }
 
@@ -378,12 +380,11 @@ HRESULT CCrystal::SetUp_Components()
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	if (m_EnviromentDesc.iCurLevel == 0)
-		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
+
 	/* For.Com_Shader */
 	/*나중에  레벨 인덱스 수정해야됌*/
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 	/* For.Com_Shader */

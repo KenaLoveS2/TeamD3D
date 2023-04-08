@@ -260,7 +260,7 @@ HRESULT CRotHat::Create_HatModel(HAT_DESC& HatDesc, _bool bShowFlag)
 {
 	if (HatDesc.eHatType >= HAT_TYPE_END) return E_FAIL;
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, m_szModelTagTable[HatDesc.eHatType], L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_szModelTagTable[HatDesc.eHatType], L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, m_szAoTexturePathTable[HatDesc.eHatType]), E_FAIL);
 
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();

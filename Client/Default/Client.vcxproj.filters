@@ -1403,9 +1403,6 @@
     <ClInclude Include="..\public\CPortalPlane.h">
       <Filter>02.GameObjects\Envrioment\Portal</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Portal.h">
-      <Filter>02.GameObjects\Envrioment\Portal</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Chest_Anim.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
@@ -2315,9 +2312,6 @@
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CPortalPlane.cpp">
-      <Filter>02.GameObjects\Envrioment\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Portal.cpp">
       <Filter>02.GameObjects\Envrioment\Portal</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Chest_Anim.cpp">

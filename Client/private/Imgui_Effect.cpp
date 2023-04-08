@@ -1665,7 +1665,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 						jObject["Instance DataCnt"].get_to<_int>(iCnt);
 
 						CVIBuffer_Point_Instancing* pVIBuffer = nullptr;
-						if (FAILED(pGameInstance->Add_Prototype(g_LEVEL, szVIBufferFinalTag, pVIBuffer = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, iCnt))))
+						if (FAILED(pGameInstance->Add_Prototype(g_LEVEL_FOR_COMPONENT, szVIBufferFinalTag, pVIBuffer = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, iCnt))))
 							return ;
 
 #pragma region Instance Data
