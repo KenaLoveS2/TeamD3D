@@ -478,7 +478,12 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 void CKena::Tick(_float fTimeDelta)
 {
-	// m_pKenaStatus->Set_Attack(0);
+#ifdef _DEBUG
+	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
+	m_pKenaStatus->Set_Attack(10);
+	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
+#endif	
+
 	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
 	_float	fTimeRate = Update_TimeRate();
 

@@ -37,7 +37,7 @@ public:
 
 
 	void			EraseStaticShadowObject(class CGameObject* pObject);
-
+	void			EraseAllStaticShadowObject();
 public:
 	HRESULT			Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
 	void			Set_Flare(_bool bFlare) { m_bFlare = bFlare; }

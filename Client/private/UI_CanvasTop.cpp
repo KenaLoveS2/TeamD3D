@@ -9,6 +9,7 @@
 #include "UI_NodeRotCnt.h"
 #include "UI_NodeRotArrow.h"
 #include "UI_NodeBossHP.h"
+#include "UI_NodeMood.h"
 #include "BossWarrior.h"
 #include "BossShaman.h"
 #include "BossHunter.h"
@@ -58,7 +59,7 @@ HRESULT CUI_CanvasTop::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	//m_bActive = true;
+	m_bActive = true;
 
 	return S_OK;
 }
@@ -78,7 +79,15 @@ void CUI_CanvasTop::Tick(_float fTimeDelta)
 		static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Get_CurrentGuagePosition()
 	);
 
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
+	//{
+	//	static _uint iState = CUI_NodeMood::STATE_HIT;
+	//	iState++;
+	//	iState %= CUI_NodeMood::STATE_END;
 
+	//	m_vecNode[UI_MOOD]->Set_Active(true);
+	//	static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn((CUI_NodeMood::STATE)iState);
+	//}
 
 	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
 	//{
@@ -98,6 +107,9 @@ void CUI_CanvasTop::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_CanvasTop::Render()
 {
+	if (m_pTextureCom[TEXTURE_DIFFUSE] == nullptr)
+		return S_OK;
+
 	__super::Render();
 
 	return S_OK;
@@ -112,10 +124,10 @@ HRESULT CUI_CanvasTop::Bind()
 		return E_FAIL;
 
 	/* Boss Warrior Bind */
-	CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-		L"Layer_Monster", L"BossWarrior_0"));
-	if (pBossWarrior == nullptr)
-		return E_FAIL;
+	//CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+	//	L"Layer_Monster", L"BossWarrior_0"));
+	//if (pBossWarrior == nullptr)
+	//	return E_FAIL;
 
 	/* Boss Shaman Bind */
 	//CBossShaman* pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
@@ -124,16 +136,15 @@ HRESULT CUI_CanvasTop::Bind()
 	//	return E_FAIL;
 
 	/* Boss Hunter Bind */
-	CBossHunter* pBossHunter = dynamic_cast<CBossHunter*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-		L"Layer_Monster", L"BossHunter_0"));
-	if (pBossHunter == nullptr)
-		return E_FAIL;
-
+	//CBossHunter* pBossHunter = dynamic_cast<CBossHunter*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+	//	L"Layer_Monster", L"BossHunter_0"));
+	//if (pBossHunter == nullptr)
+	//	return E_FAIL;
 
 	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-	pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	//pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 	//pShaman->m_BossShamanDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-	pBossHunter->m_BossHunterDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	//pBossHunter->m_BossHunterDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
 
 	m_bBindFinished = true;
@@ -261,6 +272,19 @@ HRESULT CUI_CanvasTop::Ready_Nodes()
 		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
 		tDesc.fileName = cloneTag;
 		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_BossHP", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
+
+	{ /* PlayerMood */
+		string strTag = "Node_Mood";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Mood", cloneTag, &tDesc));
 		if (FAILED(Add_Node(pUI)))
 			return E_FAIL;
 		m_vecNodeCloneTag.push_back(strTag);

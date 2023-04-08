@@ -8,6 +8,7 @@ CUI_Event_Fade::CUI_Event_Fade()
 	, m_fAlpha(0.0f)
 	, m_fSpeed(0.0f)
 	, m_bInOut(false)
+	, m_bEnd(false)
 {
 	m_szEventName = "Fade";
 	m_iRenderPass = 13;
@@ -19,6 +20,7 @@ void CUI_Event_Fade::Call_Event(_bool bStart)
 	m_fTimeAcc = 0.0f;
 	m_fAlpha = 0.0f;
 	m_bInOut = true;
+	m_bEnd = false;
 }
 
 void CUI_Event_Fade::FadeOut()
@@ -27,6 +29,7 @@ void CUI_Event_Fade::FadeOut()
 	m_fAlpha = 1.0f;
 	m_bInOut = false;
 	m_fTimeAcc = 0.0f;
+	m_bEnd = false;
 }
 
 HRESULT CUI_Event_Fade::Tick(_float fTimeDelta)
@@ -59,6 +62,7 @@ HRESULT CUI_Event_Fade::Late_Tick(_float fTimeDelta)
 				m_bStart = false;
 				m_fTimeAcc = 0.0f;
 				m_fSpeed = -m_fSpeed;
+				m_bEnd = true;
 			}
 		}
 

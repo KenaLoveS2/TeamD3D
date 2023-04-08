@@ -30,9 +30,10 @@ public:
 	virtual HRESULT					Load_Data(_tchar* fileName) override;
 
 public:
-	virtual	void					Activate(_float4 vPos)			override;
-	virtual	void					Activate(CGameObject* pTarget)	override;
-	virtual void					DeActivate()					override;
+	virtual	void					Activate(_float4 vPos)											override;
+	virtual	void					Activate(CGameObject* pTarget)									override;
+	virtual void					Activate_Reflecting(_float4 vLook, _float4 vPos, _float fAngle) override;
+	virtual void					DeActivate()													override;
 
 private:
 	HRESULT							SetUp_Components();

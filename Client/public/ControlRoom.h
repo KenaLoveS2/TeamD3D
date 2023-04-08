@@ -22,7 +22,9 @@ public:
 	CGameObject*		Get_Find_TriggerObj(const _tchar * pCloneTag);
 	void				Add_Gimmick_TrggerObj(const _tchar*pCloneTag, CGameObject* pTriggerObj);
 	void				Add_GimmickObj(_int iRoomNumber, CGameObject* pGimmickObj,CEnviromentObj::CHAPTER GimmickType);
-	
+
+	void				Clear_Static_ShadowList();
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -36,13 +38,16 @@ public:  /*For.Gimmick*/
 	void				PulsePlate_Down_Active(_int iRoomIndex,_bool IsTrigger);
 	void				Trigger_Active(_int iRoomIndex,CEnviromentObj::CHAPTER eChpater, _bool IsTrigger);
 	void				DeadZoneObject_Change(_bool bChange);
+
+
+
 private:
 	HRESULT SetUp_Components();
 	
 private:
 	CRenderer*											  m_pRendererCom = nullptr; /*OnlyDebug*/
 	
-	list<pair<CEnviromentObj::CHAPTER,CGameObject*>> 			  m_GimmcikObj_List[5];		//±â¹ÍÀÌ ´Ã¾î³¯ ¼ö·Ï Ãß°¡
+	list<pair<CEnviromentObj::CHAPTER,CGameObject*>> 			  m_GimmcikObj_List[6];		//±â¹ÍÀÌ ´Ã¾î³¯ ¼ö·Ï Ãß°¡
 	map< const _tchar * ,CGameObject*>							  m_Gimmcik_Trigger_map;
 
 	array<bool, 4>												 m_MapShadowArray;		// ÀüÃ¼¸Ê -1(Ã³À½¸Ê)

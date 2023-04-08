@@ -155,7 +155,7 @@ void CBossHunter::Tick(_float fTimeDelta)
 
 	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
 
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
 	if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
 
@@ -236,17 +236,18 @@ HRESULT CBossHunter::Render()
 	{
 		if (i == 0) // ArrowString
 		{
-			// ArrowString (Have to another Texture) Pause render until then
+			// ArrowString
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", HUNTER_ARROW), E_FAIL);
 		}
 		else if (i == 3) //Hair
 		{
-			// Hair (Have to another Texture) Pause render until then
+			// Hair 
 			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			//FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", DEFAULT), E_FAIL);
+			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture"), E_FAIL);
+			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture"), E_FAIL);
+			//FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", HUNTER_HAIR), E_FAIL);
 		}
 		else if (i == 4) // Knife UV01
 		{
@@ -256,7 +257,15 @@ HRESULT CBossHunter::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
 		}
-		else
+		else if (i == 1) // face and body 
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", HUNTER_HAIR), E_FAIL);
+		}
+		else 
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
@@ -321,6 +330,7 @@ void CBossHunter::Imgui_RenderProperty()
 
 void CBossHunter::ImGui_AnimationProperty()
 {
+	m_pTransformCom->Imgui_RenderProperty();
 	//m_pTransformCom->Imgui_RenderProperty_ForJH();
 	//m_pArrows[m_iArrowIndex]->Get_TransformCom()->Imgui_RenderProperty_ForJH();
 
@@ -1111,8 +1121,16 @@ HRESULT CBossHunter::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Boss_Hunter", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
+	// String
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_64.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_135.png")), E_FAIL);
+
+	// Hair
+	//FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_100.png")), E_FAIL);
+	//FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/Ramp6.png")), E_FAIL);
+	//FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_EMISSIVEMASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_54.png")), E_FAIL);
+
+
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/VillageHunter_Uv01_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/VillageHunter_Uv01_EMISSIVE.png")), E_FAIL);
@@ -1504,7 +1522,7 @@ void CBossHunter::ShockEffect_On(_bool bIsInit, _float fTimeDelta)
 	}
 
 	_float4 vPos = m_pArrows[m_iArrowIndex]->Get_ArrowHeadPos();
-	CGameObject* pArrow = m_pArrows[m_iArrowIndex];
+	//vPos.x += 0.30f;
 
 	m_vecEffects[EFFECT_CHARGE_PARTICLE_GATHER]->Activate(vPos);
 	m_vecEffects[EFFECT_CHARGE_TEXTURE_CIRCLE]->Activate_Scaling(vPos, { -3.f, -3.f });
@@ -1553,6 +1571,9 @@ void CBossHunter::DustEffect_On(_bool bIsInit, _float fTimeDelta)
 	else
 		vPos = m_pTransformCom->Get_Position();
 
+	_float4		vCenterPos = m_pTransformCom->Get_Position();
+	vPos.x = vCenterPos.x;
+	vPos.z = vCenterPos.z;
 
 	m_vecEffects[EFFECT_DUST_PARTICLE_BIG]->Activate(vPos);
 	m_vecEffects[EFFECT_DUST_PARTICLE_SMALL]->Activate(vPos);
@@ -1568,9 +1589,9 @@ void CBossHunter::StunEffect_Off(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->DeActivate_Dissolve();
-	m_vecEffects[EFFECT_STUN_MESH_BASE]->DeActivate_Dissolve();
-	m_vecEffects[EFFECT_STUN_MESH_BASE2]->DeActivate_Dissolve();
+	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->DeActivate_Slowly();
+	m_vecEffects[EFFECT_STUN_MESH_BASE]->DeActivate_Slowly();
+	m_vecEffects[EFFECT_STUN_MESH_BASE2]->DeActivate_Slowly();
 
 }
 
@@ -1621,9 +1642,13 @@ void CBossHunter::StunEffect_On(_bool bIsInit, _float fTimeDelta)
 	else
 		vPos = m_pTransformCom->Get_Position();
 
-	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->Activate(vPos);
-	m_vecEffects[EFFECT_STUN_MESH_BASE]->Activate(vPos);
-	m_vecEffects[EFFECT_STUN_MESH_BASE2]->Activate(vPos);
+	_float4		vCenterPos = m_pTransformCom->Get_Position();
+	vPos.x = vCenterPos.x;
+	vPos.z = vCenterPos.z;
+
+	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->Activate_Slowly(vPos);
+	m_vecEffects[EFFECT_STUN_MESH_BASE]->Activate_Slowly(vPos);
+	m_vecEffects[EFFECT_STUN_MESH_BASE2]->Activate_Slowly(vPos);
 }
 
 HRESULT CBossHunter::Create_Effects()
@@ -1729,6 +1754,15 @@ void CBossHunter::ImGui_EffectProperty()
 			tags.push_back(str);
 		}
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("Reset Arrow Effects"))
+	{
+		for(auto& arrow : m_pArrows)
+		{
+			arrow->Reset_Effects();
+		}
+	}
+
 
 	static _int iSelectedEffect;
 	_int iSelectedBefore = iSelectedEffect;

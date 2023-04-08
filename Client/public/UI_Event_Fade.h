@@ -25,6 +25,7 @@ public:
 		else
 			return false;
 	}
+	_bool				Is_End() { return m_bEnd; }
 
 public:
 	virtual	HRESULT		Tick(_float fTimeDelta)					override;
@@ -40,6 +41,7 @@ public:
 private:
 	_bool			m_bStart;
 	_bool			m_bInOut;
+	_bool			m_bEnd;
 
 	_float			m_fAlpha;
 	_float			m_fSpeed;
