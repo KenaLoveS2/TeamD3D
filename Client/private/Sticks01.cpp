@@ -1177,7 +1177,7 @@ void CSticks01::Create_CopySoundKey()
 		TEXT("Mon_Sticks_Hurt.ogg"),
 		TEXT("Mon_Sticks_Die.ogg"),
 		TEXT("Mon_Sticks_Axe_Whoosh.ogg"),
-		TEXT("Mon_Attack_Impact.ogg"),
+		TEXT("Mon_Attack_Impact1.ogg"),
 		TEXT("Mon_Walk_S.ogg"),
 	};
 	
