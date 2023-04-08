@@ -49,6 +49,7 @@ HRESULT CSaiya::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 	m_pModelCom->Set_AllAnimCommonType();
+
 	if (g_LEVEL == LEVEL_TESTPLAY)
 	{
 		CGameObject* p_game_object = nullptr;
@@ -344,7 +345,7 @@ HRESULT CSaiya::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		Rot_WispSetPosition();
-		PlaySound(m_pCopySoundKey[LAUGH_0, 1.f]);
+		PlaySound(m_pCopySoundKey[LAUGH_0],1.f);
 		m_pModelCom->Set_AnimIndex(SAIYA_CHASINGLOOP);
 	})
 		.OnExit([this]()
