@@ -17,6 +17,10 @@ _float		fDefaultVal = 345.f; /* Default Chat Value */
 _bool		bDefaultVal = false;
 wstring		wstrDefault = L"";
 
+#define SND_LAGHTER_1 L"VOX_Jizo_Kids_Laughter_1.ogg"
+#define SND_LAGHTER_2 L"VOX_Jizo_Kids_Laughter_2.ogg"
+#define SND_LAGHTER_3 L"VOX_Jizo_Kids_Laughter_3.ogg"
+
 CSaiya::CSaiya(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CNpc(pDevice, pContext)
 	, m_iChatIndex(0)
@@ -56,8 +60,6 @@ HRESULT CSaiya::Initialize(void* pArg)
 		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", L"Saiya_Rot", nullptr, &p_game_object);
 		m_pRot = dynamic_cast<CRot*>(p_game_object);
 	}
-
-	Create_CopySoundKey();
 
 	return S_OK;
 }
@@ -345,7 +347,6 @@ HRESULT CSaiya::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		Rot_WispSetPosition();
-		PlaySound(m_pCopySoundKey[LAUGH_0],1.f);
 		m_pModelCom->Set_AnimIndex(SAIYA_CHASINGLOOP);
 	})
 		.OnExit([this]()
@@ -382,6 +383,8 @@ HRESULT CSaiya::SetUp_State()
 			m_pRot->Set_WakeUpPos(vPos);
 			m_pRot->Get_TransformCom()->Set_Look(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * -1.f);
 		}
+
+		Play_Sound(SND_LAGHTER_1, 1.f);
 	})
 		.AddTransition("ACTION_0 to ACTION_1" , "ACTION_1")
 		.Predicator([this]()
@@ -1200,28 +1203,7 @@ void CSaiya::Rot_WispSetPosition()
 	}
 }
 
-void CSaiya::Create_CopySoundKey()
-{
-	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
-		TEXT("VOX_Jizo_Kids_Laughter_1.ogg"), TEXT("VOX_Jizo_Kids_Laughter_2.ogg"),
-		TEXT("VOX_Jizo_Kids_Laughter_3.ogg")
-	};
-
-	_tchar szTemp[MAX_PATH] = { 0, };
-
-	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
-	{
-		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
-	}
-}
-
-void CSaiya::SaveBufferCopySound(_tchar* pOriginSoundKey, _tchar* pTempBuffer, _tchar** ppOutBuffer)
-{
-	CGameInstance::GetInstance()->Copy_Sound(pOriginSoundKey, pTempBuffer);
-	*ppOutBuffer = CUtile::Create_StringAuto(pTempBuffer);
-}
-
-void CSaiya::PlaySound(const _tchar* SoundKey, float fVolume)
+void CSaiya::Play_Sound(const _tchar* SoundKey, float fVolume)
 {
 	CGameInstance::GetInstance()->Play_Sound(SoundKey, fVolume);
 }

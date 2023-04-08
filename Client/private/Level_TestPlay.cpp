@@ -118,7 +118,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
 
-	//CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
+	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -145,7 +145,7 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 		CPhysX_Manager::GetInstance()->Clear(true);
 		pGameInstance->Clear();
 		pGameInstance->Scene_EnviMgr_Change();
-		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_GIMMICK)))))
+		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
 			return;
 	}
 }

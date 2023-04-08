@@ -295,7 +295,7 @@ HRESULT CKena::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
-	if(g_LEVEL == LEVEL_FINAL) // ���̳η� ������ Rot ���� ���ִ� ���Դϴٶ��㷷�� ó���� 5�� ��������
+	if(g_LEVEL == LEVEL_FINAL) 
 		FAILED_CHECK_RETURN(Ready_Rots(), E_FAIL);
 
 	Push_EventFunctions();
@@ -309,7 +309,6 @@ HRESULT CKena::Initialize(void * pArg)
 	/* InitJumpSpeed = 2.f * Gravity * JumpHeight */
 	//m_fInitJumpSpeed = sqrtf(2.f * m_fGravity * 1.5f);
 	m_fInitJumpSpeed = 0.35f;
-
 	m_iObjectProperty = OP_PLAYER;
 	m_pKenaStatus->Set_Attack(30);
 	
@@ -469,8 +468,21 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	m_Delegator.broadcast(eRot, fRotState);
 	//m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
 
-	const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
-	m_pTransformCom->Set_Position(vPosFloat4);
+	if(g_LEVEL == LEVEL_TESTPLAY)
+	{
+		const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
+		m_pTransformCom->Set_Position(vPosFloat4);
+	}
+	else if(g_LEVEL == LEVEL_FINAL)
+	{
+		const _float4 vPosFloat4 = _float4(151.7f, 22.2f, 609.5f, 1.f);
+		m_pTransformCom->Set_Position(vPosFloat4);
+	}
+	else
+	{
+		const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
+		m_pTransformCom->Set_Position(vPosFloat4);
+	}
 
 	for (auto& pEffect : m_mapEffect)
 	{
@@ -1515,6 +1527,7 @@ HRESULT CKena::SetUp_Components()
 
 HRESULT CKena::Ready_Rots()
 {
+	CRot::Clear();
 	for (_uint i = 0; i < 5; ++i)
 	{
 		_tchar szCloneRotTag[32] = { 0, };
@@ -1522,6 +1535,13 @@ HRESULT CKena::Ready_Rots()
 		CGameObject* p_game_object = nullptr;
 		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", CUtile::Create_StringAuto(szCloneRotTag), nullptr, &p_game_object);
 		dynamic_cast<CRot*>(p_game_object)->AlreadyRot();
+		m_pKenaStatus->Add_RotCount();
+
+		if (i == FIRST_ROT)
+		{
+			Set_FirstRotPtr((CRot*)p_game_object);
+			CRot::Set_RotUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));			
+		}
 	}
 
 	return S_OK;

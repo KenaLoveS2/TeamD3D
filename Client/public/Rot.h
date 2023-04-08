@@ -47,7 +47,7 @@ private:
 	class CRotHat* m_pRotHat = nullptr;
 
 private:
-	_bool m_bWakeUp = false;	
+	_bool m_bWakeUp = false, m_bManualWakeUp = false;
 	_uint m_iCuteAnimIndex = 0;
 	_float m_fKenaToRotDistance = 2.f;
 	_float m_fTeleportDistance = 6.f;
@@ -101,6 +101,7 @@ public:
 	_int Get_KenaConnectRotCount();
 	_int Get_HaveHatRotCount();
 	_int Get_NoHatRotCount();
+	static void Clear();
 
 public:
 	enum ANIMATION {

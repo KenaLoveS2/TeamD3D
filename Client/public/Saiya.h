@@ -97,12 +97,6 @@ class CSaiya final : public CNpc
 		ANIMATION_END
 	};
 
-	enum COPY_SOUND_KEY
-	{
-		LAUGH_0, LAUGH_1, LAUGH_2, COPY_SOUND_KEY_END
-	};
-
-
 private:
 	CSaiya(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CSaiya(const CNpc& rhs);
@@ -143,9 +137,7 @@ private:
 	HRESULT						Load_KeyFrame();
 	void								Rot_WispSetPosition();
 
-	void								Create_CopySoundKey();
-	void								SaveBufferCopySound(_tchar* pOriginSoundKey, _tchar* pTempBuffer, _tchar** ppOutBuffer);
-	void								PlaySound(const _tchar* SoundKey, float fVolume);
+	void								Play_Sound(const _tchar* SoundKey, float fVolume);
 
 private:
 	CUI_FocusNPC*							m_pFocus;
@@ -159,7 +151,6 @@ private:
 	_float3											m_vCamOffset;
 
 	_bool											m_bPulse = false;
-	_tchar*											m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
 
 	_bool											m_bCinecam[NPC_CINE_END] = { false, };
 	class CCinematicCamera*			m_pCinecam[NPC_CINE_END] = { nullptr, };
