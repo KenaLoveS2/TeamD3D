@@ -78,17 +78,7 @@ HRESULT CLevel_Gimmick::Initialize()
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	{
-		MSG_BOX("Layer_Monster");
-		return E_FAIL;
-	}
-
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
-	{
-		MSG_BOX("Layer_NPC");
-		return E_FAIL;
-	}
+	/*
 
 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 	{
@@ -100,13 +90,14 @@ HRESULT CLevel_Gimmick::Initialize()
 	{
 		MSG_BOX("Layer_Effect");
 		return E_FAIL;
-	}*/
+	}
 
-	//if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas"))))
-	//{
-	//	MSG_BOX("Layer_Canvas");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas"))))
+	{
+		MSG_BOX("Layer_Canvas");
+		return E_FAIL;
+	}
+	*/
 
 	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
 	{
