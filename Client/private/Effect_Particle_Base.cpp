@@ -102,8 +102,7 @@ HRESULT CEffect_Particle_Base::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
 	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();
@@ -442,8 +441,7 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 	for (auto fElement : jLoad["17. maxPos"])
 		fElement.get_to<float>(*((float*)&tInfo.vMaxPos + i++));
 
-	float fValue;
-	jLoad["18. fPlaySpeed"].get_to<float>(fValue);
+	jLoad["18. fPlaySpeed"].get_to<float>(tInfo.fPlaySpeed);
 
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_PtInstancing_S2"), TEXT("Com_VIBuffer")
 		, (CComponent**)&m_pVIBufferCom, &tInfo)))
@@ -501,6 +499,48 @@ void CEffect_Particle_Base::Activate(CGameObject* pTarget)
 	m_pTarget = pTarget;
 }
 
+void CEffect_Particle_Base::Activate_Reflecting(_float4 vLook, _float4 vPos, _float fAngle)
+{
+	/* SpreadType Recommended */
+
+	m_bActive = true;
+
+	m_pTransformCom->Set_Position(vPos);
+
+	CVIBuffer_Point_Instancing_S2::POINTINFO tInfo = m_pVIBufferCom->Get_Info();
+
+	_float4 vDir = -vLook;
+	vDir.y = 0.0f;
+	vDir.w = 0.0f;
+	vDir = XMVector3Normalize(vDir);
+
+	if(vDir.Length() != 0.0f)
+	{
+		_matrix matRot1 = XMMatrixRotationY(XMConvertToRadians(-fAngle * 0.5f));
+		_matrix matRot2 = XMMatrixRotationY(XMConvertToRadians(fAngle * 0.5f));
+
+		_float4 vDir1 = 0.0001f * XMVector3Normalize(XMVector3TransformNormal(vDir, matRot1));
+		_float4 vDir2 = 0.0001f * XMVector3Normalize(XMVector3TransformNormal(vDir, matRot2));
+
+		tInfo.vMinPos.x = min(vDir1.x, vDir2.x);
+		tInfo.vMaxPos.x = max(vDir1.x, vDir2.x);
+		tInfo.vMinPos.z = min(vDir1.z, vDir2.z);
+		tInfo.vMaxPos.z = max(vDir1.z, vDir2.z);
+
+		//_float3 vSpeedPlus = 3 * XMVector3Normalize(-vLook);
+		//tInfo.vSpeedMax = tInfo.vSpeedMax + vSpeedPlus;
+		//tInfo.vSpeedMin = tInfo.vSpeedMin + vSpeedPlus;
+	}
+	else /* Axis Y */
+	{
+		tInfo.vMinPos = _float3{ -0.0010f, tInfo.vMinPos.y, 0.0010f };
+		tInfo.vMaxPos = _float3{ -0.0010f, tInfo.vMinPos.y, 0.0010f };
+	}
+
+	if (FAILED(m_pVIBufferCom->Update_Buffer(&tInfo)))
+		MSG_BOX("Error : Effect_Particle_Base");
+}
+
 void CEffect_Particle_Base::DeActivate()
 {
 	__super::DeActivate();
@@ -546,41 +586,36 @@ HRESULT CEffect_Particle_Base::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
-	//if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
-	//	return E_FAIL;
-
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_iTextureIndex)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_tex_0", m_iTextureIndex)))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_float4_0", &m_vColor, sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRItensity", &m_fHDRIntensity, sizeof(_float))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_float_0", &m_fHDRIntensity, sizeof(_float))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_IsSpriteAnim", &m_bOptions[OPTION_SPRITE], sizeof(_bool))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bool_0", &m_bOptions[OPTION_SPRITE], sizeof(_bool))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUVAnim", &m_bOptions[OPTION_UV], sizeof(_bool))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bool_1", &m_bOptions[OPTION_UV], sizeof(_bool))))
 		return E_FAIL;
 
 	if (m_bOptions[OPTION_UV])
 	{
-		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedX", &m_fUVMove[0], sizeof(_float))))
+		_float2 vUVMove = { m_fUVMove[0], m_fUVMove[1] };
+		if (FAILED(m_pShaderCom->Set_RawValue("g_float2_0", &vUVMove, sizeof(_float2))))
 			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedY", &m_fUVMove[1], sizeof(_float))))
-			return E_FAIL;
-
 	}
 
 	if (m_bOptions[OPTION_SPRITE])
 	{
-		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrames", &m_iFrames[0], sizeof(_int))))
+		if (FAILED(m_pShaderCom->Set_RawValue("g_int_0", &m_iFrames[0], sizeof(_int))))
 			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrames", &m_iFrames[1], sizeof(_int))))
+		if (FAILED(m_pShaderCom->Set_RawValue("g_int_1", &m_iFrames[1], sizeof(_int))))
 			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrameNow", &m_iFrameNow[0], sizeof(_int))))
+		if (FAILED(m_pShaderCom->Set_RawValue("g_int_2", &m_iFrameNow[0], sizeof(_int))))
 			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrameNow", &m_iFrameNow[1], sizeof(_int))))
+		if (FAILED(m_pShaderCom->Set_RawValue("g_int_3", &m_iFrameNow[1], sizeof(_int))))
 			return E_FAIL;
 	}
 

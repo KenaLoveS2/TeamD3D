@@ -305,8 +305,10 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
-	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	// hyunwook
+	//FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
+	// hyaewon
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	/* Line Changed : Effect Texture component needed */
@@ -1805,9 +1807,14 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	/********************************************/
 	/*				For. ModelCom				*/
 	/********************************************/
-// 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, true, true)))
-// 		assert(!"VillageCart");
-	//MSG_BOX("ModelCom VillageCart : ForSY");
+
+	_matrix	 PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+
+	/* For.Prototype_Component_Model_ShockRing */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShockRing",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/ShockArrow_Ring.mdat"), PivotMatrix))))
+		return E_FAIL;
+
 
 	
 	/********************************************/
@@ -2432,7 +2439,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_InteractStaff */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InteractStaff_P"),
-		CE_P_InteractStaff::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_InteractStaff.json"))))
+ 		CE_P_InteractStaff::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_InteractStaff.json"))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_TeleportRot */

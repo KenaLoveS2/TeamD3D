@@ -217,14 +217,19 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 			if (iSlot == 2)
 			{
 				m_fMaxShield *= 1.5f;
+				m_fShield = m_fMaxShield;
 
-				/* NEED : UI SHILED GAGE UP */
+
+				CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::HUD_SHIELD_UPGRADE;
+				m_StatusDelegator.broadcast(eUpgrade, m_fMaxShield);
 			}
 			else if (iSlot == 4)
 			{
 				m_fMaxShield *= 1.5f;
+				m_fShield = m_fMaxShield;
 
-				/* NEED : UI SHILED GAGE UP */
+				CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::HUD_SHIELD_UPGRADE;
+				m_StatusDelegator.broadcast(eUpgrade, m_fMaxShield);
 			}
 
 			break;
@@ -451,24 +456,24 @@ void CKena_Status::Set_RotCount(_int iValue)
 {
 	/* NEED : ADD_ROTCOUNT() 수정 후에 이 함수는 비워줘. */
 
-	m_iCurrentRotCount = iValue;
+	//m_iCurrentRotCount = iValue;
 
-	CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
-	CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
-	CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
+	//CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
+	//CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
+	//CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
 
-	_float fRotMax = (_float)Get_RotMax();
-	_float fRotNow = (_float)m_iCurrentRotCount;
-	_float fGuage = fRotNow / fRotMax;
+	//_float fRotMax = (_float)Get_RotMax();
+	//_float fRotNow = (_float)m_iCurrentRotCount;
+	//_float fGuage = fRotNow / fRotMax;
 
-	m_StatusDelegator.broadcast(eNow, fRotNow);
-	m_StatusDelegator.broadcast(eMax, fRotMax);
-	m_StatusDelegator.broadcast(eGet, fGuage);
+	//m_StatusDelegator.broadcast(eNow, fRotNow);
+	//m_StatusDelegator.broadcast(eMax, fRotMax);
+	//m_StatusDelegator.broadcast(eGet, fGuage);
 
 
-	/* think later */
-	if (Get_RotMax() == m_iCurrentRotCount)
-		m_iRotLevel++;
+	///* think later */
+	//if (Get_RotMax() == m_iCurrentRotCount)
+	//	m_iRotLevel++;
 }
 
 void CKena_Status::Set_CurArrowCount(_int iValue)
@@ -526,8 +531,24 @@ void CKena_Status::Add_RotCount()
 		else if (m_iRotLevel == 4)
 			m_iRotCountMax = 10;
 
-		/* NEED : UI MAX PIP COUNT INCREASE */
-		/* NEED : UI ROT COUNT GAGE RESET */
+		/* Rot LEvel Up */
+		/* Pip Level Up */
+
+	}
+	else
+	{
+		/* 230407 */
+		CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
+		CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
+		CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
+
+		_float fRotMax = (_float)Get_RotMax();
+		_float fRotNow = (_float)m_iCurrentRotCount;
+		_float fGuage = fRotNow / fRotMax;
+
+		m_StatusDelegator.broadcast(eNow, fRotNow);
+		m_StatusDelegator.broadcast(eMax, fRotMax);
+		m_StatusDelegator.broadcast(eGet, fGuage);
 	}
 }
 
