@@ -157,7 +157,13 @@ private:
 	const _float m_fIdleTime = 1.f;
 
 	enum COPY_SOUND_KEY {
-		CSK_ATTACK, CSK_THROW, CSK_DIE, CSK_IDLE, CSK_PAIN, CSK_TENSE1, CSK_TENSE2, CSK_IMPACT, CSK_WALK,
+		CSK_ATTACK1, CSK_ATTACK2, CSK_ATTACK3, CSK_ATTACK4, CSK_ATTACK5, CSK_ATTACK6, CSK_ATTACK7, CSK_ATTACK8, CSK_ATTACK9,
+		CSK_HIT1, CSK_HIT2, CSK_HIT3, CSK_HIT4, 
+		CSK_HURT1, CSK_HURT2, CSK_HURT3, CSK_HURT4, CSK_HURT5, CSK_HURT6, CSK_HURT7,
+		CSK_TENSE1, CSK_TENSE2, CSK_TENSE3, 
+		CSK_BACK, 
+		CSK_IMPACT2, CSK_IMPACT3, CSK_IMPACT4, CSK_IMPACT5,
+		CSK_WALK, CSK_SWING, CSK_SLASH, CSK_BOSS_DING, CSK_BOSS_BASE,
 		COPY_SOUND_KEY_END,
 	};
 
@@ -173,6 +179,45 @@ public:
 	void Attack_End(_uint* pAttackIndex, _uint iMaxAttackIndex, _uint iAnimIndex);
 
 	void Create_CopySoundKey();
+	void Play_Attack1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack4Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack5Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack6Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack7Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack8Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack9Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Hit1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hit2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hit3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hit4Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Hurt1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt4Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt5Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt6Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt7Sound(_bool bIsInit, _float fTimeDelta);
+	
+	void Play_Tense1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Tense2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Tense3Sound(_bool bIsInit, _float fTimeDelta);
+	
+	void Play_BackSound(_bool bIsInit, _float fTimeDelta);
+	void Play_ImpactSound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact4Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact5Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
+	void Play_SwingSound(_bool bIsInit, _float fTimeDelta);
+	void Play_SlashSound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_BossDingSound(_bool bIsInit, _float fTimeDelta);
+	void Play_BossBaseSound(_bool bIsInit, _float fTimeDelta);
 };
 
 END
