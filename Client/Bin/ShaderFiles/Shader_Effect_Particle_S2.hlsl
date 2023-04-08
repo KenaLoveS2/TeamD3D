@@ -61,6 +61,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;
 }
 
+
 struct GS_IN
 {
 	float3		vPosition		: POSITION;
@@ -297,6 +298,81 @@ PS_OUT PS_MAIN_SPREAD(PS_IN In)
 	return Out;
 }
 
+
+/***********************************************/
+/*					Trail					   */
+/***********************************************/
+VS_OUT VS_TRAIL(VS_IN In)
+{
+	VS_OUT		Out = (VS_OUT)0;
+
+	return Out;
+}
+
+[maxvertexcount(6)]
+void GS_TRAIL(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
+{
+	GS_OUT		Out[4];
+
+	//float3		vLook	= In[0].fLife * (g_vCamPosition.xyz - In[0].vPosition);
+	//float3		vRight	= In[0].fLife * (normalize(cross(float3(0.f, 1.f, 0.f), vLook)) * In[0].vPSize.x * 0.5f);
+	//float3		vUp		= In[0].fLife * (normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f);
+
+	float3		vLook = In[0].fLife * (g_vCamPosition.xyz - In[0].vPosition);
+	float3		vDir = normalize(In[0].vPosition - In[0].vCenterPosition);
+	float3		vRight = In[0].fLife * (normalize(cross(vDir, vLook)) * In[0].vPSize.x * 0.5f);
+	float3		vUp = In[0].fLife * (normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f);
+
+
+
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+
+	float3		vPosition;
+
+	vPosition = In[0].vPosition + vRight + vUp;
+	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[0].vTexUV = float2(0.f, 0.f);
+	Out[0].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition - vRight + vUp;
+	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[1].vTexUV = float2(1.f, 0.f);
+	Out[1].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition - vRight - vUp;
+	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[2].vTexUV = float2(1.f, 1.f);
+	Out[2].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition + vRight - vUp;
+	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[3].vTexUV = float2(0.f, 1.f);
+	Out[3].fLife = In[0].fLife;
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[1]);
+	Vertices.Append(Out[2]);
+	Vertices.RestartStrip();
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[2]);
+	Vertices.Append(Out[3]);
+	Vertices.RestartStrip();
+
+}
+
+PS_OUT PS_TRAIL(PS_IN In)
+{
+	PS_OUT Out = (PS_OUT)0;
+	return Out;
+}
+
+
+
+
+/***********************************************/
+/*					Pass					   */
+/***********************************************/
 technique11 DefaultTechnique
 {
 	pass Default_Haze // 0
@@ -341,7 +417,7 @@ technique11 DefaultTechnique
 	pass DefaultSpread // 3
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -349,5 +425,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SPREAD();
+	}
+
+	pass DefaultTrail // 4
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_TRAIL();
+		GeometryShader = compile gs_5_0 GS_TRAIL();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_TRAIL();
 	}
 }

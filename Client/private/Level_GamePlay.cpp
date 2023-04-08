@@ -64,8 +64,8 @@ HRESULT CLevel_GamePlay::Initialize()
  	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
  		return E_FAIL;
 
- 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
- 		return E_FAIL;
+ 	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+ 	//	return E_FAIL;
 
 	// Ready_Thread_CloneObject(TEXT(""));
 	
@@ -259,15 +259,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_Environment(const _tchar * pLayerTag)
 
 	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Chest.json");
 
-	 FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_HealthFlower_Anim", L"HealthFlower", nullptr, nullptr), E_FAIL);
+	// FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_HealthFlower_Anim", L"HealthFlower", nullptr, nullptr), E_FAIL);
 
 	// CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Portal_Test.json");
 
-	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "TestBombTarget.json");
+	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "TestBombTarget.json");
 
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_BowTarget", L"BowTarget", nullptr, nullptr), E_FAIL);
+	//FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_BowTarget", L"BowTarget", nullptr, nullptr), E_FAIL);
 
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_Meditation_Spot", L"MeditationSpot", nullptr, nullptr), E_FAIL);
+	//FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_Meditation_Spot", L"MeditationSpot", nullptr, nullptr), E_FAIL);
 
 	return S_OK;
 }

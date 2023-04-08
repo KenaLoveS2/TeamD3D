@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Effect_Particle_Base.h"
 #include "GameInstance.h"
-
+#include "Camera_Manager.h"
 
 CEffect_Particle_Base::CEffect_Particle_Base(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEffect_Base_S2(pDevice, pContext)
@@ -249,6 +249,10 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		}
 	}
 
+	/* For. Hint (Trial) */
+	RecordPath();
+
+
 	/* Position */
 	ImGui::Separator();
 	{
@@ -257,9 +261,6 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		if (ImGui::DragFloat3("vWorldPosition", (_float*)&vPosition, 0.10f, -1000.0f, 1000.0f, "%.3f"))
 			m_pTransformCom->Set_Position(vPosition);
 	}
-
-	/* For. Hint (Trial) */
-	RecordPath();
 
 	
 	/* SelfStop */
@@ -655,11 +656,15 @@ void CEffect_Particle_Base::RecordPath()
 {
 	if(ImGui::CollapsingHeader("RecordPath"))
 	{
+		/* Rect Trail */
+
 		if (ImGui::DragFloat("Time Interval", &m_fTime, 0.01f, 0.0f, 5.0f))
 			m_fTimeAcc = 0.0f;
+		ImGui::InputFloat("TimeAcc", &m_fTimeAcc, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
 		static bool bStart = false;
 		static bool bPlay = false;
+		static _uint vPosIndex = 0;
 
 		/* UIs */
 		if (ImGui::Button("Record"))
@@ -675,7 +680,17 @@ void CEffect_Particle_Base::RecordPath()
 		if (bStart)
 			ImGui::Text("Recording...");
 		if (ImGui::Button("Play"))
-			bPlay = !bPlay;
+		{
+			bPlay = true;
+			m_fTimeAcc = 0.0f;
+			vPosIndex = 0;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Pause"))
+			bPlay = false;
+		if (bStart)
+			ImGui::Text("Playing...");
+
 
 		/* Functions */
 		if (bStart)
@@ -683,15 +698,20 @@ void CEffect_Particle_Base::RecordPath()
 			m_fTimeAcc += 0.001f;
 			if (m_fTimeAcc > m_fTime)
 			{
-				m_vecPos.push_back(m_pTransformCom->Get_Position());
+				m_vecPos.push_back(CCamera_Manager::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_Position());
 				m_fTimeAcc = 0.0f;
 			}
 		}
 
 		if (bPlay)
 		{
-			for (auto& vPos : m_vecPos)
-				m_pTransformCom->Set_Position(vPos);
+			m_fTimeAcc += 0.001f;
+			if (m_fTimeAcc > m_fTime && vPosIndex < m_vecPos.size())
+			{
+				m_pTransformCom->Set_Position(m_vecPos[vPosIndex]);
+				m_fTimeAcc = 0.0f;
+				vPosIndex++;
+			}
 		}
 
 
