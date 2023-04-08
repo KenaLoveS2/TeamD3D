@@ -57,7 +57,7 @@ private:
 	_bool							m_bDead = false;
 
 	_float4							m_vInitPosition;
-	_float							m_fFlyTime = 4.f;
+	_float							m_fFlyTime = 8.f;
 
 	ANIMATION						m_eCurState = REST;
 	ANIMATION						m_ePreState = REST;

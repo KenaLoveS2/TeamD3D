@@ -481,15 +481,13 @@ void CKena::Tick(_float fTimeDelta)
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 	m_pKenaStatus->Set_Attack(10);
+	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
 	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
-
-	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
 	_float	fTimeRate = Update_TimeRate();
 
 	__super::Tick(fTimeDelta);
-	if (CGameInstance::GetInstance()->Key_Down(DIK_9))
-		m_pKenaStatus->Set_HP(10);
+
 	LiftRotRockProc();
 
 	Check_Damaged();
@@ -2609,8 +2607,11 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 		if (iColliderIndex == (_int)COL_PORTAL && m_bDash == true)
 		{
-			CPortalPlane* pPortal = dynamic_cast<CPortalPlane*>(m_pDashTarget);
-			CPortalPlane* pLinkedPortal = pPortal->Get_LinkedPortal();
+			CPortalPlane* pPortal = dynamic_cast<CPortalPlane*>(pTarget);
+			CPortalPlane* pLinkedPortal = nullptr;
+
+			if (pPortal != nullptr)
+				pLinkedPortal = pPortal->Get_LinkedPortal();
 
 			if (pLinkedPortal != nullptr)
 			{

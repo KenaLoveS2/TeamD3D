@@ -87,12 +87,12 @@ void CBowTarget::Tick(_float fTimeDelta)
 
 	m_pTransformCom->Tick(fTimeDelta);
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_E))
-		m_bLaunch = true;
-	if (CGameInstance::GetInstance()->Key_Down(DIK_R))
-		Reset();
-	if (CGameInstance::GetInstance()->Key_Down(DIK_T))
-		m_bArrowHit = true;
+// 	if (CGameInstance::GetInstance()->Key_Down(DIK_E))
+// 		m_bLaunch = true;
+// 	if (CGameInstance::GetInstance()->Key_Down(DIK_R))
+// 		Reset();
+// 	if (CGameInstance::GetInstance()->Key_Down(DIK_T))
+// 		m_bArrowHit = true;
 }
 
 void CBowTarget::Late_Tick(_float fTimeDelta)
