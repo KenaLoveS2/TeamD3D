@@ -56,6 +56,7 @@ HRESULT CKena_State::Initialize(CKena * pKena, CKena_Status * pStatus, CStateMac
 	FAILED_CHECK_RETURN(SetUp_State_Damaged_Common(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Damaged_Heavy(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Dash(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Death(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Dodge(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Fall(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Heavy_Attack1(), E_FAIL);
@@ -69,6 +70,7 @@ HRESULT CKena_State::Initialize(CKena * pKena, CKena_Status * pStatus, CStateMac
 	FAILED_CHECK_RETURN(SetUp_State_Mask(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Meditate(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Pulse(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Respawn(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_RotAction(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Shield(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Spin_Attack(), E_FAIL);
@@ -257,6 +259,7 @@ HRESULT CKena_State::SetUp_State_Run()
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"INTO_PULSE_FROM_RUN", this, &CKena_State::KeyInput_E, &CKena_State::Check_Shield)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"ATTACK_1_FROM_RUN", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyInput_Direction)
@@ -2869,6 +2872,28 @@ HRESULT CKena_State::SetUp_State_Dash()
 	return S_OK;
 }
 
+HRESULT CKena_State::SetUp_State_Death()
+{
+	m_pStateMachine->Add_State(L"DEATH_FRONT")
+		.Init_Start(this, &CKena_State::Start_Death_Front)
+		.Init_Tick(this, &CKena_State::Tick_Death_Front)
+		.Init_End(this, &CKena_State::End_Death_Front)
+
+		.Add_State(L"DEATH_BACK")
+		.Init_Start(this, &CKena_State::Start_Death_Back)
+		.Init_Tick(this, &CKena_State::Tick_Death_Back)
+		.Init_End(this, &CKena_State::End_Death_Back)
+
+		.Add_State(L"DEATH_WATER")
+		.Init_Start(this, &CKena_State::Start_Death_Water)
+		.Init_Tick(this, &CKena_State::Tick_Death_Water)
+		.Init_End(this, &CKena_State::End_Death_Water)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
 HRESULT CKena_State::SetUp_State_Pulse()
 {
 	m_pStateMachine->Add_State(L"INTO_PULSE")
@@ -3145,6 +3170,18 @@ HRESULT CKena_State::SetUp_State_Pulse()
 	return S_OK;
 }
 
+HRESULT CKena_State::SetUp_State_Respawn()
+{
+	m_pStateMachine->Add_State(L"RESPAWN")
+		.Init_Start(this, &CKena_State::Start_Respawn)
+		.Init_Tick(this, &CKena_State::Tick_Respawn)
+		.Init_End(this, &CKena_State::End_Respawn)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
 HRESULT CKena_State::SetUp_State_RotAction()
 {
 	m_pStateMachine->Add_State(L"ROT_ACTION")
@@ -3237,6 +3274,7 @@ HRESULT CKena_State::SetUp_State_Sprint()
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"SPRINT_ATTACK", this, &CKena_State::MouseDown_Left, &CKena_State::Check_Skill_Melee_1)
 		.Init_Changer(L"HEAVY_ATTACK_COMBO", this, &CKena_State::MouseDown_Right, &CKena_State::Check_Skill_Melee_2)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, &CKena_State::Check_Shield)
 		.Init_Changer(L"SPRINT_STOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"SPRINT", this, &CKena_State::Animation_Finish)
@@ -3254,6 +3292,7 @@ HRESULT CKena_State::SetUp_State_Sprint()
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"HEAVY_ATTACK_COMBO", this, &CKena_State::MouseDown_Right, &CKena_State::Check_Skill_Melee_2)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, &CKena_State::Check_Shield)
 		.Init_Changer(L"SPRINT_ATTACK", this, &CKena_State::MouseDown_Left, &CKena_State::Check_Skill_Melee_1)
 		.Init_Changer(L"SPRINT_STOP", this, &CKena_State::KeyInput_None)
@@ -3269,6 +3308,7 @@ HRESULT CKena_State::SetUp_State_Sprint()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, &CKena_State::Check_Shield)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyInput_Direction)
@@ -3300,6 +3340,7 @@ HRESULT CKena_State::SetUp_State_Sprint()
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.26f)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.26f)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.26f)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.26f)
 		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, &CKena_State::Check_Shield, NULLFUNC, &CKena_State::Animation_Progress, 0.26f)
 		.Init_Changer(L"ATTACK_4_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
 		.Init_Changer(L"ATTACK_4_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.5f)
@@ -5752,9 +5793,26 @@ void CKena_State::Start_Dash_Combat_Attack_2(_float fTimeDelta)
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 }
 
+void CKena_State::Start_Death_Front(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("DEATH_FRONT");
+}
+
+void CKena_State::Start_Death_Back(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("DEATH_BACK");
+}
+
+void CKena_State::Start_Death_Water(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("DEATH_WATER");
+}
+
 void CKena_State::Start_Backflip(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BACKFLIP");
+
+	m_pKena->m_bDodge = true;
 
 	CE_KenaPulse* pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
 	pPulse->Set_Active(false);
@@ -5765,6 +5823,8 @@ void CKena_State::Start_Roll(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("ROLL");
 	Move(0.f, m_eDir);
+
+	m_pKena->m_bDodge = true;
 
 	CE_KenaPulse* pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
 	pPulse->Set_Active(false);
@@ -5830,6 +5890,8 @@ void CKena_State::Start_Heavy_Attack_1_Release(_float fTimeDelta)
 	m_pKena->m_bHeavyAttack = true;
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+
+	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 }
 
 void CKena_State::Start_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
@@ -5840,6 +5902,8 @@ void CKena_State::Start_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
 	m_pKena->m_bPerfectAttack = true;
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+
+	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 }
 
 void CKena_State::Start_Heavy_Attack_1_Return(_float fTimeDelta)
@@ -5870,6 +5934,8 @@ void CKena_State::Start_Heavy_Attack_2_Release(_float fTimeDelta)
 	m_pKena->m_bHeavyAttack = true;
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+
+	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 }
 
 void CKena_State::Start_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
@@ -5880,6 +5946,8 @@ void CKena_State::Start_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
 	m_pKena->m_bPerfectAttack = true;
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+
+	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 }
 
 void CKena_State::Start_Heavy_Attack_2_Return(_float fTimeDelta)
@@ -5910,6 +5978,8 @@ void CKena_State::Start_Heavy_Attack_3_Release(_float fTimeDelta)
 	m_pKena->m_bHeavyAttack = true;
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+
+	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 }
 
 void CKena_State::Start_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
@@ -5920,6 +5990,8 @@ void CKena_State::Start_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
 	m_pKena->m_bPerfectAttack = true;
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+
+	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 }
 
 void CKena_State::Start_Heavy_Attack_3_Return(_float fTimeDelta)
@@ -6261,6 +6333,11 @@ void CKena_State::Start_Pulse_Squat_Sprint(_float fTimeDelta)
 	m_pKena->m_bSprint = true;
 
 	dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"])->Set_NoActive(true);
+}
+
+void CKena_State::Start_Respawn(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("RESPAWN");
 }
 
 void CKena_State::Start_Rot_Action(_float fTimeDelta)
@@ -6934,6 +7011,18 @@ void CKena_State::Tick_Dash_Combat_Attack_2(_float fTimeDelta)
 {
 }
 
+void CKena_State::Tick_Death_Front(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Death_Back(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Death_Water(_float fTimeDelta)
+{
+}
+
 void CKena_State::Tick_Backflip(_float fTimeDelta)
 {
 }
@@ -7218,6 +7307,10 @@ void CKena_State::Tick_Pulse_Walk(_float fTimeDelta)
 void CKena_State::Tick_Pulse_Squat_Sprint(_float fTimeDelta)
 {
 	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+}
+
+void CKena_State::Tick_Respawn(_float fTimeDelta)
+{
 }
 
 void CKena_State::Tick_Rot_Action(_float fTimeDelta)
@@ -7825,12 +7918,26 @@ void CKena_State::End_Dash_Combat_Attack_2(_float fTimeDelta)
 	m_pKena->m_pRendererCom->Set_MotionBlur(false);
 }
 
+void CKena_State::End_Death_Front(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Death_Back(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Death_Water(_float fTimeDelta)
+{
+}
+
 void CKena_State::End_Backflip(_float fTimeDelta)
 {
+	m_pKena->m_bDodge = false;
 }
 
 void CKena_State::End_Roll(_float fTimeDelta)
 {
+	m_pKena->m_bDodge = false;
 }
 
 void CKena_State::End_Roll_Left(_float fTimeDelta)
@@ -8127,6 +8234,10 @@ void CKena_State::End_Pulse_Walk(_float fTimeDelta)
 void CKena_State::End_Pulse_Squat_Sprint(_float fTimeDelta)
 {
 	m_pKena->m_bSprint = false;
+}
+
+void CKena_State::End_Respawn(_float fTimeDelta)
+{
 }
 
 void CKena_State::End_Rot_Action(_float fTimeDelta)

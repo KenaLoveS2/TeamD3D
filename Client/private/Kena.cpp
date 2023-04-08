@@ -510,17 +510,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	Run_Smooth_Targeting(fTimeDelta);
 
-	for (auto& pPart : m_vecPart)
-		pPart->Tick(fTimeDelta);
-
-	for (auto& pArrow : m_vecArrow)
-		pArrow->Tick(fTimeDelta);
-
-	for (auto& pBomb : m_vecBomb)
-		pBomb->Tick(fTimeDelta);
 	
-	for (auto& pEffect : m_mapEffect)
-		pEffect.second->Tick(fTimeDelta);
 
 	/* Camera Shake Test */
 	/*if (CGameInstance::GetInstance()->Key_Down(DIK_O))
@@ -548,6 +538,19 @@ void CKena::Tick(_float fTimeDelta)
 
 void CKena::Late_Tick(_float fTimeDelta)
 {
+	/* 문제 생기면 보고 바람. */
+	for (auto& pPart : m_vecPart)
+		pPart->Tick(fTimeDelta);
+
+	for (auto& pArrow : m_vecArrow)
+		pArrow->Tick(fTimeDelta);
+
+	for (auto& pBomb : m_vecBomb)
+		pBomb->Tick(fTimeDelta);
+
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Tick(fTimeDelta);
+
 	__super::Late_Tick(fTimeDelta);
 
 	m_pKenaState->Late_Tick(fTimeDelta);
@@ -2583,7 +2586,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		CGameObject* pGameObject = nullptr;
 
 		_bool bRealAttack = false;
-		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)
+		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false && m_bDodge == false)
 		{
 			for (auto& Effect : m_mapEffect)
 			{

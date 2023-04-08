@@ -358,7 +358,7 @@ HRESULT CBowTarget::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	/* For.Com_DISSOLVETEX */
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Component_Texture_Dissolve_BowTarget", L"COM_DISSOLVETEX", (CComponent**)&m_pDissolveTexture), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Texture_Dissolve_BowTarget", L"COM_DISSOLVETEX", (CComponent**)&m_pDissolveTexture), E_FAIL);
 	
 
 	return S_OK;

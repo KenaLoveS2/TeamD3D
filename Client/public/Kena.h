@@ -165,6 +165,7 @@ private:
 	_bool						m_bBomb = false;
 	_bool						m_bInjectBomb = false;
 	_bool						m_bPulse = false;
+	_bool						m_bDodge = false;
 	_bool						m_bDash = false;
 	_bool						m_bMask = false;
 
