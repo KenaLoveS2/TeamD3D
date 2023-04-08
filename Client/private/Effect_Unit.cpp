@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CEffect_Unit.h"
+#include "Effect_Unit.h"
 #include "gameinstance.h"
 
 CEffect_Unit::CEffect_Unit(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -22,9 +22,9 @@ void CUI_NodeHUDHP::Upgrade()
 {
 	/* LevelUp : Guage Length + 150.f */
 	m_fSourScaleX = m_matLocal._11;
-	m_fDestScaleX = m_fSourScaleX + 150.f;
+	m_fDestScaleX = m_fSourScaleX + 100.f;
 	m_fSourTransX = m_matLocal._41;
-	m_fDestTransX = m_fSourTransX + 150.f * 0.5f;
+	m_fDestTransX = m_fSourTransX + 100.f * 0.5f;
 	m_bUpgrade = true;
 }
 

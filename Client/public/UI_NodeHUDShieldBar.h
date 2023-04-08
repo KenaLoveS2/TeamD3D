@@ -17,9 +17,20 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
+public:
+	void	Upgrade();
+
 private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
+
+private: /* For. Upgrade */
+	_bool	m_bUpgrade;
+	_float	m_fSpeed;
+	_float	m_fSourScaleX;
+	_float	m_fDestScaleX;
+	_float	m_fSourTransX;
+	_float	m_fDestTransX;
 
 public:
 	static	CUI_NodeHUDShieldBar*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

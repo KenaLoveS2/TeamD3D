@@ -36,9 +36,11 @@ public:
 	virtual	void					BackToNormal()				override;
 
 public:
-	virtual	void					Activate(_float4 vPos)			override;
-	virtual	void					Activate(CGameObject* pTarget)	override;
-	virtual void					DeActivate()					override;
+	virtual	void					Activate(_float4 vPos)												override;
+	virtual	void					Activate(CGameObject* pTarget)										override;
+	virtual void					Activate_Scaling(_float4 vDir, _float4 vPos, _float2 vScaleSpeed)	override;
+	virtual	void					Activate_Slowly(_float4 vPos)										override;
+	virtual void					DeActivate()														override;
 
 private:
 	HRESULT							SetUp_Components();
@@ -51,17 +53,17 @@ private: /* Tool Function */
 	void							ColorCode(_int iTextureType);
 
 private:
-	CShader* m_pShaderCom;
-	CRenderer* m_pRendererCom;
-	CTexture* m_pTextureCom[TEXTURE_END];
-	CVIBuffer_Rect* m_pVIBufferCom;
-	CModel* m_pModelCom;
+	CShader*						m_pShaderCom;
+	CRenderer*						m_pRendererCom;
+	CTexture*						m_pTextureCom[TEXTURE_END];
+	CVIBuffer_Rect*					m_pVIBufferCom;
+	CModel*							m_pModelCom;
 
 private:
-	char* m_ShaderVarName[TEXTURE_END];
-	_tchar* m_TextureComName[TEXTURE_END];
+	char*							m_ShaderVarName[TEXTURE_END];
+	_tchar*							m_TextureComName[TEXTURE_END];
 	_int							m_iTextureIndices[TEXTURE_END];
-	char* m_ShaderColorName[TEXTURE_END];
+	char*							m_ShaderColorName[TEXTURE_END];
 	_float4							m_vTextureColors[TEXTURE_END];
 
 	_float							m_fCutY = 0.f;

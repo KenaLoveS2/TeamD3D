@@ -47,6 +47,7 @@ protected:
 		BOSS_AO_R_M,
 		BOSS_AO_R_M_E,
 		HUNTER_ARROW,
+		HUNTER_HAIR = 34,
 		PASS_END
 	};
 

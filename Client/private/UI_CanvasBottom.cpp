@@ -4,6 +4,9 @@
 #include "Kena.h"
 #include "UI_NodeLetterBox.h"
 #include "UI_NodeChat.h"
+#include "UI_NodeKey.h"
+
+/* Bind Object */
 #include "Saiya.h"
 #include "CinematicCamera.h"
 
@@ -143,6 +146,31 @@ HRESULT CUI_CanvasBottom::Ready_Nodes()
 		pGameInstance->Add_String(cloneTag);
 	}
 
+	{ /* Keys */
+		string strTag = "Node_Key1";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Key", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
+
+	{ /* Keys */
+		string strTag = "Node_Key2";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Key", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 
