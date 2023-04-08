@@ -1720,7 +1720,7 @@ PS_OUT PS_MAIN_E_R_AO_E_DISSOLVE(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime * 5.f;
+		float fDissolveAmount = g_fDissolveTime;
 
 		// sample noise texture
 		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
@@ -1749,7 +1749,7 @@ PS_OUT PS_MAIN_E_R_AO_E_DISSOLVE(PS_IN In)
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc) + g_fHDRIntensity, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 2.f), 0.f);
 	// ERAO
 	float4 ERAO = float4(vAO_R_MDesc.b, vAO_R_MDesc.g, 1.f, 1.f);
 	Out.vAmbient = ERAO;
