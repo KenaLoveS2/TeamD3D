@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "CameraForNpc.h"
 #include "Saiya.h"
+#include "CinematicCamera.h"
 
 CBeni::CBeni(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CNpc(pDevice, pContext)
@@ -97,6 +98,16 @@ void CBeni::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	AdditiveAnim(fTimeDelta);
+
+	_float3 vLook = m_pSaiya->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	_float3 vRight = _float3(1.f, 0.f, 0.f);
+
+	if(vLook.Dot(vRight) <=0.f)
+		m_vOffsetPos = _float3(0.5, 0.f, 0.f);
+	else
+		m_vOffsetPos = _float3(-0.5, 0.f, 0.f);
+
+	SaiyaPos(m_vOffsetPos);
 }
 
 void CBeni::Late_Tick(_float fTimeDelta)
@@ -216,12 +227,7 @@ HRESULT CBeni::SetUp_State()
 		return m_strState == "ACTION_1";
 	})
 
-
 		.AddState("ACTION_1")
-		.OnStart([this]()
-	{
-				SaiyaPos();
-	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(BENI_RUN);
@@ -233,7 +239,6 @@ HRESULT CBeni::SetUp_State()
 		return m_strState == "ACTION_2";
 	})
 
-
 		.AddState("ACTION_2")
 		.OnStart([this]()
 	{
@@ -244,16 +249,11 @@ HRESULT CBeni::SetUp_State()
 	{
 		// 사라질때 이펙트 	
 	})
-		.OnExit([this]()
-	{
-				SaiyaPos();
-	})
 		.AddTransition("ACTION_2 to ACTION_3", "ACTION_3")
 		.Predicator([this]()
 	{
 		return m_strState == "ACTION_3";
 	})
-
 
 		.AddState("ACTION_3")
 		.Tick([this](_float fTimeDelta)
@@ -266,12 +266,7 @@ HRESULT CBeni::SetUp_State()
 		return m_strState == "ACTION_4" && AnimFinishChecker(BENI_CHASINGLOOP);;
 	})
 
-
 		.AddState("ACTION_4")
-		.OnStart([this]()
-	{
-				SaiyaPos();
-	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(BENI_RUN);
@@ -293,35 +288,263 @@ HRESULT CBeni::SetUp_State()
 	{
 		// 사라질때 이펙트 	
 	})
-		.OnExit([this]()
-	{
-				SaiyaPos();
-	})
 		.AddTransition("ACTION_5 to ACTION_6", "ACTION_6")
 		.Predicator([this]()
 	{
-		return m_strState == "ACTION_6";
+		return AnimFinishChecker(BENI_TELEPORT);
 	})
-
 
 		.AddState("ACTION_6")
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(BENI_IDLE);
 	})
+		.AddTransition("ACTION_6 to ACTION_7", "ACTION_7")
+		.Predicator([this]()
+	{
+		return dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("MAP_CINE0")))->CameraFinishedChecker(0.7f); // 첫 펄스로 시네캠 생성될때
+	})
 
+		.AddState("ACTION_7")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_RUN);
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	})
+		.AddTransition("ACTION_7 to ACTION_8", "ACTION_8")
+		.Predicator([this]()
+	{
+		return true;
+	})
+
+		.AddState("ACTION_8")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_TELEPORT);
+		m_pModelCom->Set_AnimIndex(BENI_TELEPORT);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		// 사라질때 이펙트 	
+	})
+		.AddTransition("ACTION_8 to ACTION_9", "ACTION_9")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BENI_TELEPORT);
+	})
+
+		.AddState("ACTION_9")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_IDLE);
+	})
+		.AddTransition("ACTION_9 to ACTION_10", "ACTION_10")
+		.Predicator([this]()
+	{
+		return m_strState == "ACTION_10";
+	})
+
+		.AddState("ACTION_10")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_RUN);
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	})
+		.AddTransition("ACTION_10 to ACTION_11", "ACTION_11")
+		.Predicator([this]()
+	{
+		return m_strState == "ACTION_11";
+	})
+
+		.AddState("ACTION_11")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_TELEPORT);
+		m_pModelCom->Set_AnimIndex(BENI_TELEPORT);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		// 사라질때 이펙트 	
+	})
+		.AddTransition("ACTION_11 to ACTION_12", "ACTION_12")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BENI_TELEPORT);
+	})
+
+		.AddState("ACTION_12")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_IDLE);
+	})
+		.AddTransition("ACTION_12 to ACTION_14", "ACTION_14")
+		.Predicator([this]()
+	{
+		return m_strState == "ACTION_14";
+	})
+
+		.AddState("ACTION_14")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_CURIOUS);
+		m_pModelCom->Set_AnimIndex(BENI_CURIOUS);
+	})
+		.AddTransition("ACTION_14 to ACTION_15", "ACTION_15")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BENI_CURIOUS);
+	})
+
+		.AddState("ACTION_15")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_IDLE);
+	})
+		.AddTransition("ACTION_15 to ACTION_16", "ACTION_16")
+		.Predicator([this]()
+	{
+		return m_strState == "ACTION_16";
+	})
+
+		.AddState("ACTION_16")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_PULSE);
+		m_pModelCom->Set_AnimIndex(BENI_PULSE);
+	})
+		.AddTransition("ACTION_16 to ACTION_17", "ACTION_17")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BENI_PULSE);
+	})
+
+		.AddState("ACTION_17")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_IDLE);
+	})
+		.AddTransition("ACTION_17 to ACTION_18", "ACTION_18")
+		.Predicator([this]()
+	{
+		return m_strState == "ACTION_18";
+	})
+
+		.AddState("ACTION_18")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_RUN);
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	})
+		.AddTransition("ACTION_18 to ACTION_19", "ACTION_19")
+		.Predicator([this]()
+	{
+		return m_strState == "ACTION_19";
+	})
+
+		.AddState("ACTION_19")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_TELEPORT);
+		m_pModelCom->Set_AnimIndex(BENI_TELEPORT);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		// 사라질때 이펙트 	
+	})
+		.AddTransition("ACTION_19 to ACTION_20", "ACTION_20")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BENI_TELEPORT);
+	})
+
+		.AddState("ACTION_20")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_IDLE);
+	})
+		.AddTransition("ACTION_20 to ACTION_21", "ACTION_21")
+		.Predicator([this]()
+	{
+		return m_strState == "ACTION_21";
+	})
+
+		.AddState("ACTION_21")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_PULSE);
+		m_pModelCom->Set_AnimIndex(BENI_PULSE);
+	})
+		.AddTransition("ACTION_21 to ACTION_22", "ACTION_22")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BENI_PULSE) && m_strState == "ACTION_22";
+	})
+
+		.AddState("ACTION_22")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_RUN);
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	})
+		.AddTransition("ACTION_22 to ACTION_23", "ACTION_23")
+		.Predicator([this]()
+	{
+		return m_strState == "ACTION_23";
+	})
+
+		.AddState("ACTION_23")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_TELEPORT);
+		m_pModelCom->Set_AnimIndex(BENI_TELEPORT);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		// 사라질때 이펙트 	
+	})
+		.AddTransition("ACTION_23 to ACTION_24", "ACTION_24")
+		.Predicator([this]()
+	{
+		return  AnimFinishChecker(BENI_TELEPORT);
+	})
+
+		.AddState("ACTION_24")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_IDLE);
+	})
+		.AddTransition("ACTION_24 to ACTION_25", "ACTION_25")
+		.Predicator([this]()
+	{
+		return m_strState == "ACTION_25";
+	})
+		.AddState("ACTION_25")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_PULSE);
+		m_pModelCom->Set_AnimIndex(BENI_PULSE);
+	})
+		.AddTransition("ACTION_25 to ACTION_26", "ACTION_26")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BENI_PULSE);
+	})
+
+		.AddState("ACTION_26")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_IDLE);
+	})
 
 		.Build();
+
 	return S_OK;
 }
 
 HRESULT CBeni::SetUp_Components()
 {
 	__super::SetUp_Components();
-
-	
-		FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Beni", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
-
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Beni", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Beni/jizoboy_body_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Beni/jizoboy_cloth_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(5, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Beni/jizokids_mask_AO_R_M.png")), E_FAIL);
@@ -373,10 +596,10 @@ void CBeni::SaiyaFunc(_float fTimeDelta)
 		m_strState = m_pSaiya->Get_FSM()->GetCurStateName();
 }
 
-void CBeni::SaiyaPos()
+void CBeni::SaiyaPos(_float3 vOffSetPos)
 {
 	const _float4 vPos = m_pSaiya->Get_TransformCom()->Get_Position();
-	const _float4 vChangePos = _float4(vPos.x - 0.5f, vPos.y, vPos.z, 1.f);
+	const _float4 vChangePos = _float4(vPos.x + vOffSetPos.x, vPos.y, vPos.z + vOffSetPos.z, 1.f);
 	const _float4 vLook = m_pSaiya->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
 	m_pTransformCom->Set_Position(vChangePos);
 	m_pTransformCom->Set_Look(vLook);

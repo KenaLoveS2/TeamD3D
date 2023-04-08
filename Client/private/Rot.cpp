@@ -71,6 +71,10 @@ HRESULT CRot::Initialize(void* pArg)
 	m_iEveryRotCount++;
 	m_iObjectProperty = OP_ROT;
 
+	wstring wstrTag = wstring(m_szCloneObjectTag) + TEXT("Wisp");
+	m_pRotWisp = static_cast<CRotWisp*>(CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp"), CUtile::Create_StringAuto(wstrTag.c_str())));
+	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
+
 	return S_OK;
 }
 
@@ -121,9 +125,6 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
 
-	wstring wstrTag = wstring(m_szCloneObjectTag) + TEXT("Wisp");
-	m_pRotWisp = static_cast<CRotWisp*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp"), CUtile::Create_StringAuto(wstrTag.c_str())));
-	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
 	return S_OK;
 }
 
@@ -283,6 +284,12 @@ void CRot::ImGui_PhysXValueProperty()
 	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
 	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
 	m_pTransformCom->Set_PxPivot(vPxPivot);
+}
+
+void CRot::AlreadyRot()
+{
+	m_bWakeUp = true;
+	m_pRotWisp->Set_Collect(true);
 }
 
 HRESULT CRot::SetUp_Components()

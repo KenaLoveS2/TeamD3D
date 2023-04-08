@@ -76,6 +76,7 @@ float			g_fUVSpeedY = 0.f;
 float			g_fStringDissolve;
 float			g_fStringHDR;
 
+bool			g_Day = true;
 
 float4 SSS(float3 position, float3 normal, float3 dir, float4 color, float2 vUV, float amount, Texture2D<float4> Texturediffuse, Texture2D<float4> sssMask)
 {
@@ -389,10 +390,10 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
 	float4		FinalColor = float4(0, 0, 0, 1);
-	if(max(max(vDiffuse.r, vDiffuse.g),vDiffuse.b) == vDiffuse.b)
+	if(max(max(vDiffuse.r, vDiffuse.g),vDiffuse.b) == vDiffuse.b && !g_Day)
 	{
-		FinalColor = vDiffuse + vEmissive * 3.f;
-		Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 5.f, 0.f);
+		FinalColor = vDiffuse + vEmissive * 2.f;
+		Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 3.f, 0.f);
 	}
 	else
 	{

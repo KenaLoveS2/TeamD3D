@@ -258,6 +258,7 @@ HRESULT CKena_Staff::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
 			/******************************************************************/
+			m_pShaderCom->Set_RawValue("g_Day", &g_bDayOrNight, sizeof(bool));
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 5);
 		}
 

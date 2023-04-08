@@ -30,6 +30,7 @@
 #include "E_P_ExplosionGravity.h"
 #include "E_KenaDash.h"
 #include "Light.h"
+#include "Layer.h"
 
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -286,6 +287,9 @@ HRESULT CKena::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
+	if(g_LEVEL == LEVEL_FINAL) // 파이널로 갔을때 Rot 생성 해주는 것입니다람쥐렁이 처음에 5개 먹을듯요
+		FAILED_CHECK_RETURN(Ready_Rots(), E_FAIL);
+
 	Push_EventFunctions();
 
 	m_fSSSAmount = 0.09f;
@@ -308,7 +312,6 @@ HRESULT CKena::Late_Initialize(void * pArg)
 {
 	FAILED_CHECK_RETURN(Ready_Arrows(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Bombs(), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 
 	_float3 vPos = _float3(0.f, 3.f, 0.f);
 	_float3 vPivotScale = _float3(0.2f, 0.5f, 1.f); // _float3(0.2f, 3.f, 1.f);
@@ -477,9 +480,7 @@ void CKena::Tick(_float fTimeDelta)
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 	m_pKenaStatus->Set_Attack(10);
 #endif
-
-	Update_LightPos(fTimeDelta);
-
+	
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
@@ -1607,6 +1608,20 @@ HRESULT CKena::SetUp_Components()
 	return S_OK;
 }
 
+HRESULT CKena::Ready_Rots()
+{
+	for (_uint i = 0; i < 5; ++i)
+	{
+		_tchar szCloneRotTag[32] = { 0, };
+		swprintf_s(szCloneRotTag, L"PlayerRot_%d", i);
+		CGameObject* p_game_object = nullptr;
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", CUtile::Create_StringAuto(szCloneRotTag), nullptr, &p_game_object);
+		dynamic_cast<CRot*>(p_game_object)->AlreadyRot();
+	}
+
+	return S_OK;
+}
+
 HRESULT CKena::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
@@ -1721,7 +1736,7 @@ void CKena::Update_LightPos(_float fTimeDelta)
 	XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
 	_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
 	_float fPivotPos[3] = { m_vStaffLightPos.x,m_vStaffLightPos.y, m_vStaffLightPos.z };
-	ImGui::SliderFloat3("StaffLightPivot", fPivotPos, -10.f, 10.f);
+	ImGui::DragFloat3("StaffLightPivot", fPivotPos,0.01f, -10.f, 10.f);
 	m_vStaffLightPos = _float4(fPivotPos[0], fPivotPos[1], fPivotPos[2], 0.f);
 	vPos += m_vStaffLightPos;
 	m_pStaffLight->Set_Position(vPos);

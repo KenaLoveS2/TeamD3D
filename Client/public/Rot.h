@@ -72,6 +72,7 @@ public:
 	virtual void ImGui_AnimationProperty() override;
 	virtual void ImGui_ShaderValueProperty() override;
 	virtual void ImGui_PhysXValueProperty() override;
+	void			AlreadyRot();
 
 private:
 	HRESULT SetUp_Components();

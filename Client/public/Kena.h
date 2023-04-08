@@ -78,13 +78,13 @@ public:
 	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
-	virtual HRESULT			Initialize_Prototype() override;
-	virtual HRESULT			Initialize(void* pArg) override;
-	virtual HRESULT			Late_Initialize(void* pArg) override;
+	virtual HRESULT		Initialize_Prototype() override;
+	virtual HRESULT		Initialize(void* pArg) override;
+	virtual HRESULT		Late_Initialize(void* pArg) override;
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT			Render() override;
-	virtual HRESULT			RenderShadow() override;
+	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderShadow() override;
 
 	virtual HRESULT		RenderCine() override;
 	HRESULT					SetUp_CineShaderResources();
@@ -94,7 +94,7 @@ public:
 	virtual void				ImGui_ShaderValueProperty() override;
 	virtual void				ImGui_PhysXValueProperty() override;
 	virtual void				Update_Child() override;
-	virtual HRESULT				Call_EventFunction(const string& strFuncName) override;
+	virtual HRESULT		Call_EventFunction(const string& strFuncName) override;
 	virtual void				Push_EventFunctions() override;
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
@@ -227,6 +227,8 @@ private:
 	HRESULT					Ready_Bombs();
 	HRESULT					Ready_Effects();
 	HRESULT					Ready_Lights();
+	HRESULT					Ready_Rots();
+
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
