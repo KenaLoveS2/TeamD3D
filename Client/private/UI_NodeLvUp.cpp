@@ -39,11 +39,11 @@ HRESULT CUI_NodeLvUp::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	// m_bActive = true;
 	m_szTitle = CUtile::Create_StringAuto(L"Level");
 
 	/* event */
-	m_vecEvents.push_back(CUI_Event_Fade::Create(0.01f, 6.f));
+	m_vecEvents.push_back(CUI_Event_Fade::Create(0.01f, 4.f));
 
 	return S_OK;
 }
@@ -73,6 +73,9 @@ void CUI_NodeLvUp::Tick(_float fTimeDelta)
 		//if (m_matLokcal._42 < 280.f)
 		//	m_matLocal._42 = 280.f;
 	}
+
+	if (static_cast<CUI_Event_Fade*>(m_vecEvents[0])->Is_End())
+		m_bActive = false;
 
 	__super::Tick(fTimeDelta);
 }
@@ -109,7 +112,7 @@ HRESULT CUI_NodeLvUp::Render()
 	{
 		_float4 vPos;
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-		_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f -25.f, g_iWinSizeY*0.5f - vPos.y + 20.f };
+		_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f -25.f, g_iWinSizeY*0.5f - vPos.y + 30.f };
 
 		if (m_szLevel != nullptr)
 		{
@@ -127,6 +130,8 @@ HRESULT CUI_NodeLvUp::Render()
 
 void CUI_NodeLvUp::Appear(_uint iLevel)
 {
+	m_bActive = true;
+
 	m_vecEvents[0]->Call_Event(true);
 
 	//m_matLocal._42 = 320.f;
@@ -138,6 +143,11 @@ void CUI_NodeLvUp::Appear(_uint iLevel)
 	m_szLevel = CUtile::Create_String(to_wstring(iLevel).c_str());
 
 
+}
+
+_float CUI_NodeLvUp::Get_Alpha()
+{
+	return static_cast<CUI_Event_Fade*>(m_vecEvents[0])->Get_Alpha();
 }
 
 HRESULT CUI_NodeLvUp::SetUp_Components()

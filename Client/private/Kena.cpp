@@ -634,19 +634,6 @@ void CKena::Tick(_float fTimeDelta)
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 		m_pCamera->Camera_Shake(XMVectorSet(1.f, 1.f, 0.f, 0.f), XMConvertToRadians(10.f));
 
-	/* Delegator Arrow */
-	// CKena_Status::m_iCurArrowCount, m_iMaxArrowCount, m_fCurArrowCoolTime, m_fInitArrowCount
-	//CUI_ClientManager::UI_PRESENT eArrow = CUI_ClientManager::AMMO_ARROW;
-	//_float fCurArrowCount = (_float)m_pKenaStatus->Get_CurArrowCount();
-	//
-	//
-	//_float fMaxArrowCount = (_float)m_pKenaStatus->Get_MaxArrowCount();
-	//_float fCurArrowCoolTime = (_float)m_pKenaStatus->Get_CurArrowCoolTime();
-	//_float fInitArrowCoolTime = (_float)m_pKenaStatus->Get_InitArrowCoolTime();
-	//
-	//m_PlayerAmmoDelegator.broadcast(eArrow, fCurArrowCount, fMaxArrowCount, fCurArrowCoolTime, fInitArrowCoolTime);
-
-	/* ~Delegator */
 
 	CRot::Set_RotUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	CMonster::Set_MonsterUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
@@ -738,11 +725,10 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_Delegator.broadcast(ePip, fCurGuage);
 	}
 
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
-	//{
-	//	CKena* pPlayer = this;
-	//	m_PlayerPtrDelegator.broadcast(eCart, funcDefault, pPlayer);
-	//}
+	if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+	{
+		m_pKenaStatus->Add_RotCount();
+	}
 
 	//	//static _float fTag = 0.0f;
 	//	//if (fTag < 1.0f)

@@ -509,10 +509,35 @@ void CKena_Status::Set_CurBombCount(_int iValue)
 
 void CKena_Status::Add_RotCount()
 {
-	/* NEED : UI UPDATE ROT COUNT GAGE */
+	//m_iCurrentRotCount = 0;
+	//m_iRotLevel = 1;
+	//m_iRotCountMax = 2;
 	m_iCurrentRotCount++;
 
-	if (m_iCurrentRotCount >= m_iRotCountMax && m_iRotLevel != 4)
+	/* UI Rot Get */
+	CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
+	CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
+	CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
+
+	_float fMin = 0.0f;
+
+	if (m_iRotLevel == 2)
+		fMin = 2.0f;
+	else if (m_iRotLevel == 3)
+		fMin = 5.0f;
+	else if (m_iRotLevel == 4)
+		fMin = 8.0f;
+
+	_float fRotMax = (_float)m_iRotCountMax;
+	_float fRotNow = (_float)m_iCurrentRotCount;
+	_float fGuage = (fRotNow-fMin) / (fRotMax-fMin);
+
+	m_StatusDelegator.broadcast(eNow, fRotNow);
+	m_StatusDelegator.broadcast(eMax, fRotMax);
+	m_StatusDelegator.broadcast(eGet, fGuage);
+	/* ~UI Rot Get */
+
+	if (m_iCurrentRotCount >= m_iRotCountMax && m_iRotLevel != 5)
 	{
 		dynamic_cast<CKena*>(m_pOwner)->Set_State(CKena::STATE_LEVELUP, true);
 		m_iRotLevel++;
@@ -531,25 +556,16 @@ void CKena_Status::Add_RotCount()
 		else if (m_iRotLevel == 4)
 			m_iRotCountMax = 10;
 
-		/* Rot LEvel Up */
+		/* Rot Level Up */
+		CUI_ClientManager::UI_PRESENT eLVUP = CUI_ClientManager::TOP_ROT_LVUP;
+		_float fLevel = (_float)m_iRotLevel;
+		m_StatusDelegator.broadcast(eLVUP, fLevel);
+
 		/* Pip Level Up */
-
 	}
-	else
-	{
-		/* 230407 */
-		CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
-		CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
-		CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
 
-		_float fRotMax = (_float)Get_RotMax();
-		_float fRotNow = (_float)m_iCurrentRotCount;
-		_float fGuage = fRotNow / fRotMax;
 
-		m_StatusDelegator.broadcast(eNow, fRotNow);
-		m_StatusDelegator.broadcast(eMax, fRotMax);
-		m_StatusDelegator.broadcast(eGet, fGuage);
-	}
+	
 }
 
 void CKena_Status::Unlock_Skill(SKILLTAB eCategory, _uint iSlot)

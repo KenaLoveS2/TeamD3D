@@ -18,8 +18,15 @@ CUI_NodeRotFrontGuage::CUI_NodeRotFrontGuage(const CUI_NodeRotFrontGuage & rhs)
 
 void CUI_NodeRotFrontGuage::Set_Guage(_float fGuage)
 {
+	m_bActive = true;
+
 	m_vecEvents[EVENT_FADE]->Call_Event(true);
 	m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
+}
+
+void CUI_NodeRotFrontGuage::Set_GuageZero()
+{
+	static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Set_InitState(0.0f);
 }
 
 _float CUI_NodeRotFrontGuage::Get_CurrentGuage()
@@ -33,6 +40,17 @@ _float CUI_NodeRotFrontGuage::Get_CurrentGuagePosition()
 
 	return m_matLocal._41 - 0.5f*m_matLocal._11 /* Zero Point */
 		+ m_matLocal._11*fGuage;
+}
+
+_bool CUI_NodeRotFrontGuage::If_DisAppear_Get_Alpha(_float* pAlpha_Out)
+{
+	if (static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Is_DisAppear())
+	{
+		*pAlpha_Out = static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Get_Alpha();
+		return true;
+	}
+	else
+		return false;
 }
 
 HRESULT CUI_NodeRotFrontGuage::Initialize_Prototype()
@@ -58,7 +76,7 @@ HRESULT CUI_NodeRotFrontGuage::Initialize(void * pArg)
 	}
 
 
-	m_bActive = true;
+	//m_bActive = true;
 	m_szTitle = CUtile::Create_StringAuto(L"부식령 발견!");
 
 	/* Events */
@@ -66,7 +84,7 @@ HRESULT CUI_NodeRotFrontGuage::Initialize(void * pArg)
 	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
 	static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Set_InitState(0.f);
 
-	m_vecEvents.push_back(CUI_Event_Fade::Create(0.05f, 4.f));
+	m_vecEvents.push_back(CUI_Event_Fade::Create(0.05f, 2.f));
 	return S_OK;
 }
 
@@ -79,6 +97,9 @@ void CUI_NodeRotFrontGuage::Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
+
+	if (static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Is_End())
+		m_bActive = false;
 
 	__super::Tick(fTimeDelta);
 }
@@ -110,15 +131,15 @@ HRESULT CUI_NodeRotFrontGuage::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 80.f, g_iWinSizeY*0.5f - vPos.y -80.f };
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 80.f, g_iWinSizeY*0.5f - vPos.y -70.f };
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (m_szTitle != nullptr)
 	{
-		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szTitle,
+		pGameInstance->Render_Font(TEXT("Font_SR0"), m_szTitle,
 			vNewPos /* position */,
-			0.f, _float2(1.f, 1.f)/* size */,
+			0.f, _float2(0.7f, 0.7f)/* size */,
 			XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Get_Alpha())/* color */);
 	}
 

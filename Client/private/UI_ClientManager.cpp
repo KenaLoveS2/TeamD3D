@@ -554,8 +554,15 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_KeyIcon"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/02. KeyboardIcon/key_%d.png"), 5))))
 		return E_FAIL;
-	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_KeyIcon");
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_KeyIcon"); // 66
 
+	/********************************************/
+	/*				For. SimpleRot				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_SimpleRotIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/RotIconSimple.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_SimpleRotIcon"); // 67
 
 
 

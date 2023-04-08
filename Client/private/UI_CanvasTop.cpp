@@ -18,6 +18,8 @@ CUI_CanvasTop::CUI_CanvasTop(ID3D11Device * pDevice, ID3D11DeviceContext * pCont
 	:CUI_Canvas(pDevice,pContext)
 	, m_iRotNow(0)
 	, m_iRotMax(0)
+	, m_bRotLvUp(false)
+	, m_iRotLv(1)
 {
 }
 
@@ -25,6 +27,8 @@ CUI_CanvasTop::CUI_CanvasTop(const CUI_CanvasTop & rhs)
 	: CUI_Canvas(rhs)
 	, m_iRotNow(0)
 	, m_iRotMax(0)
+	, m_bRotLvUp(false)
+	, m_iRotLv(1)
 {
 }
 
@@ -78,6 +82,40 @@ void CUI_CanvasTop::Tick(_float fTimeDelta)
 	static_cast<CUI_NodeRotArrow*>(m_vecNode[UI_ROTARROW])->Set_Arrow(
 		static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Get_CurrentGuagePosition()
 	);
+
+	if (m_bRotLvUp == true)
+	{
+		_float fGuageAlpha = -1.f;
+		if (true == static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->If_DisAppear_Get_Alpha(&fGuageAlpha))
+		{
+			if (fGuageAlpha < 0.3f)
+			{
+				static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_BACKFLARE])->Start_Effect(m_vecNode[UI_ROTLVUP], 0.0f, 0.0f);
+				static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_FRONTFLAREROUND])->Start_Effect(m_vecNode[UI_ROTLVUP], 0.0f, 0.0f);
+				static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_FRONTFLARE])->Start_Effect(m_vecNode[UI_ROTLVUP], 0.0f, 0.0f);
+
+				static_cast<CUI_NodeLvUp*>(m_vecNode[UI_ROTLVUP])->Appear(m_iRotLv);
+			}
+		}
+		else if (true == m_vecNode[UI_ROTLVUP]->Is_Active())
+		{
+			_float fAlpha = static_cast<CUI_NodeLvUp*>(m_vecNode[UI_ROTLVUP])->Get_Alpha();
+
+			static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_BACKFLARE])->Set_Alpha(fAlpha);
+			static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_FRONTFLAREROUND])->Set_Alpha(fAlpha);
+			static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_FRONTFLARE])->Set_Alpha(fAlpha);
+
+		}
+		else if (false == m_vecNode[UI_ROTGUAGE]->Is_Active() && false == m_vecNode[UI_ROTLVUP]->Is_Active())
+		{
+			m_bRotLvUp = false;
+			static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_GuageZero();
+
+			m_vecNode[UI_EFFECT_BACKFLARE]->Set_Active(false);
+			m_vecNode[UI_EFFECT_FRONTFLAREROUND]->Set_Active(false);
+			m_vecNode[UI_EFFECT_FRONTFLARE]->Set_Active(false);
+		}
+	}
 
 	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
 	//{
@@ -363,6 +401,10 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 		break;
 	case CUI_ClientManager::TOP_ROTGET:
 		static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_Guage(fValue);
+		break;
+	case CUI_ClientManager::TOP_ROT_LVUP:
+		m_bRotLvUp = true;
+		m_iRotLv = (_uint)fValue;
 		break;
 	case CUI_ClientManager::TOP_BOSS:
 		if (fValue >= 10.f)
