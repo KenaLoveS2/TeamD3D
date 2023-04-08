@@ -3,8 +3,8 @@
     "ImagePath": "../Bin/Resources/Textures/UI/06. Inventory/upgrade/Output/Bomb/Bomb%d.png",
     "Level0":[
         {
-            "Name": "폭탁이름0",
-            "Desc": "폭탄설명0",
+            "Name": "폭탄",
+            "Desc": "조준 상태에서 우클릭을 눌렀다 떼어 폭탄을 던집니다.",
             "Condition": [
                 {
                     "PrevSkill" : -1,
@@ -17,8 +17,8 @@
     ],
     "Level1":[
         {
-            "Name": "폭탄이름1",
-            "Desc": "폭탄설명1",
+            "Name": "빠른 기폭 +",
+            "Desc": "폭탄이 터지기 전에 전개된 보호막과 닿으면 바로 폭발합니다.",
             "Condition": [
                 {
                     "PrevSkill" : -1,
@@ -31,8 +31,8 @@
     ],
     "Level2":[
         {
-            "Name": "폭탄이름2",
-            "Desc": "폭탄설명2",
+            "Name": "빠른 기폭 ++",
+            "Desc": "폭탄이 부착된 후 터지기까지의 시간이 줄어듭니다.",
             "Condition": [
                 {
                     "PrevSkill" : 1,
@@ -45,8 +45,8 @@
     ],
     "Level3":[
         {
-            "Name": "폭탄이름3",
-            "Desc": "폭탄설명3",
+            "Name": "다중 폭탄",
+            "Desc": "한 번에 폭탄 2개를 생성할 수 있는 능력을 잠금 해제합니다.",
             "Condition": [
                 {
                     "PrevSkill" : -1,
@@ -59,8 +59,8 @@
     ],
     "Level4":[
         {
-            "Name": "폭탄이름4",
-            "Desc": "폭탄설명4",
+            "Name": "스플래터 폭탄",
+            "Desc": "적에게 폭탄이 붙었을 때 튀어오르며,\n일시적으로 적이 근접 공격으로 받는 대미지가 증가합니다.",
             "Condition": [
                 {
                     "PrevSkill" : -1,

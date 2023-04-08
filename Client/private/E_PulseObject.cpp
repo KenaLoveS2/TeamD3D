@@ -2,6 +2,7 @@
 #include "..\public\E_PulseObject.h"
 #include "GameInstance.h"
 #include "Effect_Trail.h"
+#include "BowTarget.h"
 
 CE_PulseObject::CE_PulseObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -205,6 +206,17 @@ void CE_PulseObject::ImGui_PhysXValueProperty()
 	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
 	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
 	m_pTransformCom->Set_PxPivot(vPxPivot);
+}
+
+_int CE_PulseObject::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	if (pTarget != nullptr)
+	{
+		if (iColliderIndex == (_int)COL_BOWTARGET)
+			dynamic_cast<CBowTarget*>(pTarget)->TurnOn_Launch();
+	}
+
+	return 0;
 }
 
 

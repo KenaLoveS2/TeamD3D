@@ -431,6 +431,9 @@ HRESULT CRot::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		if (m_pKena->Get_State(CKena::STATE_LEVELUP) == true)
+			m_pKena->Set_State(CKena::STATE_LEVELUP_READY, true);
+
 		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 		m_pMyCam->Set_Target(nullptr);
 		p_game_instance->Work_Camera(L"PLAYER_CAM");

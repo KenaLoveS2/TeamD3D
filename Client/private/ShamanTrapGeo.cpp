@@ -165,7 +165,7 @@ void CShamanTrapGeo::Imgui_RenderProperty()
 HRESULT CShamanTrapGeo::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxEffectModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{

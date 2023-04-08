@@ -1698,6 +1698,65 @@ PS_OUT PS_MAIN_HUNTER_HAIR(PS_IN In)
 	return Out;
 } // 34
 
+PS_OUT PS_MAIN_E_R_AO_E_DISSOLVE(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	FinalColor = vDiffuse + (vDiffuse * vEmissiveDesc * g_EmissiveColor);
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(120.f, 120.f, 120.f, 255.f) / 255.f;
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(85.f, 215.f, 255.f, 255.f) / 255.f;
+
+		// add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 2.f), 0.f);
+	// ERAO
+	float4 ERAO = float4(vAO_R_MDesc.b, vAO_R_MDesc.g, 1.f, 1.f);
+	Out.vAmbient = ERAO;
+
+	return Out;
+}//35
+
 technique11 DefaultTechnique
 {
 	pass Default
@@ -2147,4 +2206,16 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_HUNTER_HAIR();
 	}//34
+	pass E_R_AO_E
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_E_R_AO_E_DISSOLVE();
+	}//35
 };

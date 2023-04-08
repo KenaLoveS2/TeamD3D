@@ -7,7 +7,7 @@
 #include "Interaction_Com.h"
 #include "Kena.h"
 #include "ControlRoom.h"
-
+#include "PulseStone.h"
 CPulse_Plate_Anim::CPulse_Plate_Anim(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
 {
@@ -263,6 +263,13 @@ void CPulse_Plate_Anim::Pulse_Plate_AnimControl(_float fTimeDelta)
 			dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Play();
 			m_bSecondCinema = true;*/
 		}
+
+		if (m_EnviromentDesc.iRoomIndex == 6 && !m_bSecondCinema) /*Gimmick Map*/
+		{
+			dynamic_cast<CPulseStone*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+				L"Layer_Enviroment", L"MG_PulseStoneRock"))->Gimmick_Active(true);
+		}
+
 	}
 
 	if (m_bPlayerColl && (m_pModelCom->Get_AnimIndex() == 2 && m_pModelCom->Get_AnimationFinish())

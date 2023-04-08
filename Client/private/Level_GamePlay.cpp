@@ -39,6 +39,7 @@ HRESULT CLevel_GamePlay::Initialize()
 		p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
+		p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 
 	RELEASE_INSTANCE(CGameInstance)
 		
@@ -246,6 +247,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"NPC_CAM", pCamera), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 
@@ -261,9 +263,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Environment(const _tchar * pLayerTag)
 
 	// CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Portal_Test.json");
 
-	//FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_PortalPlane"), L"Portal_0"), E_FAIL);
+	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "TestBombTarget.json");
 
-	//FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_PortalPlane"), L"Portal_1"), E_FAIL);
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_BowTarget", L"BowTarget", nullptr, nullptr), E_FAIL);
+
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_Meditation_Spot", L"MeditationSpot", nullptr, nullptr), E_FAIL);
 
 	return S_OK;
 }

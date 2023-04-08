@@ -27,7 +27,9 @@ HRESULT CTexture_Manager::Scene_Chane_Clear()
 {
 	for (auto& Pair : m_Textures)
 		Safe_Release(Pair.second);
+
 	m_Textures.clear();
+	
 	return S_OK;
 }
 
@@ -35,5 +37,6 @@ void CTexture_Manager::Free()
 {
 	for (auto& Pair : m_Textures)
 		Safe_Release(Pair.second);
+
 	m_Textures.clear();
 }

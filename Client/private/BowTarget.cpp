@@ -1,236 +1,374 @@
 #include "stdafx.h"
 #include "..\public\BowTarget.h"
 #include "GameInstance.h"
+#include "Utile.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
+#include "BowTarget.h"
+#include "AnimationState.h"
 
-CBowTarget::CBowTarget(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	:CEnviromentObj(pDevice, pContext)
+CBowTarget::CBowTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CEnviromentObj(pDevice, pContext)
 {
 }
 
-CBowTarget::CBowTarget(const CBowTarget & rhs)
+CBowTarget::CBowTarget(const CBowTarget& rhs)
 	: CEnviromentObj(rhs)
 {
 }
 
 HRESULT CBowTarget::Initialize_Prototype()
 {
-	if (FAILED(__super::Initialize_Prototype()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 
 	return S_OK;
 }
 
-HRESULT CBowTarget::Initialize(void * pArg)
+HRESULT CBowTarget::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
 
-	if (FAILED(SetUp_Components()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 
 	m_bRenderActive = true;
+
+	CTransform::TRANSFORMDESC		Desc = m_pTransformCom->Get_TransformDesc();
+	Desc.fSpeedPerSec = 2.5f;
+	Desc.fRotationPerSec = XMConvertToRadians(90.f);
+	m_pTransformCom->Set_TransformDesc(Desc);
+
 	return S_OK;
 }
 
 HRESULT CBowTarget::Late_Initialize(void* pArg)
 {
-	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
-	{
-		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
-	}
-	else if (m_pModelCom->Get_IStancingModel() == false && m_pModelCom->Get_UseTriangleMeshActor())
-	{
-		m_pModelCom->Create_PxTriangle(Create_PxUserData(this, false, COL_ENVIROMENT));
-	}
-	else
-		return S_OK;
+	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float3 vPivotScale = _float3(0.2f, 0.f, 1.f);
+	_float3 vPivotPos = _float3(0.03f, 0.13f, 0.01f);
+
+	// Capsule X == radius , Y == halfHeight
+	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	PxSphereDesc.eType = SPHERE_DYNAMIC;
+	PxSphereDesc.pActortag = m_szCloneObjectTag;
+	PxSphereDesc.vPos = vPos;
+	PxSphereDesc.fRadius = vPivotScale.x;
+	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxSphereDesc.fDensity = 1.f;
+	PxSphereDesc.fAngularDamping = 0.5f;
+	PxSphereDesc.fMass = 59.f;
+	PxSphereDesc.fLinearDamping = 1.f;
+	PxSphereDesc.bCCD = true;
+	PxSphereDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	PxSphereDesc.fDynamicFriction = 0.5f;
+	PxSphereDesc.fStaticFriction = 0.5f;
+	PxSphereDesc.fRestitution = 0.1f;
+
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_BOWTARGET));
+
+	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 
 	return S_OK;
 }
 
 void CBowTarget::Tick(_float fTimeDelta)
 {
+	if (CGameInstance::GetInstance()->Key_Down(DIK_E))
+		m_bLaunch = true;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_R))
+		Reset();
+	if (CGameInstance::GetInstance()->Key_Down(DIK_T))
+		m_bArrowHit = true;
+
+	if (m_bDead == true)
+		return;
+
 	__super::Tick(fTimeDelta);
 
-	if (m_bOncePosUpdate == false && m_bRenderActive)
-	{
-		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
-		m_bOncePosUpdate = true;
-	}
+	m_eCurState = Check_State();
+	Update_State(fTimeDelta);
+
+	m_pAnimation->Play_Animation(fTimeDelta);
+
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CBowTarget::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDead == true)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom && m_bRenderActive)
-	{
-#ifdef _DEBUG
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
-#endif
+	if (m_ePreState != m_eCurState)
+		m_ePreState = m_eCurState;
 
+	if (m_pRendererCom != nullptr && m_bRenderActive == true)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	}
 }
 
 HRESULT CBowTarget::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	if (m_pModelCom->Get_IStancingModel())
+	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_AO_R_MTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 35);
+	}
 
-			if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
+	return S_OK;
+}
+
+void CBowTarget::Imgui_RenderProperty()
+{
+}
+
+void CBowTarget::ImGui_AnimationProperty()
+{
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
+	m_pAnimation->ImGui_RenderProperty();
+}
+
+void CBowTarget::ImGui_PhysXValueProperty()
+{
+	PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+	PxShape* pShape = nullptr;
+	pActor->getShapes(&pShape, sizeof(PxShape));
+	PxSphereGeometry& Geometry = pShape->getGeometry().sphere();
+	_float& fScaleX = Geometry.radius;
+	ImGui::BulletText("Radius Setting");
+	ImGui::DragFloat("Radius", &fScaleX, 0.01f);
+	pShape->setGeometry(Geometry);
+
+	CTransform::ActorData* pActorData = m_pTransformCom->FindActorData(m_szCloneObjectTag);
+	_smatrix		matPivot = pActorData->PivotMatrix;
+	_float4		vScale, vRot, vTrans;
+	ImGuizmo::DecomposeMatrixToComponents((_float*)&matPivot, (_float*)&vTrans, (_float*)&vRot, (_float*)&vScale);
+
+	ImGui::DragFloat3("Rotate", (_float*)&vRot, 0.01f);
+	ImGui::DragFloat3("Translation", (_float*)&vTrans, 0.01f);
+
+	ImGuizmo::RecomposeMatrixFromComponents((_float*)&vTrans, (_float*)&vRot, (_float*)&vScale, (_float*)&matPivot);
+
+	pActorData->PivotMatrix = matPivot;
+}
+
+HRESULT CBowTarget::Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)
+{
+	return S_OK;
+}
+
+void CBowTarget::Calc_RootBoneDisplacement(_fvector vDisplacement)
+{
+	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	vPos = vPos + vDisplacement;
+	m_pTransformCom->Set_Translation(vPos, vDisplacement);
+}
+
+_int CBowTarget::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	if (pTarget == nullptr)
+	{
+
+	}
+	else
+	{
+		_bool	bWork = (m_eCurState == CBowTarget::LAUNCH || m_eCurState == CBowTarget::LOOP || m_eCurState == CBowTarget::FAIL_LOOP);
+		if (iColliderIndex == (_int)COL_PLAYER_ARROW && bWork == true)
+			m_bArrowHit = true;
+	}
+
+	return 0;
+}
+
+_int CBowTarget::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	return 0;
+}
+
+_int CBowTarget::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	return 0;
+}
+
+CBowTarget::ANIMATION CBowTarget::Check_State()
+{
+	ANIMATION	eState = m_ePreState;
+
+	switch (eState)
+	{
+		case CBowTarget::REST:
+		{
+			if (m_bLaunch == true)
 			{
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+				eState = CBowTarget::LAUNCH;
+				m_pAnimation->State_Animation("LAUNCH");
 			}
-			else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
+
+			break;
+		}
+
+		case CBowTarget::LAUNCH:
+		{
+			if (m_pAnimation->Get_AnimationFinish() == true)
 			{
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
+				eState = CBowTarget::LOOP;
+				m_pAnimation->State_Animation("LOOP", 0.f);
 			}
-			else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
+
+			if (m_bArrowHit == true)
 			{
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
+				eState = CBowTarget::HIT;
+				m_pAnimation->State_Animation("HIT");
 			}
+
+			break;
+		}
+
+		case CBowTarget::LOOP:
+		{
+			if (m_fFlyTime <= 0.f)
+			{
+				eState = CBowTarget::FAIL_LOOP;
+				m_pAnimation->State_Animation("FAIL_LOOP");
+			}
+
+			if (m_bArrowHit == true)
+			{
+				eState = CBowTarget::HIT;
+				m_pAnimation->State_Animation("HIT");
+			}
+
+			break;
+		}
+
+		case CBowTarget::HIT:
+		{
+			if (m_fDissolveTime >= 1.f)
+			{
+				m_bDead = true;
+				m_pTransformCom->Clear_Actor();
+				//Reset();
+			}
+
+			break;
+		}
+
+		case CBowTarget::FAIL_LOOP:
+		{
+			if (m_pAnimation->Get_AnimationFinish() == true)
+			{
+				Reset();
+			}
+
+			if (m_bArrowHit == true)
+			{
+				eState = CBowTarget::HIT;
+				m_pAnimation->State_Animation("HIT");
+			}
+
+			break;
+		}
+	}
+
+	return eState;
+}
+
+void CBowTarget::Update_State(_float fTimeDelta)
+{
+	switch (m_eCurState)
+	{
+		case CBowTarget::REST:
+		{
+			break;
+		}
+
+		case CBowTarget::LAUNCH:
+		{
+			break;
+		}
+
+		case CBowTarget::LOOP:
+		{
+			m_fFlyTime -= fTimeDelta;
+			break;
+		}
+
+		case CBowTarget::HIT:
+		{
+			m_fDissolveTime = m_pAnimation->Get_AnimationProgress();
+			CUtile::Saturate<_float>(m_fDissolveTime, 0.f, 1.f);
+			break;
+		}
+
+		case CBowTarget::FAIL_LOOP:
+		{
+			_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+			if (XMVectorGetY(vPos) > m_vInitPosition.y)
+				m_pTransformCom->Go_AxisNegY(fTimeDelta);
 			else
-			{
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
-			}
-		}
-	}
-	else
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
-		}
-	}
+				m_pTransformCom->Set_Position(m_vInitPosition);
 
-	return S_OK;
+			break;
+		}
+	}
 }
 
-HRESULT CBowTarget::RenderShadow()
+void CBowTarget::Reset()
 {
-	if (FAILED(__super::RenderShadow()))
-		return E_FAIL;
+	m_bKenaDetected = false;
+	m_bLaunch = false;
+	m_bArrowHit = false;
+	m_fFlyTime = 4.f;
 
-	if (FAILED(SetUp_ShadowShaderResources()))
-		return E_FAIL;
+	m_eCurState = CBowTarget::REST;
+	m_ePreState = CBowTarget::REST;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+	m_fDissolveTime = 0.f;
 
-	if (m_pModelCom->Get_IStancingModel())
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 0), E_FAIL);
-		}
-	}
-	else
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 21), E_FAIL);
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT CBowTarget::RenderCine()
-{
-	if (FAILED(__super::RenderCine()))
-		return E_FAIL;
-
-	if (FAILED(__super::SetUp_CineShaderResources()))
-		return E_FAIL;
-
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	if (m_pModelCom->Get_IStancingModel())
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 12), E_FAIL);
-		}
-	}
-	else
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 20), E_FAIL);
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT CBowTarget::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
-{
-	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
-
-	/* For.Com_CtrlMove */
-	if (eComponentOption == COMPONENTS_CONTROL_MOVE)
-	{
-		if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_ControlMove"), pComTag,
-			(CComponent**)&m_pControlMoveCom)))
-			return E_FAIL;
-	}
-	/* For.Com_Interaction */
-	else if (eComponentOption == COMPONENTS_INTERACTION)
-	{
-		if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_Interaction_Com"), pComTag,
-			(CComponent**)&m_pInteractionCom)))
-			return E_FAIL;
-	}
-	else
-		return S_OK;
-
-	return S_OK;
+	m_pTransformCom->Set_Position(m_vInitPosition);
 }
 
 HRESULT CBowTarget::SetUp_Components()
 {
 	/* For.Com_Renderer */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
-		(CComponent**)&m_pRendererCom)))
-		return E_FAIL;
-
-	/*나중에  레벨 인덱스 수정해야됌*/
-	if (m_EnviromentDesc.iCurLevel == 0)
-		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
-	
-	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
-		(CComponent**)&m_pModelCom)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
-		(CComponent**)&m_pShaderCom)))
-		return E_FAIL;
+	if (m_EnviromentDesc.iCurLevel == 0)
+		m_EnviromentDesc.iCurLevel = g_LEVEL;
+
+	/* For.Com_Model */
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_BowTarget", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_COMP_E_R_AO, TEXT("../Bin/Resources/Anim/BowTarget/T_BowTarget_Comp_E_R_AO.png")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/BowTarget/T_BowTarget_E.png")), E_FAIL);
+
+	/* For.Com_Shader */
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+
+	/* For.Com_DISSOLVETEX */
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Component_Texture_Dissolve_BowTarget", L"COM_DISSOLVETEX", (CComponent**)&m_pDissolveTexture), E_FAIL);
+	
+
+	return S_OK;
+}
+
+HRESULT CBowTarget::SetUp_State()
+{
+	m_pModelCom->Set_RootBone("WhirlyBird");
+	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "WhirlyBird", "../Bin/Data/Animation/BowTarget.json");
+	m_pAnimation->State_Animation("REST", 0.f);
 
 	return S_OK;
 }
@@ -238,30 +376,31 @@ HRESULT CBowTarget::SetUp_Components()
 HRESULT CBowTarget::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
-	RELEASE_INSTANCE(CGameInstance);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bArrowHit, sizeof(_bool)), E_FAIL);
+
+	m_bArrowHit && Bind_Dissolve(m_pShaderCom);
+
 	return S_OK;
 }
 
-HRESULT CBowTarget::SetUp_ShadowShaderResources()
+HRESULT CBowTarget::Bind_Dissolve(CShader* pShader)
 {
-	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
-	RELEASE_INSTANCE(CGameInstance);
+	FAILED_CHECK_RETURN(pShader->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pDissolveTexture->Bind_ShaderResource(pShader, "g_DissolveTexture"), E_FAIL);
+
 	return S_OK;
 }
 
-CBowTarget * CBowTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CBowTarget* CBowTarget::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBowTarget*		pInstance = new CBowTarget(pDevice, pContext);
+	CBowTarget* pInstance = new CBowTarget(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -271,9 +410,9 @@ CBowTarget * CBowTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pC
 	return pInstance;
 }
 
-CGameObject * CBowTarget::Clone(void * pArg)
+CGameObject* CBowTarget::Clone(void* pArg)
 {
-	CBowTarget*		pInstance = new CBowTarget(*this);
+	CBowTarget* pInstance = new CBowTarget(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -287,11 +426,12 @@ void CBowTarget::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pDissolveTexture);
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pAnimation);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
-	//Safe_Release(m_pMasterDiffuseBlendTexCom);
 }
