@@ -150,8 +150,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 }
 
 void CBossWarrior::Tick(_float fTimeDelta)
-{	
-	m_bReadySpawn = true;
+{		
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -161,7 +160,7 @@ void CBossWarrior::Tick(_float fTimeDelta)
 
 	m_pHat->Tick(fTimeDelta);
 
-	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
 
@@ -1008,7 +1007,7 @@ HRESULT CBossWarrior::SetUp_Components()
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/VillageWarrior_Uv_02_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/VillageWarrior_Uv_02_OPACITY.png")), E_FAIL);
 
-	// m_pModelCom->Set_RootBone("VL_Warrior");
+	m_pModelCom->Set_RootBone("VL_Warrior");
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_BossWarrior.json");

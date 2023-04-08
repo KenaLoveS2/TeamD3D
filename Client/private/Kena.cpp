@@ -472,7 +472,7 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(10);
+	m_pKenaStatus->Set_Attack(100);
 #endif	
 
 	if (m_bAim && m_bJump)
