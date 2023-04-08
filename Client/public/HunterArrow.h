@@ -36,6 +36,14 @@ private:
 
 	CBone* m_pBowBone = nullptr;
 
+	enum COPY_SOUND_KEY {
+		CSK_HIT, CSK_IMPACT, CSK_LAUNCH, CSK_WHOOSH, CSK_IMPACT2,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+	CGameInstance* m_pGameInstance = nullptr;
+
 public:
 	CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CHunterArrow(const CHunterArrow& rhs);
@@ -69,10 +77,10 @@ public:
 
 	_int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex);
 	void Execute_Ready(FIRE_TYPE eFireType);
-	void Execute_Fire();
+	void Execute_Fire(_bool bLookTargetFlag, _float4 vTargetPos);
 	void Execute_Finish();
 	_bool IsEnd() {
-		return m_eArrowState == STATE_END;
+		return m_eArrowState == CHunterArrow::STATE_END;
 	}
 
 
@@ -103,7 +111,7 @@ public:
 	HRESULT		SetUp_Effects();
 	void		Reset_Effects();
 
-
+	void Play_FireFinishSound();
 
 };
 END
