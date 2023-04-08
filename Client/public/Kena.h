@@ -71,9 +71,10 @@ public:
 	void						Set_RotActionPossible(_bool bValue) { m_bRotActionPossible = bValue; }
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
 	void						Set_ChestInteractable(_bool bInteractable) { m_bChestInteractable = bInteractable; }
+	void						Set_MeditationPossible(_bool bValue) { m_bMeditationPossible = bValue; }
 	void						Add_HitStopTime(_float fTime) { m_fHitStopTime += fTime; }
 
-	const _bool&		Is_StateLock() const{ return m_bStateLock; }
+	const _bool&				Is_StateLock() const{ return m_bStateLock; }
 	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
@@ -181,6 +182,7 @@ private:
 	_bool						m_bRotActionPossible = false;
 	_bool						m_bRotWispInteractable = false;
 	_bool						m_bChestInteractable = false;
+	_bool						m_bMeditationPossible = false;
 
 	/* Effect Control */
 	_bool						m_bTrailON = false;

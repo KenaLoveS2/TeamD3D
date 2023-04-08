@@ -1,0 +1,57 @@
+[
+    {
+        "0. State Name": "FAIL_LOOP",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": false,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_WhirlyBird_FailLoop",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "HIT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": false,
+        "4. Lerp Duration": 0.0,
+        "5. Main Animation": "A_WhirlyBird_Hit",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "LAUNCH",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_WhirlyBird_Launch",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "LOOP",
+        "1. Looping": true,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": false,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_WhirlyBird_Loop",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "REST",
+        "1. Looping": true,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": false,
+        "4. Lerp Duration": 0.2,
+        "5. Main Animation": "A_WhirlyBird_Rest",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    }
+]

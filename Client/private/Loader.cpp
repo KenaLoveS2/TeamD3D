@@ -1755,6 +1755,9 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	/* Prototype_Component_Model_Broken_BowTarget */
 	FAILED_CHECK_RETURN(LoadNonAnimFolderModel(iLevelIndex, "Broken_BowTarget", false, false, false), E_FAIL);
 
+	/* Prototype Component_Texture_Dissolve_BowTarget */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Component_Texture_Dissolve_BowTarget", CTexture::Create(m_pDevice, m_pContext, L"../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_37.png")), E_FAIL);
+
 	/* GAMEOBJECTS */
 	/* Prototype_GameObject_Kena */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Kena", CKena::Create(m_pDevice, m_pContext)), E_FAIL);

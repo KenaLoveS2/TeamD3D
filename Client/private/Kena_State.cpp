@@ -206,7 +206,7 @@ HRESULT CKena_State::SetUp_State_Idle()
 		.Init_Changer(L"PULSE_PARRY", this, &CKena_State::Parry, &CKena_State::KeyDown_E)
 		.Init_Changer(L"TAKE_DAMAGE", this, &CKena_State::CommonHit)
 		.Init_Changer(L"INTERACT_STAFF", this, &CKena_State::KeyDown_Q, &CKena_State::Interactable)
-		.Init_Changer(L"MEDITATE_INTO", this, &CKena_State::KeyDown_Q)
+		.Init_Changer(L"MEDITATE_INTO", this, &CKena_State::KeyDown_Q, &CKena_State::Meditation_Possible)
 		.Init_Changer(L"MASK_ON", this, &CKena_State::KeyDown_T)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
@@ -8353,6 +8353,11 @@ _bool CKena_State::RotWisp_Interactable()
 _bool CKena_State::Chest_Interactable()
 {
 	return m_pKena->m_bChestInteractable;
+}
+
+_bool CKena_State::Meditation_Possible()
+{
+	return m_pKena->m_bMeditationPossible;
 }
 
 _bool CKena_State::Check_Skill_Melee_0()

@@ -1212,6 +1212,7 @@ private:	/* Changer */
 	_bool	Interactable();
 	_bool	RotWisp_Interactable();
 	_bool	Chest_Interactable();
+	_bool	Meditation_Possible();
 
 	_bool	Check_Skill_Melee_0();
 	_bool	Check_Skill_Melee_1();
