@@ -29,6 +29,8 @@ public:
 	void	Trail_InputPos(_float4 vPosition);
 	void	Trail_KeyFrames(vector<_float4>* vecKeyFrames, _float fTimeDelta);
 
+	void	StartUpdate();
+
 public:
 	void	Set_ParticleIdx(_int iIndex) { m_iIndex = iIndex; }
 	_int	Get_ParticleIdx() { return m_iIndex; }

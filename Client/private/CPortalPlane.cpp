@@ -80,11 +80,11 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 
 void CPortalPlane::Tick(_float fTimeDelta)
 {
-	if( false==m_bTestOnce) /*삭제하세요 배치를 위한 테스트용 변수*/
-	{
-		Late_Initialize(nullptr);
-		m_bTestOnce = true;
-	}
+	//if( false==m_bTestOnce) /*삭제하세요 배치를 위한 테스트용 변수*/
+	//{
+	//	Late_Initialize(nullptr);
+	//	m_bTestOnce = true;
+	//}
 
 	CGameObject::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
@@ -147,7 +147,7 @@ void CPortalPlane::ImGui_PhysXValueProperty()
 
 HRESULT CPortalPlane::SetUp_Components()
 {
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_WaterPlane", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_WaterPlane", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_Water", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 

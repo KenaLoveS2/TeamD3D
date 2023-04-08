@@ -57,6 +57,20 @@ HRESULT CFireBullet::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_eEFfectDesc.fFrame[0] = 99.f;
+
+	_tchar szSoundKey[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_Mage_FireStart.ogg"),
+		TEXT("Mon_Mage_FireChase.ogg"),
+		TEXT("Mon_Mage_FireExplosion.ogg"),
+	};
+
+	_tchar szTemp[64];
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		CGameInstance::GetInstance()->Copy_Sound(szSoundKey[i], szTemp);
+		m_pCopySoundKey[i] = CUtile::Create_StringAuto(szTemp);
+	}
+
 	return S_OK;
 }
 
@@ -181,7 +195,7 @@ HRESULT CFireBullet::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxEffectModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Sphere", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Sphere", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/MageBullet/T_Deadzone_REAM.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_SPECULAR, TEXT("../Bin/Resources/Textures/Effect/MageBullet/t_fur_noise_02.png")), E_FAIL);
@@ -296,12 +310,13 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 		//_vector vPos = m_pTransformCom->Get_Position();
 		//dynamic_cast<CE_RectTrail*>(m_vecChild[CHILD_P_TRAIL])->Trail_InputPos(vPos);
 
+		CGameInstance::GetInstance()->Play_Sound(m_pCopySoundKey[CSK_FIRE_CHASE], 0.7f);
 		m_eState = STATE_CHASE;
-
+		
 		break;
 	}
 	case STATE_CHASE:
-	{	
+	{			
 		m_pTransformCom->Chase(m_vTargetPos, fTimeDelta, 0.2f, true);
 		m_vecChild[CHILD_P_TRAIL]->Set_Active(true);
 
@@ -316,6 +331,7 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	}
 	case STATE_EXPLOSION_START:
 	{	
+		CGameInstance::GetInstance()->Stop_Sound(9);
 		// Turn Off => Object + RectTrail
 		m_vecChild[CHILD_COVER]->Set_Active(false);
 		m_vecChild[CHILD_BACK]->Set_Active(false);
@@ -325,6 +341,8 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 		m_bDissolve = true;
 		dynamic_cast<CE_FireBulletExplosion*>(m_vecChild[CHILD_EXPLOSION])->SetUp_State(m_vTargetPos);
 		dynamic_cast<CE_P_ExplosionGravity*>(m_vecChild[CHILD_P_DEAD])->UpdateParticle(m_vTargetPos);
+		CGameInstance::GetInstance()->Play_Sound(m_pCopySoundKey[CSK_FIRE_EXPLOSION], 0.7f);
+
 		m_eState = STATE_EXPLOSION;
 		break;
 	}
@@ -360,6 +378,8 @@ void CFireBullet::Execute_Create(_float4 vCreatePos)
 	m_vecChild[CHILD_COVER]->Set_Active(true);
 	m_vecChild[CHILD_BACK]->Set_Active(true);
 	m_vecChild[CHILD_EXPLOSION]->Set_Active(false);
+
+	CGameInstance::GetInstance()->Play_Sound(m_pCopySoundKey[CSK_FIRE_START], 0.7f);
 }
 
 _int CFireBullet::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)

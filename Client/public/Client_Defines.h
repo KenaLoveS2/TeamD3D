@@ -19,15 +19,15 @@ extern bool g_bFrameLimit;
 #define LIFT_ROT_COUNT		6
 #define FIRST_ROT			0
 
-#define MONSTER_LINEAR_DAMING		1.f
+#define MONSTER_LINEAR_DAMING		2.0f
 #define MONSTER_ANGULAR_DAMING		0.5f
 #define MONSTER_MASS				25000.f
 
 namespace Client
 {
-	enum LEVEL { LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_MAPTOOL, LEVEL_TESTPLAY, LEVEL_EFFECT, LEVEL_FINAL, LEVEL_END };
+	enum LEVEL { LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_MAPTOOL, LEVEL_TESTPLAY, LEVEL_EFFECT, LEVEL_GIMMICK, LEVEL_FINAL, LEVEL_END };
 
-	enum SOUND { SOUND_BGM, SOUND_UI, SOUND_END };
+	enum SOUND { SOUND_BGM, SOUND_UI, SOUND_PLAYER_VOICE, SOUND_PLAYER_SFX, SOUND_END };
 
 	static void Set_FrameLimit(bool bLimitFlag)
 	{
@@ -78,7 +78,7 @@ extern float				g_fSkyColorIntensity;
 extern bool				g_bDayOrNight;
 
 extern unsigned int	g_LEVEL;
-
+extern unsigned int	g_LEVEL_FOR_COMPONENT;
 static const XMFLOAT4X4 g_IdentityFloat4x4 = {
 	1,0,0,0,
 	0,1,0,0,

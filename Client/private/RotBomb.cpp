@@ -51,7 +51,7 @@ HRESULT CRotBomb::Initialize(void * pArg)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
 	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-	assert(m_pKena != nullptr && "CFireBullet::Initialize()");
+	assert(m_pKena != nullptr && "CRotBomb::Initialize()");
 
 	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
 	m_eEFfectDesc.bActive = false;
@@ -259,11 +259,11 @@ void CRotBomb::Set_Child()
 
 	m_vecChild.reserve(CHILD_END);
 
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotBombExplosion", L"RotBombExplosion"));
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotBombExplosion", CUtile::Create_CombinedString(m_szCloneObjectTag, L"RotBombExplosion") ));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 	
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Explosion_p", L"RotBombExplosion_P"));
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Explosion_p", CUtile::Create_CombinedString(m_szCloneObjectTag, L"RotBombExplosion_P")));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 
@@ -271,7 +271,7 @@ void CRotBomb::Set_Child()
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Position(vPos);
 
-	m_pPathTrail = dynamic_cast<CE_BombTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_BombTrail", L"RotBombTrail"));
+	m_pPathTrail = dynamic_cast<CE_BombTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_BombTrail", CUtile::Create_CombinedString(m_szCloneObjectTag, L"RotBombTrail")));
 	NULL_CHECK_RETURN(m_pPathTrail, );
 	m_pPathTrail->Set_Position(vPos);
 
@@ -282,7 +282,7 @@ HRESULT CRotBomb::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxEffectAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Rot_Bomb", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Rot_Bomb", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	/* Texture */
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();

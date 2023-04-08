@@ -89,29 +89,21 @@ HRESULT CUI_CanvasBottom::Bind()
 	CSaiya* pSaiya = dynamic_cast<CSaiya*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_NPC", L"Saiya"));
 	if (pSaiya == nullptr)
 		return E_FAIL;
+	
+	map <const _tchar*, class CCamera*>* pMap = CGameInstance::GetInstance()->Get_CameraContainer();
 
-	map <const _tchar*, class CGameObject*>* pMap = CGameInstance::GetInstance()->Get_GameObjects(g_LEVEL, L"CinemaCam");
 	if (pMap == nullptr)
 		return E_FAIL;
-
-
 
 	if (!pMap->empty())
 	{
 		for (auto pair : *pMap)
 		{
-			CCinematicCamera* pCam = static_cast<CCinematicCamera*>(pair.second);
-			if (pCam == nullptr)
-				return E_FAIL;
+			CCinematicCamera* pCam = dynamic_cast<CCinematicCamera*>(pair.second);
+
+			if(pCam != nullptr)
+				pCam->m_CinemaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
 		}
-
-
-		for (auto pair : *pMap)
-		{
-			CCinematicCamera* pCam = static_cast<CCinematicCamera*>(pair.second);
-			pCam->m_CinemaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
-		}
-
 	}
 
 	pSaiya->m_SaiyaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);

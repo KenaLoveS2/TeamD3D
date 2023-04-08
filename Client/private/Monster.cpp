@@ -349,13 +349,11 @@ HRESULT CMonster::SetUp_MovementTrail()
 void CMonster::Update_MovementTrail(const char * pBoneTag)
 {
 	CBone*	pBonePtr = m_pModelCom->Get_BonePtr(pBoneTag);
-	_matrix SocketMatrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+	_matrix SocketMatrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+	m_pMovementTrail->Get_TransformCom()->Set_WorldMatrix(SocketMatrix);
 
-	m_pMovementTrail->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
-
-	if (this->m_bSpawn == true)
-		m_pMovementTrail->Trail_InputRandomPos(matWorldSocket.r[3]);
+	if (m_bSpawn == true)
+		m_pMovementTrail->Trail_InputRandomPos(SocketMatrix.r[3]);
 }
 
 HRESULT CMonster::SetUp_DamageParticle()
@@ -587,6 +585,9 @@ void CMonster::Start_Spawn()
 	m_bReadySpawn = true;
 	m_bDissolve = true;
 	m_fDissolveTime = 1.f;
+
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+
 	m_pGameInstance->Play_Sound(m_pSoundKey_Wisp, 0.5f);
 }
 
@@ -622,4 +623,3 @@ void CMonster::SaveBufferCopySound(_tchar* pOriginSoundKey, _tchar* pTempBuffer,
 	m_pGameInstance->Copy_Sound(pOriginSoundKey, pTempBuffer);
 	*ppOutBuffer = CUtile::Create_StringAuto(pTempBuffer);
 }
-

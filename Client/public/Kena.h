@@ -32,7 +32,7 @@ public:
 		STATE_LEVELUP,
 		STATE_ATTACK, STATE_HEAVYATTACK, STATE_PERFECTATTACK,
 		STATE_COMMONHIT, STATE_HEAVYHIT,
-		STATE_SPRINT, STATE_MASK,
+		STATE_SPRINT, STATE_DASH, STATE_MASK,
 		STATE_AIM, STATE_BOW, STATE_INJECTBOW,
 		STATE_BOMB, STATE_INJECTBOMB, 
 		STATE_PULSE, STATE_PARRY,
@@ -73,7 +73,7 @@ public:
 	void						Set_ChestInteractable(_bool bInteractable) { m_bChestInteractable = bInteractable; }
 	void						Add_HitStopTime(_float fTime) { m_fHitStopTime += fTime; }
 
-	const _bool&				Is_StateLock() const{ return m_bStateLock; }
+	const _bool&		Is_StateLock() const{ return m_bStateLock; }
 	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
@@ -197,8 +197,11 @@ private:
 	void                        RimColorValue();
 	_bool						m_bHitRim = false;
 	_bool						m_bParryRim = false;
+	_bool						m_bDashRim = false;
+
 	_float						m_fHitRimIntensity = 0.f;
 	_float						m_fParryRimIntensity = 0.f;
+	_float						m_fDashRimIntensity = 0.f;
 
 	_bool						m_bRotRockChoiceFlag = false;
 	_bool						m_bRotRockMoveFlag = false;
@@ -263,7 +266,6 @@ public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _float>										m_Delegator;
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, CKena*>		m_PlayerPtrDelegator;
 	//Delegator<CUI_ClientManager::UI_PRESENT, _float, _float, _float, _float>				m_PlayerAmmoDelegator;
-
 
 	// 테스트용 임시 변수 인듯
 	_float m_fTest = 0.f;

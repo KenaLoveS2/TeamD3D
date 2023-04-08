@@ -96,7 +96,6 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 		}
 
 		m_pTransformCom->Tick(fTimeDelta);
-
 		return;
 	}
 
@@ -194,7 +193,7 @@ HRESULT CE_Swipes_Charged::SetUp_ShaderResources()
 HRESULT CE_Swipes_Charged::SetUp_Components()
 {	
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
 	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_SPHERE;
 
 	return S_OK;

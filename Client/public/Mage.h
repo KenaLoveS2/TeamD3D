@@ -129,6 +129,15 @@ private:
 
 	class CSticks01* m_pSticks[MAGE_STICK_COUNT] = { nullptr, };
 
+
+	enum COPY_SOUND_KEY {
+		CSK_DIE, CSK_HURT, CSK_HIT, CSK_MOVE, CSK_SUMMON, CSK_MAGIC1, CSK_MAGIC2, CSK_ATTACK, CSK_SPAWN, CSK_IMPACT, CSK_IDLE,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+
+
 public:
 	static CMage*							Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*				Clone(void* pArg = nullptr)  override;
@@ -136,6 +145,11 @@ public:
 
 	void Create_Sticks();
 	virtual void Clear_ByMinion(CMonster* pMinion) override;
+
+	virtual void Create_CopySoundKey() override;
+
+	void Play_AttackSound(_bool bIsInit, _float fTimeDelta);
+	void Play_ImpactSound(_bool bIsInit, _float fTimeDelta);	
 };
 
 END

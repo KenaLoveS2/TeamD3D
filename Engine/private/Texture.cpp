@@ -175,8 +175,8 @@ CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pConte
 			MSG_BOX("Failed to Created : CTexture");
 			Safe_Release(pInstance);
 		}
+		Safe_AddRef(pInstance);
 		CTexture_Manager::GetInstance()->Add_Texture(pTextureFilePath, pInstance);
-		
 		return pInstance;
 	}
 }
@@ -198,8 +198,11 @@ void CTexture::Free()
 {
 	__super::Free();
 
+	
 	for (_uint i = 0; i < m_iNumTextures; ++i)
 		Safe_Release(m_pTextures[i]);
 
 	Safe_Delete_Array(m_pTextures);
+
+	
 }

@@ -71,14 +71,14 @@ void CCameraForNpc::Tick(_float TimeDelta)
 				m_vTargetPos = m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
 			/* For. At */
-			_float3 vDir = XMVector3Normalize(m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) * m_fOffsetMulLook;
-			vDir.y += m_fOffsetY;
+			_float3 vDir = XMVector3Normalize(m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+			vDir += m_vLookOffset;
 			_float3 vLerpLook = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vDir, TimeDelta * m_fLerpTime);
 			_float4 vCalculatedLook = _float4(vLerpLook.x, vLerpLook.y, vLerpLook.z, 0.f);
 			m_pTransformCom->Set_Look(vCalculatedLook);
 
 			/* For. Pos*/
-			_vector vTargetPos = XMVectorSet(m_vTargetPos.x, m_vTargetPos.y + 0.5f, m_vTargetPos.z, 1.f) + m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+			_vector vTargetPos = XMVectorSet(m_vTargetPos.x + m_vOffset.x, m_vTargetPos.y + m_vOffset.y, m_vTargetPos.z + m_vOffset.z, 1.f) + m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
 			_float3 vLerpPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vTargetPos, TimeDelta * m_fLerpTime);
 			_float4 vCalculatedCamPos = _float4(vLerpPos.x, vLerpPos.y, vLerpPos.z, 1.f);
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCalculatedCamPos);
@@ -91,10 +91,10 @@ void CCameraForNpc::Tick(_float TimeDelta)
 			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 				m_vTargetPos = m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
-			_float3 vDir = XMVector3Normalize(m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) * m_fOffsetMulLook;
-			vDir.y += m_fOffsetY;
+			_float3 vDir = XMVector3Normalize(m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+			vDir += m_vLookOffset;
 			m_pTransformCom->Set_Look(vDir);
-			_vector vTargetPos = XMVectorSet(m_vTargetPos.x, m_vTargetPos.y + 0.5f, m_vTargetPos.z, 1.f) + m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+			_vector vTargetPos = XMVectorSet(m_vTargetPos.x + m_vOffset.x, m_vTargetPos.y + m_vOffset.y, m_vTargetPos.z + m_vOffset.z, 1.f) + m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vTargetPos);
 			pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
 			RELEASE_INSTANCE(CGameInstance)
@@ -115,6 +115,22 @@ HRESULT CCameraForNpc::Render()
 void CCameraForNpc::Imgui_RenderProperty()
 {
 	CCamera::Imgui_RenderProperty();
+	float fPos[3] = { m_vOffset.x,m_vOffset.y, m_vOffset.z };
+	ImGui::DragFloat3("PosOffset", fPos, 0.01f, -100.f, 100.f);
+	m_vOffset.x = fPos[0]; m_vOffset.y = fPos[1]; m_vOffset.z = fPos[2];
+	float fLook[3] = { m_vLookOffset.x,m_vLookOffset.y ,m_vLookOffset.z };
+	ImGui::DragFloat3("LookOffset", fLook, 0.01f, -100.f, 100.f);
+	m_vLookOffset.x = fLook[0]; m_vLookOffset.y = fLook[1]; m_vLookOffset.z = fLook[2];
+}
+
+void CCameraForNpc::Set_Target(CGameObject* pTarget, _uint iOffsetType, _float3 vOffset, _float3 vLookOffset, _float fTime)
+{
+	m_bInitSet = true;
+	m_pTarget = pTarget;
+	m_iOffsetType = iOffsetType;
+	m_vOffset = vOffset;
+	m_vLookOffset = vLookOffset;
+	m_fLerpTime = fTime;
 }
 
 CCameraForNpc* CCameraForNpc::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

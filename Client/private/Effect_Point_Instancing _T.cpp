@@ -202,66 +202,38 @@ void CEffect_Point_Instancing_T::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pVIInstancingBufferCom->Get_PointDesc()->fTimeDelta = fTimeDelta;
-
 	if (m_eEFfectDesc.bStart == true)
-	{
 		m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
-
-		if (m_eEFfectDesc.bStart == false)
-			m_eEFfectDesc.fPlayBbackTime = 0.0f;
-	}
+	else
+		m_eEFfectDesc.fPlayBbackTime = 0.0f;
 
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
-	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
-		{
-			if (m_eEFfectDesc.fTimeDelta < 1.f)
-				m_eEFfectDesc.fWidthFrame++;
-			else
-				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-			m_fTimeDelta = 0.0;
-
-			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
-			{
-				if (m_eEFfectDesc.fTimeDelta < 1.f)
-					m_eEFfectDesc.fHeightFrame++;
-				else
-					m_eEFfectDesc.fHeightFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-				m_eEFfectDesc.fWidthFrame = 0.f;
-
-				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-					m_eEFfectDesc.fHeightFrame = 0.f;
-			}
-		}
-	}
+		Tick_Sprite(m_fTimeDelta, fTimeDelta);
 	
-	if (m_eEFfectDesc.fAngle != 0.0f)
-	{
-		_float4 vLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
+	//if (m_eEFfectDesc.fAngle != 0.0f)
+	//{
+	//	_float4 vLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
+	//	if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
+	//		vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+	//	if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
+	//		vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+	//	if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
+	//		vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+	//}
 
-		if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
-			vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-		if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
-			vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-		if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
-			vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-	}
+	//if (m_vecTrailEffect.size() != 0)
+	//{
+	//	_matrix WorldMatrix = XMMatrixIdentity();
+	//	auto &iter = m_vecTrailEffect.begin();
+	//	for (_int i = 0; i < m_vecTrailEffect.size(); i++, iter++)
+	//	{
+	//		WorldMatrix.r[3] = m_pVIInstancingBufferCom->Get_InstanceData_Idx(i).fPos;
+	//		(*iter)->Tick(fTimeDelta);
+	//		(*iter)->Set_WorldMatrix(WorldMatrix* m_pTransformCom->Get_WorldMatrix());
+	//	}
+	//}
 
-	if (m_vecTrailEffect.size() != 0)
-	{
-		_matrix WorldMatrix = XMMatrixIdentity();
-		auto &iter = m_vecTrailEffect.begin();
-		for (_int i = 0; i < m_vecTrailEffect.size(); i++, iter++)
-		{
-			WorldMatrix.r[3] = m_pVIInstancingBufferCom->Get_InstanceData_Idx(i).fPos;
-			(*iter)->Tick(fTimeDelta);
-			(*iter)->Set_WorldMatrix(WorldMatrix* m_pTransformCom->Get_WorldMatrix());
-		}
-	}
-
+	m_pVIInstancingBufferCom->Get_PointDesc()->fTimeDelta = fTimeDelta;
 	m_pVIInstancingBufferCom->Tick(fTimeDelta);
 }
 
@@ -272,10 +244,10 @@ void CEffect_Point_Instancing_T::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 
-	if (m_eEFfectDesc.IsBillboard == true)
-		BillBoardSetting(m_eEFfectDesc.vScale);
-	else
-		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
+// 	if (m_eEFfectDesc.IsBillboard == true)
+// 		BillBoardSetting(m_eEFfectDesc.vScale);
+// 	else
+// 		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
 	if (m_vecTrailEffect.size() != 0)
 	{
@@ -295,6 +267,13 @@ HRESULT CEffect_Point_Instancing_T::Render()
 	return S_OK;
 }
 
+void CEffect_Point_Instancing_T::Imgui_RenderProperty()
+{
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+	ImGui::InputFloat("HDRValue", &m_fHDRValue);
+
+}
+
 HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -306,7 +285,7 @@ HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 		(CComponent**)&m_pShaderCom), E_FAIL);
 
 	/* For.Com_VIBuffer => 버퍼마다 갯수가 다르기 때문에 이름지정함 ~~ */
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, m_szVIBufferProtoTag, TEXT("Com_VIBuffer"),
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_szVIBufferProtoTag, TEXT("Com_VIBuffer"),
 		(CComponent**)&m_pVIInstancingBufferCom), E_FAIL);
 
 	/***********
@@ -324,7 +303,7 @@ HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-		FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this), E_FAIL);
+		FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this), E_FAIL);
 	}
 
 	/* For.MaskTexture */
@@ -336,7 +315,7 @@ HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-		FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this), E_FAIL);
+		FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this), E_FAIL);
 	}
 
 	return S_OK;

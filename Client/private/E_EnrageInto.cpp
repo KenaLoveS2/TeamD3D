@@ -46,19 +46,11 @@ HRESULT CE_EnrageInto::Late_Initialize(void * pArg)
 void CE_EnrageInto::Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
-	{
-		m_fTimeDelta = 0.0f;
 		return;
-	}
 
 	__super::Tick(fTimeDelta);
 
-	m_fTimeDelta += fTimeDelta;
-	if (m_fTimeDelta > 1.f)
-	{
-		m_eEFfectDesc.bActive = false;
-		m_fTimeDelta = 0.0f;
-	}
+	TurnOffSystem(m_fTimeDelta, 1.f, fTimeDelta);
 }
 
 void CE_EnrageInto::Late_Tick(_float fTimeDelta)

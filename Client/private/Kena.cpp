@@ -121,6 +121,10 @@ const _bool CKena::Get_State(STATERETURN eState) const
 		return m_bSprint;
 		break;
 
+	case STATE_DASH:
+		return m_bDash || m_bDashAttack || m_bDashPortal;
+		break;
+
 	case STATE_MASK:
 		return m_bMask;
 		break;
@@ -199,6 +203,10 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 
 	case STATE_SPRINT:
 		m_bSprint = bValue;
+		break;
+
+	case STATE_DASH:
+		m_bDash = bValue;
 		break;
 
 	case STATE_MASK:
@@ -432,7 +440,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 		else if (i == 7)
 			desc.vPivotPos = _float4(-2.f, 0.f, 0.f, 1.f);
 
-		if (FAILED(p_game_instance->Clone_GameObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), 
+		if (FAILED(p_game_instance->Clone_GameObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"),
 			CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
 			return E_FAIL;
 
@@ -464,9 +472,9 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	//m_pKenaStatus->Set_Attack(0);
+	m_pKenaStatus->Set_Attack(10);
 #endif	
-	
+
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
@@ -1348,6 +1356,18 @@ void CKena::RimColorValue()
 		m_pShaderCom->Set_RawValue("g_Hit", &m_bHitRim, sizeof(_bool));
 		m_pShaderCom->Set_RawValue("g_HitRimIntensity", &m_fHitRimIntensity, sizeof(_float));
 	}
+	// DashAttack Rim
+	{
+		if (m_fDashRimIntensity > 0.f)
+			m_fDashRimIntensity -= TIMEDELTA;
+		else
+		{
+			m_fDashRimIntensity = 0.f;
+			m_bDashRim = false;
+		}
+		m_pShaderCom->Set_RawValue("g_Dash", &m_bDashRim, sizeof(_bool));
+		m_pShaderCom->Set_RawValue("g_DashRimIntensity", &m_fDashRimIntensity, sizeof(_float));
+	}
 }
 
 HRESULT CKena::Ready_Parts()
@@ -1367,7 +1387,7 @@ HRESULT CKena::Ready_Parts()
 	NULL_CHECK_RETURN(pPart, E_FAIL);
 
 	m_vecPart.push_back(pPart);
-	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
+	pGameInstance->Add_AnimObject(g_LEVEL, pPart);
 	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")), false);
 
 	/* MainOutfit */
@@ -1380,7 +1400,7 @@ HRESULT CKena::Ready_Parts()
 	NULL_CHECK_RETURN(pPart, E_FAIL);
 
 	m_vecPart.push_back(pPart);
-	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
+	pGameInstance->Add_AnimObject(g_LEVEL, pPart);
 	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")), true);
 
 	/* Taro Mask */
@@ -1517,7 +1537,7 @@ HRESULT CKena::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Kena", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Kena", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	//For.Cloth			
 	// AO_R_M

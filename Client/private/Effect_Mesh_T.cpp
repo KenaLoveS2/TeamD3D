@@ -178,6 +178,8 @@ void CEffect_Mesh_T::Imgui_RenderProperty()
 	ImGui::RadioButton("Sprite", &iType, 0);
 	ImGui::RadioButton("One", &iType, 1);
 
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+
 	if (ImGui::Button("Reset"))
 		m_fTimeDelta = 0.0f;
 
@@ -387,23 +389,23 @@ HRESULT CEffect_Mesh_T::Set_ModelCom(EFFECTDESC::MESHTYPE eMeshType)
 	switch (eMeshType)
 	{
 	case Client::CEffect_Base::tagEffectDesc::MESH_PLANE:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Plane"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_Plane"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_CUBE:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cube"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_Cube"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_CONE:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cone"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_Cone"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_SPHERE:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_CYLINDER:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cylinder"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_Cylinder"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	}
@@ -439,7 +441,7 @@ HRESULT CEffect_Mesh_T::SetUp_Components()
 		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 			return E_FAIL;
 	}
 
@@ -452,7 +454,7 @@ HRESULT CEffect_Mesh_T::SetUp_Components()
 		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 			return E_FAIL;
 	}
 

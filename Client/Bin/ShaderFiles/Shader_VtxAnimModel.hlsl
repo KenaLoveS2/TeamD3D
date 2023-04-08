@@ -219,6 +219,11 @@ PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
 		FinalColor = (vDiffuse)+(vRimColor * g_ParryRimIntensity);
 	}
+	else if (g_Dash)
+	{
+		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		FinalColor = (vDiffuse)+(vRimColor * g_DashRimIntensity);
+	}
 	else
 	{
 		FinalColor = (vDiffuse);
@@ -256,6 +261,11 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 	{
 		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
 		FinalColor = (vDiffuse + vEmissive) + vRimColor * g_ParryRimIntensity;
+	}
+	else if (g_Dash)
+	{
+		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		FinalColor = (vDiffuse + vEmissive) + vRimColor * g_DashRimIntensity;
 	}
 	else
 	{
@@ -303,6 +313,11 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
 		FinalColor = (vDiffuse + vEmissive * vEmissiveMask.r) + vRimColor * g_ParryRimIntensity;
 	}
+	else if (g_Dash)
+	{
+		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		FinalColor = (vDiffuse + vEmissive * vEmissiveMask.r) + vRimColor * g_DashRimIntensity;
+	}
 	else
 	{
 		FinalColor = (vDiffuse + vEmissive * vEmissiveMask.r);
@@ -342,6 +357,11 @@ PS_OUT PS_MAIN_FACE(PS_IN In)
 	{
 		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
 		FinalColor = (vDiffuse)+vRimColor * g_ParryRimIntensity;
+	}
+	else if (g_Dash)
+	{
+		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		FinalColor = (vDiffuse)+ vRimColor * g_DashRimIntensity;
 	}
 	else
 	{
@@ -426,6 +446,11 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
 		FinalColor = (vDiffuse)+vRimColor * g_ParryRimIntensity;
 	}
+	else if (g_Dash)
+	{
+		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		FinalColor = (vDiffuse)+vRimColor * g_DashRimIntensity;
+	}
 	else
 	{
 		FinalColor = (vDiffuse);
@@ -467,6 +492,11 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 	{
 		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
 		FinalColor += vRimColor * g_ParryRimIntensity;
+	}
+	else if (g_Dash)
+	{
+		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		FinalColor += vRimColor * g_DashRimIntensity;
 	}
 
 	Out.vDiffuse = FinalColor;

@@ -5,6 +5,8 @@
 #include "GameInstance.h"
 #include "UI_NodeButton.h"
 
+unsigned int	g_LEVEL_FOR_COMPONENT = 0;
+
 CLevel_Logo::CLevel_Logo(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
 {
@@ -145,14 +147,13 @@ HRESULT CLevel_Logo::Ready_For_LevelName()
 	//arrLevel[LEVEL_MAPTOOL] = "LEVEL_MAPTOOL";
 	//arrLevel[LEVEL_TESTPLAY] = "LEVEL_TESTPLAY";
 
-	arrLevel.reserve(5);
+	arrLevel.reserve(4);
 
 	arrLevel.push_back("LEVEL_GAMEPLAY");
 	arrLevel.push_back("LEVEL_MAPTOOL");
 	arrLevel.push_back("LEVEL_TESTPLAY");
 	arrLevel.push_back("LEVEL_TEST_EFFECT");
-	arrLevel.push_back("LEVEL_FINAL");
-	return S_OK;
+		return S_OK;
 }
 
 void CLevel_Logo::ChoseLevel()
@@ -200,6 +201,7 @@ void CLevel_Logo::ChangeScene(_uint iLevel)
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
+	g_LEVEL_FOR_COMPONENT = iLevel;
 	if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(iLevel)))))
 		return;
 	Safe_Release(pGameInstance);

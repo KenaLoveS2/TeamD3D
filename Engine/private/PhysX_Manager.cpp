@@ -7,54 +7,54 @@
 #include "GameInstance.h"
 
 /*
-eVISUALIZATION: ÀÌ ÇÃ·¡±×´Â PhysX ºñÁÖ¾ó µð¹ö°Å¿¡¼­ ¾×ÅÍ¸¦ ½Ã°¢È­ÇØ¾ß ÇÏ´ÂÁö ¿©ºÎ¸¦ ³ªÅ¸³À´Ï´Ù.
-eDISABLE_GRAVITY: ÀÌ ÇÃ·¡±×´Â ¾×ÅÍÀÇ Áß·ÂÀ» ºñÈ°¼ºÈ­ÇÏ´Â µ¥ »ç¿ëµË´Ï´Ù.
-eSEND_SLEEP_NOTIFIES: ÀÌ ÇÃ·¡±×´Â ¾×ÅÍ¿¡ ´ëÇÑ ¼ö¸é ¾Ë¸²À» È°¼ºÈ­/ºñÈ°¼ºÈ­ÇÏ´Â µ¥ »ç¿ëµË´Ï´Ù. ¾×ÅÍ°¡ Àáµé°Å³ª ±ú¾î³¯ ¶§ »ç¿ëÀÚ¿¡°Ô ¾Ë¸²À» º¸³¾ ¼ö ÀÖ½À´Ï´Ù.
-eDISABLE_SIMULATION: ÀÌ ÇÃ·¡±×´Â ¾×ÅÍ¿¡ ´ëÇÑ ½Ã¹Ä·¹ÀÌ¼ÇÀ» ºñÈ°¼ºÈ­ÇÏ´Â µ¥ »ç¿ëµË´Ï´Ù.
-eCONTACT_REPORTING: ÀÌ ÇÃ·¡±×´Â ¾×ÅÍ¿¡ ´ëÇÑ ¿¬¶ôÃ³ º¸°í¸¦ È°¼ºÈ­/ºñÈ°¼ºÈ­ÇÏ´Â µ¥ »ç¿ëµË´Ï´Ù. È°¼ºÈ­µÇ¸é ¾×ÅÍ´Â ¸ðµç Á¢Á¡À» »ç¿ëÀÚ¿¡°Ô º¸°íÇÕ´Ï´Ù.
-eCONTACT_PERFORMANCE_RBD: ÀÌ ÇÃ·¡±×´Â ¾×ÅÍ¿¡ ´ëÇÑ Á¢ÃË ¼º´É ±â´ÉÀ» È°¼ºÈ­/ºñÈ°¼ºÈ­ÇÏ´Â µ¥ »ç¿ëµË´Ï´Ù. È°¼ºÈ­µÇ¸é ¾×ÅÍ´Â ¼º´ÉÀ» Çâ»ó½ÃÅ°´Â ´Ü¼øÈ­µÈ Á¢ÃË »ý¼º ¾Ë°í¸®ÁòÀ» »ç¿ëÇÏÁö¸¸ Á¢ÃËÀÇ Á¤È®µµ°¡ ¶³¾îÁú ¼ö ÀÖ½À´Ï´Ù.
-eCONTACT_PERFORMANCE_ARTICULATION: ÀÌ ÇÃ·¡±×´Â ´Ù°üÀý ¸öÃ¼¿¡ ´ëÇÑ Á¢ÃË ¼º´É ±â´ÉÀ» È°¼ºÈ­/ºñÈ°¼ºÈ­ÇÏ´Â µ¥ »ç¿ëµË´Ï´Ù. È°¼ºÈ­µÇ¸é ´Ù°üÀý ¸öÃ¼´Â ¼º´ÉÀ» Çâ»ó½ÃÅ°´Â ´Ü¼øÈ­µÈ Á¢ÃË »ý¼º ¾Ë°í¸®ÁòÀ» »ç¿ëÇÏÁö¸¸ Á¢ÃËÀÇ Á¤È®µµ°¡ ¶³¾îÁú ¼ö ÀÖ½À´Ï´Ù.
-eCONTACT_FORCE_THRESHOLD: ÀÌ ÇÃ·¡±×´Â ¾×ÅÍ¿¡ ´ëÇÑ Á¢ÃË·Â ÀÓ°è°ªÀ» ¼³Á¤ÇÏ´Â µ¥ »ç¿ëµË´Ï´Ù. Á¢ÃË·ÂÀÌ ÀÌ ÀÓ°è°ªÀ» ÃÊ°úÇÏ¸é Á¢ÃË º¸°í¼­°¡ »ý¼ºµË´Ï´Ù.
-eDISABLE_CONTACT_REPORT_BUFFER_RESIZE: ÀÌ ÇÃ·¡±×´Â ¿¬¶ôÃ³ º¸°í¼­ ¹öÆÛ°¡ ¾×ÅÍ¿¡ ´ëÇØ ÀÚµ¿À¸·Î Å©±â°¡ Á¶Á¤µÇ´Â °ÍÀ» ¹æÁöÇÏ´Â µ¥ »ç¿ëµË´Ï´Ù.
-eLOCK_COM: ÀÌ ÇÃ·¡±×´Â ¾×ÅÍÀÇ Áú·® Áß½ÉÀ» °íÁ¤ÇÏ´Â µ¥ »ç¿ëµË´Ï´Ù.
+eVISUALIZATION: ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×´ï¿½ PhysX ï¿½ï¿½ï¿½Ö¾ï¿½ ï¿½ï¿½ï¿½ï¿½Å¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Ã°ï¿½È­ï¿½Ø¾ï¿½ ï¿½Ï´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½Ï´ï¿½.
+eDISABLE_GRAVITY: ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß·ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ë´Ï´ï¿½.
+eSEND_SLEEP_NOTIFIES: ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×´ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­/ï¿½ï¿½È°ï¿½ï¿½È­ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ë´Ï´ï¿½. ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½î³¯ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
+eDISABLE_SIMULATION: ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×´ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¹Ä·ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ë´Ï´ï¿½.
+eCONTACT_REPORTING: ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×´ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­/ï¿½ï¿½È°ï¿½ï¿½È­ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ë´Ï´ï¿½. È°ï¿½ï¿½È­ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½Í´ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+eCONTACT_PERFORMANCE_RBD: ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×´ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­/ï¿½ï¿½È°ï¿½ï¿½È­ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ë´Ï´ï¿½. È°ï¿½ï¿½È­ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½Í´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ü¼ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
+eCONTACT_PERFORMANCE_ARTICULATION: ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×´ï¿½ ï¿½Ù°ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­/ï¿½ï¿½È°ï¿½ï¿½È­ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ë´Ï´ï¿½. È°ï¿½ï¿½È­ï¿½Ç¸ï¿½ ï¿½Ù°ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ü¼ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
+eCONTACT_FORCE_THRESHOLD: ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×´ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ë·ï¿½ ï¿½Ó°è°ªï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ë´Ï´ï¿½. ï¿½ï¿½ï¿½Ë·ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ó°è°ªï¿½ï¿½ ï¿½Ê°ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ë´Ï´ï¿½.
+eDISABLE_CONTACT_REPORT_BUFFER_RESIZE: ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×´ï¿½ ï¿½ï¿½ï¿½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û°ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½â°¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ë´Ï´ï¿½.
+eLOCK_COM: ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ë´Ï´ï¿½.
 */
 
 /*
 Mass: The mass of the object, specified in kilograms.
-Áú·®: Å³·Î±×·¥À¸·Î ÁöÁ¤µÈ ¹°Ã¼ÀÇ Áú·®.
+ï¿½ï¿½ï¿½ï¿½: Å³ï¿½Î±×·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 
 Center of mass: The center of mass of the object, specified as a vector in local space.
-Áú·® Áß½É: ·ÎÄÃ °ø°£¿¡¼­ º¤ÅÍ·Î ÁöÁ¤µÈ °³Ã¼ÀÇ Áú·® Áß½ÉÀÔ´Ï´Ù.
+ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ï¿½Ô´Ï´ï¿½.
 
 Inertia tensor: The 3x3 inertia tensor of the object, specified in local space.
-°ü¼º ÅÙ¼­: ·ÎÄÃ °ø°£¿¡¼­ ÁöÁ¤µÈ °³Ã¼ÀÇ 3x3 °ü¼º ÅÙ¼­ÀÔ´Ï´Ù.
+ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¼ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ 3x3 ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¼ï¿½ï¿½Ô´Ï´ï¿½.
 
 Linear velocity: The linear velocity of the object, specified as a vector in world space.
-¼±Çü ¼Óµµ: ¿ùµå °ø°£¿¡¼­ º¤ÅÍ·Î ÁöÁ¤µÈ °³Ã¼ÀÇ ¼±Çü ¼ÓµµÀÔ´Ï´Ù.
+ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ï¿½Ô´Ï´ï¿½.
 
 Angular velocity: The angular velocity of the object, specified as a vector in local space.
-°¢¼Óµµ: ·ÎÄÃ °ø°£¿¡¼­ º¤ÅÍ·Î ÁöÁ¤µÈ °´Ã¼ÀÇ °¢¼Óµµ.
+ï¿½ï¿½ï¿½Óµï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Óµï¿½.
 
 Linear damping: The damping applied to the linear motion of the object. This value should be between 0 (no damping) and 1 (complete damping).
-¼±Çü °¨¼è: °´Ã¼ÀÇ Á÷¼± ¿îµ¿¿¡ Àû¿ëµÇ´Â °¨¼èÀÔ´Ï´Ù. ÀÌ °ªÀº 0(Á¦µ¿ ¾øÀ½)°ú 1(¿ÏÀüÇÑ Á¦µ¿) »çÀÌ¿©¾ß ÇÕ´Ï´Ù.
+ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½îµ¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ 1(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½Õ´Ï´ï¿½.
 
 Angular damping: The damping applied to the angular motion of the object. This value should be between 0 (no damping) and 1 (complete damping).
-°¢µµ °¨¼è: °³Ã¼ÀÇ °¢ ¿îµ¿¿¡ Àû¿ëµÇ´Â °¨¼èÀÔ´Ï´Ù. ÀÌ °ªÀº 0(Á¦µ¿ ¾øÀ½)°ú 1(¿ÏÀüÇÑ Á¦µ¿) »çÀÌ¿©¾ß ÇÕ´Ï´Ù.
+ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ ï¿½îµ¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ 1(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½Õ´Ï´ï¿½.
 
 Max angular velocity: The maximum angular velocity that the object can reach, specified in radians per second.
-ÃÖ´ë °¢¼Óµµ: °´Ã¼°¡ µµ´ÞÇÒ ¼ö ÀÖ´Â ÃÖ´ë °¢¼Óµµ·Î, ÃÊ´ç ¶óµð¾ÈÀ¸·Î ÁöÁ¤µË´Ï´Ù.
+ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Óµï¿½: ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½, ï¿½Ê´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ë´Ï´ï¿½.
 
 Sleep threshold: The amount of motion required to wake the object up from sleep. This value should be between 0 (never sleep) and a large number (sleep immediately).
-¼ö¸é ÀÓ°è°ª: °³Ã¼¸¦ ÀýÀü »óÅÂ¿¡¼­ ±ú¿ì´Â µ¥ ÇÊ¿äÇÑ µ¿ÀÛÀÇ ¾çÀÔ´Ï´Ù. ÀÌ °ªÀº 0(ÀáÀÚÁö ¾ÊÀ½)°ú Å« ¼ýÀÚ(Áï½Ã ÀáÀÚ±â) »çÀÌ¿©¾ß ÇÕ´Ï´Ù.
+ï¿½ï¿½ï¿½ï¿½ ï¿½Ó°è°ª: ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô´Ï´ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ Å« ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú±ï¿½) ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½Õ´Ï´ï¿½.
 
 CCD threshold: The distance threshold at which continuous collision detection (CCD) is triggered for the object. This value should be greater than 0.
-CCD ÀÓ°è°ª: °³Ã¼¿¡ ´ëÇØ CCD(¿¬¼Ó Ãæµ¹ °¨Áö)°¡ Æ®¸®°ÅµÇ´Â °Å¸® ÀÓ°è°ªÀÔ´Ï´Ù. ÀÌ °ªÀº 0º¸´Ù Ä¿¾ß ÇÕ´Ï´Ù.
+CCD ï¿½Ó°è°ª: ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ CCD(ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ÅµÇ´ï¿½ ï¿½Å¸ï¿½ ï¿½Ó°è°ªï¿½Ô´Ï´ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½ï¿½ ï¿½Õ´Ï´ï¿½.
 
 Collision filtering: The collision filter data used to determine which objects can collide with the rigid body.
-Ãæµ¹ ÇÊÅÍ¸µ: °­Ã¼¿Í Ãæµ¹ÇÒ ¼ö ÀÖ´Â °´Ã¼¸¦ °áÁ¤ÇÏ´Â µ¥ »ç¿ëµÇ´Â Ãæµ¹ ÇÊÅÍ µ¥ÀÌÅÍÀÔ´Ï´Ù.
+ï¿½æµ¹ ï¿½ï¿½ï¿½Í¸ï¿½: ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
 
 Kinematic target: If the rigid body is set to kinematic, this specifies the target transform that the body will interpolate towards.
-¿îµ¿ÇÐÀû ´ë»ó: °­Ã¼°¡ ¿îµ¿ÇÐÀûÀ¸·Î ¼³Á¤µÈ °æ¿ì ½ÅÃ¼°¡ º¸°£ÇÒ ´ë»ó º¯È¯À» ÁöÁ¤ÇÕ´Ï´Ù.
+ï¿½îµ¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½îµ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 */
 
 
@@ -102,20 +102,20 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 		| PxPairFlag::eCONTACT_EVENT_POSE;
 		
 	/*
-	eCONTACT_DEFAULT: ¿¬¶ôÃ³ »ý¼ºÀ» À§ÇÑ ±âº» µ¿ÀÛÀÔ´Ï´Ù. ÀÌ°ÍÀº ´Ù¸¥ ¸ðµç ÇÃ·¡±×¸¦ ±âº»°ªÀ¸·Î ¼³Á¤ÇÏ´Â °Í°ú °°½À´Ï´Ù.
-	eNOTIFY_TOUCH_FOUND: µÎ ¹è¿ìÀÇ Á¢ÃËÀÌ Ã³À½ °¨ÁöµÇ¸é ¾ÖÇÃ¸®ÄÉÀÌ¼Ç¿¡ ¾Ë¸³´Ï´Ù.
-	eNOTIFY_TOUCH_LOST: µÎ ¹è¿ìÀÇ ¿¬¶ôÀÌ ²÷¾îÁ³À» ¶§ ¾îÇÃ¸®ÄÉÀÌ¼Ç¿¡ ¾Ë¸³´Ï´Ù.
-	eNOTIFY_THRESHOLD_FORCE_FOUND: µÎ ¾×ÅÍ »çÀÌÀÇ ÈûÀÌ ÁöÁ¤µÈ ÀÓ°è°ªÀ» ÃÊ°úÇÏ¸é ¾ÖÇÃ¸®ÄÉÀÌ¼Ç¿¡ ¾Ë¸³´Ï´Ù.
-	eNOTIFY_THRESHOLD_FORCE_LOST: µÎ ¾×ÅÍ »çÀÌÀÇ ÈûÀÌ ÁöÁ¤µÈ ÀÓ°è°ª ¾Æ·¡·Î ¶³¾îÁö¸é ¾ÖÇÃ¸®ÄÉÀÌ¼Ç¿¡ ¾Ë¸³´Ï´Ù.
-	eNOTIFY_CONTACT_POINTS: µÎ ¹è¿ìÀÇ Á¢Á¡ Àû¿ëÀ» ¾Ë¸³´Ï´Ù.
-	eSOLVE_CONTACT: Ãæµ¹ °¨Áö ½Ã µÎ ÇàÀ§ÀÚ °£ÀÇ Á¢ÃËÀ» »ý¼ºÇÕ´Ï´Ù.
-	eMODIFY_CONTACTS: ¾ÖÇÃ¸®ÄÉÀÌ¼ÇÀÌ µÎ ¹è¿ì »çÀÌÀÇ Á¢Á¡À» ¼öÁ¤ÇÒ ¼ö ÀÖµµ·Ï Çã¿ëÇÕ´Ï´Ù.
-	eDETECT_DISCRETE_CONTACT: ºÒ¿¬¼Ó Ãæµ¹ °¨Áö¸¦ »ç¿ëÇÏ¿© µÎ ¾×ÅÍ °£ÀÇ Á¢ÃËÀ» °¨ÁöÇÕ´Ï´Ù.
-	eDETECT_CCD_CONTACT: ¿¬¼Ó Ãæµ¹ °¨Áö¸¦ »ç¿ëÇÏ¿© µÎ ¾×ÅÍ °£ÀÇ Á¢ÃËÀ» °¨ÁöÇÕ´Ï´Ù.
-	ePRE_SOLVER_VELOCITY: ¼Ö¹ö°¡ ½ÇÇàµÇ±â Àü¿¡ ¾×ÅÍ¿¡ ¼Óµµ º¯°æÀ» Àû¿ëÇÕ´Ï´Ù.
-	ePOST_SOLVER_VELOCITY: ¼Ö¹ö ½ÇÇà ÈÄ ¾×ÅÍ¿¡ ¼Óµµ º¯°æÀ» Àû¿ëÇÕ´Ï´Ù.
-	eCONTACT_EVENT_POSE: µÎ ¹è¿ìÀÇ Á¢Á¡ Æ÷Áî Àû¿ëÀ» ¾Ë¸³´Ï´Ù.
-	eNEXT_FREE: °ªÀ» ¹Ýº¹ÇÏ´Â µ¥ »ç¿ëµË´Ï´Ù PxPairFlag.
+	eCONTACT_DEFAULT: ï¿½ï¿½ï¿½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½âº» ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. ï¿½Ì°ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×¸ï¿½ ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
+	eNOTIFY_TOUCH_FOUND: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼Ç¿ï¿½ ï¿½Ë¸ï¿½ï¿½Ï´ï¿½.
+	eNOTIFY_TOUCH_LOST: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼Ç¿ï¿½ ï¿½Ë¸ï¿½ï¿½Ï´ï¿½.
+	eNOTIFY_THRESHOLD_FORCE_FOUND: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó°è°ªï¿½ï¿½ ï¿½Ê°ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼Ç¿ï¿½ ï¿½Ë¸ï¿½ï¿½Ï´ï¿½.
+	eNOTIFY_THRESHOLD_FORCE_LOST: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó°è°ª ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼Ç¿ï¿½ ï¿½Ë¸ï¿½ï¿½Ï´ï¿½.
+	eNOTIFY_CONTACT_POINTS: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½ï¿½Ï´ï¿½.
+	eSOLVE_CONTACT: ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+	eMODIFY_CONTACTS: ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+	eDETECT_DISCRETE_CONTACT: ï¿½Ò¿ï¿½ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+	eDETECT_CCD_CONTACT: ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+	ePRE_SOLVER_VELOCITY: ï¿½Ö¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+	ePOST_SOLVER_VELOCITY: ï¿½Ö¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+	eCONTACT_EVENT_POSE: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½ï¿½Ï´ï¿½.
+	eNEXT_FREE: ï¿½ï¿½ï¿½ï¿½ ï¿½Ýºï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ë´Ï´ï¿½ PxPairFlag.
 	*/
 
 	return PxFilterFlag::eDEFAULT;
@@ -130,6 +130,18 @@ CPhysX_Manager::CPhysX_Manager()
 void CPhysX_Manager::Free()
 {
 	Clear();
+
+	Px_Safe_Release(m_pControlllerManager);
+	Px_Safe_Release(m_pCooking);
+	Px_Safe_Release(m_pScene);
+	Px_Safe_Release(m_pDispatcher);
+	Px_Safe_Release(m_pPhysics);
+
+	PxPvdTransport* pTransport = m_pPvd->getTransport();
+	Px_Safe_Release(m_pPvd);
+	Px_Safe_Release(pTransport);
+	Px_Safe_Release(m_pFoundation);
+
 #ifdef _DEBUG
 	Safe_Release(m_pInputLayout);
 	Safe_Delete(m_pBatch);
@@ -185,7 +197,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	
 	m_pMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f);
 
-	// ±âº» ¶¥ »ý¼º	
+	// ï¿½âº» ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½	
 	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);		
 	m_pScene->addActor(*pGroundPlane);
 	
@@ -314,28 +326,24 @@ void CPhysX_Manager::createDynamic(const PxTransform& t, const PxGeometry& geome
 	m_pScene->addActor(*dynamic);
 }
 
-void CPhysX_Manager::Clear()
+void CPhysX_Manager::Clear(_bool bReCreateGround)
 {	
-	Px_Safe_Release(m_pControlllerManager);
-	Px_Safe_Release(m_pCooking);	
-	Px_Safe_Release(m_pScene);
-	Px_Safe_Release(m_pDispatcher);
-	Px_Safe_Release(m_pPhysics);
-		
-	PxPvdTransport* pTransport = m_pPvd->getTransport();
-	Px_Safe_Release(m_pPvd);
-	Px_Safe_Release(pTransport);	
-	Px_Safe_Release(m_pFoundation);
+	Reset();
+	if (bReCreateGround)
+		Create_PlaneGround();
 
-	for (auto &iter : m_UserDataes)
-	{
+	for (auto& iter : m_UserDataes)
 		Safe_Delete(iter);
-	}
+	m_UserDataes.clear();
 
-	for (auto &iter : m_TriggerDataes)
-	{
+	for (auto& iter : m_TriggerDataes)
 		Safe_Delete(iter);
-	}
+	m_TriggerDataes.clear();
+
+	m_StaticActors.clear();
+	m_DynamicActors.clear();
+	m_DynamicColliders.clear();
+	m_Triggers.clear();
 }
 
 
@@ -391,8 +399,11 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 {
 	if (Desc.eType == BOX_STATIC)
 	{	
-		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
+		PxRigidActor* pTemp = Find_StaticActor(Desc.pActortag);
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Box() -> Created Tag Name!!");
 
+		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
+		
 		/*
 		PxQuat Rotation = PxQuat(XMConvertToRadians(Desc.fDegree), CUtile::ConvertPosition_D3DToPx(Desc.vRotationAxis));
 		Transform.q = Rotation;
@@ -432,6 +443,14 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 	}
 	else if (Desc.eType == BOX_DYNAMIC)
 	{	
+		PxRigidActor* pTemp = nullptr;
+		if(pUserData->isGravity)
+			pTemp = Find_DynamicActor(Desc.pActortag);
+		else
+			pTemp = Find_DynamicCollider(Desc.pActortag);
+
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Box() -> Created Tag Name!!");
+
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic* pBox = m_pPhysics->createRigidDynamic(Transform);
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
@@ -487,6 +506,9 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 {
 	if (Desc.eType == SPHERE_STATIC)
 	{
+		PxRigidActor* pTemp = Find_StaticActor(Desc.pActortag);
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Sphere() -> Created Tag Name!!");
+
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic* pSphere = m_pPhysics->createRigidStatic(Transform);		
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
@@ -517,6 +539,13 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 	}
 	else if (Desc.eType == SPHERE_DYNAMIC)
 	{
+		PxRigidActor* pTemp = nullptr;
+		if (pUserData->isGravity)
+			pTemp = Find_DynamicActor(Desc.pActortag);
+		else
+			pTemp = Find_DynamicCollider(Desc.pActortag);
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Sphere() -> Created Tag Name!!");
+
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic* pSphere = m_pPhysics->createRigidDynamic(Transform);
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
@@ -570,6 +599,9 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 {
 	if (Desc.eType == CAPSULE_STATIC)
 	{
+		PxRigidActor* pTemp = Find_StaticActor(Desc.pActortag);
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Capsule() -> Created Tag Name!!");
+
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic *pCapsule = m_pPhysics->createRigidStatic(Transform);
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
@@ -603,6 +635,13 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 	}
 	else if (Desc.eType == CAPSULE_DYNAMIC)
 	{
+		PxRigidActor* pTemp = nullptr;
+		if (pUserData->isGravity)
+			pTemp = Find_DynamicActor(Desc.pActortag);
+		else
+			pTemp = Find_DynamicCollider(Desc.pActortag);
+		assert(pTemp == nullptr && "CPhysX_Manager::Create_Capsule() -> Created Tag Name!!");
+
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic *pCapsule = m_pPhysics->createRigidDynamic(Transform);		
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
@@ -757,6 +796,14 @@ PxRigidActor * CPhysX_Manager::Find_DynamicCollider(const _tchar * pActorTag)
 {
 	auto Pair = find_if(m_DynamicColliders.begin(), m_DynamicColliders.end(), CTag_Finder(pActorTag));
 	if (Pair == m_DynamicColliders.end()) return nullptr;
+
+	return Pair->second;
+}
+
+PxRigidActor* CPhysX_Manager::Find_Trigger(const _tchar* pActorTag)
+{
+	auto Pair = find_if(m_Triggers.begin(), m_Triggers.end(), CTag_Finder(pActorTag));
+	if (Pair == m_Triggers.end()) return nullptr;
 
 	return Pair->second;
 }
@@ -1151,6 +1198,9 @@ void CPhysX_Manager::Create_Trigger(PX_TRIGGER_DATA* pTriggerData)
 {
 	if (pTriggerData == nullptr) return;
 
+	PxRigidActor* pTemp = Find_Trigger(pTriggerData->pActortag);
+	assert(pTemp == nullptr && "CPhysX_Manager::Create_Trigger() -> Created Tag Name!!");
+
 	PxTransform Transform(CUtile::ConvertPosition_D3DToPx(pTriggerData->vPos));
 
 	pTriggerData->pTriggerStatic = m_pPhysics->createRigidStatic(Transform);
@@ -1208,14 +1258,20 @@ void CPhysX_Manager::Reset()
 	PxActorTypeFlags actorTypes = PxActorTypeFlag::eRIGID_STATIC | PxActorTypeFlag::eRIGID_DYNAMIC;
 
 	PxU32 numActors = m_pScene->getNbActors(actorTypes);
-	PxActor** actors = nullptr;
-	m_pScene->getActors(actorTypes, actors, numActors, 0);
 
-	for (PxU32 i = 0; i < numActors; i++) 
+	PxActor** pActors = new PxActor * [numActors];
+	for (PxU32 i = 0; i < numActors; i++)
+		pActors[i] = nullptr;
+
+	m_pScene->getActors(actorTypes, pActors, numActors, 0);
+
+	for (PxU32 i = 0; i < numActors; i++)
 	{
-		m_pScene->removeActor(*actors[i]);
-		actors[i]->release();
+		m_pScene->removeActor(*pActors[i]);
+		pActors[i]->release();
 	}
+
+	Safe_Delete_Array(pActors);
 }
 
 void CPhysX_Manager::Delete_DynamicActor(PxRigidActor* pActor)
@@ -1395,4 +1451,21 @@ void CPhysX_Manager::PutToSleep(PxRigidDynamic* pActor)
 void CPhysX_Manager::WakeUp(PxRigidDynamic* pActor)
 {
 	pActor->wakeUp();
+}
+
+void CPhysX_Manager::Delete_TriggerActor(const _tchar* pTag)
+{
+	for(auto& pTri : m_TriggerDataes)
+	{	
+		if(!wcscmp(pTri->pActortag, pTag))
+		{
+			Delete_Actor(pTri->pTriggerStatic);
+		}
+	}
+}
+
+void CPhysX_Manager::Create_PlaneGround()
+{
+	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);
+	m_pScene->addActor(*pGroundPlane);
 }

@@ -577,6 +577,12 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\11. InfoWindow">
       <UniqueIdentifier>{efaa76b7-5840-4489-8605-62bf3055ba0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Levels\07. Gimmick">
+      <UniqueIdentifier>{209510b0-f1a9-4366-96a9-f2b8a6281b13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Meditation_Spot">
+      <UniqueIdentifier>{d809b4cf-2aab-455c-a361-d30849842e35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1502,6 +1508,12 @@
     <ClInclude Include="..\public\UI_NodeKey.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\KeyGuide</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Level_Gimmick.h">
+      <Filter>01.Levels\07. Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Meditation_Spot.h">
+      <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2406,6 +2418,12 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeKey.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\KeyGuide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Gimmick.cpp">
+      <Filter>01.Levels\07. Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Meditation_Spot.cpp">
+      <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

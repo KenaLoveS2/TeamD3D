@@ -366,7 +366,7 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 				jObject["Instance DataCnt"].get_to<_int>(iCnt);
 
 				CVIBuffer_Point_Instancing* pVIBuffer = nullptr;
-				if (FAILED(pGameInstance->Add_Prototype(g_LEVEL, szVIBufferFinalTag, pVIBuffer = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, iCnt))))
+				if (FAILED(pGameInstance->Add_Prototype(g_LEVEL_FOR_COMPONENT, szVIBufferFinalTag, pVIBuffer = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, iCnt))))
 					return E_FAIL;
 
 #pragma region Instance Data
@@ -486,7 +486,7 @@ _bool CEffect_Base::TurnOffSystem(_float& fTurnoffTime, _float fDurationTime, _f
 	fTurnoffTime += fTimeDelta;
 	if (fTurnoffTime > fDurationTime)
 	{
-		//m_pTransformCom->Set_PositionY(-1000.f);
+		m_pTransformCom->Set_PositionY(-1000.f);
 		m_eEFfectDesc.bActive = false;
 		fTurnoffTime = 0.0f;
 		return true;
@@ -839,7 +839,7 @@ HRESULT CEffect_Base::Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextu
 				_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 				CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-				if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
+				if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 					return E_FAIL;
 			}
 		}
@@ -879,7 +879,7 @@ HRESULT CEffect_Base::Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextu
 
 				_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 				CGameInstance::GetInstance()->Add_String(szMTextureComTag);
-				if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
+				if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 					return E_FAIL;
 			}
 		}
