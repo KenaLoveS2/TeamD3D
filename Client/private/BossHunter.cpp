@@ -503,16 +503,20 @@ HRESULT CBossHunter::SetUp_State()
 	m_pFSM = CFSMComponentBuilder()
 	.InitState("SLEEP")
 	.AddState("SLEEP")
-	.OnExit([this]()
+	.Tick([this](_float fTimeDelta)
 	{
+		m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fFlyHeightY);
+	})
+	.OnExit([this]()
+	{	
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_bReadySpawn = true;
 	})
 	.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
 	.Predicator([this]()
 	{
-	m_fSpawnRange = 10.f;
-	return DistanceTrigger(m_fSpawnRange);
+		m_fSpawnRange = 10.f;
+		return DistanceTrigger(m_fSpawnRange);
 	})
 
 
@@ -554,11 +558,11 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	m_fIdleTimeCheck += fTimeDelta;
 
-	if (m_pTransformCom->Get_PositionY() <= m_fFlyHeightY)
+	if (m_pTransformCom->Get_PositionY() <= m_vKenaPos.y + m_fFlyHeightY)
 	{
 		m_pTransformCom->Go_AxisY(fTimeDelta);
-		if (m_pTransformCom->Get_PositionY() >= m_fFlyHeightY)
-			m_pTransformCom->Set_PositionY(m_fFlyHeightY);
+		if (m_pTransformCom->Get_PositionY() >= m_vKenaPos.y + m_fFlyHeightY)
+			m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fFlyHeightY);
 	}
 
 	m_bDodge = m_pKena->Get_State(CKena::STATE_BOW) && (rand() % 5 == 0);
@@ -956,12 +960,12 @@ HRESULT CBossHunter::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		if (m_pTransformCom->Get_PositionY() > m_fFlyHeightY)
+		if (m_pTransformCom->Get_PositionY() > m_vKenaPos.y + m_fFlyHeightY)
 		{
 			m_pTransformCom->Go_AxisNegY(fTimeDelta);
-			if (m_pTransformCom->Get_PositionY() < m_fFlyHeightY)
+			if (m_pTransformCom->Get_PositionY() < m_vKenaPos.y + m_fFlyHeightY)
 			{
-				m_pTransformCom->Set_PositionY(m_fFlyHeightY);
+				m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fFlyHeightY);
 				m_bShockArrowDownY = true;
 			}				
 		}
