@@ -21,6 +21,7 @@
 #include "UI_ClientManager.h"
 #include "UI.h"
 #include "Level_Loading.h"
+#include "ControlRoom.h"
 
 CLevel_TestPlay::CLevel_TestPlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -135,14 +136,17 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 	if (GetKeyState(VK_F2) & 0x8000)
 	{
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
+		
+		CControlRoom* pControllRoom  = dynamic_cast<CControlRoom*>(pGameInstance->Get_GameObjectPtr(LEVEL_TESTPLAY, L"Layer_ControlRoom", L"ControlRoom"));
+		assert(nullptr != pControllRoom && "Scene_Change");
+		(pControllRoom)->Clear_Static_ShadowList();
+
 		pGameInstance->Clear_ImguiObjects();
 		CPhysX_Manager::GetInstance()->Clear(true);
 		pGameInstance->Clear();
 		pGameInstance->Scene_EnviMgr_Change();
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_GIMMICK)))))
 			return;
-		Safe_Release(pGameInstance);
 	}
 }
 

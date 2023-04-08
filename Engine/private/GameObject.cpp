@@ -160,7 +160,7 @@ void CGameObject::ImGui_PhysXValueProperty()
 	_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
 
 	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
-	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
+	//ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
 	vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
 	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
 	m_pTransformCom->Set_PxPivotScale(vPxPivotScale);
@@ -195,14 +195,14 @@ void CGameObject::ImGui_PhysXValueProperty()
 
 			PxShape*			pShape = nullptr;
 			pActor->getShapes(&pShape, sizeof(PxShape));
-			PxCapsuleGeometry& Geometry = pShape->getGeometry().capsule();
+			PxSphereGeometry& Geometry = pShape->getGeometry().sphere();
 			_float&	fScaleX = Geometry.radius;
-			_float&	fScaleY = Geometry.halfHeight;
+			//_float&	fScaleY = Geometry.halfHeight;
 
 			/* Scale */
 			ImGui::BulletText("Scale Setting");
 			ImGui::DragFloat("Scale X", &fScaleX, 0.05f);
-			ImGui::DragFloat("Scale Y", &fScaleY, 0.05f);
+			//ImGui::DragFloat("Scale Y", &fScaleY, 0.05f);
 
 			pShape->setGeometry(Geometry);
 
@@ -232,7 +232,8 @@ void CGameObject::ImGui_PhysXValueProperty()
 
 void CGameObject::Set_Position(_float4& vPosition)
 {
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&vPosition));
+	//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&vPosition));
+	m_pTransformCom->Set_Position(vPosition);
 }
 
 void CGameObject::Set_Position(_float3& vPosition)

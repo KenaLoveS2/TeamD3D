@@ -15,7 +15,7 @@
 #include "Tool_Animation.h"
 #include "Imgui_UIEditor.h"
 #include "ImGui_PhysX.h"
-
+#include "Imgui_UIEditor.h"
 #include "CinematicCamera.h"
 #include "UI_ClientManager.h"
 #include "UI.h"
@@ -43,6 +43,7 @@ HRESULT CLevel_MapTool::Initialize()
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 
 #ifdef FOR_MAP_GIMMICK
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
@@ -105,7 +106,7 @@ HRESULT CLevel_MapTool::Render()
 
 HRESULT CLevel_MapTool::Ready_Lights()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
 	LIGHTDESC LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
@@ -113,16 +114,15 @@ HRESULT CLevel_MapTool::Ready_Lights()
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(0.2f, 0.2f, 0.2f, 1.f);
-	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
-	LightDesc.vSpecular = _float4(0.0f, 0.0f, 0.0f, 1.f);
-	LightDesc.vPosition = _float4(100.f, 100.f, 100.f, 1.f);
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.vSpecular = _float4(1.0f, 1.0f, 1.0f, 1.f);
+	LightDesc.vPosition = _float4(-100.f, 100.f, -100.f, 1.f);
 	LightDesc.szLightName = "DIRECTIONAL";
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -131,7 +131,7 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//CImgui_TerrainEditor::LoadFilterData("MiniGame_MappToolTerrain.json");
+	CImgui_TerrainEditor::LoadFilterData("MiniGame_MappToolTerrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");

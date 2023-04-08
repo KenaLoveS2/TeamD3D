@@ -771,7 +771,7 @@ CAnimation* CModel::Find_Animation(_uint iAnimIndex)
 	return m_Animations[iAnimIndex];
 }
 
-void CModel::Set_InstancePos(vector<_float4x4>& InstanceMatrixVec)
+void CModel::Set_InstancePos(vector<_float4x4> & InstanceMatrixVec)
 {
 	if (m_bIsInstancing == false)
 		return;
@@ -2061,7 +2061,7 @@ void CModel::Create_Px_InstTriangle(CTransform* pParentTransform)
 	}
 }
 
-void CModel::SetUp_InstModelColider(vector<_float3> vecColiderSize)
+void CModel::SetUp_InstModelColider(vector<_float3> & vecColiderSize)
 {
 	for (auto vSize : vecColiderSize)
 	{
@@ -2343,6 +2343,9 @@ void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
 
 	size_t InstmatrixSize = m_pInstancingMatrix.size();
+
+	if (InstmatrixSize == 0)
+		return;
 
 	for (size_t i = 0; i < InstmatrixSize; ++i)
 	{

@@ -59,6 +59,7 @@ public:
 
 public:
 	virtual void	ImGui_PhysXValueProperty()override;
+	virtual _int	Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 	
 
 private:

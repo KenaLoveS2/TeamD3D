@@ -6,6 +6,7 @@
 #include "UI_NodeHUDHP.h"
 #include "UI_NodeHUDHPBar.h"
 #include "UI_NodeHUDShield.h"
+#include "UI_NodeHUDShieldBar.h"
 #include "UI_NodeHUDPip.h"
 #include "UI_NodeHUDRot.h"
 #include "UI_NodeEffect.h"
@@ -316,8 +317,16 @@ void CUI_CanvasHUD::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 	case CUI_ClientManager::HUD_HP:
 		static_cast<CUI_NodeHUDHP*>(m_vecNode[UI_HPGUAGE])->Set_Guage(fValue);
 		break;
+	case CUI_ClientManager::HUD_HP_UPGRADE:
+		static_cast<CUI_NodeHUDHP*>(m_vecNode[UI_HPGUAGE])->Upgrade();
+		static_cast<CUI_NodeHUDHPBar*>(m_vecNode[UI_HPBAR])->Upgrade();
+		break;
 	case CUI_ClientManager::HUD_SHIELD:
 		static_cast<CUI_NodeHUDShield*>(m_vecNode[UI_SHIELD])->Set_Guage(fValue);
+		break;
+	case CUI_ClientManager::HUD_SHIELD_UPGRADE:
+		static_cast<CUI_NodeHUDShield*>(m_vecNode[UI_SHIELD])->Upgrade();
+		static_cast<CUI_NodeHUDShieldBar*>(m_vecNode[UI_SHIELDBAR])->Upgrade();
 		break;
 	case CUI_ClientManager::HUD_PIP:
 		/* PIP_3	PIP_2	PIP_1 */

@@ -3,6 +3,10 @@
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
+#include "Kena.h"
+#include "AnimationState.h"
+#include "Kena_State.h"
+#include "Kena_Status.h"
 
 CMeditation_Spot::CMeditation_Spot(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -37,6 +41,39 @@ HRESULT CMeditation_Spot::Initialize(void* pArg)
 
 HRESULT CMeditation_Spot::Late_Initialize(void* pArg)
 {
+	m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	NULL_CHECK_RETURN(m_pKena, E_FAIL);
+
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(-10.f, 0.f, -10.f, 1.f));
+
+	_float3 vPos;
+	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+	_float3 vSize = _float3(1.51f, 0.39f, 1.34f);
+
+	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	BoxDesc.pActortag = m_szCloneObjectTag;
+	BoxDesc.eType = BOX_STATIC;
+	BoxDesc.vPos = vPos;
+	BoxDesc.vSize = vSize;
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = false;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDensity = 0.2f;
+	BoxDesc.fMass = 150.f;
+	BoxDesc.fLinearDamping = 10.f;
+	BoxDesc.fAngularDamping = 5.f;
+	BoxDesc.bCCD = false;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
+
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
+	pPhysX->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_MEDITATIONSPOT, vPos, 2.f));
+
 	//m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
 
 	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
@@ -56,6 +93,41 @@ HRESULT CMeditation_Spot::Late_Initialize(void* pArg)
 void CMeditation_Spot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	/* Kena Interact */
+	if (m_bKenaDetected == true)
+	{
+		CAnimationState* pAnimState = m_pKena->Get_AnimationStateMachine();
+		if (pAnimState->Get_CurrentAnimIndex() == (_uint)CKena_State::MEDITATE_LOOP)
+		{
+			CKena_Status* pStatus = m_pKena->Get_Status();
+			_int	iHP = pStatus->Get_HP();
+
+			if (m_bUsed == false)
+			{
+				if (pAnimState->Get_AnimationProgress() > 0.4f)
+				{
+					m_bKenaDetected = false;
+					m_bUsed = true;
+
+					_int	iMaxHP = pStatus->Get_MaxHP();
+					_float	fHPRate = pStatus->Get_PercentHP();
+
+					pStatus->Set_MaxHP(iMaxHP + 50);
+					pStatus->Add_HealAmount(pStatus->Get_MaxHP() - iHP);
+
+					/* NEED : UI HP GUAGE UP */
+					//m_pKena->m_Delegator
+				}
+			}
+			else
+			{
+				if (iHP + 1 <= pStatus->Get_MaxHP())
+					pStatus->Add_HealAmount(1);
+			}
+		}
+	}
+
 	if (m_bPulseTest)
 		m_fEmissivePulse += 0.05f;
 
@@ -70,9 +142,7 @@ void CMeditation_Spot::Tick(_float fTimeDelta)
 	}
 
 	if (m_fEmissivePulse >= 2.f)
-	{
 		m_bPulseTest = !m_bPulseTest;
-	}
 
 	if (m_bOncePosUpdate == false && m_bRenderActive)
 	{
@@ -293,6 +363,21 @@ void CMeditation_Spot::ImGui_ShaderValueProperty()
 void CMeditation_Spot::ImGui_PhysXValueProperty()
 {
 	ImGui::Text("CMeditation_Spot::ImGui_PhysXValueProperty");
+
+	PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_StaticActor(m_szCloneObjectTag);
+
+	PxShape* pShape = nullptr;
+	pActor->getShapes(&pShape, sizeof(PxShape));
+	PxBoxGeometry& Geometry = pShape->getGeometry().box();
+	PxVec3& fScale = Geometry.halfExtents;
+
+	/* Scale */
+	ImGui::BulletText("Scale Setting");
+	ImGui::DragFloat("Scale X", &fScale.x, 0.01f);
+	ImGui::DragFloat("Scale Y", &fScale.y, 0.01f);
+	ImGui::DragFloat("Scale Z", &fScale.z, 0.01f);
+
+	pShape->setGeometry(Geometry);
 }
 
 HRESULT CMeditation_Spot::Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)
@@ -330,15 +415,35 @@ _int CMeditation_Spot::Execute_Collision(CGameObject* pTarget, _float3 vCollisio
 
 _int CMeditation_Spot::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	if (iColliderIndex == (_int)COL_PULSE)
-		_bool b = false;
+	if (pTarget != nullptr)
+	{
+		if (iColliderIndex == (_int)COL_PULSE)
+			_bool b = false;
+
+		if (iColliderIndex == (_int)COL_PLAYER)
+		{
+			m_bKenaDetected = true;
+			m_pKena->Set_MeditationPossible(true);
+		}
+	}
+
 	return 0;
 }
 
 _int CMeditation_Spot::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	if (iColliderIndex == (_int)COL_PULSE)
-		_bool b = false;
+	if (pTarget != nullptr)
+	{
+		if (iColliderIndex == (_int)COL_PULSE)
+			_bool b = false;
+
+		if (iColliderIndex == (_int)COL_PLAYER)
+		{
+			m_bKenaDetected = false;
+			m_pKena->Set_MeditationPossible(true);
+		}
+	}
+
 	return 0;
 }
 

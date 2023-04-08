@@ -34,6 +34,7 @@ public:
 private:
 	HRESULT SetUp_ShaderResources();
 	void	Imgui_RenderProperty() override;
+	void	ImGui_PhysXValueProperty() override;
 	HRESULT SetUp_Effects();
 
 private:

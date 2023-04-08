@@ -21,6 +21,7 @@ public:
 
 public:
 	const BOMBSTATE&		Get_CurrentState() const { return m_eCurState; }
+	void					Set_BoomTime(_float fTime) { m_fBoomTime = fTime; }
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -64,6 +65,7 @@ private:
 
 	_bool						m_bBoom = false;
 	_float						m_fBoomTimer = 0.f;
+	_float						m_fBoomTime = 4.5f;
 
 private:
 	HRESULT					SetUp_Components();

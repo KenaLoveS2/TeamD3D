@@ -151,8 +151,7 @@ HRESULT CEffect_Texture_Base::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
 	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();
@@ -502,7 +501,7 @@ HRESULT CEffect_Texture_Base::SetUp_Components()
 	/* For Com_Texture */
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), m_TextureComName[i],
+		if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_Effect"), m_TextureComName[i],
 			(CComponent**)&m_pTextureCom[i])))
 			return E_FAIL;
 	}
@@ -542,37 +541,33 @@ HRESULT CEffect_Texture_Base::SetUp_ShaderResources()
 	}
 
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRItensity", &m_fHDRIntensity, sizeof(_float))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_float_0", &m_fHDRIntensity, sizeof(_float))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_IsSpriteAnim", &m_bOptions[OPTION_SPRITE], sizeof(_bool))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bool_0", &m_bOptions[OPTION_SPRITE], sizeof(_bool))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUVAnim", &m_bOptions[OPTION_UV], sizeof(_bool))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bool_1", &m_bOptions[OPTION_UV], sizeof(_bool))))
 		return E_FAIL;
 
 	if (m_bOptions[OPTION_UV])
 	{
-		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedX", &m_fUVMove[0], sizeof(_float))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedY", &m_fUVMove[1], sizeof(_float))))
-			return E_FAIL;
+		_float2 vUVMove = { m_fUVMove[0], m_fUVMove[1] };
 
+		if (FAILED(m_pShaderCom->Set_RawValue("g_float2_0", &vUVMove, sizeof(_float2))))
+			return E_FAIL;
 	}
 
 	if (m_bOptions[OPTION_SPRITE])
 	{
-		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrames", &m_iFrames[0], sizeof(_int))))
+		if (FAILED(m_pShaderCom->Set_RawValue("g_int_0", &m_iFrames[0], sizeof(_int))))
 			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrames", &m_iFrames[1], sizeof(_int))))
+		if (FAILED(m_pShaderCom->Set_RawValue("g_int_1", &m_iFrames[1], sizeof(_int))))
 			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrameNow", &m_iFrameNow[0], sizeof(_int))))
+		if (FAILED(m_pShaderCom->Set_RawValue("g_int_2", &m_iFrameNow[0], sizeof(_int))))
 			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrameNow", &m_iFrameNow[1], sizeof(_int))))
+		if (FAILED(m_pShaderCom->Set_RawValue("g_int_3", &m_iFrameNow[1], sizeof(_int))))
 			return E_FAIL;
 	}
-
-
-
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -581,14 +576,14 @@ HRESULT CEffect_Texture_Base::SetUp_ShaderResources()
 HRESULT CEffect_Texture_Base::SetUp_TextureInfo()
 {
 	/* Ready For Textures */
-	m_ShaderVarName[TEXTURE_DIFFUSE] = "g_DiffuseTexture";
-	m_ShaderVarName[TEXTURE_MASK] = "g_MaskTexture";
+	m_ShaderVarName[TEXTURE_DIFFUSE]	= "g_tex_0";
+	m_ShaderVarName[TEXTURE_MASK]		= "g_tex_1";
 
-	m_TextureComName[TEXTURE_DIFFUSE] = L"Com_DiffuseTexture";
-	m_TextureComName[TEXTURE_MASK] = L"Com_MaskTexture";
+	m_TextureComName[TEXTURE_DIFFUSE]	= L"Com_DiffuseTexture";
+	m_TextureComName[TEXTURE_MASK]		= L"Com_MaskTexture";
 
-	m_ShaderColorName[TEXTURE_DIFFUSE] = "g_vColor";
-	m_ShaderColorName[TEXTURE_MASK] = "g_vMaskColor";
+	m_ShaderColorName[TEXTURE_DIFFUSE]	= "g_float4_0";
+	m_ShaderColorName[TEXTURE_MASK]		 = "g_float4_1";
 
 	return S_OK;
 }
