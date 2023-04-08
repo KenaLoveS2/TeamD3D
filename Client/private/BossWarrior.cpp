@@ -150,7 +150,8 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 }
 
 void CBossWarrior::Tick(_float fTimeDelta)
-{
+{	
+	// m_bReadySpawn = true;
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -348,6 +349,18 @@ void CBossWarrior::Push_EventFunctions()
 	Play_Tense3Sound(true, 0.0f);
 
 	Play_BackSound(true, 0.0f);
+	
+	Play_ImpactSound(true, 0.0f);
+	Play_Impact3Sound(true, 0.0f);
+	Play_Impact4Sound(true, 0.0f);
+	Play_Impact5Sound(true, 0.0f);
+
+	Play_WalkSound(true, 0.0f);
+	Play_SwingSound(true, 0.0f);
+	Play_SlashSound(true, 0.0f);
+
+	Play_BossBaseSound(true, 0.0f);
+	Play_BossDingSound(true, 0.0f);
 }
 
 HRESULT CBossWarrior::SetUp_State()
@@ -361,7 +374,7 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		
+		m_bReadySpawn = true;
 	})
 		.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
@@ -373,8 +386,8 @@ HRESULT CBossWarrior::SetUp_State()
 
 		.AddState("READY_SPAWN")
 		.OnStart([this]()
-	{
-		// 등장 연출 필요
+	{	
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_BOSS_BASE], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
@@ -402,6 +415,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{	
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE1], 0.5f);
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE_LOOP);
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
@@ -842,7 +856,7 @@ HRESULT CBossWarrior::SetUp_State()
 
 		/*
 		HW.For.MapGimmick
-		  Map Change  03_30 Test용임 */
+		 Map Change  03_30 Test용임 */
 		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
 		pCtrlRoom->DeadZoneObject_Change(true);
 
@@ -1535,6 +1549,15 @@ void CBossWarrior::Create_CopySoundKey()
 		TEXT("Mon_BossWarrior_Tense2.ogg"),
 		TEXT("Mon_BossWarrior_Tense3.ogg"),
 		TEXT("Mon_BossWarrior_Back.ogg"),
+		TEXT("Mon_Attack_Impact2.ogg"),
+		TEXT("Mon_Attack_Impact3.ogg"),
+		TEXT("Mon_Attack_Impact4.ogg"),
+		TEXT("Mon_Attack_Impact5.ogg"),
+		TEXT("Mon_Walk_L.ogg"),
+		TEXT("Mon_Swing2.ogg"),
+		TEXT("Mon_Knife2.ogg"),
+		TEXT("Mon_BossSound_Ding.ogg"),
+		TEXT("Mon_BossSound_Base.ogg"),
 	};
 
 	_tchar szTemp[MAX_PATH] = { 0, };
@@ -1794,7 +1817,7 @@ void CBossWarrior::Play_Tense1Sound(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE1], 0.5f);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE1], 0.7f);
 }
 
 void CBossWarrior::Play_Tense2Sound(_bool bIsInit, _float fTimeDelta)
@@ -1806,7 +1829,7 @@ void CBossWarrior::Play_Tense2Sound(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE2], 0.5f);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE2], 0.7f);
 }
 
 void CBossWarrior::Play_Tense3Sound(_bool bIsInit, _float fTimeDelta)
@@ -1818,7 +1841,7 @@ void CBossWarrior::Play_Tense3Sound(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE3], 0.5f);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE3], 0.7f);
 }
 
 void CBossWarrior::Play_BackSound(_bool bIsInit, _float fTimeDelta)
@@ -1831,4 +1854,112 @@ void CBossWarrior::Play_BackSound(_bool bIsInit, _float fTimeDelta)
 	}
 
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_BACK], 0.5f);
+}
+
+void CBossWarrior::Play_ImpactSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_ImpactSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT2], 0.5f);
+}
+
+void CBossWarrior::Play_Impact3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_Impact3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT3], 0.5f);
+}
+
+void CBossWarrior::Play_Impact4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_Impact4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT4], 0.5f);
+}
+
+void CBossWarrior::Play_Impact5Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_Impact5Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT5], 0.5f);
+}
+
+void CBossWarrior::Play_WalkSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_WalkSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WALK], 0.1f);
+}
+
+void CBossWarrior::Play_SwingSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_SwingSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_SWING], 0.5f);
+}
+
+void CBossWarrior::Play_SlashSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_SlashSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_SLASH], 0.7f);
+}
+
+void CBossWarrior::Play_BossDingSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_BossDingSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_BOSS_DING], 0.5f);
+}
+
+void CBossWarrior::Play_BossBaseSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_BossBaseSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_BOSS_BASE], 0.5f);
 }

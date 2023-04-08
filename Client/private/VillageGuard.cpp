@@ -738,7 +738,7 @@ void CVillageGuard::Create_CopySoundKey()
 		TEXT("Mon_VillageGuard_Attack3.ogg"),
 		TEXT("Mon_Sword1.ogg"),
 		TEXT("Mon_Sword2.ogg"),
-		TEXT("Mon_Attack_Impact.ogg"),
+		TEXT("Mon_Attack_Impact1.ogg"),
 	};
 
 	_tchar szTemp[MAX_PATH] = { 0, };

@@ -161,7 +161,9 @@ private:
 		CSK_HIT1, CSK_HIT2, CSK_HIT3, CSK_HIT4, 
 		CSK_HURT1, CSK_HURT2, CSK_HURT3, CSK_HURT4, CSK_HURT5, CSK_HURT6, CSK_HURT7,
 		CSK_TENSE1, CSK_TENSE2, CSK_TENSE3, 
-		CSK_BACK,		
+		CSK_BACK, 
+		CSK_IMPACT2, CSK_IMPACT3, CSK_IMPACT4, CSK_IMPACT5,
+		CSK_WALK, CSK_SWING, CSK_SLASH, CSK_BOSS_DING, CSK_BOSS_BASE,
 		COPY_SOUND_KEY_END,
 	};
 
@@ -205,6 +207,17 @@ public:
 	void Play_Tense3Sound(_bool bIsInit, _float fTimeDelta);
 	
 	void Play_BackSound(_bool bIsInit, _float fTimeDelta);
+	void Play_ImpactSound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact4Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact5Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
+	void Play_SwingSound(_bool bIsInit, _float fTimeDelta);
+	void Play_SlashSound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_BossDingSound(_bool bIsInit, _float fTimeDelta);
+	void Play_BossBaseSound(_bool bIsInit, _float fTimeDelta);
 };
 
 END

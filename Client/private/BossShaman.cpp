@@ -181,7 +181,7 @@ void CBossShaman::Tick(_float fTimeDelta)
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
-	AdditiveAnim(fTimeDelta);
+	// AdditiveAnim(fTimeDelta);
 }
 
 void CBossShaman::Late_Tick(_float fTimeDelta)
