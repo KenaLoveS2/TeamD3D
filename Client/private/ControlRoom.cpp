@@ -174,6 +174,8 @@ void CControlRoom::DeadZoneObject_Change(_bool bChnage)
 	static_cast<CDZ_FallenTree_Anim*>(pObj)->Set_BossClear(true);
 }
 
+
+
 HRESULT CControlRoom::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);

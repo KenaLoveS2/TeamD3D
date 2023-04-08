@@ -92,7 +92,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	/*Deliver_PulseE*/
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER; // 1¹ø  :PULSE_OBJ_DELIVER
-	PulseObj_Desc.fIncreseRatio = 1.05f;
+	PulseObj_Desc.fIncreseRatio = 1.03f;
 	PulseObj_Desc.fPulseMaxSize = 10.f;
 	PulseObj_Desc.vResetSize = _float3(1.f, 1.f, 1.f);
 	PulseObj_Desc.vResetPos = vPos;
@@ -118,6 +118,8 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 		m_pControlRoom->Add_Gimmick_TrggerObj(m_szCloneObjectTag, this);
 	}
 	
+
+
 	return S_OK;
 }
 

@@ -38,13 +38,16 @@ public:  /*For.Gimmick*/
 	void				PulsePlate_Down_Active(_int iRoomIndex,_bool IsTrigger);
 	void				Trigger_Active(_int iRoomIndex,CEnviromentObj::CHAPTER eChpater, _bool IsTrigger);
 	void				DeadZoneObject_Change(_bool bChange);
+
+
+
 private:
 	HRESULT SetUp_Components();
 	
 private:
 	CRenderer*											  m_pRendererCom = nullptr; /*OnlyDebug*/
 	
-	list<pair<CEnviromentObj::CHAPTER,CGameObject*>> 			  m_GimmcikObj_List[5];		//±â¹ÍÀÌ ´Ã¾î³¯ ¼ö·Ï Ãß°¡
+	list<pair<CEnviromentObj::CHAPTER,CGameObject*>> 			  m_GimmcikObj_List[6];		//±â¹ÍÀÌ ´Ã¾î³¯ ¼ö·Ï Ãß°¡
 	map< const _tchar * ,CGameObject*>							  m_Gimmcik_Trigger_map;
 
 	array<bool, 4>												 m_MapShadowArray;		// ÀüÃ¼¸Ê -1(Ã³À½¸Ê)
