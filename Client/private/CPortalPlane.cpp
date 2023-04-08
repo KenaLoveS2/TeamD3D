@@ -4,6 +4,7 @@
 #include "Utile.h"
 #include "Kena.h"
 #include "Camera_Player.h"
+#include "ControlRoom.h"
 
 CPortalPlane::CPortalPlane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -15,6 +16,14 @@ CPortalPlane::CPortalPlane(const CPortalPlane& rhs)
 {
 }
 
+CPortalPlane* CPortalPlane::Get_LinkedPortal()
+{
+	if (m_bRendaerPortal_Gimmick == false)
+		return nullptr;
+
+	return m_pLinkedPortal;
+}
+
 HRESULT CPortalPlane::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
@@ -24,12 +33,12 @@ HRESULT CPortalPlane::Initialize_Prototype()
 HRESULT CPortalPlane::Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
-
+	
 	m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
 	m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-
+	m_bRendaerPortal_Gimmick = true;
 	return S_OK;
 }
 
@@ -43,10 +52,20 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 	NULL_CHECK_RETURN(m_pCamera, E_FAIL);*/
 
 	if (!lstrcmp(m_szCloneObjectTag, L"3_Portal0"))
+	{
 		m_pLinkedPortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"3_Portal1"));
+		NULL_CHECK_RETURN(m_pLinkedPortal, E_FAIL);
+	}
+		
 	else if (!lstrcmp(m_szCloneObjectTag, L"3_Portal1"))
+	{
 		m_pLinkedPortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"3_Portal0"));
-	NULL_CHECK_RETURN(m_pLinkedPortal, E_FAIL);
+		NULL_CHECK_RETURN(m_pLinkedPortal, E_FAIL);
+	}
+
+	Late_init_For_GimmickLevel();
+		
+	
 
 	_float3 vPos;
 	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
@@ -80,11 +99,6 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 
 void CPortalPlane::Tick(_float fTimeDelta)
 {
-	//if( false==m_bTestOnce) /*삭제하세요 배치를 위한 테스트용 변수*/
-	//{
-	//	Late_Initialize(nullptr);
-	//	m_bTestOnce = true;
-	//}
 
 	CGameObject::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
@@ -95,7 +109,7 @@ void CPortalPlane::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	/*NonCulling*/
-	if (m_pRendererCom && m_bRenderActive)
+	if (m_pRendererCom && m_bRenderActive && m_bRendaerPortal_Gimmick)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
@@ -121,6 +135,9 @@ void CPortalPlane::Imgui_RenderProperty()
 
 	PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_StaticActor(m_szCloneObjectTag);
 
+	if (pActor == nullptr)
+		return;
+
 	PxShape* pShape = nullptr;
 	pActor->getShapes(&pShape, sizeof(PxShape));
 	PxBoxGeometry& Geometry = pShape->getGeometry().box();
@@ -143,6 +160,34 @@ void CPortalPlane::ImGui_ShaderValueProperty()
 void CPortalPlane::ImGui_PhysXValueProperty()
 {
 	CGameObject::ImGui_PhysXValueProperty();
+}
+
+HRESULT CPortalPlane::Late_init_For_GimmickLevel()
+{
+
+	if (!lstrcmp(m_szCloneObjectTag, L"MG_CrystalGimmick_Portal"))
+	{
+		m_pLinkedPortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+			L"Layer_Enviroment", L"MG_TeleFlower_Gimmick_StartPortal"));
+
+		/* TO.Do*/
+		m_bRendaerPortal_Gimmick = false;
+
+		NULL_CHECK_RETURN(m_pLinkedPortal, E_FAIL);
+
+	}
+	else if (!lstrcmp(m_szCloneObjectTag, L"MG_TeleFlower_Gimmick_Goal_Portal"))
+	{
+		m_pLinkedPortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+			L"Layer_Enviroment", L"MG_Final_Portal"));
+
+		NULL_CHECK_RETURN(m_pLinkedPortal, E_FAIL);
+	}
+	else
+		return S_OK;
+
+
+	return S_OK;
 }
 
 HRESULT CPortalPlane::SetUp_Components()

@@ -49,8 +49,8 @@ public:
 	virtual HRESULT Tick(_float fTimeDelta) override;
 	virtual HRESULT Render();
 
-	_int	Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat);
-	_int	Occlusion_Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat);
+	_int	Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*>& InstanceMatrixVec, _fmatrix ParentMat);
+	_int	Occlusion_Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*>& InstanceMatrixVec, _fmatrix ParentMat);
 
 public:
 	_bool	Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
@@ -58,7 +58,7 @@ public:
 	void	InstaincingMesh_yPosControl(_float yPos);
 	void	InstaincingMesh_EffectTick(_float yLimitPos,_float fTimeDelta);
 
-	void	Create_PxTriangle_InstMeshActor(CTransform* pParentTransform, vector<_float4x4*> VecInstancingMatrix);
+	void	Create_PxTriangle_InstMeshActor(CTransform* pParentTransform, vector<_float4x4*>& VecInstancingMatrix);
 
 public:
 	HRESULT SetUp_BonePtr(CModel* pModel);

@@ -18,6 +18,11 @@ private:
 	virtual ~CPulseStone() = default;
 
 public:
+	void		Gimmick_Active(_bool bGimmickStart) {
+		m_bGimmickActive = bGimmickStart;
+	}
+
+public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
 	virtual HRESULT		Late_Initialize(void* pArg=nullptr) override;
@@ -28,11 +33,18 @@ public:
 
 private:
 	CModel*									m_pModelCom = nullptr;
-	class CInteraction_Com*			m_pInteractionCom = nullptr;
-	class CControlMove*				m_pControlMoveCom = nullptr;
+	
+	class CPortalPlane*		m_pRenderFalsePortal = nullptr;
 
+private:
+	vector<class CEffect_Base*>			m_VecCrystal_Effect;
+	_bool								m_bGimmickActive = false;
 public:
-	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
+	
+	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+	virtual _int Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+
+
 
 private:
 	HRESULT SetUp_Components();

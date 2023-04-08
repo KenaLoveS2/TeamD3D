@@ -391,6 +391,9 @@ public:
 	static	CKena_State		NullFunc;
 
 public:
+	const CTransform::DIRECTION& Get_CurrentDirection() const { return m_eDir; }
+
+public:
 	HRESULT					Initialize(class CKena* pKena, class CKena_Status* pStatus, CStateMachine* pStateMachine, CModel* pModel, CAnimationState* pAnimation, CTransform* pTransform, class CCamera_Player* pCamera);
 	void						Tick(_double dTimeDelta);
 	void						Late_Tick(_double dTimeDelta);
@@ -1209,6 +1212,7 @@ private:	/* Changer */
 	_bool	Interactable();
 	_bool	RotWisp_Interactable();
 	_bool	Chest_Interactable();
+	_bool	Meditation_Possible();
 
 	_bool	Check_Skill_Melee_0();
 	_bool	Check_Skill_Melee_1();

@@ -784,7 +784,7 @@ _bool CTransform::Calc_InRange(_float fRadian, CTransform * pTargetTransformCom)
 	_float		fMaxAngle = XM_2PI - fRadian * 0.5f;
 	_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirToTarget), XMVector3Normalize(vLook))));
 
-	if (fAngle < fMinAngle || fAngle > fMaxAngle)
+	if (fAngle < fMinAngle/* || fAngle > fMaxAngle*/)
 		return true;
 
 	return false;
@@ -1003,8 +1003,6 @@ void CTransform::Update_AllCollider(_float4x4 PivotMatrix)
 
 _bool CTransform::IsFalling()
 {
-	return false;
-
 	if (m_pPxActor == nullptr || m_bIsStaticPxActor) return false;
 
 	return m_pPhysX_Manager->IsFalling((PxRigidDynamic*)m_pPxActor);
