@@ -486,8 +486,8 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = true;
-	_bool bFlowerCheck = false;
+	_bool bRealObject = false;
+	_bool bFlowerCheck = true;
 
 #ifdef FOR_MAPTOOL   
 
@@ -500,6 +500,9 @@ HRESULT CLoader::Loading_ForMapTool()
 			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.mdat"),
 				PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.json", false, true))))
 			return E_FAIL;
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Giant", true, true, true)))
+			assert(!"Issue");
 
 	}
 #pragma endregion

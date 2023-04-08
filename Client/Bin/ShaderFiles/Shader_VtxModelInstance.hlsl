@@ -1,3 +1,4 @@
+
 #include "Shader_Client_Defines.h"
 
 /**********Constant Buffer*********/
@@ -125,6 +126,71 @@ VS_OUT_INSTANCE VS_MAIN_INSTANCE(VS_IN_INSTANCE In)
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 
     return Out;
+}
+
+
+struct VS_OUT_INSTANCE_GEOMETRY
+{
+    float3      vPosition : POSITION;
+    float4      vNormal : NORMAL;
+    float2      vTexUV : TEXCOORD0;
+    float4      vProjPos : TEXCOORD1;
+    float4      vTangent : TANGENT;
+    float3      vBinormal : BINORMAL;
+};
+
+
+VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
+{
+    VS_OUT_INSTANCE_GEOMETRY      Out = (VS_OUT_INSTANCE_GEOMETRY)0;
+
+    matrix      matWV, matWVP;
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+
+    float4x4   Transform = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
+
+    vector      vPosition = mul(float4(In.vPosition, 1.f), Transform);
+    vector      vNormal = mul(float4(In.vNormal, 0.f), Transform);
+    vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), Transform);
+
+    Out.vPosition = mul(vPosition.xyz, matWVP);
+    Out.vNormal = normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
+    Out.vTexUV = In.vTexUV;
+    Out.vProjPos = vector(Out.vPosition,1.f);
+    Out.vTangent = normalize(mul(vTangent, g_WorldMatrix));
+    Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
+
+    return Out;
+}
+
+struct GS_IN
+{
+    float3      vPosition : POSITION;
+    float4      vNormal : NORMAL;
+    float2      vTexUV : TEXCOORD0;
+    float4      vProjPos : TEXCOORD1;
+    float4      vTangent : TANGENT;
+    float3      vBinormal : BINORMAL;
+};
+
+struct GS_OUT
+{
+    float4      vPosition : SV_POSITION;
+    float4      vNormal : NORMAL;
+    float2      vTexUV : TEXCOORD0;
+    float4      vProjPos : TEXCOORD1;
+    float4      vTangent : TANGENT;
+    float3      vBinormal : BINORMAL;
+};
+
+[maxvertexcount(3)]
+void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
+{
+    GS_OUT		Out[3];
+
+ 
+
 }
 
 struct PS_IN
@@ -838,5 +904,21 @@ technique11 DefaultTechnique
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_H_R_AO();
     }//22
+
+
+    pass GeoMeryTest
+    {
+        SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+        SetDepthStencilState(DS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN_INSTANCE_GEOMETRY();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_TESS();
+    }//23
+
+
 
 }
