@@ -1632,16 +1632,19 @@ PS_OUT PS_MAIN_HUNTER_HAIR(PS_IN In)
 		}
 		else
 		{
-			float4 vColor = float4(237, 152, 196, 1) / 255;
-			Out.vDiffuse.rgb *= vColor.rgb;
-
 			if (In.vTexUV.x > 0.2f)
 			{
+				float4 vColor = float4(240, 33, 168, 1) / 255;
+				Out.vDiffuse.rgb *= vColor.rgb;
+
 				Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,
-					length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 7.f), 0.f);
+					length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 30.f), 0.f);
 			}
 			else
 			{
+				float4 vColor = float4(237, 152, 196, 1) / 255;
+				Out.vDiffuse.rgb *= vColor.rgb;
+
 				if (vEmissiveDesc.r < 0.2f)
 				{
 					Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar,

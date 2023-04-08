@@ -155,7 +155,7 @@ void CBossHunter::Tick(_float fTimeDelta)
 
 	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
 
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
 	if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
 

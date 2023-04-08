@@ -217,15 +217,19 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 			if (iSlot == 2)
 			{
 				m_fMaxShield *= 1.5f;
+				m_fShield = m_fMaxShield;
 
-				/* NEED : UI SHILED GAGE UP  */
-				/* ÇÏ±â ½Ã·¯À× */
+
+				CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::HUD_SHIELD_UPGRADE;
+				m_StatusDelegator.broadcast(eUpgrade, m_fMaxShield);
 			}
 			else if (iSlot == 4)
 			{
 				m_fMaxShield *= 1.5f;
+				m_fShield = m_fMaxShield;
 
-				/* NEED : UI SHILED GAGE UP */
+				CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::HUD_SHIELD_UPGRADE;
+				m_StatusDelegator.broadcast(eUpgrade, m_fMaxShield);
 			}
 
 			break;

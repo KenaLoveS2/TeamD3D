@@ -77,12 +77,13 @@ void CUI_NodeHUDShield::Tick(_float fTimeDelta)
 			m_fSpeed = 40.f;
 			m_matLocal._11 += m_fSpeed * fTimeDelta;
 			m_matLocal._41 += m_fSpeed * fTimeDelta * 0.5f;
-
+			//static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Set_FullState();
 		}
 		else
 		{
 			m_matLocal._11 = m_fDestScaleX;
 			m_matLocal._41 = m_fDestTransX;
+			//static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Set_FullState();
 			m_bUpgrade = false;
 		}
 	}

@@ -13,6 +13,7 @@ public:
 	virtual	void		Call_Event(_float fData)				override;
 
 	void				Set_InitState(_float fInitialGuage);
+	void				Set_FullState();
 	_bool				Is_FullFilled() { if (m_fGuage >= 0.99f) return true; else return false; }
 	_bool				Is_Zero();
 	_float				Get_GuageNow() { return m_fGuageNew; }
