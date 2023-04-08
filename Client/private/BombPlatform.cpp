@@ -56,7 +56,7 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
 	ZeroMemory(&PxBoxDesc, sizeof(CPhysX_Manager::PX_BOX_DESC));
 	PxBoxDesc.pActortag = m_szCloneObjectTag;
-	PxBoxDesc.eType = BOX_DYNAMIC;
+	PxBoxDesc.eType = BOX_STATIC;
 	PxBoxDesc.vPos = vPos;
 	PxBoxDesc.vSize = vPivotScale;
 	PxBoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
@@ -75,7 +75,8 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	PxBoxDesc.isTrigger = false;
 
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
-	m_pTransformCom->Add_Collider(m_szCloneObjectTag, matPivot);
+	m_pTransformCom->Connect_PxActor_Static(m_szCloneObjectTag);
+	m_pTransformCom->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());
 
 	return S_OK;
 }
@@ -86,8 +87,6 @@ void CBombPlatform::Tick(_float fTimeDelta)
 
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
-
-	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CBombPlatform::Late_Tick(_float fTimeDelta)
@@ -245,7 +244,6 @@ void CBombPlatform::Update_State(_float fTimeDelta)
 			_float		fMaxLength = (m_vMovingPos - m_vInitPos).Length();
 			_float		fCurLength = (vPos - m_vInitPos).Length();
 			_float		fRatio = fCurLength / fMaxLength;
-			//CUtile::Saturate<_float>(fRatio, 0.f, 1.f);
 
 			if (fRatio <= 1.f)
 			{
@@ -271,8 +269,6 @@ void CBombPlatform::Update_State(_float fTimeDelta)
 				m_pTransformCom->Set_WorldMatrix(matWorld);
 			}
 
-			//vPos = _float4::Lerp(m_vInitPos, m_vMovingPos, fRatio);
-
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
 
 			break;
@@ -291,7 +287,6 @@ void CBombPlatform::Update_State(_float fTimeDelta)
 			_float		fMaxLength = (m_vMovingPos - m_vInitPos).Length();
 			_float		fCurLength = (m_vMovingPos - vPos).Length();
 			_float		fRatio = fCurLength / fMaxLength;
-			//CUtile::Saturate<_float>(fRatio, 0.f, 1.f);
 
 			if (fRatio <= 1.f)
 			{
@@ -316,8 +311,6 @@ void CBombPlatform::Update_State(_float fTimeDelta)
 				matWorld = XMMatrixAffineTransformation(vScale, XMQuaternionIdentity(), m_vInitQuat, vTrans);
 				m_pTransformCom->Set_WorldMatrix(matWorld);
 			}
-
-			//vPos = _float4::Lerp(m_vMovingPos, m_vInitPos, fRatio);
 
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
 
