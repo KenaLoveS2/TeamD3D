@@ -307,7 +307,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
-	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	//FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	/* Line Changed : Effect Texture component needed */
 	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_GAMEPLAY), E_FAIL);
