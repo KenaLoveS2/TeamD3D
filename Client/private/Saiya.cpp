@@ -56,6 +56,8 @@ HRESULT CSaiya::Initialize(void* pArg)
 		m_pRot = dynamic_cast<CRot*>(p_game_object);
 	}
 
+	Create_CopySoundKey();
+
 	return S_OK;
 }
 
@@ -342,6 +344,7 @@ HRESULT CSaiya::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		Rot_WispSetPosition();
+		PlaySound(m_pCopySoundKey[LAUGH_0, 1.f]);
 		m_pModelCom->Set_AnimIndex(SAIYA_CHASINGLOOP);
 	})
 		.OnExit([this]()
@@ -1194,6 +1197,32 @@ void CSaiya::Rot_WispSetPosition()
 		m_pRot->Set_Position(vRotPos);
 		m_pRot->Set_WispPos(vRotPos);
 	}
+}
+
+void CSaiya::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("VOX_Jizo_Kids_Laughter_1.ogg"), TEXT("VOX_Jizo_Kids_Laughter_2.ogg"),
+		TEXT("VOX_Jizo_Kids_Laughter_3.ogg")
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
+	}
+}
+
+void CSaiya::SaveBufferCopySound(_tchar* pOriginSoundKey, _tchar* pTempBuffer, _tchar** ppOutBuffer)
+{
+	CGameInstance::GetInstance()->Copy_Sound(pOriginSoundKey, pTempBuffer);
+	*ppOutBuffer = CUtile::Create_StringAuto(pTempBuffer);
+}
+
+void CSaiya::PlaySound(const _tchar* SoundKey, float fVolume)
+{
+	CGameInstance::GetInstance()->Play_Sound(SoundKey, fVolume);
 }
 
 CSaiya* CSaiya::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -82,7 +82,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	/* For. String */
 	m_fStringDissolveSpeed = 10.f;
 	m_fStringHDRIntensity = 5.0f;
-	m_vStringDiffuseColor = { 1.0f, 0.05f, 0.46f, 1.f };
+	m_vStringDiffuseColor = _float4(1.0f, 0.05f, 0.46f, 1.f) ;
 
 	FAILED_CHECK_RETURN(Create_Trail(), E_FAIL);
 
