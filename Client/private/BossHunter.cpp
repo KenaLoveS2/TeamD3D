@@ -503,12 +503,14 @@ HRESULT CBossHunter::SetUp_State()
 	m_pFSM = CFSMComponentBuilder()
 	.InitState("SLEEP")
 	.AddState("SLEEP")
+	.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fFlyHeightY);
+	})
 	.OnExit([this]()
 	{	
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_bReadySpawn = true;
-
-		m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fFlyHeightY);
 	})
 	.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
 	.Predicator([this]()
