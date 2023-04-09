@@ -188,6 +188,8 @@
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\public\BossHunter.h" />
+    <ClInclude Include="..\public\BossRock.h" />
+    <ClInclude Include="..\public\BossRock_Pool.h" />
     <ClInclude Include="..\public\BossShaman.h" />
     <ClInclude Include="..\public\BossWarrior.h" />
     <ClInclude Include="..\public\BossWarrior_Hat.h" />
@@ -474,6 +476,8 @@
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\private\BossHunter.cpp" />
+    <ClCompile Include="..\private\BossRock.cpp" />
+    <ClCompile Include="..\private\BossRock_Pool.cpp" />
     <ClCompile Include="..\private\BossShaman.cpp" />
     <ClCompile Include="..\private\BossWarrior.cpp" />
     <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
