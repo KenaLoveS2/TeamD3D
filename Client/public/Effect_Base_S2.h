@@ -38,9 +38,12 @@ public: /* Activation Function */
 	virtual	void					Activate(CGameObject* pTarget) {};
 	virtual void					Activate_Scaling(CGameObject* pTarget, _float2 vScaleSpeed) {};
 	virtual void					Activate_Scaling(_float4 vPos, _float2 vScaleSpeed) {};
+	virtual void					Activate_Scaling(_float4 vDir, _float4 vPos, _float2 vScaleSpeed) {};
 	virtual void					Activate_Spread(_float4 vPos, _float2 vScaleSpeed) {};
+	virtual void					Activate_Reflecting(_float4 vDir, _float4 vPos, _float fAngle) {};
+	virtual	void					Activate_Slowly(_float4 vPos) {};
 	virtual void					DeActivate();
-	virtual void					DeActivate_Dissolve();
+	virtual void					DeActivate_Slowly();
 
 
 protected:	/* Tool Function */
@@ -82,8 +85,12 @@ protected:
 	_float4x4						m_LocalMatrixOriginal;
 	_float4							m_ParentPosition;
 
+	_bool							m_bActiveSlowly;
+	_bool							m_bDeActiveSlowly;
+
 protected: /* For. Activation */
 	_float2							m_vScaleSpeed;
+	_float3							m_vScaleOrignial;
 
 	_bool							m_bSelfStop;
 	_float							m_fSelfStopTime;

@@ -17,6 +17,10 @@ _float		fDefaultVal = 345.f; /* Default Chat Value */
 _bool		bDefaultVal = false;
 wstring		wstrDefault = L"";
 
+#define SND_LAGHTER_1 L"VOX_Jizo_Kids_Laughter_1.ogg"
+#define SND_LAGHTER_2 L"VOX_Jizo_Kids_Laughter_2.ogg"
+#define SND_LAGHTER_3 L"VOX_Jizo_Kids_Laughter_3.ogg"
+
 CSaiya::CSaiya(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CNpc(pDevice, pContext)
 	, m_iChatIndex(0)
@@ -49,9 +53,14 @@ HRESULT CSaiya::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 	m_pModelCom->Set_AllAnimCommonType();
-	CGameObject* p_game_object = nullptr;
-	CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", L"Saiya_Rot", nullptr, &p_game_object);
-	m_pRot = dynamic_cast<CRot*>(p_game_object);
+
+	if (g_LEVEL == LEVEL_TESTPLAY)
+	{
+		CGameObject* p_game_object = nullptr;
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", L"Saiya_Rot", nullptr, &p_game_object);
+		m_pRot = dynamic_cast<CRot*>(p_game_object);
+	}
+
 	return S_OK;
 }
 
@@ -92,17 +101,21 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pCinecam[NPC_CINE0] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CINE0")));
-	m_pCinecam[NPC_CINE1] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CINE1")));
-	m_pMainCam = dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")));
-
-	Load_KeyFrame();
-	if (!m_keyframes.empty())
+	if (g_LEVEL == LEVEL_TESTPLAY)
 	{
-		const _float4 vPos = _float4(m_keyframes[m_iKeyFrame].vPos.x, m_keyframes[m_iKeyFrame].vPos.y, m_keyframes[m_iKeyFrame].vPos.z, 1.f);
-		const _float4 vLook = _float4(m_keyframes[m_iKeyFrame].vLook.x, m_keyframes[m_iKeyFrame].vLook.y, m_keyframes[m_iKeyFrame].vLook.z, 0.f);
-		m_pTransformCom->Set_Position(vPos);
-		m_pTransformCom->Set_Look(vLook);
+		m_pCinecam[NPC_CINE0] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CINE0")));
+		m_pCinecam[NPC_CINE1] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CINE1")));
+		m_pCinecam[NPC_CINE2] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CINE2")));
+		m_pMainCam = dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")));
+
+		Load_KeyFrame();
+		if (!m_keyframes.empty())
+		{
+			const _float4 vPos = _float4(m_keyframes[m_iKeyFrame].vPos.x, m_keyframes[m_iKeyFrame].vPos.y, m_keyframes[m_iKeyFrame].vPos.z, 1.f);
+			const _float4 vLook = _float4(m_keyframes[m_iKeyFrame].vLook.x, m_keyframes[m_iKeyFrame].vLook.y, m_keyframes[m_iKeyFrame].vLook.z, 0.f);
+			m_pTransformCom->Set_Position(vPos);
+			m_pTransformCom->Set_Look(vLook);
+		}
 	}
 
 	return S_OK;
@@ -111,9 +124,9 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 void CSaiya::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
 	m_iNumKeyFrame = (_uint)m_keyframes.size();
 	Update_Collider(fTimeDelta);
+
 	char szName[MAX_PATH] = "";
 	CUtile::WideCharToChar(m_szCloneObjectTag, szName);
 	ImGui::Begin(szName);
@@ -121,6 +134,7 @@ void CSaiya::Tick(_float fTimeDelta)
 	ImGui_AnimationProperty();
 	m_pTransformCom->Imgui_RenderProperty();
 	ImGui::End();
+
 	if (m_pFSM && m_iKeyFrame < m_iNumKeyFrame - 2) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -188,6 +202,8 @@ HRESULT CSaiya::RenderShadow()
 void CSaiya::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
+	_float fDistanceBetweenPlayer = m_pTransformCom->Calc_Distance_XYZ(m_pKena->Get_TransformCom());
+	ImGui::Text("Distance to Player :	%f", fDistanceBetweenPlayer);
 
 	if(ImGui::Button("NpcCam"))
 	{
@@ -301,6 +317,22 @@ void CSaiya::ImGui_PhysXValueProperty()
 	CNpc::ImGui_PhysXValueProperty();
 }
 
+_int CSaiya::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	if(pTarget != m_pKena && iColliderIndex == (_int)TRIGGER_PULSE && DistanceTrigger(10.f))
+	{
+		m_bPulse = true;
+		return 0;
+	}
+	else
+	{
+		m_bPulse = false;
+		return 0;
+	}
+
+	return 0;
+}
+
 void CSaiya::Update_Collider(_float fTimeDelta)
 {
 	m_pTransformCom->Tick(fTimeDelta);
@@ -315,12 +347,14 @@ HRESULT CSaiya::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		Rot_WispSetPosition();
+		m_pModelCom->Set_AnimIndex(SAIYA_CHASINGLOOP);
 	})
 		.OnExit([this]()
 	{
 		CGameInstance::GetInstance()->Work_Camera(m_pCinecam[NPC_CINE0]->Get_ObjectCloneName());
 		m_pCinecam[NPC_CINE0]->Play();
 		m_bCinecam[NPC_CINE0] = true;
+		Set_PlayerLock(true);
 	})
 		.AddTransition("INIT_CAM to ACTION_0" , "ACTION_0")
 		.Predicator([this]()
@@ -336,19 +370,26 @@ HRESULT CSaiya::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		Set_PlayerLock(false);
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		CGameInstance::GetInstance()->Work_Camera(m_pMainCam->Get_ObjectCloneName());
 		const _float3 vOffset = _float3(0.f, 0.5f, 1.f);
 		const _float3 vLookOffset = _float3(0.f, 0.4f, 0.f);
 		m_pMainCam->Set_Target(this, CCameraForNpc::OFFSET_FRONT, vOffset, vLookOffset);
-		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(TEXT("Saiya_Rot"), this, TRIGGER_ROT, CUtile::Float_4to3(vPos), 1.f));
-		m_pRot->Set_WakeUpPos(vPos);
-		m_pRot->Get_TransformCom()->Set_Look(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * -1.f);
+		m_pCinecam[NPC_CINE0]->CinemaUIOff();
+		if (m_pRot)
+		{
+			CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(TEXT("Saiya_Rot"), this, TRIGGER_ROT, CUtile::Float_4to3(vPos), 1.f));
+			m_pRot->Set_WakeUpPos(vPos);
+			m_pRot->Get_TransformCom()->Set_Look(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * -1.f);
+		}
+
+		Play_Sound(SND_LAGHTER_1, 1.f);
 	})
 		.AddTransition("ACTION_0 to ACTION_1" , "ACTION_1")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(SAIYA_CHASINGLOOP) && m_pCinecam[0]->CameraFinishedChecker();
+		return m_pCinecam[0]->CameraFinishedChecker();
 	})
 
 		.AddState("ACTION_1")
@@ -365,7 +406,7 @@ HRESULT CSaiya::SetUp_State()
 		.AddTransition("ACTION_1 to ACTION_2", "ACTION_2")
 		.Predicator([this]()
 	{
-		return !DistanceTrigger(20.f);
+		return !DistanceTrigger(15.f);
 	})
 
 
@@ -402,7 +443,7 @@ HRESULT CSaiya::SetUp_State()
 		.AddTransition("ACTION_3 to ACTION_4", "ACTION_4")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(5.f) && AnimFinishChecker(SAIYA_CHASINGLOOP) && !m_bCinecam[NPC_CINE1];
+		return DistanceTrigger(15.f) && AnimFinishChecker(SAIYA_CHASINGLOOP) && !m_bCinecam[NPC_CINE1];
 	})
 
 
@@ -474,7 +515,7 @@ HRESULT CSaiya::SetUp_State()
 		.AddTransition("ACTION_7 to ACTION_8", "ACTION_8")
 		.Predicator([this]()
 	{
-	 	return true; // 위치 잡자 
+	 	return true; 
 	})
 
 		.AddState("ACTION_8")
@@ -524,10 +565,7 @@ HRESULT CSaiya::SetUp_State()
 			m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_CHEER);
 			m_pModelCom->Set_AnimIndex(SAIYA_CHEER);
 			CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
-
-			CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
-			if (pKena != nullptr)
-				pKena->Set_StateLock(true);
+			Set_PlayerLock(true);
 	})
 
 		.OnExit([this]()
@@ -573,9 +611,7 @@ HRESULT CSaiya::SetUp_State()
 		_bool bVal = false;
 		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
 
-		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
-		if (pKena != nullptr)
-			pKena->Set_StateLock(false);
+		Set_PlayerLock(false);
 
 		m_iLineIndex = 0;
 		m_iChatIndex++;
@@ -593,7 +629,7 @@ HRESULT CSaiya::SetUp_State()
 		.AddTransition("ACTION_9 to ACTION_10", "ACTION_10")
 		.Predicator([this]()
 	{
-		return IsChatEnd(); // 여기서 대화해야댐 대화끝나면 true가 되야됨
+		return IsChatEnd();
 	})
 
 		.AddState("ACTION_10")
@@ -640,6 +676,320 @@ HRESULT CSaiya::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+	}) // 플레이어 또 가까이오면 시네마캠 NPC_CINE2 동작 
+
+		.OnExit([this]()
+	{
+		CGameInstance::GetInstance()->Work_Camera(m_pCinecam[NPC_CINE2]->Get_ObjectCloneName());
+		m_pCinecam[NPC_CINE2]->Play();
+		m_bCinecam[NPC_CINE2] = true;
+		Set_PlayerLock(true);
+	})
+		.AddTransition("ACTION_12 to ACTION_13", "ACTION_13")
+		.Predicator([this]()
+	{
+		return 	DistanceTrigger(25.f) && !m_bCinecam[NPC_CINE2];
+	})
+
+		.AddState("ACTION_13")
+		.OnStart([this]()
+	{
+		Set_PlayerLock(false);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_IDLE); // 어느정도 가까이 오면 아이들 상태에서 Curious한 애니메이션 실행 펄스로 했을때 옆에 NPC 닿으면 Pulse 그 애니메이션하고 놀라워하기 
+	})
+		.AddTransition("ACTION_13 to ACTION_14", "ACTION_14")
+		.Predicator([this]()
+	{
+		return 	m_pCinecam[NPC_CINE2]->CameraFinishedChecker(0.45f);
+	})
+
+		.AddState("ACTION_14")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_CURIOUS);
+		m_pModelCom->Set_AnimIndex(SAIYA_CURIOUS);
+	})
+		.AddTransition("ACTION_14 to ACTION_15", "ACTION_15")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(SAIYA_CURIOUS);
+	})
+
+		.AddState("ACTION_15")
+		.OnStart([this]()
+	{
+		m_bPulse = false;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+	}) // 펄스 닿으면 애니메이션 진행
+		.AddTransition("ACTION_15 to ACTION_16", "ACTION_16")
+		.Predicator([this]()
+	{
+		return m_bPulse && m_bCinecam[NPC_CINE2];
+	})
+
+
+		.AddState("ACTION_16")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_PULSE);
+		m_pModelCom->Set_AnimIndex(SAIYA_PULSE);
+		CGameInstance::GetInstance()->Work_Camera(m_pMainCam->Get_ObjectCloneName());
+		const _float3 vOffset = _float3(2.5f, 2.f, 1.f);
+		const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
+		m_pMainCam->Set_Target(this, CCameraForNpc::OFFSET_FRONT, vOffset, vLookOffset);
+	})
+		.AddTransition("ACTION_16 to ACTION_17", "ACTION_17")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(SAIYA_PULSE);
+	})
+
+
+		.AddState("ACTION_17")
+		.OnStart([this]()
+	{
+		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+		_bool bVal = true;
+		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][0]);
+		m_iLineIndex++;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+
+		if (CGameInstance::GetInstance()->Key_Down(DIK_E))
+		{
+			if (m_iLineIndex == (int)m_vecChat[m_iChatIndex].size())
+			{
+				m_iLineIndex++;
+				return;
+			}
+			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+			_bool bVal = true;
+			m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][m_iLineIndex]);
+			m_iLineIndex++;
+		}
+	}) //대화
+		.OnExit([this]()
+	{
+			/* Chat End */
+			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+			_bool bVal = false;
+			m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
+
+			m_iLineIndex = 0;
+			m_iChatIndex++;
+
+			/* Quest Start */
+			CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+			CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
+			_bool bStart = true;
+			m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
+			_float fQuestIdx = 0.f;
+			m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fQuestIdx, wstrDefault);
+			CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
+			CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+	})
+		.AddTransition("ACTION_17 to ACTION_18", "ACTION_18")
+		.Predicator([this]()
+	{
+		return IsChatEnd();
+	})
+
+		.AddState("ACTION_18")
+		.OnStart([this]()
+	{
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_RUN);
+		m_pTransformCom->Set_Look(CUtile::Float3toFloat4Look(m_keyframes[9].vLook));
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	})
+		.AddTransition("ACTION_18 to ACTION_19", "ACTION_19")
+		.Predicator([this]()
+	{
+		return !DistanceTrigger(10.f);
+	})
+
+		.AddState("ACTION_19")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_TELEPORT);
+		m_pModelCom->Set_AnimIndex(SAIYA_TELEPORT);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		// 사라질때 이펙트 	
+	})
+		.OnExit([this]()
+	{
+		if (!m_keyframes.empty())
+		{
+			m_pTransformCom->Set_Position(CUtile::Float3toFloat4Position(m_keyframes[10].vPos));
+			m_pTransformCom->Set_Look(CUtile::Float3toFloat4Look(m_keyframes[10].vLook));
+		}
+	})
+		.AddTransition("ACTION_19 to ACTION_20", "ACTION_20")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(SAIYA_TELEPORT);
+	})
+
+		.AddState("ACTION_20")
+		.OnStart([this]()
+	{
+		m_bPulse = false;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+	})
+		.AddTransition("ACTION_20 to ACTION_21", "ACTION_21")
+		.Predicator([this]()
+	{
+		return m_bPulse;// 시네마캠 ㄱㄱㄱ
+	})
+
+		.AddState("ACTION_21")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_PULSE);
+		m_pModelCom->Set_AnimIndex(SAIYA_PULSE);
+	})
+		.AddTransition("ACTION_21 to ACTION_22", "ACTION_22")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(SAIYA_PULSE);
+	})
+
+		.AddState("ACTION_22")
+		.OnStart([this]()
+	{
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_RUN);
+		m_pTransformCom->Set_Look(CUtile::Float3toFloat4Look(m_keyframes[11].vLook));
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	})
+		.AddTransition("ACTION_22 to ACTION_23", "ACTION_23")
+		.Predicator([this]()
+	{
+		return !DistanceTrigger(10.f);
+	})
+
+		.AddState("ACTION_23")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_TELEPORT);
+		m_pModelCom->Set_AnimIndex(SAIYA_TELEPORT);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		// 사라질때 이펙트 	
+	})
+		.OnExit([this]()
+	{
+		if (!m_keyframes.empty())
+		{
+			m_pTransformCom->Set_Position(CUtile::Float3toFloat4Position(m_keyframes[12].vPos));
+			m_pTransformCom->Set_Look(CUtile::Float3toFloat4Look(m_keyframes[12].vLook));
+		}
+	})
+		.AddTransition("ACTION_23 to ACTION_24", "ACTION_24")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(SAIYA_TELEPORT);
+	})
+
+		.AddState("ACTION_24")
+		.OnStart([this]()
+	{
+		m_bPulse = false;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+	})
+		.AddTransition("ACTION_24 to ACTION_25", "ACTION_25")
+		.Predicator([this]()
+	{
+		return m_bPulse;
+	})
+
+		.AddState("ACTION_25")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_PULSE);
+		m_pModelCom->Set_AnimIndex(SAIYA_PULSE);
+	})
+		.AddTransition("ACTION_25 to ACTION_26", "ACTION_26")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(SAIYA_PULSE);
+	})
+
+		.AddState("ACTION_26")
+		.OnStart([this]()
+	{
+		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+		_bool bVal = true;
+		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][0]);
+		m_iLineIndex++;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+		if (CGameInstance::GetInstance()->Key_Down(DIK_E))
+		{
+			if (m_iLineIndex == (int)m_vecChat[m_iChatIndex].size())
+			{
+				m_iLineIndex++;
+				return;
+			}
+			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+			_bool bVal = true;
+			m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][m_iLineIndex]);
+			m_iLineIndex++;
+		}
+	}) //대화
+		.OnExit([this]()
+	{
+		/* Chat End */
+		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+		_bool bVal = false;
+		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
+
+		m_iLineIndex = 0;
+		m_iChatIndex++;
+
+		/* Quest Start */
+		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+		CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
+		_bool bStart = true;
+		m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
+		_float fQuestIdx = 0.f;
+		m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fQuestIdx, wstrDefault);
+		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
+		CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+	})
+		.AddTransition("ACTION_26 to ACTION_27", "ACTION_27")
+		.Predicator([this]()
+	{
+		return IsChatEnd();
+	})
+
+		.AddState("ACTION_27")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
 	})
 
 		.Build();
@@ -651,7 +1001,7 @@ HRESULT CSaiya::SetUp_Components()
 	__super::SetUp_Components();
 	// 첫씬 레벨
 	// 프로토타입 -
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Saiya", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Saiya", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_NORMALS, TEXT("../Bin/Resources/Anim/NPC/Eyes_NORMAL.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Saiya/jizokids_mask_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Saiya/jizogirl_body_AO_R_M.png")), E_FAIL);
@@ -744,6 +1094,12 @@ void CSaiya::AdditiveAnim(_float fTimeDelta)
 	m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, 1.f, "SK_Saiya.ao");
 }
 
+void CSaiya::Set_PlayerLock(_bool bLock)
+{
+	if (m_pKena)
+		m_pKena->Set_StateLock(bLock);
+}
+
 _bool CSaiya::IsChatEnd()
 {
 	if ((size_t)m_iLineIndex > m_vecChat[m_iChatIndex].size())
@@ -827,21 +1183,29 @@ HRESULT CSaiya::Load_KeyFrame()
 
 void CSaiya::Rot_WispSetPosition()
 {
-	CBone* pBone = m_pModelCom->Get_BonePtr("char_spine_low_jnt");
-	_matrix			SocketMatrix =
-		pBone->Get_OffsetMatrix() *
-		pBone->Get_CombindMatrix() *
-		m_pModelCom->Get_PivotMatrix() *
-		m_pTransformCom->Get_WorldMatrix();
-	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
-	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
-	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
-	_float4x4 pivotMatrix;
-	XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
-	_float4 vRotLook = _float4(pivotMatrix._31, 0.f, pivotMatrix._33, 0.f);
-	_float4 vRotPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f) + vRotLook * -1.5f;
-	m_pRot->Set_Position(vRotPos);
-	m_pRot->Set_WispPos(vRotPos);
+	if (m_pRot)
+	{
+		CBone* pBone = m_pModelCom->Get_BonePtr("char_spine_low_jnt");
+		_matrix			SocketMatrix =
+			pBone->Get_OffsetMatrix() *
+			pBone->Get_CombindMatrix() *
+			m_pModelCom->Get_PivotMatrix() *
+			m_pTransformCom->Get_WorldMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+		_float4x4 pivotMatrix;
+		XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+		_float4 vRotLook = _float4(pivotMatrix._31, 0.f, pivotMatrix._33, 0.f);
+		_float4 vRotPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f) + vRotLook * -1.5f;
+		m_pRot->Set_Position(vRotPos);
+		m_pRot->Set_WispPos(vRotPos);
+	}
+}
+
+void CSaiya::Play_Sound(const _tchar* SoundKey, float fVolume)
+{
+	CGameInstance::GetInstance()->Play_Sound(SoundKey, fVolume);
 }
 
 CSaiya* CSaiya::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

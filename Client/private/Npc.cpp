@@ -37,7 +37,10 @@ HRESULT CNpc::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
+
+	if(g_LEVEL == LEVEL_TESTPLAY)
+		FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
+
 	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 
 	RELEASE_INSTANCE(CGameInstance)

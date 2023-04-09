@@ -33,7 +33,47 @@ HRESULT CWaterPlane::Initialize(void* pArg)
 
 HRESULT CWaterPlane::Late_Initialize(void* pArg)
 {
-	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+	_float3 vPos;
+	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+	_float	fMinX, fMaxX, fMinY, fMaxY, fMinZ, fMaxZ;
+	m_pModelCom->Calc_MinMax(&fMinX, &fMaxX, &fMinY, &fMaxY, &fMinZ, &fMaxZ);
+
+	_float3	vSize = _float3(fMaxX - fMinX, fMaxY - fMinY, fMaxZ - fMinZ);
+	vSize *= 0.5f;
+	_float3 vScale = m_pTransformCom->Get_Scaled();
+
+	vSize.x *= vScale.x;
+	vSize.y *= vScale.y;
+	vSize.z *= vScale.z;
+
+	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	BoxDesc.pActortag = m_szCloneObjectTag;
+	BoxDesc.eType = BOX_STATIC;
+	BoxDesc.vPos = vPos;
+	BoxDesc.vSize = vSize;
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = false;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDensity = 0.2f;
+	BoxDesc.fMass = 150.f;
+	BoxDesc.fLinearDamping = 10.f;
+	BoxDesc.fAngularDamping = 5.f;
+	BoxDesc.bCCD = false;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
+	BoxDesc.isTrigger = true;
+
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_WATER));
+
+	_smatrix	matPivot = XMMatrixIdentity();
+	m_pTransformCom->Connect_PxActor_Static(m_szCloneObjectTag);
+	m_pTransformCom->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());
+
 	return S_OK;
 }
 
@@ -89,7 +129,7 @@ void CWaterPlane::ImGui_PhysXValueProperty()
 
 HRESULT CWaterPlane::SetUp_Components()
 {
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_WaterPlane", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_WaterPlane", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_Water", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 	return S_OK;

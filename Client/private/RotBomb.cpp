@@ -10,6 +10,7 @@
 #include "E_P_Explosion.h"
 #include "E_BombTrail.h"
 #include "Camera_Player.h"
+#include "Kena_Status.h"
 
 CRotBomb::CRotBomb(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -141,7 +142,7 @@ void CRotBomb::Late_Tick(_float fTimeDelta)
 
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
+	
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
 
@@ -259,11 +260,18 @@ void CRotBomb::Set_Child()
 
 	m_vecChild.reserve(CHILD_END);
 
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotBombExplosion", CUtile::Create_CombinedString(m_szCloneObjectTag, L"RotBombExplosion") ));
+	wstring strCloneTag = m_szCloneObjectTag;
+	strCloneTag += L"_RotBombExplosion";
+
+	_tchar* pTag = CUtile::Create_StringAuto(strCloneTag.c_str());
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotBombExplosion", pTag));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 	
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Explosion_p", CUtile::Create_CombinedString(m_szCloneObjectTag, L"RotBombExplosion_P")));
+	strCloneTag = m_szCloneObjectTag;
+	strCloneTag += L"_RotBombExplosion";
+	pTag = CUtile::Create_StringAuto(strCloneTag.c_str());
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Explosion_p", pTag));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 
@@ -419,8 +427,13 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 		if (m_pAnimation->Get_AnimationFinish() == true && m_pAnimation->Get_CurrentAnimName() == "LAND")
 			m_pAnimation->State_Animation("LAND_LOOP");
 
-		if (m_fBoomTimer > 4.5f && m_pAnimation->Get_CurrentAnimName() == "LAND_LOOP")
+		if (m_fBoomTimer > m_fBoomTime && m_pAnimation->Get_CurrentAnimName() == "LAND_LOOP")
+		{
 			m_pAnimation->State_Animation("LAND_RUMBLE");
+
+			if (m_pKena->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOMB, 2) == true)
+				m_pAnimation->Set_AnimationSpeed(50.f);
+		}
 
 		if (m_bBoom == true)
 		{
@@ -437,7 +450,10 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 	else if (m_eCurState == CRotBomb::BOMB_BOOM)
 	{
 		if (m_vecChild[CHILD_COVER]->Get_Active() == false)
+		{
+			eState = CRotBomb::BOMBSTATE_END;
 			Reset();
+		}
 	}
 
 	return eState;
@@ -595,7 +611,7 @@ void CRotBomb::Throw(_float fTimeDelta)
 
 _int CRotBomb::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	if (pTarget == nullptr || iColliderIndex == (_int)COLLISON_DUMMY || iColliderIndex == (_int)COL_MONSTER || iColliderIndex == (_int)COL_ELETE_MONSTER || iColliderIndex == (_int)COL_BOSS_MONSTER)
+	if (pTarget == nullptr || iColliderIndex == (_int)COLLISON_DUMMY || iColliderIndex == (_int)COL_MONSTER || iColliderIndex == (_int)COL_ELETE_MONSTER || iColliderIndex == (_int)COL_BOSS_MONSTER || iColliderIndex == (_int)COL_ENVIROMENT)
 	{
 		if (m_bHit == false)
 		{
@@ -611,7 +627,7 @@ _int CRotBomb::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 		}
 	}
 
-	if (iColliderIndex == (_uint)COL_PLAYER_ARROW && m_eCurState == CRotBomb::BOMB_LAND)
+	if (iColliderIndex == (_int)COL_PLAYER && m_eCurState == CRotBomb::BOMB_LAND && m_pKena->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOMB, 1) == true)
 		m_bBoom = true;
 
 	return 0;

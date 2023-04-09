@@ -9,7 +9,13 @@ CHunterArrow::CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_fTrailTimeAcc(0.f)
 	, m_bTrailOn(false)
 	, m_iTrailIndex(0)
-{
+	, m_bShockwaveOn(false)
+	, m_fRingTime(0.0f)
+	, m_fRingTimeAcc(0.0f)
+	, m_iRingIndex(0)
+	, m_iHitIndex(0)
+	, m_pGameInstance(CGameInstance::GetInstance())
+{	
 }
 
 CHunterArrow::CHunterArrow(const CHunterArrow& rhs)
@@ -18,6 +24,12 @@ CHunterArrow::CHunterArrow(const CHunterArrow& rhs)
 	, m_fTrailTimeAcc(0.f)
 	, m_bTrailOn(false)
 	, m_iTrailIndex(0)
+	, m_bShockwaveOn(false)
+	, m_fRingTime(0.0f)
+	, m_fRingTimeAcc(0.0f)
+	, m_iRingIndex(0)
+	, m_iHitIndex(0)
+	, m_pGameInstance(CGameInstance::GetInstance())
 {
 }
 
@@ -36,7 +48,7 @@ HRESULT CHunterArrow::Initialize(void* pArg)
 
 	CGameObject::GAMEOBJECTDESC GameObjDesc;
 	ZeroMemory(&GameObjDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GameObjDesc.TransformDesc.fSpeedPerSec = 17.f;
+	GameObjDesc.TransformDesc.fSpeedPerSec = 20.f;
 
 	if (FAILED(__super::Initialize(&GameObjDesc)))
 		return E_FAIL;
@@ -53,6 +65,23 @@ HRESULT CHunterArrow::Initialize(void* pArg)
 	m_fDissolveTime = 0.f;
 	m_fTrailTime = 0.1f;
 	m_fTrailTimeAcc = 0.f;
+	m_fRingTime = 0.30f;
+
+	_tchar szSoundTable[COPY_SOUND_KEY_END][64] = {	
+		TEXT("Mon_BossHunter_ArrowHit.ogg"),
+		TEXT("Mon_BossHunter_ArrowHit.ogg"),
+		TEXT("Mon_BossHunter_ArrowLaunch.ogg"),
+		TEXT("Mon_BossHunter_ArrowWhoosh.ogg"),
+		TEXT("Mon_Attack_Impact3.ogg"),		
+	};
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		pGameInstance->Copy_Sound(szSoundTable[i], szTemp);
+		m_pCopySoundKey[i] = CUtile::Create_StringAuto(szTemp);
+	}
 
 	return S_OK;
 }
@@ -103,8 +132,12 @@ void CHunterArrow::Tick(_float fTimeDelta)
 	ArrowProc(fTimeDelta);
 	Update_Collider(fTimeDelta);
 
-	for (auto& eff : m_vecTrailEffects)
-		eff->Tick(fTimeDelta);
+	for (_uint i = 0; i < EFFECT_END; ++i)
+	{
+		for (auto& eff : m_vecEffects[i])
+			eff->Tick(fTimeDelta);
+	}
+
 }
 
 void CHunterArrow::Late_Tick(_float fTimeDelta)
@@ -114,8 +147,11 @@ void CHunterArrow::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 
-	for (auto& eff : m_vecTrailEffects)
-		eff->Late_Tick(fTimeDelta);
+	for (_uint i = 0; i < EFFECT_END; ++i)
+	{
+		for (auto& eff : m_vecEffects[i])
+			eff->Late_Tick(fTimeDelta);
+	}
 
 	m_pRendererCom&& m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
@@ -212,7 +248,7 @@ HRESULT CHunterArrow::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Boss_Hunter_Arrow"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_Boss_Hunter_Arrow"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
 	m_pModelCom->SetUp_Material(0, aiTextureType::WJTextureType_DIFFUSE, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/E_Effect_20.png"));
@@ -306,8 +342,14 @@ void CHunterArrow::Free()
 {
 	__super::Free();
 
-	for (auto& effect : m_vecTrailEffects)
-		Safe_Release(effect);
+	for (_uint i = 0; i < EFFECT_END; ++i)
+	{
+		for (auto& eff : m_vecEffects[i])
+		{
+			Safe_Release(eff);
+			m_vecEffects[i].clear();
+		}
+	}
 }
 
 void CHunterArrow::ArrowProc(_float fTimeDelta)
@@ -327,17 +369,19 @@ void CHunterArrow::ArrowProc(_float fTimeDelta)
 		m_bTrailOn = false;
 	}
 	case FIRE:
-	{
-
+	{	
 		m_pTransformCom->Go_Straight(fTimeDelta);
 
 		Play_TrailEffect(fTimeDelta);
+
+		Play_RingEffect(fTimeDelta);
 
 		break;
 	}
 	case FINISH:
 	{
 		m_bTrailOn = false;
+		m_bShockwaveOn = false;
 
 		m_fDissolveTime += 0.5f * fTimeDelta;
 		if (m_fDissolveTime > 1.f)
@@ -363,15 +407,24 @@ void CHunterArrow::Execute_Ready(FIRE_TYPE eFireType)
 	m_eArrowState = REDAY;
 }
 
-void CHunterArrow::Execute_Fire()
+void CHunterArrow::Execute_Fire(_bool bLookTargetFlag, _float4 vTargetPos)
 {
 	m_eArrowState = FIRE;
 	m_bTrailOn = true;
+
+	if (m_eFireType == SHOCK)
+		m_bShockwaveOn = true;
+	
+	bLookTargetFlag ? m_pTransformCom->LookAt(vTargetPos) : 0;
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_LAUNCH], 0.5f);	
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WHOOSH], 0.5f);
 }
 
 void CHunterArrow::Execute_Finish()
 {
 	m_eArrowState = FINISH;
+	Play_FireFinishSound();
 }
 
 void CHunterArrow::Play_TrailEffect(_float fTimedelta)
@@ -382,12 +435,39 @@ void CHunterArrow::Play_TrailEffect(_float fTimedelta)
 		m_fTrailTime = 0.01f;
 		if (m_fTrailTimeAcc > m_fTrailTime)
 		{
-			m_vecTrailEffects[m_iTrailIndex]->Activate(m_pTransformCom->Get_Position());
+			m_vecEffects[EFFECT_TRAIL][m_iTrailIndex]->Activate(m_pTransformCom->Get_Position());
 			m_iTrailIndex++;
 			m_iTrailIndex %= MAX_TRAIL_EFFECTS;
 			m_fTrailTimeAcc = 0.f;
 		}
 	}
+}
+
+void CHunterArrow::Play_RingEffect(_float fTimeDelta)
+{
+	if (m_bShockwaveOn)
+	{
+		m_fRingTimeAcc += fTimeDelta;
+		m_fRingTime = 0.1f;
+		if (m_fRingTimeAcc > m_fRingTime)
+		{
+			_float4 vDir = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+			_float4 vPos = m_pTransformCom->Get_Position();
+			m_vecEffects[EFFECT_RING][m_iRingIndex]->Activate_Scaling(vDir, vPos, {0.05f, 0.05f});  
+
+			m_iRingIndex++;
+			m_iRingIndex %= MAX_RING_EFFECTS;
+			m_fRingTimeAcc = 0.0f;
+		}
+	}
+}
+void CHunterArrow::Play_HitEffect(_float fTimeDelta)
+{
+	m_vecEffects[EFFECT_HIT][m_iHitIndex]->Activate_Reflecting(
+		m_pTransformCom->Get_State(CTransform::STATE_LOOK), Get_ArrowHeadPos(), 80.0f);
+
+	m_iHitIndex++;
+	m_iHitIndex %= MAX_HIT_EFFECTS;
 }
 
 _float4 CHunterArrow::Get_ArrowHeadPos()
@@ -405,7 +485,33 @@ HRESULT CHunterArrow::SetUp_Effects()
 			CUtile::Create_DummyString(), L"Particle_ArrowTrail"));
 
 		if (pEffect != nullptr)
-			m_vecTrailEffects.push_back(pEffect);
+			m_vecEffects[EFFECT_TRAIL].push_back(pEffect);
+		else
+			return E_FAIL;
+	}
+
+	for (_uint i = 0; i < MAX_RING_EFFECTS; ++i)
+	{
+		CEffect_Base_S2* pEffect = nullptr;
+
+		pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Mesh_Base",
+			CUtile::Create_DummyString(), L"Mesh_ShockRing"));
+
+		if (pEffect != nullptr)
+			m_vecEffects[EFFECT_RING].push_back(pEffect);
+		else
+			return E_FAIL;
+	}
+
+	for (_uint i = 0; i < MAX_HIT_EFFECTS; ++i)
+	{
+		CEffect_Base_S2* pEffect = nullptr;
+
+		pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base",
+			CUtile::Create_DummyString(), L"Particle_ArrowHit"));
+
+		if (pEffect != nullptr)
+			m_vecEffects[EFFECT_HIT].push_back(pEffect);
 		else
 			return E_FAIL;
 	}
@@ -413,11 +519,41 @@ HRESULT CHunterArrow::SetUp_Effects()
 	return S_OK;
 }
 
+void CHunterArrow::Reset_Effects()
+{
+	for(_uint i=0;i<EFFECT_END;++i)
+	{
+		for (auto& eff : m_vecEffects[i])
+		{
+			Safe_Release(eff);
+			m_vecEffects[i].clear();
+		}
+
+	}
+
+	SetUp_Effects();
+}
+
 _int CHunterArrow::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	if (m_eArrowState == FIRE)
 	{
 		m_eArrowState = FINISH;
+
+		Play_HitEffect(0.0f);
+		Play_FireFinishSound();
 	}
 	return 0;
+}
+
+void CHunterArrow::Play_FireFinishSound()
+{
+	_tchar* pSoundTable[FIRE_TYPE_END] = {
+		m_pCopySoundKey[CSK_IMPACT],
+		m_pCopySoundKey[CSK_HIT],
+		m_pCopySoundKey[CSK_IMPACT2],
+		m_pCopySoundKey[CSK_HIT],
+	};
+
+	m_pGameInstance->Play_Sound(pSoundTable[m_eArrowState], 0.5f);
 }

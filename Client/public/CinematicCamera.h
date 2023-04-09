@@ -40,6 +40,7 @@ public:
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>	m_CinemaDelegator;
 	void		Load_ChatData(string str);
+	void		CinemaUIOff();
 
 private:
 	void		AddKeyFrame(CAMERAKEYFRAME keyFrame);

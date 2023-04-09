@@ -373,14 +373,7 @@ void CCinematicCamera::Imgui_RenderProperty()
 		ImGui::SameLine();
 		if (ImGui::Button("CinemaUIOff"))
 		{
-			/* Call CinemaUI */
-			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
-			_bool bOn = false;
-			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
-			/* ~Call CinemaUI */
-			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
-			m_iChatIndex = 0;
-			m_CinemaDelegator.broadcast(eChat, bOn, fTemp, m_vecChat[m_iChatIndex]);
+			CinemaUIOff();
 		}
 
 		if (ImGui::Button("DebugPlay"))
@@ -530,7 +523,7 @@ HRESULT CCinematicCamera::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_CineCam", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_CineCam", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	return S_OK;
 }
 
@@ -706,6 +699,18 @@ void CCinematicCamera::Load_ChatData(string str)
 	}
 
 	/* ~Chat File Load */
+}
+
+void CCinematicCamera::CinemaUIOff()
+{
+	/* Call CinemaUI */
+	CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
+	_bool bOn = false;
+	m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
+	/* ~Call CinemaUI */
+	CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+	m_iChatIndex = 0;
+	m_CinemaDelegator.broadcast(eChat, bOn, fTemp, m_vecChat[m_iChatIndex]);
 }
 
 void CCinematicCamera::Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAME>& v, string& chatFileName)

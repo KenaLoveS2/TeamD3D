@@ -63,7 +63,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
-	m_pModelCom->Set_AnimIndex(IDLE);
+	m_pModelCom->Init_AnimIndex(IDLE);
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 	m_pBodyBone = m_pModelCom->Get_BonePtr("char_spine_mid_jnt");
 	m_pWeaponTrailBone = m_pModelCom->Get_BonePtr("Knife_EndJnt");
@@ -82,7 +82,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	/* For. String */
 	m_fStringDissolveSpeed = 10.f;
 	m_fStringHDRIntensity = 5.0f;
-	m_vStringDiffuseColor = { 1.0f, 0.05f, 0.46f, 1.f };
+	m_vStringDiffuseColor = _float4(1.0f, 0.05f, 0.46f, 1.f) ;
 
 	FAILED_CHECK_RETURN(Create_Trail(), E_FAIL);
 
@@ -149,17 +149,59 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 }
 
 void CBossHunter::Tick(_float fTimeDelta)
-{
-	m_pModelCom->Play_Animation(fTimeDelta);
+{	
+	//m_pModelCom->Play_Animation(fTimeDelta);
+	//Update_Collider(fTimeDelta);
+
+	//m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
+
+	////if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	//if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
+	//if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
+
+	// /* For. String */
+	//m_fUVSpeeds[0] += 0.245f * fTimeDelta;
+	//m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
+
+	//m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
+	//if (m_fStringDissolve > 0.5)
+	//{
+	//	m_fStringDissolve = 0.5f;
+	//	m_fStringDissolveSpeed *= -1;
+	//	m_fStringDissolveSpeed = -0.9f;
+
+	//}
+	//else if (m_fStringDissolve < 0.f)
+	//{
+	//	m_fStringDissolve = 0.f;
+	//	m_fStringDissolveSpeed *= -1;
+	//	m_fStringDissolveSpeed = 0.9f;
+
+	//}
+	///* ~ For. String */
+
+	//for (auto& pArrow : m_pArrows)
+	//	pArrow->Tick(fTimeDelta);
+
+	//for (auto& pEffect : m_vecEffects)
+	//	pEffect->Tick(fTimeDelta);
+
+	//return;
+
+	if (m_bDeath) return;
+
+	__super::Tick(fTimeDelta);
+
 	Update_Collider(fTimeDelta);
-
-	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
-
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
 	if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
 
-	 /* For. String */
+	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	m_pModelCom->Play_Animation(fTimeDelta);
+	AdditiveAnim(fTimeDelta);
+
+	/* For. String */
 	m_fUVSpeeds[0] += 0.245f * fTimeDelta;
 	m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
 
@@ -179,31 +221,11 @@ void CBossHunter::Tick(_float fTimeDelta)
 
 	}
 	/* ~ For. String */
-
 	for (auto& pArrow : m_pArrows)
 		pArrow->Tick(fTimeDelta);
 
 	for (auto& pEffect : m_vecEffects)
 		pEffect->Tick(fTimeDelta);
-
-	return;
-
-
-	if (m_bDeath) return;
-
-	__super::Tick(fTimeDelta);
-
-	Update_Collider(fTimeDelta);
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
-	if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
-	if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
-
-	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	m_pModelCom->Play_Animation(fTimeDelta);
-	AdditiveAnim(fTimeDelta);
-
-	for (auto& pArrow : m_pArrows)
-		pArrow->Tick(fTimeDelta);
 }
 
 void CBossHunter::Late_Tick(_float fTimeDelta)
@@ -236,17 +258,18 @@ HRESULT CBossHunter::Render()
 	{
 		if (i == 0) // ArrowString
 		{
-			// ArrowString (Have to another Texture) Pause render until then
+			// ArrowString
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", HUNTER_ARROW), E_FAIL);
 		}
 		else if (i == 3) //Hair
 		{
-			// Hair (Have to another Texture) Pause render until then
+			// Hair 
 			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			//FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", DEFAULT), E_FAIL);
+			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture"), E_FAIL);
+			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture"), E_FAIL);
+			//FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", HUNTER_HAIR), E_FAIL);
 		}
 		else if (i == 4) // Knife UV01
 		{
@@ -256,7 +279,15 @@ HRESULT CBossHunter::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
 		}
-		else
+		else if (i == 1) // face and body 
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", HUNTER_HAIR), E_FAIL);
+		}
+		else 
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
@@ -321,6 +352,7 @@ void CBossHunter::Imgui_RenderProperty()
 
 void CBossHunter::ImGui_AnimationProperty()
 {
+	m_pTransformCom->Imgui_RenderProperty();
 	//m_pTransformCom->Imgui_RenderProperty_ForJH();
 	//m_pArrows[m_iArrowIndex]->Get_TransformCom()->Imgui_RenderProperty_ForJH();
 
@@ -398,6 +430,72 @@ void CBossHunter::Push_EventFunctions()
 
 	TurnOnTrail(true, 0.f);
 	TUrnOffTrail(true, 0.f);
+
+	// Sound CallBack
+	Play_Attack1Sound(true, 0.f);
+	Play_Attack2Sound(true, 0.f);
+	Play_Attack3Sound(true, 0.f);
+	Play_Attack4Sound(true, 0.f);
+	Play_Attack5Sound(true, 0.f);
+	Play_Attack6Sound(true, 0.f);
+	Play_Attack7Sound(true, 0.f);
+	Play_Attack8Sound(true, 0.f);
+	Play_Attack9Sound(true, 0.f);
+	Play_Attack10Sound(true, 0.f);
+	Play_Attack11Sound(true, 0.f);
+	Play_Attack12Sound(true, 0.f);
+	Play_Attack13Sound(true, 0.f);
+
+	Play_Hurt1Sound(true, 0.f);
+	Play_Hurt2Sound(true, 0.f);
+	Play_Hurt3Sound(true, 0.f);
+	Play_Hurt4Sound(true, 0.f);
+	Play_Hurt5Sound(true, 0.f);
+	Play_Hurt6Sound(true, 0.f);
+	Play_Hurt7Sound(true, 0.f);
+	Play_Hurt8Sound(true, 0.f);
+	Play_Hurt9Sound(true, 0.f);
+	Play_Hurt10Sound(true, 0.f);
+	Play_Hurt11Sound(true, 0.f);
+
+	Play_Whoosh1Sound(true, 0.f);
+	Play_Whoosh2Sound(true, 0.f);
+	Play_Whoosh3Sound(true, 0.f);
+	Play_Whoosh4Sound(true, 0.f);
+	Play_Whoosh5Sound(true, 0.f);
+	Play_Whoosh6Sound(true, 0.f);
+	Play_Whoosh7Sound(true, 0.f);
+	Play_Whoosh8Sound(true, 0.f);
+
+	Play_Elemental1Sound(true, 0.f);
+	Play_Elemental2Sound(true, 0.f);
+	Play_Elemental3Sound(true, 0.f);
+	Play_Elemental4Sound(true, 0.f);
+	Play_Elemental5Sound(true, 0.f);
+	Play_Elemental6Sound(true, 0.f);
+	Play_Elemental7Sound(true, 0.f);
+	Play_Elemental8Sound(true, 0.f);
+	Play_Elemental9Sound(true, 0.f);
+	Play_Elemental10Sound(true, 0.f);
+	Play_Elemental11Sound(true, 0.f);
+	Play_Elemental12Sound(true, 0.f);
+	Play_Elemental13Sound(true, 0.f);
+	Play_Elemental14Sound(true, 0.f);
+	Play_Elemental15Sound(true, 0.f);
+
+	Play_Impact1Sound(true, 0.f);
+	Play_Impact2Sound(true, 0.f);
+	Play_Impact3Sound(true, 0.f);
+	Play_Impact4Sound(true, 0.f);
+	Play_Impact5Sound(true, 0.f);
+
+	Play_Knife1Sound(true, 0.f);
+	Play_Knife2Sound(true, 0.f);
+	Play_Knife3Sound(true, 0.f);	
+
+	Play_ArrowChargeSound(true, 0.f);
+
+	Stop_ShockArrowUpY(true, 0.f);
 }
 
 HRESULT CBossHunter::SetUp_State()
@@ -405,23 +503,29 @@ HRESULT CBossHunter::SetUp_State()
 	m_pFSM = CFSMComponentBuilder()
 	.InitState("SLEEP")
 	.AddState("SLEEP")
-	.OnExit([this]()
+	.Tick([this](_float fTimeDelta)
 	{
-
+		m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fFlyHeightY);
+	})
+	.OnExit([this]()
+	{	
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+		m_bReadySpawn = true;
 	})
 	.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
 	.Predicator([this]()
 	{
-	m_fSpawnRange = 5.f;
-	return DistanceTrigger(m_fSpawnRange);
+		m_fSpawnRange = 10.f;
+		return DistanceTrigger(m_fSpawnRange);
 	})
 
 
 	.AddState("READY_SPAWN")
 	.OnStart([this]()
 	{
-	m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
-	m_pModelCom->Set_AnimIndex(IDLE);
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+	m_pModelCom->ResetAnimIdx_PlayTime(RAMPAGE);
+	m_pModelCom->Set_AnimIndex(RAMPAGE);
 
 	CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 	_float fValue = 30.f; /* == BossHunter Name */
@@ -429,13 +533,13 @@ HRESULT CBossHunter::SetUp_State()
 	})
 	.OnExit([this]()
 	{
-	m_pTransformCom->LookAt(m_vKenaPos);
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	m_bSpawn = true;
 	})
 	.AddTransition("READY_SPAWN to IDLE", "IDLE")
 	.Predicator([this]()
 	{
-	return AnimFinishChecker(IDLE);
+	return AnimFinishChecker(RAMPAGE);
 	})
 
 	.AddState("IDLE")
@@ -454,11 +558,11 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	m_fIdleTimeCheck += fTimeDelta;
 
-	if (m_pTransformCom->Get_PositionY() <= m_fFlyHeightY)
+	if (m_pTransformCom->Get_PositionY() <= m_vKenaPos.y + m_fFlyHeightY)
 	{
 		m_pTransformCom->Go_AxisY(fTimeDelta);
-		if (m_pTransformCom->Get_PositionY() >= m_fFlyHeightY)
-			m_pTransformCom->Set_PositionY(m_fFlyHeightY);
+		if (m_pTransformCom->Get_PositionY() >= m_vKenaPos.y + m_fFlyHeightY)
+			m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fFlyHeightY);
 	}
 
 	m_bDodge = m_pKena->Get_State(CKena::STATE_BOW) && (rand() % 5 == 0);
@@ -816,6 +920,11 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	ResetAndSet_Animation(SHOCK_ARROW_ATTACK);
 	Set_NextAttack();
+	m_bShockArrowUpY = true;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_bShockArrowUpY ? m_pTransformCom->Go_AxisY(fTimeDelta) : 0;		
 	})
 	.OnExit([this]()
 	{
@@ -846,17 +955,31 @@ HRESULT CBossHunter::SetUp_State()
 	.AddState("SHOCK_ARROW_LOOP")
 	.OnStart([this]()
 	{
-	ResetAndSet_Animation(SHOCK_ARROW_LOOP);
+		ResetAndSet_Animation(SHOCK_ARROW_LOOP);
+		m_bShockArrowDownY = false;
 	})
+		.Tick([this](_float fTimeDelta)
+	{
+		if (m_pTransformCom->Get_PositionY() > m_vKenaPos.y + m_fFlyHeightY)
+		{
+			m_pTransformCom->Go_AxisNegY(fTimeDelta);
+			if (m_pTransformCom->Get_PositionY() < m_vKenaPos.y + m_fFlyHeightY)
+			{
+				m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fFlyHeightY);
+				m_bShockArrowDownY = true;
+			}				
+		}
+	})
+
 	.AddTransition("To DYING", "DYING")
 	.Predicator([this]()
 	{
-	return m_pMonsterStatusCom->IsDead();
+		return m_pMonsterStatusCom->IsDead();
 	})
 	.AddTransition("SHOCK_ARROW_LOOP To SHOCK_ARROW_EXIT", "SHOCK_ARROW_EXIT")
 	.Predicator([this]()
 	{
-	return m_pArrows[m_iArrowIndex]->IsEnd();
+		return m_pArrows[m_iArrowIndex]->IsEnd() && m_bShockArrowDownY;
 	})
 
 
@@ -932,6 +1055,7 @@ HRESULT CBossHunter::SetUp_State()
 	.AddState("START_STUN")
 	.OnStart([this]()
 	{
+	ShockEffect_Off(false, 0.f);
 	Reset_HitFlag();
 	ResetAndSet_Animation(STUN_INTO_FALL);
 	m_pTransformCom->Speed_Boost(true, 0.5f);
@@ -1111,8 +1235,14 @@ HRESULT CBossHunter::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Boss_Hunter", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
+	// String
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_64.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_135.png")), E_FAIL);
+
+	// Hair
+	//FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_100.png")), E_FAIL);
+	//FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/Ramp6.png")), E_FAIL);
+	//FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_EMISSIVEMASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_54.png")), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/VillageHunter_Uv01_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/VillageHunter_Uv01_EMISSIVE.png")), E_FAIL);
@@ -1289,7 +1419,7 @@ _int CBossHunter::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos,
 
 			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);
 			//m_bWeaklyHit = !m_bStronglyHit;
-
+			
 			if (pArrow->Get_CurrentState() == CSpiritArrow::ARROW_INJECT_FIRE)
 			{
 				m_bStronglyHit = true;
@@ -1350,9 +1480,9 @@ void CBossHunter::Ready_Arrow(CHunterArrow::FIRE_TYPE eFireType)
 	m_pArrows[m_iArrowIndex]->Execute_Ready(eFireType);
 }
 
-void CBossHunter::Fire_Arrow(_bool bArrowIndexUpdate)
+void CBossHunter::Fire_Arrow(_bool bArrowIndexUpdate, _bool bTargetLook, _float4 vTargetPos)
 {
-	m_pArrows[m_iArrowIndex]->Execute_Fire();
+	m_pArrows[m_iArrowIndex]->Execute_Fire(bTargetLook, vTargetPos);
 	bArrowIndexUpdate ? Update_ArrowIndex() : 0;
 }
 
@@ -1395,7 +1525,13 @@ void CBossHunter::ReadyArrow_Single(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	Ready_Arrow(CHunterArrow::SINGLE);
+	_uint iLastArrowIndex = m_iArrowIndex + SINGLE_SHOT_FRIEND_COUNT * 2 + 1;
+	_uint iIndex;
+	for (_uint i = m_iArrowIndex; i < iLastArrowIndex; i++)
+	{
+		iIndex = i % ARROW_COUNT;
+		m_pArrows[iIndex]->Execute_Ready(CHunterArrow::SINGLE);
+	}
 }
 
 void CBossHunter::ReadyArrow_Charge(_bool bIsInit, _float fTimeDelta)
@@ -1444,8 +1580,25 @@ void CBossHunter::FireArrow_Single(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::FireArrow_Single);
 		return;
 	}
+	
+	_vector vKenaPos = m_vKenaPos + m_vTargetOffset;
+	_uint iBackupIndex = m_iArrowIndex;
+	Fire_Arrow(true, true, vKenaPos);
 
-	Fire_Arrow(true);
+	_vector vRight = XMVector3Normalize(m_pArrows[iBackupIndex]->Get_TransformCom()->Get_State(CTransform::STATE_RIGHT));
+	_vector vDirTable[2] = { vRight, -vRight };
+	
+	_float fDist = 2.f;
+	for (_uint i = 0; i < 2; i++)
+	{
+		for (_uint j = 0; j < SINGLE_SHOT_FRIEND_COUNT; j++)
+		{
+			m_vSingleShotTargetPosTable[i * SINGLE_SHOT_FRIEND_COUNT + j] = vKenaPos + vDirTable[i] * (j + 1) * fDist;
+		}
+	}
+	
+	for (_uint i = 0; i < SINGLE_SHOT_FRIEND_COUNT * 2; i++)
+		Fire_Arrow(true, true, m_vSingleShotTargetPosTable[i]);	
 }
 
 void CBossHunter::FireArrow_Charge(_bool bIsInit, _float fTimeDelta)
@@ -1456,8 +1609,9 @@ void CBossHunter::FireArrow_Charge(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::FireArrow_Charge);
 		return;
 	}
+		
+	Fire_Arrow(true, true, m_vKenaPos + m_vTargetOffset);
 
-	Fire_Arrow(true);
 	m_bReadyStrongArrow = false;
 }
 
@@ -1469,8 +1623,8 @@ void CBossHunter::FireArrow_Rapid(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::FireArrow_Rapid);
 		return;
 	}
-
-	Fire_Arrow(true);
+		
+	Fire_Arrow(true, true, m_vKenaPos + m_vTargetOffset);
 }
 
 void CBossHunter::FireArrow_Shock(_bool bIsInit, _float fTimeDelta)
@@ -1481,8 +1635,8 @@ void CBossHunter::FireArrow_Shock(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::FireArrow_Shock);
 		return;
 	}
-
-	Fire_Arrow(false);
+		
+	Fire_Arrow(true, false, _float4());
 	m_bReadyStrongArrow = false;
 }
 
@@ -1502,7 +1656,7 @@ void CBossHunter::ShockEffect_On(_bool bIsInit, _float fTimeDelta)
 	}
 
 	_float4 vPos = m_pArrows[m_iArrowIndex]->Get_ArrowHeadPos();
-	CGameObject* pArrow = m_pArrows[m_iArrowIndex];
+	//vPos.x += 0.30f;
 
 	m_vecEffects[EFFECT_CHARGE_PARTICLE_GATHER]->Activate(vPos);
 	m_vecEffects[EFFECT_CHARGE_TEXTURE_CIRCLE]->Activate_Scaling(vPos, { -3.f, -3.f });
@@ -1551,6 +1705,9 @@ void CBossHunter::DustEffect_On(_bool bIsInit, _float fTimeDelta)
 	else
 		vPos = m_pTransformCom->Get_Position();
 
+	_float4		vCenterPos = m_pTransformCom->Get_Position();
+	vPos.x = vCenterPos.x;
+	vPos.z = vCenterPos.z;
 
 	m_vecEffects[EFFECT_DUST_PARTICLE_BIG]->Activate(vPos);
 	m_vecEffects[EFFECT_DUST_PARTICLE_SMALL]->Activate(vPos);
@@ -1566,9 +1723,9 @@ void CBossHunter::StunEffect_Off(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->DeActivate_Dissolve();
-	m_vecEffects[EFFECT_STUN_MESH_BASE]->DeActivate_Dissolve();
-	m_vecEffects[EFFECT_STUN_MESH_BASE2]->DeActivate_Dissolve();
+	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->DeActivate_Slowly();
+	m_vecEffects[EFFECT_STUN_MESH_BASE]->DeActivate_Slowly();
+	m_vecEffects[EFFECT_STUN_MESH_BASE2]->DeActivate_Slowly();
 
 }
 
@@ -1619,9 +1776,13 @@ void CBossHunter::StunEffect_On(_bool bIsInit, _float fTimeDelta)
 	else
 		vPos = m_pTransformCom->Get_Position();
 
-	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->Activate(vPos);
-	m_vecEffects[EFFECT_STUN_MESH_BASE]->Activate(vPos);
-	m_vecEffects[EFFECT_STUN_MESH_BASE2]->Activate(vPos);
+	_float4		vCenterPos = m_pTransformCom->Get_Position();
+	vPos.x = vCenterPos.x;
+	vPos.z = vCenterPos.z;
+
+	m_vecEffects[EFFECT_STUN_MESH_GUAGE]->Activate_Slowly(vPos);
+	m_vecEffects[EFFECT_STUN_MESH_BASE]->Activate_Slowly(vPos);
+	m_vecEffects[EFFECT_STUN_MESH_BASE2]->Activate_Slowly(vPos);
 }
 
 HRESULT CBossHunter::Create_Effects()
@@ -1727,6 +1888,15 @@ void CBossHunter::ImGui_EffectProperty()
 			tags.push_back(str);
 		}
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("Reset Arrow Effects"))
+	{
+		for(auto& arrow : m_pArrows)
+		{
+			arrow->Reset_Effects();
+		}
+	}
+
 
 	static _int iSelectedEffect;
 	_int iSelectedBefore = iSelectedEffect;
@@ -1781,7 +1951,27 @@ void CBossHunter::Update_Trail(const char* pBoneTag)
 void CBossHunter::Create_CopySoundKey()
 {
 	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_BossHunter_Attack1.ogg"), TEXT("Mon_BossHunter_Attack2.ogg"), TEXT("Mon_BossHunter_Attack3.ogg"), TEXT("Mon_BossHunter_Attack4.ogg"),
+		TEXT("Mon_BossHunter_Attack5.ogg"), TEXT("Mon_BossHunter_Attack6.ogg"), TEXT("Mon_BossHunter_Attack7.ogg"), TEXT("Mon_BossHunter_Attack8.ogg"),
+		TEXT("Mon_BossHunter_Attack9.ogg"), TEXT("Mon_BossHunter_Attack10.ogg"), TEXT("Mon_BossHunter_Attack11.ogg"), TEXT("Mon_BossHunter_Attack12.ogg"),
+		TEXT("Mon_BossHunter_Attack13.ogg"),
 
+		TEXT("Mon_BossHunter_Hurt1.ogg"), TEXT("Mon_BossHunter_Hurt2.ogg"), TEXT("Mon_BossHunter_Hurt3.ogg"), TEXT("Mon_BossHunter_Hurt4.ogg"),
+		TEXT("Mon_BossHunter_Hurt5.ogg"), TEXT("Mon_BossHunter_Hurt6.ogg"), TEXT("Mon_BossHunter_Hurt7.ogg"), TEXT("Mon_BossHunter_Hurt8.ogg"),
+		TEXT("Mon_BossHunter_Hurt9.ogg"), TEXT("Mon_BossHunter_Hurt10.ogg"), TEXT("Mon_BossHunter_Hurt11.ogg"),
+
+		TEXT("Mon_BossHunter_Whoosh1.ogg"), TEXT("Mon_BossHunter_Whoosh2.ogg"), TEXT("Mon_BossHunter_Whoosh3.ogg"), TEXT("Mon_BossHunter_Whoosh4.ogg"),
+		TEXT("Mon_BossHunter_Whoosh5.ogg"), TEXT("Mon_BossHunter_Whoosh6.ogg"), TEXT("Mon_BossHunter_Whoosh7.ogg"), TEXT("Mon_BossHunter_Whoosh8.ogg"),
+
+		TEXT("Mon_BossHunter_Elemental1.ogg"), TEXT("Mon_BossHunter_Elemental2.ogg"), TEXT("Mon_BossHunter_Elemental3.ogg"), TEXT("Mon_BossHunter_Elemental4.ogg"),
+		TEXT("Mon_BossHunter_Elemental5.ogg"), TEXT("Mon_BossHunter_Elemental6.ogg"), TEXT("Mon_BossHunter_Elemental7.ogg"), TEXT("Mon_BossHunter_Elemental8.ogg"),
+		TEXT("Mon_BossHunter_Elemental9.ogg"), TEXT("Mon_BossHunter_Elemental10.ogg"), TEXT("Mon_BossHunter_Elemental11.ogg"), TEXT("Mon_BossHunter_Elemental12.ogg"),
+		TEXT("Mon_BossHunter_Elemental13.ogg"), TEXT("Mon_BossHunter_Elemental14.ogg"), TEXT("Mon_BossHunter_Elemental15.ogg"),
+
+		TEXT("Mon_Attack_Impact1.ogg"), TEXT("Mon_Attack_Impact2.ogg"), TEXT("Mon_Attack_Impact3.ogg"), TEXT("Mon_Attack_Impact4.ogg"), TEXT("Mon_Attack_Impact5.ogg"),
+		TEXT("Mon_Knife1.ogg"), TEXT("Mon_Knife2.ogg"), TEXT("Mon_Knife3.ogg"),
+
+		TEXT("Mon_BossHunter_ArrowCharge.ogg"),
 	};
 
 	_tchar szTemp[MAX_PATH] = { 0, };
@@ -1790,4 +1980,690 @@ void CBossHunter::Create_CopySoundKey()
 	{
 		SaveBufferCopySound(szOriginKeyTable[i], szTemp, &m_pCopySoundKey[i]);
 	}
+}
+
+void CBossHunter::Play_Attack1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK1], 0.5f);
+}
+
+void CBossHunter::Play_Attack2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK2], 0.5f);
+}
+
+void CBossHunter::Play_Attack3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK3], 0.5f);
+}
+
+void CBossHunter::Play_Attack4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK4], 0.5f);
+}
+
+void CBossHunter::Play_Attack5Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack5Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK5], 0.5f);
+}
+
+void CBossHunter::Play_Attack6Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack6Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK6], 0.5f);
+}
+
+void CBossHunter::Play_Attack7Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack7Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK7], 0.5f);
+}
+
+void CBossHunter::Play_Attack8Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack8Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK8], 0.5f);
+}
+
+void CBossHunter::Play_Attack9Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack9Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK9], 0.5f);
+}
+
+void CBossHunter::Play_Attack10Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack10Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK10], 0.5f);
+}
+
+void CBossHunter::Play_Attack11Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack11Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK11], 0.5f);
+}
+
+void CBossHunter::Play_Attack12Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack12Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK12], 0.5f);
+}
+
+void CBossHunter::Play_Attack13Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Attack13Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ATTACK13], 0.5f);
+}
+
+void CBossHunter::Play_Hurt1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Hurt1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT1], 0.5f);
+}
+
+void CBossHunter::Play_Hurt2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Hurt2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT2], 0.5f);
+}
+
+void CBossHunter::Play_Hurt3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Hurt3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT3], 0.5f);
+}
+
+void CBossHunter::Play_Hurt4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Hurt4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT4], 0.5f);
+}
+
+void CBossHunter::Play_Hurt5Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Hurt5Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT5], 0.5f);
+}
+
+void CBossHunter::Play_Hurt6Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Hurt6Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT6], 0.5f);
+}
+
+void CBossHunter::Play_Hurt7Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Hurt7Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT7], 0.5f);
+}
+
+void CBossHunter::Play_Hurt8Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Hurt8Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT8], 0.5f);
+}
+
+void CBossHunter::Play_Hurt9Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Hurt9Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT9], 0.5f);
+}
+
+void CBossHunter::Play_Hurt10Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Hurt10Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT10], 0.5f);
+}
+
+void CBossHunter::Play_Hurt11Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Hurt11Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT11], 0.5f);
+}
+
+
+void CBossHunter::Play_Whoosh1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Whoosh1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WHOOSH1], 0.5f);
+}
+
+void CBossHunter::Play_Whoosh2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Whoosh2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WHOOSH2], 0.5f);
+}
+
+void CBossHunter::Play_Whoosh3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Whoosh3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WHOOSH3], 0.5f);
+}
+
+void CBossHunter::Play_Whoosh4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Whoosh4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WHOOSH4], 0.5f);
+}
+
+void CBossHunter::Play_Whoosh5Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Whoosh5Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WHOOSH5], 0.5f);
+}
+
+void CBossHunter::Play_Whoosh6Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Whoosh6Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WHOOSH6], 0.5f);
+}
+
+void CBossHunter::Play_Whoosh7Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Whoosh7Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WHOOSH7], 0.5f);
+}
+
+void CBossHunter::Play_Whoosh8Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Whoosh8Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WHOOSH8], 0.5f);
+}
+
+void CBossHunter::Play_Elemental1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL1], 0.5f);
+}
+
+void CBossHunter::Play_Elemental2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL2], 0.5f);
+}
+
+void CBossHunter::Play_Elemental3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL3], 0.5f);
+}
+
+void CBossHunter::Play_Elemental4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL4], 0.5f);
+}
+
+void CBossHunter::Play_Elemental5Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental5Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL5], 0.5f);
+}
+
+void CBossHunter::Play_Elemental6Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental6Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL6], 0.5f);
+}
+
+void CBossHunter::Play_Elemental7Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental7Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL7], 0.5f);
+}
+
+void CBossHunter::Play_Elemental8Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental8Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL8], 0.5f);
+}
+
+void CBossHunter::Play_Elemental9Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental9Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL9], 0.5f);
+}
+
+void CBossHunter::Play_Elemental10Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental10Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL10], 0.5f);
+}
+
+void CBossHunter::Play_Elemental11Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental11Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL11], 0.5f);
+}
+
+void CBossHunter::Play_Elemental12Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental12Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL12], 0.5f);
+}
+
+void CBossHunter::Play_Elemental13Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental13Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL13], 0.5f);
+}
+
+
+void CBossHunter::Play_Elemental14Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental14Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL14], 0.5f);
+}
+
+void CBossHunter::Play_Elemental15Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Elemental15Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL15], 0.5f);
+}
+
+void CBossHunter::Play_Impact1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Impact1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT1], 0.5f);
+}
+
+void CBossHunter::Play_Impact2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Impact2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT2], 0.5f);
+}
+
+void CBossHunter::Play_Impact3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Impact3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT3], 0.5f);
+}
+
+void CBossHunter::Play_Impact4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Impact4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT4], 0.5f);
+}
+
+void CBossHunter::Play_Impact5Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Impact5Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT5], 0.5f);
+}
+
+void CBossHunter::Play_Knife1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Knife1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_KNIFE1], 0.5f);
+}
+
+void CBossHunter::Play_Knife2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Knife2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_KNIFE2], 0.5f);
+}
+
+void CBossHunter::Play_Knife3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_Knife3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_KNIFE3], 0.5f);
+}
+
+void CBossHunter::Play_ArrowChargeSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Play_ArrowChargeSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ARROW_CHARGE], 0.5f);
+}
+
+void CBossHunter::Stop_ShockArrowUpY(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Stop_ShockArrowUpY);
+		return;
+	}
+
+	m_bShockArrowUpY = false;
 }

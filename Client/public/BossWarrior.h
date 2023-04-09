@@ -9,6 +9,7 @@
 
 #define COL_WEAPON_TEXT					TEXT("BossWarrior_Weapon")
 #define COL_RIGHT_LEG_TEXT				TEXT("BossWarrior_RightLeg")
+#define COL_GRAB_HAND_TEXT				TEXT("BossWarrior_GrabHand")
 
 BEGIN(Client)
 class CBossWarrior : public CMonster
@@ -43,6 +44,13 @@ private:
 
 	enum ATTACKTYPE
 	{
+		AT_CHARGE,
+		AT_UPPER_CUT,
+		AT_COMBO,
+		AT_SWEEP,
+		AT_GRAB,
+		AT_JUMP,
+		AT_TRIP_UPPERCUT,
 		ATTACKTYPE_END
 	};
 
@@ -129,6 +137,9 @@ private:
 	_float3 m_vRightLegPivotTrans = { -0.26f, -0.02f, -0.06f};	
 	_float4x4 m_RightLegPivotMatrix;
 
+	_float3 m_vGrabHandPivotTrans = { 1.f, -0.02f, -2.02f };
+	_float4x4 m_GrabHandPivotMatrix;
+
 	class CGameObject* m_pHat = nullptr;
 	map<const string, class CEffect_Base*>	m_mapEffect;
 
@@ -137,16 +148,18 @@ private:
 
 	CBone* m_pWeaponBone = nullptr;
 	CBone* m_pRightLegBone = nullptr;
+	
+	CBone* m_pGrabHandBone = nullptr;
+	CBone* m_pGrabJointBone = nullptr;
 
-	_uint m_iCloseAttackIndex = 0;
-	_uint m_iFarAttackIndex = 0;
+	ATTACKTYPE m_eAttackType = AT_CHARGE;
 
 	_bool m_bEnRageReady = true;
 	_bool m_bBellCall = false;
 	_bool m_bBlock = false;
 	_bool m_bBlockHit = false;
-
-
+	_bool m_bKenaGrab = false;
+	
 	_float m_fBlockRange = 2.5f;
 	_float m_fJumpBackRange = 2.5;
 	_float m_fCloseAttackRange = 5.f;
@@ -157,7 +170,13 @@ private:
 	const _float m_fIdleTime = 1.f;
 
 	enum COPY_SOUND_KEY {
-		CSK_ATTACK, CSK_THROW, CSK_DIE, CSK_IDLE, CSK_PAIN, CSK_TENSE1, CSK_TENSE2, CSK_IMPACT, CSK_WALK,
+		CSK_ATTACK1, CSK_ATTACK2, CSK_ATTACK3, CSK_ATTACK4, CSK_ATTACK5, CSK_ATTACK6, CSK_ATTACK7, CSK_ATTACK8, CSK_ATTACK9,
+		CSK_HIT1, CSK_HIT2, CSK_HIT3, CSK_HIT4, 
+		CSK_HURT1, CSK_HURT2, CSK_HURT3, CSK_HURT4, CSK_HURT5, CSK_HURT6, CSK_HURT7,
+		CSK_TENSE1, CSK_TENSE2, CSK_TENSE3, 
+		CSK_BACK, 
+		CSK_IMPACT2, CSK_IMPACT3, CSK_IMPACT4, CSK_IMPACT5,
+		CSK_WALK, CSK_SWING, CSK_SLASH, CSK_BOSS_DING, CSK_BOSS_BASE, CSK_ELEMENTAL1, CSK_ELEMENTAL2, CSK_ELEMENTAL11,
 		COPY_SOUND_KEY_END,
 	};
 
@@ -169,10 +188,58 @@ public:
 	virtual void						Free() override;
 
 	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
-	void Attack_End(_uint* pAttackIndex, _uint iMaxAttackIndex, _uint iAnimIndex);
+	CBone* Get_GrabHandBonePtr() { return m_pGrabHandBone; }
+	CBone* Get_GrabJointBonePtr() { return m_pGrabJointBone; }
+	_bool Is_WarriorGrabAnimation() { return m_bKenaGrab; }
+
+	void Attack_End();
 
 	void Create_CopySoundKey();
+	void Play_Attack1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack4Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack5Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack6Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack7Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack8Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack9Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Hit1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hit2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hit3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hit4Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Hurt1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt4Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt5Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt6Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt7Sound(_bool bIsInit, _float fTimeDelta);
+	
+	void Play_Tense1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Tense2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Tense3Sound(_bool bIsInit, _float fTimeDelta);
+	
+	void Play_BackSound(_bool bIsInit, _float fTimeDelta);
+	void Play_ImpactSound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact4Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact5Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
+	void Play_SwingSound(_bool bIsInit, _float fTimeDelta);
+	void Play_SlashSound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_BossDingSound(_bool bIsInit, _float fTimeDelta);
+	void Play_BossBaseSound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Elemental1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Elemental2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Elemental11Sound(_bool bIsInit, _float fTimeDelta);
 };
 
 END

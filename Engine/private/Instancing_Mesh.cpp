@@ -147,7 +147,7 @@ HRESULT CInstancing_Mesh::Load_Mesh(HANDLE& hFile, DWORD& dwByte)
 	return S_OK;
 }
 
-void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>& VecInstancingMatrix)
+void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*> & VecInstancingMatrix)
 {
 	m_iNumInstance = m_iNumInstance_Origin = (_uint)VecInstancingMatrix.size();
 	m_iNumPrimitive = m_iOriginNumPrimitive * m_iNumInstance;
@@ -204,9 +204,13 @@ void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>& VecInstancingMatrix
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
 		memcpy(&pInstanceVertices[i].vRight, &VecInstancingMatrix[i]->m[0], sizeof(_float4));
+		pInstanceVertices[i].vRight.w = 0.f;
 		memcpy(&pInstanceVertices[i].vUp, &VecInstancingMatrix[i]->m[1], sizeof(_float4));
+		pInstanceVertices[i].vUp.w = 0.f;
 		memcpy(&pInstanceVertices[i].vLook, &VecInstancingMatrix[i]->m[2], sizeof(_float4));
+		pInstanceVertices[i].vLook.w = 0.f;
 		memcpy(&pInstanceVertices[i].vPosition, &VecInstancingMatrix[i]->m[3], sizeof(_float4));
+		pInstanceVertices[i].vPosition.w = 1.f;
 	}
 	Safe_Release(m_pInstanceBuffer);
 	m_pInstanceBuffer = nullptr;
@@ -219,7 +223,7 @@ void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>& VecInstancingMatrix
 	Safe_Delete_Array(pInstanceVertices);
 }
 
-void CInstancing_Mesh::InstBuffer_Update(vector<_float4x4*>& VecInstancingMatrix)
+void CInstancing_Mesh::InstBuffer_Update(vector<_float4x4*> & VecInstancingMatrix)
 {
 	/*메쉬_인스턴싱_이펙트 일때 여기 사용*/
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
@@ -233,9 +237,13 @@ void CInstancing_Mesh::InstBuffer_Update(vector<_float4x4*>& VecInstancingMatrix
 		for (_uint i = 0; i < m_iNumInstance; ++i)
 		{
 			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &VecInstancingMatrix[i]->m[0], sizeof(_float4));
+			((VTXMATRIX*)SubResource.pData)[i].vRight.w = 0.f;
 			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &VecInstancingMatrix[i]->m[1], sizeof(_float4));
+			((VTXMATRIX*)SubResource.pData)[i].vUp.w = 0.f;
 			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &VecInstancingMatrix[i]->m[2], sizeof(_float4));
+			((VTXMATRIX*)SubResource.pData)[i].vLook.w = 0.f;
 			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vPosition, &VecInstancingMatrix[i]->m[3], sizeof(_float4));
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
 		}
 
 		m_pContext->Unmap(m_pInstanceBuffer, 0);
@@ -272,10 +280,10 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 	}
 }
 
-void CInstancing_Mesh::Edit_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix, _int EditStartIndex,
+void CInstancing_Mesh::Edit_InstanceAngle_Pos_Model(vector<_float4x4*> & VecInstancingMatrix, _int EditStartIndex,
 	_int EditEndIndex, _float3 vPos, _float3 vAngle )
 {
-	if (EditEndIndex <= 0 || EditEndIndex >= m_iNumInstance)
+	if (EditEndIndex <= 0 || EditEndIndex >= (_int)m_iNumInstance)
 		return;
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
@@ -324,7 +332,7 @@ void CInstancing_Mesh::Create_InstanceModel_InstanceAngle_Pos_Model(vector<_floa
 {
 	_float4 vCreatePos;
 
-	for(_uint i=0 ;i< iCreateNum; ++i)
+	for(_int i = 0 ;i < iCreateNum; ++i)
 	{
 		_float4x4* Temp = new _float4x4;
 		XMStoreFloat4x4(Temp, XMMatrixIdentity());
@@ -625,7 +633,7 @@ HRESULT CInstancing_Mesh::Render()
 
 }
 
-_int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat)
+_int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> & InstanceMatrixVec, _fmatrix ParentMat)
 {
 	return 1;
 	list<_float4x4> InstPos;
@@ -680,7 +688,7 @@ _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vecto
 	return 1;
 }
 
-_int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat)
+_int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> & InstanceMatrixVec, _fmatrix ParentMat)
 {
 	return 1;
 	list<_float4x4> InstPos;
@@ -935,7 +943,7 @@ void CInstancing_Mesh::InstaincingMesh_yPosControl(_float yPos)
 	}
 }
 
-void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransform, vector<_float4x4*> VecInstancingMatrix)
+void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransform, vector<_float4x4*> & VecInstancingMatrix)
 {
 	size_t InstSize = VecInstancingMatrix.size();
 	assert(InstSize > 0 && "CInstancing_Mesh::Create_PxTriangle_InstMeshActor");

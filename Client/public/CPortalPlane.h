@@ -18,8 +18,10 @@ private:
 	virtual ~CPortalPlane() = default;
 
 public:
-	CPortalPlane* Get_LinkedPortal() { return m_pLinkedPortal; }
-
+	CPortalPlane* Get_LinkedPortal();
+	void		 Set_GimmickRender(_bool bRenderActive) {
+		m_bRendaerPortal_Gimmick = bRenderActive;
+	}
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
@@ -32,6 +34,9 @@ public:
 	virtual void			ImGui_PhysXValueProperty() override;
 
 private:
+	HRESULT			Late_init_For_GimmickLevel();
+
+private:
 	CModel*					m_pModelCom = nullptr;
 
 private:
@@ -40,9 +45,8 @@ private:
 	CPortalPlane*			m_pLinkedPortal = nullptr;
 
 	_float					m_fTimeDelta = 0.f;
+	_bool					m_bRendaerPortal_Gimmick = true;
 
-
-	_bool					m_bTestOnce = false; // 
 
 private:
 	HRESULT  SetUp_Components();

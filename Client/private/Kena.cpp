@@ -29,6 +29,8 @@
 
 #include "E_P_ExplosionGravity.h"
 #include "E_KenaDash.h"
+#include "Light.h"
+#include "Layer.h"
 
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -89,12 +91,20 @@ const _bool CKena::Get_State(STATERETURN eState) const
 {
 	/* Used by Camera */
 	if (eState == CKena::STATERETURN_END)
-		return !m_bHeavyAttack && !m_bMask && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
+		return !m_bDeath && !m_bHeavyAttack && !m_bMask && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
 
 	switch (eState)
 	{
+	case STATE_DEATH:
+		return m_bDeath;
+		break;
+
 	case STATE_LEVELUP:
 		return m_bLevelUp;
+		break;
+
+	case STATE_LEVELUP_READY:
+		return m_bLevelUp_Ready;
 		break;
 
 	case STATE_ATTACK:
@@ -177,8 +187,16 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 
 	switch (eState)
 	{
+	case STATE_DEATH:
+		m_bDeath = bValue;
+		break;
+
 	case STATE_LEVELUP:
 		m_bLevelUp = bValue;
+		break;
+
+	case STATE_LEVELUP_READY:
+		m_bLevelUp_Ready = bValue;
 		break;
 
 	case STATE_ATTACK:
@@ -285,6 +303,9 @@ HRESULT CKena::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
+	if(g_LEVEL == LEVEL_FINAL) 
+		FAILED_CHECK_RETURN(Ready_Rots(), E_FAIL);
+
 	Push_EventFunctions();
 
 	m_fSSSAmount = 0.09f;
@@ -296,9 +317,9 @@ HRESULT CKena::Initialize(void * pArg)
 	/* InitJumpSpeed = 2.f * Gravity * JumpHeight */
 	//m_fInitJumpSpeed = sqrtf(2.f * m_fGravity * 1.5f);
 	m_fInitJumpSpeed = 0.35f;
-
 	m_iObjectProperty = OP_PLAYER;
 	m_pKenaStatus->Set_Attack(30);
+	
 	return S_OK;
 }
 
@@ -360,13 +381,13 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 1.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
-	PxCapsuleDesc.fMass = 20.f;
+	PxCapsuleDesc.fMass = 200000.f;
 	PxCapsuleDesc.fLinearDamping = 10.f;
 	PxCapsuleDesc.bCCD = true;
 	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
 	PxCapsuleDesc.fDynamicFriction = 0.5f;
 	PxCapsuleDesc.fStaticFriction = 0.5f;
-	PxCapsuleDesc.fRestitution = 0.1f;
+	PxCapsuleDesc.fRestitution = 0.f;
 
 	//CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_PLAYER_BUMP));
 	//m_pTransformCom->Add_Collider(pTag, matIdentity);
@@ -455,8 +476,21 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	m_Delegator.broadcast(eRot, fRotState);
 	//m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
 
-	const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
-	m_pTransformCom->Set_Position(vPosFloat4);
+	if(g_LEVEL == LEVEL_TESTPLAY)
+	{
+		const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
+		m_pTransformCom->Set_Position(vPosFloat4);
+	}
+	else if(g_LEVEL == LEVEL_FINAL)
+	{
+		const _float4 vPosFloat4 = _float4(151.7f, 22.2f, 609.5f, 1.f);
+		m_pTransformCom->Set_Position(vPosFloat4);
+	}
+	else
+	{
+		const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
+		m_pTransformCom->Set_Position(vPosFloat4);
+	}
 
 	for (auto& pEffect : m_mapEffect)
 	{
@@ -472,51 +506,17 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(10);
+	m_pKenaStatus->Set_Attack(0);
+	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
+	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
-
-	if (m_bAim && m_bJump)
-		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
-	else
-	{
-		if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
-			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
-			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD &&
-			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_FRONT &&
-			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_BACK)
-			CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
-	}
-
-	_float	fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+	_float	fTimeRate = Update_TimeRate();
 
 	__super::Tick(fTimeDelta);
 
 	LiftRotRockProc();
 
- 	if (m_bParry == true)
- 	{
- 		if (m_iCurParryFrame == m_iParryFrameCount)
- 		{
- 			m_bCommonHit = true;
- 			//m_bHeavyHit = true;
-			m_bHitRim = true;
-			m_fHitRimIntensity = 1.f;
- 			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
-
-			if (m_bPulse == false)
-			{
-				m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
-				CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
-				//CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
-				_float fGuage = m_pKenaStatus->Get_PercentHP();
-				m_Delegator.broadcast(eHP, fGuage);
-				//m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
-			} 				
- 
- 			m_bParry = false;
- 			m_pAttackObject = nullptr;
- 		}
- 	}
+	Check_Damaged();
 
 	CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 	//CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
@@ -524,115 +524,25 @@ void CKena::Tick(_float fTimeDelta)
 	m_Delegator.broadcast(eHP, fGuage);
 	//m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
 
-	if (m_pAnimation->Get_Preview() == false)
-	{
-		m_pKenaState->Tick(fTimeDelta);
-
-		if(!m_bStateLock)
-			m_pStateMachine->Tick(fTimeDelta);
-
-		if (m_bAim == true)
-			m_pAnimation->Tick(fTimeDelta);
-	}
-
-	m_pKenaStatus->Tick(fTimeDelta);
-
-	m_bCommonHit = false;
-	m_bHeavyHit = false;
+	Update_State_Status(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 
-	if (fTimeRate != CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60"))
-	{
-		fTimeDelta /= fTimeRate;
-		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
-		fTimeDelta *= fTimeRate;
-	}
+	Check_TimeRate_Changed(fTimeDelta, fTimeRate);
 
-	if (m_pModelCom->Get_Preview() == false)
-	{
-		if (m_fHitStopTime <= 0.f)
-		{
-			if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
-				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
-				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD && 
-				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_FRONT &&
-				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_BACK)
-				m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
-			else
-				m_pAnimation->Play_Animation(fTimeDelta);
-		}
-		else
-		{
-			m_fHitStopTime -= fTimeDelta / fTimeRate;
-			CUtile::Saturate<_float>(m_fHitStopTime, 0.f, 3.f);
-		}
-	}
-	else
-		m_pModelCom->Play_Animation(fTimeDelta);
+	Play_Animation(fTimeDelta, fTimeRate);
 
-	if (m_bAttack)
-	{
-		CBone*	pBone = m_pModelCom->Get_BonePtr("staff_skin9_jnt");
-		_matrix	matSocket = pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+	Push_WeaponPosition();
 
-		if (m_vecWeaposPos.size() < 2)
-			m_vecWeaposPos.push_back(matSocket.r[3]);
-		else
-		{
-			m_vecWeaposPos.front() = m_vecWeaposPos.back();
-			m_vecWeaposPos.pop_back();
-			m_vecWeaposPos.push_back(matSocket.r[3]);
-		}
-	}
-	else
-		m_vecWeaposPos.clear();
+	Run_Smooth_Targeting(fTimeDelta);
 
-	if (m_pTargetMonster && m_bAttack)
-	{
-		_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		_vector	vTargetPos = m_pTargetMonster->Get_Position();
-		_vector	vDir = vTargetPos - vPos;
-		_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
-
-		if (!m_bJump && !m_bSprint)
-		{
-			if (fDistance > 0.5f)
-			{
-				vTargetPos = vTargetPos + XMVector3Normalize(vDir) * 0.5f;
-				vDir = vTargetPos - vPos;
-
-				m_pTransformCom->Set_Speed(7.f);
-				m_pTransformCom->LookAt_NoUpDown(vTargetPos);
-				m_pTransformCom->Go_DirectionNoY(vDir, fTimeDelta);
-			}
-			else
-			{
-				m_pTransformCom->Set_Speed(5.f);
-				m_pTransformCom->LookAt_NoUpDown(vTargetPos);
-				m_bLocalMoveLock = true;
-			}
-		}
-	}
-	else
-		m_bLocalMoveLock = false;
-
-	for (auto& pPart : m_vecPart)
-		pPart->Tick(fTimeDelta);
-
-	for (auto& pArrow : m_vecArrow)
-		pArrow->Tick(fTimeDelta);
-
-	for (auto& pBomb : m_vecBomb)
-		pBomb->Tick(fTimeDelta);
 	
-	for (auto& pEffect : m_mapEffect)
-		pEffect.second->Tick(fTimeDelta);
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
+	/* Camera Shake Test */
+	/*if (CGameInstance::GetInstance()->Key_Down(DIK_O))
 		m_pCamera->Camera_Shake(0.003f, 10);
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
-		m_pCamera->Camera_Shake(XMVectorSet(1.f, 1.f, 0.f, 0.f), XMConvertToRadians(10.f));
+		m_pCamera->Camera_Shake(XMVectorSet(1.f, 1.f, 0.f, 0.f), XMConvertToRadians(10.f));*/
 
 	/* Delegator Arrow */
 	// CKena_Status::m_iCurArrowCount, m_iMaxArrowCount, m_fCurArrowCoolTime, m_fInitArrowCount
@@ -654,9 +564,25 @@ void CKena::Tick(_float fTimeDelta)
 
 void CKena::Late_Tick(_float fTimeDelta)
 {
+	/* 문제 생기면 보고 바람. */
+	for (auto& pPart : m_vecPart)
+		pPart->Tick(fTimeDelta);
+
+	for (auto& pArrow : m_vecArrow)
+		pArrow->Tick(fTimeDelta);
+
+	for (auto& pBomb : m_vecBomb)
+		pBomb->Tick(fTimeDelta);
+
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Tick(fTimeDelta);
+
 	__super::Late_Tick(fTimeDelta);
 
 	m_pKenaState->Late_Tick(fTimeDelta);
+
+// 	if (m_bParry == false)
+// 		m_eDamagedDir = CKena::DAMAGED_FROM_END;
 
 	if (m_iCurParryFrame < m_iParryFrameCount)
 	{
@@ -664,15 +590,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_bParry = true;
 	}
 
-	if (m_pTargetMonster != nullptr)
-	{
-		if (m_pTargetMonster->Is_Dead() == true ||
-			m_pTransformCom->Calc_Distance_XZ(m_pTargetMonster->Get_TransformCom()) > 5.f ||
-			m_pTransformCom->Calc_InRange(XMConvertToRadians(240.f), m_pTargetMonster->Get_TransformCom()) == false)
-			m_pTargetMonster = nullptr;
-	}
-
-	Call_FocusMonsterIcon(m_pTargetMonster);
+	Check_Smooth_Targeting();
 
 	/* UI Control */
 	if (CKena_Status::RS_ACTIVE == m_pKenaStatus->Get_RotState())
@@ -1231,6 +1149,25 @@ void CKena::Push_EventFunctions()
 	TurnOnDashLp(true, 0.f);
 	TurnOffDashLp(true, 0.f);
 	TurnOnDashEd(true, 0.f);
+
+	PlaySound_Jump(true, 0.f);
+	PlaySound_PulseJump(true, 0.f);
+	PlaySound_Land(true, 0.f);
+	PlaySound_Dodge(true, 0.f);
+	PlaySound_Dodge_End(true, 0.f);
+
+	PlaySound_Pulse_Intro(true, 0.f);
+	PlaySound_Pulse_Outro(true, 0.f);
+	PlaySound_Dash(true, 0.f);
+
+	PlaySound_Attack_Voice(true, 0.f);
+	PlaySound_Attack_1(true, 0.f);
+	PlaySound_Attack_2(true, 0.f);
+	PlaySound_Attack_3(true, 0.f);
+	PlaySound_Attack_4(true, 0.f);
+	PlaySound_HeavyAttack_Charge(true, 0.f);
+	PlaySound_HeavyAttack_Release_Perfect(true, 0.f);
+	PlaySound_HeavyAttack_Spark(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -1241,6 +1178,25 @@ void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	vPos = vPos + vDisplacement;
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
+}
+
+void CKena::Respawn()
+{
+	if (m_bDeath == false)
+		return;
+
+	m_pKenaStatus->Respawn();
+}
+
+void CKena::Respawn(_fvector vSpawnPos)
+{
+	if (m_bDeath == false)
+		return;
+
+	m_pKenaStatus->Respawn();
+
+	_float4		vPos = vSpawnPos;
+	m_pTargetMonster->Set_Position(vPos);
 }
 
 void CKena::Smooth_Targeting(CMonster * pMonster)
@@ -1531,6 +1487,35 @@ HRESULT CKena::Ready_Effects()
 	return S_OK;
 }
 
+HRESULT CKena::Ready_Lights()
+{
+	LIGHTDESC			LightDesc;
+	ZeroMemory(&LightDesc, sizeof LightDesc);
+	LightDesc.eType = LIGHTDESC::TYPE_POINT;
+	LightDesc.isEnable = true;
+	CBone* pBone = m_pModelCom->Get_BonePtr("bow_string_jnt_top");
+	NULL_CHECK_RETURN(pBone, E_FAIL);
+	_matrix			SocketMatrix =	pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() *	m_pModelCom->Get_PivotMatrix() * 	m_pTransformCom->Get_WorldMatrix();
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+	_float4x4 pivotMatrix;
+	XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+	_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
+	m_vStaffLightPos = vPos;
+	LightDesc.vPosition = m_vStaffLightPos;
+	LightDesc.fRange = 3.0f;
+	LightDesc.vDiffuse = _float4(0.f, 0.f, 100.f, 1.f);
+	LightDesc.vAmbient = _float4(0.f, 0.f, 100.f, 1.f);
+	LightDesc.vSpecular = _float4(0.f, 0.f, 100.f, 0.f);
+	LightDesc.szLightName = "Kena_Staff_PointLight";
+
+	if (FAILED(CGameInstance::GetInstance()->Add_Light(m_pDevice, m_pContext, LightDesc, &m_pStaffLight)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CKena::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
@@ -1569,6 +1554,28 @@ HRESULT CKena::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_KenaStatus", L"Com_Status", (CComponent**)&m_pKenaStatus, nullptr, this), E_FAIL);
 	m_pKenaStatus->Load("../Bin/Data/Status/Kena_Status.json");
+
+	return S_OK;
+}
+
+HRESULT CKena::Ready_Rots()
+{
+	CRot::Clear();
+	for (_uint i = 0; i < 5; ++i)
+	{
+		_tchar szCloneRotTag[32] = { 0, };
+		swprintf_s(szCloneRotTag, L"PlayerRot_%d", i);
+		CGameObject* p_game_object = nullptr;
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", CUtile::Create_StringAuto(szCloneRotTag), nullptr, &p_game_object);
+		dynamic_cast<CRot*>(p_game_object)->AlreadyRot();
+		m_pKenaStatus->Add_RotCount();
+
+		if (i == FIRST_ROT)
+		{
+			Set_FirstRotPtr((CRot*)p_game_object);
+			CRot::Set_RotUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));			
+		}
+	}
 
 	return S_OK;
 }
@@ -1675,6 +1682,90 @@ void CKena::Update_Collider(_float fTimeDelta)
 	m_pTransformCom->Update_Collider(L"Kena_Bump", matPivot);
 }
 
+void CKena::Update_LightPos(_float fTimeDelta)
+{
+	CBone* pBone = m_pModelCom->Get_BonePtr("bow_string_jnt_top");
+	NULL_CHECK_RETURN(pBone, );
+	_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+	_float4x4 pivotMatrix;
+	XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+	_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
+	_float fPivotPos[3] = { m_vStaffLightPos.x,m_vStaffLightPos.y, m_vStaffLightPos.z };
+	ImGui::DragFloat3("StaffLightPivot", fPivotPos,0.01f, -10.f, 10.f);
+	m_vStaffLightPos = _float4(fPivotPos[0], fPivotPos[1], fPivotPos[2], 0.f);
+	vPos += m_vStaffLightPos;
+	m_pStaffLight->Set_Position(vPos);
+}
+
+_float CKena::Update_TimeRate()
+{
+	if (m_bAim && m_bJump)
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
+	else
+	{
+		if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_FRONT &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_BACK)
+			CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+	}
+
+	return CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+}
+
+void CKena::Check_Damaged()
+{
+	if (m_bParry == true)
+	{
+		if (m_iCurParryFrame == m_iParryFrameCount)
+		{
+			m_bCommonHit = true;
+			//m_bHeavyHit = true;
+			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
+
+			if (m_bPulse == false)
+			{
+				m_bHitRim = true;
+				m_fHitRimIntensity = 1.f;
+
+				if (m_bDeath = m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr()))
+					m_eDamagedDir = Calc_DirToMonster_2Way(m_pAttackObject);
+
+				/* JH : HP게이지는 그냥 매프레임 갱신해주려고 Tick으로 뺐음. */
+// 				CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
+// 				_float fGuage = m_pKenaStatus->Get_PercentHP();
+// 				m_Delegator.broadcast(eHP, fGuage);
+			}
+
+			m_bParry = false;
+			m_pAttackObject = nullptr;
+		}
+	}
+}
+
+void CKena::Update_State_Status(_float fTimeDelta)
+{
+	if (m_pAnimation->Get_Preview() == false)
+	{
+		m_pKenaState->Tick(fTimeDelta);
+
+		if (!m_bStateLock)
+			m_pStateMachine->Tick(fTimeDelta);
+
+		if (m_bAim == true)
+			m_pAnimation->Tick(fTimeDelta);
+	}
+
+	m_pKenaStatus->Tick(fTimeDelta);
+
+	m_bCommonHit = false;
+	m_bHeavyHit = false;
+}
+
 void CKena::Update_AdditiveRatio(_float fTimeDelta)
 {
 	_float	fRatio = LookAnimationController(fTimeDelta);
@@ -1695,6 +1786,107 @@ void CKena::Update_AdditiveRatio(_float fTimeDelta)
 	}
 
 	return;
+}
+
+void CKena::Check_TimeRate_Changed(_float& fTimeDelta, _float fTimeRate)
+{
+	if (fTimeRate != CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60"))
+	{
+		fTimeDelta /= fTimeRate;
+		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+		fTimeDelta *= fTimeRate;
+	}
+}
+
+void CKena::Play_Animation(_float fTimeDelta, _float fTimeRate)
+{
+	if (m_pModelCom->Get_Preview() == false)
+	{
+		if (m_fHitStopTime <= 0.f)
+		{
+			if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_FRONT &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_BACK)
+				m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
+			else
+				m_pAnimation->Play_Animation(fTimeDelta);
+		}
+		else
+		{
+			m_fHitStopTime -= fTimeDelta / fTimeRate;
+			CUtile::Saturate<_float>(m_fHitStopTime, 0.f, 3.f);
+		}
+	}
+	else
+		m_pModelCom->Play_Animation(fTimeDelta);
+}
+
+void CKena::Push_WeaponPosition()
+{
+	if (m_bAttack)
+	{
+		CBone* pBone = m_pModelCom->Get_BonePtr("staff_skin9_jnt");
+		_matrix	matSocket = pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+
+		if (m_vecWeaposPos.size() < 2)
+			m_vecWeaposPos.push_back(matSocket.r[3]);
+		else
+		{
+			m_vecWeaposPos.front() = m_vecWeaposPos.back();
+			m_vecWeaposPos.pop_back();
+			m_vecWeaposPos.push_back(matSocket.r[3]);
+		}
+	}
+	else
+		m_vecWeaposPos.clear();
+}
+
+void CKena::Run_Smooth_Targeting(_float fTimeDelta)
+{
+	if (m_pTargetMonster && m_bAttack && m_pKenaState->Get_CurrentDirection() == CTransform::DIR_END)
+	{
+		_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_vector	vTargetPos = m_pTargetMonster->Get_Position();
+		_vector	vDir = vTargetPos - vPos;
+		_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
+
+		if (!m_bJump && !m_bSprint)
+		{
+			if (fDistance > 1.f)
+			{
+				vTargetPos = vTargetPos - XMVector3Normalize(vDir) * 0.5f;
+				vDir = vTargetPos - vPos;
+
+				m_pTransformCom->Set_Speed(7.f);
+				m_pTransformCom->LookAt_NoUpDown(vTargetPos);
+				m_pTransformCom->Go_DirectionNoY(vDir, fTimeDelta);
+				m_bLocalMoveLock = false;
+			}
+			else
+			{
+				m_pTransformCom->Set_Speed(5.f);
+				m_pTransformCom->LookAt_NoUpDown(vTargetPos);
+				m_bLocalMoveLock = true;
+			}
+		}
+	}
+	else
+		m_bLocalMoveLock = false;
+}
+
+void CKena::Check_Smooth_Targeting()
+{
+	if (m_pTargetMonster != nullptr)
+	{
+		if (m_pTargetMonster->Is_Dead() == true ||
+			m_pTransformCom->Calc_Distance_XZ(m_pTargetMonster->Get_TransformCom()) > 5.f ||
+			m_pTransformCom->Calc_InRange(XMConvertToRadians(60.f), m_pTargetMonster->Get_TransformCom()) == false)
+			m_pTargetMonster = nullptr;
+	}
+
+	Call_FocusMonsterIcon(m_pTargetMonster);
 }
 
 _float CKena::LookAnimationController(_float fTimeDelta)
@@ -1783,6 +1975,24 @@ CKena::DAMAGED_FROM CKena::Calc_DirToMonster(const _float3 & vCollisionPos)
 		else if (fLeftRightAngle >= 0.5f && fLeftRightAngle <= 1.f)
 			eDir = DAMAGED_LEFT;
 	}
+
+	return eDir;
+}
+
+CKena:: DAMAGED_FROM CKena::Calc_DirToMonster_2Way(CGameObject* pTarget)
+{
+	DAMAGED_FROM	eDir = CKena::DAMAGED_FROM_END;
+
+	CTransform* pTargetTransCom = pTarget->Get_TransformCom();
+	_float4    vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	vDir.Normalize();
+
+	_float	fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
+
+	if (fFrontBackAngle >= 0.f)
+		eDir = CKena::DAMAGED_FRONT;
+	else
+		eDir = CKena::DAMAGED_BACK;
 
 	return eDir;
 }
@@ -2087,6 +2297,7 @@ void CKena::TurnOffDashLp(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffDashLp);
 		return;
 	}
+
 	m_mapEffect["K_D_Sphere"]->Set_Active(false);
 }
 
@@ -2098,8 +2309,344 @@ void CKena::TurnOnDashEd(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnDashEd);
 		return;
 	}
+
 	_float4 vPos = m_pTransformCom->Get_Position();
 	dynamic_cast<CE_KenaDash*>(m_mapEffect["KenaDash"])->Tick_State(vPos);
+}
+
+void CKena::PlaySound_Jump(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Jump);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Jump.ogg", 1.f, false, SOUND_PLAYER_VOICE);
+}
+
+void CKena::PlaySound_PulseJump(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_PulseJump);
+		return;
+	}
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 4.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_PulseJump_0.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_PulseJump_1.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_PulseJump_2.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_PulseJump_3.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	else if (iRand == 4)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_PulseJump_4.ogg", 1.f, false, SOUND_PLAYER_SFX);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_PulseJump_Cloth.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_PulseJump_Flaps.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_PulseJump_Spin.ogg", 1.f, false, SOUND_PLAYER_SFX);
+}
+
+void CKena::PlaySound_Land(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Land);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Land.ogg", 1.f, false, SOUND_PLAYER_VOICE);
+}
+
+void CKena::PlaySound_Dodge(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Dodge);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Roll.ogg", 1.f, false);
+
+	if (m_pAnimation->Get_CurrentAnimIndex() == (_uint)CKena_State::BACKFLIP)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Backflip.ogg", 1.f, false);
+	else if (m_pAnimation->Get_CurrentAnimIndex() == (_uint)CKena_State::ROLL)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Roll.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_Dodge_End(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Dodge_End);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Roll_End.ogg", 1.f, false, SOUND_PLAYER_VOICE);
+}
+
+void CKena::PlaySound_Pulse_Intro(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Pulse_Intro);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Charge_Ring.ogg", 0.2f, false);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Charge.ogg", 1.f, false);
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 2.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Charge_Bamboo_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Charge_Bamboo_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Charge_Bamboo_2.ogg", 1.f, false);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Charge_Bamboo_Tone.ogg", 1.f, false);
+
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 1.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Charge_Init_Build_Synth_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Charge_Init_Build_Synth_1.ogg", 1.f, false);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Charge_Init_Suzu.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_Pulse_Outro(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Pulse_Outro);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Outro.ogg", 1.f, false);
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 1.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Outro_Wind_Air_0.ogg", 0.1f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Pulse_Outro_Wind_Air_1.ogg", 0.1f, false);
+}
+
+void CKena::PlaySound_Dash(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Dash);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Dash.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_Attack_Voice(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Attack_Voice);
+		return;
+	}
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 24.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_3.ogg", 1.f, false);
+	else if (iRand == 4)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_4.ogg", 1.f, false);
+	else if (iRand == 5)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_5.ogg", 1.f, false);
+	else if (iRand == 6)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_6.ogg", 1.f, false);
+	else if (iRand == 7)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_7.ogg", 1.f, false);
+	else if (iRand == 8)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_8.ogg", 1.f, false);
+	else if (iRand == 9)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_9.ogg", 1.f, false);
+	else if (iRand == 10)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_10.ogg", 1.f, false);
+	else if (iRand == 11)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_11.ogg", 1.f, false);
+	else if (iRand == 12)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_12.ogg", 1.f, false);
+	else if (iRand == 13)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_13.ogg", 1.f, false);
+	else if (iRand == 14)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_14.ogg", 1.f, false);
+	else if (iRand == 15)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_15.ogg", 1.f, false);
+	else if (iRand == 16)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_16.ogg", 1.f, false);
+	else if (iRand == 17)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_17.ogg", 1.f, false);
+	else if (iRand == 18)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_18.ogg", 1.f, false);
+	else if (iRand == 19)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_19.ogg", 1.f, false);
+	else if (iRand == 20)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_20.ogg", 1.f, false);
+	else if (iRand == 21)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_21.ogg", 1.f, false);
+	else if (iRand == 22)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_22.ogg", 1.f, false);
+	else if (iRand == 23)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_23.ogg", 1.f, false);
+	else if (iRand == 24)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_24.ogg", 1.f, false);
+
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 3.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_1.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_2.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_3.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_4.ogg", 1.f, false);
+
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 1.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_Tone_1.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_Tone_2.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_Attack_1(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Attack_1);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_0.ogg", 1.f, false, SOUND_PLAYER_VOICE);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_1.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_Tone_1.ogg", 1.f, false, SOUND_PLAYER_SFX);
+}
+
+void CKena::PlaySound_Attack_2(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Attack_2);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_1.ogg", 1.f, false, SOUND_PLAYER_VOICE);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_2.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_Tone_2.ogg", 1.f, false, SOUND_PLAYER_SFX);
+}
+
+void CKena::PlaySound_Attack_3(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Attack_3);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_4.ogg", 1.f, false, SOUND_PLAYER_VOICE);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_3.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_Tone_3.ogg", 1.f, false, SOUND_PLAYER_SFX);
+}
+
+void CKena::PlaySound_Attack_4(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Attack_4);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_16.ogg", 1.f, false, SOUND_PLAYER_VOICE);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_4.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_Tone_4.ogg", 1.f, false, SOUND_PLAYER_SFX);
+}
+
+void CKena::PlaySound_HeavyAttack_Charge(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_HeavyAttack_Charge);
+		return;
+	}
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 3.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_0.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_1.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_2.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_3.ogg", 1.f, false, SOUND_PLAYER_SFX);
+
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 2.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_0.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_1.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_2.ogg", 1.f, false, SOUND_PLAYER_SFX);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Weapon.ogg", 0.5f, false, SOUND_PLAYER_SFX);
+}
+
+void CKena::PlaySound_HeavyAttack_Spark(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_HeavyAttack_Spark);
+		return;
+	}
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 2.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Spark_0.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Spark_1.ogg", 1.f, false, SOUND_PLAYER_SFX);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Spark_2.ogg", 1.f, false, SOUND_PLAYER_SFX);
+}
+
+void CKena::PlaySound_HeavyAttack_Release_Perfect(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_HeavyAttack_Release_Perfect);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Release_Perfect.ogg", 1.f, false, SOUND_PLAYER_SFX);
 }
 
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -2169,6 +2716,11 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_bPulseJump = false;
 			m_fCurJumpSpeed = 0.f;
 		}
+
+		if (iColliderIndex == (_int)COL_WATER)
+		{
+
+		}
 	}
 	else
 	{
@@ -2177,7 +2729,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		CGameObject* pGameObject = nullptr;
 
 		_bool bRealAttack = false;
-		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)
+		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false && m_bDodge == false && m_bDeath == false)
 		{
 			for (auto& Effect : m_mapEffect)
 			{
@@ -2201,26 +2753,33 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 		if (iColliderIndex == (_int)COL_PORTAL && m_bDash == true)
 		{
-			m_bDashPortal = true;
-			m_pDashTarget = pTarget;
+			CPortalPlane* pPortal = dynamic_cast<CPortalPlane*>(pTarget);
+			CPortalPlane* pLinkedPortal = nullptr;
 
-			CPortalPlane* pPortal = dynamic_cast<CPortalPlane*>(m_pDashTarget);
-			_smatrix	matOutPortal = pPortal->Get_LinkedPortal()->Get_WorldMatrix();
+			if (pPortal != nullptr)
+				pLinkedPortal = pPortal->Get_LinkedPortal();
 
-			_float4		vOutRight;
-			_float4		vOutLook = matOutPortal.Up();
-			vOutLook.Normalize();
-			vOutRight = XMVector3Normalize(XMVector3Cross(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_UP)), vOutLook));
+			if (pLinkedPortal != nullptr)
+			{
+				m_bDashPortal = true;
+				m_pDashTarget = pTarget;
 
-			_float3		vScale = m_pTransformCom->Get_Scaled();
+				_smatrix	matOutPortal = pLinkedPortal->Get_WorldMatrix();
 
-			m_pTransformCom->Set_State(CTransform::STATE_RIGHT, vOutRight * vScale.x);
-			m_pTransformCom->Set_State(CTransform::STATE_LOOK, vOutLook * vScale.z);
+				_float4		vOutRight;
+				_float4		vOutLook = matOutPortal.Up();
+				vOutLook.Normalize();
+				vOutRight = XMVector3Normalize(XMVector3Cross(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_UP)), vOutLook));
 
-			_float4		vPos = matOutPortal.Translation() + vOutLook * 0.5f;
-			vPos.y -= 4.f;
-			//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
-			m_pTransformCom->Set_Position(vPos);
+				_float3		vScale = m_pTransformCom->Get_Scaled();
+
+				m_pTransformCom->Set_State(CTransform::STATE_RIGHT, vOutRight * vScale.x);
+				m_pTransformCom->Set_State(CTransform::STATE_LOOK, vOutLook * vScale.z);
+
+				_float4		vPos = matOutPortal.Translation() + vOutLook * 0.5f;
+				vPos.y -= 4.f;
+				m_pTransformCom->Set_Position(vPos);
+			}
 		}
 	}
 
@@ -2237,6 +2796,15 @@ _int CKena::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex
 		m_bParry = true;
 		m_iCurParryFrame = 0;
 		m_pAttackObject = pTarget;
+	}
+	else if (iColliderIndex == (_int)COL_WARRIOR_GRAB_HAND)
+	{
+		// 케나의 바디 콜라이더와 워리어의 그랩 핸드 트리거와 충돌
+	}
+
+	if (iColliderIndex == (_int)COL_WATER)
+	{
+		m_bWater = m_bDeath = m_pKenaStatus->UnderAttack(m_pKenaStatus->Get_MaxHP());
 	}
 
 	return 0;

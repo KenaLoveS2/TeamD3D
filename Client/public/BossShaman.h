@@ -114,13 +114,6 @@ private:
 	_float3 m_vWeaPonPivotRot = { 0.f, 0.f, 0.f };
 	_float3 m_vWeaPonPivotTrans = { -1.2f, -0.59f, -1.3f };
 
-	enum COPY_SOUND_KEY {
-		CSK_ATTACK, CSK_THROW, CSK_DIE, CSK_IDLE, CSK_PAIN, CSK_TENSE1, CSK_TENSE2, CSK_IMPACT, CSK_WALK,
-		COPY_SOUND_KEY_END,
-	};
-
-	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
-
 private:
 	CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBossShaman(const CBossShaman& rhs);
@@ -171,6 +164,17 @@ private:
 	vector<_float3> m_vecPivot;
 	vector<_float3> m_vecPivotScale;
 	vector<_float3> m_vecPivotRot;
+
+	enum COPY_SOUND_KEY {
+		CSK_ATTACK1, CSK_ATTACK2, CSK_ATTACK3, CSK_ATTACK4, CSK_ATTACK5, CSK_ATTACK6, CSK_ATTACK7, CSK_ATTACK8,
+		CSK_HIT1, CSK_HIT2, CSK_HIT3, CSK_HIT4,
+		CSK_HURT1, CSK_HURT2, CSK_HURT3, CSK_HURT4, CSK_HURT5, CSK_HURT6, CSK_HURT7,
+		CSK_MOVE1, CSK_MOVE2, CSK_MOVE3, CSK_MOVE4, CSK_MOVE5, CSK_MOVE6,
+		CSK_TENSE1, CSK_TENSE2, CSK_TENSE3, CSK_TENSE4,		
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
 
 private:	/* Animation Event Func */
 	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
@@ -228,6 +232,35 @@ public:
 	void LookAt_Kena(_bool bIsInit, _float fTimeDelta);
 
 	void Create_CopySoundKey();
+	
+	void Play_Attack1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack4Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack5Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack6Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack7Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Attack8Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Hit1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hit2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hit3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hit4Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Hurt1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt4Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt5Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt6Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Hurt7Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Move1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Move2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Move3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Move4Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Move5Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Move6Sound(_bool bIsInit, _float fTimeDelta);
 };
 
 END

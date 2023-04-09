@@ -214,6 +214,10 @@ HRESULT CMoth::SetUp_State()
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("SLEEP")
 		.AddState("SLEEP")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->Set_PositionY(m_vKenaPos.y + 1.4f);
+	})
 		.OnExit([this]()
 	{
 		m_pEnemyWisp->IsActiveState();
@@ -439,7 +443,7 @@ HRESULT CMoth::SetUp_State()
 		.AddTransition("DOWN to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return m_pTransformCom->Get_PositionY() < 1.4f;
+		return m_pTransformCom->Get_PositionY() < m_vKenaPos.y + 1.4f;
 	})
 
 		.AddState("PARRIED")
@@ -494,7 +498,7 @@ HRESULT CMoth::SetUp_Components()
 {
 	__super::SetUp_Components();
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Moth", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Moth", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	m_pModelCom->Set_RootBone("Moth_RIG");
 

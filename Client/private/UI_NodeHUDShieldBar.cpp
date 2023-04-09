@@ -37,11 +37,36 @@ HRESULT CUI_NodeHUDShieldBar::Initialize(void * pArg)
 	/* Test */
 	m_bActive = true;
 
+	/* For. Upgrade */
+	m_fSourScaleX = m_matLocal._11;
+	m_fDestScaleX = m_fSourScaleX;
+	m_fSourTransX = m_matLocal._41;
+	m_fDestTransX = m_fSourTransX;
+	m_bUpgrade = false;
+	m_fSpeed = 1.f;
+
 	return S_OK;
 }
 
 void CUI_NodeHUDShieldBar::Tick(_float fTimeDelta)
 {
+	if (m_bUpgrade)
+	{
+		if (m_fDestScaleX > m_matLocal._11)
+		{
+			m_fSpeed = 40.f;
+			m_matLocal._11 += m_fSpeed * fTimeDelta;
+			m_matLocal._41 += m_fSpeed * fTimeDelta * 0.5f;
+
+		}
+		else
+		{
+			m_matLocal._11 = m_fDestScaleX;
+			m_matLocal._41 = m_fDestTransX;
+			m_bUpgrade = false;
+		}
+	}
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -56,6 +81,16 @@ HRESULT CUI_NodeHUDShieldBar::Render()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CUI_NodeHUDShieldBar::Upgrade()
+{
+	/* LevelUp : Guage Length + 100.f */
+	m_fSourScaleX = m_matLocal._11;
+	m_fDestScaleX = m_fSourScaleX + 100.f;
+	m_fSourTransX = m_matLocal._41;
+	m_fDestTransX = m_fSourTransX + 100.f * 0.5f;
+	m_bUpgrade = true;
 }
 
 HRESULT CUI_NodeHUDShieldBar::SetUp_Components()

@@ -18,6 +18,7 @@ class CSaiya final : public CNpc
 	{
 		NPC_CINE0 = 0,
 		NPC_CINE1,
+		NPC_CINE2,
 
 		NPC_CINE_END,
 	};
@@ -113,10 +114,10 @@ public:
 	virtual void					ImGui_AnimationProperty() override;
 	virtual void					ImGui_ShaderValueProperty() override;
 	virtual void					ImGui_PhysXValueProperty() override;
+	virtual _int					Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>		m_SaiyaDelegator;
-
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) override;
@@ -126,13 +127,17 @@ protected:
 	virtual HRESULT			SetUp_ShadowShaderResources()override;
 	virtual HRESULT			SetUp_UI()override;
 
+
 private:
 	virtual void					AdditiveAnim(_float fTimeDelta) override;
+	void								Set_PlayerLock(_bool bLock);
 
-	_bool									IsChatEnd();
-	HRESULT								Save_KeyFrame();
-	HRESULT								Load_KeyFrame();
-	void										Rot_WispSetPosition();
+	_bool							IsChatEnd();
+	HRESULT						Save_KeyFrame();
+	HRESULT						Load_KeyFrame();
+	void								Rot_WispSetPosition();
+
+	void								Play_Sound(const _tchar* SoundKey, float fVolume);
 
 private:
 	CUI_FocusNPC*							m_pFocus;
@@ -143,9 +148,9 @@ private:
 	vector<SAIYAKEYFRAME>			m_keyframes;
 	_uint												m_iNumKeyFrame = 0;
 	_uint												m_iKeyFrame = 0;
-
 	_float3											m_vCamOffset;
-	
+
+	_bool											m_bPulse = false;
 
 	_bool											m_bCinecam[NPC_CINE_END] = { false, };
 	class CCinematicCamera*			m_pCinecam[NPC_CINE_END] = { nullptr, };
