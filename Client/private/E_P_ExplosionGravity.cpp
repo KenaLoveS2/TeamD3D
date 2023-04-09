@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\E_P_ExplosionGravity.h"
 #include "GameInstance.h"
+#include "E_ShamanLazer.h"
 
 CE_P_ExplosionGravity::CE_P_ExplosionGravity(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Point_Instancing(pDevice, pContext)
@@ -34,7 +35,8 @@ HRESULT CE_P_ExplosionGravity::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	m_pVIInstancingBufferCom = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, 200);
+	// 200 => 100
+	m_pVIInstancingBufferCom = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, 100);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	
@@ -50,12 +52,11 @@ HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
-	//if (!lstrcmp(Get_ObjectCloneName(), L"Test"))
- 	// if (m_eType == TYPE_HEALTHFLOWER)
-	//if (m_eType == TYPE_DEFAULT)
+//	if (m_eType == TYPE_DEFAULT)
+	//if (!lstrcmp(Get_ObjectCloneName(), L"Explosion"))
  //		Set_OptionTool();
  //	else
-		m_fLife += fTimeDelta;
+//		m_fLife += fTimeDelta;
 
 	__super::Tick(fTimeDelta);
 	if (m_eEFfectDesc.bActive == false)
@@ -66,9 +67,9 @@ void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 	else
 		m_pTransformCom->Set_Position(m_vFixPos);
 
-//	m_fLife += fTimeDelta;
+	m_fLife += fTimeDelta;
 	/*m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && */
-	if (m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
+	if (m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
 		m_eEFfectDesc.bActive = false;
 }
 
@@ -99,10 +100,15 @@ HRESULT CE_P_ExplosionGravity::SetUp_Components()
 	return S_OK;
 }
 
+HRESULT CE_P_ExplosionGravity::SetUp_ChangeBuffer()
+{
+	return S_OK;
+}
+
 void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 {
-	CVIBuffer_Point_Instancing::POINTDESC* ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
 	m_eType = eType;
+	CVIBuffer_Point_Instancing::POINTDESC* ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
 	_float3 fMin = _float3(-1.f, -1.f, -1.f);
 	_float3 fMax = _float3(1.f, 1.f, 1.f);
 	_float fTerm = 1.f;
@@ -139,6 +145,27 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 		ParticleOption_Parabola(ePointDesc, 10.f, XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f, 0.2f,
 			fTerm, _float2(0.05f, 0.2f), false);
 		break;
+
+	case CE_P_ExplosionGravity::TYPE_BOSS_GATHER:
+	{
+		m_eEFfectDesc.fFrame[0] = 53.f;
+		m_eEFfectDesc.iPassCnt = 0;
+		m_eEFfectDesc.vColor = XMVectorSet(1.f, 0.2f, 1.f, 0.4f);
+
+		/* Point Instance Option */
+		m_pVIInstancingBufferCom->Set_Speeds(0.02f);
+		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_GATHER;
+		ePointDesc->bSpread = false;
+
+		ePointDesc->fCreateRange = 1.f;
+		ePointDesc->fRange = 1.f;
+		ePointDesc->fTerm = 1.f;
+		ePointDesc->bSetDir = false;
+
+		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.05f, 0.1f));
+		break;
+	}
 
 	case CE_P_ExplosionGravity::TYPE_DAMAGE_PULSE:
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);

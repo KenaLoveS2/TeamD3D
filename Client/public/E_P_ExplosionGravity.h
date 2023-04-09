@@ -14,6 +14,7 @@ public:
 		TYPE_BOSS_WEAPON,
 		TYPE_BOSS_ATTACK,
 		TYPE_BOSS_PARRY,
+		TYPE_BOSS_GATHER,
 		/* Kena */
 		TYPE_DAMAGE_PULSE,
 		TYPE_KENA_ATTACK,
@@ -40,7 +41,9 @@ public:
 public:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_Components();
-	
+
+	HRESULT SetUp_ChangeBuffer();
+
 public:
 	TYPE	Get_Type() { return m_eType; }
 	void	Set_Option(TYPE eType, _vector vSetDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));

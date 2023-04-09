@@ -78,7 +78,7 @@ HRESULT CLevel_EffectTest::Ready_Lights()
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	LIGHTDESC			LightDesc;
+	LIGHTDESC         LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;

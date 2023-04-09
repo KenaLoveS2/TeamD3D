@@ -23,7 +23,6 @@ public:
 	virtual HRESULT Render() override;
 	virtual void	Imgui_RenderProperty() override;
 
-public:
 	void			Reset();
 
 private:

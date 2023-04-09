@@ -1414,7 +1414,7 @@ HRESULT CKena::Ready_Bombs()
 	return S_OK;
 }
 
-HRESULT CKena::Ready_Effects()
+HRESULT CKena::Ready_Effects() 
 {
 	CEffect_Base*	pEffectBase = nullptr;
 	_tchar*			pCloneTag = nullptr;

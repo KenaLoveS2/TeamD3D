@@ -1514,7 +1514,18 @@
     <ClInclude Include="..\public\Meditation_Spot.h">
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_HunterTrail.h" />
+    <ClInclude Include="..\public\E_HunterTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_ShamanTeleport.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanIceDagger.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanLazer.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2426,7 +2437,18 @@
     <ClCompile Include="..\private\Meditation_Spot.cpp">
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_HunterTrail.cpp" />
+    <ClCompile Include="..\private\E_HunterTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_ShamanTeleport.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanIceDagger.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanLazer.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2523,6 +2545,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\SSLR.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
