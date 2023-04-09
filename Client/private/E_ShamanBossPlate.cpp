@@ -33,9 +33,10 @@ HRESULT CE_ShamanBossPlate::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
-	m_eEFfectDesc.bActive = false;
 	m_fHDRValue = 2.f;
-	m_pTransformCom->Set_Scaled(_float3(11.f, 11.f, 11.f));
+	m_eEFfectDesc.fFrame[0] = 63.f;
+	m_eEFfectDesc.bActive = false;
+	m_pTransformCom->Set_Scaled(_float3(11.f, 1.f, 11.f));
 
 	Set_EffectType(m_eType);
 	return S_OK;
@@ -48,30 +49,25 @@ HRESULT CE_ShamanBossPlate::Late_Initialize(void* pArg)
 
 void CE_ShamanBossPlate::Tick(_float fTimeDelta)
 {
-	m_eEFfectDesc.bActive = true;
-
-	//ImGui::Begin("CE_ShamanBossPlate");
-	//if (ImGui::Button("RE"))
-	//	m_pShaderCom->ReCompile(); ImGui::SameLine();
-	//ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
-	//if (ImGui::Button("Reset"))
-	//	m_fTimeDelta = 0.0f;
-	//_float fTime = m_fTimeDelta;
-
-	//ImGui::InputFloat("fTimeDelta", &fTime);
-	//ImGui::End();
-
-	//if (m_pParent == nullptr)
-	//	ToolOption("CE_ShamanBossPlate");
-
 	if (m_eEFfectDesc.bActive == false)
-	{
-		m_fTimeDelta = 0.0f;
 		return;
-	}
-	else
-		m_fTimeDelta += fTimeDelta;
+
+	m_fTimeDelta += fTimeDelta;
 	__super::Tick(fTimeDelta);
+
+	if (m_bDissolve)
+	{
+		if(m_bTurnInto == false)
+		{
+			_bool bTurn = TurnOnDissolveSystem(m_fDissolveTime, m_bDissolve, fTimeDelta);
+			if (bTurn == true) m_bTurnInto = true;
+		}
+		else
+		{
+			_bool bResult = TurnOffSystem(m_fDissolveTime, 1.f, fTimeDelta);
+			if (bResult == true) Reset();
+		}
+	}
 }
 
 void CE_ShamanBossPlate::Late_Tick(_float fTimeDelta)
@@ -180,23 +176,29 @@ void CE_ShamanBossPlate::Imgui_RenderProperty()
 
 void CE_ShamanBossPlate::Set_EffectType(EFFECTTYPE eType)
 {
+	m_eType = eType;
+	Reset();
+
 	switch (eType)
 	{
 	case Client::CE_ShamanBossPlate::EFFECT_PLATE:
+		m_pTransformCom->Set_Scaled(_float3(11.f, 1.f, 11.f));
 		m_eEFfectDesc.vColor = XMVectorSet(50.f, 111.f, 255.f, 255.f) / 255.f;
 		break;
 
 	case Client::CE_ShamanBossPlate::EFFECT_HANDSET:
+		m_pTransformCom->Set_Scaled(_float3(6.f, 1.f, 6.f));
 		m_eEFfectDesc.vColor = XMVectorSet(200.f, 145.f, 255.f, 62.f) / 255.f;
-		break;
-
-	case Client::CE_ShamanBossPlate::EFFECT_END:
 		break;
 	}
 }
 
 void CE_ShamanBossPlate::Reset()
 {
+	m_fTimeDelta = 0.0f;
+	m_bDissolve = false;
+	m_fDissolveTime = 1.0f;
+	m_bTurnInto = false;
 }
 
 HRESULT CE_ShamanBossPlate::SetUp_ShaderResources()
@@ -206,6 +208,8 @@ HRESULT CE_ShamanBossPlate::SetUp_ShaderResources()
 
 	FAILED_CHECK_RETURN(m_pShamanTextureCom->Bind_ShaderResource(m_pShaderCom, "g_ShamanTexture", m_iShamanTexture), E_FAIL);
 
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
 	return S_OK;
 }
 

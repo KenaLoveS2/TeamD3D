@@ -28,6 +28,7 @@ public:
 
 public:
 	void			Set_EffectType(EFFECTTYPE eType);
+	void			Set_Dissolve(_bool bDissolve) { m_bDissolve = bDissolve; }
 
 public:
 	void			Reset();
@@ -40,6 +41,10 @@ private:
 private:
 	class CTexture* m_pShamanTextureCom = nullptr;
 	_uint			m_iShamanTexture = 0;
+
+	_bool			m_bTurnInto = false;
+	_bool			m_bDissolve = false;
+	_float			m_fDissolveTime = 1.0f;
 
 public:
 	static  CE_ShamanBossPlate* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath = nullptr);

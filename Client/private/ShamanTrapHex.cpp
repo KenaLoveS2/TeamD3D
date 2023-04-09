@@ -36,10 +36,15 @@ HRESULT CShamanTrapHex::Initialize(void* pArg)
 
 	/* 모델을 별도로 설정해 주기 때문에 Desc 일부 변경 해줌 */
 	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_END; // Mesh 생성 안함
-	m_iTotalDTextureComCnt = 0;	m_iTotalMTextureComCnt = 0;
+	m_iTotalDTextureComCnt = 4;	m_iTotalMTextureComCnt = 0;
+	m_eEFfectDesc.fFrame[0] = 133.f;
+	m_eEFfectDesc.fFrame[1] = 15.f;
+	m_eEFfectDesc.fFrame[2] = 10.f;
+	m_eEFfectDesc.fFrame[3] = 143.f;
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_Effects(), E_FAIL);
 
 	_matrix matiden = XMMatrixIdentity();
 	m_pTransformCom->Set_WorldMatrix(matiden);
@@ -50,19 +55,27 @@ HRESULT CShamanTrapHex::Initialize(void* pArg)
 	m_pPartBone = m_pModelCom->Get_BonePtr("Geo");
 	m_vEdgeColor =	_float4(1.f, 0.f, 1.f, 40.f / 255.f);
 	m_vBaseColor =	_float4(1.f, 0.f, 1.f, 40.f / 255.f);
-	m_eEFfectDesc.vColor = _float4(1.f, 0.f, 1.f, 40.f / 255.f);
+//	m_eEFfectDesc.vColor = _float4(1.f, 0.f, 1.f, 40.f / 255.f);
 
 	m_pTransformCom->Set_Position(m_vInvisiblePos);
 
+	m_eEFfectDesc.vColor = _float4(130.0f, 50.0f, 110.0f, 0.0f) / 255.f;
+	m_fHDRValue = 0.0f;
 	return S_OK;
 }
 
 void CShamanTrapHex::Tick(_float fTimeDelta)
 {
+	m_eEFfectDesc.bActive = true;
+
 	if (m_eEFfectDesc.bActive == false)
+	{
+		m_fTimeDelta = 0.0f;
 		return;
+	}
 
 	__super::Tick(fTimeDelta);
+	m_fTimeDelta += fTimeDelta;
 
 	Trap_Proc(fTimeDelta);
 
@@ -81,7 +94,6 @@ void CShamanTrapHex::Late_Tick(_float fTimeDelta)
 	
 	for (auto &pParts : m_pPart)
 		pParts->Late_Tick(fTimeDelta);
-		
 
 	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
@@ -126,8 +138,6 @@ void CShamanTrapHex::ImGui_AnimationProperty()
 
 void CShamanTrapHex::Imgui_RenderProperty()
 {
-	if (ImGui::Button("Recompile"))
-		m_pShaderCom->ReCompile();
 	//m_pPart[SHAMAN_0]->Imgui_RenderProperty();
 	//m_pPart[GEO]->Imgui_RenderProperty();
 }
@@ -154,6 +164,7 @@ HRESULT CShamanTrapHex::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxEffectAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_ShamanTrapHex", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
@@ -162,16 +173,16 @@ HRESULT CShamanTrapHex::SetUp_Components()
 	}
 
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
-	{
-		CShamanTrapGeo::ShamanTrapDESC Desc;
-		ZeroMemory(&Desc, sizeof(CShamanTrapGeo::ShamanTrapDESC));
-		XMStoreFloat4x4(&Desc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
-		Desc.pSocket = m_pModelCom->Get_BonePtr("Geo");
-		Desc.pTargetTransform = m_pTransformCom;
-		Safe_AddRef(Desc.pSocket);
-		Safe_AddRef(m_pTransformCom);
-		m_pPart[GEO] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_ShamanTrapGeo"), TEXT("ShamanTrapGeo"), &Desc);
-	}
+	//{
+	//	CShamanTrapGeo::ShamanTrapDESC Desc;
+	//	ZeroMemory(&Desc, sizeof(CShamanTrapGeo::ShamanTrapDESC));
+	//	XMStoreFloat4x4(&Desc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
+	//	Desc.pSocket = m_pModelCom->Get_BonePtr("Geo");
+	//	Desc.pTargetTransform = m_pTransformCom;
+	//	Safe_AddRef(Desc.pSocket);
+	//	Safe_AddRef(m_pTransformCom);
+	//	m_pPart[GEO] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_ShamanTrapGeo"), TEXT("ShamanTrapGeo"), &Desc);
+	//}
 
 	//{
 	//	CShamanTrapPlane::ShamanTrapDESC Desc;
@@ -258,6 +269,21 @@ HRESULT CShamanTrapHex::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vEdgeLineColor", &m_vEdgeColor, sizeof(_float4)), E_FAIL);
+	return S_OK;
+}
+
+HRESULT CShamanTrapHex::SetUp_Effects()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CEffect_Base* pEffectBase = nullptr;
+
+	/* Geo */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanTrapGeo", L"Geo"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_vecChild.push_back(pEffectBase);
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

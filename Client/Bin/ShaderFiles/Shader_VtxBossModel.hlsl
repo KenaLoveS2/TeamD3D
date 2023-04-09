@@ -99,18 +99,30 @@ PS_OUT PS_SHAMANMAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float4 vDiffuse = g_ShamanTexture.Sample(LinearSampler, In.vTexUV);
+	float4 vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	float4 finalcolor = vDiffuse * g_vColor;
 	finalcolor = saturate(finalcolor);
 	if (finalcolor.a < 0.01f)
 		discard;
 
-	//float fTime = min(g_Time, 1.f);
-	//Out.vDiffuse = Out.vDiffuse * (fTime / 1.f);
+	float fTime = min(g_Time, 1.f);
+	Out.vDiffuse = Out.vDiffuse * (fTime / 1.f);
 	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
 
-	//Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+	if (g_bDissolve)
+	{
+		float  fDissolveAmount = g_fDissolveTime;
+		float  DissolveValue = g_DTexture_0.Sample(LinearSampler, In.vTexUV).r;
+		if (DissolveValue <= fDissolveAmount)
+			discard;
+
+		else if (DissolveValue <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			if (Out.vDiffuse.a != 0.0f)
+				Out.vDiffuse = Out.vDiffuse + float4(0.f, 0.f, 0.f, DissolveValue);
+		}
+	}
+
 	return Out;
 }
 
@@ -136,6 +148,34 @@ PS_OUT PS_SHAMANTHUNDER(PS_IN In)
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
 
+	return Out;
+}
+
+PS_OUT PS_MAIN(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 vDiffuse = g_ShamanTexture.Sample(LinearSampler, In.vTexUV);
+	float4 finalcolor = vDiffuse * g_vColor;
+	finalcolor = saturate(finalcolor);
+	if (finalcolor.a < 0.01f)
+		discard;
+
+	float fTime = min(g_Time, 1.f);
+	Out.vDiffuse = Out.vDiffuse * (fTime / 1.f);
+	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
+	return Out;
+}
+
+PS_OUT PS_ICEDAGGER(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	float4 finalcolor = vDiffuse * g_vColor;
+	finalcolor = saturate(finalcolor);
+
+	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
 	return Out;
 }
 
@@ -165,5 +205,31 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_SHAMANTHUNDER();
+	}
+
+	pass Main // 2
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
+	pass Ice_Dagger // 3
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_ICEDAGGER();
 	}
 }

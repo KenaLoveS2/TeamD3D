@@ -265,8 +265,10 @@ void GS_RECTTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 	matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float4x4    WorldMatrix = In[0].Matrix;
 
-	float3      vUp = matrix_up(WorldMatrix) * In[0].vPSize.y * In[0].fWidth;
-	float3		vRight = matrix_right(WorldMatrix) * In[0].vPSize.x * In[0].fWidth;
+	float       fCurWidth = (In[0].fLife / g_fLife);
+
+	float3      vUp = matrix_up(WorldMatrix) * In[0].vPSize.y * In[0].fWidth * fCurWidth;
+	float3		vRight = matrix_right(WorldMatrix) * In[0].vPSize.x * In[0].fWidth * fCurWidth;
 	float3		vPosition = matrix_postion(In[0].Matrix);
 
 	float3 vResultPos;
@@ -1100,10 +1102,9 @@ PS_OUT PS_RECTTRAIL(PS_TRAILIN In)
 	vDiffuse.a = vDiffuse.r;
 	if (vDiffuse.a < 0.1f)
 		discard;
-	Out.vColor = vDiffuse + g_vColor;
-	Out.vColor.a *= (1 - In.fLife);
+	Out.vColor = vDiffuse + g_vColor;	
+	Out.vColor.a *= In.fLife;
 
-	// Out.vColor.a = Out.vColor.a * In.fLife;
 	return Out;
 }
 
@@ -1153,12 +1154,49 @@ PS_OUT PS_RECTTRAIL_SPRITE(PS_TRAILIN In)
 	float3 vColor = float3(15.f, 130.f, 190.f) / 255.f;
 	albedo.rgb = float3(1.f, 1.f, 1.f) * 3.f;
 	albedo = albedo * g_vColor;
-
+	if (albedo.a < 0.1f)
+		discard;
 	// Out.vColor = albedo;
 	//albedo.a = albedo.a * In.fLife;
 	Out.vColor = CalcHDRColor(albedo, g_fHDRValue);
 	Out.vColor.a *= (1 - In.fLife);
 
+	return Out;
+}
+
+//PS_SHAMANSNOWRECTTRAIL
+PS_OUT PS_SHAMANSNOWRECTTRAIL(PS_TRAILIN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+	In.vTexUV.x = In.vTexUV.x / 2;
+	In.vTexUV.y = In.vTexUV.y / 2;
+
+	vector vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vDiffuse.a = vDiffuse.r;
+	if (vDiffuse.a < 0.1f)
+		discard;
+
+	float4 finalcolor = vDiffuse + g_vColor;
+	Out.vColor = CalcHDRColor(finalcolor, g_fHDRValue);
+	Out.vColor.a *= (1 - In.fLife);
+	return Out;
+}
+
+PS_OUT PS_SHAMANRECTTRAIL(PS_TRAILIN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vDiffuse.a = vDiffuse.r;
+	if (vDiffuse.a < 0.1f)
+		discard;
+
+	float4 finalcolor = vDiffuse + g_vColor;
+	Out.vColor = CalcHDRColor(finalcolor, g_fHDRValue);
 	return Out;
 }
 
@@ -1372,4 +1410,30 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_ROTBOMBTRAIL();
 	}
 
+	pass ShamanRectTrail // 16
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_TRAILMAIN();
+		GeometryShader = compile gs_5_0 GS_RECTTRAIL();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SHAMANSNOWRECTTRAIL();
+	}
+
+	//PS_SHAMANRECTTRAIL
+	pass ShamanRectDashTrail // 17
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_TRAILMAIN();
+		GeometryShader = compile gs_5_0 GS_RECTTRAIL();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SHAMANRECTTRAIL();
+	}
 }

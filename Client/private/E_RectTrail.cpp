@@ -5,6 +5,7 @@
 #include "Kena.h"
 #include "Monster.h"
 #include "Kena_Staff.h"
+#include "BossShaman.h"
 
 CE_RectTrail::CE_RectTrail(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Trail(pDevice, pContext)
@@ -85,10 +86,28 @@ void CE_RectTrail::Tick(_float fTimeDelta)
 	//}
 #pragma endregion Test
 
+	if (m_pParent && !lstrcmp(m_pParent->Get_ObjectCloneName(), L"S_IceDagger_0"))
+	{
+		ImGui::Begin("RectTrail");
+
+		if (ImGui::Button("Recompile"))
+			m_pShaderCom->ReCompile();
+
+		ImGui::InputFloat("DiffuseTexture", &m_eEFfectDesc.fFrame[0]);
+		ImGui::InputFloat("MaskTexture", &m_eEFfectDesc.fMaskFrame[0]);
+		ImGui::InputFloat("Life", &m_eEFfectDesc.fLife);
+		ImGui::InputFloat("Width", &m_eEFfectDesc.fWidth);
+		ImGui::InputInt("Pass", &m_eEFfectDesc.iPassCnt);
+		ImGui::InputFloat("HDRValue", &m_fHDRValue);
+		ImGui::InputFloat4("vColor", (_float*)&m_eEFfectDesc.vColor);
+
+		ImGui::End();
+	}
+
 	__super::Tick(fTimeDelta);
 
 	if (m_eType == CE_RectTrail::OBJ_BODY_SHAMAN)
-		TurnOffSystem(m_fDurationTime, 2.f, fTimeDelta);
+		TurnOffSystem(m_fDurationTime, 8.f, fTimeDelta);
 
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
 		Tick_Sprite(m_fTimeDelta, fTimeDelta);
@@ -134,7 +153,6 @@ HRESULT CE_RectTrail::SetUp_ShaderResources()
 	//if (FAILED(m_pVITrailBufferCom->Bind_ShaderResouce(m_pShaderCom, "g_InfoMatrix")))
 	//	return E_FAIL;
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float)), E_FAIL);
-
 	return S_OK;
 }
 
@@ -142,6 +160,7 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 {
 	m_eEFfectDesc.IsTrail = true;
 	m_eEFfectDesc.fWidth = 1.f;
+	m_eType = eType;
 
 	switch (eType)
 	{
@@ -169,23 +188,27 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 
 	case Client::CE_RectTrail::OBJ_B_SHAMAN: // snow
 		m_eEFfectDesc.fFrame[0] = 31.f;
-		m_eEFfectDesc.iPassCnt = 13;
+		m_eEFfectDesc.iPassCnt = 16;
 		m_eEFfectDesc.fLife = 0.5f;
-		m_eEFfectDesc.fWidth = 2.f;
+		m_eEFfectDesc.fWidth = 4.f;
 		m_eEFfectDesc.vColor = XMVectorSet(255.f, 255.f, 255.f, 255.f) / 255.f;
+		m_eEFfectDesc.iSeparateWidth = 2;
+		m_eEFfectDesc.iSeparateHeight = 2;
+		m_fHDRValue = 3.5f;
 		break;
 
 	case Client::CE_RectTrail::OBJ_W_SHAMAN:
-		m_eEFfectDesc.fFrame[0] = 26.f;
-		m_eEFfectDesc.iPassCnt = 13;
-		m_eEFfectDesc.fLife = 0.5f;
-		m_eEFfectDesc.fWidth = 2.f;
-		m_eEFfectDesc.vColor = XMVectorSet(255.f, 255.f, 255.f, 60.f) / 255.f;
+		m_eEFfectDesc.fFrame[0] = 126.f;
+		m_eEFfectDesc.iPassCnt = 17;
+		m_eEFfectDesc.fLife = 0.3f;
+		m_eEFfectDesc.fWidth = 15.f;
+		m_eEFfectDesc.vColor = XMVectorSet(1.f, 0.2f, 1.f, 0.5f);
+		m_fHDRValue = 3.f;
 		break;
 
 	case Client::CE_RectTrail::OBJ_B_HUNTER: 
 		m_eEFfectDesc.fFrame[0] = 31.f;
-		m_eEFfectDesc.iPassCnt = 13;
+		m_eEFfectDesc.iPassCnt = 11; // 13 
 		m_eEFfectDesc.fLife = 0.5f;
 		m_eEFfectDesc.fWidth = 2.f;
 		m_eEFfectDesc.vColor = XMVectorSet(255.f, 255.f, 255.f, 255.f) / 255.f;
@@ -193,10 +216,10 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 
 	case Client::CE_RectTrail::OBJ_BODY_SHAMAN:
 		m_eEFfectDesc.fFrame[0] = 126.f;
-		m_eEFfectDesc.iPassCnt = 13;
+		m_eEFfectDesc.iPassCnt = 11; // 13 
 		m_eEFfectDesc.fLife = 0.5f;
-		m_eEFfectDesc.fWidth = 1.f;
-		m_eEFfectDesc.vColor = XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f;
+		m_eEFfectDesc.fWidth = 3.f;
+		m_eEFfectDesc.vColor = XMVectorSet(255.f, 0.0f, 0.0f, 255.f) / 255.f;
 		break;
 
 	case Client::CE_RectTrail::OBJ_ROTWISP:
@@ -218,7 +241,7 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 		m_eEFfectDesc.iPassCnt = 14;
 		m_eEFfectDesc.fLife = 0.5f;
 		m_eEFfectDesc.fWidth = 13.f;
-		m_eEFfectDesc.vColor = XMVectorSet(255.f, 32.f, 0.f, 255.f) / 255.f;
+		m_eEFfectDesc.vColor = XMVectorSet(255.f, 32.f, 0.f, 102.f) / 255.f;
 
 		m_eEFfectDesc.eTextureRenderType = CEffect_Base::tagEffectDesc::TEX_SPRITE;
 		m_eEFfectDesc.iSeparateWidth = 8;

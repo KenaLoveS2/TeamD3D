@@ -36,7 +36,7 @@ HRESULT CE_ShamanThunderCylinder::Initialize(void* pArg)
 	m_eEFfectDesc.bActive = false;
 
 	m_eEFfectDesc.eTextureRenderType = EFFECTDESC::TEXTURERENDERTYPE::TEX_SPRITE;
-	m_eEFfectDesc.iWidthCnt = 4;
+	m_eEFfectDesc.iHeightCnt = m_eEFfectDesc.iWidthCnt = 4;
 	m_eEFfectDesc.iHeightCnt = 4;
 	m_eEFfectDesc.fTimeDelta = 0.2f;
 	m_fHDRValue = 3.f;
@@ -57,41 +57,13 @@ void CE_ShamanThunderCylinder::Tick(_float fTimeDelta)
 		m_fTimeDelta = 0.0f;
 		return;
 	}
-	else
-		m_fTimeDelta += fTimeDelta;
+	
+	m_fTimeDelta += fTimeDelta;
 
 	__super::Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
-	{
-		m_fSpriteTime += fTimeDelta;
-		if (m_fSpriteTime > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
-		{
-			if (m_eEFfectDesc.fTimeDelta < 1.f)
-				m_eEFfectDesc.fWidthFrame++;
-			else
-				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-			m_fSpriteTime = 0.0;
-
-			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
-			{
-				if (m_eEFfectDesc.fTimeDelta < 1.f)
-					m_eEFfectDesc.fHeightFrame++;
-				else
-					m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
-
-				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-				{
-					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
-					m_bFinishSprite = true;
-				}
-			}
-
-		}
-	}
+		Tick_Sprite(m_fSpriteTime, fTimeDelta);
 }
 
 void CE_ShamanThunderCylinder::Late_Tick(_float fTimeDelta)
@@ -210,7 +182,6 @@ HRESULT CE_ShamanThunderCylinder::SetUp_ShaderResources()
 		return E_FAIL;
 
 	FAILED_CHECK_RETURN(m_pShamanTextureCom->Bind_ShaderResource(m_pShaderCom, "g_ShamanTexture", m_iShamanTexture), E_FAIL);
-
 	return S_OK;
 }
 
