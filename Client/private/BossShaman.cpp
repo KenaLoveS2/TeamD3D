@@ -820,6 +820,9 @@ HRESULT CBossShaman::SetUp_State()
 		.OnStart([this]()
 	{
 		Attack_Start(false, TRAP_LOOP);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
 		Update_LazerPos();
 	})
 		.OnExit([this]()
@@ -830,7 +833,7 @@ HRESULT CBossShaman::SetUp_State()
 		.Predicator([this]()
 	{
 		// 레이저 발사가 끝나면 아이들로
-		return m_mapEffect["S_Lazer"]->Get_Active();
+		return m_mapEffect["S_Lazer"]->Get_Active() == false;
 	})
 
 		.AddState("TRAP_END")
@@ -1186,13 +1189,9 @@ void CBossShaman::Update_Trail(const char* pBoneTag)
 {
 	_matrix SocketMatrix = m_pWeaponTrailBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
 	m_mapEffect["S_Trail"]->Get_TransformCom()->Set_WorldMatrix(SocketMatrix);
-	//m_mapEffect["S_KnifeTrail"]->Get_TransformCom()->Set_WorldMatrix(SocketMatrix);
 
 	if (m_mapEffect["S_Trail"]->Get_Active() == true) /* Normal Trail Setting */
 		dynamic_cast<CEffect_Trail*>(m_mapEffect["S_Trail"])->Trail_InputPos(SocketMatrix.r[3]);
-
-	// 	if (m_mapEffect["S_KnifeTrail"]->Get_Active() == true) /* WeaponCloud Trail Setting */
-	// 		dynamic_cast<CEffect_Trail*>(m_mapEffect["S_KnifeTrail"])->Trail_InputPos(SocketMatrix.r[3]);
 }
 
 void CBossShaman::Update_DashAttackTrail()
@@ -1316,7 +1315,6 @@ void CBossShaman::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 	m_bTrail = false;
-	m_mapEffect["S_Trail"]->Set_Active(false);
 	dynamic_cast<CE_ShamanTrail*>(m_mapEffect["S_Trail"])->Reset();
 }
 
@@ -1341,7 +1339,6 @@ void CBossShaman::TurnOnWeaponCloudTrail(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 	m_bDashAttackTrail = true;
-	//m_mapEffect["S_KnifeTrail"]->Set_Active(true);
 }
 
 void CBossShaman::TurnOffWeaponCloudTrail(_bool bIsInit, _float fTimeDelta)
@@ -1353,7 +1350,6 @@ void CBossShaman::TurnOffWeaponCloudTrail(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 	m_bDashAttackTrail = false;
-	//m_mapEffect["S_KnifeTrail"]->Set_Active(false);
 }
 
 void CBossShaman::TurnOnHandSummons(_bool bIsInit, _float fTimeDelta)
@@ -1469,14 +1465,24 @@ void CBossShaman::TurnOnTeleport(_bool bIsInit, _float fTimeDelta)
 	_float4 vPos = m_pTransformCom->Get_Position();
 
 	m_mapEffect["S_P_Teleport"]->Set_Position(vPos);
-	m_mapEffect["S_Plate"]->Set_Position(vPos);
+	dynamic_cast<CE_ShamanBossPlate*>(m_mapEffect["S_Plate"])->Set_Teleport(vPos);
 
 	vPos.y += 1.5f;
-	dynamic_cast<CE_ShamanSmoke*>(m_mapEffect["Shaman_Smoke"])->Set_State(CE_ShamanSmoke::STATE::STATE_TELEPORT, vPos);
+	CE_ShamanSmoke* pShamanSmoke = dynamic_cast<CE_ShamanSmoke*>(m_mapEffect["Shaman_Smoke"]);
+	{
+		if (m_pModelCom->Get_AnimIndex() == (_uint)AWAKE || m_pModelCom->Get_AnimIndex() == (_uint)IDLE_LOOP)
+		{
+			_matrix Left_SocketMatrix = m_pLeftHandBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+			pShamanSmoke->Set_State(CE_ShamanSmoke::STATE::STATE_IDLE, vPos, Left_SocketMatrix.r[3]);
+		}
+		else
+		{
+			pShamanSmoke->Set_State(CE_ShamanSmoke::STATE::STATE_TELEPORT, vPos);
 
-	m_mapEffect["S_Plate"]->Set_Active(true);
-	m_mapEffect["S_P_Teleport"]->Set_Active(true);
-	m_pMovementTrail->Set_Active(true);
+			m_mapEffect["S_P_Teleport"]->Set_Active(true);
+			m_pMovementTrail->Set_Active(true);
+		}
+	}
 }
 
 void CBossShaman::TurnOnCameraShake(_bool bIsInit, _float fTimeDelta)
@@ -1504,13 +1510,15 @@ void CBossShaman::TurnOnSummons(_bool bIsInit, _float fTimeDelta)
 	_float4 vPos = m_pTransformCom->Get_Position();
 	vPos.y = vPos.y + 0.1f;
 
-	dynamic_cast<CE_ShamanBossPlate*>(m_mapEffect["S_Plate"])->Set_Dissolve(true);
-	m_mapEffect["S_Plate"]->Set_Position(vPos);
-	m_mapEffect["S_Plate"]->Set_Active(true);
+	CE_ShamanBossPlate* pPlate = dynamic_cast<CE_ShamanBossPlate*>(m_mapEffect["S_Plate"]);
+	pPlate->Set_Dissolve(true);
+	pPlate->Set_Position(vPos);
+	pPlate->Set_Active(true);
 
-	dynamic_cast<CE_ShamanSummons*>(m_mapEffect["S_Summons"])->Set_Dissolve(true);
-	m_mapEffect["S_Summons"]->Set_Position(vPos);
-	m_mapEffect["S_Summons"]->Set_Active(true);
+	CE_ShamanSummons* pSummons = dynamic_cast<CE_ShamanSummons*>(m_mapEffect["S_Summons"]);
+	pSummons->Set_Dissolve(true);
+	pSummons->Set_Position(vPos);
+	pSummons->Set_Active(true);
 }
 
 void CBossShaman::TurnOffSummons(_bool bIsInit, _float fTimeDelta)

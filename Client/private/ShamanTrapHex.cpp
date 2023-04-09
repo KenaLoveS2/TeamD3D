@@ -66,8 +66,6 @@ HRESULT CShamanTrapHex::Initialize(void* pArg)
 
 void CShamanTrapHex::Tick(_float fTimeDelta)
 {
-	m_eEFfectDesc.bActive = true;
-
 	if (m_eEFfectDesc.bActive == false)
 	{
 		m_fTimeDelta = 0.0f;
@@ -138,6 +136,7 @@ void CShamanTrapHex::ImGui_AnimationProperty()
 
 void CShamanTrapHex::Imgui_RenderProperty()
 {
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
 	//m_pPart[SHAMAN_0]->Imgui_RenderProperty();
 	//m_pPart[GEO]->Imgui_RenderProperty();
 }
@@ -346,14 +345,14 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 	switch (m_eState)
 	{
 	case START_TRAP:
-	{	
+	{
 		if (m_pModelCom->Get_AnimationFinish())
 			m_eState = TRAP;
 
 		break;
-	}		
+	}
 	case TRAP:
-	{			
+	{
 		if (m_fTrapTime > fTrapSuccessTime)
 		{
 			m_bTrapSuccess = true;
@@ -365,7 +364,7 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 		}
 
 		break;
-	}		
+	}
 	case BREAK_TRAP:
 	{
 		// 부서지는 파티클이 필요하다
@@ -373,7 +372,7 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 			m_eState = END_TRAP;
 
 		break;
-	}		
+	}
 	case END_TRAP:
 	{
 		// 서서히 없어짐?
@@ -381,7 +380,14 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 		m_eEFfectDesc.bActive = false;
 		m_eState = STATE_END;
 		break;
-	}	
+	}
+
+	case STATE_END:
+	{
+		m_eEFfectDesc.bActive = false;
+		break;
+	}
+
 	}
 }
 
@@ -390,7 +396,7 @@ void CShamanTrapHex::Execute_Trap(_float4 vPos)
 	m_bTrapSuccess = false;
 	m_fTrapTime = 0.f;
 	m_eEFfectDesc.bActive = true;
-	vPos.y -= 0.5f;
+	vPos.y += 0.1f;
 	m_pTransformCom->Set_Position(vPos);
 	m_pModelCom->Set_AnimIndex(CONTRACT);
 

@@ -30,6 +30,8 @@ public:
 	void			Set_EffectType(EFFECTTYPE eType);
 	void			Set_Dissolve(_bool bDissolve) { m_bDissolve = bDissolve; }
 
+	void			Set_Teleport(_float4 vPos);
+
 public:
 	void			Reset();
 	EFFECTTYPE		m_eType = EFFECT_PLATE;

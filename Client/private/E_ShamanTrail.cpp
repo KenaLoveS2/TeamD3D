@@ -90,6 +90,7 @@ HRESULT CE_ShamanTrail::Render()
 
 void CE_ShamanTrail::Reset()
 {
+	m_eEFfectDesc.bActive = false;
 	m_fTimeDelta = 0.0f;
 	ResetInfo();
 }
