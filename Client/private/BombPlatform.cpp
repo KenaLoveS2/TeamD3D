@@ -44,7 +44,7 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 
 	/* CloneTag로 m_vMovingPos 다르게 주면 돼 */
 	m_vMovingPos = _float4(50.f, 1.f, 35.f, 1.f);
-	m_vMovingQuat = XMQuaternionIdentity();
+	m_vMovingQuat = XMQuaternionRotationNormal(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(CUtile::Get_RandomFloat(0.f, 359.f)));
 	m_fReturnTime = 5.f;
 
 	_float3	vPos = m_vInitPos;
@@ -133,7 +133,7 @@ void CBombPlatform::Imgui_RenderProperty()
 
 void CBombPlatform::ImGui_PhysXValueProperty()
 {
-	PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_DynamicCollider(m_szCloneObjectTag);
+	PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_StaticActor(m_szCloneObjectTag);
 
 	PxShape* pShape = nullptr;
 	pActor->getShapes(&pShape, sizeof(PxShape));
