@@ -855,6 +855,16 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+	if (FAILED(m_pShader->Set_RawValue("g_bFog", &m_bFog, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_RawValue("g_FogColor", &m_vFogColor, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_RawValue("g_FogStart", &m_fFogStart, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_RawValue("g_FogRange", &m_fFogRange, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance)
 
@@ -999,21 +1009,6 @@ HRESULT CRenderer::Render_PostProcess()
 		pLDRDest = pLDRTmp;
 		PostProcess_Flare();
 	}
-
-	/***5***/
-	if (m_bFog)
-	{
-		pLDRSour_SRV = pLDRSour->Get_SRV();
-		pLDRDest_RTV = pLDRDest->Get_RTV();
-		if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour_SRV)))
-			return E_FAIL;
-		m_pContext->OMSetRenderTargets(1, &pLDRDest_RTV, pDepthStencilView);
-		pLDRTmp = pLDRSour;
-		pLDRSour = pLDRDest;
-		pLDRDest = pLDRTmp;
-		PostProcess_Fog();
-	}
-
 
 	m_pContext->OMSetRenderTargets(1, &pBackBufferView, pDepthStencilView);
 	Safe_Release(pBackBufferView);
@@ -1176,27 +1171,6 @@ HRESULT CRenderer::PostProcess_Flare()
 		return E_FAIL;
 
 	m_pShader_PostProcess->Begin(5);
-	m_pVIBuffer->Render();
-	return S_OK;
-}
-
-HRESULT CRenderer::PostProcess_Fog()
-{
-	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_FogColor", &m_vFogColor, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_FogStart", &m_fFogStart, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_FogRange", &m_fFogRange, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_fFar", CGameInstance::GetInstance()->Get_CameraFar(), sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_ViewMatrixInv", &CGameInstance::GetInstance()->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_ProjMatrixInv", &CGameInstance::GetInstance()->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4))))
-		return E_FAIL;
-	m_pShader_PostProcess->Begin(6);
 	m_pVIBuffer->Render();
 	return S_OK;
 }

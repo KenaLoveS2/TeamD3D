@@ -146,8 +146,8 @@ public: /* For.PipeLine */
 
 	public: /* For.Light_Manager */
 		const LIGHTDESC* Get_LightDesc(_uint iIndex);
-		HRESULT Add_Light(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const LIGHTDESC& LightDesc,
-						  class CLight** ppOut = nullptr);
+		class CLight* Get_Light(_uint iIndex);
+		HRESULT Add_Light(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const LIGHTDESC& LightDesc, class CLight** ppOut = nullptr);
 		void Imgui_LightManagerRender();
 		void Clear();
 
@@ -166,6 +166,7 @@ public: /* For.PipeLine */
 
 	public: /* For.Sound_Manager */
 		_int Play_Sound(const _tchar* pSoundKey, _float fVolume, _bool bIsBGM = false, _int iManualChannelIndex = -1);
+		_int Play_ManualSound(const _tchar* pSoundKey, _float fVolume, _bool bIsBGM = false, _int iManualChannelIndex = -1);
 		void Stop_Sound(_uint iManualChannelIndex);
 		void Set_Volume(_uint iManualChannelIndex, _float fVolume);
 		void Set_MasterVolume(_float fVolume);

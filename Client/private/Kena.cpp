@@ -498,15 +498,21 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(0);
+	m_pKenaStatus->Set_Attack(50);
 	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
 	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
 	_float	fTimeRate = Update_TimeRate();
-
+	
 	__super::Tick(fTimeDelta);
 
 	LiftRotRockProc();
+
+	if(ImGui::Button("HunterPos"))
+	{
+		const _float4 vPos = _float4(89.f, 6.f, 441.f, 1.f);
+		m_pTransformCom->Set_Position(vPos);
+	}
 
 	Check_Damaged();
 
