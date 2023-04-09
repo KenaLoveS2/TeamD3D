@@ -101,6 +101,9 @@
 #include "MannequinRot.h"
 #include "Meditation_Spot.h"
 
+#include "BossRock.h"
+#include "BossRock_Pool.h"
+
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
@@ -2173,6 +2176,12 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_GameObject_HunterArrow
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MannequinRot"), CMannequinRot::Create(m_pDevice, m_pContext)))) return E_FAIL;
 	
+	// Prototype_GameObject_BossRock
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossRock"), CBossRock::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_BossRockPool
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossRockPool"), CBossRock_Pool::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
 	return S_OK;
 }
 

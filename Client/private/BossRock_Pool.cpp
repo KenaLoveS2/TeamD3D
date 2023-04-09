@@ -1,188 +1,109 @@
 #include "stdafx.h"
-#include "..\public\LiftRot_Master.h"
-#include "FSMComponent.h"
-#include "Kena.h"
-#include "Rope_RotRock.h"
-#include "LiftRot.h"
+#include "..\public\BossRock_Pool.h"
+#include "..\public\BossRock.h"
 
-CLiftRot_Master::CLiftRot_Master(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
+CBossRock_Pool::CBossRock_Pool(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CGameObject(pDevice, p_context)
+	, m_pGameInstance(CGameInstance::GetInstance())
 {
 }
 
-CLiftRot_Master::CLiftRot_Master(const CLiftRot_Master& rhs)
+CBossRock_Pool::CBossRock_Pool(const CBossRock_Pool& rhs)
 	:CGameObject(rhs)
+	, m_pGameInstance(CGameInstance::GetInstance())
 {
 }
 
-HRESULT CLiftRot_Master::Initialize_Prototype()
+HRESULT CBossRock_Pool::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 
 	return S_OK;
 }
 
-HRESULT CLiftRot_Master::Initialize(void* pArg)
+HRESULT CBossRock_Pool::Initialize(void* pArg)
 {
-	m_pGameInstacne = CGameInstance::GetInstance();
+	ZeroMemory(&m_Desc, sizeof(DESC));
 
-	return S_OK;
-}
+	if (pArg) memcpy(&m_Desc, pArg, sizeof(DESC));
+	else {		
+		m_Desc.vCenterPos = { 0.f, 0.f, 0.f, 1.f };
+		m_Desc.iRockCount = 30;
+	}
+	
+	m_Rocks.reserve(m_Desc.iRockCount);
 
-HRESULT CLiftRot_Master::Late_Initialize(void * pArg)
-{	
-	_tchar szCloneRotTag[32] = { 0, };
-
-	CLiftRot::DESC Desc;
-	Desc.eType = CLiftRot::LIFT;
-	Desc.vInitPos = _float4(-50.f, 0.f, -50.f, 1.f);
-
-	for (_uint i = 0; i < LIFT_ROT_COUNT; i++)
+	CBossRock::DESC BossRockDesc;
+	CBossRock* pRock = nullptr;
+	for (_uint i = 0; i < (_uint)m_Desc.iRockCount; i++)
 	{
-		swprintf_s(szCloneRotTag, L"LiftRot_%d", i);
-		m_pLiftRotArr[i] = (CLiftRot*)m_pGameInstacne->Clone_GameObject(TEXT("Prototype_GameObject_LiftRot"), CUtile::Create_StringAuto(szCloneRotTag), &Desc);
-		assert(m_pLiftRotArr[i] != nullptr && "CLiftRot_Master::Late_Initialize");		
-		m_pLiftRotArr[i]->Set_OwnerLiftRotMasterPtr(this);
+		BossRockDesc.eType = (CBossRock::ROCK_TPYE)i;
+		BossRockDesc.vPosition = m_Desc.vCenterPos += _float4();
+
+		pRock = (CBossRock*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossRock"), CUtile::Create_DummyString(), &BossRockDesc);
+		assert(pRock && "CBossRock_Pool::Initialize()");
+
+		m_Rocks.push_back(pRock);
+		pRock = nullptr;
 	}
 
 	return S_OK;
 }
 
-void CLiftRot_Master::Tick(_float fTimeDelta)
+HRESULT CBossRock_Pool::Late_Initialize(void * pArg)
+{	
+	for (auto& pRock : m_Rocks)
+		pRock->Late_Initialize(nullptr);
+
+	return S_OK;
+}
+
+void CBossRock_Pool::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pRopeRotRock)
-	{
-		m_vRopeRotRockPos = m_pRopeRotRock->Get_TransformCom()->Get_Position();		
-	}
-	
-	for (auto &pLiftRot : m_pLiftRotArr)
-	{
-		pLiftRot->Tick(fTimeDelta);
-	}
+	for (auto& pRock : m_Rocks)
+		pRock->Tick(fTimeDelta);
 }
 
-void CLiftRot_Master::Late_Tick(_float fTimeDelta)
+void CBossRock_Pool::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	for (auto &pLiftRot : m_pLiftRotArr)
-	{
-		pLiftRot->Late_Tick(fTimeDelta);
-	}
+	for (auto& pRock : m_Rocks)
+		pRock->Late_Tick(fTimeDelta);
 }
 
-CLiftRot_Master* CLiftRot_Master::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CBossRock_Pool* CBossRock_Pool::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLiftRot_Master* pInstance = new CLiftRot_Master(pDevice, pContext);
+	CBossRock_Pool* pInstance = new CBossRock_Pool(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Create : CLiftRot_Master");
+		MSG_BOX("Failed to Create : CBossRock_Pool");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CLiftRot_Master::Clone(void* pArg)
+CGameObject* CBossRock_Pool::Clone(void* pArg)
 {
-	CLiftRot_Master* pInstance = new CLiftRot_Master(*this);
+	CBossRock_Pool* pInstance = new CBossRock_Pool(*this);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Clone : CLiftRot_Master");
+		MSG_BOX("Failed to Clone : CBossRock_Pool");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CLiftRot_Master::Free()
+void CBossRock_Pool::Free()
 {
 	__super::Free();
 
-	for (auto& pLiftRot : m_pLiftRotArr)
-		Safe_Release(pLiftRot);
-}
+	for (auto& pRock : m_Rocks)
+		Safe_Release(pRock);
 
-void CLiftRot_Master::Execute_WakeUp(_float4 vCenterPos, _float3* pCreatePosOffsetArr, _float3* pLiftPosOffsetArr)
-{
-	_float4 vCreate, vLift;
-	for (_uint i = 0; i < LIFT_ROT_COUNT; i++)
-	{
-		vCreate = vCenterPos + pCreatePosOffsetArr[i];
-		vLift = vCenterPos + pLiftPosOffsetArr[i];
-		m_pLiftRotArr[i]->Execute_WakeUp(vCreate, vLift);
-	}		
-}
-
-void CLiftRot_Master::Execute_WakeUp(_fmatrix ParentMatrix, _float3* pCreateLocalPos, _float3* pLiftLocalPos)
-{
-	_float4 vCreate, vLift;
-	for (_uint i = 0; i < LIFT_ROT_COUNT; i++)
-	{
-		vCreate = XMVectorSetW(XMVector3TransformCoord(pCreateLocalPos[i], ParentMatrix), 1.f);
-		vLift = XMVectorSetW(XMVector3TransformCoord(pLiftLocalPos[i], ParentMatrix), 1.f);		
-		m_pLiftRotArr[i]->Execute_WakeUp(vCreate, vLift);
-	}
-}
-
-void CLiftRot_Master::Execute_LiftStart()
-{
-	for (auto& pLiftRot : m_pLiftRotArr)
-		pLiftRot->Execute_LiftStart();
-}
-
-void CLiftRot_Master::Execute_LiftMoveStart()
-{
-	for (auto& pLiftRot : m_pLiftRotArr)
-		pLiftRot->Execute_LiftMoveStart();
-}
-
-void CLiftRot_Master::Execute_Move(_float4 vCenterPos, _float3 *pOffsetPosArr)
-{
-	for (_uint i = 0; i < LIFT_ROT_COUNT; i++)
-	{
-		m_pLiftRotArr[i]->Set_NewPosition(vCenterPos + pOffsetPosArr[i], vCenterPos);
-	}	
-}
-
-void CLiftRot_Master::Execute_Move(_fmatrix ParentMatrix, _float3* pLocalPosArr)
-{
-	_float4 vNewPos;
-	for (_uint i = 0; i < LIFT_ROT_COUNT; i++)
-	{
-		vNewPos = XMVectorSetW(XMVector3TransformCoord(pLocalPosArr[i], ParentMatrix), 1.f);		
-		m_pLiftRotArr[i]->Set_NewPosition(vNewPos, ParentMatrix.r[3]);
-	}
-}
-
-void CLiftRot_Master::Execute_LiftMoveEnd()
-{
-	for (auto& pLiftRot : m_pLiftRotArr)
-		pLiftRot->Execute_LiftMoveEnd();
-}
-
-_bool CLiftRot_Master::Is_LiftReady()
-{
-	_bool bRet = true;
-	for (auto& pLiftRot : m_pLiftRotArr)
-	{
-		bRet = pLiftRot->Get_LiftReady();
-		if (bRet == false) break;
-	}
-
-	return bRet;
-}
-
-_bool CLiftRot_Master::Is_LiftEnd()
-{
-	_bool bRet = true;
-	for (auto& pLiftRot : m_pLiftRotArr)
-	{
-		bRet = pLiftRot->Get_LiftEnd();
-		if (bRet == false) break;
-	}
-
-	return bRet;
+	m_Rocks.clear();
 }

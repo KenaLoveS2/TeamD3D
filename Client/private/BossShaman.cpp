@@ -157,8 +157,6 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
-	const _float4 vPos = _float4(-6.f, -1.5f, 1190.f,1.f);
-	m_pTransformCom->Set_Position(vPos);
 
 	CGameObject* p_game_object = nullptr;
 	m_pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, L"Layer_Monster", TEXT("Prototype_GameObject_ShamanTrapHex"), L"ShamanTrapHex_0", nullptr, &p_game_object);
@@ -168,7 +166,7 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Late_Initialize(nullptr);
 
-	m_bReadySpawn = true;
+	// m_bReadySpawn = true;
 	return S_OK;
 }
 
@@ -182,7 +180,7 @@ void CBossShaman::Tick(_float fTimeDelta)
 	// m_bDashAttackTrail = true;
 	//m_bSpawn = true;
 #endif // EFFECTDEBUG
-
+		
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -420,7 +418,8 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("SLEEP")		
 		.OnExit([this]()
 	{
-
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+		m_bReadySpawn = true;
 	})
 		.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
@@ -691,7 +690,11 @@ HRESULT CBossShaman::SetUp_State()
 	{
 		return m_eAttackType == AT_FREEZE_BLAST;
 	})
-
+		.AddTransition("TELEPORT_EXIT To ICE_DAGGER", "ICE_DAGGER")
+		.Predicator([this]()
+	{
+		return m_eAttackType == AT_ICE_DAGGER;
+	})
 
 
 		.AddState("MELEE_ATTACK")
@@ -965,7 +968,44 @@ HRESULT CBossShaman::SetUp_State()
 		return AnimFinishChecker(FREEZE_BLAST);
 	})
 
+
+		.AddState("ICE_DAGGER")
+		.OnStart([this]()
+	{		
+		Attack_Start(false, ICE_DAGGER_INTO);
+	})		
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("ICE_DAGGER to ICE_DAGGER_EXIT", "ICE_DAGGER_EXIT")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(ICE_DAGGER_INTO);
+	})
 		
+		.AddState("ICE_DAGGER_EXIT")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(ICE_DAGGER_EXIT);
+		m_pModelCom->Set_AnimIndex(ICE_DAGGER_EXIT);
+	})
+		.OnExit([this]()
+	{
+		Attack_End(false, IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("ICE_DAGGER to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(ICE_DAGGER_EXIT);
+	})
+
 
 		.AddState("DYING")
 		.OnStart([this]()
