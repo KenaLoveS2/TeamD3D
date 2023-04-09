@@ -657,15 +657,9 @@ PS_OUT PS_MAIN_EFFECTSHAMAN(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector vFinalColor = vDiffuse + g_vColor * 3.f;
 
-	vector vFinalColor = vDiffuse * g_vColor;
-
-	Out.vDiffuse = vFinalColor * 100.f;
-	//Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 6.f, 0.f);
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
-
+	Out.vDiffuse = CalcHDRColor(vFinalColor, g_fHDRValue);
 	return Out;
 }
 

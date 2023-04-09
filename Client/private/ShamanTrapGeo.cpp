@@ -1,20 +1,25 @@
 #include "stdafx.h"
 #include "..\public\ShamanTrapGeo.h"
 #include "GameInstance.h"
+#include "ShamanTrapHex.h"
 
 CShamanTrapGeo::CShamanTrapGeo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	:CEffect_Mesh(pDevice, pContext)
+	:CEffect(pDevice, pContext)
 {
 }
 
 CShamanTrapGeo::CShamanTrapGeo(const CShamanTrapGeo& rhs)
-	: CEffect_Mesh(rhs)
+	: CEffect(rhs)
 {
 }
 
-HRESULT CShamanTrapGeo::Initialize_Prototype()
+HRESULT CShamanTrapGeo::Initialize_Prototype(const _tchar* pFilePath)
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+
+	if (pFilePath != nullptr)
+		FAILED_CHECK_RETURN(Load_E_Desc(pFilePath), E_FAIL);
+
 	return S_OK;
 }
 
@@ -28,10 +33,6 @@ HRESULT CShamanTrapGeo::Initialize(void* pArg)
 	GameObjDesc.TransformDesc.fSpeedPerSec = 3.f;
 	GameObjDesc.TransformDesc.fRotationPerSec = 0.f;
 
-	/* 모델을 별도로 설정해 주기 때문에 Desc 일부 변경 해줌 */
-	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_END; // Mesh 생성 안함
-	m_iTotalDTextureComCnt = 0;	m_iTotalMTextureComCnt = 0;
-
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
@@ -43,32 +44,23 @@ HRESULT CShamanTrapGeo::Initialize(void* pArg)
 
 	m_vPivotPos = _float4(0.f, 0.f, 0.f, 0.f);
 	m_vPivotRot = _float4(-1.575f, 0.f, -0.525f, 0.f);
-	m_eEFfectDesc.vColor = _float4(1.f, 0.f, 1.f, 40.f / 255.f);
+	m_fHDRValue = 3.f;
+
+	m_vecChild[0]->Set_Parent(this);
+	m_vecChild[0]->Set_HDRValue(3.f);
 	return S_OK;
 }
 
 void CShamanTrapGeo::Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return;
-
 	__super::Tick(fTimeDelta);
 
-	_matrix SocketMatrix =
-		m_Desc.pSocket->Get_OffsetMatrix() *
-		m_Desc.pSocket->Get_CombindMatrix() *
-		XMLoadFloat4x4(&m_Desc.PivotMatrix);
-
-	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
-	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
-	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
-
-	SocketMatrix =
-		XMMatrixRotationX(m_vPivotRot.x) * XMMatrixRotationY(m_vPivotRot.y) * XMMatrixRotationZ(m_vPivotRot.z)
-		*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z)
-		* SocketMatrix * m_Desc.pTargetTransform->Get_WorldMatrix();
-
-	XMStoreFloat4x4(&m_SocketMatrix, SocketMatrix);
+	if (dynamic_cast<CShamanTrapHex*>(m_pParent)->Get_Active() == true)
+	{
+		m_eEFfectDesc.bActive = true;
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(true);
+	}
 }
 
 void CShamanTrapGeo::Late_Tick(_float fTimeDelta)
@@ -78,23 +70,16 @@ void CShamanTrapGeo::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
+	if (m_pParent)	Set_Matrix();
+
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CShamanTrapGeo::Render()
 {
-	if (m_eEFfectDesc.bActive == false)
-		return E_FAIL;
-
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
-
-	for (_uint i = 0; i < m_iNumMeshes; ++i)
-	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 12);
-	}
 
 	return S_OK;
 }
@@ -109,7 +94,6 @@ _bool CShamanTrapGeo::IsActiveState()
 
 void CShamanTrapGeo::ImGui_AnimationProperty()
 {
-	CEffect_Mesh::ImGui_AnimationProperty();
 }
 
 void CShamanTrapGeo::Imgui_RenderProperty()
@@ -164,13 +148,12 @@ void CShamanTrapGeo::Imgui_RenderProperty()
 
 HRESULT CShamanTrapGeo::SetUp_Components()
 {
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxEffectModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
-	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
-	for (_uint i = 0; i < m_iNumMeshes; ++i)
-	{
-		FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Anim/Enemy/Boss_TrapAsset/Noise_cloudsmed.png")), E_FAIL);
-	}
+	//FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxEffectModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	//FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+
+	//m_iNumMeshes = m_pModelCom->Get_NumMeshes();
+	//for (_uint i = 0; i < m_iNumMeshes; ++i)
+	//	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Anim/Enemy/Boss_TrapAsset/Noise_cloudsmed.png")), E_FAIL);
 
 	return S_OK;
 }
@@ -178,15 +161,16 @@ HRESULT CShamanTrapGeo::SetUp_Components()
 HRESULT CShamanTrapGeo::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix), E_FAIL);
+
+
 	return S_OK;
 }
 
-CShamanTrapGeo* CShamanTrapGeo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CShamanTrapGeo* CShamanTrapGeo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath)
 {
 	CShamanTrapGeo * pInstance = new CShamanTrapGeo(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(pFilePath)))
 	{
 		MSG_BOX("CShamanTrapGeo Create Failed");
 		Safe_Release(pInstance);
@@ -208,11 +192,5 @@ CGameObject* CShamanTrapGeo::Clone(void* pArg)
 
 void CShamanTrapGeo::Free()
 {
-	CEffect_Mesh::Free();
-
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_Desc.pSocket);
-		Safe_Release(m_Desc.pTargetTransform);
-	}
+	__super::Free();
 }

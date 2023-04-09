@@ -1345,13 +1345,11 @@ void CBossHunter::Create_Arrow()
 	}
 }
 
-/* ���� */
 void CBossHunter::Ready_Arrow(CHunterArrow::FIRE_TYPE eFireType)
 {
 	m_pArrows[m_iArrowIndex]->Execute_Ready(eFireType);
 }
 
-/* ���� �� */
 void CBossHunter::Fire_Arrow(_bool bArrowIndexUpdate)
 {
 	m_pArrows[m_iArrowIndex]->Execute_Fire();

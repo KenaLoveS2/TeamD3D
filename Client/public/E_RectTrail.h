@@ -34,6 +34,10 @@ public:
 	void	Set_TexRandomPrint();
 
 	void	Set_KenaStaffOption();
+	void	Set_ObjectTrail(_float fWidth, _float4 vColor) { 
+		m_eEFfectDesc.fWidth = fWidth;
+		m_eEFfectDesc.vColor = vColor; 
+	}
 
 private:
 	class CKena* m_pKena = nullptr;
