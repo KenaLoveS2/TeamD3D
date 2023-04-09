@@ -117,15 +117,15 @@ void CUI_CanvasTop::Tick(_float fTimeDelta)
 		}
 	}
 
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
-	//{
-	//	static _uint iState = CUI_NodeMood::STATE_HIT;
-	//	iState++;
-	//	iState %= CUI_NodeMood::STATE_END;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_K))
+	{
+		static _uint iState = CUI_NodeMood::STATE_HIT;
+		iState++;
+		iState %= CUI_NodeMood::STATE_END;
 
-	//	m_vecNode[UI_MOOD]->Set_Active(true);
-	//	static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn((CUI_NodeMood::STATE)iState);
-	//}
+		m_vecNode[UI_MOOD]->Set_Active(true);
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn((CUI_NodeMood::STATE)iState);
+	}
 
 	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
 	//{

@@ -18,6 +18,15 @@ float			g_fUVSpeedX = 0.f, g_fUVSpeedY = 0.f;
 int				g_XFrames = 1, g_YFrames = 1;
 int				g_XFrameNow = 0, g_YFrameNow = 0;
 
+struct	tInstanceInfo
+{
+	float3				vPosition;
+	float2				vTexUV;
+	float				fLife;
+};
+
+RWStructuredBuffer<tInstanceInfo>	g_WriteBuffer;
+
 struct VS_IN
 {
 	float3		vPosition		: POSITION;
@@ -66,15 +75,15 @@ struct GS_IN
 {
 	float3		vPosition		: POSITION;
 	float2		vPSize			: PSIZE;
-	float       fLife : TEXCOORD0;
+	float       fLife			: TEXCOORD0;
 	float3		vCenterPosition	: TEXCOORD1;
 };
 
 struct GS_OUT
 {
-	float4		vPosition	: SV_POSITION;
-	float2		vTexUV		: TEXCOORD0;
-	float       fLife : TEXCOORD1;
+	float4		vPosition		: SV_POSITION;
+	float2		vTexUV			: TEXCOORD0;
+	float       fLife			: TEXCOORD1;
 };
 
 [maxvertexcount(6)]
@@ -180,7 +189,7 @@ struct PS_IN
 {
 	float4		vPosition	: SV_POSITION;
 	float2		vTexUV		: TEXCOORD0;
-	float       fLife : TEXCOORD1;
+	float       fLife		: TEXCOORD1;
 };
 
 struct PS_OUT
@@ -317,7 +326,6 @@ struct VS_TRAILOUT
 	float4				vPosition	: POSITION;
 	float2				vPSize		: PSIZE;
 	float				fLife		: TEXCOORD0;
-	float				fWidth		: TEXCOORD1;
 	row_major float4x4	Matrix		: WORLD;
 	uint				InstanceID	: SV_InstanceID;
 };
@@ -330,14 +338,13 @@ VS_TRAILOUT VS_TRAIL(VS_TRAILIN In)
 
 	/* Option */
 	Out.fLife = In.Matrix[3][3];
-	Out.fWidth = In.Matrix[2][3];
 
 	Matrix[0][3] = 0.f;
 	Matrix[1][3] = 0.f;
 	Matrix[2][3] = 0.f;
 	Matrix[3][3] = 1.f;
 
-	vector		vPosition = float4(In.vPosition, 1.f);
+	vector		vPosition = float4(In.vPosition, 1.f);	/* Already World Position.*/
 
 	Out.vPosition	= float4(In.vPosition, 1.f);
 	Out.InstanceID	= In.InstanceID;
@@ -350,53 +357,95 @@ VS_TRAILOUT VS_TRAIL(VS_TRAILIN In)
 /* Trail */
 struct GS_TRAILIN
 {
-	float4      vPosition   : POSITION;
-	float2      vPSize      : PSIZE;
-	float       fLife : TEXCOORD0;
-	float		fWidth : TEXCOORD1;
-	row_major   float4x4    Matrix  : WORLD;
-	uint        InstanceID  : SV_InstanceID;
+	float4				vPosition   : POSITION;
+	float2				vPSize      : PSIZE;
+	float				fLife		: TEXCOORD0;
+	row_major float4x4  Matrix		: WORLD;
+	uint				InstanceID  : SV_InstanceID;
 };
 
 struct GS_TRAILOUT
 {
-	float4		vPosition : SV_POSITION;
-	float2		vTexUV : TEXCOORD0;
-	float		fLife : TEXCOORD1;
+	float4				vPosition	: SV_POSITION;
+	float2				vTexUV		: TEXCOORD0;
+	float				fLife		: TEXCOORD1;
 };
 
 [maxvertexcount(6)]
 void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices)
 {
-	GS_TRAILOUT		Out[4];
+	GS_TRAILOUT		Out[4] = { (GS_TRAILOUT)0, (GS_TRAILOUT)0, (GS_TRAILOUT)0,(GS_TRAILOUT)0 };
 
-	matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	matrix      matVP		= mul(g_ViewMatrix, g_ProjMatrix);
 	float4x4    WorldMatrix = In[0].Matrix;
 
-	float3      vUp = matrix_up(WorldMatrix) * In[0].vPSize.y * In[0].fWidth;
-	float3		vRight = matrix_right(WorldMatrix) * In[0].vPSize.x * In[0].fWidth;
-	float3		vPosition = matrix_postion(In[0].Matrix);
+	float3      vUp			= In[0].fLife * matrix_up(WorldMatrix) * In[0].vPSize.y * 0.5f;
+	float3		vRight		= In[0].fLife * matrix_right(WorldMatrix) * In[0].vPSize.x * 0.5f;
+	float3		vPosition	= matrix_postion(In[0].Matrix);
 
 	float3 vResultPos;
-	vResultPos = vPosition - vRight + vUp;
-	Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
-	Out[0].vTexUV = float2(0.f, 0.f);
-	Out[0].fLife = In[0].fLife;
+	//if (In[0].InstanceID == 0)
+	//{
+		vResultPos = vPosition - vRight + vUp;
+		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[0].vTexUV = float2(0.f, 0.f);
+		Out[0].fLife = In[0].fLife;
+		
+		vResultPos = vPosition + vRight + vUp;
+		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[1].vTexUV = float2(1.f, 0.f);
+		Out[1].fLife = In[0].fLife;
 
-	vResultPos = vPosition + vRight + vUp;
-	Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
-	Out[1].vTexUV = float2(1.f, 0.f);
-	Out[1].fLife = In[0].fLife;
+		vResultPos = vPosition + vRight - vUp;
+		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[2].vTexUV = float2(1.f, 1.f);
+		Out[2].fLife = In[0].fLife;
 
-	vResultPos = vPosition + vRight - vUp;
-	Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
-	Out[2].vTexUV = float2(1.f, 1.f);
-	Out[2].fLife = In[0].fLife;
+		vResultPos = vPosition - vRight - vUp;
+		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[3].vTexUV = float2(0.f, 1.f);
+		Out[3].fLife = In[0].fLife;
 
-	vResultPos = vPosition - vRight - vUp;
-	Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
-	Out[3].vTexUV = float2(0.f, 1.f);
-	Out[3].fLife = In[0].fLife;
+	//}
+	//else
+	//{
+	//	//Prev[1] -> Now[0]
+	//	//vResultPos = vPositionPrev + vRightPrev + vUpPrev;
+	//	Out[0].vPosition	= mul(vector(g_WriteBuffer[0].vPosition), matVP);
+	//	Out[0].vTexUV		= float2(0.f, 0.f);
+	//	Out[0].fLife		= g_WriteBuffer[0].fLife;
+
+	//	vResultPos = vPosition + vRight + vUp;
+	//	Out[1].vPosition	= mul(vector(vResultPos, 1.f), matVP);
+	//	Out[1].vTexUV		= float2(1.f, 0.f);
+	//	Out[1].fLife		= In[0].fLife;
+
+	//	vResultPos = vPosition + vRight - vUp;
+	//	Out[2].vPosition	= mul(vector(vResultPos, 1.f), matVP);
+	//	Out[2].vTexUV		= float2(1.f, 1.f);
+	//	Out[2].fLife		= In[0].fLife;
+
+	//	//Prev[2] -> Now[3]
+	//	//vResultPos = vPositionPrev + vRightPrev - vUpPrev;
+	//	Out[3].vPosition	= mul(vector(g_WriteBuffer[1].vPosition), matVP);
+	//	Out[3].vTexUV		= float2(0.f, 1.f);
+	//	Out[3].fLife		= g_WriteBuffer[1].fLife;
+
+	//}
+
+
+	tInstanceInfo p1;
+	p1.vPosition	= vPosition + vRight + vUp;
+	p1.vTexUV		= Out[1].vTexUV;
+	p1.fLife		= Out[1].fLife;
+	g_WriteBuffer[0] = p1;
+
+	tInstanceInfo p2;
+	p2.vPosition	= vPosition + vRight - vUp;
+	p2.vTexUV		= Out[2].vTexUV;
+	p2.fLife		= Out[2].fLife;
+	g_WriteBuffer[1] = p2;
+
 
 	Vertices.Append(Out[0]);
 	Vertices.Append(Out[1]);
@@ -412,9 +461,9 @@ void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices
 
 struct PS_TRAILIN
 {
-	float4		vPosition : SV_POSITION;
-	float2		vTexUV : TEXCOORD0;
-	float       fLife : TEXCOORD1;
+	float4		vPosition		: SV_POSITION;
+	float2		vTexUV			: TEXCOORD0;
+	float       fLife			: TEXCOORD1;
 };
 
 PS_OUT PS_TRAIL(PS_TRAILIN In)
@@ -422,13 +471,16 @@ PS_OUT PS_TRAIL(PS_TRAILIN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	vector vDiffuse = g_tex_0.Sample(LinearSampler, In.vTexUV);
-	vDiffuse.a = vDiffuse.r;
-	if (vDiffuse.a < 0.1f)
-		discard;
-	Out.vColor = vDiffuse + g_vColor;
-	Out.vColor.a *= (1 - In.fLife);
+	//
+	//vDiffuse.a = vDiffuse.r;
+	//if (vDiffuse.a < 0.1f)
+	//	discard;
+	//Out.vColor = vDiffuse + g_vColor;
+	//Out.vColor.a *= In.fLife;
 
 	// Out.vColor.a = Out.vColor.a * In.fLife;
+
+	Out.vColor = float4(1.f, 1.f, 1.f, In.fLife);
 	return Out;
 }
 

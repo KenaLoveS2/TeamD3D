@@ -47,6 +47,8 @@ HRESULT CEffect_Particle_Base::Initialize(void* pArg)
 	else
 		SetUp_Buffer();
 
+	m_pVIBufferCom->Set_Owner(this);
+
 	if (FAILED(SetUp_Components()))
 	{
 		MSG_BOX("Failed To SetupComponents : CEffect_Particle_Base");
@@ -118,7 +120,7 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 	m_pTransformCom->Imgui_RenderProperty_ForJH();
 
 	/* Diffuse Texture Select */
-	if (ImGui::CollapsingHeader(" > DiffuseTexture"))
+	if (ImGui::CollapsingHeader("DiffuseTexture"))
 	{
 		if (m_pTextureCom == nullptr)
 			return;
@@ -142,8 +144,8 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		/* RenderPass */
 		static _int iRenderPass;
 		iRenderPass = m_iRenderPass;
-		const char* renderPass[4] = { "DefaultHaze", "BlackHaze", "BlackGather", "RePaint" };
-		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 4, 5))
+		const char* renderPass[5] = { "DefaultHaze", "BlackHaze", "BlackGather", "Spread", "Trail"};
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 5, 5))
 			m_iRenderPass = iRenderPass;
 
 		/* Color */
@@ -162,7 +164,7 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		Options();
 
 	/* Buffer Update */
-	if (ImGui::CollapsingHeader(" > Update Buffer"))
+	if (ImGui::CollapsingHeader("Update Buffer"))
 	{
 		if (m_pVIBufferCom == nullptr)
 			return;
@@ -174,8 +176,8 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 		/* Type */
 		static _int iType = tInfo.eType;
-		const char* list[4] = { "Haze", "Gather", "Parabola", "Spread" };
-		ImGui::ListBox("Type", &iType, list, 4, 5);
+		const char* list[5] = { "Haze", "Gather", "Parabola", "Spread", "Trail"};
+		ImGui::ListBox("Type", &iType, list, 5, 5);
 		tInfo.eType = (pointType)iType;
 
 		/* NumInstance */
@@ -648,6 +650,7 @@ HRESULT CEffect_Particle_Base::SetUp_Buffer()
 	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_VIBuffer_PtInstancing_S2"), TEXT("Com_VIBuffer")
 		, (CComponent**)&m_pVIBufferCom, &tInfo)))
 		return E_FAIL;
+
 
 	return S_OK;
 }
