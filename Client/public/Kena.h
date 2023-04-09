@@ -29,7 +29,7 @@ public:
 	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
 	enum COLLIDERTYPE { COLL_BODY, COLL_STAFF, COLLIDERTYPE_END };
 	enum STATERETURN {
-		STATE_LEVELUP, STATE_LEVELUP_READY,
+		STATE_DEATH, STATE_LEVELUP, STATE_LEVELUP_READY,
 		STATE_ATTACK, STATE_HEAVYATTACK, STATE_PERFECTATTACK,
 		STATE_COMMONHIT, STATE_HEAVYHIT,
 		STATE_SPRINT, STATE_DASH, STATE_MASK,
@@ -99,6 +99,8 @@ public:
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 public:
+	void						Respawn();
+	void						Respawn(_fvector vSpawnPos);
 	void						Smooth_Targeting(class CMonster* pMonster);
 
 	//void						Call_FocusIcon(CGameObject* pTarget);
@@ -135,6 +137,8 @@ private:
 
 private:
 	/* State variables*/
+	_bool						m_bDeath = false;
+	_bool						m_bWater = false;
 	_bool						m_bLevelUp = false;
 	_bool						m_bLevelUp_Ready = false;
 	_bool						m_bAttack = false;
@@ -248,6 +252,7 @@ private:
 private:
 	DAMAGED_FROM				Calc_DirToMonster(CGameObject* pTarget);
 	DAMAGED_FROM				Calc_DirToMonster(const _float3& vCollisionPos);
+	DAMAGED_FROM				Calc_DirToMonster_2Way(CGameObject* pTarget);
 
 private:	/* Effect Event Func */
 	void	TurnOnAttack(_bool bIsInit, _float fTimeDelta);

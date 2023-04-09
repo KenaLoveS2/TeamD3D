@@ -1215,6 +1215,9 @@ private:	/* Changer */
 	_bool	TruePass();
 	_bool	OnGround();
 	_bool	LevelUp();
+	_bool	Death();
+	_bool	Death_Water();
+	_bool	Respawn_Ready();
 	_bool	CommonHit();
 	_bool	HeavyHit();
 	_bool	Shield_Small();
@@ -1271,6 +1274,7 @@ private:	/* Changer */
 	_bool	Damaged_Dir_Back();
 	_bool	Damaged_Dir_Left();
 	_bool	Damaged_Dir_Right();
+	_bool	Damaged_Dir_False();
 	_bool	Check_PipCount();
 	_bool	Check_ArrowCount();
 	_bool	Check_BombCount();
