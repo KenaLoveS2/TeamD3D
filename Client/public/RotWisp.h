@@ -69,7 +69,9 @@ private:
 	_bool							AnimIntervalChecker(_uint eAnim, _double StartRate, _double FinishRate);
 
 public:
-	_bool							Get_Collect() { return m_bCollect; }
+	const _bool 					Get_Collect() { return m_bCollect; }
+	void								Set_Collect(_bool bCollect) { m_bCollect = bCollect; }
+
 	HRESULT		Set_Effects();
 
 	/* MovementTrail Particle */

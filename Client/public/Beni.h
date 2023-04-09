@@ -116,12 +116,13 @@ protected:
 private:
 	virtual void					AdditiveAnim(_float fTimeDelta) override;
 	void								SaiyaFunc(_float fTimeDelta);
-	void								SaiyaPos();
+	void								SaiyaPos(_float3 vOffSetPos);
 
 private:
 	_bool							m_bMeetPlayer = false;
 	class CSaiya*				m_pSaiya = nullptr;
 	string							m_strState;
+	_float3							m_vOffsetPos = _float3(0.5f, 0.f, 0.f);
 
 public:
 	static CBeni*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

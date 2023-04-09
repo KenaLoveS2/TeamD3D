@@ -29,6 +29,8 @@
 
 #include "E_P_ExplosionGravity.h"
 #include "E_KenaDash.h"
+#include "Light.h"
+#include "Layer.h"
 
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -301,6 +303,9 @@ HRESULT CKena::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
+	if(g_LEVEL == LEVEL_FINAL) 
+		FAILED_CHECK_RETURN(Ready_Rots(), E_FAIL);
+
 	Push_EventFunctions();
 
 	m_fSSSAmount = 0.09f;
@@ -312,9 +317,9 @@ HRESULT CKena::Initialize(void * pArg)
 	/* InitJumpSpeed = 2.f * Gravity * JumpHeight */
 	//m_fInitJumpSpeed = sqrtf(2.f * m_fGravity * 1.5f);
 	m_fInitJumpSpeed = 0.35f;
-
 	m_iObjectProperty = OP_PLAYER;
 	m_pKenaStatus->Set_Attack(30);
+	
 	return S_OK;
 }
 
@@ -471,8 +476,21 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	m_Delegator.broadcast(eRot, fRotState);
 	//m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
 
-	const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
-	m_pTransformCom->Set_Position(vPosFloat4);
+	if(g_LEVEL == LEVEL_TESTPLAY)
+	{
+		const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
+		m_pTransformCom->Set_Position(vPosFloat4);
+	}
+	else if(g_LEVEL == LEVEL_FINAL)
+	{
+		const _float4 vPosFloat4 = _float4(151.7f, 22.2f, 609.5f, 1.f);
+		m_pTransformCom->Set_Position(vPosFloat4);
+	}
+	else
+	{
+		const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
+		m_pTransformCom->Set_Position(vPosFloat4);
+	}
 
 	for (auto& pEffect : m_mapEffect)
 	{
@@ -488,7 +506,7 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(10);
+	m_pKenaStatus->Set_Attack(0);
 	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
 	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
@@ -1469,6 +1487,35 @@ HRESULT CKena::Ready_Effects()
 	return S_OK;
 }
 
+HRESULT CKena::Ready_Lights()
+{
+	LIGHTDESC			LightDesc;
+	ZeroMemory(&LightDesc, sizeof LightDesc);
+	LightDesc.eType = LIGHTDESC::TYPE_POINT;
+	LightDesc.isEnable = true;
+	CBone* pBone = m_pModelCom->Get_BonePtr("bow_string_jnt_top");
+	NULL_CHECK_RETURN(pBone, E_FAIL);
+	_matrix			SocketMatrix =	pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() *	m_pModelCom->Get_PivotMatrix() * 	m_pTransformCom->Get_WorldMatrix();
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+	_float4x4 pivotMatrix;
+	XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+	_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
+	m_vStaffLightPos = vPos;
+	LightDesc.vPosition = m_vStaffLightPos;
+	LightDesc.fRange = 3.0f;
+	LightDesc.vDiffuse = _float4(0.f, 0.f, 100.f, 1.f);
+	LightDesc.vAmbient = _float4(0.f, 0.f, 100.f, 1.f);
+	LightDesc.vSpecular = _float4(0.f, 0.f, 100.f, 0.f);
+	LightDesc.szLightName = "Kena_Staff_PointLight";
+
+	if (FAILED(CGameInstance::GetInstance()->Add_Light(m_pDevice, m_pContext, LightDesc, &m_pStaffLight)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CKena::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
@@ -1507,6 +1554,28 @@ HRESULT CKena::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_KenaStatus", L"Com_Status", (CComponent**)&m_pKenaStatus, nullptr, this), E_FAIL);
 	m_pKenaStatus->Load("../Bin/Data/Status/Kena_Status.json");
+
+	return S_OK;
+}
+
+HRESULT CKena::Ready_Rots()
+{
+	CRot::Clear();
+	for (_uint i = 0; i < 5; ++i)
+	{
+		_tchar szCloneRotTag[32] = { 0, };
+		swprintf_s(szCloneRotTag, L"PlayerRot_%d", i);
+		CGameObject* p_game_object = nullptr;
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", CUtile::Create_StringAuto(szCloneRotTag), nullptr, &p_game_object);
+		dynamic_cast<CRot*>(p_game_object)->AlreadyRot();
+		m_pKenaStatus->Add_RotCount();
+
+		if (i == FIRST_ROT)
+		{
+			Set_FirstRotPtr((CRot*)p_game_object);
+			CRot::Set_RotUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));			
+		}
+	}
 
 	return S_OK;
 }
@@ -1611,6 +1680,24 @@ void CKena::Update_Collider(_float fTimeDelta)
 
 	matPivot = XMMatrixTranslation(0.f, 0.7f, 0.f);
 	m_pTransformCom->Update_Collider(L"Kena_Bump", matPivot);
+}
+
+void CKena::Update_LightPos(_float fTimeDelta)
+{
+	CBone* pBone = m_pModelCom->Get_BonePtr("bow_string_jnt_top");
+	NULL_CHECK_RETURN(pBone, );
+	_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+	_float4x4 pivotMatrix;
+	XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+	_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
+	_float fPivotPos[3] = { m_vStaffLightPos.x,m_vStaffLightPos.y, m_vStaffLightPos.z };
+	ImGui::DragFloat3("StaffLightPivot", fPivotPos,0.01f, -10.f, 10.f);
+	m_vStaffLightPos = _float4(fPivotPos[0], fPivotPos[1], fPivotPos[2], 0.f);
+	vPos += m_vStaffLightPos;
+	m_pStaffLight->Set_Position(vPos);
 }
 
 _float CKena::Update_TimeRate()

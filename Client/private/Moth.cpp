@@ -214,6 +214,10 @@ HRESULT CMoth::SetUp_State()
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("SLEEP")
 		.AddState("SLEEP")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->Set_PositionY(m_vKenaPos.y + 1.4f);
+	})
 		.OnExit([this]()
 	{
 		m_pEnemyWisp->IsActiveState();
@@ -439,7 +443,7 @@ HRESULT CMoth::SetUp_State()
 		.AddTransition("DOWN to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return m_pTransformCom->Get_PositionY() < 1.4f;
+		return m_pTransformCom->Get_PositionY() < m_vKenaPos.y + 1.4f;
 	})
 
 		.AddState("PARRIED")
