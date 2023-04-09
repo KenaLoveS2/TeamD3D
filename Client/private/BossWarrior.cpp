@@ -940,8 +940,8 @@ HRESULT CBossWarrior::SetUp_State()
 		/*
 		HW.For.MapGimmick
 		 Map Change  03_30 TestøÎ¿” */
-		// CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
-		// pCtrlRoom->DeadZoneObject_Change(true);
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->DeadZoneObject_Change(true);
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()
