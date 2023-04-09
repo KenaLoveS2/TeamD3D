@@ -67,21 +67,32 @@ _bool CStatus::IsDead()
 	return m_iHP <= 0;
 }
 
-void CStatus::UnderAttack(CStatus* pEnemyStatus)
+_bool CStatus::UnderAttack(CStatus* pEnemyStatus)
 {
-	if (pEnemyStatus == nullptr) return;
+	if (pEnemyStatus == nullptr)
+		return false;
 
 	m_iHP -= pEnemyStatus->m_iAttack;
 	CUtile::Saturate<_int>(m_iHP, 0, m_iMaxHP);
+
+	if (m_iHP == 0)
+		return true;
+
+	return false;
 }
 
-void CStatus::UnderAttack(_int iDamage)
+_bool CStatus::UnderAttack(_int iDamage)
 {
 	if (iDamage <= 0)
-		return;
+		return false;
 
 	m_iHP -= iDamage;
 	CUtile::Saturate<_int>(m_iHP, 0, m_iMaxHP);
+
+	if (m_iHP == 0)
+		return true;
+
+	return false;
 }
 
 void CStatus::Add_CurrentHP(_int iValue)

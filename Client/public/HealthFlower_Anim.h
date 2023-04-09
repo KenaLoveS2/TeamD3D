@@ -56,6 +56,9 @@ private:
 	ANIMATION			m_eCurState = OPEN_LOOP;
 	ANIMATION			m_ePreState = OPEN_LOOP;
 
+	_float				m_fDissolveTime = 0.f;
+	CTexture*			m_pDissolveTexture = nullptr;
+
 private:
 	ANIMATION			Check_State();
 	void				Update_State(_float fTimeDelta);
@@ -64,6 +67,7 @@ private:
 private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_ShaderResources();
+	HRESULT				Bind_Dissolve(class CShader* pShader);
 
 public:
 	static  CHealthFlower_Anim* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -140,15 +140,18 @@ HRESULT CHealthFlower_Anim::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (i == 4)
-			continue;
-
-		else if (i == 2 || i==3) 
+		if (i == 2 || i==3) 
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 33),E_FAIL);
+		}
+		else if (i == 4)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 14), E_FAIL);
 		}
 		else
 		{
@@ -322,6 +325,8 @@ void CHealthFlower_Anim::Update_State(_float fTimeDelta)
 		}
 	case CHealthFlower_Anim::BIND:
 		{
+			m_fDissolveTime = m_pModelCom->Get_AnimationProgress();
+			CUtile::Saturate<_float>(m_fDissolveTime, 0.f, 1.f);
 			break;
 		}
 	case CHealthFlower_Anim::OPEN:
@@ -366,8 +371,10 @@ HRESULT CHealthFlower_Anim::SetUp_Components()
 	m_pModelCom->SetUp_Material(3, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/HealthFlower/T_HealthFlower_E.png"));
 
 	/* For.Com_Shader */
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
-		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+
+	/* For.DissolveTex */
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Texture_Dissolve", L"COM_DISSOLVETEX", (CComponent**)&m_pDissolveTexture), E_FAIL);
 
 	return S_OK;
 }
@@ -387,7 +394,19 @@ HRESULT CHealthFlower_Anim::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bUsed, sizeof(_bool)), E_FAIL);
+
+	m_bUsed&& Bind_Dissolve(m_pShaderCom);
+
 	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CHealthFlower_Anim::Bind_Dissolve(CShader* pShader)
+{
+	FAILED_CHECK_RETURN(pShader->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pDissolveTexture->Bind_ShaderResource(pShader, "g_DissolveTexture"), E_FAIL);
 
 	return S_OK;
 }
@@ -420,6 +439,7 @@ void CHealthFlower_Anim::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pDissolveTexture);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

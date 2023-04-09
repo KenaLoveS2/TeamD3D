@@ -34,8 +34,8 @@ HRESULT CBossWarrior_Hat::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(&GameObjDesc)))
 		return E_FAIL;
 
-	m_vPivotPos = _float4(0.f, 0.11f, -3.80f, 0.f);
-	m_vPivotRot = _float4(-1.5f, 0.f, 3.15f, 0.f);
+	m_vPivotPos = _float4(0.f, 0.03f, -3.78f, 0.f);
+	m_vPivotRot = _float4(-1.58f, 0.f, 3.15f, 0.f);
 	
 	XMStoreFloat4x4(&m_SocketPivotMatrix,
 		XMMatrixRotationX(m_vPivotRot.x)
@@ -43,30 +43,27 @@ HRESULT CBossWarrior_Hat::Initialize(void* pArg)
 		* XMMatrixRotationZ(m_vPivotRot.z)
 		*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z));
 
+	XMStoreFloat4x4(&m_ColliderPivotMatrix,
+		XMMatrixRotationX(m_vColliderPivotRot.x) *
+		XMMatrixRotationY(m_vColliderPivotRot.y) *
+		XMMatrixRotationZ(m_vColliderPivotRot.z) *
+		XMMatrixTranslation(m_vColliderPivotPos.x, m_vColliderPivotPos.y, m_vColliderPivotPos.z));
+
 	return S_OK;
 }
 
 HRESULT CBossWarrior_Hat::Late_Initialize(void* pArg)
 {	
 	{	
-		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-		PxSphereDesc.eType = SPHERE_DYNAMIC;
-		PxSphereDesc.pActortag = m_szCloneObjectTag;
-		PxSphereDesc.vPos = _float3(0.f, 0.f, 0.f);
-		PxSphereDesc.fRadius = 0.3f;		
-		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-		PxSphereDesc.isGravity = true;
-		PxSphereDesc.fDensity = 1.f;
-		PxSphereDesc.fAngularDamping = 0.5f;
-		PxSphereDesc.fMass = 10.f;
-		PxSphereDesc.fLinearDamping = 10.f;
-		PxSphereDesc.fDynamicFriction = 0.5f;
-		PxSphereDesc.fStaticFriction = 0.5f;
-		PxSphereDesc.fRestitution = 0.1f;
-		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_PARTS;
+		CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
+		PxBoxDesc.eType = BOX_DYNAMIC;
+		PxBoxDesc.pActortag = m_szCloneObjectTag;
+		PxBoxDesc.vPos = _float3(0.f, 0.f, 0.f);		
+		PxBoxDesc.vSize = _float3(0.6f, 0.08f, 0.6f);
+		PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_PARTS;
 
-		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER));
-		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
+		CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COL_MONSTER));
+		m_pTransformCom->Add_Collider(PxBoxDesc.pActortag, g_IdentityFloat4x4);
 	}
 
 	return S_OK;
@@ -97,18 +94,28 @@ void CBossWarrior_Hat::Tick(_float fTimeDelta)
 	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 	
-	/*XMStoreFloat4x4(&m_SocketPivotMatrix,
-	XMMatrixRotationX(m_vPivotRot.x)
-	* XMMatrixRotationY(m_vPivotRot.y)
-	* XMMatrixRotationZ(m_vPivotRot.z)
-	*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z));
-	*/
-
+	//XMStoreFloat4x4(&m_SocketPivotMatrix,
+	//XMMatrixRotationX(m_vPivotRot.x)
+	//* XMMatrixRotationY(m_vPivotRot.y)
+	//* XMMatrixRotationZ(m_vPivotRot.z)
+	//*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z));
+	
 	SocketMatrix = XMLoadFloat4x4(&m_SocketPivotMatrix) * SocketMatrix * m_WeaponDesc.pTargetTransform->Get_WorldMatrix();
 	XMStoreFloat4x4(&m_SocketMatrix, SocketMatrix);
 
-	m_pTransformCom->Update_AllCollider(m_SocketMatrix);
-	m_pTransformCom->Tick(fTimeDelta);
+	{
+	/*	XMStoreFloat4x4(&m_ColliderPivotMatrix,
+			XMMatrixRotationX(m_vColliderPivotRot.x) * 
+			XMMatrixRotationY(m_vColliderPivotRot.y) * 
+			XMMatrixRotationZ(m_vColliderPivotRot.z) *
+			XMMatrixTranslation(m_vColliderPivotPos.x, m_vColliderPivotPos.y, m_vColliderPivotPos.z));*/
+
+		_float4x4 vCollderMatrix;
+		XMStoreFloat4x4(&vCollderMatrix, XMLoadFloat4x4(&m_ColliderPivotMatrix) * SocketMatrix);
+
+		m_pTransformCom->Update_AllCollider(vCollderMatrix);
+		m_pTransformCom->Tick(fTimeDelta);
+	}
 }
 
 void CBossWarrior_Hat::Late_Tick(_float fTimeDelta)
@@ -175,6 +182,17 @@ void CBossWarrior_Hat::Imgui_RenderProperty()
 	m_vPivotRot.x = fRotPos[0];
 	m_vPivotRot.y = fRotPos[1];
 	m_vPivotRot.z = fRotPos[2];
+
+	{
+		float fColPivotPos[3] = { m_vColliderPivotPos.x, m_vColliderPivotPos.y, m_vColliderPivotPos.z };
+		ImGui::DragFloat3("Col Pivot Pos", fColPivotPos, 0.01f, -100.f, 100.0f);
+		memcpy(&m_vColliderPivotPos, fColPivotPos, sizeof(_float3));
+
+		float fColPivotRot[3] = { m_vColliderPivotRot.x, m_vColliderPivotRot.y, m_vColliderPivotRot.z };
+		ImGui::DragFloat3("Col Pivot Rot", fColPivotRot, 0.01f, -100.f, 100.0f);
+		memcpy(&m_vColliderPivotRot, fColPivotRot, sizeof(_float3));
+	}
+	
 	if (ImGui::Button("HatRecompile"))
 	{
 		m_pRendererCom->ReCompile();

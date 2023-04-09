@@ -481,6 +481,18 @@ void CEffect_Base::TurnOffSystem(_float fDurationTime, _float fTimeDelta)
 	}
 }
 
+_bool CEffect_Base::TurnOnDissolveSystem(_float& fTurnoffTime,_bool& bDissolve, _float fTimeDelta)
+{
+	fTurnoffTime -= fTimeDelta;
+	if (fTurnoffTime < 0.f)
+	{
+		fTurnoffTime = 0.0f;
+		bDissolve = false;
+		return true;
+	}
+	return false;
+}
+
 _bool CEffect_Base::TurnOffSystem(_float& fTurnoffTime, _float fDurationTime, _float fTimeDelta)
 { 
 	fTurnoffTime += fTimeDelta;

@@ -197,7 +197,7 @@ public:
 	_float Get_DissolveTime() { return m_fDissolveTime; }
 
 	void Attack_Start(_uint iAnimIndex);
-	void Attack_End(_uint iAnimIndex);
+	virtual void Attack_End(_uint iAnimIndex);
 
 	virtual void Spawn_ByMaster(CMonster* pMaster, _float4 vPos) {}
 	virtual void Clear_ByMinion(CMonster* pMinion) {}

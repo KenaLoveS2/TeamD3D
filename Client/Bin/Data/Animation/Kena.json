@@ -5537,5 +5537,60 @@
         "6. Blend Animation": "N/A",
         "7. Joint Index": "N/A",
         "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "DEATH_WATER",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_SwimDeath",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "DEATH_FRONT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Death",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "DEATH_BACK",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Death_Behind",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "RESPAWN",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Respawn",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "WARRIOR_GRAB",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_WarriorGrab",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
     }
 ]
