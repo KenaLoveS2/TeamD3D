@@ -31,6 +31,7 @@
 #include "E_KenaDash.h"
 #include "Light.h"
 #include "Layer.h"
+#include "BossWarrior.h"
 
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -127,6 +128,10 @@ const _bool CKena::Get_State(STATERETURN eState) const
 		return m_bHeavyHit;
 		break;
 
+	case STATE_GRAB_WARRIOR:
+		return m_bGrabWarrior;
+		break;
+
 	case STATE_SPRINT:
 		return m_bSprint;
 		break;
@@ -219,6 +224,10 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 		m_bHeavyHit = bValue;
 		break;
 
+	case STATE_GRAB_WARRIOR:
+		m_bGrabWarrior = bValue;
+		break;
+
 	case STATE_SPRINT:
 		m_bSprint = bValue;
 		break;
@@ -303,7 +312,7 @@ HRESULT CKena::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
-	if(g_LEVEL == LEVEL_FINAL) 
+	if(g_LEVEL == (_int)LEVEL_FINAL) 
 		FAILED_CHECK_RETURN(Ready_Rots(), E_FAIL);
 
 	Push_EventFunctions();
@@ -476,12 +485,12 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	m_Delegator.broadcast(eRot, fRotState);
 	//m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
 
-	if(g_LEVEL == LEVEL_TESTPLAY)
+	if(g_LEVEL == (_int)LEVEL_TESTPLAY)
 	{
 		const _float4 vPosFloat4 = _float4(13.f, 0.f, 9.f, 1.f);
 		m_pTransformCom->Set_Position(vPosFloat4);
 	}
-	else if(g_LEVEL == LEVEL_FINAL)
+	else if(g_LEVEL == (_int)LEVEL_FINAL)
 	{
 		const _float4 vPosFloat4 = _float4(151.7f, 22.2f, 609.5f, 1.f);
 		m_pTransformCom->Set_Position(vPosFloat4);
@@ -2724,7 +2733,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 	}
 	else
 	{
-		if (pTarget == nullptr || iColliderIndex == (_int)COLLISON_DUMMY) return 0;
+		if (pTarget == nullptr || iColliderIndex == (_int)COLLISON_DUMMY || m_bGrabWarrior == true) return 0;
 
 		CGameObject* pGameObject = nullptr;
 
@@ -2797,9 +2806,15 @@ _int CKena::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex
 		m_iCurParryFrame = 0;
 		m_pAttackObject = pTarget;
 	}
-	else if (iColliderIndex == (_int)COL_WARRIOR_GRAB_HAND)
+	
+	if (iColliderIndex == (_int)COL_WARRIOR_GRAB_HAND)
 	{
-		// 케나의 바디 콜라이더와 워리어의 그랩 핸드 트리거와 충돌
+		CBossWarrior* pWarrior = dynamic_cast<CBossWarrior*>(pTarget);
+		if (pWarrior->Is_WarriorGrabAnimation())
+		{
+			m_bGrabWarrior = true;
+			m_pAttackObject = pWarrior;
+		}
 	}
 
 	if (iColliderIndex == (_int)COL_WATER)
