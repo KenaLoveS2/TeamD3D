@@ -392,6 +392,8 @@ void CShamanTrapHex::Execute_Trap(_float4 vPos)
 	m_eEFfectDesc.bActive = true;
 	vPos.y -= 0.5f;
 	m_pTransformCom->Set_Position(vPos);
+	
+	m_pModelCom->ResetAnimIdx_PlayTime(CONTRACT);
 	m_pModelCom->Set_AnimIndex(CONTRACT);
 
 	m_eState = START_TRAP;
@@ -404,6 +406,7 @@ void CShamanTrapHex::Execute_Trap(_float4 vPos)
 
 void CShamanTrapHex::Execute_Break()
 {
+	m_pModelCom->ResetAnimIdx_PlayTime(EXPAND);
 	m_pModelCom->Set_AnimIndex(EXPAND);
 	m_eState = BREAK_TRAP;
 }
