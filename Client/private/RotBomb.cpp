@@ -142,7 +142,7 @@ void CRotBomb::Late_Tick(_float fTimeDelta)
 
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
+	
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
 

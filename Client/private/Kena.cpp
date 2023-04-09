@@ -91,10 +91,14 @@ const _bool CKena::Get_State(STATERETURN eState) const
 {
 	/* Used by Camera */
 	if (eState == CKena::STATERETURN_END)
-		return !m_bHeavyAttack && !m_bMask && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
+		return !m_bDeath && !m_bHeavyAttack && !m_bMask && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
 
 	switch (eState)
 	{
+	case STATE_DEATH:
+		return m_bDeath;
+		break;
+
 	case STATE_LEVELUP:
 		return m_bLevelUp;
 		break;
@@ -183,6 +187,10 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 
 	switch (eState)
 	{
+	case STATE_DEATH:
+		m_bDeath = bValue;
+		break;
+
 	case STATE_LEVELUP:
 		m_bLevelUp = bValue;
 		break;
@@ -528,17 +536,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	Run_Smooth_Targeting(fTimeDelta);
 
-	for (auto& pPart : m_vecPart)
-		pPart->Tick(fTimeDelta);
-
-	for (auto& pArrow : m_vecArrow)
-		pArrow->Tick(fTimeDelta);
-
-	for (auto& pBomb : m_vecBomb)
-		pBomb->Tick(fTimeDelta);
 	
-	for (auto& pEffect : m_mapEffect)
-		pEffect.second->Tick(fTimeDelta);
 
 	/* Camera Shake Test */
 	/*if (CGameInstance::GetInstance()->Key_Down(DIK_O))
@@ -566,9 +564,25 @@ void CKena::Tick(_float fTimeDelta)
 
 void CKena::Late_Tick(_float fTimeDelta)
 {
+	/* ¹®Á¦ »ý±â¸é º¸°í ¹Ù¶÷. */
+	for (auto& pPart : m_vecPart)
+		pPart->Tick(fTimeDelta);
+
+	for (auto& pArrow : m_vecArrow)
+		pArrow->Tick(fTimeDelta);
+
+	for (auto& pBomb : m_vecBomb)
+		pBomb->Tick(fTimeDelta);
+
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Tick(fTimeDelta);
+
 	__super::Late_Tick(fTimeDelta);
 
 	m_pKenaState->Late_Tick(fTimeDelta);
+
+// 	if (m_bParry == false)
+// 		m_eDamagedDir = CKena::DAMAGED_FROM_END;
 
 	if (m_iCurParryFrame < m_iParryFrameCount)
 	{
@@ -1166,6 +1180,25 @@ void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
 }
 
+void CKena::Respawn()
+{
+	if (m_bDeath == false)
+		return;
+
+	m_pKenaStatus->Respawn();
+}
+
+void CKena::Respawn(_fvector vSpawnPos)
+{
+	if (m_bDeath == false)
+		return;
+
+	m_pKenaStatus->Respawn();
+
+	_float4		vPos = vSpawnPos;
+	m_pTargetMonster->Set_Position(vPos);
+}
+
 void CKena::Smooth_Targeting(CMonster * pMonster)
 {
 	if (m_pTargetMonster != nullptr)
@@ -1692,14 +1725,17 @@ void CKena::Check_Damaged()
 		{
 			m_bCommonHit = true;
 			//m_bHeavyHit = true;
-			m_bHitRim = true;
-			m_fHitRimIntensity = 1.f;
 			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
 
 			if (m_bPulse == false)
 			{
-				m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
-				/* JH : HPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ Tickï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. */
+				m_bHitRim = true;
+				m_fHitRimIntensity = 1.f;
+
+				if (m_bDeath = m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr()))
+					m_eDamagedDir = Calc_DirToMonster_2Way(m_pAttackObject);
+
+				/* JH : HP°ÔÀÌÁö´Â ±×³É ¸ÅÇÁ·¹ÀÓ °»½ÅÇØÁÖ·Á°í TickÀ¸·Î »°À½. */
 // 				CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 // 				_float fGuage = m_pKenaStatus->Get_PercentHP();
 // 				m_Delegator.broadcast(eHP, fGuage);
@@ -1939,6 +1975,24 @@ CKena::DAMAGED_FROM CKena::Calc_DirToMonster(const _float3 & vCollisionPos)
 		else if (fLeftRightAngle >= 0.5f && fLeftRightAngle <= 1.f)
 			eDir = DAMAGED_LEFT;
 	}
+
+	return eDir;
+}
+
+CKena:: DAMAGED_FROM CKena::Calc_DirToMonster_2Way(CGameObject* pTarget)
+{
+	DAMAGED_FROM	eDir = CKena::DAMAGED_FROM_END;
+
+	CTransform* pTargetTransCom = pTarget->Get_TransformCom();
+	_float4    vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	vDir.Normalize();
+
+	_float	fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
+
+	if (fFrontBackAngle >= 0.f)
+		eDir = CKena::DAMAGED_FRONT;
+	else
+		eDir = CKena::DAMAGED_BACK;
 
 	return eDir;
 }
@@ -2662,6 +2716,11 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_bPulseJump = false;
 			m_fCurJumpSpeed = 0.f;
 		}
+
+		if (iColliderIndex == (_int)COL_WATER)
+		{
+
+		}
 	}
 	else
 	{
@@ -2670,7 +2729,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		CGameObject* pGameObject = nullptr;
 
 		_bool bRealAttack = false;
-		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)
+		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false && m_bDodge == false && m_bDeath == false)
 		{
 			for (auto& Effect : m_mapEffect)
 			{
@@ -2737,6 +2796,11 @@ _int CKena::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex
 		m_bParry = true;
 		m_iCurParryFrame = 0;
 		m_pAttackObject = pTarget;
+	}
+
+	if (iColliderIndex == (_int)COL_WATER)
+	{
+		m_bWater = m_bDeath = m_pKenaStatus->UnderAttack(m_pKenaStatus->Get_MaxHP());
 	}
 
 	return 0;

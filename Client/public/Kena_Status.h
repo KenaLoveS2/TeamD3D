@@ -78,6 +78,7 @@ public:
 	virtual void				Free() override;
 
 public:
+	void	Respawn();
 	HRESULT Save();
 	HRESULT Load(const string & strFilePath);
 
