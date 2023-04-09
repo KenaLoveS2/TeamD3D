@@ -373,14 +373,7 @@ void CCinematicCamera::Imgui_RenderProperty()
 		ImGui::SameLine();
 		if (ImGui::Button("CinemaUIOff"))
 		{
-			/* Call CinemaUI */
-			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
-			_bool bOn = false;
-			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
-			/* ~Call CinemaUI */
-			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
-			m_iChatIndex = 0;
-			m_CinemaDelegator.broadcast(eChat, bOn, fTemp, m_vecChat[m_iChatIndex]);
+			CinemaUIOff();
 		}
 
 		if (ImGui::Button("DebugPlay"))
@@ -706,6 +699,18 @@ void CCinematicCamera::Load_ChatData(string str)
 	}
 
 	/* ~Chat File Load */
+}
+
+void CCinematicCamera::CinemaUIOff()
+{
+	/* Call CinemaUI */
+	CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
+	_bool bOn = false;
+	m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
+	/* ~Call CinemaUI */
+	CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+	m_iChatIndex = 0;
+	m_CinemaDelegator.broadcast(eChat, bOn, fTemp, m_vecChat[m_iChatIndex]);
 }
 
 void CCinematicCamera::Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAME>& v, string& chatFileName)
