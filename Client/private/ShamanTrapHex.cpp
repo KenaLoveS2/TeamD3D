@@ -398,7 +398,7 @@ void CShamanTrapHex::Execute_Trap(_float4 vPos)
 
 	m_eState = START_TRAP;
 
-	for (_uint i = SHAMAN_0; i < PARTS_END; i++)
+	for (_uint i = SHAMAN_0; i < (_uint)PARTS_END; i++)
 	{
 		((CFakeShaman*)m_pPart[i])->Clear();
 	}
