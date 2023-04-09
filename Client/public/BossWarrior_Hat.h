@@ -11,6 +11,10 @@ private:
 	_float4x4 m_SocketPivotMatrix;
 	_uint m_iShaderPass = 6;
 
+	_float3 m_vColliderPivotPos = { 0.f, -0.15f, 0.f };
+	_float3 m_vColliderPivotRot = {0.3f, 0.f, 0.f};
+	_float4x4 m_ColliderPivotMatrix;
+
 private:
 	CBossWarrior_Hat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBossWarrior_Hat(const CBossWarrior_Hat& rhs);
