@@ -2651,6 +2651,10 @@ _int CKena::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex
 		m_iCurParryFrame = 0;
 		m_pAttackObject = pTarget;
 	}
+	else if (iColliderIndex == (_int)COL_WARRIOR_GRAB_HAND)
+	{
+		// 케나의 바디 콜라이더와 워리어의 그랩 핸드 트리거와 충돌
+	}
 
 	return 0;
 }

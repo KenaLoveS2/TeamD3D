@@ -9,6 +9,7 @@
 
 #define COL_WEAPON_TEXT					TEXT("BossWarrior_Weapon")
 #define COL_RIGHT_LEG_TEXT				TEXT("BossWarrior_RightLeg")
+#define COL_GRAB_HAND_TEXT				TEXT("BossWarrior_GrabHand")
 
 BEGIN(Client)
 class CBossWarrior : public CMonster
@@ -43,6 +44,13 @@ private:
 
 	enum ATTACKTYPE
 	{
+		AT_CHARGE,
+		AT_UPPER_CUT,
+		AT_COMBO,
+		AT_SWEEP,
+		AT_GRAB,
+		AT_JUMP,
+		AT_TRIP_UPPERCUT,
 		ATTACKTYPE_END
 	};
 
@@ -129,6 +137,9 @@ private:
 	_float3 m_vRightLegPivotTrans = { -0.26f, -0.02f, -0.06f};	
 	_float4x4 m_RightLegPivotMatrix;
 
+	_float3 m_vGrabHandPivotTrans = { 1.f, -0.02f, -2.02f };
+	_float4x4 m_GrabHandPivotMatrix;
+
 	class CGameObject* m_pHat = nullptr;
 	map<const string, class CEffect_Base*>	m_mapEffect;
 
@@ -137,16 +148,18 @@ private:
 
 	CBone* m_pWeaponBone = nullptr;
 	CBone* m_pRightLegBone = nullptr;
+	
+	CBone* m_pGrabHandBone = nullptr;
+	CBone* m_pGrabJointBone = nullptr;
 
-	_uint m_iCloseAttackIndex = 0;
-	_uint m_iFarAttackIndex = 0;
+	ATTACKTYPE m_eAttackType = AT_CHARGE;
 
 	_bool m_bEnRageReady = true;
 	_bool m_bBellCall = false;
 	_bool m_bBlock = false;
 	_bool m_bBlockHit = false;
-
-
+	_bool m_bKenaGrab = false;
+	
 	_float m_fBlockRange = 2.5f;
 	_float m_fJumpBackRange = 2.5;
 	_float m_fCloseAttackRange = 5.f;
@@ -163,7 +176,7 @@ private:
 		CSK_TENSE1, CSK_TENSE2, CSK_TENSE3, 
 		CSK_BACK, 
 		CSK_IMPACT2, CSK_IMPACT3, CSK_IMPACT4, CSK_IMPACT5,
-		CSK_WALK, CSK_SWING, CSK_SLASH, CSK_BOSS_DING, CSK_BOSS_BASE,
+		CSK_WALK, CSK_SWING, CSK_SLASH, CSK_BOSS_DING, CSK_BOSS_BASE, CSK_ELEMENTAL1, CSK_ELEMENTAL2, CSK_ELEMENTAL11,
 		COPY_SOUND_KEY_END,
 	};
 
@@ -175,8 +188,13 @@ public:
 	virtual void						Free() override;
 
 	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
-	void Attack_End(_uint* pAttackIndex, _uint iMaxAttackIndex, _uint iAnimIndex);
+	CBone* Get_GrabHandBonePtr() { return m_pGrabHandBone; }
+	CBone* Get_GrabJointBonePtr() { return m_pGrabJointBone; }
+	_bool Is_WarriorGrabAnimation() { return m_bKenaGrab; }
+
+	void Attack_End();
 
 	void Create_CopySoundKey();
 	void Play_Attack1Sound(_bool bIsInit, _float fTimeDelta);
@@ -218,6 +236,10 @@ public:
 
 	void Play_BossDingSound(_bool bIsInit, _float fTimeDelta);
 	void Play_BossBaseSound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Elemental1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Elemental2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Elemental11Sound(_bool bIsInit, _float fTimeDelta);
 };
 
 END
