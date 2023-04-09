@@ -398,11 +398,13 @@ void CShamanTrapHex::Execute_Trap(_float4 vPos)
 	m_eEFfectDesc.bActive = true;
 	vPos.y += 0.1f;
 	m_pTransformCom->Set_Position(vPos);
+	
+	m_pModelCom->ResetAnimIdx_PlayTime(CONTRACT);
 	m_pModelCom->Set_AnimIndex(CONTRACT);
 
 	m_eState = START_TRAP;
 
-	for (_uint i = SHAMAN_0; i < PARTS_END; i++)
+	for (_uint i = SHAMAN_0; i < (_uint)PARTS_END; i++)
 	{
 		((CFakeShaman*)m_pPart[i])->Clear();
 	}
@@ -410,6 +412,7 @@ void CShamanTrapHex::Execute_Trap(_float4 vPos)
 
 void CShamanTrapHex::Execute_Break()
 {
+	m_pModelCom->ResetAnimIdx_PlayTime(EXPAND);
 	m_pModelCom->Set_AnimIndex(EXPAND);
 	m_eState = BREAK_TRAP;
 }
