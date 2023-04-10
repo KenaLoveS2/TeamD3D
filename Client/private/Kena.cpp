@@ -511,7 +511,7 @@ void CKena::Tick(_float fTimeDelta)
 	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
 	_float	fTimeRate = Update_TimeRate();
-	
+	m_bStateLock = true;
 	__super::Tick(fTimeDelta);
 
 	LiftRotRockProc();

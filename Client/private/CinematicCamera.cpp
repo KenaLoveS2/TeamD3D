@@ -394,10 +394,10 @@ void CCinematicCamera::Imgui_RenderProperty()
 		if (iSelectKeyFrame != -1 && iSelectKeyFrame < (int)m_iNumKeyFrames)
 		{
 			float fPos[3] = { m_keyframes[iSelectKeyFrame].vPos.x , m_keyframes[iSelectKeyFrame].vPos.y,m_keyframes[iSelectKeyFrame].vPos.z };
-			ImGui::DragFloat3("KFPos", fPos, 0.01f, -1000.f, 1000.f);
+			ImGui::DragFloat3("KFPos", fPos, 0.01f, -1000.f, 1500.f);
 			m_keyframes[iSelectKeyFrame].vPos = _float3(fPos[0], fPos[1], fPos[2]);
 			float fLookAT[3] = { m_keyframes[iSelectKeyFrame].vLookAt.x , m_keyframes[iSelectKeyFrame].vLookAt.y,m_keyframes[iSelectKeyFrame].vLookAt.z };
-			ImGui::DragFloat3("KFLookAT", fLookAT, 0.01f, -1000.f, 1000.f);
+			ImGui::DragFloat3("KFLookAT", fLookAT, 0.01f, -1000.f, 1500.f);
 			m_keyframes[iSelectKeyFrame].vLookAt = _float3(fLookAT[0], fLookAT[1], fLookAT[2]);
 			ImGui::DragFloat("KFTime", &m_keyframes[iSelectKeyFrame].fTime);
 
