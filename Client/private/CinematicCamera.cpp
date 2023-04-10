@@ -7,6 +7,8 @@
 #include <codecvt>
 #include <locale>
 
+#include "Kena.h"
+
 _float fTemp = 345.f;
 wstring wstrTemp = L"";
 
@@ -148,7 +150,13 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 		m_pTransformCom->Imgui_RenderProperty();
 		ImGui::End();
 #endif
-		
+
+	if(!m_pPlayer)
+		m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena")));
+
+	if (!m_pPlayer)
+		return;
+
 	m_iNumKeyFrames = (_uint)m_keyframes.size();
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
@@ -166,6 +174,7 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 
 		if (m_bInitSet)
 		{
+			dynamic_cast<CKena*>(m_pPlayer)->Set_StateLock(true);
 			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 			m_pPlayerCam = pGameInstance->Find_Camera(L"PLAYER_CAM");
 			RELEASE_INSTANCE(CGameInstance)
@@ -223,6 +232,7 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 	{
 		if (!m_bFinishSet)
 		{
+			dynamic_cast<CKena*>(m_pPlayer)->Set_StateLock(false);
 			CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
 			if (!m_vecChat.empty())
 			{
@@ -394,10 +404,10 @@ void CCinematicCamera::Imgui_RenderProperty()
 		if (iSelectKeyFrame != -1 && iSelectKeyFrame < (int)m_iNumKeyFrames)
 		{
 			float fPos[3] = { m_keyframes[iSelectKeyFrame].vPos.x , m_keyframes[iSelectKeyFrame].vPos.y,m_keyframes[iSelectKeyFrame].vPos.z };
-			ImGui::DragFloat3("KFPos", fPos, 0.01f, -1000.f, 1000.f);
+			ImGui::DragFloat3("KFPos", fPos, 0.01f, -1000.f, 1500.f);
 			m_keyframes[iSelectKeyFrame].vPos = _float3(fPos[0], fPos[1], fPos[2]);
 			float fLookAT[3] = { m_keyframes[iSelectKeyFrame].vLookAt.x , m_keyframes[iSelectKeyFrame].vLookAt.y,m_keyframes[iSelectKeyFrame].vLookAt.z };
-			ImGui::DragFloat3("KFLookAT", fLookAT, 0.01f, -1000.f, 1000.f);
+			ImGui::DragFloat3("KFLookAT", fLookAT, 0.01f, -1000.f, 1500.f);
 			m_keyframes[iSelectKeyFrame].vLookAt = _float3(fLookAT[0], fLookAT[1], fLookAT[2]);
 			ImGui::DragFloat("KFTime", &m_keyframes[iSelectKeyFrame].fTime);
 

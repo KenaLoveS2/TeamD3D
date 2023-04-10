@@ -50,136 +50,136 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	StoneCubeDesc.fMass = 50.f;
 	StoneCubeDesc.fLinearDamping = 3.f;
 
-	float	boxRadius = 0.20f; // »óÀÚ Áß½É°ú ¿øÀÇ Áß½É »çÀÌÀÇ °Å¸®
-	int		boxCountPerLayer = 2; // ÇÑ ·¹ÀÌ¾î¿¡ Æ÷ÇÔµÉ ¹Ú½º °³¼ö
-	float	layerHeight = 1.f;  //StoneCubeDesc.vSize.y; // ·¹ÀÌ¾î °£ ³ôÀÌ Â÷ÀÌ
-	float	layerRadiusStep = 0.0f; // ·¹ÀÌ¾î °£ ¹ÝÁö¸§ Â÷ÀÌ
-	int		layerCount = 10; // ÀüÃ¼ ·¹ÀÌ¾î °³¼ö
+	float	boxRadius = 0.20f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ß½É°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
+	int		boxCountPerLayer = 2; // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½Ôµï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	float	layerHeight = 1.f;  //StoneCubeDesc.vSize.y; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	float	layerRadiusStep = 0.0f; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	int		layerCount = 5; // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	_float3 vColiderSize = { 0.f,0.f,0.f };
 
 	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall03")
 	{
-		StoneCubeDesc.vSize = _float3(0.7f, 0.29f, 0.7f);
-		StoneCubeDesc.fMass = 30.f;
-		StoneCubeDesc.fLinearDamping = 1.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.8f; // »óÀÚ Áß½É°ú ¿øÀÇ Áß½É »çÀÌÀÇ °Å¸®
-		boxCountPerLayer = 2; // ÇÑ ·¹ÀÌ¾î¿¡ Æ÷ÇÔµÉ ¹Ú½º °³¼ö
-		layerHeight = StoneCubeDesc.vSize.y; // ·¹ÀÌ¾î °£ ³ôÀÌ Â÷
-		layerRadiusStep = 0.0f; // ·¹ÀÌ¾î °£ ¹ÝÁö¸§ Â÷ÀÌ
-		layerCount = 5; // ÀüÃ¼ ·¹ÀÌ¾î °³¼ö
+		boxRadius = 0.8f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ß½É°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
+		boxCountPerLayer = 2; // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½Ôµï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerHeight = StoneCubeDesc.vSize.y; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+		layerRadiusStep = 0.0f; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerCount = 5; // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall03");
-		vColiderSize = _float3(0.7f, 2.5f, 0.7f); //º»Ã¼ÀÇ ÄÝ¶óÀÌ´õ »çÀÌÁî
+		vColiderSize = _float3(0.7f, 2.5f, 0.7f); //ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall04")
 	{
-		StoneCubeDesc.vSize = _float3(0.38f, 0.25f, 0.45f);
-		StoneCubeDesc.fMass = 100.f;
-		StoneCubeDesc.fLinearDamping = 2.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.5f; // »óÀÚ Áß½É°ú ¿øÀÇ Áß½É »çÀÌÀÇ °Å¸®
-		boxCountPerLayer = 2; // ÇÑ ·¹ÀÌ¾î¿¡ Æ÷ÇÔµÉ ¹Ú½º °³¼ö
-		layerHeight = StoneCubeDesc.vSize.y; // ·¹ÀÌ¾î °£ ³ôÀÌ Â÷
-		layerRadiusStep = 0.0f; // ·¹ÀÌ¾î °£ ¹ÝÁö¸§ Â÷ÀÌ
-		layerCount = 5; // ÀüÃ¼ ·¹ÀÌ¾î °³¼ö
+		boxRadius = 0.5f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ß½É°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
+		boxCountPerLayer = 2; // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½Ôµï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerHeight = StoneCubeDesc.vSize.y; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+		layerRadiusStep = 0.0f; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerCount = 5; // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall04");
-		vColiderSize = _float3(1.13f, 2.88f, 1.13f); //º»Ã¼ÀÇ ÄÝ¶óÀÌ´õ »çÀÌÁî
+		vColiderSize = _float3(1.13f, 2.88f, 1.13f); //ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall05")
 	{
-		StoneCubeDesc.vSize = _float3(2.5f, 0.315f, 2.5f);
-		StoneCubeDesc.fMass = 100.f;
-		StoneCubeDesc.fLinearDamping = 2.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.7f; // »óÀÚ Áß½É°ú ¿øÀÇ Áß½É »çÀÌÀÇ °Å¸®
-		boxCountPerLayer = 2; // ÇÑ ·¹ÀÌ¾î¿¡ Æ÷ÇÔµÉ ¹Ú½º °³¼ö
-		layerHeight = StoneCubeDesc.vSize.y; // ·¹ÀÌ¾î °£ ³ôÀÌ Â÷
-		layerRadiusStep = 0.0f; // ·¹ÀÌ¾î °£ ¹ÝÁö¸§ Â÷ÀÌ
-		layerCount = 5; // ÀüÃ¼ ·¹ÀÌ¾î °³¼ö
+		boxRadius = 0.7f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ß½É°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
+		boxCountPerLayer = 2; // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½Ôµï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerHeight = StoneCubeDesc.vSize.y; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+		layerRadiusStep = 0.0f; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerCount = 5; // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall05");
-		vColiderSize = _float3(0.9f, 3.3f, 0.9f); //º»Ã¼ÀÇ ÄÝ¶óÀÌ´õ »çÀÌÁî
+		vColiderSize = _float3(0.9f, 3.3f, 0.9f); //ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall06")
 	{
-		StoneCubeDesc.vSize = _float3(1.3f, 0.28f, 1.3f);
-		StoneCubeDesc.fMass = 10.f;
-		StoneCubeDesc.fLinearDamping = 1.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.8f; // »óÀÚ Áß½É°ú ¿øÀÇ Áß½É »çÀÌÀÇ °Å¸®
-		boxCountPerLayer = 2; // ÇÑ ·¹ÀÌ¾î¿¡ Æ÷ÇÔµÉ ¹Ú½º °³¼ö
-		layerHeight = StoneCubeDesc.vSize.y; // ·¹ÀÌ¾î °£ ³ôÀÌ Â÷
-		layerRadiusStep = 0.0f; // ·¹ÀÌ¾î °£ ¹ÝÁö¸§ Â÷ÀÌ
-		layerCount = 5; // ÀüÃ¼ ·¹ÀÌ¾î °³¼ö
+		boxRadius = 0.8f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ß½É°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
+		boxCountPerLayer = 2; // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½Ôµï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerHeight = StoneCubeDesc.vSize.y; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+		layerRadiusStep = 0.0f; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerCount = 5; // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall06");
-		vColiderSize = _float3(1.f, 2.8f, 1.f); //º»Ã¼ÀÇ ÄÝ¶óÀÌ´õ »çÀÌÁî
+		vColiderSize = _float3(1.f, 2.8f, 1.f); //ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_MaskShrine_Rock_09")
 	{
 		StoneCubeDesc.vSize = _float3(0.09f, 0.09f, 0.09f);
-		StoneCubeDesc.fMass = 2.f;
+		StoneCubeDesc.fMass = 10000.f;
 		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.4f; // »óÀÚ Áß½É°ú ¿øÀÇ Áß½É »çÀÌÀÇ °Å¸®
-		boxCountPerLayer = 2; // ÇÑ ·¹ÀÌ¾î¿¡ Æ÷ÇÔµÉ ¹Ú½º °³¼ö
-		layerHeight = StoneCubeDesc.vSize.y; // ·¹ÀÌ¾î °£ ³ôÀÌ Â÷
-		layerRadiusStep = 0.0f; // ·¹ÀÌ¾î °£ ¹ÝÁö¸§ Â÷ÀÌ
-		layerCount = 5; // ÀüÃ¼ ·¹ÀÌ¾î °³¼ö
+		boxRadius = 0.4f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ß½É°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
+		boxCountPerLayer = 2; // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½Ôµï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerHeight = StoneCubeDesc.vSize.y; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+		layerRadiusStep = 0.0f; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerCount = 5; // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_MaskShrine_Rock_09");
-		vColiderSize = _float3( 0.26f,1.2f,0.26f ); //º»Ã¼ÀÇ ÄÝ¶óÀÌ´õ »çÀÌÁî
+		vColiderSize = _float3( 0.26f,1.2f,0.26f ); //ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium04")
 	{
-		StoneCubeDesc.vSize = _float3(0.37f, 0.23f, 0.37f);
-		StoneCubeDesc.fMass = 100.f;
-		StoneCubeDesc.fLinearDamping = 3.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
 
-		boxRadius = 0.65f; // »óÀÚ Áß½É°ú ¿øÀÇ Áß½É »çÀÌÀÇ °Å¸®
-		boxCountPerLayer = 2; // ÇÑ ·¹ÀÌ¾î¿¡ Æ÷ÇÔµÉ ¹Ú½º °³¼ö
-		layerHeight = StoneCubeDesc.vSize.y; // ·¹ÀÌ¾î °£ ³ôÀÌ Â÷
-		layerRadiusStep = 0.0f; // ·¹ÀÌ¾î °£ ¹ÝÁö¸§ Â÷ÀÌ
-		layerCount = 5; // ÀüÃ¼ ·¹ÀÌ¾î °³¼ö
+		boxRadius = 0.65f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ß½É°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
+		boxCountPerLayer = 2; // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½Ôµï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerHeight = StoneCubeDesc.vSize.y; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+		layerRadiusStep = 0.0f; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerCount = 5; // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium04");
-		vColiderSize = _float3(0.9f, 2.44f, 0.9f); //º»Ã¼ÀÇ ÄÝ¶óÀÌ´õ »çÀÌÁî
+		vColiderSize = _float3(0.9f, 2.44f, 0.9f); //ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium06")
 	{
-		StoneCubeDesc.vSize = _float3(0.4f, 0.23f, 0.4f);
-		StoneCubeDesc.fMass = 100.f;
-		StoneCubeDesc.fLinearDamping = 3.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 		
-		boxRadius = 0.7f; // »óÀÚ Áß½É°ú ¿øÀÇ Áß½É »çÀÌÀÇ °Å¸®
-		boxCountPerLayer = 2; // ÇÑ ·¹ÀÌ¾î¿¡ Æ÷ÇÔµÉ ¹Ú½º °³¼ö
-		layerHeight = StoneCubeDesc.vSize.y; // ·¹ÀÌ¾î °£ ³ôÀÌ Â÷
-		layerRadiusStep = 0.0f; // ·¹ÀÌ¾î °£ ¹ÝÁö¸§ Â÷ÀÌ
-		layerCount = 5; // ÀüÃ¼ ·¹ÀÌ¾î °³¼ö
+		boxRadius = 0.7f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ß½É°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
+		boxCountPerLayer = 2; // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½Ôµï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerHeight = StoneCubeDesc.vSize.y; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+		layerRadiusStep = 0.0f; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerCount = 5; // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium06");
-		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //º»Ã¼ÀÇ ÄÝ¶óÀÌ´õ »çÀÌÁî
+		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium07")
 	{
-		StoneCubeDesc.vSize = _float3(0.5f, 0.23f, 0.5f);
-		StoneCubeDesc.fMass = 100.f;
-		StoneCubeDesc.fLinearDamping = 3.f;
+		StoneCubeDesc.vSize = _float3(0.16f,0.16f,0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.7f; // »óÀÚ Áß½É°ú ¿øÀÇ Áß½É »çÀÌÀÇ °Å¸®
-		boxCountPerLayer = 2; // ÇÑ ·¹ÀÌ¾î¿¡ Æ÷ÇÔµÉ ¹Ú½º °³¼ö
-		layerHeight = StoneCubeDesc.vSize.y; // ·¹ÀÌ¾î °£ ³ôÀÌ Â÷
-		layerRadiusStep = 0.0f; // ·¹ÀÌ¾î °£ ¹ÝÁö¸§ Â÷ÀÌ
-		layerCount = 5; // ÀüÃ¼ ·¹ÀÌ¾î °³¼ö
+		boxRadius = 0.7f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ß½É°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
+		boxCountPerLayer = 2; // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½Ôµï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerHeight = StoneCubeDesc.vSize.y; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+		layerRadiusStep = 0.0f; // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		layerCount = 5; // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium07");
-		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //º»Ã¼ÀÇ ÄÝ¶óÀÌ´õ »çÀÌÁî
+		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 
 	vSize.x += 0.05f;
@@ -212,8 +212,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		}
 	}*/
 
-	/*¿øÇü Å¾*/
-
+	/*ï¿½ï¿½ï¿½ï¿½ Å¾*/
 	
 	_uint iTemp = 0;
 	for (int layer = 0; layer < layerCount; ++layer) 
@@ -270,11 +269,10 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.bKinematic = true;
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
-	
-	/*³»ÀÏ ¸ÕÀú »ý¼ºÇÏ°í ½½¸³À¸·Î ¹Ù²Ù±â*/
 
+	m_pActor = pPhysX->Find_StaticActor(m_szCloneObjectTag);
 
-
+	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²Ù±ï¿½*/
 
 	return S_OK;
 }
@@ -301,11 +299,7 @@ void CDynamic_Stone::Tick(_float fTimeDelta)
 		}
 	}
 
-	
-
 	//CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
-
-
 
 	__super::Tick(fTimeDelta);
 }
@@ -314,162 +308,32 @@ void CDynamic_Stone::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	size_t size = m_pDynamicObj_List.size();
-	size_t iIndex = 0;
 	for (auto& pObj : m_pDynamicObj_List)
 	{
 		if (pObj != nullptr)
 			pObj->Late_Tick(fTimeDelta);
-
 	}
 
-//	if (m_pRendererCom && m_bRenderActive)
-//	{
-//#ifdef _DEBUG
-//		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
-//#endif
-//		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-//	}
-
+	if(m_bOnceColl && m_pActor)
+	{
+		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+		pPhysX->Delete_Actor(m_pActor);
+		m_pActor = nullptr;
+	}
 }
 
 HRESULT CDynamic_Stone::Render()
 {
-	//if (FAILED(__super::Render()))
-	//	return E_FAIL;
-
-	//if (FAILED(SetUp_ShaderResources()))
-	//	return E_FAIL;
-
-	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	//if (m_pModelCom->Get_IStancingModel())
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-
-	//		if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr && (*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_EMISSIVE] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-	//			float f = 1.f;
-	//			FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fStonePulseIntensity", &f, sizeof(float)), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
-	//		}
-	//		else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
-	//		}
-	//		else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
-	//		}
-	//		else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
-	//		}
-	//		else
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-	//		if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 17), E_FAIL);
-	//		}
-	//		else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 18), E_FAIL);
-	//		}
-	//		else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 16), E_FAIL);
-	//		}
-	//		else
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
-	//		}
-	//	}
-	//}
-
 	return S_OK;
 }
 
 HRESULT CDynamic_Stone::RenderShadow()
 {
-	//if (FAILED(__super::RenderShadow()))
-	//	return E_FAIL;
-
-	//if (FAILED(SetUp_ShadowShaderResources()))
-	//	return E_FAIL;
-
-	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	//if (m_pModelCom->Get_IStancingModel())
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 0), E_FAIL);
-	//	}
-	//}
-	//else
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
-	//	}
-	//}
-
 	return S_OK;
 }
 
 HRESULT CDynamic_Stone::RenderCine()
 {
-	//if (FAILED(__super::RenderCine()))
-	//	return E_FAIL;
-
-	//if (FAILED(__super::SetUp_CineShaderResources()))
-	//	return E_FAIL;
-
-	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	//if (m_pModelCom->Get_IStancingModel())
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 12), E_FAIL);
-	//	}
-	//}
-	//else
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		/* ÀÌ ¸ðµ¨À» ±×¸®±âÀ§ÇÑ ¼ÎÀÌ´õ¿¡ ¸ÓÅ×¸®¾ó ÅØ½ºÃÄ¸¦ Àü´ÞÇÏ³®. */
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 10), E_FAIL);
-	//	}
-	//}
-
 	return S_OK;
 }
 
@@ -478,7 +342,7 @@ _int CDynamic_Stone::Execute_Collision(CGameObject* pTarget, _float3 vCollisionP
 	if (pTarget == nullptr || COL_DYNAMIC_ENVIOBJ == iColliderIndex)
 		return 0;
 
-	if (m_bOnceColl == true)		//ÇÑ¹ø¸¸ »ý¼ºµÇ±âÀ§ÇØ¼­
+	if (m_bOnceColl == true)		//ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç±ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½
 		return 0;
 
 	_bool bMonsterRealAttack = false;
@@ -554,11 +418,11 @@ HRESULT CDynamic_Stone::SetUp_Components()
 	//	return E_FAIL;
 
 	///* For.Com_Shader */
-	///*³ªÁß¿¡  ·¹º§ ÀÎµ¦½º ¼öÁ¤ÇØ¾ß‰Î*/
+	///*ï¿½ï¿½ï¿½ß¿ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½*/
 	//if (m_EnviromentDesc.iCurLevel == 0)
 	//	m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
-	///* For.Com_Model */ 	/*³ªÁß¿¡  ·¹º§ ÀÎµ¦½º ¼öÁ¤ÇØ¾ß‰Î*/
+	///* For.Com_Model */ 	/*ï¿½ï¿½ï¿½ß¿ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½*/
 	//if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 	//	(CComponent**)&m_pModelCom)))
 	//	return E_FAIL;
@@ -631,7 +495,7 @@ CGameObject* CDynamic_Stone::Clone(void* pArg)
 	return pInstance;
 }
 
-void CDynamic_Stone::Free() //¿¹ÀÇ free ÇÔ¼ö È£Ãâº¸´Ù 
+void CDynamic_Stone::Free() //ï¿½ï¿½ï¿½ï¿½ free ï¿½Ô¼ï¿½ È£ï¿½âº¸ï¿½ï¿½ 
 {
 	if(m_isCloned)
 	{

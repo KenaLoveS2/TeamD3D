@@ -573,6 +573,7 @@ HRESULT CBossHunter::SetUp_State()
 		m_bSpawn = true;
 		CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
 		m_pCineCam[0]->CinemaUIOff();
+		m_pKena->Set_StateLock(false);
 	})
 	.AddTransition("READY_SPAWN to IDLE", "IDLE")
 	.Predicator([this]()
