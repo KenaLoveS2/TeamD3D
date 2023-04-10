@@ -7,7 +7,8 @@ class ENGINE_DLL CVIBuffer_Point_Instancing_S2 final : public CVIBuffer_Instanci
 public:
 	typedef struct tagPtInfo
 	{
-		enum TYPE { TYPE_HAZE, TYPE_GATHER, TYPE_PARABOLA , TYPE_SPREAD, TYPE_END };
+		enum TYPE { TYPE_HAZE, TYPE_GATHER, TYPE_PARABOLA , TYPE_SPREAD, 
+				TYPE_TRAIL, TYPE_END };
 
 		TYPE	eType = TYPE_HAZE;
 
@@ -32,6 +33,7 @@ private:
 public:
 	POINTINFO		Get_Info() { return m_tInfo; }
 	_bool			Is_Finished() { return m_bFinished; }
+	void			Set_Owner(class CGameObject* pObj) { m_pOwner = pObj; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -47,18 +49,20 @@ private: /* Tick Function By Type */
 	HRESULT		Tick_Gather(_float TimeDelta);
 	HRESULT		Tick_Parabola(_float TimeDelta);
 	HRESULT		Tick_Spread(_float TimeDelta);
+	HRESULT		Tick_Trail(_float TimeDelta);
+
 private:
 	void		Safe_Delete_Arrays();
 	void		Reset();
 
 private:
-	POINTINFO		m_tInfo;
-	_float* m_pXSpeeds = nullptr;
-	_float* m_pYSpeeds = nullptr;
-	_float* m_pZSpeeds = nullptr;
-	_float3* m_pPositions = nullptr;
-
-	_bool			m_bFinished = false;
+	POINTINFO			m_tInfo;
+	_float*				m_pXSpeeds = nullptr;
+	_float*				m_pYSpeeds = nullptr;
+	_float*				m_pZSpeeds = nullptr;
+	_float3*			m_pPositions = nullptr;
+	_bool				m_bFinished = false;
+	vector<VTXMATRIX>	m_vecInstances;
 
 public:
 	static CVIBuffer_Point_Instancing_S2* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

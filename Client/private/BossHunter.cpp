@@ -573,6 +573,7 @@ HRESULT CBossHunter::SetUp_State()
 		m_bSpawn = true;
 		CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
 		m_pCineCam[0]->CinemaUIOff();
+		m_pKena->Set_StateLock(false);
 	})
 	.AddTransition("READY_SPAWN to IDLE", "IDLE")
 	.Predicator([this]()
@@ -1979,8 +1980,8 @@ void CBossHunter::ImGui_EffectProperty()
 		for (auto pEffect : m_vecEffects)
 		{
 			wstring wstr = pEffect->Get_ObjectCloneName();
-			string str;
-			str.assign(wstr.begin(), wstr.end());
+			string str = CUtile::wstring_to_utf8(wstr);
+			//str.assign(wstr.begin(), wstr.end());
 			tags.push_back(str);
 		}
 	}

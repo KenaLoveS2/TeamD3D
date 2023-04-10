@@ -192,8 +192,8 @@ void CChannel::Update_TransformMatrix(_float PlayTime, _bool isRootBone)
 		_vector	vSc, vRot, vTrans;
 		XMMatrixDecompose(&vSc, &vRot, &vTrans, matTransform);
 
-		TransformMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRot, XMVectorSet(0.f, 0.f, 0.f, 1.f));
-		//TransformMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
+		//TransformMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRot, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		TransformMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 		m_pBone->Set_TransformMatrix(TransformMatrix);
 	}
 }

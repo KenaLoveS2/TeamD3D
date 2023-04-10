@@ -198,6 +198,7 @@ public:
 
 	void Attack_End();
 
+	void Grab_Turn(_bool bIsInit, _float fTimeDelta);
 	void Create_CopySoundKey();
 	void Play_Attack1Sound(_bool bIsInit, _float fTimeDelta);
 	void Play_Attack2Sound(_bool bIsInit, _float fTimeDelta);

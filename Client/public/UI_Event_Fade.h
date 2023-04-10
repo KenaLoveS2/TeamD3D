@@ -26,6 +26,11 @@ public:
 			return false;
 	}
 	_bool				Is_End() { return m_bEnd; }
+	void				Change_Data(_float fSpeed, _float fDurTime)
+	{
+		m_fSpeed = fSpeed;
+		m_fTime = fDurTime;
+	}
 
 public:
 	virtual	HRESULT		Tick(_float fTimeDelta)					override;

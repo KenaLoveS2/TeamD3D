@@ -205,6 +205,7 @@
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\public\CLevel_Final.h" />
+    <ClInclude Include="..\public\DeadZoneBossTree.h" />
     <ClInclude Include="..\public\E_Common_CIrcleSp.h" />
     <ClInclude Include="..\public\E_LazerTrail.h" />
     <ClInclude Include="..\public\E_P_ShamanTeleport.h" />
@@ -464,6 +465,7 @@
     <ClInclude Include="..\public\UI_NodeSkillName.h" />
     <ClInclude Include="..\public\UI_NodeSkillVideo.h" />
     <ClInclude Include="..\public\UI_NodeTitle.h" />
+    <ClInclude Include="..\public\UI_NodeVideo.h" />
     <ClInclude Include="..\public\UI_RotIcon.h" />
     <ClInclude Include="..\public\UI_Weakpoint.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
@@ -500,6 +502,7 @@
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\CLevel_Final.cpp" />
+    <ClCompile Include="..\private\DeadZoneBossTree.cpp" />
     <ClCompile Include="..\private\E_Common_CIrcleSp.cpp" />
     <ClCompile Include="..\private\E_LazerTrail.cpp" />
     <ClCompile Include="..\private\E_P_ShamanTeleport.cpp" />
@@ -758,6 +761,7 @@
     <ClCompile Include="..\private\UI_NodeSkillName.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillVideo.cpp" />
     <ClCompile Include="..\private\UI_NodeTitle.cpp" />
+    <ClCompile Include="..\private\UI_NodeVideo.cpp" />
     <ClCompile Include="..\private\UI_RotIcon.cpp" />
     <ClCompile Include="..\private\UI_Weakpoint.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />

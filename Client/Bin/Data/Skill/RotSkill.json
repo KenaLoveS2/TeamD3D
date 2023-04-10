@@ -12,7 +12,8 @@
                     "Karma"     : 50
                 }
             ],
-            "State": 0
+            "State": 0,
+            "Video":"IntoTheFray"
         }
     ],
     "Level1":[
@@ -26,7 +27,8 @@
                     "Karma"     : 200
                 }
             ],
-            "State": 0
+            "State": 0,
+            "Video":"IntoTheFray"
         }
     ],
     "Level2":[
@@ -40,7 +42,8 @@
                     "Karma"     : 300
                 }
             ],
-            "State": 0
+            "State": 0,
+            "Video":"IntoTheFray"
         }
     ],
     "Level3":[
@@ -54,7 +57,8 @@
                     "Karma"     : 400
                 }
             ],
-            "State": 0
+            "State": 0,
+            "Video":"IntoTheFray"
         }
     ],
     "Level4":[
@@ -68,7 +72,8 @@
                     "Karma"     : 500
                 }
             ],
-            "State": 0
+            "State": 0,
+            "Video":"IntoTheFray"
         }
     ]
 }

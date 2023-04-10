@@ -212,8 +212,6 @@ HRESULT CUI_CanvasItemBar::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources();
 
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
@@ -235,8 +233,6 @@ HRESULT CUI_CanvasItemBar::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -294,8 +290,8 @@ HRESULT CUI_CanvasItemBar::Load_Data(wstring fileName)
 	wstring name = L"../Bin/Data/UI/";
 	name += fileName;
 	name += L"_Property.json";
-	string filePath;
-	filePath.assign(name.begin(), name.end());
+	string filePath = CUtile::wstring_to_utf8(name);
+	//filePath.assign(name.begin(), name.end());
 
 	ifstream file(filePath);
 	if (file.fail())

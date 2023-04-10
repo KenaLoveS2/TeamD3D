@@ -92,7 +92,7 @@ const _bool CKena::Get_State(STATERETURN eState) const
 {
 	/* Used by Camera */
 	if (eState == CKena::STATERETURN_END)
-		return !m_bDeath && !m_bHeavyAttack && !m_bMask && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
+		return !m_bDeath && !m_bGrabWarrior && !m_bHeavyAttack && !m_bMask && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
 
 	switch (eState)
 	{
@@ -516,8 +516,8 @@ void CKena::Tick(_float fTimeDelta)
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 	m_pKenaStatus->Set_Attack(50);
-	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
-	m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
+	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
+	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
 	_float	fTimeRate = Update_TimeRate();
 	
@@ -559,19 +559,6 @@ void CKena::Tick(_float fTimeDelta)
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 		m_pCamera->Camera_Shake(XMVectorSet(1.f, 1.f, 0.f, 0.f), XMConvertToRadians(10.f));*/
 
-	/* Delegator Arrow */
-	// CKena_Status::m_iCurArrowCount, m_iMaxArrowCount, m_fCurArrowCoolTime, m_fInitArrowCount
-	//CUI_ClientManager::UI_PRESENT eArrow = CUI_ClientManager::AMMO_ARROW;
-	//_float fCurArrowCount = (_float)m_pKenaStatus->Get_CurArrowCount();
-	//
-	//
-	//_float fMaxArrowCount = (_float)m_pKenaStatus->Get_MaxArrowCount();
-	//_float fCurArrowCoolTime = (_float)m_pKenaStatus->Get_CurArrowCoolTime();
-	//_float fInitArrowCoolTime = (_float)m_pKenaStatus->Get_InitArrowCoolTime();
-	//
-	//m_PlayerAmmoDelegator.broadcast(eArrow, fCurArrowCount, fMaxArrowCount, fCurArrowCoolTime, fInitArrowCoolTime);
-
-	/* ~Delegator */
 
 	CRot::Set_RotUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	CMonster::Set_MonsterUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
@@ -614,7 +601,6 @@ void CKena::Late_Tick(_float fTimeDelta)
 		if (nullptr != pMonster && false == pMonster->Get_Bind())
 		{
 			CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
-			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 			CKena_Status::ROTSTATE eRotState;
 			if (m_pKenaStatus->Get_CurPIPGuage() >= 1.0f)
 				eRotState = CKena_Status::RS_GOOD;
@@ -671,11 +657,10 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_Delegator.broadcast(ePip, fCurGuage);
 	}
 
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
-	//{
-	//	CKena* pPlayer = this;
-	//	m_PlayerPtrDelegator.broadcast(eCart, funcDefault, pPlayer);
-	//}
+	if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+	{
+		m_pKenaStatus->Add_RotCount();
+	}
 
 	//	//static _float fTag = 0.0f;
 	//	//if (fTag < 1.0f)
@@ -1144,6 +1129,9 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 
 void CKena::Push_EventFunctions()
 {
+	UnderAttack(true, 0.f);
+	Grab_CameraShake(true, 0.f);
+
 	TurnOnFootStep_Left(true, 0.f);
 	TurnOnFootStep_Right(true, 0.f);
 	TurnOnAttack(true, 0.f);
@@ -1755,7 +1743,9 @@ void CKena::Check_Damaged()
 // 				_float fGuage = m_pKenaStatus->Get_PercentHP();
 // 				m_Delegator.broadcast(eHP, fGuage);
 
-				/* NEED : UI SCREEN FX HIT */
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::TOP_MOOD_HIT;
+				_float fDefault = 1.f;
+				m_Delegator.broadcast(tag, fDefault);
 			}
 
 			m_bParry = false;
@@ -1827,7 +1817,8 @@ void CKena::Play_Animation(_float fTimeDelta, _float fTimeRate)
 				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
 				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD &&
 				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_FRONT &&
-				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_BACK)
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_BACK &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::WARRIOR_GRAB)
 				m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
 			else
 				m_pAnimation->Play_Animation(fTimeDelta);
@@ -2014,6 +2005,50 @@ CKena:: DAMAGED_FROM CKena::Calc_DirToMonster_2Way(CGameObject* pTarget)
 		eDir = CKena::DAMAGED_BACK;
 
 	return eDir;
+}
+
+void CKena::UnderAttack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::UnderAttack);
+		return;
+	}
+
+	if (m_pAttackObject == nullptr)
+		return;
+
+	m_bCommonHit = true;
+	m_bHitRim = true;
+	m_fHitRimIntensity = 1.f;
+
+	CMonster_Status*	pStatus = dynamic_cast<CMonster*>(m_pAttackObject)->Get_MonsterStatusPtr();
+	if (m_bDeath = m_pKenaStatus->UnderAttack(pStatus))
+		m_eDamagedDir = Calc_DirToMonster_2Way(m_pAttackObject);
+}
+
+void CKena::Grab_CameraShake(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::Grab_CameraShake);
+		return;
+	}
+
+	CTransform* pCamTransform = m_pCamera->Get_TransformCom();
+	_vector	vNegRight = pCamTransform->Get_State(CTransform::STATE_RIGHT) * -1.f;
+	_vector	vLook = XMVector3Normalize(pCamTransform->Get_State(CTransform::STATE_LOOK));
+
+	_vector	vDir = XMVector3TransformNormal(vNegRight, XMMatrixRotationAxis(vLook, XMConvertToRadians(-25.f)));
+
+	m_pCamera->Camera_Shake(vDir, XMConvertToRadians(80.f));
+	m_pCamera->Camera_Shake(0.008f, 30);
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.2f);
+	Add_HitStopTime(0.25f);
+	m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena::TurnOnAttack(_bool bIsInit, _float fTimeDelta)

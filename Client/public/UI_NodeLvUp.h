@@ -20,6 +20,7 @@ public:
 
 public:
 	void					Appear(_uint iLevel);
+	_float					Get_Alpha();
 
 private:
 	virtual HRESULT			SetUp_Components() override;

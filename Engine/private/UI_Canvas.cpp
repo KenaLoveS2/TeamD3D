@@ -163,8 +163,8 @@ HRESULT CUI_Canvas::Save_Data()
 	filePath += this->Get_ObjectCloneName();
 	filePath += L"_Property.json";
 
-	string fileName;
-	fileName = fileName.assign(filePath.begin(), filePath.end());
+	string fileName = CUtile::wstring_to_utf8(filePath);
+	//fileName = fileName.assign(filePath.begin(), filePath.end());
 
 	ofstream	file(fileName);
 	file << json;
@@ -185,8 +185,8 @@ HRESULT CUI_Canvas::Load_Data(wstring fileName)
 	wstring name = L"../Bin/Data/UI/";
 	name += fileName;
 	name += L"_Property.json";
-	string filePath;
-	filePath.assign(name.begin(), name.end());
+	string filePath = CUtile::wstring_to_utf8(name);
+	//filePath.assign(name.begin(), name.end());
 
 	ifstream file(filePath);
 	if (file.fail())

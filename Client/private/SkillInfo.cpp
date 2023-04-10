@@ -76,7 +76,8 @@ HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pConte
 	Json	jLoad;
 
 	string strFilePath;
-	strFilePath.assign(filePath.begin(), filePath.end());
+	//strFilePath.assign(filePath.begin(), filePath.end());
+	strFilePath = CUtile::wstring_to_utf8(filePath);
 
 	ifstream file(filePath);
 	if (file.fail())
@@ -100,13 +101,13 @@ HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pConte
 	m_pTextureProtoTag = CUtile::Create_String(protoTag.c_str());
 
 	/* Create Texture Component */
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), 
+	if (FAILED(CGameInstance::GetInstance()->Add_Prototype(CGameInstance::Get_StaticLevelIndex(),
 		m_pTextureProtoTag, CTexture::Create(pDevice, pContext, CUtile::Create_StringAuto(wstrImageFilePath.c_str()), 5))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	//RELEASE_INSTANCE(CGameInstance);
 
 	/* 2. Name, Description, Condition ,State */
 	//using convert_type = codecvt_utf8<wchar_t>;
@@ -134,6 +135,10 @@ HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pConte
 				jCondition["RotLevel"].get_to<_int>(m_tDesc[i].conditions[CONDITION_ROTLEVEL]);
 				jCondition["Karma"].get_to<_int>(m_tDesc[i].conditions[CONDITION_KARMA]);
 			}
+
+			string strVideo;
+			jLevel["Video"].get_to<string>(strVideo);
+			m_tDesc[i].wstrVideo = CUtile::utf8_to_wstring(strVideo);
 
 		}
 	}

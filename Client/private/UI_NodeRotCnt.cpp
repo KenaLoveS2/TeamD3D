@@ -19,6 +19,8 @@ CUI_NodeRotCnt::CUI_NodeRotCnt(const CUI_NodeRotCnt & rhs)
 
 void CUI_NodeRotCnt::Set_Info(_int iRotMax)
 {
+	m_bActive = true;
+
 	m_vecEvents[EVENT_FADE]->Call_Event(true);
 
 	m_iRotMax = iRotMax;
@@ -50,9 +52,9 @@ HRESULT CUI_NodeRotCnt::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	//m_bActive = true;
 
-	m_vecEvents.push_back(CUI_Event_Fade::Create(0.05f, 4.f));
+	m_vecEvents.push_back(CUI_Event_Fade::Create(0.05f, 2.f));
 	return S_OK;
 }
 
@@ -60,6 +62,9 @@ void CUI_NodeRotCnt::Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
+
+	if (static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Is_End())
+		m_bActive = false;
 
 	__super::Tick(fTimeDelta);
 }
@@ -91,19 +96,15 @@ HRESULT CUI_NodeRotCnt::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 410.f, g_iWinSizeY*0.5f - vPos.y - 20.f };
-
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 410.f, g_iWinSizeY*0.5f - vPos.y - 15.f };
 
 	if(m_szInfo != nullptr)
 	{
-		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szInfo,
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szInfo,
 				vNewPos /* position */,
-				0.f, _float2(1.f, 1.f)/* size */,
+				0.f, _float2(0.7f, 0.7f)/* size */,
 				XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Get_Alpha())/* color */);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -130,8 +131,6 @@ HRESULT CUI_NodeRotCnt::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
-
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
@@ -160,8 +159,6 @@ HRESULT CUI_NodeRotCnt::SetUp_ShaderResources()
 	_float4 vColor = { 1.f, 1.f, 1.f, 1.f };
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

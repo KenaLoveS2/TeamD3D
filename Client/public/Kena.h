@@ -95,7 +95,7 @@ public:
 	virtual void				ImGui_ShaderValueProperty() override;
 	virtual void				ImGui_PhysXValueProperty() override;
 	virtual void				Update_Child() override;
-	virtual HRESULT		Call_EventFunction(const string& strFuncName) override;
+	virtual HRESULT				Call_EventFunction(const string& strFuncName) override;
 	virtual void				Push_EventFunctions() override;
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
@@ -261,6 +261,10 @@ private:
 	DAMAGED_FROM				Calc_DirToMonster(CGameObject* pTarget);
 	DAMAGED_FROM				Calc_DirToMonster(const _float3& vCollisionPos);
 	DAMAGED_FROM				Calc_DirToMonster_2Way(CGameObject* pTarget);
+
+private:	/* State Event Func */
+	void	UnderAttack(_bool bIsInit, _float fTimeDelta);
+	void	Grab_CameraShake(_bool bIsInit, _float fTimeDelta);
 
 private:	/* Effect Event Func */
 	void	TurnOnAttack(_bool bIsInit, _float fTimeDelta);

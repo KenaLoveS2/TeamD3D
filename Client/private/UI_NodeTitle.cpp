@@ -140,12 +140,10 @@ HRESULT CUI_NodeTitle::Render()
 
 	if (m_szTitle != nullptr)
 	{
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szTitle,
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_Basic0"), m_szTitle,
 			vNewPos /* position */,
 			0.f, _float2(1.5f, 1.5f)/* size */,
 			XMVectorSet(1.f, 1.f, 1.f, m_fAlpha)/* color */);
-		RELEASE_INSTANCE(CGameInstance);
 	}
 
 
@@ -189,7 +187,6 @@ HRESULT CUI_NodeTitle::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -211,8 +208,6 @@ HRESULT CUI_NodeTitle::SetUp_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

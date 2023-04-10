@@ -1052,6 +1052,14 @@ HRESULT CModel::Set_BoneIndex(const _tchar* pFilePath)
 	return S_OK;
 }
 
+void CModel::Set_AnimationBlendDuration(_uint iAnimIndex, _float fBlendDuration)
+{
+	if (iAnimIndex >= m_iNumAnimations)
+		return;
+
+	m_Animations[iAnimIndex]->Set_BlendDuration(fBlendDuration);
+}
+
 void CModel::FixedAnimIdx_PlayTime(_uint iAnimIndex, _float fTime)
 {
 	m_Animations[iAnimIndex]->Fixed_Animation(fTime);
@@ -2339,6 +2347,19 @@ void CModel::Imgui_Mesh_InstancingSort_EditOrCreate()
 	 ImGui::Checkbox("Z_Ratio Use", &m_bXYZRatioUse[2]);
 }
 
+
+void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
+{
+	if (m_bIsInstancing == true)
+	{
+		for (auto& pInstMesh : m_InstancingMeshes)
+			pInstMesh->InstaincingMesh_yPosControl(yPos);
+	}
+}
+
+#endif
+
+
 void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 {
 	if (m_bIsInstancing == false)
@@ -2369,17 +2390,6 @@ void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 
 }
 
-
-void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
-{
-	if (m_bIsInstancing == true)
-	{
-		for (auto& pInstMesh : m_InstancingMeshes)
-			pInstMesh->InstaincingMesh_yPosControl(yPos);
-	}
-}
-
-#endif
 
 void CModel::Set_DurationRate(_uint iAnimIndex, _float fRate)
 {

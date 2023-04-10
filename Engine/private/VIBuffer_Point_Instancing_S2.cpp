@@ -159,6 +159,8 @@ HRESULT CVIBuffer_Point_Instancing_S2::Initialize(void* pArg, CGameObject* pOwne
 	Safe_Delete_Array(pInstanceVertices);
 #pragma endregion
 
+	m_vecInstances.reserve(m_iNumInstance);
+
 	return S_OK;
 }
 
@@ -174,6 +176,8 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick(_float TimeDelta)
 		return Tick_Parabola(TimeDelta);
 	case POINTINFO::TYPE_SPREAD:
 		return Tick_Spread(TimeDelta);
+	case POINTINFO::TYPE_TRAIL:
+		return Tick_Trail(TimeDelta);
 	default:
 		MSG_BOX("Invalid Type : Instancing S2");
 		break;
@@ -396,6 +400,51 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Spread(_float TimeDelta)
 	return S_OK;
 }
 
+HRESULT CVIBuffer_Point_Instancing_S2::Tick_Trail(_float TimeDelta)
+{
+	if (m_pOwner == nullptr)
+	{
+		MSG_BOX("Owner Needed");
+		return S_OK;
+	}
+
+	//if (m_vecInstances.empty())
+	//	return S_OK;
+
+	for (auto& mat : m_vecInstances)
+		mat.vPosition.w -= m_tInfo.fPlaySpeed * TimeDelta;
+
+	m_vecInstances.erase(remove_if(m_vecInstances.begin(), m_vecInstances.end(), [](const VTXMATRIX& Info) {
+		return Info.vPosition.w <= 0.0f;
+		}), m_vecInstances.end());
+
+	if (m_vecInstances.size() < m_tInfo.iNumInstance)
+	{
+		m_tInfo.fTermAcc += TimeDelta;
+		if (m_tInfo.fTermAcc > m_tInfo.fTerm)
+		{
+			VTXMATRIX matrix;
+			memcpy(&matrix, &m_pOwner->Get_TransformCom()->Get_WorldMatrixFloat4x4(), sizeof(_float4x4));
+			m_vecInstances.push_back(matrix);
+			m_tInfo.fTermAcc = 0.0f;
+		}
+	}
+
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	CONTEXT_LOCK
+		HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	if (SUCCEEDED(hr))
+	{
+		memcpy(SubResource.pData, m_vecInstances.data(), sizeof(VTXMATRIX) * m_vecInstances.size());
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	}
+
+	m_iNumInstance = (_uint)m_vecInstances.size();
+	return S_OK;
+}
+
 void CVIBuffer_Point_Instancing_S2::Safe_Delete_Arrays()
 {
 	Safe_Delete_Array(m_pXSpeeds);
@@ -412,6 +461,8 @@ void CVIBuffer_Point_Instancing_S2::Reset()
 	Safe_Release(m_pInstanceBuffer);
 
 	Safe_Delete_Arrays();
+
+	m_vecInstances.clear();
 
 	m_bFinished = false;
 }
