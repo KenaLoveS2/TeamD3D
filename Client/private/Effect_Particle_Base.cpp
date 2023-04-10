@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Effect_Particle_Base.h"
 #include "GameInstance.h"
-
+#include "Camera_Manager.h"
 
 CEffect_Particle_Base::CEffect_Particle_Base(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEffect_Base_S2(pDevice, pContext)
@@ -9,6 +9,8 @@ CEffect_Particle_Base::CEffect_Particle_Base(ID3D11Device* pDevice, ID3D11Device
 	, m_pShaderCom(nullptr)
 	, m_pTextureCom(nullptr)
 	, m_pVIBufferCom(nullptr)
+	, m_fTime(0.0f)
+	, m_fTimeAcc(0.0f)
 {
 }
 
@@ -18,6 +20,8 @@ CEffect_Particle_Base::CEffect_Particle_Base(const CEffect_Particle_Base& rhs)
 	, m_pShaderCom(nullptr)
 	, m_pTextureCom(nullptr)
 	, m_pVIBufferCom(nullptr)
+	, m_fTime(0.0f)
+	, m_fTimeAcc(0.0f)
 {
 }
 
@@ -42,6 +46,8 @@ HRESULT CEffect_Particle_Base::Initialize(void* pArg)
 	}
 	else
 		SetUp_Buffer();
+
+	m_pVIBufferCom->Set_Owner(this);
 
 	if (FAILED(SetUp_Components()))
 	{
@@ -114,7 +120,7 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 	m_pTransformCom->Imgui_RenderProperty_ForJH();
 
 	/* Diffuse Texture Select */
-	if (ImGui::CollapsingHeader(" > DiffuseTexture"))
+	if (ImGui::CollapsingHeader("DiffuseTexture"))
 	{
 		if (m_pTextureCom == nullptr)
 			return;
@@ -138,8 +144,8 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		/* RenderPass */
 		static _int iRenderPass;
 		iRenderPass = m_iRenderPass;
-		const char* renderPass[4] = { "DefaultHaze", "BlackHaze", "BlackGather", "RePaint" };
-		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 4, 5))
+		const char* renderPass[5] = { "DefaultHaze", "BlackHaze", "BlackGather", "Spread", "Trail"};
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 5, 5))
 			m_iRenderPass = iRenderPass;
 
 		/* Color */
@@ -158,7 +164,7 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		Options();
 
 	/* Buffer Update */
-	if (ImGui::CollapsingHeader(" > Update Buffer"))
+	if (ImGui::CollapsingHeader("Update Buffer"))
 	{
 		if (m_pVIBufferCom == nullptr)
 			return;
@@ -170,8 +176,8 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 		/* Type */
 		static _int iType = tInfo.eType;
-		const char* list[4] = { "Haze", "Gather", "Parabola", "Spread" };
-		ImGui::ListBox("Type", &iType, list, 4, 5);
+		const char* list[5] = { "Haze", "Gather", "Parabola", "Spread", "Trail"};
+		ImGui::ListBox("Type", &iType, list, 5, 5);
 		tInfo.eType = (pointType)iType;
 
 		/* NumInstance */
@@ -245,6 +251,10 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		}
 	}
 
+	/* For. Hint (Trial) */
+	RecordPath();
+
+
 	/* Position */
 	ImGui::Separator();
 	{
@@ -253,16 +263,15 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		if (ImGui::DragFloat3("vWorldPosition", (_float*)&vPosition, 0.10f, -1000.0f, 1000.0f, "%.3f"))
 			m_pTransformCom->Set_Position(vPosition);
 	}
+
 	
 	/* SelfStop */
 	ImGui::Separator();
 	ImGui::Checkbox("IsSelfStop", &m_bSelfStop);
 
 	if (m_bSelfStop)
-	{
 		ImGui::DragFloat("SelfStopDuration", &m_fSelfStopTime, 0.0f, 30.0f);
-	}
-
+	
 	ImGui::Separator();
 	Save_Data();
 
@@ -642,7 +651,74 @@ HRESULT CEffect_Particle_Base::SetUp_Buffer()
 		, (CComponent**)&m_pVIBufferCom, &tInfo)))
 		return E_FAIL;
 
+
 	return S_OK;
+}
+
+void CEffect_Particle_Base::RecordPath()
+{
+	if(ImGui::CollapsingHeader("RecordPath"))
+	{
+		/* Rect Trail */
+
+		if (ImGui::DragFloat("Time Interval", &m_fTime, 0.01f, 0.0f, 5.0f))
+			m_fTimeAcc = 0.0f;
+		ImGui::InputFloat("TimeAcc", &m_fTimeAcc, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+		static bool bStart = false;
+		static bool bPlay = false;
+		static _uint vPosIndex = 0;
+
+		/* UIs */
+		if (ImGui::Button("Record"))
+		{
+			bStart = true;
+			m_vecPos.clear();
+			m_fTimeAcc = 0.0f;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Stop"))
+			bStart = false;
+		ImGui::SameLine();
+		if (bStart)
+			ImGui::Text("Recording...");
+		if (ImGui::Button("Play"))
+		{
+			bPlay = true;
+			m_fTimeAcc = 0.0f;
+			vPosIndex = 0;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Pause"))
+			bPlay = false;
+		if (bStart)
+			ImGui::Text("Playing...");
+
+
+		/* Functions */
+		if (bStart)
+		{
+			m_fTimeAcc += 0.001f;
+			if (m_fTimeAcc > m_fTime)
+			{
+				m_vecPos.push_back(CCamera_Manager::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_Position());
+				m_fTimeAcc = 0.0f;
+			}
+		}
+
+		if (bPlay)
+		{
+			m_fTimeAcc += 0.001f;
+			if (m_fTimeAcc > m_fTime && vPosIndex < m_vecPos.size())
+			{
+				m_pTransformCom->Set_Position(m_vecPos[vPosIndex]);
+				m_fTimeAcc = 0.0f;
+				vPosIndex++;
+			}
+		}
+
+
+	}
 }
 
 CEffect_Particle_Base* CEffect_Particle_Base::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

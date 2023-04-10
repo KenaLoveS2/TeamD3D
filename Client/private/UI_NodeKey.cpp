@@ -15,6 +15,14 @@ CUI_NodeKey::CUI_NodeKey(const CUI_NodeKey& rhs)
 {
 }
 
+void CUI_NodeKey::Set_Key(wstring wstr, KEYTYPE eType)
+{
+	Safe_Delete_Array(m_szKeyDesc);
+	m_szKeyDesc = CUtile::Create_String(wstr.c_str());
+
+	m_iTextureIdx = eType;
+}
+
 HRESULT CUI_NodeKey::Initialize_Prototype()
 {
 	return CUI_Node::Initialize_Prototype();
@@ -45,12 +53,10 @@ HRESULT CUI_NodeKey::Initialize(void* pArg)
 HRESULT CUI_NodeKey::Late_Initialize(void* pArg)
 {
 	return S_OK;
-
 }
 
 void CUI_NodeKey::Tick(_float fTimeDelta)
 {
-
 	if (!m_bActive)
 		return;
 
@@ -112,8 +118,6 @@ HRESULT CUI_NodeKey::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -125,16 +129,9 @@ HRESULT CUI_NodeKey::SetUp_ShaderResources()
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
-		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIdx)))
 			return E_FAIL;
 	}
-
-	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
-	{
-		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
-			return E_FAIL;
-	}
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

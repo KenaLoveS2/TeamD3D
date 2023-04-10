@@ -56,12 +56,10 @@ void CImgui_UIEditor::Imgui_FreeRender()
 	{
 		static int selected_canvasType = 0;
 
-		CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
+		CGameInstance*	pGameInstance = CGameInstance::GetInstance();
 		vector<wstring>*	pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
 		vector<wstring>*	pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
 		vector<string>*		pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
-
-		RELEASE_INSTANCE(CGameInstance);
 
 		_uint iNumItems = (_uint)pCanvasProtoTags->size();
 		if (ListBox(" : Type", &selected_canvasType, Editor_Getter, pCanvasNames, iNumItems, iNumItems))
@@ -107,9 +105,7 @@ Exit:
 HRESULT CImgui_UIEditor::Ready_CloneCanvasList()
 {
 	/* Initialize */
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	size_t types = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG)->size();
-	RELEASE_INSTANCE(CGameInstance);
+	size_t types = CGameInstance::GetInstance()->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG)->size();
 
 	m_vecCanvas.resize(types);
 	for (_uint i = 0; i < types; ++i)
@@ -123,10 +119,7 @@ HRESULT CImgui_UIEditor::Ready_CloneCanvasList()
 
 void CImgui_UIEditor::EventList()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	vector<string>* pList = pGameInstance->Get_UIString(CUI_Manager::STRKEY_EVENT);
-	RELEASE_INSTANCE(CGameInstance);
-
+	vector<string>* pList = CGameInstance::GetInstance()->Get_UIString(CUI_Manager::STRKEY_EVENT);
 
 	_uint iSize = (_uint)pList->size();
 	static int selected_Event;

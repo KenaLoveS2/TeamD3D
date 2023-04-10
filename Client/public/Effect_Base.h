@@ -130,6 +130,11 @@ public:
 	void						 Set_Matrix();
 	void						 Set_InitMatrix(_fmatrix WorldMatrix) { XMStoreFloat4x4(&m_InitWorldMatrix, WorldMatrix); }
 
+	void						 Set_Effect(_float4 vPos, _bool bActive) {
+		Set_Position(vPos); 
+		m_eEFfectDesc.bActive = bActive;
+	}
+
 	virtual void    Set_Active(_bool bActive) { m_eEFfectDesc.bActive = bActive; }
 	//void    Set_AddScale(_float fScale) { m_eEFfectDesc.vScale *= fScale; }
 	void    Set_AddScale(_float fScale) {
@@ -156,7 +161,7 @@ public:
 	public:
 	void	TurnOffSystem(_float fDurationTime, _float fTimeDelta);
 	_bool	TurnOnDissolveSystem(_float& fTurnoffTime, _bool& bDissolve, _float fTimeDelta);
-	_bool	TurnOffSystem(_float& fTurnoffTime, _float fDurationTime, _float fTimeDelta);
+	_bool	TurnOffSystem(_float& fTurnoffTime, _float fDurationTime, _float fTimeDelta, _bool bResetPos = true);
 	void	Tick_Sprite(_float& fDurationTime, _float fTimeDelta);
 
 public: // Texture Cnt

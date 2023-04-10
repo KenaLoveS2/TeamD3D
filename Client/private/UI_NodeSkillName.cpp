@@ -26,8 +26,8 @@ void CUI_NodeSkillName::Set_String(wstring str)
 
 	size_t length = str.length();
 
-	m_fFontPos = 20.f* (length - 4);
-	m_fTextureScale = 40.f * (length - 4);
+	m_fFontPos = 20.f * (length - 1) * 0.5f;
+	m_fTextureScale = 10.f * (length - 1);
 
 	m_matLocal._11 = m_matLocalOriginal._11 + m_fTextureScale;
 
@@ -95,7 +95,7 @@ HRESULT CUI_NodeSkillName::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 45.f - m_fFontPos, g_iWinSizeY*0.5f - vPos.y -20.f };
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 20.f - m_fFontPos, g_iWinSizeY*0.5f - vPos.y -20.f };
 
 	if (nullptr != m_szName)
 	{

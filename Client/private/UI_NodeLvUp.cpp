@@ -39,11 +39,11 @@ HRESULT CUI_NodeLvUp::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	// m_bActive = true;
 	m_szTitle = CUtile::Create_StringAuto(L"Level");
 
 	/* event */
-	m_vecEvents.push_back(CUI_Event_Fade::Create(0.01f, 6.f));
+	m_vecEvents.push_back(CUI_Event_Fade::Create(0.01f, 4.f));
 
 	return S_OK;
 }
@@ -74,6 +74,9 @@ void CUI_NodeLvUp::Tick(_float fTimeDelta)
 		//	m_matLocal._42 = 280.f;
 	}
 
+	if (static_cast<CUI_Event_Fade*>(m_vecEvents[0])->Is_End())
+		m_bActive = false;
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -97,28 +100,24 @@ HRESULT CUI_NodeLvUp::Render()
 
 		if (m_szTitle != nullptr)
 		{
-			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-			pGameInstance->Render_Font(TEXT("Font_Comic"), m_szTitle,
+			CGameInstance::GetInstance()->Render_Font(TEXT("Font_Comic"), m_szTitle,
 				vNewPos /* position */,
 				0.f, _float2(0.7f, 0.7f)/* size */,
 				XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[0])->Get_Alpha())/* color */);
-			RELEASE_INSTANCE(CGameInstance);
 		}
 	}
 
 	{
 		_float4 vPos;
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-		_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f -25.f, g_iWinSizeY*0.5f - vPos.y + 20.f };
+		_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f -25.f, g_iWinSizeY*0.5f - vPos.y + 30.f };
 
 		if (m_szLevel != nullptr)
 		{
-			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-			pGameInstance->Render_Font(TEXT("Font_Comic"), m_szLevel,
+			CGameInstance::GetInstance()->Render_Font(TEXT("Font_Comic"), m_szLevel,
 				vNewPos /* position */,
 				0.f, _float2(1.3f, 1.3f)/* size */,
 				XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[0])->Get_Alpha())/* color */);
-			RELEASE_INSTANCE(CGameInstance);
 		}
 	}
 
@@ -127,6 +126,8 @@ HRESULT CUI_NodeLvUp::Render()
 
 void CUI_NodeLvUp::Appear(_uint iLevel)
 {
+	m_bActive = true;
+
 	m_vecEvents[0]->Call_Event(true);
 
 	//m_matLocal._42 = 320.f;
@@ -138,6 +139,11 @@ void CUI_NodeLvUp::Appear(_uint iLevel)
 	m_szLevel = CUtile::Create_String(to_wstring(iLevel).c_str());
 
 
+}
+
+_float CUI_NodeLvUp::Get_Alpha()
+{
+	return static_cast<CUI_Event_Fade*>(m_vecEvents[0])->Get_Alpha();
 }
 
 HRESULT CUI_NodeLvUp::SetUp_Components()
@@ -163,8 +169,6 @@ HRESULT CUI_NodeLvUp::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -185,9 +189,6 @@ HRESULT CUI_NodeLvUp::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

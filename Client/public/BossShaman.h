@@ -4,6 +4,7 @@
 #include "UI_ClientManager.h"
 
 #define MINION_COUNT				3
+#define ICEDAGGER_COUNT				5
 #define TEXT_COL_SHAMAN_BODY		TEXT("BossShaman_Body_Collider")
 #define TEXT_COL_SHAMAN_WEAPON		TEXT("BossShaman_Weapon_Collider")
 
@@ -84,7 +85,8 @@ private:
 	const _float m_fTeleportRange = 2.f;
 	
 	_float m_fTrapOffstY = 1.f;
-	
+	_int   m_iIceDaggerIdx = 0;
+
 	_float m_fTeleportRangeTable[ATTACKTYPE_END] = { 1.5f, 3.f, 4.f, 5.f, 3.f, };
 		
 	_bool m_bSummonEnd = false;
@@ -98,7 +100,6 @@ private:
 	_float4 m_vTrapLookPos;
 
 	_float m_fStunTime = 0.f;
-
 	ATTACKTYPE m_eAttackType = AT_MELEE_ATTACK;
 
 	class CSticks01* m_pMinions[MINION_COUNT] = { nullptr };
@@ -152,8 +153,12 @@ public:
 	void	Update_DashAttackTrail();
 	void	Update_IceDagger();
 	void	Update_LazerPos();
+	void	Update_IceDaggerIdx() {
+		m_iIceDaggerIdx++;
+		m_iIceDaggerIdx %= ICEDAGGER_COUNT;
+	}
 
-private:
+ private:
 	void Set_AttackType();
 	void Reset_Attack();
 	void Tick_Attack(_float fTimeDelta);
@@ -212,9 +217,10 @@ private:	/* Animation Event Func */
 
 private:
 	map<const string, class CEffect_Base*>	m_mapEffect;
+	_bool	m_bTrap = false;
 	_bool	m_bTrail = false;
-	_bool	m_bDashAttackTrail = false;
 	_bool	m_bIceDagger = false;
+	_bool	m_bDashAttackTrail = false;
 
 public:
 	static CBossShaman* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -21,9 +21,6 @@ public:
 		_float3 vPos;
 		_float fLinearDamping;
 		_float fMass;
-
-
-
 	}Dynamic_StoneCube_DESC;
 
 
@@ -48,6 +45,8 @@ public:
 
 public:
 	void				Actor_Clear();
+
+	void				Imgui_Move(_float3 vParentPos);
 
 private:
 	class CShader* m_pShaderCom = nullptr;

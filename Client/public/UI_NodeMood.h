@@ -7,7 +7,7 @@ class CUI_NodeMood final : public CUI_Node
 {
 public:
 	enum EVENT { EVENT_FADE, EVENT_END };
-	enum STATE { STATE_HIT, STATE_PARRY, STATE_HEAL, STATE_END };
+	enum STATE { STATE_HIT, STATE_PARRY, STATE_HEAL, STATE_FADE, STATE_DAZZLE, STATE_END };
 
 private:
 	CUI_NodeMood(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
