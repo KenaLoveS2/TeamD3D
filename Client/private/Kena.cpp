@@ -2893,7 +2893,7 @@ void CKena::Buy_RotHat(_uint iHatIndex)
 
 _bool CKena::IsBuyPossible_RotHat()
 {
-	if (m_pFirstRot == nullptr) false;
+	if (m_pFirstRot == nullptr) return false;
 
 	return m_pFirstRot->IsBuyPossible();
 }

@@ -382,8 +382,15 @@ void CUI_CanvasHatCart::Shopping()
 		m_iHatCount[m_iPickedIndex- UI_ITEMBAR0] += 1;
 		static_cast<CUI_CanvasItemBar*>(m_vecNode[m_iPickedIndex])->Buy(m_iHatCount[m_iPickedIndex - UI_ITEMBAR0]);
 
-		m_pPlayer->Buy_RotHat(m_iPickedIndex - UI_ITEMBAR0);		
+		// m_pPlayer->Buy_RotHat(m_iPickedIndex - UI_ITEMBAR0);
+		CGameInstance::GetInstance()->Play_Sound(TEXT("UI_HatCart_Buy.ogg"), 0.7f);
 	}
+	else
+	{
+		CGameInstance::GetInstance()->Play_Sound(TEXT("UI_HatCart_Click.ogg"), 0.5f);
+	}
+
+	m_pPlayer->Buy_RotHat(m_iPickedIndex - UI_ITEMBAR0);
 }
 CUI_CanvasHatCart * CUI_CanvasHatCart::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {

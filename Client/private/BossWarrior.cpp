@@ -9,6 +9,7 @@
 #include "ControlRoom.h"
 #include "E_Warrior_FireSwipe.h"
 #include "SpiritArrow.h"
+#include "BossRock_Pool.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -73,6 +74,14 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	XMStoreFloat4x4(&m_GrabHandPivotMatrix, XMMatrixTranslation(m_vGrabHandPivotTrans.x, m_vGrabHandPivotTrans.y, m_vGrabHandPivotTrans.z));
 
 	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
+
+	CBossRock_Pool::DESC BossRockPoolDesc;
+	BossRockPoolDesc.iRockCount = 30;
+	BossRockPoolDesc.vCenterPos = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
+	m_pBossRockPool = (CBossRock_Pool*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossRockPool"), TEXT("Warrior_BossRockPool"), &BossRockPoolDesc);
+	assert(m_pBossRockPool && "CBossWarrior::Initialize()");
+	m_pBossRockPool->Late_Initialize(nullptr);
+
 	return S_OK;
 }
 
@@ -196,6 +205,8 @@ void CBossWarrior::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	AdditiveAnim(fTimeDelta);
+
+	m_pBossRockPool->Tick(fTimeDelta);
 }
 
 void CBossWarrior::Late_Tick(_float fTimeDelta)
@@ -213,6 +224,8 @@ void CBossWarrior::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
+		
+	m_pBossRockPool->Late_Tick(fTimeDelta);
 }
 
 HRESULT CBossWarrior::Render()
@@ -1324,6 +1337,8 @@ void CBossWarrior::TurnOnShockFrontExtended(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["W_ShockFront"]->Set_Position(vPosition);
 	m_mapEffect["W_ShockFront"]->Set_Active(true);
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL11], 0.5f);
+
+	m_pBossRockPool->Execute_UpRocks();
 }
 
 void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
@@ -1392,6 +1407,8 @@ void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
 
 	Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_WEAPON, m_pTransformCom->Get_Position(), false);
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL11], 0.5f);
+
+	m_pBossRockPool->Execute_UpRocks();
 }
 
 void CBossWarrior::TurnOnRoot(_bool bIsInit, _float fTimeDelta)
@@ -1479,6 +1496,8 @@ void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["W_DistortionPlane"]->Set_Active(true);
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL2], 0.5f);
 	// 기둥이랑 먼지가 전역적으로 나와야 함 
+
+	m_pBossRockPool->Execute_UpRocks();
 }
 
 void CBossWarrior::TurnOnCamShake(_bool bIsInit, _float fTimeDelta)

@@ -43,6 +43,7 @@ HRESULT CLiftRot_Master::Late_Initialize(void * pArg)
 		m_pLiftRotArr[i] = (CLiftRot*)m_pGameInstacne->Clone_GameObject(TEXT("Prototype_GameObject_LiftRot"), CUtile::Create_StringAuto(szCloneRotTag), &Desc);
 		assert(m_pLiftRotArr[i] != nullptr && "CLiftRot_Master::Late_Initialize");		
 		m_pLiftRotArr[i]->Set_OwnerLiftRotMasterPtr(this);
+		m_pLiftRotArr[i]->Late_Initialize(nullptr);
 	}
 
 	return S_OK;

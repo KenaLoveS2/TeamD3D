@@ -1,25 +1,20 @@
 #include "stdafx.h"
 #include "..\public\LiftRot.h"
 #include "GameInstance.h"
-#include "FSMComponent.h"
 #include "Kena.h"
 #include "Rope_RotRock.h"
 #include "E_TeleportRot.h"
 #include "LiftRot_Master.h"
+#include "Rot.h"
 
 CLiftRot::CLiftRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
-	:CGameObject(pDevice, p_context)
+	: CRot_Base(pDevice, p_context)
 {
 }
 
 CLiftRot::CLiftRot(const CLiftRot& rhs)
-	:CGameObject(rhs)
+	: CRot_Base(rhs)
 {
-}
-
-const _double& CLiftRot::Get_AnimationPlayTime()
-{
-	return m_pModelCom->Get_PlayTime();
 }
 
 HRESULT CLiftRot::Initialize_Prototype()
@@ -35,50 +30,17 @@ HRESULT CLiftRot::Initialize(void* pArg)
 		m_Desc.eType = LIFT;
 		m_Desc.vInitPos = _float4(-50.f, 0.f, -50.f, 1.f);
 	}
-
-	CGameObject::GAMEOBJECTDESC		GaemObjectDesc;
-	ZeroMemory(&GaemObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GaemObjectDesc.TransformDesc.fSpeedPerSec = 1.0f;
-	GaemObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
-
-	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_LiftFSM(), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_CuteFSM(), E_FAIL);
-	Set_Type(m_Desc.eType);
-
-	m_pModelCom->Set_AnimIndex(CRot::IDLE);
-	m_pModelCom->Set_AllAnimCommonType();
-
-	Push_EventFunctions();
 	
+	FAILED_CHECK_RETURN(__super::Initialize(nullptr), E_FAIL);
+	Set_Type(m_Desc.eType);
+			
 	return S_OK;
 }
 
 HRESULT CLiftRot::Late_Initialize(void * pArg)
 {	
-	// Capsule X == radius , Y == halfHeight
-	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
-	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
-	PxCapsuleDesc.pActortag = m_szCloneObjectTag;
-	PxCapsuleDesc.isGravity = true;
-	PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
-	PxCapsuleDesc.fRadius = 0.1f;
-	PxCapsuleDesc.fHalfHeight = 0.04f;
-	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxCapsuleDesc.fDensity = 1.f;
-	PxCapsuleDesc.fAngularDamping = 0.5f;
-	PxCapsuleDesc.fMass = 10.f;
-	PxCapsuleDesc.fLinearDamping = 10.f;
-	PxCapsuleDesc.fDynamicFriction = 0.5f;
-	PxCapsuleDesc.fStaticFriction = 0.5f;
-	PxCapsuleDesc.fRestitution = 0.1f;
-	PxCapsuleDesc.eFilterType = FILTER_DEFULAT;
-
-	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_DEFAULT));
-
-	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));
+	FAILED_CHECK_RETURN(__super::Late_Initialize(nullptr), E_FAIL);
+	
 	m_pTransformCom->Set_Position(m_Desc.vInitPos);
 		
 	return S_OK;
@@ -109,55 +71,6 @@ void CLiftRot::Late_Tick(_float fTimeDelta)
 	}
 
 	m_pTeleportRot->Late_Tick(fTimeDelta);
-}
-
-HRESULT CLiftRot::Render()
-{
-	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
-
-	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
-
-	_uint	 iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
-	{
-		if (i == 0)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 27), E_FAIL);
-		}
-		else if (i == 1)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 32), E_FAIL);
-		}
-		else if (i == 2)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_AlphaTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 31), E_FAIL);
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT CLiftRot::RenderShadow()
-{
-	if (FAILED(__super::RenderShadow()))
-		return E_FAIL;
-
-	if (FAILED(SetUp_ShadowShaderResources()))
-		return E_FAIL;
-
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
-
-	return S_OK;
 }
 
 void CLiftRot::Imgui_RenderProperty()
@@ -212,54 +125,10 @@ HRESULT CLiftRot::Call_EventFunction(const string& strFuncName)
 	return CGameObject::Call_EventFunction(strFuncName);
 }
 
-HRESULT CLiftRot::SetUp_Components()
-{
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Rot", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
-	m_pModelCom->Set_RootBone("Rot_RIG");
-
-	//  0 : Body
-	//	1 : Eye
-	//	2 : Hair
-	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Rot/rh_body_AO_R_M.png")), E_FAIL);
-	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Rot/rot_fur_ALPHA.png")), E_FAIL);
-
-	m_pTeleportRot = dynamic_cast<CE_TeleportRot*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_TeleportRot", CUtile::Create_DummyString()));
-	NULL_CHECK_RETURN(m_pTeleportRot, E_FAIL);
-
-	return S_OK;
-}
-
-HRESULT CLiftRot::SetUp_ShaderResources()
-{
-	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-
-	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-
-	return S_OK;
-}
-
-HRESULT CLiftRot::SetUp_ShadowShaderResources()
-{
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-
-	RELEASE_INSTANCE(CGameInstance);
-
-	return S_OK;
+HRESULT CLiftRot::SetUp_State()
+{	
+	FAILED_CHECK_RETURN(SetUp_LiftFSM(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_CuteFSM(), E_FAIL);
 }
 
 CLiftRot* CLiftRot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -292,13 +161,8 @@ void CLiftRot::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pCuteFSM);
-	Safe_Release(m_pWorkFSM);
+	Safe_Release(m_pCuteFSM);	
 	Safe_Release(m_pLiftFSM);
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
-	Safe_Release(m_pTeleportRot);	
 }
 
 HRESULT CLiftRot::SetUp_LiftFSM()
@@ -326,8 +190,8 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 		m_bLiftDownEnd = false;
 		m_pTeleportRot->Set_Position(m_pTransformCom->Get_Position());
 		m_pTeleportRot->Set_Active(true);
-		m_pModelCom->ResetAnimIdx_PlayTime(CRot::TELEPORT6);
-		m_pModelCom->Set_AnimIndex(CRot::TELEPORT6);
+		m_pModelCom->ResetAnimIdx_PlayTime(TELEPORT6);
+		m_pModelCom->Set_AnimIndex(TELEPORT6);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -341,7 +205,7 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 		.AddState("LIFT_POS_MOVE")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(CRot::WALK);
+		m_pModelCom->Set_AnimIndex(WALK);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -352,7 +216,7 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 	{		
 		m_bLiftReady = m_pTransformCom->IsClosed_XZ(m_vLiftPos, 0.2f);
 		if(m_bLiftReady)
-			m_pModelCom->Set_AnimIndex(CRot::CARRYLOOP);
+			m_pModelCom->Set_AnimIndex(CARRYLOOP);
 
 		return m_bLiftStart;
 	})		
@@ -360,7 +224,7 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 		.AddState("LIFT")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(CRot::LIFT);
+		m_pModelCom->Set_AnimIndex(LIFT);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -369,14 +233,14 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 		.AddTransition("LIFT to LIFT_MOVE", "LIFT_MOVE")
 		.Predicator([this]()
 	{	
-		m_bLiftEnd = (m_iAnimationIndex == CRot::LIFT) && m_pModelCom->Get_AnimationFinish();
+		m_bLiftEnd = (m_iAnimationIndex == (_int)LIFT) && m_pModelCom->Get_AnimationFinish();
 		return m_bLiftMoveStart;
 	})		
 
 		.AddState("LIFT_MOVE")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(CRot::CARRYFORWARD);
+		m_pModelCom->Set_AnimIndex(CARRYFORWARD);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -455,10 +319,8 @@ HRESULT CLiftRot::SetUp_CuteFSM()
 		.OnStart([this]()
 	{
 		m_pTransformCom->LookAt_NoUpDown(CRot::Get_RotUseKenaPos());
-		m_pTeleportRot->Set_Position(m_pTransformCom->Get_Position());
-		m_pTeleportRot->Set_Active(true);
-		m_bCuteEnd = false;
-		m_pModelCom->Set_AnimIndex(CRot::TELEPORT7);
+		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), TELEPORT7);
+		m_bCuteEnd = false;		
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -468,8 +330,12 @@ HRESULT CLiftRot::SetUp_CuteFSM()
 			m_pTeleportRot->Set_Active(true);
 			m_pTeleportRot->Set_Position(m_pTransformCom->Get_Position());
 		}
-			
-		m_pModelCom->Set_AnimIndex(CRot::TELEPORT2);
+		
+		if (m_pModelCom->Get_AnimationFinish())
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(TELEPORT2);
+			m_pModelCom->Set_AnimIndex(TELEPORT2);
+		}			
 	})
 		.AddTransition("CUTE to GO_SLEEP", "GO_SLEEP")
 		.Predicator([this]()
@@ -480,19 +346,13 @@ HRESULT CLiftRot::SetUp_CuteFSM()
 		.AddState("GO_SLEEP")
 		.OnStart([this]()
 	{	
-		m_pModelCom->Set_AnimIndex(CRot::IDLE); // 사라지는 애님		
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-		
-	})
-		.OnExit([this]()
-	{
-		m_pTeleportRot->Set_Position(m_pTransformCom->Get_Position());
-		m_pTeleportRot->Set_Active(true);
-		m_bCuteStart = false;
-		m_bCuteEnd = false;
+		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), TELEPORT7);
 		m_pTransformCom->Set_Position(m_Desc.vInitPos);
+	})		
+		.OnExit([this]()
+	{			
+		m_bCuteStart = false;
+		m_bCuteEnd = false;		
 	})
 		.AddTransition("GO_SLEEP to SLEEP", "SLEEP")
 		.Predicator([this]()
@@ -503,16 +363,6 @@ HRESULT CLiftRot::SetUp_CuteFSM()
 		.Build();
 
 	return S_OK;
-}
-
-_int CLiftRot::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
-{
-	if (pTarget)
-	{
-		
-	}
-	
-	return 0;
 }
 
 void CLiftRot::Execute_WakeUp(_float4& vCreatePos, _float4& vLiftPos)

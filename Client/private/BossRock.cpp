@@ -23,24 +23,25 @@ HRESULT CBossRock::Initialize_Prototype()
 
 HRESULT CBossRock::Initialize(void* pArg)
 {
-	CGameObject::GAMEOBJECTDESC GameObjDesc;
-	ZeroMemory(&GameObjDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GameObjDesc.TransformDesc.fSpeedPerSec = 1.f;
-	GameObjDesc.TransformDesc.fRotationPerSec = 1.f;
-
-	FAILED_CHECK_RETURN(__super::Initialize(&GameObjDesc), E_FAIL);
-
 	ZeroMemory(&m_Desc, sizeof(DESC));
-
 	if (pArg) memcpy(&m_Desc, pArg, sizeof(DESC));
 	else {
 		m_Desc.eType = (ROCK_TPYE)(rand() % ROCK_TPYE_END);
 		m_Desc.vPosition = { 0.f, 0.f, 0.f, 1.f };
+		m_Desc.fUpTime = 1.f;
+		m_Desc.fSpeedY = 1.f;
 	}
-	
+
+	CGameObject::GAMEOBJECTDESC GameObjDesc;
+	ZeroMemory(&GameObjDesc, sizeof(CGameObject::GAMEOBJECTDESC));
+	GameObjDesc.TransformDesc.fSpeedPerSec = m_Desc.fSpeedY;
+	GameObjDesc.TransformDesc.fRotationPerSec = 1.f;
+
+	FAILED_CHECK_RETURN(__super::Initialize(&GameObjDesc), E_FAIL);
+
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
-	iNumMeshes = m_pModelCom->Get_NumMeshes();
+	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	return S_OK;
 }
@@ -53,8 +54,8 @@ HRESULT CBossRock::Late_Initialize(void * pArg)
 	PxBoxDesc.vPos = { 0.f, 0.f, 0.f };
 	PxBoxDesc.vSize = { 0.18f, 0.18f, 0.18f };
 	PxBoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
-	PxBoxDesc.fMass = 100.f;
-	PxBoxDesc.fLinearDamping = 5.f;
+	PxBoxDesc.fMass = 10000.f;
+	PxBoxDesc.fLinearDamping = 0.7f;
 	PxBoxDesc.fAngularDamping = 5.f;
 
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, true, COLLISON_DUMMY, true));
@@ -67,7 +68,9 @@ HRESULT CBossRock::Late_Initialize(void * pArg)
 
 void CBossRock::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);		
+	__super::Tick(fTimeDelta);
+
+	BossRockProc(fTimeDelta);
 }
 
 void CBossRock::Late_Tick(_float fTimeDelta)
@@ -82,11 +85,10 @@ HRESULT CBossRock::Render()
 	if (FAILED(__super::Render())) return E_FAIL;
 	if (FAILED(SetUp_ShaderResources())) return E_FAIL;
 	
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 0, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 0, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-		
+		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 0, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);		
 		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 0), E_FAIL);
 	}
 
@@ -150,4 +152,29 @@ HRESULT CBossRock::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition(), sizeof(_float4)))) return E_FAIL;
 		
 	return S_OK;
+}
+
+void CBossRock::BossRockProc(_float fTimeDelta)
+{
+	switch (m_eState)
+	{
+	case UP:
+	{
+		m_pTransformCom->Go_AxisY(fTimeDelta);
+		m_fUpTimeCheck += fTimeDelta;
+		m_eState = m_fUpTimeCheck >= m_Desc.fUpTime ? STATE_END : m_eState;
+
+		break;
+	}	
+	case DOWN:
+	{
+		break;
+	}	
+	}
+}
+
+void CBossRock::Exectue_Up()
+{
+	m_fUpTimeCheck = 0.f;
+	m_eState = UP;
 }

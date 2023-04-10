@@ -182,6 +182,8 @@ private:
 
 	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
 
+	class CBossRock_Pool* m_pBossRockPool = nullptr;
+
 public:
 	static CBossWarrior*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;

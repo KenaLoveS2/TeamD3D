@@ -63,8 +63,9 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	m_pTransformCom->Set_PxPivot(m_vInitPivot);
-	const _float4 vPos = _float4(55.741f, 15.093f, 1066.333f, 1.f);
-	m_pTransformCom->Set_Position(vPos);
+	const _float4 vPos = _float4(55.741f, 15.093f, 1066.333f, 1.f);	
+	// m_pTransformCom->Set_Position(vPos);
+	m_pTransformCom->Set_Position(_float4(-5.f, 0.f, -5.f, 1.f));
 	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	
 	m_pKena = (CKena*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));

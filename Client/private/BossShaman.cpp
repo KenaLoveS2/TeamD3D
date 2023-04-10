@@ -895,7 +895,8 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("STUN")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(STUN_TAKE_DAMAGE);		
+		m_pModelCom->ResetAnimIdx_PlayTime(STUN_TAKE_DAMAGE);
+		m_pModelCom->Set_AnimIndex(STUN_TAKE_DAMAGE);
 		m_fStunTime = 0.f;
 	})
 		.Tick([this](_float fTimeDelta)
