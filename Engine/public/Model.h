@@ -73,7 +73,6 @@ public:
 	void						Update_BonesMatrix(CModel * pModel);
 	void						Set_AllAnimCommonType();
 	void						Print_Animation_Names(const string & strFilePath);
-
 	void						InstanceModelPosInit(_fmatrix parentMatrix);
 
 public:
@@ -84,19 +83,18 @@ public:
 
 public:
 	void						Play_Animation(_float fTimeDelta);
-	HRESULT						Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);
-	HRESULT						Render(CShader * pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
+	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);
+	HRESULT				Render(CShader * pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 	void						Imgui_MaterialPath();
 
 
 	void						Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
-	_bool						Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
+	_bool					Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
 
-	_bool						Culling_InstancingMeshs(_float fCameraDistance, _fmatrix ParentMat);
+	_bool					Culling_InstancingMeshs(_float fCameraDistance, _fmatrix ParentMat);
 
 private:
 	void						MODELMATERIAL_Create_Model(const char* jSonPath);
-
 
 public:
 	void						Set_InstanceEffect_Info(CTransform * pParentTransform,_int iInstanceNum,_float fMinSpeed, _float fMaxSpeed);

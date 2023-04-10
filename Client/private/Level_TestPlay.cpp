@@ -161,7 +161,7 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 	{
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
-		CControlRoom* pControllRoom = dynamic_cast<CControlRoom*>(pGameInstance->Get_GameObjectPtr(LEVEL_GIMMICK, L"Layer_ControlRoom", L"ControlRoom"));
+		CControlRoom* pControllRoom = dynamic_cast<CControlRoom*>(pGameInstance->Get_GameObjectPtr(LEVEL_TESTPLAY, L"Layer_ControlRoom", L"ControlRoom"));
 		assert(nullptr != pControllRoom && "Scene_Change");
 		(pControllRoom)->Clear_Static_ShadowList();
 

@@ -406,8 +406,8 @@ HRESULT CLevel_Final::Ready_Layer_Player(const _tchar* pLayerTag)
 
 HRESULT CLevel_Final::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
-	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Chap0_Monster.json");
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Test.json");
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Chap0_Monster.json");
+	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Test.json");
 	return S_OK;
 }
 

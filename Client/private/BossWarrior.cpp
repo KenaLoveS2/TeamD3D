@@ -171,8 +171,8 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
 	}
 
-	m_pCineCam[0] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("BOSSHUNTER_START")));
-	m_pCineCam[1] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("BOSSHUNTER_END")));
+	m_pCineCam[0] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("BOSSWARRIOR_START")));
+	m_pCineCam[1] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("BOSSWARRIOR_END")));
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
@@ -451,7 +451,7 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-				m_fDissolveTime -= fTimeDelta;
+				m_fDissolveTime -= fTimeDelta * 0.5f;
 				if (m_fDissolveTime < -0.5f)
 					m_bDissolve = false;
 
@@ -982,7 +982,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_fEndTime += fTimeDelta;
-		m_fDissolveTime = m_fEndTime * 0.1f;
+		m_fDissolveTime = m_fEndTime * 0.3f;
 		if (m_fDissolveTime >= 1.f)
 			m_bDissolve = false;
 	})
@@ -1137,15 +1137,15 @@ HRESULT CBossWarrior::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_BossWarrior.json");
 
-	CBossWarrior_Hat::MONSTERWEAPONDESC		WeaponDesc;
-	ZeroMemory(&WeaponDesc, sizeof(CBossWarrior_Hat::MONSTERWEAPONDESC));
+	CMonsterWeapon::MONSTERWEAPONDESC		WeaponDesc;
+	ZeroMemory(&WeaponDesc, sizeof(CMonsterWeapon::MONSTERWEAPONDESC));
 
 	XMStoreFloat4x4(&WeaponDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
 	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("HatJoint");
 	WeaponDesc.pTargetTransform = m_pTransformCom;
 	WeaponDesc.pOwnerMonster = this;
-	Safe_AddRef(WeaponDesc.pSocket);
-	Safe_AddRef(m_pTransformCom);
+	//Safe_AddRef(WeaponDesc.pSocket);
+	//Safe_AddRef(m_pTransformCom);
 		
 	m_pHat = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossWarrior_Hat"), L"BossWarrior_Hat", &WeaponDesc);
 	assert(m_pHat && "Boss Warrior Hat is nullptr");
@@ -1260,7 +1260,7 @@ void CBossWarrior::BossFight_End()
 	const _float3 vOffset = _float3(0.f, 1.5f, 0.f);
 	const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
 
-	dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")))->Set_Target(this, CCameraForNpc::OFFSET_FRONT_LERP, vOffset, vLookOffset, 0.9f, 2.f);
+	dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")))->Set_Target(this, CCameraForNpc::OFFSET_FRONT_LERP, vOffset, vLookOffset, 0.9f, 3.f);
 }
 
 void CBossWarrior::Set_AttackType()
