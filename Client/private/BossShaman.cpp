@@ -166,6 +166,8 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Late_Initialize(nullptr);
 
+	m_pShamanTapHex->Late_Initialize(nullptr);
+
 	// m_bReadySpawn = true;
 	return S_OK;
 }
