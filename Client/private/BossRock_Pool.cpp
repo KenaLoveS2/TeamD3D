@@ -37,8 +37,10 @@ HRESULT CBossRock_Pool::Initialize(void* pArg)
 	CBossRock* pRock = nullptr;
 	for (_uint i = 0; i < (_uint)m_Desc.iRockCount; i++)
 	{
-		BossRockDesc.eType = (CBossRock::ROCK_TPYE)i;
-		BossRockDesc.vPosition = m_Desc.vCenterPos += _float4();
+		BossRockDesc.eType = (CBossRock::ROCK_TPYE)(i % CBossRock::ROCK_TPYE_END);
+		BossRockDesc.vPosition = m_Desc.vCenterPos += _float4(CUtile::Get_RandomFloat(-5.f, 5.f), 0.01f, CUtile::Get_RandomFloat(-5.f, 5.f), 0.f);
+		BossRockDesc.fUpTime = CUtile::Get_RandomFloat(2.f, 4.f);
+		BossRockDesc.fSpeedY = CUtile::Get_RandomFloat(3.f, 4.f);
 
 		pRock = (CBossRock*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossRock"), CUtile::Create_DummyString(), &BossRockDesc);
 		assert(pRock && "CBossRock_Pool::Initialize()");
@@ -106,4 +108,10 @@ void CBossRock_Pool::Free()
 		Safe_Release(pRock);
 
 	m_Rocks.clear();
+}
+
+void CBossRock_Pool::Execute_UpRocks()
+{
+	for (auto& pRock : m_Rocks)
+		pRock->Exectue_Up();
 }

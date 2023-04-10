@@ -78,6 +78,7 @@ HRESULT CCamera_Player::Initialize(void * pArg)
 
 	m_mapCamOffset.emplace(CAMOFFSET_DEFAULT		, new CCamOffset(1.2f, 2.f, 0.f, 0.4f, false));
 	m_mapCamOffset.emplace(CAMOFFSET_BOSSBATTLE		, new CCamOffset(1.9f, 3.2f, 0.f, 0.4f, false));
+	m_mapCamOffset.emplace(CAMOFFSET_GRAB_WARRIOR	, new CCamOffset(1.1f, 0.6f, -0.35f, 1.f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_MASK			, new CCamOffset(1.2f, 2.f, 0.f, 0.4f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_AIM			, new CCamOffset(1.2f, 0.85f, 0.5f, 0.3f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_AIR_AIM		, new CCamOffset(1.2f, 0.85f, 0.5f, 0.3f, true));
@@ -115,6 +116,8 @@ void CCamera_Player::Tick(_float fTimeDelta)
 		Set_CamOffset(CCamera_Player::CAMOFFSET_PARRY);
 	if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == true)
 		Set_CamOffset(CCamera_Player::CAMOFFSET_HEAVYATTACK);
+	if (m_pKena->Get_State(CKena::STATE_GRAB_WARRIOR) == true)
+		Set_CamOffset(CCamera_Player::CAMOFFSET_GRAB_WARRIOR);
 	if (m_pKena->Get_State(CKena::STATERETURN_END) == true)
 	{
 		if (m_pKena->Get_State(CKena::STATE_BOSSBATTLE) == true)
@@ -195,13 +198,13 @@ void CCamera_Player::Tick(_float fTimeDelta)
 			}
 
 			if (m_MouseMoveX != 0)
-				m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
+				m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
 			else
 			{
 				if (m_LastMoveX < 0)
-					m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, fTimeDelta * m_fCurMouseSensitivityX * -1.f);
+					m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, fTimeDelta * m_fCurMouseSensitivityX * -1.f);
 				else if (m_LastMoveX > 0)
-					m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, fTimeDelta * m_fCurMouseSensitivityX);
+					m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, fTimeDelta * m_fCurMouseSensitivityX);
 			}
 		}
 		if (m_MouseMoveY = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_Y))
@@ -238,10 +241,10 @@ void CCamera_Player::Tick(_float fTimeDelta)
 					m_fCurMouseSensitivityY = m_fInitMouseSensitivity;
 			}
 
-			m_pTransformCom->Orbit(vKenaPos, m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fCamDistance, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
+			m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fCamDistance, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
 		}
 		if (m_MouseMoveX == 0 && m_MouseMoveY == 0)
-			m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, 0.f);
+			m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, 0.f);
 	}
 	else
 	{
@@ -418,6 +421,33 @@ void CCamera_Player::Tick(_float fTimeDelta)
 			}
 		}
 
+		if (m_RandomShakeList.empty() == false)
+		{
+			_vector	vShakeDir = m_RandomShakeList.front();
+
+			_vector	vEye = matWorld.r[3];
+			_vector	vAt = vEye + XMVector3Normalize(matWorld.r[2]);
+
+			_vector	vShakeEye = vEye - vShakeDir;
+			_vector	vShakeAt = vAt + vShakeDir;
+
+			matWorld.r[3] = vShakeEye;
+			_float3		vScale = _float3(XMVectorGetX(XMVector3Length(matWorld.r[0])), XMVectorGetX(XMVector3Length(matWorld.r[1])), XMVectorGetX(XMVector3Length(matWorld.r[2])));
+
+			_vector		vLook = XMVector3Normalize(vShakeAt - matWorld.r[3]) * vScale.z;
+			_vector		vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
+			_vector		vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight)) * vScale.y;
+
+			//if (isnan(XMVectorGetX(vLook)) || isnan(XMVectorGetX(vRight)) || isnan(XMVectorGetX(vUp)))
+			//	return;
+
+			matWorld.r[0] = vRight;
+			matWorld.r[1] = vUp;
+			matWorld.r[2] = vLook;
+
+			m_RandomShakeList.pop_front();
+		}
+
 		CGameInstance::GetInstance()->Set_Transform(CPipeLine::D3DTS_VIEW, XMMatrixInverse(nullptr, matWorld));
 		return;
 	}
@@ -487,6 +517,10 @@ void CCamera_Player::Imgui_RenderProperty()
 		strcpy_s(szOffset, "BOSSBATTLE");
 		break;
 
+	case CCamera_Player::CAMOFFSET_GRAB_WARRIOR:
+		strcpy_s(szOffset, "GRAB_WARRIOR");
+		break;
+
 	case CCamera_Player::CAMOFFSET_MASK:
 		strcpy_s(szOffset, "MASK");
 		break;
@@ -530,7 +564,7 @@ void CCamera_Player::Imgui_RenderProperty()
 		m_pCurOffset->bPlayerControl = false;
 	ImGui::InputFloat4("Last Position", (_float*)&m_pCurOffset->vLastPos, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-	char*	pOffsetTag[CAMOFFSET_END] = { "DEFAULT", "BOSS_BATTLE", "MASK", "AIM", "AIR_AIM", "INJECT_BOW", "PULSE", "PARRY", "HEAVY_ATTACK" };
+	char*	pOffsetTag[CAMOFFSET_END] = { "DEFAULT", "BOSS_BATTLE", "GRAB_WARRIOR", "MASK", "AIM", "AIR_AIM", "INJECT_BOW", "PULSE", "PARRY", "HEAVY_ATTACK" };
 	static _int	iSelectOffset = -1;
 	ImGui::ListBox("Offset", &iSelectOffset, pOffsetTag, (_int)CAMOFFSET_END);
 

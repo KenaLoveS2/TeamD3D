@@ -20,25 +20,26 @@ public:
 	HRESULT		Add_Event(_float fPlayTime, const string& strFuncName);
 
 public:
-	const _bool&				IsFinished() const { return m_isFinished; }
-	_bool&							IsLooping() { return m_isLooping; }
-	const _uint&					Get_AnimIndex() const { return m_iAnimationIndex; }
-	const _float					Get_AnimationProgress() const { return _float(m_PlayTime / m_Duration); }
-	_double&						Get_AnimationDuration() { return m_Duration; }
-	_double&						Get_PlayTime() { return m_PlayTime; }
-	_double&						Get_LastPlayTime() { return m_LastPlayTime; }
-	const _double				Get_PlayRate() { return m_PlayTime / m_Duration; }
-	_double&						Get_AnimationTickPerSecond() { return m_TickPerSecond; }
-	const char*					Get_Name() const { return m_szName; }
-	_float&							Get_BlendDuration() { return m_fBlendDuration; }
+	const _bool&			IsFinished() const { return m_isFinished; }
+	_bool&					IsLooping() { return m_isLooping; }
+	const _uint&			Get_AnimIndex() const { return m_iAnimationIndex; }
+	const _float			Get_AnimationProgress() const { return _float(m_PlayTime / m_Duration); }
+	_double&				Get_AnimationDuration() { return m_Duration; }
+	_double&				Get_PlayTime() { return m_PlayTime; }
+	_double&				Get_LastPlayTime() { return m_LastPlayTime; }
+	const _double			Get_PlayRate() { return m_PlayTime / m_Duration; }
+	_double&				Get_AnimationTickPerSecond() { return m_TickPerSecond; }
+	const char*				Get_Name() const { return m_szName; }
+	_float&					Get_BlendDuration() { return m_fBlendDuration; }
 
-	const _uint&					Get_ChannelCount() const { return m_iNumChannels; }
+	const _uint&			Get_ChannelCount() const { return m_iNumChannels; }
 	class CChannel*			Find_Channel(class CBone* pBone);
-	void								Set_AnimIndex(_uint iAnimIndex) { m_iAnimationIndex = iAnimIndex; }
-	void								Set_AnimationType(ANIMTYPE eType) { m_eAnimType = eType; }
-	void								Set_PlayTime(_double dPlayTime);
-	void								Set_Name(const char* pName) { strcpy_s(m_szName, pName); }
-	ANIMTYPE&					Get_AnimationType() { return m_eAnimType; }
+	void					Set_AnimIndex(_uint iAnimIndex) { m_iAnimationIndex = iAnimIndex; }
+	void					Set_AnimationType(ANIMTYPE eType) { m_eAnimType = eType; }
+	void					Set_PlayTime(_double dPlayTime);
+	void					Set_Name(const char* pName) { strcpy_s(m_szName, pName); }
+	void					Set_BlendDuration(_float fBlendDuration) { m_fBlendDuration = fBlendDuration; }
+	ANIMTYPE&				Get_AnimationType() { return m_eAnimType; }
 
 public:
 	HRESULT						Initialize_Prototype(HANDLE hFile, class CModel* pModel);

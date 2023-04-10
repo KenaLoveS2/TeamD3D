@@ -5,12 +5,12 @@
 #include "E_TeleportRot.h"
 
 CMannequinRot::CMannequinRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
-	:CGameObject(pDevice, p_context)
+	:CRot_Base(pDevice, p_context)
 {
 }
 
 CMannequinRot::CMannequinRot(const CMannequinRot& rhs)
-	:CGameObject(rhs)
+	: CRot_Base(rhs)
 {
 }
 
@@ -22,34 +22,20 @@ HRESULT CMannequinRot::Initialize_Prototype()
 
 HRESULT CMannequinRot::Initialize(void* pArg)
 {
-	CGameObject::GAMEOBJECTDESC		GaemObjectDesc;
-	ZeroMemory(&GaemObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GaemObjectDesc.TransformDesc.fSpeedPerSec = CUtile::Get_RandomFloat(1.3f,2.f);
-	GaemObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
-	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_Effects(), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
-
-	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
-	m_pModelCom->Set_AnimIndex(CRot::IDLE);
-	m_pModelCom->Set_AllAnimCommonType();
-	Push_EventFunctions();
-
+	FAILED_CHECK_RETURN(__super::Initialize(nullptr), E_FAIL);
+		
 	Create_Hats();
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	m_pMyCam = static_cast<CCameraForRot*>(pGameInstance->Find_Camera(L"ROT_CAM"));
-
+		
+	m_pMyCam = static_cast<CCameraForRot*>(m_pGameInstance->Find_Camera(L"ROT_CAM"));
 
 	return S_OK;
 }
 
 HRESULT CMannequinRot::Late_Initialize(void * pArg)
 {		
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	
-	
+	// FAILED_CHECK_RETURN(__super::Late_Initialize(nullptr), E_FAIL);
+	FAILED_CHECK_RETURN(Setup_KenaParamters(), E_FAIL);
+
 	return S_OK;
 }
 
@@ -81,52 +67,6 @@ void CMannequinRot::Late_Tick(_float fTimeDelta)
 		pHat->Late_Tick(fTimeDelta);
 }
 
-HRESULT CMannequinRot::Render()
-{
-	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
-
-	_uint	 iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
-	{
-		if (i == 0)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 27), E_FAIL);
-		}
-		else if (i == 1)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 32), E_FAIL);
-		}
-		else if (i == 2)
-		{
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_AlphaTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 31), E_FAIL);
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT CMannequinRot::RenderShadow()
-{
-	if (FAILED(__super::RenderShadow()))
-		return E_FAIL;
-
-	if (FAILED(SetUp_ShadowShaderResources()))
-		return E_FAIL;
-
-	for (_uint i = 0; i < m_iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
-
-	return S_OK;
-}
-
 void CMannequinRot::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
@@ -153,38 +93,6 @@ void CMannequinRot::ImGui_ShaderValueProperty()
 		m_pShaderCom->ReCompile();
 		m_pRendererCom->ReCompile();
 	}
-}
-
-HRESULT CMannequinRot::SetUp_Components()
-{
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Rot", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
-	m_pModelCom->Set_RootBone("Rot_RIG");
-	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Rot/rh_body_AO_R_M.png")), E_FAIL);
-	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Rot/rot_fur_ALPHA.png")), E_FAIL);
-
-	return S_OK;
-}
-
-HRESULT CMannequinRot::SetUp_ShaderResources()
-{
-	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-	return S_OK;
-}
-
-HRESULT CMannequinRot::SetUp_ShadowShaderResources()
-{
-	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-	return S_OK;
 }
 
 CMannequinRot* CMannequinRot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -216,13 +124,7 @@ CGameObject* CMannequinRot::Clone(void* pArg)
 void CMannequinRot::Free()
 {
 	__super::Free();
-		
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
-	Safe_Release(m_pFSM);
-		
-	Safe_Release(m_pTeleportRot);
+	
 	for(auto &pHat : m_pRotHats)
 		Safe_Release(pHat);
 }
@@ -242,10 +144,7 @@ HRESULT CMannequinRot::SetUp_State()
 		.OnStart([this]()
 	{	
 		m_bRender = true;
-		m_pModelCom->ResetAnimIdx_PlayTime(CRot::TELEPORT6);
-		m_pModelCom->Set_AnimIndex(CRot::TELEPORT6);
-		m_pTeleportRot->Set_Active(true);
-		m_pTeleportRot->Set_Position(m_pTransformCom->Get_Position());
+		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), TELEPORT6);
 	})	
 		.AddTransition("TELEPORT to START_SHOW", "IDLE")
 		.Predicator([this]()
@@ -257,8 +156,8 @@ HRESULT CMannequinRot::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(CRot::IDLE);
-		m_pModelCom->Set_AnimIndex(CRot::IDLE);
+		m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
+		m_pModelCom->Set_AnimIndex(IDLE);
 		m_fIdleTimeCheck = 0.f;
 	})
 		.Tick([this](_float fTimeDelta)
@@ -268,7 +167,7 @@ HRESULT CMannequinRot::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		_uint iIndex = m_bEndShow ? CRot::IDLE : m_iPerchaseAnimIndex;
+		_uint iIndex = m_bEndShow ? IDLE : m_iPerchaseAnimIndex;
 	})
 		.AddTransition("IDLE to END_SHOW", "END_SHOW")
 		.Predicator([this]()
@@ -283,10 +182,12 @@ HRESULT CMannequinRot::SetUp_State()
 
 		.AddState("PREVIEW_HAT")
 		.OnStart([this]()
-	{
+	{	
 		m_pModelCom->ResetAnimIdx_PlayTime(m_iPerchaseAnimIndex);
 		m_pModelCom->Set_AnimIndex(m_iPerchaseAnimIndex);		
-		m_iPerchaseAnimIndex = m_iPerchaseAnimIndex == (_uint)CRot::PURCHASEHAT3 ? CRot::PURCHASEHAT4 : CRot::PURCHASEHAT3;
+		m_iPerchaseAnimIndex = 
+			m_iPerchaseAnimIndex == (_uint)PURCHASEHAT1 ? PURCHASEHAT3 : 
+			m_iPerchaseAnimIndex == (_uint)PURCHASEHAT3 ? PURCHASEHAT4 : PURCHASEHAT1;			
 	})		
 		.AddTransition("PREVIEW_HAT to END_SHOW", "END_SHOW")
 		.Predicator([this]()
@@ -303,10 +204,8 @@ HRESULT CMannequinRot::SetUp_State()
 		.AddState("END_SHOW")
 		.OnStart([this]()
 	{
-		m_fIdleTimeCheck = 0.f;
-		m_pModelCom->Set_AnimIndex(CRot::HIDE5);
-		m_pTeleportRot->Set_Active(true);
-		m_pTeleportRot->Set_Position(m_pTransformCom->Get_Position());
+		m_fIdleTimeCheck = 0.f;		
+		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), HIDE5);		
 	})
 		.Tick([this](_float fTimeDelta)
 	{	
@@ -315,7 +214,7 @@ HRESULT CMannequinRot::SetUp_State()
 		.OnExit([this]()
 	{	
 		m_bShowFlag = m_bRender = m_bEndShow = false;		
-		m_pModelCom->Set_AnimIndex(CRot::IDLE);
+		m_pModelCom->Set_AnimIndex(IDLE);
 		m_pMyCam->Clear();
 		CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");		
 	})
@@ -328,19 +227,6 @@ HRESULT CMannequinRot::SetUp_State()
 
 		.Build();
 
-	return S_OK;
-}
-
-HRESULT CMannequinRot::SetUp_Effects()
-{
-	CEffect_Base* pEffectBase = nullptr;
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-	m_pTeleportRot = dynamic_cast<CE_TeleportRot*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_TeleportRot", TEXT("MannequinRot_Teleport")));
-	NULL_CHECK_RETURN(m_pTeleportRot, E_FAIL);
-//	m_pTeleportRot->Set_Parent(this);
-
-	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
