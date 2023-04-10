@@ -22,22 +22,22 @@ CSkillInfo::CSkillInfo()
 	//switch (eResult)
 	//{
 	//case CHECK_PREVSKILL:
-	//	msg = L"¼±Çà ´É·Â ÇÊ¿ä";
+	//	msg = L"ï¿½ï¿½ï¿½ï¿½ ï¿½É·ï¿½ ï¿½Ê¿ï¿½";
 	//	break;
 	//case CHECK_ROTLEVEL:
-	//	msg = L"ºÎ½Ä·É ·¹º§ " + to_wstring(m_tDesc[iLevel].conditions[CHECK_ROTLEVEL]) + L" ÇÊ¿ä";
+	//	msg = L"ï¿½Î½Ä·ï¿½ ï¿½ï¿½ï¿½ï¿½ " + to_wstring(m_tDesc[iLevel].conditions[CHECK_ROTLEVEL]) + L" ï¿½Ê¿ï¿½";
 	//	break;
 	//case  CHECK_KARMA:
-	//	msg = L"Ä«¸£¸¶ ºÎÁ·";
+	//	msg = L"Ä«ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½";
 	//	break;
 	//case CHECK_UNLOCKED_AVAILABLE:
-	//	msg = L"¾÷±×·¹ÀÌµå °¡´É";
+	//	msg = L"ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½";
 	//	break;
 	//case CHECK_UNLOCKED_ALREADY:
-	//	msg = L"Ãß°¡ Ä«¸£¸¶ ÇÊ¿ä";
+	//	msg = L"ï¿½ß°ï¿½ Ä«ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½";
 	//	break;
 	//default:
-	//	msg = L"µ¹¾Æ°¡";
+	//	msg = L"ï¿½ï¿½ï¿½Æ°ï¿½";
 	//	break;
 	//}
 	//return msg;
@@ -76,7 +76,8 @@ HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pConte
 	Json	jLoad;
 
 	string strFilePath;
-	strFilePath.assign(filePath.begin(), filePath.end());
+	//strFilePath.assign(filePath.begin(), filePath.end());
+	strFilePath = CUtile::wstring_to_utf8(filePath);
 
 	ifstream file(filePath);
 	if (file.fail())
@@ -137,6 +138,10 @@ HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pConte
 				jCondition["RotLevel"].get_to<_int>(m_tDesc[i].conditions[CONDITION_ROTLEVEL]);
 				jCondition["Karma"].get_to<_int>(m_tDesc[i].conditions[CONDITION_KARMA]);
 			}
+
+			string strVideo;
+			jLevel["Video"].get_to<string>(strVideo);
+			m_tDesc[i].wstrVideo = CUtile::utf8_to_wstring(strVideo);
 
 		}
 	}

@@ -583,6 +583,9 @@
     <Filter Include="02.GameObjects\Envrioment\Meditation_Spot">
       <UniqueIdentifier>{d809b4cf-2aab-455c-a361-d30849842e35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video">
+      <UniqueIdentifier>{badeb5f1-e152-420c-83a3-f331d15d888d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Monster\BossRock">
       <UniqueIdentifier>{af6e2ed7-fbcf-476d-b449-80988ade864c}</UniqueIdentifier>
     </Filter>
@@ -1518,6 +1521,9 @@
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_HunterTrail.h" />
+    <ClInclude Include="..\public\UI_NodeVideo.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\BossRock.h">
       <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClInclude>
@@ -2445,6 +2451,9 @@
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_HunterTrail.cpp" />
+    <ClCompile Include="..\private\UI_NodeVideo.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\BossRock.cpp">
       <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClCompile>

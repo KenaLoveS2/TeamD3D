@@ -291,7 +291,9 @@ CHealthFlower_Anim::ANIMATION CHealthFlower_Anim::Check_State()
 				/* PARTICLE */
 				m_pExplosionGravity->UpdateParticle(m_pTransformCom->Get_Position());
 
-				/* NEED : UI SCREEN FX HEALTHFLOWER HEAL */
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::TOP_MOOD_HEAL;
+				_float fDefault = 1.f; 
+				m_pKena->m_Delegator.broadcast(tag, fDefault);
 			}
 
 			break;

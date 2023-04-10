@@ -18,6 +18,14 @@ float			g_fUVSpeedX = 0.f, g_fUVSpeedY = 0.f;
 int				g_XFrames = 1, g_YFrames = 1;
 int				g_XFrameNow = 0, g_YFrameNow = 0;
 
+struct	tInstanceInfo
+{
+	float4x4			Matrix;
+	float				fLife;
+};
+
+//RWStructuredBuffer<tInstanceInfo>	g_WriteBuffer;
+
 struct VS_IN
 {
 	float3		vPosition		: POSITION;
@@ -61,19 +69,20 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;
 }
 
+
 struct GS_IN
 {
 	float3		vPosition		: POSITION;
 	float2		vPSize			: PSIZE;
-	float       fLife : TEXCOORD0;
+	float       fLife			: TEXCOORD0;
 	float3		vCenterPosition	: TEXCOORD1;
 };
 
 struct GS_OUT
 {
-	float4		vPosition	: SV_POSITION;
-	float2		vTexUV		: TEXCOORD0;
-	float       fLife : TEXCOORD1;
+	float4		vPosition		: SV_POSITION;
+	float2		vTexUV			: TEXCOORD0;
+	float       fLife			: TEXCOORD1;
 };
 
 [maxvertexcount(6)]
@@ -179,7 +188,7 @@ struct PS_IN
 {
 	float4		vPosition	: SV_POSITION;
 	float2		vTexUV		: TEXCOORD0;
-	float       fLife : TEXCOORD1;
+	float       fLife		: TEXCOORD1;
 };
 
 struct PS_OUT
@@ -297,6 +306,254 @@ PS_OUT PS_MAIN_SPREAD(PS_IN In)
 	return Out;
 }
 
+
+/***********************************************/
+/*					Trail					   */
+/***********************************************/
+
+struct VS_TRAILIN
+{
+	float3				vPosition	: POSITION;
+	float2				vPSize		: PSIZE;
+	row_major float4x4	Matrix		: WORLD;
+	uint				InstanceID	: SV_InstanceID;
+};
+
+struct VS_TRAILOUT
+{
+	float4				vPosition	: POSITION;
+	float2				vPSize		: PSIZE;
+	float				fLife		: TEXCOORD0;
+	row_major float4x4	Matrix		: WORLD;
+	uint				InstanceID	: SV_InstanceID;
+};
+
+VS_TRAILOUT VS_TRAIL(VS_TRAILIN In)
+{
+	VS_TRAILOUT  Out = (VS_TRAILOUT)0;
+
+	float4x4	Matrix = In.Matrix;
+
+	/* Option */
+	Out.fLife = In.Matrix[3][3];
+
+	Matrix[0][3] = 0.f;
+	Matrix[1][3] = 0.f;
+	Matrix[2][3] = 0.f;
+	Matrix[3][3] = 1.f;
+
+	vector		vPosition = float4(In.vPosition, 1.f);	/* Already World Position.*/
+
+	Out.vPosition	= float4(In.vPosition, 1.f);
+	Out.InstanceID	= In.InstanceID;
+	Out.vPSize		= In.vPSize;
+	Out.Matrix		= Matrix;
+
+	return Out;
+}
+
+
+//
+//struct HS_CONSTANT_DATA
+//{
+//	float edges[4] : SV_TessFactor;
+//};
+//
+//struct HS_OUTPUT
+//{
+//	float4				vPosition	: POSITION;
+//	float2				vPSize		: PSIZE;
+//	float				fLife		: TEXCOORD0;
+//	row_major float4x4	Matrix		: WORLD;
+//	uint				InstanceID	: SV_InstanceID;
+//};
+//
+//HS_CONSTANT_DATA HSConstantFunction(InputPatch<VS_TRAILOUT, 4> patch, uint patchID : SV_PrimitiveID)
+//{
+//	HS_CONSTANT_DATA output;
+//
+//	// 헐셰이더에서 RWStructuredBuffer에 값을 쓰는 예시 코드
+//	int iIndex = patch[patchID].InstanceID % 2;
+//	tInstanceInfo tInfo;
+//	tInfo.Matrix = patch[patchID].Matrix;
+//	tInfo.fLife = patch[patchID].fLife;
+//	g_WriteBuffer[iIndex] = tInfo;
+//
+//
+//	// 패치 테셀레이션을 위한 테셀레이션 팩터 설정
+//	//output.maxVertexCount = 2048;
+//	output.edges[0] = 1;
+//	//output.inside = 1;
+//
+//	return output;
+//}
+//
+//void HS_TRAIL(InputPatch<VS_TRAILOUT, 4> patch,
+//	uint patchID : SV_PrimitiveID,
+//	out HS_CONSTANT_DATA output[4])
+//{
+//	for (int i = 0; i < 4; ++i)
+//	{
+//		output[i] = HSConstantFunction(patch, patchID);
+//
+//	}
+//}
+//
+//struct DS_OUT
+//{
+//	float4				vPosition	: POSITION;
+//	float2				vPSize		: PSIZE;
+//	float				fLife : TEXCOORD0;
+//	row_major float4x4	Matrix		: WORLD;
+//	uint				InstanceID	: SV_InstanceID;
+//};
+//
+//[maxvertexcount(4)]
+//void DS_TRAIL(InputPatch<VS_TRAILOUT, 4> inputPatch,
+//	uint patchId : SV_PrimitiveID,
+//	out DS_OUT output[4])
+//{
+//	for (int i = 0; i < 4; ++i) {
+//		output[i].vPosition = inputPatch[i].vPosition;
+//		output[i].vPSize = inputPatch[i].vPSize;
+//		output[i].fLife = inputPatch[i].fLife;
+//		output[i].Matrix = inputPatch[i].Matrix;
+//		output[i].InstanceID = inputPatch[i].InstanceID;
+//	}
+//}
+
+struct GS_TRAILIN
+{
+	float4				vPosition   : POSITION;
+	float2				vPSize      : PSIZE;
+	float				fLife		: TEXCOORD0;
+	row_major float4x4  Matrix		: WORLD;
+	uint				InstanceID  : SV_InstanceID;
+};
+
+struct GS_TRAILOUT
+{
+	float4				vPosition	: SV_POSITION;
+	float2				vTexUV		: TEXCOORD0;
+	float				fLife		: TEXCOORD1;
+};
+
+[maxvertexcount(6)]
+void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices)
+{
+	GS_TRAILOUT		Out[4] = { (GS_TRAILOUT)0, (GS_TRAILOUT)0, (GS_TRAILOUT)0,(GS_TRAILOUT)0 };
+
+	matrix      matVP		= mul(g_ViewMatrix, g_ProjMatrix);
+	float4x4    WorldMatrix = In[0].Matrix;
+
+	float3      vUp			= In[0].fLife * matrix_up(WorldMatrix) * In[0].vPSize.y * 0.5f;
+	float3		vRight		= In[0].fLife * matrix_right(WorldMatrix) * In[0].vPSize.x * 0.5f;
+	float3		vPosition	= matrix_postion(In[0].Matrix);
+
+	float3 vResultPos;
+	//if (In[0].InstanceID == 0)
+	//{
+		vResultPos = vPosition - vRight + vUp;
+		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[0].vTexUV = float2(0.f, 0.f);
+		Out[0].fLife = In[0].fLife;
+		
+		vResultPos = vPosition + vRight + vUp;
+		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[1].vTexUV = float2(1.f, 0.f);
+		Out[1].fLife = In[0].fLife;
+
+		vResultPos = vPosition + vRight - vUp;
+		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[2].vTexUV = float2(1.f, 1.f);
+		Out[2].fLife = In[0].fLife;
+
+		vResultPos = vPosition - vRight - vUp;
+		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[3].vTexUV = float2(0.f, 1.f);
+		Out[3].fLife = In[0].fLife;
+
+	//}
+	//else
+	//{
+	//	//Prev[1] -> Now[0]
+	//	//vResultPos = vPositionPrev + vRightPrev + vUpPrev;
+	//	Out[0].vPosition	= mul(vector(g_WriteBuffer[0].vPosition), matVP);
+	//	Out[0].vTexUV		= float2(0.f, 0.f);
+	//	Out[0].fLife		= g_WriteBuffer[0].fLife;
+
+	//	vResultPos = vPosition + vRight + vUp;
+	//	Out[1].vPosition	= mul(vector(vResultPos, 1.f), matVP);
+	//	Out[1].vTexUV		= float2(1.f, 0.f);
+	//	Out[1].fLife		= In[0].fLife;
+
+	//	vResultPos = vPosition + vRight - vUp;
+	//	Out[2].vPosition	= mul(vector(vResultPos, 1.f), matVP);
+	//	Out[2].vTexUV		= float2(1.f, 1.f);
+	//	Out[2].fLife		= In[0].fLife;
+
+	//	//Prev[2] -> Now[3]
+	//	//vResultPos = vPositionPrev + vRightPrev - vUpPrev;
+	//	Out[3].vPosition	= mul(vector(g_WriteBuffer[1].vPosition), matVP);
+	//	Out[3].vTexUV		= float2(0.f, 1.f);
+	//	Out[3].fLife		= g_WriteBuffer[1].fLife;
+
+	//}
+
+
+	//tInstanceInfo p1;
+	//p1.vPosition	= vPosition + vRight + vUp;
+	//p1.vTexUV		= Out[1].vTexUV;
+	//p1.fLife		= Out[1].fLife;
+	//g_WriteBuffer[0] = p1;
+
+	//tInstanceInfo p2;
+	//p2.vPosition	= vPosition + vRight - vUp;
+	//p2.vTexUV		= Out[2].vTexUV;
+	//p2.fLife		= Out[2].fLife;
+	//g_WriteBuffer[1] = p2;
+
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[1]);
+	Vertices.Append(Out[2]);
+	Vertices.RestartStrip();
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[2]);
+	Vertices.Append(Out[3]);
+	Vertices.RestartStrip();
+
+}
+
+struct PS_TRAILIN
+{
+	float4		vPosition		: SV_POSITION;
+	float2		vTexUV			: TEXCOORD0;
+	float       fLife			: TEXCOORD1;
+};
+
+PS_OUT PS_TRAIL(PS_TRAILIN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector vDiffuse = g_tex_0.Sample(LinearSampler, In.vTexUV);
+	//
+	//vDiffuse.a = vDiffuse.r;
+	//if (vDiffuse.a < 0.1f)
+	//	discard;
+	//Out.vColor = vDiffuse + g_vColor;
+	//Out.vColor.a *= In.fLife;
+
+	// Out.vColor.a = Out.vColor.a * In.fLife;
+
+	Out.vColor = float4(1.f, 1.f, 1.f, In.fLife);
+	return Out;
+}
+
+/***********************************************/
+/*					Pass					   */
+/***********************************************/
 technique11 DefaultTechnique
 {
 	pass Default_Haze // 0
@@ -341,7 +598,7 @@ technique11 DefaultTechnique
 	pass DefaultSpread // 3
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -349,5 +606,20 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SPREAD();
+	}
+
+	pass DefaultTrail // 4
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_TRAIL();
+		GeometryShader = compile gs_5_0 GS_TRAIL();
+
+		HullShader = NULL;// compile hs_5_0 HS_TRAIL();
+
+		DomainShader = NULL;// compile ds_5_0 DS_TRAIL();
+		PixelShader = compile ps_5_0 PS_TRAIL();
 	}
 }

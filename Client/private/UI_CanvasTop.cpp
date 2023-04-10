@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Kena.h"
 #include "Kena_Status.h"
+#include "Kena_State.h"
 #include "UI_NodeLvUp.h"
 #include "UI_NodeEffect.h"
 #include "UI_NodeRotFrontGuage.h"
@@ -18,6 +19,8 @@ CUI_CanvasTop::CUI_CanvasTop(ID3D11Device * pDevice, ID3D11DeviceContext * pCont
 	:CUI_Canvas(pDevice,pContext)
 	, m_iRotNow(0)
 	, m_iRotMax(0)
+	, m_bRotLvUp(false)
+	, m_iRotLv(1)
 {
 }
 
@@ -25,6 +28,8 @@ CUI_CanvasTop::CUI_CanvasTop(const CUI_CanvasTop & rhs)
 	: CUI_Canvas(rhs)
 	, m_iRotNow(0)
 	, m_iRotMax(0)
+	, m_bRotLvUp(false)
+	, m_iRotLv(1)
 {
 }
 
@@ -79,15 +84,49 @@ void CUI_CanvasTop::Tick(_float fTimeDelta)
 		static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Get_CurrentGuagePosition()
 	);
 
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
-	//{
-	//	static _uint iState = CUI_NodeMood::STATE_HIT;
-	//	iState++;
-	//	iState %= CUI_NodeMood::STATE_END;
+	if (m_bRotLvUp == true)
+	{
+		_float fGuageAlpha = -1.f;
+		if (true == static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->If_DisAppear_Get_Alpha(&fGuageAlpha))
+		{
+			if (fGuageAlpha < 0.3f)
+			{
+				static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_BACKFLARE])->Start_Effect(m_vecNode[UI_ROTLVUP], 0.0f, 0.0f);
+				static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_FRONTFLAREROUND])->Start_Effect(m_vecNode[UI_ROTLVUP], 0.0f, 0.0f);
+				static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_FRONTFLARE])->Start_Effect(m_vecNode[UI_ROTLVUP], 0.0f, 0.0f);
 
-	//	m_vecNode[UI_MOOD]->Set_Active(true);
-	//	static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn((CUI_NodeMood::STATE)iState);
-	//}
+				static_cast<CUI_NodeLvUp*>(m_vecNode[UI_ROTLVUP])->Appear(m_iRotLv);
+			}
+		}
+		else if (true == m_vecNode[UI_ROTLVUP]->Is_Active())
+		{
+			_float fAlpha = static_cast<CUI_NodeLvUp*>(m_vecNode[UI_ROTLVUP])->Get_Alpha();
+
+			static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_BACKFLARE])->Set_Alpha(fAlpha);
+			static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_FRONTFLAREROUND])->Set_Alpha(fAlpha);
+			static_cast<CUI_NodeEffect*>(m_vecNode[UI_EFFECT_FRONTFLARE])->Set_Alpha(fAlpha);
+
+		}
+		else if (false == m_vecNode[UI_ROTGUAGE]->Is_Active() && false == m_vecNode[UI_ROTLVUP]->Is_Active())
+		{
+			m_bRotLvUp = false;
+			static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_GuageZero();
+
+			m_vecNode[UI_EFFECT_BACKFLARE]->Set_Active(false);
+			m_vecNode[UI_EFFECT_FRONTFLAREROUND]->Set_Active(false);
+			m_vecNode[UI_EFFECT_FRONTFLARE]->Set_Active(false);
+		}
+	}
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_K))
+	{
+		static _uint iState = CUI_NodeMood::STATE_HIT;
+		iState++;
+		iState %= CUI_NodeMood::STATE_END;
+
+		m_vecNode[UI_MOOD]->Set_Active(true);
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn((CUI_NodeMood::STATE)iState);
+	}
 
 	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
 	//{
@@ -122,33 +161,35 @@ HRESULT CUI_CanvasTop::Bind()
 	if (pKena == nullptr)
 		return E_FAIL;
 
-	if (g_LEVEL == LEVEL_FINAL || g_LEVEL == LEVEL_GAMEPLAY)
-	{
-		/* Boss Warrior Bind */
-		CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-			L"Layer_Monster", L"BossWarrior_0"));
-		if (pBossWarrior == nullptr)
-			return E_FAIL;
+	//if (g_LEVEL == LEVEL_FINAL || g_LEVEL == LEVEL_GAMEPLAY)
+	//{
+	//	/* Boss Warrior Bind */
+	//	CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+	//		L"Layer_Monster", L"BossWarrior_0"));
+	//	if (pBossWarrior == nullptr)
+	//		return E_FAIL;
 
-		/* Boss Shaman Bind */
-		CBossShaman* pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-			L"Layer_Monster", L"BossShaman_0"));
-		if (pShaman == nullptr)
-			return E_FAIL;
+	//	/* Boss Shaman Bind */
+	//	CBossShaman* pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+	//		L"Layer_Monster", L"BossShaman_0"));
+	//	if (pShaman == nullptr)
+	//		return E_FAIL;
 
-		pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-		pShaman->m_BossShamanDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-	}
-	else if (g_LEVEL == LEVEL_TESTPLAY || g_LEVEL == LEVEL_GAMEPLAY)
-	{
-		/* Boss Hunter Bind */
-		CBossHunter* pBossHunter = dynamic_cast<CBossHunter*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-			L"Layer_Monster", L"BossHunter_0"));
-		if (pBossHunter == nullptr)
-			return E_FAIL;
+	//	pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	//	pShaman->m_BossShamanDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	//}
+	//else if (g_LEVEL == LEVEL_TESTPLAY || g_LEVEL == LEVEL_GAMEPLAY)
+	//{
+	//	/* Boss Hunter Bind */
+	//	CBossHunter* pBossHunter = dynamic_cast<CBossHunter*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+	//		L"Layer_Monster", L"BossHunter_0"));
+	//	if (pBossHunter == nullptr)
+	//		return E_FAIL;
 
-		pBossHunter->m_BossHunterDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-	}
+	//	pBossHunter->m_BossHunterDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	//}
+	
+	pKena->m_Delegator.bind(this, &CUI_CanvasTop::BindFunction);
 	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
 	m_bBindFinished = true;
@@ -322,8 +363,6 @@ HRESULT CUI_CanvasTop::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources();
 
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
@@ -346,8 +385,6 @@ HRESULT CUI_CanvasTop::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 
@@ -367,6 +404,10 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 		break;
 	case CUI_ClientManager::TOP_ROTGET:
 		static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_Guage(fValue);
+		break;
+	case CUI_ClientManager::TOP_ROT_LVUP:
+		m_bRotLvUp = true;
+		m_iRotLv = (_uint)fValue;
 		break;
 	case CUI_ClientManager::TOP_BOSS:
 		if (fValue >= 10.f)
@@ -390,8 +431,22 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 		else
 			static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Guage(fValue);
 		break;
+	case CUI_ClientManager::TOP_MOOD_HIT:
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn(CUI_NodeMood::STATE_HIT);
+		break;
+	case CUI_ClientManager::TOP_MOOD_PARRY:
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn(CUI_NodeMood::STATE_PARRY);
+		break;
+	case CUI_ClientManager::TOP_MOOD_HEAL:
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn(CUI_NodeMood::STATE_HEAL);
+		break;
+	case CUI_ClientManager::TOP_MOOD_FADE:
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn(CUI_NodeMood::STATE_FADE);
+		break;
+	case CUI_ClientManager::TOP_MOOD_DAZZLE:
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn(CUI_NodeMood::STATE_DAZZLE);
+		break;
 	}
-
 }
 
 CUI_CanvasTop * CUI_CanvasTop::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

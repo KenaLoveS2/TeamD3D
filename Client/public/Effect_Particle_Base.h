@@ -46,6 +46,17 @@ private:
 	CTexture*						m_pTextureCom;
 	CVIBuffer_Point_Instancing_S2*	m_pVIBufferCom;
 
+
+	/* For. Recording */
+private:
+	void							RecordPath();
+private:
+	vector<_float4>					m_vecPos;
+	_float							m_fTime;
+	_float							m_fTimeAcc;
+	/* ~ For. Recording */
+
+
 public:
 	static CEffect_Particle_Base* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

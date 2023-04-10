@@ -56,8 +56,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
-// 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
-// 		return E_FAIL;
+ 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
+ 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
@@ -65,8 +65,8 @@ HRESULT CLevel_GamePlay::Initialize()
  	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
  		return E_FAIL;
 
- 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
- 		return E_FAIL;
+ 	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+ 	//	return E_FAIL;
 
 	// Ready_Thread_CloneObject(TEXT(""));
 	
@@ -154,7 +154,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		
-	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
@@ -264,11 +264,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Environment(const _tchar * pLayerTag)
 
 	// CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Portal_Test.json");
 
-	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "TestBombTarget.json");
+	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "TestBombTarget.json");
 
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_BowTarget", L"BowTarget", nullptr, nullptr), E_FAIL);
+	//FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_BowTarget", L"BowTarget", nullptr, nullptr), E_FAIL);
 
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_Meditation_Spot", L"MeditationSpot", nullptr, nullptr), E_FAIL);
+	//FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_Meditation_Spot", L"MeditationSpot", nullptr, nullptr), E_FAIL);
 
 	return S_OK;
 }

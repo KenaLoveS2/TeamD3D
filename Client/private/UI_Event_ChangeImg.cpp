@@ -15,7 +15,6 @@ CUI_Event_ChangeImg::CUI_Event_ChangeImg()
 	m_bFirstCall = false;
 
 	/* Test */
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	//CTexture* pTex = static_cast<CTexture*>(pGameInstance->Clone_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Texture_HUDPipFull"));
 	//if (pTex == nullptr)
@@ -25,7 +24,7 @@ CUI_Event_ChangeImg::CUI_Event_ChangeImg()
 	//	m_vecTextures.push_back(pTex);
 	//}
 
-	RELEASE_INSTANCE(CGameInstance);
+
 }
 
 

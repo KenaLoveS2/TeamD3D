@@ -15,8 +15,10 @@ private:
 
 public: /* Events */
 	void		Set_Guage(_float fGuage);
+	void		Set_GuageZero();
 	_float		Get_CurrentGuage();
 	_float		Get_CurrentGuagePosition();
+	_bool 		If_DisAppear_Get_Alpha(_float* pAlpha_Out);
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

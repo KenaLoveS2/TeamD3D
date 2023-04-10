@@ -85,17 +85,13 @@ HRESULT CUI_NodeBossHP::Render()
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 50.f, g_iWinSizeY*0.5f - vPos.y - 60.f };
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	if (m_szTitle != nullptr)
 	{
-		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szTitle,
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_Basic0"), m_szTitle,
 			vNewPos /* position */,
 			0.f, _float2(1.f, 1.f)/* size */,
 			XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -123,8 +119,6 @@ HRESULT CUI_NodeBossHP::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -149,8 +143,6 @@ HRESULT CUI_NodeBossHP::SetUp_ShaderResources()
 	_float fAlpha = 1.f;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &fAlpha, sizeof(_float))))
 		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

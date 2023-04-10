@@ -1,23 +1,23 @@
 {
-    "DiffuseTextureIndex": 66,
+    "DiffuseTextureIndex": -1,
     "MaskTextureIndex": -1,
     "localMatrix": [
-        50.0,
+        500.0,
         0.0,
         0.0,
         0.0,
         0.0,
-        50.0,
+        300.0,
         0.0,
         0.0,
         0.0,
         0.0,
         1.0,
         0.0,
-        410.0,
-        -82.19200134277344,
+        485.0,
+        185.0,
         0.0,
         1.0
     ],
-    "renderPass": 1
+    "renderPass": 0
 }
