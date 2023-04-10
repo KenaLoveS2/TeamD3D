@@ -7,6 +7,8 @@
 #include <codecvt>
 #include <locale>
 
+#include "Kena.h"
+
 _float fTemp = 345.f;
 wstring wstrTemp = L"";
 
@@ -148,7 +150,13 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 		m_pTransformCom->Imgui_RenderProperty();
 		ImGui::End();
 #endif
-		
+
+	if(!m_pPlayer)
+		m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena")));
+
+	if (!m_pPlayer)
+		return;
+
 	m_iNumKeyFrames = (_uint)m_keyframes.size();
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
@@ -166,6 +174,7 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 
 		if (m_bInitSet)
 		{
+			dynamic_cast<CKena*>(m_pPlayer)->Set_StateLock(true);
 			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 			m_pPlayerCam = pGameInstance->Find_Camera(L"PLAYER_CAM");
 			RELEASE_INSTANCE(CGameInstance)
@@ -223,6 +232,7 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 	{
 		if (!m_bFinishSet)
 		{
+			dynamic_cast<CKena*>(m_pPlayer)->Set_StateLock(false);
 			CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
 			if (!m_vecChat.empty())
 			{

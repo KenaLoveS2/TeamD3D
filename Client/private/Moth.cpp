@@ -109,7 +109,7 @@ void CMoth::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	
 	Update_Collider(fTimeDelta);
-	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	

@@ -54,67 +54,67 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	int		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 	float	layerHeight = 1.f;  //StoneCubeDesc.vSize.y; // 레이어 간 높이 차이
 	float	layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-	int		layerCount = 10; // 전체 레이어 개수
+	int		layerCount = 5; // 전체 레이어 개수
 
 	_float3 vColiderSize = { 0.f,0.f,0.f };
 
 	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall03")
 	{
-		StoneCubeDesc.vSize = _float3(0.7f, 0.29f, 0.7f);
-		StoneCubeDesc.fMass = 30.f;
-		StoneCubeDesc.fLinearDamping = 1.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
 		boxRadius = 0.8f; // 상자 중심과 원의 중심 사이의 거리
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall03");
 		vColiderSize = _float3(0.7f, 2.5f, 0.7f); //본체의 콜라이더 사이즈
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall04")
 	{
-		StoneCubeDesc.vSize = _float3(0.38f, 0.25f, 0.45f);
-		StoneCubeDesc.fMass = 100.f;
-		StoneCubeDesc.fLinearDamping = 2.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
 		boxRadius = 0.5f; // 상자 중심과 원의 중심 사이의 거리
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall04");
 		vColiderSize = _float3(1.13f, 2.88f, 1.13f); //본체의 콜라이더 사이즈
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall05")
 	{
-		StoneCubeDesc.vSize = _float3(2.5f, 0.315f, 2.5f);
-		StoneCubeDesc.fMass = 100.f;
-		StoneCubeDesc.fLinearDamping = 2.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
 		boxRadius = 0.7f; // 상자 중심과 원의 중심 사이의 거리
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall05");
 		vColiderSize = _float3(0.9f, 3.3f, 0.9f); //본체의 콜라이더 사이즈
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall06")
 	{
-		StoneCubeDesc.vSize = _float3(1.3f, 0.28f, 1.3f);
-		StoneCubeDesc.fMass = 10.f;
-		StoneCubeDesc.fLinearDamping = 1.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
 		boxRadius = 0.8f; // 상자 중심과 원의 중심 사이의 거리
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall06");
 		vColiderSize = _float3(1.f, 2.8f, 1.f); //본체의 콜라이더 사이즈
 
@@ -122,7 +122,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_MaskShrine_Rock_09")
 	{
 		StoneCubeDesc.vSize = _float3(0.09f, 0.09f, 0.09f);
-		StoneCubeDesc.fMass = 2.f;
+		StoneCubeDesc.fMass = 10000.f;
 		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
@@ -130,16 +130,16 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 9; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_MaskShrine_Rock_09");
 		vColiderSize = _float3( 0.26f,1.2f,0.26f ); //본체의 콜라이더 사이즈
 
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium04")
 	{
-		StoneCubeDesc.vSize = _float3(0.37f, 0.23f, 0.37f);
-		StoneCubeDesc.fMass = 100.f;
-		StoneCubeDesc.fLinearDamping = 3.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
 
@@ -147,37 +147,37 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium04");
 		vColiderSize = _float3(0.9f, 2.44f, 0.9f); //본체의 콜라이더 사이즈
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium06")
 	{
-		StoneCubeDesc.vSize = _float3(0.4f, 0.23f, 0.4f);
-		StoneCubeDesc.fMass = 100.f;
-		StoneCubeDesc.fLinearDamping = 3.f;
+		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 		
 		boxRadius = 0.4f; // 상자 중심과 원의 중심 사이의 거리
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium06");
 		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //본체의 콜라이더 사이즈
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium07")
 	{
-		StoneCubeDesc.vSize = _float3(0.5f, 0.23f, 0.5f);
-		StoneCubeDesc.fMass = 100.f;
-		StoneCubeDesc.fLinearDamping = 3.f;
+		StoneCubeDesc.vSize = _float3(0.16f,0.16f,0.16f);
+		StoneCubeDesc.fMass = 10000.f;
+		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
 		boxRadius = 0.5f; // 상자 중심과 원의 중심 사이의 거리
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium07");
 		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //본체의 콜라이더 사이즈
 	}
@@ -213,7 +213,6 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	}*/
 
 	/*원형 탑*/
-
 	
 	_uint iTemp = 0;
 	for (int layer = 0; layer < layerCount; ++layer) 
@@ -270,11 +269,10 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.bKinematic = true;
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
-	
+
+	m_pActor = pPhysX->Find_StaticActor(m_szCloneObjectTag);
+
 	/*내일 먼저 생성하고 슬립으로 바꾸기*/
-
-
-
 
 	return S_OK;
 }
@@ -298,12 +296,6 @@ void CDynamic_Stone::Tick(_float fTimeDelta)
 		if (pObj != nullptr)
 			pObj->Tick(fTimeDelta);
 	}
-
-
-	//CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
-
-
-
 	__super::Tick(fTimeDelta);
 }
 
@@ -311,162 +303,32 @@ void CDynamic_Stone::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	size_t size = m_pDynamicObj_List.size();
-	size_t iIndex = 0;
 	for (auto& pObj : m_pDynamicObj_List)
 	{
 		if (pObj != nullptr)
 			pObj->Late_Tick(fTimeDelta);
-
 	}
 
-//	if (m_pRendererCom && m_bRenderActive)
-//	{
-//#ifdef _DEBUG
-//		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
-//#endif
-//		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-//	}
-
+	if(m_bOnceColl && m_pActor)
+	{
+		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+		pPhysX->Delete_Actor(m_pActor);
+		m_pActor = nullptr;
+	}
 }
 
 HRESULT CDynamic_Stone::Render()
 {
-	//if (FAILED(__super::Render()))
-	//	return E_FAIL;
-
-	//if (FAILED(SetUp_ShaderResources()))
-	//	return E_FAIL;
-
-	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	//if (m_pModelCom->Get_IStancingModel())
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-
-	//		if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr && (*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_EMISSIVE] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-	//			float f = 1.f;
-	//			FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fStonePulseIntensity", &f, sizeof(float)), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
-	//		}
-	//		else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
-	//		}
-	//		else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
-	//		}
-	//		else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
-	//		}
-	//		else
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-	//		if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 17), E_FAIL);
-	//		}
-	//		else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 18), E_FAIL);
-	//		}
-	//		else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 16), E_FAIL);
-	//		}
-	//		else
-	//		{
-	//			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
-	//		}
-	//	}
-	//}
-
 	return S_OK;
 }
 
 HRESULT CDynamic_Stone::RenderShadow()
 {
-	//if (FAILED(__super::RenderShadow()))
-	//	return E_FAIL;
-
-	//if (FAILED(SetUp_ShadowShaderResources()))
-	//	return E_FAIL;
-
-	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	//if (m_pModelCom->Get_IStancingModel())
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 0), E_FAIL);
-	//	}
-	//}
-	//else
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
-	//	}
-	//}
-
 	return S_OK;
 }
 
 HRESULT CDynamic_Stone::RenderCine()
 {
-	//if (FAILED(__super::RenderCine()))
-	//	return E_FAIL;
-
-	//if (FAILED(__super::SetUp_CineShaderResources()))
-	//	return E_FAIL;
-
-	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	//if (m_pModelCom->Get_IStancingModel())
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 12), E_FAIL);
-	//	}
-	//}
-	//else
-	//{
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-	//		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-	//		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 10), E_FAIL);
-	//	}
-	//}
-
 	return S_OK;
 }
 
