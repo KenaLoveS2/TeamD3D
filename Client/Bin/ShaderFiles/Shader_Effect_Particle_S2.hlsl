@@ -18,14 +18,6 @@ float			g_fUVSpeedX = 0.f, g_fUVSpeedY = 0.f;
 int				g_XFrames = 1, g_YFrames = 1;
 int				g_XFrameNow = 0, g_YFrameNow = 0;
 
-struct	tInstanceInfo
-{
-	float4x4			Matrix;
-	float				fLife;
-};
-
-//RWStructuredBuffer<tInstanceInfo>	g_WriteBuffer;
-
 struct VS_IN
 {
 	float3		vPosition		: POSITION;
@@ -47,7 +39,6 @@ VS_OUT VS_MAIN(VS_IN In)
 	VS_OUT		Out = (VS_OUT)0;
 
 	float4x4	Matrix = In.Matrix;
-
 	/* Option */
 	Out.fLife = In.Matrix[3][3];
 
@@ -353,74 +344,19 @@ VS_TRAILOUT VS_TRAIL(VS_TRAILIN In)
 }
 
 
-//
-//struct HS_CONSTANT_DATA
-//{
-//	float edges[4] : SV_TessFactor;
-//};
-//
-//struct HS_OUTPUT
-//{
-//	float4				vPosition	: POSITION;
-//	float2				vPSize		: PSIZE;
-//	float				fLife		: TEXCOORD0;
-//	row_major float4x4	Matrix		: WORLD;
-//	uint				InstanceID	: SV_InstanceID;
-//};
-//
-//HS_CONSTANT_DATA HSConstantFunction(InputPatch<VS_TRAILOUT, 4> patch, uint patchID : SV_PrimitiveID)
-//{
-//	HS_CONSTANT_DATA output;
-//
-//	// 헐셰이더에서 RWStructuredBuffer에 값을 쓰는 예시 코드
-//	int iIndex = patch[patchID].InstanceID % 2;
-//	tInstanceInfo tInfo;
-//	tInfo.Matrix = patch[patchID].Matrix;
-//	tInfo.fLife = patch[patchID].fLife;
-//	g_WriteBuffer[iIndex] = tInfo;
-//
-//
-//	// 패치 테셀레이션을 위한 테셀레이션 팩터 설정
-//	//output.maxVertexCount = 2048;
-//	output.edges[0] = 1;
-//	//output.inside = 1;
-//
-//	return output;
-//}
-//
-//void HS_TRAIL(InputPatch<VS_TRAILOUT, 4> patch,
-//	uint patchID : SV_PrimitiveID,
-//	out HS_CONSTANT_DATA output[4])
-//{
-//	for (int i = 0; i < 4; ++i)
-//	{
-//		output[i] = HSConstantFunction(patch, patchID);
-//
-//	}
-//}
-//
-//struct DS_OUT
-//{
-//	float4				vPosition	: POSITION;
-//	float2				vPSize		: PSIZE;
-//	float				fLife : TEXCOORD0;
-//	row_major float4x4	Matrix		: WORLD;
-//	uint				InstanceID	: SV_InstanceID;
-//};
-//
-//[maxvertexcount(4)]
-//void DS_TRAIL(InputPatch<VS_TRAILOUT, 4> inputPatch,
-//	uint patchId : SV_PrimitiveID,
-//	out DS_OUT output[4])
-//{
-//	for (int i = 0; i < 4; ++i) {
-//		output[i].vPosition = inputPatch[i].vPosition;
-//		output[i].vPSize = inputPatch[i].vPSize;
-//		output[i].fLife = inputPatch[i].fLife;
-//		output[i].Matrix = inputPatch[i].Matrix;
-//		output[i].InstanceID = inputPatch[i].InstanceID;
-//	}
-//}
+// constant buffer
+cbuffer Constants : register(b0)
+{
+	float3	vPositionP1;
+	float3	vPositionP2;
+}
+
+float3 GetPos1() { return vPositionP1; }
+float3 GetPos2() { return vPositionP2; }
+void SetPos1(float3 x) { vPositionP1 = x; }
+void SetPos2(float3 x) { vPositionP2 = x; }
+
+
 
 struct GS_TRAILIN
 {
@@ -451,19 +387,21 @@ void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices
 	float3		vPosition	= matrix_postion(In[0].Matrix);
 
 	float3 vResultPos;
-	//if (In[0].InstanceID == 0)
-	//{
+	if (In[0].InstanceID == 0)
+	{
 		vResultPos = vPosition - vRight + vUp;
 		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[0].vTexUV = float2(0.f, 0.f);
 		Out[0].fLife = In[0].fLife;
 		
 		vResultPos = vPosition + vRight + vUp;
+		vPositionP1 = vResultPos;
 		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[1].vTexUV = float2(1.f, 0.f);
 		Out[1].fLife = In[0].fLife;
 
 		vResultPos = vPosition + vRight - vUp;
+		vPositionP2 = vResultPos;
 		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[2].vTexUV = float2(1.f, 1.f);
 		Out[2].fLife = In[0].fLife;
@@ -473,33 +411,34 @@ void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices
 		Out[3].vTexUV = float2(0.f, 1.f);
 		Out[3].fLife = In[0].fLife;
 
-	//}
-	//else
-	//{
-	//	//Prev[1] -> Now[0]
-	//	//vResultPos = vPositionPrev + vRightPrev + vUpPrev;
-	//	Out[0].vPosition	= mul(vector(g_WriteBuffer[0].vPosition), matVP);
-	//	Out[0].vTexUV		= float2(0.f, 0.f);
-	//	Out[0].fLife		= g_WriteBuffer[0].fLife;
+	}
+	else
+	{
+		//vResultPos = vPosition - vRight + vUp;
+		vResultPos = vPosition1;
+		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[0].vTexUV = float2(0.f, 0.f);
+		Out[0].fLife = In[0].fLife;
 
-	//	vResultPos = vPosition + vRight + vUp;
-	//	Out[1].vPosition	= mul(vector(vResultPos, 1.f), matVP);
-	//	Out[1].vTexUV		= float2(1.f, 0.f);
-	//	Out[1].fLife		= In[0].fLife;
+		vResultPos = vPosition + vRight + vUp;
+		vPositionP1 = vResultPos;
+		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[1].vTexUV = float2(1.f, 0.f);
+		Out[1].fLife = In[0].fLife;
 
-	//	vResultPos = vPosition + vRight - vUp;
-	//	Out[2].vPosition	= mul(vector(vResultPos, 1.f), matVP);
-	//	Out[2].vTexUV		= float2(1.f, 1.f);
-	//	Out[2].fLife		= In[0].fLife;
+		vResultPos = vPosition + vRight - vUp;
+		vPositionP2 = vResultPos;
+		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[2].vTexUV = float2(1.f, 1.f);
+		Out[2].fLife = In[0].fLife;
 
-	//	//Prev[2] -> Now[3]
-	//	//vResultPos = vPositionPrev + vRightPrev - vUpPrev;
-	//	Out[3].vPosition	= mul(vector(g_WriteBuffer[1].vPosition), matVP);
-	//	Out[3].vTexUV		= float2(0.f, 1.f);
-	//	Out[3].fLife		= g_WriteBuffer[1].fLife;
+		vResultPos = vPosition2;
+		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[3].vTexUV = float2(0.f, 1.f);
+		Out[3].fLife = In[0].fLife;
+	}
 
-	//}
-
+	
 
 	//tInstanceInfo p1;
 	//p1.vPosition	= vPosition + vRight + vUp;
