@@ -24,7 +24,7 @@ struct	tInstanceInfo
 	float				fLife;
 };
 
-RWStructuredBuffer<tInstanceInfo>	g_WriteBuffer;
+//RWStructuredBuffer<tInstanceInfo>	g_WriteBuffer;
 
 struct VS_IN
 {

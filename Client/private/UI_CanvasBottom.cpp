@@ -199,8 +199,6 @@ HRESULT CUI_CanvasBottom::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources();
 
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
@@ -222,8 +220,6 @@ HRESULT CUI_CanvasBottom::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

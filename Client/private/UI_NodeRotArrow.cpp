@@ -103,19 +103,15 @@ HRESULT CUI_NodeRotArrow::Render()
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f-13.f, g_iWinSizeY*0.5f - vPos.y + 10.f};
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	Safe_Delete_Array(m_szInfo);
 	m_szInfo = CUtile::Create_String(to_wstring(m_iRots).c_str());
 	if (m_szInfo != nullptr)
 	{
-		pGameInstance->Render_Font(TEXT("Font_SR0"), m_szInfo,
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szInfo,
 			vNewPos /* position */,
 			0.f, _float2(0.7f, 0.7f)/* size */,
 			XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Get_Alpha())/* color */);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -142,8 +138,6 @@ HRESULT CUI_NodeRotArrow::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
-
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
@@ -172,8 +166,6 @@ HRESULT CUI_NodeRotArrow::SetUp_ShaderResources()
 	_float4 vColor = { 1.f, 1.f, 1.f, 1.f };
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

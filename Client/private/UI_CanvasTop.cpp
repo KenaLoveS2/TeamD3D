@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Kena.h"
 #include "Kena_Status.h"
+#include "Kena_State.h"
 #include "UI_NodeLvUp.h"
 #include "UI_NodeEffect.h"
 #include "UI_NodeRotFrontGuage.h"
@@ -160,33 +161,35 @@ HRESULT CUI_CanvasTop::Bind()
 	if (pKena == nullptr)
 		return E_FAIL;
 
-	if (g_LEVEL == LEVEL_FINAL || g_LEVEL == LEVEL_GAMEPLAY)
-	{
-		/* Boss Warrior Bind */
-		CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-			L"Layer_Monster", L"BossWarrior_0"));
-		if (pBossWarrior == nullptr)
-			return E_FAIL;
+	//if (g_LEVEL == LEVEL_FINAL || g_LEVEL == LEVEL_GAMEPLAY)
+	//{
+	//	/* Boss Warrior Bind */
+	//	CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+	//		L"Layer_Monster", L"BossWarrior_0"));
+	//	if (pBossWarrior == nullptr)
+	//		return E_FAIL;
 
-		/* Boss Shaman Bind */
-		CBossShaman* pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-			L"Layer_Monster", L"BossShaman_0"));
-		if (pShaman == nullptr)
-			return E_FAIL;
+	//	/* Boss Shaman Bind */
+	//	CBossShaman* pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+	//		L"Layer_Monster", L"BossShaman_0"));
+	//	if (pShaman == nullptr)
+	//		return E_FAIL;
 
-		pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-		pShaman->m_BossShamanDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-	}
-	else if (g_LEVEL == LEVEL_TESTPLAY || g_LEVEL == LEVEL_GAMEPLAY)
-	{
-		/* Boss Hunter Bind */
-		CBossHunter* pBossHunter = dynamic_cast<CBossHunter*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-			L"Layer_Monster", L"BossHunter_0"));
-		if (pBossHunter == nullptr)
-			return E_FAIL;
+	//	pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	//	pShaman->m_BossShamanDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	//}
+	//else if (g_LEVEL == LEVEL_TESTPLAY || g_LEVEL == LEVEL_GAMEPLAY)
+	//{
+	//	/* Boss Hunter Bind */
+	//	CBossHunter* pBossHunter = dynamic_cast<CBossHunter*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+	//		L"Layer_Monster", L"BossHunter_0"));
+	//	if (pBossHunter == nullptr)
+	//		return E_FAIL;
 
-		pBossHunter->m_BossHunterDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-	}
+	//	pBossHunter->m_BossHunterDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	//}
+	
+	pKena->m_Delegator.bind(this, &CUI_CanvasTop::BindFunction);
 	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
 	m_bBindFinished = true;
@@ -360,8 +363,6 @@ HRESULT CUI_CanvasTop::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources();
 
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
@@ -383,8 +384,6 @@ HRESULT CUI_CanvasTop::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -432,8 +431,22 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 		else
 			static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Guage(fValue);
 		break;
+	case CUI_ClientManager::TOP_MOOD_HIT:
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn(CUI_NodeMood::STATE_HIT);
+		break;
+	case CUI_ClientManager::TOP_MOOD_PARRY:
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn(CUI_NodeMood::STATE_PARRY);
+		break;
+	case CUI_ClientManager::TOP_MOOD_HEAL:
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn(CUI_NodeMood::STATE_HEAL);
+		break;
+	case CUI_ClientManager::TOP_MOOD_FADE:
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn(CUI_NodeMood::STATE_FADE);
+		break;
+	case CUI_ClientManager::TOP_MOOD_DAZZLE:
+		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn(CUI_NodeMood::STATE_DAZZLE);
+		break;
 	}
-
 }
 
 CUI_CanvasTop * CUI_CanvasTop::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

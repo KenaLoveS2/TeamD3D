@@ -239,7 +239,14 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 		{
 			CUI_ClientManager::UI_PRESENT eArrowUpgrade = CUI_ClientManager::AMMO_ARROWUPRADE;
 
-			if (iSlot == 2)		/* 화살 개수 증가 */
+			if (iSlot == 0)
+			{
+				m_iCurArrowCount = m_iMaxArrowCount;
+
+				_float fMax = (_float)m_iMaxArrowCount;
+				m_StatusDelegator.broadcast(eArrowUpgrade, fMax);
+			}
+			else if (iSlot == 2)		/* 화살 개수 증가 */
 			{
 				m_iMaxArrowCount++;
 				m_iCurArrowCount = m_iMaxArrowCount;
@@ -268,7 +275,14 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 		{
 			CUI_ClientManager::UI_PRESENT eBombUpgrade = CUI_ClientManager::AMMO_BOMBUPGRADE;
 
-			if (iSlot == 2)		/* 폭탄 터지는 시간 감소 */
+			if (iSlot == 0)
+			{
+				m_iCurBombCount = m_iMaxBombCount;
+
+				_float fMax = (_float)m_iMaxBombCount;
+				m_StatusDelegator.broadcast(eBombUpgrade, fMax);
+			}
+			else if (iSlot == 2)		/* 폭탄 터지는 시간 감소 */
 			{
 				vector<CRotBomb*>* pBombs = dynamic_cast<CKena*>(m_pOwner)->Get_Bombs();
 
@@ -502,6 +516,9 @@ void CKena_Status::Add_CurPipGuage()
 {
 	m_fCurPIPGuage += 1.f;
 
+	/* modifydate 230410 : HSY */
+	m_fCurPIPGuage = min(m_fCurPIPGuage, (_float)m_iMaxPIPCount);
+
 	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
 	m_StatusDelegator.broadcast(ePip, m_fCurPIPGuage);
 }
@@ -626,9 +643,9 @@ void CKena_Status::Unlock_Skill(SKILLTAB eCategory, _uint iSlot)
 	if (iSlot >= 5)
 		return;
 
-	if (m_bSkills[eCategory][iSlot] == false)
-	{
+	//if (m_bSkills[eCategory][iSlot] == false)
+	//{
 		m_bSkills[eCategory][iSlot] = true;
 		Apply_Skill(eCategory, iSlot);
-	}
+	//}
 }

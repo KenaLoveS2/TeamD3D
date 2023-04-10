@@ -1979,8 +1979,8 @@ void CBossHunter::ImGui_EffectProperty()
 		for (auto pEffect : m_vecEffects)
 		{
 			wstring wstr = pEffect->Get_ObjectCloneName();
-			string str;
-			str.assign(wstr.begin(), wstr.end());
+			string str = CUtile::wstring_to_utf8(wstr);
+			//str.assign(wstr.begin(), wstr.end());
 			tags.push_back(str);
 		}
 	}

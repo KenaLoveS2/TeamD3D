@@ -133,17 +133,13 @@ HRESULT CUI_NodeRotFrontGuage::Render()
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 80.f, g_iWinSizeY*0.5f - vPos.y -70.f };
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	if (m_szTitle != nullptr)
 	{
-		pGameInstance->Render_Font(TEXT("Font_SR0"), m_szTitle,
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szTitle,
 			vNewPos /* position */,
 			0.f, _float2(0.7f, 0.7f)/* size */,
 			XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Get_Alpha())/* color */);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -171,8 +167,6 @@ HRESULT CUI_NodeRotFrontGuage::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -193,9 +187,6 @@ HRESULT CUI_NodeRotFrontGuage::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

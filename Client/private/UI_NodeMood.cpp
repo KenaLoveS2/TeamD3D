@@ -113,7 +113,7 @@ HRESULT CUI_NodeMood::Render()
 
 void CUI_NodeMood::MoodOn(STATE eState)
 {
-
+	m_bActive = true;
 	m_eState = eState;
 
 	switch(m_eState)
@@ -169,8 +169,6 @@ HRESULT CUI_NodeMood::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -198,8 +196,6 @@ HRESULT CUI_NodeMood::SetUp_ShaderResources()
 	_float fAmount = 0.6f; /* Max Alpha Control */
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAmount", &fAmount, sizeof(_float))))
 		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

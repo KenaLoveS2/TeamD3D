@@ -98,17 +98,13 @@ HRESULT CUI_NodeRotCnt::Render()
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 410.f, g_iWinSizeY*0.5f - vPos.y - 15.f };
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	if(m_szInfo != nullptr)
 	{
-		pGameInstance->Render_Font(TEXT("Font_SR0"), m_szInfo,
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szInfo,
 				vNewPos /* position */,
 				0.f, _float2(0.7f, 0.7f)/* size */,
 				XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Get_Alpha())/* color */);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -135,8 +131,6 @@ HRESULT CUI_NodeRotCnt::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
-
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
@@ -165,8 +159,6 @@ HRESULT CUI_NodeRotCnt::SetUp_ShaderResources()
 	_float4 vColor = { 1.f, 1.f, 1.f, 1.f };
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
