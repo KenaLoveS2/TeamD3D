@@ -132,6 +132,58 @@ _int CSound_Manager::Play_Sound(const _tchar *pSoundKey, _float fVolume, _bool b
 	return iPlayIndex;
 }
 
+_int CSound_Manager::Play_ManualSound(const _tchar* pSoundKey, _float fVolume, _bool bIsBGM, _int iManualChannelIndex)
+{
+	if (iManualChannelIndex >= MAX_CHANNEL_COUNT) return -1;
+
+	SOUNDS::iterator Pair = find_if(m_Sounds.begin(), m_Sounds.end(), CTag_Finder(pSoundKey));
+	if (Pair == m_Sounds.end())
+		return -1;
+
+	FMOD_BOOL bPlayFlag = FALSE;
+
+	if (iManualChannelIndex != -1)
+	{
+		FMOD_Channel_IsPlaying(m_Channels[iManualChannelIndex].first, &bPlayFlag);
+		if (bPlayFlag)
+			return -1;
+	}
+
+	_int iPlayIndex = -1;
+	if (iManualChannelIndex == -1)
+	{
+		for (_uint i = m_iNumManualChannels; i < MAX_CHANNEL_COUNT; i++)
+		{
+			// if (m_Channels[i].second == Pair->second) return -1;
+
+			if (iPlayIndex == -1 && FMOD_Channel_IsPlaying(m_Channels[i].first, &bPlayFlag))
+			{
+				iPlayIndex = i;
+				break;
+			}
+		}
+	}
+	else
+		iPlayIndex = iManualChannelIndex;
+
+	if (iPlayIndex >= MAX_CHANNEL_COUNT || iPlayIndex < 0)
+		return -1;
+
+	FMOD_CHANNEL* pUseChannel;
+	CSound* pUseSound = Pair->second;
+
+	FMOD_System_PlaySound(m_pSystem, pUseSound->GetSoundPtr(), nullptr, FALSE, &pUseChannel);
+	if (bIsBGM)
+		FMOD_Channel_SetMode(pUseChannel, FMOD_LOOP_NORMAL);
+
+	pUseSound->Set_Volume(pUseChannel, fVolume);
+	FMOD_System_Update(m_pSystem);
+
+	m_Channels[iPlayIndex] = { pUseChannel, pUseSound };
+
+	return iPlayIndex;
+}
+
 void CSound_Manager::Stop_Sound(_uint iManualChannelIndex)
 {
 	if (iManualChannelIndex >= MAX_CHANNEL_COUNT) return;
@@ -191,6 +243,7 @@ void CSound_Manager::Tick(double fTimeDelta)
 		pChannel = &m_Channels[i];
 		if (pChannel->second)
 		{
+			pChannel->second->Tick(fTimeDelta, nullptr);
 			pChannel->second->UpdateUseVolume(m_Channels[i].first);
 			
 			FMOD_BOOL bPlayFlag = FALSE;

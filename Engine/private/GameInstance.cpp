@@ -669,6 +669,14 @@ const LIGHTDESC * CGameInstance::Get_LightDesc(_uint iIndex)
 	return m_pLight_Manager->Get_LightDesc(iIndex);	
 }
 
+CLight* CGameInstance::Get_Light(_uint iIndex)
+{
+	if (nullptr == m_pLight_Manager)
+		return nullptr;
+
+	return m_pLight_Manager->Get_Light(iIndex);
+}
+
 HRESULT CGameInstance::Add_Light(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const LIGHTDESC & LightDesc, class CLight** ppOut)
 {
 	if (nullptr == m_pLight_Manager) return E_FAIL;
@@ -743,6 +751,12 @@ _int CGameInstance::Play_Sound(const _tchar * pSoundKey, _float fVolume, _bool b
 {
 	if (m_pSound_Manager == nullptr) return -1;
 	return m_pSound_Manager->Play_Sound(pSoundKey, fVolume, bIsBGM, iManualChannelIndex);
+}
+
+_int CGameInstance::Play_ManualSound(const _tchar* pSoundKey, _float fVolume, _bool bIsBGM, _int iManualChannelIndex)
+{
+	if (m_pSound_Manager == nullptr) return -1;
+	return m_pSound_Manager->Play_ManualSound(pSoundKey, fVolume, bIsBGM, iManualChannelIndex);
 }
 
 void CGameInstance::Stop_Sound(_uint iManualChannelIndex)

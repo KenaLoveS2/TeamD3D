@@ -32,7 +32,8 @@ HRESULT CE_ShamanSummons::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-
+	FAILED_CHECK_RETURN(SetUp_Effects(), E_FAIL);
+	
 	m_eEFfectDesc.bActive = false;
 	m_fHDRValue = 2.f;
 	m_eEFfectDesc.vColor = XMVectorSet(50.f, 111.f, 255.f, 255.f) / 255.f;
@@ -48,15 +49,31 @@ HRESULT CE_ShamanSummons::Late_Initialize(void* pArg)
 
 void CE_ShamanSummons::Tick(_float fTimeDelta)
 {
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Active(m_eEFfectDesc.bActive);
+
 	if (m_eEFfectDesc.bActive == false)
 	{
 		m_fTimeDelta = 0.0f;
 		return;
 	}
-	else
-		m_fTimeDelta += fTimeDelta;
 
 	__super::Tick(fTimeDelta);
+	m_fTimeDelta += fTimeDelta;
+
+	if (m_bDissolve)
+	{
+		if (m_bTurnInto == false)
+		{
+			_bool bTurn = TurnOnDissolveSystem(m_fDissolveTime, m_bDissolve, fTimeDelta);
+			if (bTurn == true) m_bTurnInto = true;
+		}
+		else
+		{
+			_bool bResult = TurnOffSystem(m_fDissolveTime, 1.f, fTimeDelta);
+			if (bResult == true) Reset();
+		}
+	}
 }
 
 void CE_ShamanSummons::Late_Tick(_float fTimeDelta)
@@ -168,6 +185,11 @@ void CE_ShamanSummons::Imgui_RenderProperty()
 
 void CE_ShamanSummons::Reset()
 {
+	m_bTurnInto = false;
+	m_bDissolve = false;
+	m_fDistotionTime = 0.0f;
+	m_fDissolveTime = 1.0f;
+	m_fTimeDelta = 0.0f;
 }
 
 HRESULT CE_ShamanSummons::SetUp_ShaderResources()
@@ -177,6 +199,8 @@ HRESULT CE_ShamanSummons::SetUp_ShaderResources()
 
 	FAILED_CHECK_RETURN(m_pShamanTextureCom->Bind_ShaderResource(m_pShaderCom, "g_ShamanTexture", m_iShamanTexture), E_FAIL);
 
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
 	return S_OK;
 }
 
@@ -187,6 +211,16 @@ HRESULT CE_ShamanSummons::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_MonsterPlate"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
 	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_ETC;
 
+	return S_OK;
+}
+
+HRESULT CE_ShamanSummons::SetUp_Effects()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CEffect_Base* pEffectBase = nullptr;
+
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

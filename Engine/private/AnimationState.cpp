@@ -146,6 +146,19 @@ void CAnimationState::Set_AnimationProgress(_float fProgress)
 		return;
 }
 
+void CAnimationState::Set_AnimationSpeed(_float fSpeed)
+{
+	if (m_pCurAnim != nullptr)
+	{
+		if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
+			m_pCurAnim->m_pMainAnim->Get_AnimationTickPerSecond() = (_double)fSpeed;
+		else
+			m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_AnimationTickPerSecond() = (_double)fSpeed;
+	}
+	else
+		return;
+}
+
 HRESULT CAnimationState::Initialize(CGameObject * pOwner, CModel * pModelCom, const string & strRootBone, const string & strFilePath)
 {
 	NULL_CHECK_RETURN(pOwner, E_FAIL);

@@ -38,8 +38,9 @@ public:
 	void							Set_BoneLocked(const char* pBoneName, _bool bLock);
 	void							Set_AllBonesUnlock();
 	void							Set_RootBone(const string & strRootBone) { m_strRootBone = strRootBone; }
-	HRESULT						Set_BoneIndex(const _tchar * pFilePath);
+	HRESULT					Set_BoneIndex(const _tchar * pFilePath);
 
+	void							FixedAnimIdx_PlayTime(_uint iAnimIndex, _float fTime);
 	void							ResetAnimIdx_PlayTime(_uint iAnimIndex);
 	void							Set_AdditiveAnimIndexForMonster(_uint iAnimIndex);
 	void							Play_AdditiveAnimForMonster(_float fTimeDelta, _float fRatio, const string & strRootBone = "");
@@ -54,8 +55,8 @@ public:
 
 	/*for.Instancing*/
 	const	_bool			Get_IStancingModel() const { return m_bIsInstancing; }
-	vector<_float4x4*>* Get_InstancePos() { return &m_pInstancingMatrix; }
-	void					Set_InstancePos(vector<_float4x4>&InstanceMatrixVec);
+	vector<_float4x4*>* 	Get_InstancePos() { return &m_pInstancingMatrix; }
+	void					Set_InstancePos(vector<_float4x4>& InstanceMatrixVec);
 	/*~for.Instancing*/
 	/*for.Lod*/
 	const	_bool 			Get_IsLodModel()const { return m_bIsLodModel; }
@@ -204,8 +205,8 @@ public:
 
 	void Create_PxTriangle(const _tchar * szCloneName,class CTransform* pParentTransform, PX_USER_DATA * pUserData);
 	void Create_Px_InstTriangle(class CTransform* pParentTransform);
-	void SetUp_InstModelColider(vector<_float3> vecColiderSize);
-
+	void SetUp_InstModelColider(vector<_float3>& vecColiderSize);
+	
 	void Set_DurationRate(_uint iAnimIndex, _float fRate);
 
 	void Init_AnimIndex(_uint iAnimIndex);

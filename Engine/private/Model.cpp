@@ -771,7 +771,7 @@ CAnimation* CModel::Find_Animation(_uint iAnimIndex)
 	return m_Animations[iAnimIndex];
 }
 
-void CModel::Set_InstancePos(vector<_float4x4>& InstanceMatrixVec)
+void CModel::Set_InstancePos(vector<_float4x4> & InstanceMatrixVec)
 {
 	if (m_bIsInstancing == false)
 		return;
@@ -1050,6 +1050,11 @@ HRESULT CModel::Set_BoneIndex(const _tchar* pFilePath)
 	}
 
 	return S_OK;
+}
+
+void CModel::FixedAnimIdx_PlayTime(_uint iAnimIndex, _float fTime)
+{
+	m_Animations[iAnimIndex]->Fixed_Animation(fTime);
 }
 
 void CModel::ResetAnimIdx_PlayTime(_uint iAnimIndex)
@@ -2061,7 +2066,7 @@ void CModel::Create_Px_InstTriangle(CTransform* pParentTransform)
 	}
 }
 
-void CModel::SetUp_InstModelColider(vector<_float3> vecColiderSize)
+void CModel::SetUp_InstModelColider(vector<_float3> & vecColiderSize)
 {
 	for (auto vSize : vecColiderSize)
 	{

@@ -583,6 +583,9 @@
     <Filter Include="02.GameObjects\Envrioment\Meditation_Spot">
       <UniqueIdentifier>{d809b4cf-2aab-455c-a361-d30849842e35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\BossRock">
+      <UniqueIdentifier>{af6e2ed7-fbcf-476d-b449-80988ade864c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -751,9 +754,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\ControlMove.h">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BowTarget.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Crystal.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
@@ -1484,6 +1484,12 @@
     <ClInclude Include="..\public\CLevel_Final.h">
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BombPlatform.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BowTarget.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Effect_Unit.h">
       <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
     </ClInclude>
@@ -1510,6 +1516,13 @@
     </ClInclude>
     <ClInclude Include="..\public\Meditation_Spot.h">
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_HunterTrail.h" />
+    <ClInclude Include="..\public\BossRock.h">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossRock_Pool.h">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1656,9 +1669,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\ControlMove.cpp">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BowTarget.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Cliff_Rock.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
@@ -2392,6 +2402,12 @@
     <ClCompile Include="..\private\CLevel_Final.cpp">
       <Filter>01.Levels\06. FinalPlay</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\BombPlatform.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BowTarget.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Effect_Unit.cpp">
       <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
     </ClCompile>
@@ -2418,6 +2434,13 @@
     </ClCompile>
     <ClCompile Include="..\private\Meditation_Spot.cpp">
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_HunterTrail.cpp" />
+    <ClCompile Include="..\private\BossRock.cpp">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossRock_Pool.cpp">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2515,5 +2538,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\SSLR.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl" />
   </ItemGroup>
 </Project>

@@ -116,11 +116,11 @@ private:
 	_bool		m_bMotionBlur = false;
 	HRESULT PostProcess_Flare();
 	_bool		m_bFlare = false;
-	HRESULT PostProcess_Fog();
+
 	_bool		m_bFog = false;
 	_float4		m_vFogColor;
 	_float		m_fFogStart = 0.f;
-	_float		m_fFogRange = 50.f;
+	_float		m_fFogRange = 30.f;
 
 private:
 	HRESULT Render_DebugObject();
@@ -128,6 +128,8 @@ private:
 
 public:
 	ID3D11ShaderResourceView*		Get_LDRTexture() { return m_pLDRTexture; }
+	const _bool&		Get_Fog() { return m_bFog; }
+	const _float4& Get_FogColor() { return m_vFogColor; }
 
 private:
 	ID3D11ShaderResourceView*		m_pLDRTexture = nullptr;

@@ -57,73 +57,41 @@ HRESULT CE_ShamanTrail::Late_Initialize(void * pArg)
 
 void CE_ShamanTrail::Tick(_float fTimeDelta)
 {
-	//ImGui::Begin("CBossShaman Trail");
-
-	//if (ImGui::Button("Recompile"))
-	//	m_pShaderCom->ReCompile();
-
-	//ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
-	//ImGui::InputFloat("Width", &m_eEFfectDesc.fWidth);
-	//ImGui::InputFloat("Life", &m_eEFfectDesc.fLife);
-	//ImGui::InputFloat("Alpha", &m_eEFfectDesc.fAlpha);
-	//ImGui::InputFloat("SegmentSize", &m_eEFfectDesc.fSegmentSize);
-	//ImGui::InputInt("Flow", (_int*)&m_iTrailFlowTexture);
-	//ImGui::InputInt("Type", (_int*)&m_iTrailTypeTexture);
-
-	//static bool alpha_preview = true;
-	//static bool alpha_half_preview = false;
-	//static bool drag_and_drop = true;
-	//static bool options_menu = true;
-	//static bool hdr = false;
-
-	//ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-	//static bool   ref_color = false;
-	//static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-	//static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	//vSelectColor = m_eEFfectDesc.vColor;
-
-	//ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	//ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	//m_eEFfectDesc.vColor = vSelectColor;
-
-	//ImGui::End();
-
-	if (m_eEFfectDesc.bActive == false)
-		return;
-
 	__super::Tick(fTimeDelta);
+
 	m_pMovementTrail->Set_Active(m_eEFfectDesc.bActive);
 
 	if (m_pMovementTrail) m_pMovementTrail->Tick(fTimeDelta);
-	Update_Trail();
+	if (m_eEFfectDesc.bActive == true)
+		Update_Trail(); /* For.MovementTrail Update */
 }
 
 void CE_ShamanTrail::Late_Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-	{
-		m_fTimeDelta = 0.0f;
-		ResetInfo();
-		return;
-	}
-	else
-		m_fTimeDelta += fTimeDelta;
-
 	__super::Late_Tick(fTimeDelta);
+	m_fTimeDelta += fTimeDelta;
+
 	if (m_pMovementTrail) m_pMovementTrail->Late_Tick(fTimeDelta);
 }
 
 HRESULT CE_ShamanTrail::Render()
 {
+	if (m_eEFfectDesc.bActive == false)
+		return E_FAIL;
+
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
-	m_pShaderCom->Begin(1);
+	m_pShaderCom->Begin(0);
 	m_pVITrailBufferCom->Render();
 
 	return S_OK;
+}
+
+void CE_ShamanTrail::Reset()
+{
+	m_fTimeDelta = 0.0f;
+	ResetInfo();
 }
 
 HRESULT CE_ShamanTrail::SetUp_ShaderResources()
@@ -172,8 +140,42 @@ HRESULT CE_ShamanTrail::SetUp_MovementTrail()
 
 void CE_ShamanTrail::Update_Trail()
 {
-	if (m_eEFfectDesc.bActive == true)
-		m_pMovementTrail->Trail_InputRandomPos(m_pTransformCom->Get_Position());
+	m_pMovementTrail->Trail_InputRandomPos(m_pTransformCom->Get_Position());
+}
+
+void CE_ShamanTrail::ToolTrail(const char* ToolTag)
+{
+	ImGui::Begin(ToolTag);
+
+	if (ImGui::Button("Recompile"))
+		m_pShaderCom->ReCompile();
+
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+	ImGui::InputFloat("Width", &m_eEFfectDesc.fWidth);
+	ImGui::InputFloat("Life", &m_eEFfectDesc.fLife);
+	ImGui::InputFloat("Alpha", &m_eEFfectDesc.fAlpha);
+	ImGui::InputFloat("SegmentSize", &m_eEFfectDesc.fSegmentSize);
+	ImGui::InputInt("Flow", (_int*)&m_iTrailFlowTexture);
+	ImGui::InputInt("Type", (_int*)&m_iTrailTypeTexture);
+
+	static bool alpha_preview = true;
+	static bool alpha_half_preview = false;
+	static bool drag_and_drop = true;
+	static bool options_menu = true;
+	static bool hdr = false;
+
+	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+	static bool   ref_color = false;
+	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	vSelectColor = m_eEFfectDesc.vColor;
+
+	ImGui::ColorPicker4("##ShamanColor", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+	ImGui::ColorEdit4("##ShamanDiffuse", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
+	m_eEFfectDesc.vColor = vSelectColor;
+	ImGui::End();
 }
 
 CE_ShamanTrail * CE_ShamanTrail::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)

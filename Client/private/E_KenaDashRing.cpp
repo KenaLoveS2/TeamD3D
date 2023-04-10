@@ -44,11 +44,38 @@ void CE_KenaDashRing::Tick(_float fTimeDelta)
 // 	if (m_pParent == nullptr)
 // 		ToolOption("CE_KenaDashRing");
 
-	if (m_pParent)
-		m_eEFfectDesc.bActive = dynamic_cast<CEffect_Base*>(m_pParent)->Get_Active();
+//	if (m_pParent)
+//		m_eEFfectDesc.bActive = dynamic_cast<CEffect_Base*>(m_pParent)->Get_Active();
 
 	if (m_eEFfectDesc.bActive == false)
+	{
+		m_fCurScale = m_fInitScale;
 		return;
+	}
+
+	m_pTransformCom->Set_Scaled(_float3(m_fCurScale, m_fCurScale, 1.f));
+	m_fCurScale += 0.15f;
+
+	if (m_fCurScale > m_fInitScale + 1.5f && m_pNextRing != nullptr && m_pNextRing->Get_Active() == false)
+	{
+		m_pNextRing->Set_InitScale(m_fInitScale * 0.5f);
+		m_pNextRing->Set_CurrentScale(m_fInitScale * 0.5f);
+
+		_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_vector	vLook = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK));
+		m_pNextRing->Get_TransformCom()->Set_Position(vPos + vLook * 1.2f);
+		m_pNextRing->Get_TransformCom()->LookAt(vPos + vLook * 1.5f);
+		m_pNextRing->Set_Active(true);
+		
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Dash_Attack_Effect_Ring.ogg", 1.f, false);
+	}
+
+	if (m_fCurScale > m_fInitScale + 2.4f)
+	{
+		m_eEFfectDesc.bActive = false;
+	}
+
+	//m_pTransformCom->Go_Backward(fTimeDelta);
 
 	__super::Tick(fTimeDelta);
 }

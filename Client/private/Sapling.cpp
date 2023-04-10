@@ -141,14 +141,12 @@ HRESULT CSapling::Render()
 
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
-	
-
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		if (i == 3 && !m_bBombUp) 
 			continue;
 
-		if (i == 0)
+		if (i == 0 && m_bBombUp)
 		{
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_ReamTexture");

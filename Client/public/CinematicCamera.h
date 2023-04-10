@@ -40,6 +40,7 @@ public:
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>	m_CinemaDelegator;
 	void		Load_ChatData(string str);
+	void		CinemaUIOff();
 
 private:
 	void		AddKeyFrame(CAMERAKEYFRAME keyFrame);
@@ -65,27 +66,27 @@ private:
 
 private:
 	CRenderer*					m_pRendererCom	= nullptr;
-	CShader*					m_pShaderCom	= nullptr;
+	CShader*						m_pShaderCom	= nullptr;
 	CModel*						m_pModelCom		= nullptr;
 
 private:
 	char								m_szChatFileName[MAX_PATH] = "";
-	vector<wstring>						m_vecChat;
+	vector<wstring>			m_vecChat;
 	_int								m_iChatIndex;
-	_bool								m_bDebugRender = false;
+	_bool							m_bDebugRender = false;
 #pragma region Render Variable
 #ifdef _DEBUG
 private:
 	PrimitiveBatch<VertexPositionColor>*		m_pBatch		= nullptr;
 	BasicEffect*								m_pEffect		= nullptr;
-	ID3D11InputLayout*							m_pInputLayout	= nullptr;
+	ID3D11InputLayout*					m_pInputLayout	= nullptr;
 	_float4										m_vColor;
 #endif // _DEBUG
 
 	_bool										m_bInitSet		= false;
-	class CCamera*								m_pPlayerCam	= nullptr;
+	class CCamera*						m_pPlayerCam	= nullptr;
 	_bool										m_bPausePlay	= false;
-	_uint										m_iNumKeyFrames = 0;
+	_uint											m_iNumKeyFrames = 0;
 	_bool										m_bSaveWrite	= false;
 	string										m_strFileName;
 	_float										m_fChatRatio = 0.f;

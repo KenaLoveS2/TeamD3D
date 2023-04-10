@@ -8,6 +8,8 @@ float  g_fHDRValue;
 /**********************************/
 
 texture2D		g_DepthTexture, g_NormalTexture;
+texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
+texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
 
 /* RotBomb*/
 texture2D		g_AO_R_MTexture;
@@ -256,16 +258,29 @@ float4 g_vEdgeLineColor;
 PS_OUT PS_MAIN_SHAMANTRAP(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
+	//vector vFinalColor = (g_vColor + vEdgeLineTexture * g_vEdgeLineColor) * 10.f;
+	float  time = frac(g_Time * 0.1f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV * 2.f, float2(1.0f, 1.0f), float2(time, -time));
 
-	vector vEdgeLineTexture = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector vEdgeLineTexture = g_DiffuseTexture.Sample(LinearSampler, float2(In.vTexUV.x * 6.f + 1.f, In.vTexUV.y));
+	vector tex_0 = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vector tex_1 = g_DTexture_1.Sample(LinearSampler, In.vTexUV);
 
-	vector vFinalColor = (g_vColor + vEdgeLineTexture * g_vEdgeLineColor) * 10.f;
+	vector tex_2 = g_DTexture_2.Sample(LinearSampler, OffsetUV);
+	vector tex_3 = g_DTexture_3.Sample(LinearSampler, In.vTexUV);
 
-	Out.vDiffuse = float4(vFinalColor.rgb, g_vColor.a);
-	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
-	Out.vAmbient = (vector)1.f;
+	//half dissolve_value = tex_3.r;
+	//if (dissolve_value <= 0.6f)
+	//	discard;
+	//tex_2 = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + 0.5f, 0.2f), tex_2.a);
 
+	//vector addtexture = CalcHDRColor(tex_2 + g_vColor, g_fHDRValue);
+	//addtexture.a = tex_2.a;
+
+	vector finalcolor = lerp(tex_0, tex_1, 0.5f) + g_vColor;
+	finalcolor = CalcHDRColor(finalcolor, g_fHDRValue) ;
+
+	Out.vDiffuse = finalcolor + vEdgeLineTexture;
 	return Out;
 }//4
 

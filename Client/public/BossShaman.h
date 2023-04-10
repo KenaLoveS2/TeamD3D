@@ -43,7 +43,8 @@ private:
 		AT_TRIPLE_ATTACK,		
 		AT_TRAP,
 		AT_DASH_ATTACK,
-		AT_FREEZE_BLAST,		
+		AT_FREEZE_BLAST,
+		AT_ICE_DAGGER,
 		ATTACKTYPE_END
 	};
 
@@ -101,7 +102,12 @@ private:
 	ATTACKTYPE m_eAttackType = AT_MELEE_ATTACK;
 
 	class CSticks01* m_pMinions[MINION_COUNT] = { nullptr };
+	class CE_ShamanThunderCylinder* m_pShamanThunder[MINION_COUNT] = { nullptr }; // For.CSticks01 Summons Effect
 	class CShamanTrapHex* m_pShamanTapHex = nullptr;
+
+	/* For.DashAttackTrail */
+	CBone* m_pLeftHandBone = nullptr;
+	CBone* m_pHeadBone = nullptr;
 
 	CBone* m_pWeaponBone = nullptr;
 	CBone* m_pWeaponTrailBone = nullptr;
@@ -141,7 +147,11 @@ private:
 
 public:
 	HRESULT Ready_Effects();
+	void	Tick_Effects(_float fTimeDelta);
 	void	Update_Trail(const char* pBoneTag);
+	void	Update_DashAttackTrail();
+	void	Update_IceDagger();
+	void	Update_LazerPos();
 
 private:
 	void Set_AttackType();
@@ -177,20 +187,34 @@ private:	/* Animation Event Func */
 	/* 소환 이펙트 => 손에 나오는 이펙트 */
 	void TurnOnHandSummons(_bool bIsInit, _float fTimeDelta);
 	void TurnOffHandSummons(_bool bIsInit, _float fTimeDelta);
+
 	/* 바닥 */
 	void TurnOnSummons(_bool bIsInit, _float fTimeDelta);
 	void TurnOffSummons(_bool bIsInit, _float fTimeDelta);
 
+	/* For.DashAttack */
+	void TurnOnDashAttackTrail(_bool bIsInit, _float fTimeDelta);
+	void TurnOffDashAttackTrail(_bool bIsInit, _float fTimeDelta);
 	void TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta);
+
+	/* For.IceDagger */
+	void TurnOnIceDagger(_bool bIsInit, _float fTimeDelta);
+	void TurnOffIceDagger(_bool bIsInit, _float fTimeDelta);
+
+	/* For.Lazer */
+	void TurnOnLazer(_bool bIsInit, _float fTimeDelta);
 
 	/* 텔레포트 이펙트 */
 	void TurnOnTeleport(_bool bIsInit, _float fTimeDelta);
 
+	/* 카메라 쉐이크 */
 	void TurnOnCameraShake(_bool bIsInit, _float fTimeDelta);
 
 private:
 	map<const string, class CEffect_Base*>	m_mapEffect;
 	_bool	m_bTrail = false;
+	_bool	m_bDashAttackTrail = false;
+	_bool	m_bIceDagger = false;
 
 public:
 	static CBossShaman* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
