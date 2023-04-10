@@ -43,7 +43,7 @@ HRESULT CE_ShamanTrail::Initialize(void * pArg)
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
 	m_eEFfectDesc.fSegmentSize = 0.001f;
-	m_eEFfectDesc.vColor = XMVectorSet(255.f, 236.f, 255.f, 255.f) / 255.f;
+	m_eEFfectDesc.vColor = XMVectorSet(255.f, 255.f, 255.f, 255.f) / 255.f;
 	/* ~Trail Option */
 
 	m_eEFfectDesc.bActive = false;
@@ -90,6 +90,7 @@ HRESULT CE_ShamanTrail::Render()
 
 void CE_ShamanTrail::Reset()
 {
+	m_eEFfectDesc.bActive = false;
 	m_fTimeDelta = 0.0f;
 	ResetInfo();
 }

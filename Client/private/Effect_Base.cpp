@@ -493,12 +493,13 @@ _bool CEffect_Base::TurnOnDissolveSystem(_float& fTurnoffTime,_bool& bDissolve, 
 	return false;
 }
 
-_bool CEffect_Base::TurnOffSystem(_float& fTurnoffTime, _float fDurationTime, _float fTimeDelta)
+_bool CEffect_Base::TurnOffSystem(_float& fTurnoffTime, _float fDurationTime, _float fTimeDelta, _bool bResetPos)
 { 
 	fTurnoffTime += fTimeDelta;
 	if (fTurnoffTime > fDurationTime)
 	{
-		m_pTransformCom->Set_PositionY(-1000.f);
+		if (bResetPos)
+			m_pTransformCom->Set_PositionY(-1000.f);
 		m_eEFfectDesc.bActive = false;
 		fTurnoffTime = 0.0f;
 		return true;

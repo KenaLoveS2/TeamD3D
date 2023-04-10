@@ -443,6 +443,7 @@ private:
 	HRESULT					SetUp_State_Death();
 	HRESULT					SetUp_State_Dodge();
 	HRESULT					SetUp_State_Fall();
+	HRESULT					SetUp_State_Grab();
 	HRESULT					SetUp_State_Heavy_Attack1();
 	HRESULT					SetUp_State_Heavy_Attack2();
 	HRESULT					SetUp_State_Heavy_Attack3();
@@ -692,6 +693,8 @@ private:
 	/* FALL */
 	void						Start_Fall(_float fTimeDelta);
 	void						Start_Fall_Into_Run(_float fTimeDelta);
+	/* GRAB */
+	void						Start_Warrior_Grab(_float fTimeDelta);
 	/* HEAVY ATTACK 1 */
 	void						Start_Heavy_Attack_1_Charge(_float fTimeDelta);
 	void						Start_Heavy_Attack_1_Release(_float fTimeDelta);
@@ -912,6 +915,8 @@ private:
 	/* FALL */
 	void						Tick_Fall(_float fTimeDelta);
 	void						Tick_Fall_Into_Run(_float fTimeDelta);
+	/* GRAB */
+	void						Tick_Warrior_Grab(_float fTimeDelta);
 	/* HEAVY ATTACK 1 */
 	void						Tick_Heavy_Attack_1_Charge(_float fTimeDelta);
 	void						Tick_Heavy_Attack_1_Release(_float fTimeDelta);
@@ -1124,6 +1129,8 @@ private:
 	/* FALL */
 	void						End_Fall(_float fTimeDelta);
 	void						End_Fall_Into_Run(_float fTimeDelta);
+	/* GRAB */
+	void						End_Warrior_Grab(_float fTimeDelta);
 	/* HEAVY ATTACK 1 */
 	void						End_Heavy_Attack_1_Charge(_float fTimeDelta);
 	void						End_Heavy_Attack_1_Release(_float fTimeDelta);
@@ -1218,6 +1225,7 @@ private:	/* Changer */
 	_bool	Death();
 	_bool	Death_Water();
 	_bool	Respawn_Ready();
+	_bool	Grab_Warrior();
 	_bool	CommonHit();
 	_bool	HeavyHit();
 	_bool	Shield_Small();
