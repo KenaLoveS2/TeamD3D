@@ -139,14 +139,10 @@ struct VS_OUT_INSTANCE_GEOMETRY
     float3      vBinormal : BINORMAL;
 };
 
-
 VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
 {
     VS_OUT_INSTANCE_GEOMETRY      Out = (VS_OUT_INSTANCE_GEOMETRY)0;
 
-    matrix      matWV, matWVP;
-    matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);
 
     float4x4   Transform = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
 
@@ -154,11 +150,11 @@ VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
     vector      vNormal = mul(float4(In.vNormal, 0.f), Transform);
     vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), Transform);
 
-    Out.vPosition = mul(vPosition.xyz, matWVP);
-    Out.vNormal = normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
+    Out.vPosition = mul(vPosition.xyz, g_WorldMatrix);
+    Out.vNormal =  normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
     Out.vTexUV = In.vTexUV;
     Out.vProjPos = vector(Out.vPosition,1.f);
-    Out.vTangent = normalize(mul(vTangent, g_WorldMatrix));
+    Out.vTangent =   normalize(mul(vTangent, g_WorldMatrix));
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 
     return Out;
@@ -184,12 +180,11 @@ struct GS_OUT
     float3      vBinormal : BINORMAL;
 };
 
-[maxvertexcount(3)]
+
+[maxvertexcount(24)]
 void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
 {
-    GS_OUT		Out[3];
-
- 
+    
 
 }
 
@@ -604,6 +599,30 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
     return Out;
 }
 
+PS_OUT PS_MAIN_PointSampler(PS_IN In)
+{
+    PS_OUT      Out = (PS_OUT)0;
+
+    vector      vDiffuse = g_DiffuseTexture.Sample(PointSampler, In.vTexUV);
+
+    if (0.1f > vDiffuse.a)
+        discard;
+
+    vector      vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexUV);
+
+    /* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
+    float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+    float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+    vNormal = normalize(mul(vNormal, WorldMatrix));
+
+    Out.vDiffuse = vDiffuse;
+    Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+    Out.vAmbient = (vector)1.f;
+    return Out;
+}//1
+
+
 technique11 DefaultTechnique
 {
     pass Shadow
@@ -916,7 +935,7 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN();
         HullShader = NULL;
         DomainShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_TESS();
+        PixelShader = compile ps_5_0 PS_MAIN_PointSampler();
     }//23
 
 
