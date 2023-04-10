@@ -20,8 +20,7 @@ int				g_XFrameNow = 0, g_YFrameNow = 0;
 
 struct	tInstanceInfo
 {
-	float3				vPosition;
-	float2				vTexUV;
+	float4x4			Matrix;
 	float				fLife;
 };
 
@@ -312,7 +311,6 @@ PS_OUT PS_MAIN_SPREAD(PS_IN In)
 /*					Trail					   */
 /***********************************************/
 
-/* Trail */
 struct VS_TRAILIN
 {
 	float3				vPosition	: POSITION;
@@ -354,7 +352,76 @@ VS_TRAILOUT VS_TRAIL(VS_TRAILIN In)
 	return Out;
 }
 
-/* Trail */
+
+//
+//struct HS_CONSTANT_DATA
+//{
+//	float edges[4] : SV_TessFactor;
+//};
+//
+//struct HS_OUTPUT
+//{
+//	float4				vPosition	: POSITION;
+//	float2				vPSize		: PSIZE;
+//	float				fLife		: TEXCOORD0;
+//	row_major float4x4	Matrix		: WORLD;
+//	uint				InstanceID	: SV_InstanceID;
+//};
+//
+//HS_CONSTANT_DATA HSConstantFunction(InputPatch<VS_TRAILOUT, 4> patch, uint patchID : SV_PrimitiveID)
+//{
+//	HS_CONSTANT_DATA output;
+//
+//	// 헐셰이더에서 RWStructuredBuffer에 값을 쓰는 예시 코드
+//	int iIndex = patch[patchID].InstanceID % 2;
+//	tInstanceInfo tInfo;
+//	tInfo.Matrix = patch[patchID].Matrix;
+//	tInfo.fLife = patch[patchID].fLife;
+//	g_WriteBuffer[iIndex] = tInfo;
+//
+//
+//	// 패치 테셀레이션을 위한 테셀레이션 팩터 설정
+//	//output.maxVertexCount = 2048;
+//	output.edges[0] = 1;
+//	//output.inside = 1;
+//
+//	return output;
+//}
+//
+//void HS_TRAIL(InputPatch<VS_TRAILOUT, 4> patch,
+//	uint patchID : SV_PrimitiveID,
+//	out HS_CONSTANT_DATA output[4])
+//{
+//	for (int i = 0; i < 4; ++i)
+//	{
+//		output[i] = HSConstantFunction(patch, patchID);
+//
+//	}
+//}
+//
+//struct DS_OUT
+//{
+//	float4				vPosition	: POSITION;
+//	float2				vPSize		: PSIZE;
+//	float				fLife : TEXCOORD0;
+//	row_major float4x4	Matrix		: WORLD;
+//	uint				InstanceID	: SV_InstanceID;
+//};
+//
+//[maxvertexcount(4)]
+//void DS_TRAIL(InputPatch<VS_TRAILOUT, 4> inputPatch,
+//	uint patchId : SV_PrimitiveID,
+//	out DS_OUT output[4])
+//{
+//	for (int i = 0; i < 4; ++i) {
+//		output[i].vPosition = inputPatch[i].vPosition;
+//		output[i].vPSize = inputPatch[i].vPSize;
+//		output[i].fLife = inputPatch[i].fLife;
+//		output[i].Matrix = inputPatch[i].Matrix;
+//		output[i].InstanceID = inputPatch[i].InstanceID;
+//	}
+//}
+
 struct GS_TRAILIN
 {
 	float4				vPosition   : POSITION;
@@ -434,17 +501,17 @@ void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices
 	//}
 
 
-	tInstanceInfo p1;
-	p1.vPosition	= vPosition + vRight + vUp;
-	p1.vTexUV		= Out[1].vTexUV;
-	p1.fLife		= Out[1].fLife;
-	g_WriteBuffer[0] = p1;
+	//tInstanceInfo p1;
+	//p1.vPosition	= vPosition + vRight + vUp;
+	//p1.vTexUV		= Out[1].vTexUV;
+	//p1.fLife		= Out[1].fLife;
+	//g_WriteBuffer[0] = p1;
 
-	tInstanceInfo p2;
-	p2.vPosition	= vPosition + vRight - vUp;
-	p2.vTexUV		= Out[2].vTexUV;
-	p2.fLife		= Out[2].fLife;
-	g_WriteBuffer[1] = p2;
+	//tInstanceInfo p2;
+	//p2.vPosition	= vPosition + vRight - vUp;
+	//p2.vTexUV		= Out[2].vTexUV;
+	//p2.fLife		= Out[2].fLife;
+	//g_WriteBuffer[1] = p2;
 
 
 	Vertices.Append(Out[0]);
@@ -549,8 +616,10 @@ technique11 DefaultTechnique
 
 		VertexShader = compile vs_5_0 VS_TRAIL();
 		GeometryShader = compile gs_5_0 GS_TRAIL();
-		HullShader = NULL;
-		DomainShader = NULL;
+
+		HullShader = NULL;// compile hs_5_0 HS_TRAIL();
+
+		DomainShader = NULL;// compile ds_5_0 DS_TRAIL();
 		PixelShader = compile ps_5_0 PS_TRAIL();
 	}
 }

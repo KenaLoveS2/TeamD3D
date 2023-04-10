@@ -583,6 +583,9 @@
     <Filter Include="02.GameObjects\Envrioment\Meditation_Spot">
       <UniqueIdentifier>{d809b4cf-2aab-455c-a361-d30849842e35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video">
+      <UniqueIdentifier>{badeb5f1-e152-420c-83a3-f331d15d888d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1515,6 +1518,9 @@
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_HunterTrail.h" />
+    <ClInclude Include="..\public\UI_Node_Video.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2427,6 +2433,9 @@
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_HunterTrail.cpp" />
+    <ClCompile Include="..\private\UI_Node_Video.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
