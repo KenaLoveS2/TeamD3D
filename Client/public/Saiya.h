@@ -137,7 +137,8 @@ private:
 	HRESULT						Load_KeyFrame();
 	void								Rot_WispSetPosition();
 
-	void								Play_Sound(const _tchar* SoundKey, float fVolume);
+	void								Setting_Sound();
+	void								Play_LaughSound(float fVolume = 1.f);
 
 private:
 	CUI_FocusNPC*							m_pFocus;
@@ -151,6 +152,8 @@ private:
 	_float3											m_vCamOffset;
 
 	_bool											m_bPulse = false;
+
+	_bool											m_bSoundCheck[7] = { false, };
 
 	_bool											m_bCinecam[NPC_CINE_END] = { false, };
 	class CCinematicCamera*			m_pCinecam[NPC_CINE_END] = { nullptr, };

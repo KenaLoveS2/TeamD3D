@@ -138,6 +138,8 @@ void CMonster::Imgui_RenderProperty()
 
 	ImGui::Text("Distance to Player :	%f", DistanceBetweenPlayer());
 
+	ImGui::Checkbox("ReadySpawn", &m_bReadySpawn);
+
 	//if(ImGui::Button("AddShaderValue"))
 	//{
 	//	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)

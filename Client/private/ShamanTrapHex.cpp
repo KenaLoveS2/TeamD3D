@@ -34,8 +34,8 @@ HRESULT CShamanTrapHex::Initialize(void* pArg)
 	else
 		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
 
-	/* ¸ðµ¨À» º°µµ·Î ¼³Á¤ÇØ ÁÖ±â ¶§¹®¿¡ Desc ÀÏºÎ º¯°æ ÇØÁÜ */
-	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_END; // Mesh »ý¼º ¾ÈÇÔ
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Desc ï¿½Ïºï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
+	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_END; // Mesh ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	m_iTotalDTextureComCnt = 4;	m_iTotalMTextureComCnt = 0;
 	m_eEFfectDesc.fFrame[0] = 133.f;
 	m_eEFfectDesc.fFrame[1] = 15.f;
@@ -144,7 +144,7 @@ void CShamanTrapHex::Imgui_RenderProperty()
 
 _float4 CShamanTrapHex::Get_JointBonePos()
 {
-	// ·ÎÅ×ÀÌ¼ÇÀÌ 0,0,0 ¿¡¼­ °¡´ÉÇÑ »À, pos´Â y°ªÀº ¼öÁ¤À» ÇØ¾ßÇÒ¼öµµ ÀÖ½À´Ï´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ 0,0,0 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, posï¿½ï¿½ yï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¾ï¿½ï¿½Ò¼ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
 	CBone* pBone = m_pModelCom->Get_BonePtr("joint6_end");
 	_matrix			SocketMatrix =
 		pBone->Get_OffsetMatrix() *
@@ -163,8 +163,7 @@ _float4 CShamanTrapHex::Get_JointBonePos()
 HRESULT CShamanTrapHex::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxEffectAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_ShamanTrapHex", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
-	
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_ShamanTrapHex", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
@@ -368,7 +367,7 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 	}		
 	case BREAK_TRAP:
 	{
-		// ºÎ¼­Áö´Â ÆÄÆ¼Å¬ÀÌ ÇÊ¿äÇÏ´Ù
+		// ï¿½Î¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼Å¬ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Ï´ï¿½
 		if (m_pModelCom->Get_AnimationFinish())
 			m_eState = END_TRAP;
 
@@ -376,7 +375,7 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 	}		
 	case END_TRAP:
 	{
-		// ¼­¼­È÷ ¾ø¾îÁü?
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
 		m_pTransformCom->Set_Position(m_vInvisiblePos);
 		m_eEFfectDesc.bActive = false;
 		m_eState = STATE_END;
