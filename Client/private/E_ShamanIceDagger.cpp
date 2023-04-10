@@ -50,6 +50,34 @@ HRESULT CE_ShamanIceDagger::Initialize(void* pArg)
 HRESULT CE_ShamanIceDagger::Late_Initialize(void* pArg)
 {
 	m_pKena = (CKena*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena");
+	NULL_CHECK_RETURN(m_pKena, E_FAIL);
+
+	_float3 vPos = _float3(0.f, 0.f, 0.f);
+	_float3 vPivotScale = _float3(0.15f, 0.f, 1.f);
+	_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
+
+	// Capsule X == radius , Y == halfHeight
+	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	PxSphereDesc.eType = SPHERE_DYNAMIC;
+	PxSphereDesc.pActortag = m_szCloneObjectTag;
+	PxSphereDesc.vPos = vPos;
+	PxSphereDesc.fRadius = vPivotScale.x;
+	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxSphereDesc.fDensity = 1.f;
+	PxSphereDesc.fAngularDamping = 0.5f;
+	PxSphereDesc.fMass = 59.f;
+	PxSphereDesc.fLinearDamping = 1.f;
+	PxSphereDesc.bCCD = true;
+	PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+	PxSphereDesc.fDynamicFriction = 0.5f;
+	PxSphereDesc.fStaticFriction = 0.5f;
+	PxSphereDesc.fRestitution = 0.1f;
+
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+
+	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+
 
 	return S_OK;
 }
@@ -77,6 +105,8 @@ void CE_ShamanIceDagger::Tick(_float fTimeDelta)
 			m_fIdle2Chase = 0.0f;
 		}
 	}
+
+	m_pTransformCom->Tick(fTimeDelta);
 
 	/* MoveMentTrail */
 	{
@@ -110,6 +140,8 @@ HRESULT CE_ShamanIceDagger::Render()
 
 void CE_ShamanIceDagger::Imgui_RenderProperty()
 {
+	__super::ImGui_PhysXValueProperty();
+
 	ImGui::InputFloat("HDRValue", &m_fHDRValue);ImGui::SameLine();
 	if (ImGui::Button("RE")) m_pShaderCom->ReCompile(); 
 
@@ -180,6 +212,11 @@ void CE_ShamanIceDagger::Imgui_RenderProperty()
 		m_pTransformCom->Set_WorldMatrix(matWorld);
 	}
 	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CE_ShamanIceDagger::ImGui_PhysXValueProperty()
+{
+	__super::ImGui_PhysXValueProperty();
 }
 
 void CE_ShamanIceDagger::Reset()

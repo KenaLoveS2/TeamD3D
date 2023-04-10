@@ -32,7 +32,7 @@ public:
 	enum STATERETURN {
 		STATE_DEATH, STATE_LEVELUP, STATE_LEVELUP_READY,
 		STATE_ATTACK, STATE_HEAVYATTACK, STATE_PERFECTATTACK,
-		STATE_COMMONHIT, STATE_HEAVYHIT,
+		STATE_COMMONHIT, STATE_HEAVYHIT, STATE_GRAB_WARRIOR,
 		STATE_SPRINT, STATE_DASH, STATE_MASK,
 		STATE_AIM, STATE_BOW, STATE_INJECTBOW,
 		STATE_BOMB, STATE_INJECTBOMB, 
@@ -173,6 +173,8 @@ private:
 	_bool						m_bDodge = false;
 	_bool						m_bDash = false;
 	_bool						m_bMask = false;
+
+	_bool						m_bGrabWarrior = false;
 
 	_float						m_fInertia = 5.f;
 

@@ -2002,7 +2002,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	/************For.Warrior***********/
 	/**********************************/
 	// Prototype_Component_Model_Boss_Warrior
-	PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	PivotMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Warrior",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/Boss_Warrior.model"), PivotMatrix)))) return E_FAIL;
 
