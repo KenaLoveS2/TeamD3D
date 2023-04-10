@@ -115,7 +115,7 @@ HRESULT CUI_CanvasHatCart::Bind()
 		pCart = dynamic_cast<CHatCart*>(CGameInstance::GetInstance()->
 			Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"test"));
 	}
-	else if(g_LEVEL == LEVEL_TESTPLAY)
+	else if(g_LEVEL == LEVEL_FINAL)
 	{
 		pCart = dynamic_cast<CHatCart*>(CGameInstance::GetInstance()->
 			Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"4_HatCart"));

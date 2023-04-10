@@ -873,7 +873,7 @@ void CImgui_MapEditor::imgui_ObjectList_Clear()
 
 void CImgui_MapEditor::Imgui_Instance_Edit_Collider()
 {
-	m_pSelectedObj = dynamic_cast<CEnviromentObj*>	(CGameInstance::GetInstance()->Get_SelectObjectPtr());
+	m_pSelectedObj = dynamic_cast<CEnviromentObj*>(CGameInstance::GetInstance()->Get_SelectObjectPtr());
 
 	if (nullptr == m_pSelectedObj)
 		return;

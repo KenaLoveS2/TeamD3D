@@ -40,8 +40,27 @@ private:
 	void			Imgui_RenderProperty() override;
 
 public:
-	void			TurnOnLazer(_float fTimeDelta);
-	
+	void			TurnOnLazer( _float fTimeDelta);
+	void			Set_SpawnPos(_float4 vPos);
+	void			Calculate_Path(_float fTimeDelta);
+
+	_bool			Get_FinalState() { return m_bFinalState; }
+
+private:
+	_vector			m_SpawnPos;
+	_float			m_fRange = 2.0f;
+	_bool			m_bFinalState = false;
+
+private:
+	_float3			m_vAimPos;
+	list<_float4>	m_PathList;
+
+	_smatrix		m_matDummy;
+
+private:
+	class CE_LazerTrail* m_pPathTrail = nullptr;
+	class CShamanTrapHex* m_pShamanTrapHex = nullptr;
+
 public:
 	static  CE_ShamanLazer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject*	   Clone(void* pArg = nullptr) override;

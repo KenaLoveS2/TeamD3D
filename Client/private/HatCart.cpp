@@ -88,19 +88,21 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 			{	
 				CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
 				m_CartDelegator.broadcast(eCart, m_pPlayer, m_pUIShown);
-
+				
 				if (*m_pUIShown == true) /* Cart Open */
 				{
 					CGameInstance::GetInstance()->Play_Sound(TEXT("Rot (9).ogg"), 0.8f);
+					m_pPlayer->Set_StateLock(true);
+
 					Update_MannequinRotMatrix();
 					m_pMannequinRot->Start_FashiomShow();
 				}
 				else /* Cart Close */
 				{
 					CGameInstance::GetInstance()->Play_Sound(TEXT("Rot (9).ogg"), 0.8f);
+					m_pPlayer->Set_StateLock(false);
 					m_pMannequinRot->End_FashiomShow();
 				}
-				
 			}
 		}
 	}

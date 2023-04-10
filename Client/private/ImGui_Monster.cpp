@@ -106,20 +106,20 @@ void CImGui_Monster::MonsterList()
 		}
 	}
 
-	CLayer* pLayer = m_pGameInstance->Find_Layer(g_LEVEL, L"Layer_Monster");
-
-	if(pLayer == nullptr)
-		return;
-
 	if (!m_wstrSelectedProtoName.empty())
 	{
 		ImGui::Text("ProtoName : "); ImGui::SameLine(); ImGui::Text(CUtile::WstringToString(m_wstrSelectedProtoName).c_str());
+
+		CLayer* pLayer = m_pGameInstance->Find_Layer(g_LEVEL, L"Layer_Monster");
 
 		_int iSize = 0;
 		if (pLayer == nullptr)
 			iSize = 0;
 		else
+		{
 			iSize = (_int)pLayer->GetGameObjects().size();
+		}
+			
 
 		if (ImGui::Button("CLONE_MONSTER"))
 		{
@@ -134,6 +134,11 @@ void CImGui_Monster::MonsterList()
 			p_game_object->Late_Initialize();
 		}
 	}
+
+	CLayer* pLayer = m_pGameInstance->Find_Layer(g_LEVEL, L"Layer_Monster");
+
+	if (pLayer == nullptr)
+		return;
 
 	if (ImGui::CollapsingHeader("Monster"))
 	{

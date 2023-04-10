@@ -165,12 +165,9 @@ private:
 	void AdditiveAnim(_float fTimeDelta) override;
 
 private:
-	void Set_AttackType();
-	void Reset_Attack();
-	void Tick_Attack(_float fTimeDelta);
-
-	void Set_AFType();
-	void Reset_AF();
+	void	BossFight_Start();
+	void  BossFight_End();
+	_float m_fEndTime = 0.f;
 
 private:
 	vector<_float3> m_vecPivot;
@@ -293,7 +290,9 @@ private:
 
 private:
 	vector<CEffect_Base_S2*>		m_vecEffects;
-	class CE_HunterTrail* m_pHunterTrail = nullptr;
+	class CE_HunterTrail*           m_pHunterTrail = nullptr;
+
+	class CCinematicCamera* m_pCineCam[2] = { nullptr, };
 
 private: /* For. String */
 	_float							m_fUVSpeeds[2];

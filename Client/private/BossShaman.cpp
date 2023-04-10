@@ -13,6 +13,7 @@
 #include "E_ShamanBossPlate.h"
 #include "E_ShamanSummons.h"
 #include "E_ShamanIceDagger.h"
+#include "E_ShamanLazer.h"
 
 // #define EFFECTDEBUG
 
@@ -166,6 +167,8 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Late_Initialize(nullptr);
 
+	m_pShamanTapHex->Late_Initialize(nullptr);
+
 	// m_bReadySpawn = true;
 	return S_OK;
 }
@@ -184,7 +187,7 @@ void CBossShaman::Tick(_float fTimeDelta)
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
-	
+
 	SwordRenderProc(fTimeDelta);
 	Update_Collider(fTimeDelta);
 	Tick_Effects(fTimeDelta);
@@ -818,22 +821,33 @@ HRESULT CBossShaman::SetUp_State()
 		return m_bTraptBreak;
 	})
 
-
 		.AddState("LASER_FIRE")
 		.OnStart([this]()
 	{
 		Attack_Start(false, TRAP_LOOP);
-		Update_LazerPos();
 	})
 		.OnExit([this]()
 	{
+		m_bTrap = false;
 		Attack_End(false, IDLE_LOOP);
 	})		
-		.AddTransition("LASER_FIRE to TRAP_END", "TRAP_END")
+		.AddTransition("LASER_FIRE to TRAP_END", "TRAP_END") // 레이저 발사가 끝나면 아이들로
 		.Predicator([this]()
 	{
-		// 레이저 발사가 끝나면 아이들로
-		return m_mapEffect["S_Lazer"]->Get_Active();
+		if (m_bTrap == false)
+		{
+			_matrix Head_SocketMatrix = m_pHeadBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+			dynamic_cast<CE_ShamanLazer*>(m_mapEffect["S_Lazer"])->Set_SpawnPos(Head_SocketMatrix.r[3]);
+
+			if (dynamic_cast<CE_ShamanLazer*>(m_mapEffect["S_Lazer"])->Get_FinalState() == true)
+			{
+				_float4 vPos = m_pShamanTapHex->Get_TransformCom()->Get_Position();
+				m_mapEffect["Shaman_Charged"]->Set_Effect(vPos, true);
+				m_bTrap = true;
+			}
+		}
+		
+		return m_mapEffect["S_Lazer"]->Get_Active() == false;
 	})
 
 		.AddState("TRAP_END")
@@ -896,7 +910,7 @@ HRESULT CBossShaman::SetUp_State()
 		.OnStart([this]()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(STUN_TAKE_DAMAGE);
-		m_pModelCom->Set_AnimIndex(STUN_TAKE_DAMAGE);
+		m_pModelCom->Set_AnimIndex(STUN_TAKE_DAMAGE);		
 		m_fStunTime = 0.f;
 	})
 		.Tick([this](_float fTimeDelta)
@@ -1060,7 +1074,7 @@ HRESULT CBossShaman::SetUp_Components()
 {
 	__super::SetUp_Components();
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Boss_Shaman", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Boss_Shaman", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Boss_Shaman/Shaman_Uv02_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Enemy/Boss_Shaman/Shaman_Uv02_ALPHA.png")), E_FAIL);
@@ -1181,13 +1195,13 @@ HRESULT CBossShaman::Ready_Effects()
 	_tchar* pCloneTag = nullptr;
 	string strMapTag = "";
 	CBone* pBonePtr = m_pModelCom->Get_BonePtr("char_neck_jnt");
-	for (_int i = 0; i < 5; ++i)
+	for (_int i = 0; i < ICEDAGGER_COUNT; ++i)
 	{
 		pCloneTag = CUtile::Create_DummyString(L"S_IceDagger", i);
 		strMapTag = "S_IceDagger_" + to_string(i);
 		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShammanIceDagger", pCloneTag));
 		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-		dynamic_cast<CE_ShamanIceDagger*>(pEffectBase)->Set_CenterBone(pBonePtr, XMConvertToRadians(i * 45.f));
+		dynamic_cast<CE_ShamanIceDagger*>(pEffectBase)->Set_CenterBone(pBonePtr, XMConvertToRadians(i * 45.f), i);
 		m_mapEffect.emplace(strMapTag, pEffectBase);
 	}
 
@@ -1227,13 +1241,9 @@ void CBossShaman::Update_Trail(const char* pBoneTag)
 {
 	_matrix SocketMatrix = m_pWeaponTrailBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
 	m_mapEffect["S_Trail"]->Get_TransformCom()->Set_WorldMatrix(SocketMatrix);
-	//m_mapEffect["S_KnifeTrail"]->Get_TransformCom()->Set_WorldMatrix(SocketMatrix);
 
 	if (m_mapEffect["S_Trail"]->Get_Active() == true) /* Normal Trail Setting */
 		dynamic_cast<CEffect_Trail*>(m_mapEffect["S_Trail"])->Trail_InputPos(SocketMatrix.r[3]);
-
-	// 	if (m_mapEffect["S_KnifeTrail"]->Get_Active() == true) /* WeaponCloud Trail Setting */
-	// 		dynamic_cast<CEffect_Trail*>(m_mapEffect["S_KnifeTrail"])->Trail_InputPos(SocketMatrix.r[3]);
 }
 
 void CBossShaman::Update_DashAttackTrail()
@@ -1256,15 +1266,12 @@ void CBossShaman::Update_IceDagger()
 	{
 		if (dynamic_cast<CE_ShamanIceDagger*>(Pair.second))
 		{
-			if (Pair.second->Get_Active() == false)
+			CE_ShamanIceDagger* pObject = dynamic_cast<CE_ShamanIceDagger*>(Pair.second);
+			if (pObject->Get_Active() == false/* && pObject->Get_Index() == m_iIceDaggerIdx*/)
 			{
 				CBone*  pBonePtr = m_pModelCom->Get_BonePtr("char_neck_jnt");
 				_matrix SocketMatrix = m_pWeaponBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
-
-				_float4 vPos = SocketMatrix.r[3];
-				Pair.second->Set_Position(vPos);
-
-				Pair.second->Set_Active(true);
+				pObject->Set_Effect(SocketMatrix.r[3], true);
 			}
 		}
 	}
@@ -1274,7 +1281,8 @@ void CBossShaman::Update_LazerPos()
 {
 	_matrix SocketMatrix = m_pHeadBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
 	_float4 vPos = SocketMatrix.r[3];
-	vPos.x += 2.f; vPos.z += 2.f;
+	vPos.x += 2.f;
+	vPos.z += 2.f;
 	m_mapEffect["S_Lazer"]->Set_Position(vPos);
 	m_mapEffect["S_Lazer"]->Set_Active(true);
 }
@@ -1357,7 +1365,6 @@ void CBossShaman::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 	m_bTrail = false;
-	m_mapEffect["S_Trail"]->Set_Active(false);
 	dynamic_cast<CE_ShamanTrail*>(m_mapEffect["S_Trail"])->Reset();
 }
 
@@ -1382,7 +1389,6 @@ void CBossShaman::TurnOnWeaponCloudTrail(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 	m_bDashAttackTrail = true;
-	//m_mapEffect["S_KnifeTrail"]->Set_Active(true);
 }
 
 void CBossShaman::TurnOffWeaponCloudTrail(_bool bIsInit, _float fTimeDelta)
@@ -1394,7 +1400,6 @@ void CBossShaman::TurnOffWeaponCloudTrail(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 	m_bDashAttackTrail = false;
-	//m_mapEffect["S_KnifeTrail"]->Set_Active(false);
 }
 
 void CBossShaman::TurnOnHandSummons(_bool bIsInit, _float fTimeDelta)
@@ -1456,7 +1461,7 @@ void CBossShaman::TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnSwipeChareged);
 		return;
 	}
-	_float4 vPos = m_pTransformCom->Get_Position();	_float fRange = 5.f;
+	_float4 vPos = m_pTransformCom->Get_Position();	_float fRange = 3.f;
 	_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 	vPos += vLook * fRange;
 	vPos.y = -1.5f;
@@ -1510,14 +1515,24 @@ void CBossShaman::TurnOnTeleport(_bool bIsInit, _float fTimeDelta)
 	_float4 vPos = m_pTransformCom->Get_Position();
 
 	m_mapEffect["S_P_Teleport"]->Set_Position(vPos);
-	m_mapEffect["S_Plate"]->Set_Position(vPos);
+	dynamic_cast<CE_ShamanBossPlate*>(m_mapEffect["S_Plate"])->Set_Teleport(vPos);
 
 	vPos.y += 1.5f;
-	dynamic_cast<CE_ShamanSmoke*>(m_mapEffect["Shaman_Smoke"])->Set_State(CE_ShamanSmoke::STATE::STATE_TELEPORT, vPos);
+	CE_ShamanSmoke* pShamanSmoke = dynamic_cast<CE_ShamanSmoke*>(m_mapEffect["Shaman_Smoke"]);
+	{
+		if (m_pModelCom->Get_AnimIndex() == (_uint)AWAKE || m_pModelCom->Get_AnimIndex() == (_uint)IDLE_LOOP)
+		{
+			_matrix Left_SocketMatrix = m_pLeftHandBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+			pShamanSmoke->Set_State(CE_ShamanSmoke::STATE::STATE_IDLE, vPos, Left_SocketMatrix.r[3]);
+		}
+		else
+		{
+			pShamanSmoke->Set_State(CE_ShamanSmoke::STATE::STATE_TELEPORT, vPos);
 
-	m_mapEffect["S_Plate"]->Set_Active(true);
-	m_mapEffect["S_P_Teleport"]->Set_Active(true);
-	m_pMovementTrail->Set_Active(true);
+			m_mapEffect["S_P_Teleport"]->Set_Active(true);
+			m_pMovementTrail->Set_Active(true);
+		}
+	}
 }
 
 void CBossShaman::TurnOnCameraShake(_bool bIsInit, _float fTimeDelta)
@@ -1545,13 +1560,15 @@ void CBossShaman::TurnOnSummons(_bool bIsInit, _float fTimeDelta)
 	_float4 vPos = m_pTransformCom->Get_Position();
 	vPos.y = vPos.y + 0.1f;
 
-	dynamic_cast<CE_ShamanBossPlate*>(m_mapEffect["S_Plate"])->Set_Dissolve(true);
-	m_mapEffect["S_Plate"]->Set_Position(vPos);
-	m_mapEffect["S_Plate"]->Set_Active(true);
+	CE_ShamanBossPlate* pPlate = dynamic_cast<CE_ShamanBossPlate*>(m_mapEffect["S_Plate"]);
+	pPlate->Set_Dissolve(true);
+	pPlate->Set_Position(vPos);
+	pPlate->Set_Active(true);
 
-	dynamic_cast<CE_ShamanSummons*>(m_mapEffect["S_Summons"])->Set_Dissolve(true);
-	m_mapEffect["S_Summons"]->Set_Position(vPos);
-	m_mapEffect["S_Summons"]->Set_Active(true);
+	CE_ShamanSummons* pSummons = dynamic_cast<CE_ShamanSummons*>(m_mapEffect["S_Summons"]);
+	pSummons->Set_Dissolve(true);
+	pSummons->Set_Position(vPos);
+	pSummons->Set_Active(true);
 }
 
 void CBossShaman::TurnOffSummons(_bool bIsInit, _float fTimeDelta)

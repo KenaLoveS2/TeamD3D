@@ -34,8 +34,8 @@ HRESULT CShamanTrapHex::Initialize(void* pArg)
 	else
 		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
 
-	/* ¸ðµ¨À» º°µµ·Î ¼³Á¤ÇØ ÁÖ±â ¶§¹®¿¡ Desc ÀÏºÎ º¯°æ ÇØÁÜ */
-	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_END; // Mesh »ý¼º ¾ÈÇÔ
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Desc ï¿½Ïºï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
+	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_END; // Mesh ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	m_iTotalDTextureComCnt = 4;	m_iTotalMTextureComCnt = 0;
 	m_eEFfectDesc.fFrame[0] = 133.f;
 	m_eEFfectDesc.fFrame[1] = 15.f;
@@ -64,10 +64,53 @@ HRESULT CShamanTrapHex::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CShamanTrapHex::Late_Initialize(void* pArg)
+{
+	_float3		vPos, vPivotScale, vPivotPos, vPivotRot;
+	_smatrix	matPivot;
+	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
+	_tchar*		pCloneActorTag = nullptr;
+
+	for (_uint i = 0; i < 6; ++i)
+	{
+		vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		vPivotScale = _float3(2.f, 4.f, 1.75f);
+		vPivotPos = XMVector3TransformNormal(_float3(0.f, 4.f, 5.2f), XMMatrixRotationY(XMConvertToRadians(i * 60.f)));
+
+		matPivot = XMMatrixRotationY(XMConvertToRadians(i * 60.f)) * XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+
+		pCloneActorTag = CUtile::Create_CombinedString(m_szCloneObjectTag, std::to_wstring(i).c_str());
+
+		ZeroMemory(&PxBoxDesc, sizeof(CPhysX_Manager::PX_BOX_DESC));
+		PxBoxDesc.pActortag = pCloneActorTag;
+		PxBoxDesc.eType = BOX_STATIC;
+		PxBoxDesc.vPos = vPos;
+		PxBoxDesc.vSize = vPivotScale;
+		PxBoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+		PxBoxDesc.fDegree = 0.f;
+		PxBoxDesc.isGravity = false;
+		PxBoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
+		PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxBoxDesc.fDensity = 1.f;
+		PxBoxDesc.fAngularDamping = 0.5f;
+		PxBoxDesc.fMass = 0.1f;
+		PxBoxDesc.fLinearDamping = 0.1f;
+		PxBoxDesc.bCCD = false;
+		PxBoxDesc.fDynamicFriction = 0.5f;
+		PxBoxDesc.fStaticFriction = 0.5f;
+		PxBoxDesc.fRestitution = 0.f;
+		PxBoxDesc.isTrigger = false;
+
+		CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
+		m_pTransformCom->Add_Collider_Static(pCloneActorTag, matPivot);
+		m_pTransformCom->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());
+	}
+
+	return S_OK;
+}
+
 void CShamanTrapHex::Tick(_float fTimeDelta)
 {
-	m_eEFfectDesc.bActive = true;
-
 	if (m_eEFfectDesc.bActive == false)
 	{
 		m_fTimeDelta = 0.0f;
@@ -83,6 +126,8 @@ void CShamanTrapHex::Tick(_float fTimeDelta)
 		pParts->Tick(fTimeDelta);
 
 	m_pModelCom->Play_Animation(fTimeDelta);
+
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CShamanTrapHex::Late_Tick(_float fTimeDelta)
@@ -138,13 +183,45 @@ void CShamanTrapHex::ImGui_AnimationProperty()
 
 void CShamanTrapHex::Imgui_RenderProperty()
 {
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+	ImGui_PhysXValueProperty();
 	//m_pPart[SHAMAN_0]->Imgui_RenderProperty();
 	//m_pPart[GEO]->Imgui_RenderProperty();
 }
 
+void CShamanTrapHex::ImGui_PhysXValueProperty()
+{
+	CTransform::ActorData* pActorData = m_pTransformCom->FindActorData(m_pTransformCom->Get_ActorList()->front().pActorTag);
+	PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+
+	PxShape* pShape = nullptr;
+	pActor->getShapes(&pShape, sizeof(PxShape));
+	PxBoxGeometry& Geometry = pShape->getGeometry().box();
+	PxVec3& fScale = Geometry.halfExtents;
+
+	/* Scale */
+	ImGui::BulletText("Scale Setting");
+	ImGui::DragFloat("Scale X", &fScale.x, 0.01f);
+	ImGui::DragFloat("Scale Y", &fScale.y, 0.01f);
+	ImGui::DragFloat("Scale Z", &fScale.z, 0.01f);
+
+	pShape->setGeometry(Geometry);
+
+	_smatrix matPivot = pActorData->PivotMatrix;
+	_float4		vScale, vRot, vTrans;
+	ImGuizmo::DecomposeMatrixToComponents((_float*)&matPivot, (_float*)&vTrans, (_float*)&vRot, (_float*)&vScale);
+
+	ImGui::DragFloat3("Rotate", (_float*)&vRot, 0.01f);
+	ImGui::DragFloat3("Translation", (_float*)&vTrans, 0.01f);
+
+	ImGuizmo::RecomposeMatrixFromComponents((_float*)&vTrans, (_float*)&vRot, (_float*)&vScale, (_float*)&matPivot);
+
+	pActorData->PivotMatrix = matPivot;
+}
+
 _float4 CShamanTrapHex::Get_JointBonePos()
 {
-	// ·ÎÅ×ÀÌ¼ÇÀÌ 0,0,0 ¿¡¼­ °¡´ÉÇÑ »À, pos´Â y°ªÀº ¼öÁ¤À» ÇØ¾ßÇÒ¼öµµ ÀÖ½À´Ï´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ 0,0,0 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, posï¿½ï¿½ yï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¾ï¿½ï¿½Ò¼ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
 	CBone* pBone = m_pModelCom->Get_BonePtr("joint6_end");
 	_matrix			SocketMatrix =
 		pBone->Get_OffsetMatrix() *
@@ -163,8 +240,7 @@ _float4 CShamanTrapHex::Get_JointBonePos()
 HRESULT CShamanTrapHex::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxEffectAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_ShamanTrapHex", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
-	
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_ShamanTrapHex", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
@@ -346,14 +422,14 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 	switch (m_eState)
 	{
 	case START_TRAP:
-	{	
+	{
 		if (m_pModelCom->Get_AnimationFinish())
 			m_eState = TRAP;
 
 		break;
-	}		
+	}
 	case TRAP:
-	{			
+	{
 		if (m_fTrapTime > fTrapSuccessTime)
 		{
 			m_bTrapSuccess = true;
@@ -365,23 +441,23 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 		}
 
 		break;
-	}		
+	}
 	case BREAK_TRAP:
 	{
-		// ºÎ¼­Áö´Â ÆÄÆ¼Å¬ÀÌ ÇÊ¿äÇÏ´Ù
+		// ï¿½Î¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼Å¬ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Ï´ï¿½
 		if (m_pModelCom->Get_AnimationFinish())
 			m_eState = END_TRAP;
 
 		break;
-	}		
+	}
 	case END_TRAP:
 	{
-		// ¼­¼­È÷ ¾ø¾îÁü?
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
 		m_pTransformCom->Set_Position(m_vInvisiblePos);
 		m_eEFfectDesc.bActive = false;
 		m_eState = STATE_END;
 		break;
-	}	
+	}
 	}
 }
 
@@ -390,7 +466,7 @@ void CShamanTrapHex::Execute_Trap(_float4 vPos)
 	m_bTrapSuccess = false;
 	m_fTrapTime = 0.f;
 	m_eEFfectDesc.bActive = true;
-	vPos.y -= 0.5f;
+	vPos.y += 0.1f;
 	m_pTransformCom->Set_Position(vPos);
 	
 	m_pModelCom->ResetAnimIdx_PlayTime(CONTRACT);

@@ -43,6 +43,7 @@ private:
 
 	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
 	CGameInstance* m_pGameInstance = nullptr;
+	class CBossHunter* m_pHunter = nullptr;
 
 public:
 	CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -87,6 +88,8 @@ public:
 	/* For. Shader & Effects */
 private:
 	vector<CEffect_Base_S2*>	m_vecEffects[EFFECT_END];
+	class CE_Swipes_Charged* m_pSwipesCharged = nullptr;
+
 private: /* Trail */
 	_bool						m_bTrailOn;
 	_float						m_fTrailTime;
@@ -111,7 +114,6 @@ public:
 	HRESULT		SetUp_Effects();
 	void		Reset_Effects();
 
-	void Play_FireFinishSound();
-
+	void		Play_FireFinishSound();
 };
 END

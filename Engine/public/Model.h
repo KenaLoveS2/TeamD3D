@@ -38,8 +38,9 @@ public:
 	void							Set_BoneLocked(const char* pBoneName, _bool bLock);
 	void							Set_AllBonesUnlock();
 	void							Set_RootBone(const string & strRootBone) { m_strRootBone = strRootBone; }
-	HRESULT						Set_BoneIndex(const _tchar * pFilePath);
+	HRESULT					Set_BoneIndex(const _tchar * pFilePath);
 
+	void							FixedAnimIdx_PlayTime(_uint iAnimIndex, _float fTime);
 	void							ResetAnimIdx_PlayTime(_uint iAnimIndex);
 	void							Set_AdditiveAnimIndexForMonster(_uint iAnimIndex);
 	void							Play_AdditiveAnimForMonster(_float fTimeDelta, _float fRatio, const string & strRootBone = "");

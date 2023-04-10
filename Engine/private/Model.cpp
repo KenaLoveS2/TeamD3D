@@ -1052,6 +1052,11 @@ HRESULT CModel::Set_BoneIndex(const _tchar* pFilePath)
 	return S_OK;
 }
 
+void CModel::FixedAnimIdx_PlayTime(_uint iAnimIndex, _float fTime)
+{
+	m_Animations[iAnimIndex]->Fixed_Animation(fTime);
+}
+
 void CModel::ResetAnimIdx_PlayTime(_uint iAnimIndex)
 {
 	m_Animations[iAnimIndex]->Reset_Animation();
