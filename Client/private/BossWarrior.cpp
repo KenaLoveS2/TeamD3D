@@ -79,7 +79,7 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 
 	CBossRock_Pool::DESC BossRockPoolDesc;
 	BossRockPoolDesc.iRockCount = 30;
-	BossRockPoolDesc.vCenterPos = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
+	BossRockPoolDesc.vCenterPos = _float4(60.449f, 14.639f, 869.108f, 1.f);
 	m_pBossRockPool = (CBossRock_Pool*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossRockPool"), TEXT("Warrior_BossRockPool"), &BossRockPoolDesc);
 	assert(m_pBossRockPool && "CBossWarrior::Initialize()");
 	m_pBossRockPool->Late_Initialize(nullptr);
