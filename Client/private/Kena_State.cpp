@@ -7657,6 +7657,14 @@ void CKena_State::Tick_Fall_Into_Run(_float fTimeDelta)
 
 void CKena_State::Tick_Warrior_Grab(_float fTimeDelta)
 {
+	if (m_pAnimationState->Get_AnimationProgress() > 0.765f)
+		m_pKena->m_bGrabWarrior = false;
+	else if (m_pAnimationState->Get_AnimationProgress() > 0.6f)
+	{
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+		m_pKena->m_pRendererCom->Set_MotionBlur(false);
+	}
+
 	if (m_pKena->m_pAttackObject == nullptr)
 		return;
 
@@ -7675,6 +7683,7 @@ void CKena_State::Tick_Warrior_Grab(_float fTimeDelta)
 
 		if (vGrabPos != vWarriorPos)
 		{
+			vGrabPos.y -= 0.52f;
 			m_pTransform->Set_Position(vGrabPos);
 
 			if (pWarriorModel->Get_AnimationProgress() < 0.55f)

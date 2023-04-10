@@ -1052,6 +1052,14 @@ HRESULT CModel::Set_BoneIndex(const _tchar* pFilePath)
 	return S_OK;
 }
 
+void CModel::Set_AnimationBlendDuration(_uint iAnimIndex, _float fBlendDuration)
+{
+	if (iAnimIndex >= m_iNumAnimations)
+		return;
+
+	m_Animations[iAnimIndex]->Set_BlendDuration(fBlendDuration);
+}
+
 void CModel::FixedAnimIdx_PlayTime(_uint iAnimIndex, _float fTime)
 {
 	m_Animations[iAnimIndex]->Fixed_Animation(fTime);
