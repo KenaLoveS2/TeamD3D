@@ -2808,7 +2808,7 @@ _int CKena::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex
 		// 케나의 바디 콜라이더와 워리어의 그랩 핸드 트리거와 충돌
 	}
 
-	if (iColliderIndex == (_int)COL_WATER)
+	if (iColliderIndex == (_int)COL_WATER && g_LEVEL == LEVEL_GIMMICK)
 	{
 		m_bWater = m_bDeath = m_pKenaStatus->UnderAttack(m_pKenaStatus->Get_MaxHP());
 	}
