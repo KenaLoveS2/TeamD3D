@@ -504,17 +504,17 @@ void CDynamic_Stone::ImGui_PhysXValueProperty()
 {
 	CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
 
-	if(ImGui::Button("TestTest"))
-	{
-		for (auto& pObj : m_pDynamicObj_List)
-		{
-			if (pObj != nullptr)
-			{
-				static_cast<CDynamic_StoneCube*>(pObj)->Set_CollActive();
-				// static_cast<CDynamic_StoneCube*>(pObj)->Execute_SleepEnd();
-			}
-		}
-	}
+	//if(ImGui::Button("TestTest"))
+	//{
+	//	for (auto& pObj : m_pDynamicObj_List)
+	//	{
+	//		if (pObj != nullptr)
+	//		{
+	//			static_cast<CDynamic_StoneCube*>(pObj)->Set_CollActive();
+	//			// static_cast<CDynamic_StoneCube*>(pObj)->Execute_SleepEnd();
+	//		}
+	//	}
+	//}
 
 }
 
