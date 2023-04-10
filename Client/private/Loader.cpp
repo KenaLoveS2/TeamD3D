@@ -316,7 +316,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyunwook
-	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	//FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyaewon
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
@@ -1885,6 +1885,13 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/ShockArrow_Ring.mdat"), PivotMatrix))))
 		return E_FAIL;
 
+
+	//if (iLevelIndex == (_uint)LEVEL_GAMEPLAY)
+	//{
+	//	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_HealthFlower", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/HealthFlower/HealthFlower.model", PivotMatrix)), E_FAIL);
+
+	//	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_HealthFlower_Anim", CHealthFlower_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
+	//}
 
 	
 	/********************************************/

@@ -4,6 +4,7 @@
 #include "SkillInfo.h"
 #include "UI_NodeSkill.h"
 #include "UI_NodeEffect.h"
+#include "UI_NodeVideo.h"
 #include "UI_NodeSkillName.h"
 #include "UI_NodeSkillDesc.h"
 #include "UI_NodeSkillCond.h"
@@ -98,6 +99,14 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 		m_bActive = false;
 		return;
 	}
+
+
+	/* Test */
+	//if(CGameInstance::GetInstance()->Key_Down(DIK_X))
+	//{
+	//	static_cast<CUI_NodeVideo*>(m_vecNode[UI_SKILLVIDEO])->Play_Video(
+	//		L"AirHeavy_Tutorial_PC", true, 0.05f);
+	//}
 
 	/* Picking the Skill Icons */
 	Picking();
@@ -292,6 +301,22 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 
 	}
 
+	/* SkillVideo */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+
+		string strCloneTag = "Node_SkillVideo";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Video", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		pGameInstance->Add_String(wstrCloneTag);
+	}
+
+
 	/* SkillName */
 	{
 		CUI* pUI = nullptr;
@@ -393,8 +418,6 @@ HRESULT CUI_CanvasUpgrade::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources();
 
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
@@ -416,8 +439,6 @@ HRESULT CUI_CanvasUpgrade::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -531,6 +552,7 @@ void CUI_CanvasUpgrade::Spread()
 	tDesc = m_pSkills[m_iPickedIndex / 5]->Get_SkillDesc(m_pSelected->Get_Level());
 	static_cast<CUI_NodeSkillName*>(m_vecNode[UI_SKILLNAME])->Set_String(tDesc.wstrName);
 	static_cast<CUI_NodeSkillDesc*>(m_vecNode[UI_SKILLDESC])->Set_String(tDesc.wstrDesc);
+	static_cast<CUI_NodeVideo*>(m_vecNode[UI_SKILLVIDEO])->Play_Video(tDesc.wstrVideo, true, 0.05f);
 
 	CSkillInfo::CHECK eCheck = m_pSkills[m_iPickedIndex / 5]->Check(m_pSelected->Get_Level(), m_pPlayer);
 	static_cast<CUI_NodeSkillCond*>(m_vecNode[UI_SKILLCOND])->Set_Condition(tDesc, eCheck);

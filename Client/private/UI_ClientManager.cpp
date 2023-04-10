@@ -47,12 +47,15 @@
 #include "UI_NodeCrystal.h"
 #include "UI_NodeNumRots.h"
 
-/* Effect (Common) */
+/* Commons */
+// Effect 
 #include "UI_NodeEffect.h"
-/* Confirm Window */
+// Confirm Window
 #include "UI_CanvasConfirm.h"
 #include "UI_NodeButton.h"
 #include "UI_NodeConfWindow.h"
+// Video
+#include "UI_NodeVideo.h"
 
 /* Bottom */
 #include "UI_CanvasBottom.h"
@@ -430,7 +433,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ButtonHighLightGlowCenter");
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_BGGlow"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_UI_BGGlow.png")))))
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_UI_BGGlow_%d.png"), 2))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_BGGlow");
 
@@ -554,8 +557,15 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_KeyIcon"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/02. KeyboardIcon/key_%d.png"), 5))))
 		return E_FAIL;
-	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_KeyIcon");
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_KeyIcon"); // 66
 
+	/********************************************/
+	/*				For. SimpleRot				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_SimpleRotIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/RotIconSimple.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_SimpleRotIcon"); // 67
 
 
 
@@ -581,6 +591,78 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_FocusNPC"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/10. WorldUI/NPCCarrot2.png")))))
+		return E_FAIL;
+
+	/********************************************/
+	/*				For. Videos					*/
+	/********************************************/
+	// MeleeCore
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_MeleeCore"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/MeleeCore/MeleeCore_Tutorial_PC%03d.png"), 215))))
+		return E_FAIL;
+	// AirHeavy
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_AirHeavy"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/AirHeavy/AirHeavy_Tutorial_PC%03d.png"), 185))))
+		return E_FAIL;
+	// SprintHeavy
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_SprintHeavy"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/SprintHeavy/SprintHeavy_Tutorial_PC%03d.png"), 127))))
+		return E_FAIL;
+	// SprintLight
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_SprintLight"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/SprintLight/SprintLight_Tutorial_PC%03d.png"), 113))))
+		return E_FAIL;
+	// PerfectHeavy
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_PerfectHeavy"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/PerfectHeavy/PerfectHeavy_Tutorial_PC%03d.png"), 130))))
+		return E_FAIL;
+
+	// Shield
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Shield"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/Shield/Shield_Tutorial_PC%03d.png"), 185))))
+		return E_FAIL;
+	// ParryPip
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ParryPip"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/ParryPip/ParryPip_Tutorial_PC%03d.png"), 118))))
+		return E_FAIL;
+	// ParryCounter
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ParryCounter"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/ParryCounter/ParryCounter_Tutorial_PC%03d.png"), 154))))
+		return E_FAIL;
+
+	// MultiBomb
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_MultiBomb"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/MultiBomb/MultiBomb_Tutorial_PC%03d.png"), 163))))
+		return E_FAIL;
+	// BombAbility
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_BombAbility"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/BombAbility/BombAbility_Tutorial_PC%03d.png"), 330))))
+		return E_FAIL;
+	// QuickDrawBomb
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_QuickDrawBomb"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/QuickDrawBomb/QuickDrawBomb_Tutorial_PC%03d.png"), 168))))
+		return E_FAIL;
+	// BombSplatter2
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_BombSplatter2"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/BombSplatter2/BombSplatter2_PC%03d.png"), 192))))
+		return E_FAIL;
+
+	// BowAbility
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_BowAbility"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/BowAbility/BowAbility_Tutorial_PC%03d.png"), 163))))
+		return E_FAIL;
+	// Quiver
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Quiver"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/Quiver/Quiver_Tutorial_PC%03d.png"), 183))))
+		return E_FAIL;
+	// Focus
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Focus"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/Focus/Focus_Tutorial_PC%03d.png"), 148))))
+		return E_FAIL;
+
+	// IntoTheFray
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_IntoTheFray"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/IntoTheFray/IntoTheFray_Tutorial_PC%03d.png"), 221))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -937,6 +1019,13 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_BossHP");
 
 	/********************************************/
+	/*				For. Video					*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Video"), CUI_NodeVideo::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Video");
+
+	/********************************************/
 	/*				For. WorldUI				*/
 	/********************************************/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_MonsterHP"), CUI_MonsterHP::Create(pDevice, pContext))))
@@ -977,7 +1066,10 @@ void CUI_ClientManager::Save_TextureComStrings(CGameInstance* pGameInstance, con
 	size_t length = tag.length();
 	length = tag.length() - headLength;
 
-	string str = string(tag.begin() + headLength, tag.begin() + headLength + length);
+	wstring name = tag.substr(headLength, length);
+
+	string str = CUtile::wstring_to_utf8(name);
+	//string str = string(tag.begin() + headLength, tag.begin() + headLength + length);
 
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_TEXTURE_NAME, str);
 }
@@ -1000,7 +1092,8 @@ void CUI_ClientManager::Save_CanvasStrings(CGameInstance* pGameInstance, const _
 
 	// 3) Add Canvas Name(CloneTag(wstr) to str)
 	string str;
-	str = str.assign(tag.begin(), tag.end());
+	str = CUtile::wstring_to_utf8(tag);
+	//str = str.assign(tag.begin(), tag.end());
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_CANVAS_NAME, str);
 
 }
@@ -1023,7 +1116,8 @@ void CUI_ClientManager::Save_NodeStrings(CGameInstance* pGameInstance, const _tc
 
 	// 3) Add Canvas Name(CloneTag(wstr) to str)
 	string str;
-	str = str.assign(tag.begin(), tag.end());
+	//str = str.assign(tag.begin(), tag.end());
+	str = CUtile::wstring_to_utf8(tag);
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_NODE_NAME, str);
 
 }

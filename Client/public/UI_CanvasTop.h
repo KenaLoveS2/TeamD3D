@@ -36,6 +36,8 @@ private:
 	vector<CUI_NodeEffect*>		m_vecEffects;
 	_uint						m_iRotMax;
 	_uint						m_iRotNow;
+	_uint						m_iRotLv;
+	_bool						m_bRotLvUp;
 
 public:
 	static	CUI_CanvasTop*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

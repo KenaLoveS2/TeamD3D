@@ -109,9 +109,7 @@ HRESULT CUI_CanvasInvHeader::Render()
 
 HRESULT CUI_CanvasInvHeader::Bind()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),	L"Layer_Player", L"Kena"));
-	RELEASE_INSTANCE(CGameInstance);
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 
 	if (pKena == nullptr)
 		return E_FAIL;
