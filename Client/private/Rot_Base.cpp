@@ -243,7 +243,7 @@ HRESULT CRot_Base::Create_CopySound()
 	_tchar szSoundTable[COPY_SOUND_KEY_END][64] = {
 		TEXT("Rot (1).ogg"), TEXT("Rot (2).ogg"), TEXT("Rot (3).ogg"), TEXT("Rot (4).ogg"), TEXT("Rot (5).ogg"), TEXT("Rot (6).ogg"),
 		TEXT("Rot (7).ogg"), TEXT("Rot (8).ogg"), TEXT("Rot (9).ogg"), TEXT("Rot (10).ogg"), TEXT("Rot (11).ogg"), TEXT("Rot (12).ogg"),
-		TEXT("Rot_Bait_Movement.ogg"),		
+		TEXT("Rot_Bait_Movement.ogg"), TEXT("Rot_Cross.ogg"),		
 	};
 
 	_tchar szTemp[MAX_PATH] = { 0, };
@@ -291,7 +291,7 @@ void CRot_Base::Play_Rot3Sound(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_3], 0.6f);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_3], 0.7f);
 }
 
 void CRot_Base::Play_Rot4Sound(_bool bIsInit, _float fTimeDelta)
@@ -375,7 +375,7 @@ void CRot_Base::Play_Rot10Sound(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_10], 0.6f);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_10], 0.8f);
 }
 
 void CRot_Base::Play_Rot11Sound(_bool bIsInit, _float fTimeDelta)
@@ -387,7 +387,7 @@ void CRot_Base::Play_Rot11Sound(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_11], 0.6f);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_11], 0.8f);
 }
 
 void CRot_Base::Play_Rot12Sound(_bool bIsInit, _float fTimeDelta)
@@ -411,14 +411,14 @@ void CRot_Base::Play_MoveSound(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE], 0.5f);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE], 0.3f);
 }
 
 void CRot_Base::TurnOn_TeleportEffect(_float4 vTeleportPos, _uint iAnimindex)
 {
 	m_pTeleportRot->Set_Active(true);
 	m_pTeleportRot->Set_Position(vTeleportPos);
-	CGameInstance::GetInstance()->Play_Sound(m_pCopySoundKey[CSK_4], 1.f);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_4], 1.f);
 
 	m_pModelCom->ResetAnimIdx_PlayTime(iAnimindex);
 	m_pModelCom->Set_AnimIndex(iAnimindex);

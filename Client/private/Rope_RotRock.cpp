@@ -45,7 +45,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	BoxDesc.pActortag = m_szCloneObjectTag;
 	BoxDesc.eType = BOX_DYNAMIC;
 	BoxDesc.vPos = _float3(0.f, 0.f, 0.f);
-	BoxDesc.vSize = _float3(0.9f, 1.25f, 0.9f);
+	BoxDesc.vSize = _float3(0.7f, 1.25f, 0.7f);
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);		
 	BoxDesc.fDegree = 0.f;
 	BoxDesc.isGravity = true;
@@ -290,7 +290,7 @@ HRESULT CRope_RotRock::SetUp_State()
 		.AddState("UP")
 		.OnStart([this]()
 	{
-		m_pLiftRotMaster->Execute_LiftStart();
+		m_pLiftRotMaster->Execute_LiftStart(m_pTransformCom->Get_Position());
 		m_vPxPivotDist = m_pTransformCom->Get_vPxPivot();
 		m_vNewPivot = m_vInitPivot;
 	})

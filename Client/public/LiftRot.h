@@ -31,6 +31,8 @@ private:
 
 	DESC m_Desc;
 	_float4 m_vLiftPos;
+	
+	_float m_fTimeCheck = 0.f;
 
 private:
 	_bool m_bCuteStart = false;
@@ -67,11 +69,11 @@ public:
 
 public:
 	void Execute_WakeUp(_float4& vCreatePos, _float4& vLiftPos);
-	void Execute_LiftStart();
+	void Execute_LiftStart(_float4 vLookPos);
 	void Execute_LiftMoveStart();
 	void Execute_LiftMoveEnd();
 		
-	void Set_Type(TYPE eType) { m_pWorkFSM = eType == CUTE ? m_pCuteFSM : m_pLiftFSM; }
+	void Set_Type(CLiftRot::TYPE eType) { m_pWorkFSM = eType == CUTE ? m_pCuteFSM : m_pLiftFSM; }
 
 	void Execute_StartCute(_float4& vCreatePos);
 	void Execute_EndCute();

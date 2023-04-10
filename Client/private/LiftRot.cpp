@@ -129,6 +129,8 @@ HRESULT CLiftRot::SetUp_State()
 {	
 	FAILED_CHECK_RETURN(SetUp_LiftFSM(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_CuteFSM(), E_FAIL);
+
+	return S_OK;
 }
 
 CLiftRot* CLiftRot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -208,38 +210,49 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 		m_pModelCom->Set_AnimIndex(WALK);
 	})
 		.Tick([this](_float fTimeDelta)
-	{
-		m_pTransformCom->Chase(m_vLiftPos, fTimeDelta);
+	{	
+		if (m_bLiftReady == false)
+		{
+			m_pTransformCom->Chase(m_vLiftPos, fTimeDelta);
+			m_bLiftReady = m_pTransformCom->IsClosed_XZ(m_vLiftPos, 0.2f);
+		}
+		else
+		{
+			m_pModelCom->Set_AnimIndex(CARRYLOOP);			
+			m_pTransformCom->Set_Position(m_vLiftPos);
+		}
+			
 	})
 		.AddTransition("LIFT_POS_MOVE to LIFT_READY ", "LIFT")
 		.Predicator([this]()
-	{		
-		m_bLiftReady = m_pTransformCom->IsClosed_XZ(m_vLiftPos, 0.2f);
-		if(m_bLiftReady)
-			m_pModelCom->Set_AnimIndex(CARRYLOOP);
-
+	{	
 		return m_bLiftStart;
 	})		
 
 		.AddState("LIFT")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(LIFT);
+		m_pModelCom->ResetAnimIdx_PlayTime(CARRYFORWARD);
+		m_pModelCom->Set_AnimIndex(CARRYFORWARD);
+		m_fTimeCheck = 0.f;
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		
+		m_fTimeCheck += fTimeDelta;
+		m_pTransformCom->Set_Position(m_vLiftPos);
 	})
 		.AddTransition("LIFT to LIFT_MOVE", "LIFT_MOVE")
 		.Predicator([this]()
 	{	
-		m_bLiftEnd = (m_iAnimationIndex == (_int)LIFT) && m_pModelCom->Get_AnimationFinish();
+		// m_bLiftEnd = m_pModelCom->Get_AnimationFinish();
+		m_bLiftEnd = m_fTimeCheck >= 1.f;
 		return m_bLiftMoveStart;
 	})		
 
 		.AddState("LIFT_MOVE")
 		.OnStart([this]()
 	{
+		m_pModelCom->ResetAnimIdx_PlayTime(CARRYFORWARD);
 		m_pModelCom->Set_AnimIndex(CARRYFORWARD);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -279,8 +292,8 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 	})
 		.OnExit([this]()
 	{
-		m_pTeleportRot->Set_Position(m_pTransformCom->Get_Position());
-		m_pTeleportRot->Set_Active(true);
+		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), IDLE);
+		
 		m_bWakeUp = false;
 		m_bCreateStart = false;
 		m_bLiftReady = false;
@@ -320,6 +333,7 @@ HRESULT CLiftRot::SetUp_CuteFSM()
 	{
 		m_pTransformCom->LookAt_NoUpDown(CRot::Get_RotUseKenaPos());
 		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), TELEPORT7);
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_4], 1.f);
 		m_bCuteEnd = false;		
 	})
 		.Tick([this](_float fTimeDelta)
@@ -328,7 +342,7 @@ HRESULT CLiftRot::SetUp_CuteFSM()
 		if (m_pTeleportRot->Get_Active() == false)
 		{
 			m_pTeleportRot->Set_Active(true);
-			m_pTeleportRot->Set_Position(m_pTransformCom->Get_Position());
+			m_pTeleportRot->Set_Position(m_pTransformCom->Get_Position()); // m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_4], 1.f);
 		}
 		
 		if (m_pModelCom->Get_AnimationFinish())
@@ -372,9 +386,10 @@ void CLiftRot::Execute_WakeUp(_float4& vCreatePos, _float4& vLiftPos)
 	m_bWakeUp = true;
 }
 
-void CLiftRot::Execute_LiftStart()
+void CLiftRot::Execute_LiftStart(_float4 vLookPos)
 {
 	m_bLiftStart = true;
+	m_pTransformCom->LookAt_NoUpDown(vLookPos);	
 }
 
 void CLiftRot::Execute_LiftMoveStart()
@@ -399,7 +414,7 @@ void CLiftRot::Execute_EndCute()
 }
 
 void CLiftRot::Set_NewPosition(_float4 vNewPos, _float4 vLookPos)
-{
+{	
 	m_pTransformCom->Set_Position(vNewPos);
 	m_pTransformCom->LookAt_NoUpDown(vLookPos);
 }

@@ -1,25 +1,14 @@
 #pragma once
-
-#include "GameObject.h"
-#include "Client_Defines.h"
-
-BEGIN(Engine)
-class CRenderer;
-class CShader;
-class CModel;
-class CFSMComponent;
-END
+#include "Rot_Base.h"
 
 BEGIN(Client)
-
-class CRotForMonster final : public CGameObject
+class CRotForMonster : public CRot_Base
 {
 public:
 	typedef struct tagRotForMonsterDesc
 	{
 		_float4 vPivotPos;
 	} DESC;
-
 
 private:
 	CRotForMonster(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
@@ -32,33 +21,21 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Late_Initialize(void * pArg);
+		
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
-	virtual HRESULT RenderShadow() override;
+	
 	virtual void Imgui_RenderProperty() override;
 	virtual void ImGui_AnimationProperty() override;
 	virtual void ImGui_ShaderValueProperty() override;
 	virtual void ImGui_PhysXValueProperty() override;
-	virtual HRESULT Call_EventFunction(const string& strFuncName) override;
-	virtual void Push_EventFunctions() override;
-
+		
 	void Bind(_bool bBind, class CMonster* pGameObject);
 
 private:
-	HRESULT				SetUp_Components();
-	HRESULT				SetUp_ShaderResources();
-	HRESULT				SetUp_ShadowShaderResources();
-	HRESULT				SetUp_FSM();
+	HRESULT				SetUp_State();
 	HRESULT				Set_RotTrail();
 	_bool				AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
-
-private:
-	CRenderer*			 m_pRendererCom = nullptr;
-	CShader*				 m_pShaderCom = nullptr;
-	CModel*				 m_pModelCom = nullptr;
-	CFSMComponent* m_pFSM = nullptr;
 
 private:
 	_bool								 m_bWakeUp = false;
@@ -67,6 +44,11 @@ private:
 	class CMonster*				  m_pTarget = nullptr;
 	class CE_RotTrail*			  m_pRotTrail = nullptr;
 	DESC								  m_Desc;
+
+	_uint m_iRandTeleportAnimIndex = TELEPORT1;
+	_uint m_iTeleportAnimIndexTable[7] = {
+		TELEPORT1, TELEPORT2, TELEPORT3, TELEPORT4, TELEPORT5, TELEPORT6 ,TELEPORT7, 
+	};
 
 public:
 	static CRotForMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
