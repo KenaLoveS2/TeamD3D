@@ -193,6 +193,17 @@ void CE_ShamanBossPlate::Set_EffectType(EFFECTTYPE eType)
 	}
 }
 
+void CE_ShamanBossPlate::Set_Teleport(_float4 vPos)
+{
+	m_fDissolveTime = 0.0f;
+	m_eEFfectDesc.bActive = true;
+
+	vPos.y += 0.05f;
+	Set_Position(vPos);
+	m_bDissolve = true;
+	m_bTurnInto = true;
+}
+
 void CE_ShamanBossPlate::Reset()
 {
 	m_fTimeDelta = 0.0f;

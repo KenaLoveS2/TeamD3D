@@ -65,8 +65,6 @@ HRESULT CE_BombTrail::Initialize(void * pArg)
 
 void CE_BombTrail::Tick(_float fTimeDelta)
 {
-	//__super::Tick(fTimeDelta);
-
 	if (m_eEFfectDesc.bActive == false)
 	{
 		m_vecPositions.clear();

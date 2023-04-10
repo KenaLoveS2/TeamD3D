@@ -214,6 +214,8 @@ unsigned int	g_LEVEL = 0;
 #include "E_ShamanIceDagger.h"
 #include "E_ShamanLazer.h"
 #include "E_P_ShamanTeleport.h"
+#include "E_Common_CIrcleSp.h"
+#include "E_LazerTrail.h"
 
 
 
@@ -2685,6 +2687,15 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_GameObject_ShamanTeleport */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTeleport"),
 		CE_P_ShamanTeleport::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_BossPlate.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_CommonCircleSp */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CommonCircleSp"),
+		CE_Common_CircleSp::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Common_CircleSp.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_LazerTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LazerTrail"), CE_LazerTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #pragma endregion Effect_Object

@@ -34,9 +34,11 @@ HRESULT CE_ShamanSmoke::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_eEFfectDesc.bActive = false;
 	m_fInitSpriteCnt = _float2(0.0f, 0.0f);
+	m_eEFfectDesc.bActive = false;
 	m_eEFfectDesc.vScale = XMVectorSet(5.f, 5.f, 5.f, 1.f);
+
+	m_vecChild[0]->Set_Parent(nullptr);
 	return S_OK;
 }
 
@@ -47,6 +49,15 @@ void CE_ShamanSmoke::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
+	if (m_eState == CE_ShamanSmoke::STATE_IDLE)
+	{
+		m_fChildDurationTime += fTimeDelta;
+		if (m_fChildDurationTime > 3.f)
+		{
+			m_vecChild[0]->Set_Active(false);
+			m_fChildDurationTime = 0.0f;
+		}
+	}
 	_bool bResult = TurnOffSystem(m_fDurationTime, 4.f, fTimeDelta);
 	if (bResult == true)	ResetSprite();
 }
@@ -72,10 +83,9 @@ HRESULT CE_ShamanSmoke::Render()
 
 void CE_ShamanSmoke::Imgui_RenderProperty()
 {
-
 }
 
-void CE_ShamanSmoke::Set_State(STATE eState, _float4 vPos)
+void CE_ShamanSmoke::Set_State(STATE eState, _float4 vPos, _float4 vLeftHandPos)
 {
 	m_eState = eState;
 	m_eEFfectDesc.bActive = true;
@@ -84,8 +94,9 @@ void CE_ShamanSmoke::Set_State(STATE eState, _float4 vPos)
 	if(m_eState == CE_ShamanSmoke::STATE_IDLE)
 	{
 		/* IDLE 상태에서만 손에 연기 나옴*/
-		for (auto& pChild : m_vecChild)
-			pChild->Set_Active(true);
+		m_vecChild[0]->Set_Active(true);
+		vLeftHandPos.y += 0.5f;
+		m_vecChild[0]->Set_Position(vLeftHandPos);
 	}
 }
 
