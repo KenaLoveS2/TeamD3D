@@ -936,12 +936,6 @@ HRESULT CBossWarrior::SetUp_State()
 
 		m_pKena->Dead_FocusRotIcon(this);
 		m_bDying = true;
-
-		/*
-		HW.For.MapGimmick
-		 Map Change  03_30 TestøÎ¿” */
-		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
-		pCtrlRoom->DeadZoneObject_Change(true);
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()

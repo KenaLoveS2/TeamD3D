@@ -7,6 +7,7 @@
 #include "Effect_Base_S2.h"
 #include "SpiritArrow.h"
 #include "E_RectTrail.h"
+#include "ControlRoom.h"
 #include "E_HunterTrail.h"
 
 CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -570,6 +571,7 @@ HRESULT CBossHunter::SetUp_State()
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_bSpawn = true;
 		CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
+		m_pCineCam[0]->CinemaUIOff();
 	})
 	.AddTransition("READY_SPAWN to IDLE", "IDLE")
 	.Predicator([this]()
@@ -1278,6 +1280,9 @@ HRESULT CBossHunter::SetUp_State()
 	})
 	.OnExit([this]()
 	{
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->DeadZoneObject_Change(true);
+
 		// 시네캠 하나 만들자
 		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[1]->Get_ObjectCloneName());
 		m_pCineCam[1]->Play();
