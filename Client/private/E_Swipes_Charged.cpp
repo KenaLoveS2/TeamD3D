@@ -53,10 +53,14 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 	_float3 vOriginPos = _float3(0.f, 0.f, 0.f);
 	_float3 vPivotScale = _float3(1.0f, 0.0f, 1.f);
 
+	wstring strTag = m_szCloneObjectTag;
+	_tchar* CloneTag = CUtile::Create_DummyString();
+	strTag += CloneTag;
+
 	// Capsule X == radius , Y == halfHeight
 	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 	PxSphereDesc.eType = SPHERE_DYNAMIC;
-	PxSphereDesc.pActortag = m_szCloneObjectTag;
+	PxSphereDesc.pActortag = strTag.c_str();
 	PxSphereDesc.vPos = CUtile::Float_4to3(vPos);
 	PxSphereDesc.fRadius = vPivotScale.x;
 	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
@@ -71,7 +75,7 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 	PxSphereDesc.fRestitution = 0.1f;
 	PxSphereDesc.isTrigger = true;
 
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(m_pParent, false, COL_MONSTER_WEAPON));
 
 	_smatrix   matPivot = XMMatrixIdentity();
 	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);

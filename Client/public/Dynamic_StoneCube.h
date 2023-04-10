@@ -46,6 +46,8 @@ public:
 public:
 	void				Actor_Clear();
 
+	void				Imgui_Move(_float3 vParentPos);
+
 private:
 	class CShader* m_pShaderCom = nullptr;
 	class CRenderer* m_pRendererCom = nullptr;

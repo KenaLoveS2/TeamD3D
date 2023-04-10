@@ -272,6 +272,7 @@ void CDynamic_StoneCube::Actor_Clear()
 	m_pTransformCom->Clear_Actor();
 }
 
+
 //void CDynamic_StoneCube::ImGui_PhysXValueProperty()
 //{
 //	__super::ImGui_PhysXValueProperty();

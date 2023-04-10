@@ -22,6 +22,7 @@ private:
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
+	virtual HRESULT			Late_Initialize(void* pArg) override;
 	virtual void			Tick(_float fTimeDelta) override;
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
@@ -31,7 +32,7 @@ public:
 public:
 	virtual void			ImGui_AnimationProperty() override;
 	virtual void			Imgui_RenderProperty() override;
-	
+	virtual void			ImGui_PhysXValueProperty() override;
 	_float4					Get_JointBonePos();
 
 private:

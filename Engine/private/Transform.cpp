@@ -829,6 +829,19 @@ void CTransform::Add_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix)
 	m_ActorList.push_back(Data);
 }
 
+void CTransform::Add_Collider_Static(const _tchar* pActorTag, _float4x4 PivotMatrix)
+{
+	PxRigidActor* pActor = m_pPhysX_Manager->Find_StaticActor(pActorTag);
+	assert(pActor != nullptr && "CTransform::Add_PxColliderStatic");
+
+	ActorData Data;
+	Data.pActor = pActor;
+	wcscpy_s(Data.pActorTag, MAX_PATH, pActorTag);
+	Data.PivotMatrix = PivotMatrix;
+
+	m_ActorList.push_back(Data);
+}
+
 void CTransform::Update_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix)
 {
 	ActorData* pActorData = FindActorData(pActorTag);

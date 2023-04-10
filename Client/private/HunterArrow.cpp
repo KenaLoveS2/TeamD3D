@@ -2,6 +2,7 @@
 #include "..\public\HunterArrow.h"
 #include "BossHunter.h"
 #include "Effect_Base_S2.h"
+#include "E_Swipes_Charged.h"
 
 CHunterArrow::CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonsterWeapon(pDevice, pContext)
@@ -118,12 +119,25 @@ HRESULT CHunterArrow::Late_Initialize(void* pArg)
 		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, m_ColliderPivotMatrix);
 	}
 
+	/* SwipeCharged */
+	{
+		m_pSwipesCharged = dynamic_cast<CE_Swipes_Charged*>(m_pGameInstance->Clone_GameObject(L"Prototype_GameObject_Swipes_Charged", L"Hunter_Charged"));
+		NULL_CHECK_RETURN(m_pSwipesCharged, E_FAIL);
+		m_pSwipesCharged->Set_Parent(this);
+		m_pSwipesCharged->Late_Initialize(this);
+	}
+
+	m_pHunter = (CBossHunter*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Monster"), TEXT("BossHunter_0"));
+
 	return S_OK;
 }
 
 void CHunterArrow::Tick(_float fTimeDelta)
 {
 	if (m_eArrowState == STATE_END) return;
+
+	if(m_pHunter == nullptr)
+		m_pHunter = (CBossHunter*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Monster"), TEXT("BossHunter_0"));
 
 	__super::Tick(fTimeDelta);
 
@@ -132,12 +146,12 @@ void CHunterArrow::Tick(_float fTimeDelta)
 	ArrowProc(fTimeDelta);
 	Update_Collider(fTimeDelta);
 
-	for (_uint i = 0; i < EFFECT_END; ++i)
+	if (m_pSwipesCharged)m_pSwipesCharged->Tick(fTimeDelta);
+	for (_uint i = 0; i < (_uint)EFFECT_END; ++i)
 	{
 		for (auto& eff : m_vecEffects[i])
 			eff->Tick(fTimeDelta);
 	}
-
 }
 
 void CHunterArrow::Late_Tick(_float fTimeDelta)
@@ -146,8 +160,8 @@ void CHunterArrow::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-
-	for (_uint i = 0; i < EFFECT_END; ++i)
+	if (m_pSwipesCharged)m_pSwipesCharged->Late_Tick(fTimeDelta);
+	for (_uint i = 0; i < (_uint)EFFECT_END; ++i)
 	{
 		for (auto& eff : m_vecEffects[i])
 			eff->Late_Tick(fTimeDelta);
@@ -342,7 +356,9 @@ void CHunterArrow::Free()
 {
 	__super::Free();
 
-	for (_uint i = 0; i < EFFECT_END; ++i)
+	Safe_Release(m_pSwipesCharged);
+
+	for (_uint i = 0; i < (_uint)EFFECT_END; ++i)
 	{
 		for (auto& eff : m_vecEffects[i])
 		{
@@ -357,7 +373,7 @@ void CHunterArrow::ArrowProc(_float fTimeDelta)
 	switch (m_eArrowState)
 	{
 	case REDAY:
-	{
+	{	
 		_matrix HandSocketMatrix = m_WeaponDesc.pSocket->Get_OffsetMatrix() * m_WeaponDesc.pSocket->Get_CombindMatrix() * XMLoadFloat4x4(&m_WeaponDesc.PivotMatrix);
 		HandSocketMatrix = XMMatrixTranslation(m_vHandPivotPos.x, m_vHandPivotPos.y, m_vHandPivotPos.z) * HandSocketMatrix * m_WeaponDesc.pTargetTransform->Get_WorldMatrix();
 		m_pTransformCom->Set_Position(HandSocketMatrix.r[3]);
@@ -521,7 +537,7 @@ HRESULT CHunterArrow::SetUp_Effects()
 
 void CHunterArrow::Reset_Effects()
 {
-	for(_uint i=0;i<EFFECT_END;++i)
+	for(_uint i=0;i < EFFECT_END;++i)
 	{
 		for (auto& eff : m_vecEffects[i])
 		{
@@ -538,6 +554,9 @@ _int CHunterArrow::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
 {
 	if (m_eArrowState == FIRE)
 	{
+		if (m_pHunter && m_pHunter->Get_AnimationIndex() == 29 /*SHOCK_ARROW_ATTACK */)
+			m_pSwipesCharged->Set_Effect(Get_ArrowHeadPos(), true);
+
 		m_eArrowState = FINISH;
 
 		Play_HitEffect(0.0f);

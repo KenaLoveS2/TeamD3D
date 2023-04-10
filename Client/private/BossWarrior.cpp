@@ -153,7 +153,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		PxSphereDesc.eType = SPHERE_DYNAMIC;
 		PxSphereDesc.pActortag = COL_GRAB_HAND_TEXT;
 		PxSphereDesc.vPos = _float3(0.f, 0.f, 0.f);
-		PxSphereDesc.fRadius = 0.4f;
+		PxSphereDesc.fRadius = 0.6f;
 		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxSphereDesc.fDensity = 1.f;
 		PxSphereDesc.fAngularDamping = 0.5f;
@@ -819,7 +819,9 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("GRAB to GRAB_ATTACK", "GRAB_ATTACK")
 		.Predicator([this]()
 	{
-		return false;
+		_bool	bPass = m_pKena->Get_State(CKena::STATE_GRAB_WARRIOR);
+
+		return bPass;
 	})
 		.AddTransition("GRAB to IDLE", "IDLE")
 		.Predicator([this]()

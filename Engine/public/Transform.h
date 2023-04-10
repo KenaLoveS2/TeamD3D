@@ -178,6 +178,7 @@ public:
 	void Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));
 	void Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f), _bool bIsRightUpLookSync = false);	
 	void Add_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix);
+	void Add_Collider_Static(const _tchar* pActorTag, _float4x4 PivotMatrix);
 	void Update_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix);
 
 	void Set_Translation(_fvector vPosition, _fvector vDist);
