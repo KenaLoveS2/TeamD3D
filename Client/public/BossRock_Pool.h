@@ -15,6 +15,7 @@ END
 BEGIN(Client)
 class CBossRock_Pool final : public CGameObject
 {
+public:
 	typedef struct tagBossRockPoolDesc {
 		_float4 vCenterPos;
 		_uint iRockCount;
@@ -41,6 +42,8 @@ public:
 	virtual HRESULT Late_Initialize(void * pArg);
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+
+	void Execute_UpRocks();
 };
 
 END

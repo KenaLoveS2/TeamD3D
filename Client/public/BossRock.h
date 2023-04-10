@@ -15,10 +15,13 @@ class CBossRock final : public CGameObject
 {
 public:
 	enum ROCK_TPYE { SMALL_3, SMALL_4, SMALL_5, SMALL_6, ROCK_TPYE_END, };
+	enum STATE { UP, DOWN, STATE_END };
 
 	typedef struct tagBossRockDesc {
 		ROCK_TPYE eType;
 		_float4 vPosition;
+		_float fUpTime;
+		_float fSpeedY;
 	} DESC;
 
 private:			
@@ -27,8 +30,11 @@ private:
 	CShader* m_pShaderCom = nullptr;
 	CModel* m_pModelCom = nullptr;
 
-	_uint iNumMeshes = 0;
+	_uint m_iNumMeshes = 0;
 	DESC m_Desc;
+	STATE m_eState = STATE_END;
+
+	_float m_fUpTimeCheck = 0.f;
 
 private:
 	CBossRock(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
@@ -49,6 +55,9 @@ public:
 
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	
+	void BossRockProc(_float fTimeDelta);
+	void Exectue_Up();
 };
 
 END
