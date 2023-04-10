@@ -1754,6 +1754,8 @@ void CKena::Check_Damaged()
 // 				CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 // 				_float fGuage = m_pKenaStatus->Get_PercentHP();
 // 				m_Delegator.broadcast(eHP, fGuage);
+
+				/* NEED : UI SCREEN FX HIT */
 			}
 
 			m_bParry = false;

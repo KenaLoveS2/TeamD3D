@@ -6270,6 +6270,8 @@ void CKena_State::Start_Dash(_float fTimeDelta)
 	pPulse->Reset();
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+
+	/* NEED : UI SCREEN FX DASH */
 }
 
 void CKena_State::Start_Dash_Settle(_float fTimeDelta)
@@ -6805,6 +6807,8 @@ void CKena_State::Start_Pulse_Parry(_float fTimeDelta)
 		m_pStatus->Add_CurPipGuage();
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+
+	/* NEED : UI SCREEN FX PARRY */
 }
 
 void CKena_State::Start_Pulse_Walk(_float fTimeDelta)

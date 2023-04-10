@@ -290,6 +290,8 @@ CHealthFlower_Anim::ANIMATION CHealthFlower_Anim::Check_State()
 
 				/* PARTICLE */
 				m_pExplosionGravity->UpdateParticle(m_pTransformCom->Get_Position());
+
+				/* NEED : UI SCREEN FX HEALTHFLOWER HEAL */
 			}
 
 			break;
