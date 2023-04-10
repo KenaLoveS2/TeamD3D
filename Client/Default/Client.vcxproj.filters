@@ -1528,6 +1528,7 @@
     <ClInclude Include="..\public\E_ShamanIceDagger.h" />
     <ClInclude Include="..\public\E_ShamanLazer.h" />
     <ClInclude Include="..\public\SceneChangePortal.h" />
+    <ClInclude Include="..\public\DeadZoneBossTree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2450,6 +2451,7 @@
     <ClCompile Include="..\private\E_ShamanIceDagger.cpp" />
     <ClCompile Include="..\private\E_ShamanLazer.cpp" />
     <ClCompile Include="..\private\SceneChangePortal.cpp" />
+    <ClCompile Include="..\private\DeadZoneBossTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

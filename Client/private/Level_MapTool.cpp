@@ -19,7 +19,7 @@
 #include "CinematicCamera.h"
 #include "UI_ClientManager.h"
 #include "UI.h"
-
+#include "ControlRoom.h"
 
 CLevel_MapTool::CLevel_MapTool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -87,6 +87,8 @@ HRESULT CLevel_MapTool::Initialize()
 void CLevel_MapTool::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	
 }
 
 void CLevel_MapTool::Late_Tick(_float fTimeDelta)
@@ -131,10 +133,10 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//CImgui_TerrainEditor::LoadFilterData("MiniGame_MappToolTerrain.json");
-	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	
+	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 
@@ -150,10 +152,10 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "MiniGameMap.json");
 
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
 
