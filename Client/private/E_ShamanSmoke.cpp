@@ -36,6 +36,7 @@ HRESULT CE_ShamanSmoke::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_fInitSpriteCnt = _float2(0.0f, 0.0f);
+	m_eEFfectDesc.vScale = XMVectorSet(5.f, 5.f, 5.f, 1.f);
 	return S_OK;
 }
 
@@ -46,7 +47,8 @@ void CE_ShamanSmoke::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	TurnOffSystem(m_fDurationTime, 2.f, fTimeDelta);
+	_bool bResult = TurnOffSystem(m_fDurationTime, 4.f, fTimeDelta);
+	if (bResult == true)	ResetSprite();
 }
 
 void CE_ShamanSmoke::Late_Tick(_float fTimeDelta)
@@ -54,8 +56,8 @@ void CE_ShamanSmoke::Late_Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	if (m_pParent != nullptr)
-		Set_Matrix();
+// 	if (m_pParent != nullptr)
+// 		Set_Matrix();
 
 	__super::Late_Tick(fTimeDelta);
 }

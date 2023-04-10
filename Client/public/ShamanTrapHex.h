@@ -10,7 +10,7 @@ END
 BEGIN(Client)
 class CShamanTrapHex final : public CEffect_Mesh
 {
-	enum PARTS { GEO, /*PLANE,*/ SHAMAN_0, SHAMAN_1, SHAMAN_2, SHAMAN_3, SHAMAN_4, PARTS_END };
+	enum PARTS { /*GEO, PLANE,*/ SHAMAN_0, SHAMAN_1, SHAMAN_2, SHAMAN_3, SHAMAN_4, PARTS_END };
 	enum STATE { START_TRAP, TRAP, BREAK_TRAP, END_TRAP, STATE_END };
 	enum ANIMATION { CONTRACT, EXPAND, ANIMATION_END };
 
@@ -22,8 +22,8 @@ private:
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 
 	_bool	IsActiveState();
@@ -37,15 +37,16 @@ public:
 private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_ShaderResources();
-	void						SetColor(_float4& vColor, const char* pTag);
+	HRESULT				SetUp_Effects();
+	void				SetColor(_float4& vColor, const char* pTag);
 
-	class	 CGameObject*			m_pPart[PARTS_END] = { nullptr, };
-	CBone*								m_pPartBone = nullptr;
+	class CGameObject*	m_pPart[PARTS_END] = { nullptr, };
+	CBone*				m_pPartBone = nullptr;
 
 private:
-	_uint									m_iNumMeshes = 0;
-	_float4								m_vEdgeColor;
-	_float4								m_vBaseColor;
+	_uint				m_iNumMeshes = 0;
+	_float4				m_vEdgeColor;
+	_float4				m_vBaseColor;
 
 	STATE m_eState = STATE_END;
 	_float4 m_vInvisiblePos = { -100, -100, -100, 1.f };

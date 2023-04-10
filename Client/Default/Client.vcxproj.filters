@@ -583,6 +583,9 @@
     <Filter Include="02.GameObjects\Envrioment\Meditation_Spot">
       <UniqueIdentifier>{d809b4cf-2aab-455c-a361-d30849842e35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\BossRock">
+      <UniqueIdentifier>{af6e2ed7-fbcf-476d-b449-80988ade864c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1515,6 +1518,12 @@
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_HunterTrail.h" />
+    <ClInclude Include="..\public\BossRock.h">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossRock_Pool.h">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2427,6 +2436,12 @@
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_HunterTrail.cpp" />
+    <ClCompile Include="..\private\BossRock.cpp">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossRock_Pool.cpp">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

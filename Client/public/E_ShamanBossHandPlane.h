@@ -3,6 +3,7 @@
 
 BEGIN(Engine)
 class CTexture;
+class CTransform;
 END
 
 BEGIN(Client)
@@ -25,6 +26,7 @@ public:
 
 public:
 	void			Reset();
+	void			Set_Dissolve(_bool bDissolve) { m_bDissolve = bDissolve; }
 
 private:
 	HRESULT SetUp_ShaderResources();
@@ -32,7 +34,13 @@ private:
 
 private:
 	class CTexture* m_pShamanTextureCom = nullptr;
+	class CTransform* m_pChildTransformCom = nullptr;
 	_uint			m_iShamanTexture = 0;
+	_float			m_fAngle = 0.0f;
+
+	_bool			m_bTurnInto = false;
+	_bool			m_bDissolve = false;
+	_float			m_fDissolveTime = 1.0f;
 
 public:
 	static  CE_ShamanBossHandPlane* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath = nullptr);

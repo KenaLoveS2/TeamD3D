@@ -17,9 +17,13 @@ _float		fDefaultVal = 345.f; /* Default Chat Value */
 _bool		bDefaultVal = false;
 wstring		wstrDefault = L"";
 
-#define SND_LAGHTER_1 L"VOX_Jizo_Kids_Laughter_1.ogg"
-#define SND_LAGHTER_2 L"VOX_Jizo_Kids_Laughter_2.ogg"
-#define SND_LAGHTER_3 L"VOX_Jizo_Kids_Laughter_3.ogg"
+#define SND_LAUGHTER_1 L"VOX_Jizo_Kids_Laughter_1.ogg"
+#define SND_LAUGHTER_2 L"VOX_Jizo_Kids_Laughter_2.ogg"
+#define SND_LAUGHTER_3 L"VOX_Jizo_Kids_Laughter_3.ogg"
+#define SND_LAUGHTER_4 L"VOX_Jizo_Kids_Laughter_4.ogg"
+#define SND_LAUGHTER_5 L"VOX_Jizo_Kids_Laughter_5.ogg"
+#define SND_LAUGHTER_6 L"VOX_Jizo_Kids_Laughter_6.ogg"
+#define SND_LAUGHTER_7 L"VOX_Jizo_Kids_Laughter_7.ogg"
 
 CSaiya::CSaiya(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CNpc(pDevice, pContext)
@@ -118,6 +122,8 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 		}
 	}
 
+	Setting_Sound();
+
 	return S_OK;
 }
 
@@ -139,7 +145,6 @@ void CSaiya::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	AdditiveAnim(fTimeDelta);
-
 	if (m_bStraight)
 		m_pTransformCom->Go_Straight(fTimeDelta);
 }
@@ -347,6 +352,7 @@ HRESULT CSaiya::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		Rot_WispSetPosition();
+		Play_LaughSound();
 		m_pModelCom->Set_AnimIndex(SAIYA_CHASINGLOOP);
 	})
 		.OnExit([this]()
@@ -355,6 +361,7 @@ HRESULT CSaiya::SetUp_State()
 		m_pCinecam[NPC_CINE0]->Play();
 		m_bCinecam[NPC_CINE0] = true;
 		Set_PlayerLock(true);
+		Play_LaughSound();
 	})
 		.AddTransition("INIT_CAM to ACTION_0" , "ACTION_0")
 		.Predicator([this]()
@@ -363,8 +370,13 @@ HRESULT CSaiya::SetUp_State()
 	})
 
 		.AddState("ACTION_0")
+		.OnStart([this]()
+	{
+		Play_LaughSound();
+	})
 		.Tick([this](_float fTimeDelta)
 	{
+		Play_LaughSound();
 		m_pModelCom->Set_AnimIndex(SAIYA_CHASINGLOOP);
 		Rot_WispSetPosition();
 	})
@@ -383,8 +395,7 @@ HRESULT CSaiya::SetUp_State()
 			m_pRot->Set_WakeUpPos(vPos);
 			m_pRot->Get_TransformCom()->Set_Look(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * -1.f);
 		}
-
-		Play_Sound(SND_LAGHTER_1, 1.f);
+		Play_LaughSound();
 	})
 		.AddTransition("ACTION_0 to ACTION_1" , "ACTION_1")
 		.Predicator([this]()
@@ -393,6 +404,10 @@ HRESULT CSaiya::SetUp_State()
 	})
 
 		.AddState("ACTION_1")
+		.OnStart([this]()
+	{
+		Play_LaughSound();
+	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(SAIYA_RUN);
@@ -1110,7 +1125,15 @@ _bool CSaiya::IsChatEnd()
 
 HRESULT CSaiya::Save_KeyFrame()
 {
-	string      strSaveDirectory = "../Bin/Data/NPC/SaiyaKeyFrame.json";
+	string      strSaveDirectory;
+	if(g_LEVEL == LEVEL_FINAL)
+	{
+	     strSaveDirectory = "../Bin/Data/NPC/SaiyaKeyFrameFinal.json";
+	}
+	else
+	{
+	      strSaveDirectory = "../Bin/Data/NPC/SaiyaKeyFrame.json";
+	}
 
 	ofstream      file(strSaveDirectory.c_str());
 	Json   jSaiyaKeyFrameList;
@@ -1149,7 +1172,17 @@ HRESULT CSaiya::Save_KeyFrame()
 
 HRESULT CSaiya::Load_KeyFrame()
 {
-	string      strLoadDirectory = "../Bin/Data/NPC/SaiyaKeyFrame.json";
+	string      strLoadDirectory;
+
+	if (g_LEVEL == LEVEL_FINAL)
+	{
+		strLoadDirectory = "../Bin/Data/NPC/SaiyaKeyFrameFinal.json";
+	}
+	else
+	{
+		strLoadDirectory = "../Bin/Data/NPC/SaiyaKeyFrame.json";
+	}
+
 	ifstream      file(strLoadDirectory.c_str());
 	Json   jLoadCineCamKeyFrameList;
 	file >> jLoadCineCamKeyFrameList;
@@ -1203,9 +1236,66 @@ void CSaiya::Rot_WispSetPosition()
 	}
 }
 
-void CSaiya::Play_Sound(const _tchar* SoundKey, float fVolume)
+void CSaiya::Setting_Sound()
 {
-	CGameInstance::GetInstance()->Play_Sound(SoundKey, fVolume);
+	CSound::SOUND_DESC desc;
+	ZeroMemory(&desc, sizeof(CSound::SOUND_DESC));
+	desc.bIs3D = true;
+	desc.fRange = 20.f;
+	desc.pStartTransform = m_pTransformCom;
+	desc.pTargetTransform = m_pKena->Get_TransformCom();
+	CGameInstance::GetInstance()->Set_SoundDesc(SND_LAUGHTER_1, desc);
+	CGameInstance::GetInstance()->Set_SoundDesc(SND_LAUGHTER_2, desc);
+	CGameInstance::GetInstance()->Set_SoundDesc(SND_LAUGHTER_3, desc);
+	CGameInstance::GetInstance()->Set_SoundDesc(SND_LAUGHTER_4, desc);
+	CGameInstance::GetInstance()->Set_SoundDesc(SND_LAUGHTER_5, desc);
+	CGameInstance::GetInstance()->Set_SoundDesc(SND_LAUGHTER_6, desc);
+	CGameInstance::GetInstance()->Set_SoundDesc(SND_LAUGHTER_7, desc);
+}
+
+void CSaiya::Play_LaughSound(float fVolume)
+{
+	if (m_bSoundCheck[6] == true)
+	{
+		for (_int i = 0; i < 7; ++i)
+			m_bSoundCheck[i] = false;
+	}
+
+	if(!m_bSoundCheck[0])
+	{
+		CGameInstance::GetInstance()->Play_ManualSound(SND_LAUGHTER_1, fVolume, false, SOUND_NPC);
+		m_bSoundCheck[0] = true;
+	}
+	else	if (!m_bSoundCheck[1])
+	{
+		CGameInstance::GetInstance()->Play_ManualSound(SND_LAUGHTER_2, fVolume, false, SOUND_NPC);
+		m_bSoundCheck[1] = true;
+	}
+	else	if (!m_bSoundCheck[2])
+	{
+		CGameInstance::GetInstance()->Play_ManualSound(SND_LAUGHTER_3, fVolume, false, SOUND_NPC);
+		m_bSoundCheck[2] = true;
+	}
+	else	if (!m_bSoundCheck[3])
+	{
+		CGameInstance::GetInstance()->Play_ManualSound(SND_LAUGHTER_4, fVolume, false, SOUND_NPC);
+		m_bSoundCheck[3] = true;
+	}
+	else	if (!m_bSoundCheck[4])
+	{
+		CGameInstance::GetInstance()->Play_ManualSound(SND_LAUGHTER_5, fVolume, false, SOUND_NPC);
+		m_bSoundCheck[4] = true;
+	}
+	else	if (!m_bSoundCheck[5])
+	{
+		CGameInstance::GetInstance()->Play_ManualSound(SND_LAUGHTER_6, fVolume, false, SOUND_NPC);
+		m_bSoundCheck[5] = true;
+	}
+	else	if (!m_bSoundCheck[6])
+	{
+		CGameInstance::GetInstance()->Play_ManualSound(SND_LAUGHTER_7, fVolume, false, SOUND_NPC);
+		m_bSoundCheck[6] = true;
+	}
 }
 
 CSaiya* CSaiya::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -14,6 +14,8 @@ private:
 
 public:
 	const LIGHTDESC* Get_LightDesc(_uint iIndex);
+	class CLight* Get_Light(_uint iIndex);
+
 public:
 	HRESULT Add_Light(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const LIGHTDESC& LightDesc, class CLight** ppOut = nullptr);
 	void Render_Light(class CVIBuffer_Rect* pVIBuffer, class CShader* pShader);

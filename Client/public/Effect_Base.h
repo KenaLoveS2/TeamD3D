@@ -141,6 +141,7 @@ public:
 	}
 	void    Set_Scale(_vector vScale) { m_eEFfectDesc.vScale = vScale; }
 	_bool   Get_Active() { return m_eEFfectDesc.bActive; }
+	_float3   Get_vScale() { return m_eEFfectDesc.vScale; }
 
 	void	ResetSprite(){
 		m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
@@ -154,6 +155,7 @@ public:
 
 	public:
 	void	TurnOffSystem(_float fDurationTime, _float fTimeDelta);
+	_bool	TurnOnDissolveSystem(_float& fTurnoffTime, _bool& bDissolve, _float fTimeDelta);
 	_bool	TurnOffSystem(_float& fTurnoffTime, _float fDurationTime, _float fTimeDelta);
 	void	Tick_Sprite(_float& fDurationTime, _float fTimeDelta);
 
@@ -252,7 +254,7 @@ protected:
 	_bool  m_bLerp = false;
 	/* FreeMoving */
 
-	_bool  m_bFinishSprite = false;
+	_bool   m_bFinishSprite = false;
 	_float2 m_fInitSpriteCnt = { 0.f,0.f };
 	_float  m_fHDRValue = 1.0f;
 	_float  m_fTurnOffTime = 0.0f;

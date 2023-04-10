@@ -27,7 +27,7 @@ namespace Client
 {
 	enum LEVEL { LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_MAPTOOL, LEVEL_TESTPLAY, LEVEL_EFFECT, LEVEL_GIMMICK, LEVEL_FINAL, LEVEL_END };
 
-	enum SOUND { SOUND_BGM, SOUND_UI, SOUND_PLAYER_VOICE, SOUND_PLAYER_SFX, SOUND_END };
+	enum SOUND { SOUND_BGM, SOUND_UI, SOUND_PLAYER_VOICE, SOUND_PLAYER_SFX, SOUND_NPC, SOUND_END = 20 };
 
 	static void Set_FrameLimit(bool bLimitFlag)
 	{
@@ -74,6 +74,7 @@ extern bool				g_bNeedResizeSwapChain;
 extern bool				g_bWinActive;
 extern unsigned int	g_iWinSizeX;
 extern unsigned int	g_iWinSizeY;
+
 extern float				g_fSkyColorIntensity;
 extern bool				g_bDayOrNight;
 

@@ -78,7 +78,7 @@ void CCameraForNpc::Tick(_float TimeDelta)
 			m_pTransformCom->Set_Look(vCalculatedLook);
 
 			/* For. Pos*/
-			_vector vTargetPos = XMVectorSet(m_vTargetPos.x + m_vOffset.x, m_vTargetPos.y + m_vOffset.y, m_vTargetPos.z + m_vOffset.z, 1.f) + m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+			_vector vTargetPos = XMVectorSet(m_vTargetPos.x + m_vOffset.x, m_vTargetPos.y + m_vOffset.y, m_vTargetPos.z + m_vOffset.z, 1.f) + m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * m_fMulLook;
 			_float3 vLerpPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vTargetPos, TimeDelta * m_fLerpTime);
 			_float4 vCalculatedCamPos = _float4(vLerpPos.x, vLerpPos.y, vLerpPos.z, 1.f);
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCalculatedCamPos);
@@ -121,9 +121,10 @@ void CCameraForNpc::Imgui_RenderProperty()
 	float fLook[3] = { m_vLookOffset.x,m_vLookOffset.y ,m_vLookOffset.z };
 	ImGui::DragFloat3("LookOffset", fLook, 0.01f, -100.f, 100.f);
 	m_vLookOffset.x = fLook[0]; m_vLookOffset.y = fLook[1]; m_vLookOffset.z = fLook[2];
+	ImGui::DragFloat("MulLook", &m_fMulLook, 0.01f, 1.f, 10.f);
 }
 
-void CCameraForNpc::Set_Target(CGameObject* pTarget, _uint iOffsetType, _float3 vOffset, _float3 vLookOffset, _float fTime)
+void CCameraForNpc::Set_Target(CGameObject* pTarget, _uint iOffsetType, _float3 vOffset, _float3 vLookOffset, _float fTime, _float fMulLook)
 {
 	m_bInitSet = true;
 	m_pTarget = pTarget;
@@ -131,6 +132,7 @@ void CCameraForNpc::Set_Target(CGameObject* pTarget, _uint iOffsetType, _float3 
 	m_vOffset = vOffset;
 	m_vLookOffset = vLookOffset;
 	m_fLerpTime = fTime;
+	m_fMulLook = fMulLook;
 }
 
 CCameraForNpc* CCameraForNpc::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
