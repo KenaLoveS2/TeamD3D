@@ -460,7 +460,7 @@
     <ClInclude Include="..\public\UI_NodeSkillName.h" />
     <ClInclude Include="..\public\UI_NodeSkillVideo.h" />
     <ClInclude Include="..\public\UI_NodeTitle.h" />
-    <ClInclude Include="..\public\UI_Node_Video.h" />
+    <ClInclude Include="..\public\UI_NodeVideo.h" />
     <ClInclude Include="..\public\UI_RotIcon.h" />
     <ClInclude Include="..\public\UI_Weakpoint.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
@@ -751,7 +751,7 @@
     <ClCompile Include="..\private\UI_NodeSkillName.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillVideo.cpp" />
     <ClCompile Include="..\private\UI_NodeTitle.cpp" />
-    <ClCompile Include="..\private\UI_Node_Video.cpp" />
+    <ClCompile Include="..\private\UI_NodeVideo.cpp" />
     <ClCompile Include="..\private\UI_RotIcon.cpp" />
     <ClCompile Include="..\private\UI_Weakpoint.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />

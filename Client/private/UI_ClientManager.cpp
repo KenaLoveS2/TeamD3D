@@ -47,12 +47,15 @@
 #include "UI_NodeCrystal.h"
 #include "UI_NodeNumRots.h"
 
-/* Effect (Common) */
+/* Commons */
+// Effect 
 #include "UI_NodeEffect.h"
-/* Confirm Window */
+// Confirm Window
 #include "UI_CanvasConfirm.h"
 #include "UI_NodeButton.h"
 #include "UI_NodeConfWindow.h"
+// Video
+#include "UI_NodeVideo.h"
 
 /* Bottom */
 #include "UI_CanvasBottom.h"
@@ -590,6 +593,13 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/10. WorldUI/NPCCarrot2.png")))))
 		return E_FAIL;
 
+	/********************************************/
+	/*				For. Videos					*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_AirHeavy_Tutorial_PC"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/AirHeavy_Tutorial_PC/AirHeavy_Tutorial_PC%03d.png"), 185))))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -942,6 +952,13 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_BossHP"), CUI_NodeBossHP::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_BossHP");
+
+	/********************************************/
+	/*				For. Video					*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Video"), CUI_NodeVideo::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Video");
 
 	/********************************************/
 	/*				For. WorldUI				*/

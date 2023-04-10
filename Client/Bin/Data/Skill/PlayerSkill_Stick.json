@@ -12,7 +12,8 @@
                     "Karma"     : 0
                 }
             ],
-            "State": 0
+            "State": 0,
+            "Video":"AirHeavy_Tutorial_PC"
         }
     ],
     "Level1":[
@@ -26,7 +27,8 @@
                     "Karma"     : 50
                 }
             ],
-            "State": 0
+            "State": 0,
+            "Video":"AirHeavy_Tutorial_PC"
         }
     ],
     "Level2":[
@@ -40,7 +42,8 @@
                     "Karma"     : 100
                 }
             ],
-            "State": 0
+            "State": 0,
+            "Video":"AirHeavy_Tutorial_PC"
         }
     ],
     "Level3":[
@@ -54,7 +57,8 @@
                     "Karma"     : 150
                 }
             ],
-            "State": 0
+            "State": 0,
+            "Video":"AirHeavy_Tutorial_PC"
         }
     ],
     "Level4":[
@@ -68,7 +72,8 @@
                     "Karma"     : 200
                 }
             ],
-            "State": 0
+            "State": 0,
+            "Video":"AirHeavy_Tutorial_PC"
         }
     ]
 }

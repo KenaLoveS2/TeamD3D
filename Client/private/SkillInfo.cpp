@@ -135,6 +135,10 @@ HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pConte
 				jCondition["Karma"].get_to<_int>(m_tDesc[i].conditions[CONDITION_KARMA]);
 			}
 
+			string strVideo;
+			jLevel["Video"].get_to<string>(strVideo);
+			m_tDesc[i].wstrVideo = CUtile::utf8_to_wstring(strVideo);
+
 		}
 	}
 

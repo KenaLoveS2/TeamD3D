@@ -1521,7 +1521,7 @@
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_HunterTrail.h" />
-    <ClInclude Include="..\public\UI_Node_Video.h">
+    <ClInclude Include="..\public\UI_NodeVideo.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BossRock.h">
@@ -1530,6 +1530,9 @@
     <ClInclude Include="..\public\BossRock_Pool.h">
       <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_ShamanTeleport.h" />
+    <ClInclude Include="..\public\E_ShamanIceDagger.h" />
+    <ClInclude Include="..\public\E_ShamanLazer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2442,7 +2445,7 @@
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_HunterTrail.cpp" />
-    <ClCompile Include="..\private\UI_Node_Video.cpp">
+    <ClCompile Include="..\private\UI_NodeVideo.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BossRock.cpp">
@@ -2451,6 +2454,9 @@
     <ClCompile Include="..\private\BossRock_Pool.cpp">
       <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_P_ShamanTeleport.cpp" />
+    <ClCompile Include="..\private\E_ShamanIceDagger.cpp" />
+    <ClCompile Include="..\private\E_ShamanLazer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
