@@ -164,6 +164,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	float fTime = min(g_Time, 1.f);
 	Out.vDiffuse = Out.vDiffuse * (fTime / 1.f);
 	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
+
 	return Out;
 }
 
@@ -176,6 +177,20 @@ PS_OUT PS_ICEDAGGER(PS_IN In)
 	finalcolor = saturate(finalcolor);
 
 	Out.vDiffuse = CalcHDRColor(finalcolor, g_fHDRValue);
+
+	if (g_bDissolve)
+	{
+		float  fDissolveAmount = g_fDissolveTime;
+		float  DissolveValue = g_DTexture_1.Sample(LinearSampler, In.vTexUV).r;
+		if (DissolveValue <= fDissolveAmount)
+			discard;
+
+		else if (DissolveValue <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			if (Out.vDiffuse.a != 0.0f)
+				Out.vDiffuse = Out.vDiffuse + float4(0.f, 0.f, 0.f, DissolveValue);
+		}
+	}
 	return Out;
 }
 

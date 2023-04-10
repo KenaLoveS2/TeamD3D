@@ -32,6 +32,7 @@ public:
 	virtual HRESULT Render() override;
 	virtual void	Imgui_RenderProperty() override;
 	virtual void	ImGui_PhysXValueProperty() override;
+	virtual _int    Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)override;
 
 public:
 	void	Reset();
@@ -73,7 +74,7 @@ private:
 
 	_bool		 m_bFinalposition = false;
 	_bool		 m_bChase = false;
-	_bool		 m_bDissolve = false;
+	_bool		 m_bColl = false;
 
 public:
 	static  CE_ShamanIceDagger* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath = nullptr);
