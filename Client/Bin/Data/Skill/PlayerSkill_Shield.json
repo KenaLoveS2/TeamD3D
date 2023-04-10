@@ -13,7 +13,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"Shield"
         }
     ],
     "Level1":[
@@ -28,7 +28,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"ParryCounter"
         }
     ],
     "Level2":[
@@ -43,7 +43,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"Shield"
         }
     ],
     "Level3":[
@@ -58,7 +58,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"ParryPip"
         }
     ],
     "Level4":[
@@ -73,7 +73,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"Shield"
         }
     ]
 }

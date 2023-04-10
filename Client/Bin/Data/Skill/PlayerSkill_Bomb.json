@@ -13,7 +13,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"BombAbility"
         }
     ],
     "Level1":[
@@ -28,7 +28,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"BombAbility"
         }
     ],
     "Level2":[
@@ -43,7 +43,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"QuickDrawBomb"
         }
     ],
     "Level3":[
@@ -58,7 +58,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"MultiBomb"
         }
     ],
     "Level4":[
@@ -73,7 +73,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"BombSplatter2"
         }
     ]
 }

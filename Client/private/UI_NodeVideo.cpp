@@ -73,7 +73,7 @@ HRESULT CUI_NodeVideo::Initialize(void* pArg)
 
 	/* Temp */
 	m_bActive = true;
-	m_pTransformCom->Set_Position(XMVectorSet(1600.f, 1600.f, 1.f, 1.f));
+	//m_pTransformCom->Set_Position(XMVectorSet(1600.f, 1600.f, 1.f, 1.f));
 
 	return S_OK;
 }
@@ -82,7 +82,7 @@ void CUI_NodeVideo::Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
-
+	m_iRenderPass = 0;
 	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
 		return;
 

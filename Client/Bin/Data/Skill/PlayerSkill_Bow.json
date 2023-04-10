@@ -13,7 +13,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"BowAbility"
         }
     ],
     "Level1":[
@@ -28,7 +28,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"Focus"
         }
     ],
     "Level2":[
@@ -43,7 +43,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"Quiver"
         }
     ],
     "Level3":[
@@ -58,7 +58,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"Quiver"
         }
     ],
     "Level4":[
@@ -73,7 +73,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"Quiver"
         }
     ]
 }

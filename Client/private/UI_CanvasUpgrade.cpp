@@ -521,7 +521,7 @@ void CUI_CanvasUpgrade::Picking()
 				m_iPickedIndex = i;
 				m_pSelected->Picked(1.2f);
 				/* Spread Selected Skill's Information To Nodes */
-				//Spread();
+				Spread();
 
 				if (i >= UI_ROTSKILLS_START && i <= UI_ROTSKILL_END)
 				{
@@ -556,7 +556,7 @@ void CUI_CanvasUpgrade::Spread()
 	tDesc = m_pSkills[m_iPickedIndex / 5]->Get_SkillDesc(m_pSelected->Get_Level());
 	static_cast<CUI_NodeSkillName*>(m_vecNode[UI_SKILLNAME])->Set_String(tDesc.wstrName);
 	static_cast<CUI_NodeSkillDesc*>(m_vecNode[UI_SKILLDESC])->Set_String(tDesc.wstrDesc);
-	static_cast<CUI_NodeVideo*>(m_vecNode[UI_SKILLVIDEO])->Play_Video((tDesc.wstrVideo));
+	static_cast<CUI_NodeVideo*>(m_vecNode[UI_SKILLVIDEO])->Play_Video(tDesc.wstrVideo, true, 0.05f);
 
 	CSkillInfo::CHECK eCheck = m_pSkills[m_iPickedIndex / 5]->Check(m_pSelected->Get_Level(), m_pPlayer);
 	static_cast<CUI_NodeSkillCond*>(m_vecNode[UI_SKILLCOND])->Set_Condition(tDesc, eCheck);

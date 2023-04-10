@@ -13,7 +13,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"MeleeCore"
         }
     ],
     "Level1":[
@@ -28,7 +28,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"SprintLight"
         }
     ],
     "Level2":[
@@ -43,7 +43,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"SprintHeavy"
         }
     ],
     "Level3":[
@@ -58,7 +58,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"AirHeavy"
         }
     ],
     "Level4":[
@@ -73,7 +73,7 @@
                 }
             ],
             "State": 0,
-            "Video":"AirHeavy_Tutorial_PC"
+            "Video":"PerfectHeavy"
         }
     ]
 }

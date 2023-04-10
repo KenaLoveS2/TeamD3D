@@ -443,19 +443,7 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 _int CKena_Status::Get_RotMax()
 {
 	/* Get MaxRot related to rotLevel*/
-	switch (m_iRotLevel)
-	{
-	case 0:
-		return 5;
-	case 1:
-		return 15;
-	case 2:
-		return 35;
-	case 3:
-		return 50;
-	}
-
-	return 0;
+	return m_iRotCountMax;
 }
 
 _int CKena_Status::Get_MaxPIPCount()
