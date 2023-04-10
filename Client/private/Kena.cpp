@@ -1768,8 +1768,10 @@ void CKena::Update_State_Status(_float fTimeDelta)
 	{
 		m_pKenaState->Tick(fTimeDelta);
 
-		if (!m_bStateLock)
+		if (m_bStateLock == false)
 			m_pStateMachine->Tick(fTimeDelta);
+		else
+			m_pAnimation->State_Animation("IDLE");
 
 		if (m_bAim == true)
 			m_pAnimation->Tick(fTimeDelta);

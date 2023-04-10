@@ -71,7 +71,7 @@ HRESULT CE_Warrior_Root::Late_Initialize(void * pArg)
 	PxBoxDesc.fRestitution = 0.1f;
 	PxBoxDesc.isTrigger = true;
 
-	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(m_pParent, false, COL_MONSTER_WEAPON));
 	m_pTransformCom->Add_Collider(m_szCloneObjectTag, matPivot);
 	m_pTransformCom->Set_PxPivotScale(vPivotScale);
 	m_pTransformCom->Set_PxPivot(vPivotPos);
