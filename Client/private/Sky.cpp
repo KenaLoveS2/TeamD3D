@@ -2,6 +2,7 @@
 #include "..\public\Sky.h"
 #include "GameInstance.h"
 #include "PostFX.h"
+#include "Light.h"
 
 float g_fSkyColorIntensity = 1.f;
 bool g_bDayOrNight = true;
@@ -41,9 +42,10 @@ void CSky::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if(g_bDayOrNight)
+	if(g_bDayOrNight == true)
 	{
 		CPostFX::GetInstance()->Day();
+		
 		m_pRendererCom->Set_Flare(true);
 		if (g_fSkyColorIntensity <= 1.f)
 		{
@@ -51,8 +53,11 @@ void CSky::Tick(_float fTimeDelta)
 			if (g_fSkyColorIntensity > 1.f)
 				g_fSkyColorIntensity = 1.f;
 		}
+
+		_float4 vDiffuse = _float4(g_fSkyColorIntensity, g_fSkyColorIntensity, g_fSkyColorIntensity, 1.f);
+		CGameInstance::GetInstance()->Get_Light(0)->Set_Diffuse(vDiffuse);
 	}
-	else
+	else if(g_bDayOrNight == false)
 	{
 		CPostFX::GetInstance()->Night();
 		m_pRendererCom->Set_Flare(false);
@@ -62,6 +67,9 @@ void CSky::Tick(_float fTimeDelta)
 			if (g_fSkyColorIntensity < 0.5f)
 				g_fSkyColorIntensity = 0.5f;
 		}
+
+		_float4 vDiffuse = _float4(g_fSkyColorIntensity, g_fSkyColorIntensity, g_fSkyColorIntensity, 1.f);
+		CGameInstance::GetInstance()->Get_Light(0)->Set_Diffuse(vDiffuse);
 	}
 }
 
@@ -140,6 +148,12 @@ HRESULT CSky::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bFog", &m_pRendererCom->Get_Fog(), sizeof(_bool))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vFogColor", &m_pRendererCom->Get_FogColor(), sizeof(_float4))))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fColorIntensity", &g_fSkyColorIntensity, sizeof(_float))))

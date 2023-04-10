@@ -15,6 +15,7 @@ class CRenderer;
 class CShader;
 class CStateMachine;
 class CAnimationState;
+class CLight;
 END
 
 BEGIN(Client)
@@ -29,7 +30,7 @@ public:
 	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
 	enum COLLIDERTYPE { COLL_BODY, COLL_STAFF, COLLIDERTYPE_END };
 	enum STATERETURN {
-		STATE_LEVELUP, STATE_LEVELUP_READY,
+		STATE_DEATH, STATE_LEVELUP, STATE_LEVELUP_READY,
 		STATE_ATTACK, STATE_HEAVYATTACK, STATE_PERFECTATTACK,
 		STATE_COMMONHIT, STATE_HEAVYHIT,
 		STATE_SPRINT, STATE_DASH, STATE_MASK,
@@ -94,11 +95,13 @@ public:
 	virtual void				ImGui_ShaderValueProperty() override;
 	virtual void				ImGui_PhysXValueProperty() override;
 	virtual void				Update_Child() override;
-	virtual HRESULT				Call_EventFunction(const string& strFuncName) override;
+	virtual HRESULT		Call_EventFunction(const string& strFuncName) override;
 	virtual void				Push_EventFunctions() override;
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 public:
+	void						Respawn();
+	void						Respawn(_fvector vSpawnPos);
 	void						Smooth_Targeting(class CMonster* pMonster);
 
 	//void						Call_FocusIcon(CGameObject* pTarget);
@@ -135,6 +138,8 @@ private:
 
 private:
 	/* State variables*/
+	_bool						m_bDeath = false;
+	_bool						m_bWater = false;
 	_bool						m_bLevelUp = false;
 	_bool						m_bLevelUp_Ready = false;
 	_bool						m_bAttack = false;
@@ -165,6 +170,7 @@ private:
 	_bool						m_bBomb = false;
 	_bool						m_bInjectBomb = false;
 	_bool						m_bPulse = false;
+	_bool						m_bDodge = false;
 	_bool						m_bDash = false;
 	_bool						m_bMask = false;
 
@@ -215,17 +221,21 @@ public:
 	const  _bool&				Get_ParryRim() const { return m_bParryRim; }
 	const  _float&				Get_ParryRimIntensity() const { return m_fParryRimIntensity; }
 
-
 private:
 	/* UI */
 	CUI_RotIcon*				m_pUI_FocusRot;
-	CUI_FocusMonster*			m_pUI_FocusMonster;
+	CUI_FocusMonster*		m_pUI_FocusMonster;
+
+	_float4						m_vStaffLightPos;
+	CLight*						m_pStaffLight = nullptr;
 
 private:
 	HRESULT						Ready_Parts();
 	HRESULT						Ready_Arrows();
 	HRESULT						Ready_Bombs();
 	HRESULT						Ready_Effects();
+	HRESULT						Ready_Lights();
+	HRESULT						Ready_Rots();
 	HRESULT						SetUp_Components();
 	HRESULT						SetUp_ShaderResources();
 	HRESULT						SetUp_ShadowShaderResources();
@@ -233,6 +243,7 @@ private:
 	HRESULT						SetUp_State();
 	HRESULT						SetUp_UI();
 	void						Update_Collider(_float fTimeDelta);
+	void						Update_LightPos(_float fTimeDelta);
 	_float						Update_TimeRate();
 	void						Check_Damaged();
 	void						Update_State_Status(_float fTimeDelta);
@@ -247,6 +258,7 @@ private:
 private:
 	DAMAGED_FROM				Calc_DirToMonster(CGameObject* pTarget);
 	DAMAGED_FROM				Calc_DirToMonster(const _float3& vCollisionPos);
+	DAMAGED_FROM				Calc_DirToMonster_2Way(CGameObject* pTarget);
 
 private:	/* Effect Event Func */
 	void	TurnOnAttack(_bool bIsInit, _float fTimeDelta);
@@ -296,7 +308,7 @@ public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, CKena*>		m_PlayerPtrDelegator;
 	//Delegator<CUI_ClientManager::UI_PRESENT, _float, _float, _float, _float>				m_PlayerAmmoDelegator;
 
-	// Å×½ºÆ®¿ë ÀÓ½Ã º¯¼ö ÀÎµí
+	// ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½
 	_float m_fTest = 0.f;
 	_bool  m_bStateLock;
 	_float m_fLinearDamping = KENA_LINEAR_DAMING, m_fAngularDamping = KENA_ANGULAR_DAMING, m_fMass = KENA_MASS;

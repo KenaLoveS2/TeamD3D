@@ -342,6 +342,29 @@ void CKena_Status::Free()
 	__super::Free();
 }
 
+void CKena_Status::Respawn()
+{
+	_float	fGuage = 1.f;
+
+	m_iHP = m_iMaxHP;
+
+	m_fShield = m_fMaxShield;
+	m_bShieldBreak = false;
+	CUI_ClientManager::UI_PRESENT eShield = CUI_ClientManager::HUD_SHIELD;
+	m_StatusDelegator.broadcast(eShield, fGuage);
+
+	m_iCurArrowCount = m_iMaxArrowCount;
+	m_fCurArrowCoolTime = 0.f;
+	CUI_ClientManager::UI_PRESENT eArrowCool = CUI_ClientManager::AMMO_ARROWCOOL;
+	m_StatusDelegator.broadcast(eArrowCool, fGuage);
+
+	m_iCurBombCount = m_iMaxBombCount;
+	ZeroMemory(m_bUsed, 2);
+	CUI_ClientManager::UI_PRESENT eBombCool = CUI_ClientManager::AMMO_BOMBCOOL;
+	fGuage = 11.f;
+	m_StatusDelegator.broadcast(eBombCool, fGuage);
+}
+
 HRESULT CKena_Status::Save()
 {
 	Json jKenaStatus;

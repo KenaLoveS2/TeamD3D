@@ -188,6 +188,8 @@
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\public\BossHunter.h" />
+    <ClInclude Include="..\public\BossRock.h" />
+    <ClInclude Include="..\public\BossRock_Pool.h" />
     <ClInclude Include="..\public\BossShaman.h" />
     <ClInclude Include="..\public\BossWarrior.h" />
     <ClInclude Include="..\public\BossWarrior_Hat.h" />
@@ -203,6 +205,9 @@
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\public\CLevel_Final.h" />
+    <ClInclude Include="..\public\E_P_ShamanTeleport.h" />
+    <ClInclude Include="..\public\E_ShamanIceDagger.h" />
+    <ClInclude Include="..\public\E_ShamanLazer.h" />
     <ClInclude Include="..\public\Level_Gimmick.h" />
     <ClInclude Include="..\public\ControlRoom.h" />
     <ClInclude Include="..\public\CPortalPlane.h" />
@@ -475,6 +480,8 @@
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\private\BossHunter.cpp" />
+    <ClCompile Include="..\private\BossRock.cpp" />
+    <ClCompile Include="..\private\BossRock_Pool.cpp" />
     <ClCompile Include="..\private\BossShaman.cpp" />
     <ClCompile Include="..\private\BossWarrior.cpp" />
     <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
@@ -490,6 +497,9 @@
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\CLevel_Final.cpp" />
+    <ClCompile Include="..\private\E_P_ShamanTeleport.cpp" />
+    <ClCompile Include="..\private\E_ShamanIceDagger.cpp" />
+    <ClCompile Include="..\private\E_ShamanLazer.cpp" />
     <ClCompile Include="..\private\Level_Gimmick.cpp" />
     <ClCompile Include="..\private\ControlRoom.cpp" />
     <ClCompile Include="..\private\CPortalPlane.cpp" />

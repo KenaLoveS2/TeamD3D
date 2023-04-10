@@ -2,6 +2,8 @@
 
 textureCUBE		g_Texture;
 float				g_fColorIntensity;
+bool				g_bFog;
+float4			g_vFogColor;
 
 struct VS_IN
 {
@@ -51,7 +53,14 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	vector FinalColor = g_SkyTexture.Sample(LinearSampler, In.vTexUV);
 
-	FinalColor.rgb *= g_fColorIntensity;
+	if(!g_bFog)
+	{
+		FinalColor.rgb *= g_fColorIntensity;
+	}
+	else
+	{
+		FinalColor.rgb = g_vFogColor.rgb;
+	}
 
 	Out.vColor = FinalColor;
 

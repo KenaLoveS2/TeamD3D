@@ -76,6 +76,7 @@ float			g_fUVSpeedY = 0.f;
 float			g_fStringDissolve;
 float			g_fStringHDR;
 
+bool			g_Day = true;
 
 float4 SSS(float3 position, float3 normal, float3 dir, float4 color, float2 vUV, float amount, Texture2D<float4> Texturediffuse, Texture2D<float4> sssMask)
 {
@@ -389,11 +390,19 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
 	float4		FinalColor = float4(0, 0, 0, 1);
-	FinalColor = vDiffuse + vEmissive;
+	if(max(max(vDiffuse.r, vDiffuse.g),vDiffuse.b) == vDiffuse.b && !g_Day)
+	{
+		FinalColor = vDiffuse + vEmissive * 2.f;
+		Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 3.f, 0.f);
+	}
+	else
+	{
+		FinalColor = vDiffuse + vEmissive;
+		Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	}
 
 	Out.vDiffuse = vector(FinalColor.rgb, vDiffuse.a);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
@@ -1720,7 +1729,7 @@ PS_OUT PS_MAIN_E_R_AO_E_DISSOLVE(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime * 5.f;
+		float fDissolveAmount = g_fDissolveTime;
 
 		// sample noise texture
 		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
@@ -1749,7 +1758,7 @@ PS_OUT PS_MAIN_E_R_AO_E_DISSOLVE(PS_IN In)
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc) + g_fHDRIntensity, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 2.f), 0.f);
 	// ERAO
 	float4 ERAO = float4(vAO_R_MDesc.b, vAO_R_MDesc.g, 1.f, 1.f);
 	Out.vAmbient = ERAO;

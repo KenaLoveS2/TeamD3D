@@ -57,13 +57,20 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("Halberd_Root_Jnt");
+	assert(m_pWeaponBone && "CBossWarrior::Initialize()");
 	m_pRightLegBone = m_pModelCom->Get_BonePtr("char_rt_ankle_jnt");
+	assert(m_pRightLegBone && "CBossWarrior::Initialize()");
+	m_pGrabHandBone = m_pModelCom->Get_BonePtr("char_lf_hand_jnt");
+	assert(m_pGrabHandBone && "CBossWarrior::Initialize()");
+	m_pGrabJointBone = m_pModelCom->Get_BonePtr("GrabJoint");
+	assert(m_pGrabJointBone && "CBossWarrior::Initialize()");
 
 	XMStoreFloat4x4(&m_WeaponPivotMatrix, 
 		XMMatrixRotationX(m_vWeaPonPivotRot.x) * XMMatrixRotationY(m_vWeaPonPivotRot.y) * XMMatrixRotationZ(m_vWeaPonPivotRot.z)
 		* XMMatrixTranslation(m_vWeaPonPivotTrans.x, m_vWeaPonPivotTrans.y, m_vWeaPonPivotTrans.z));
 		
 	XMStoreFloat4x4(&m_RightLegPivotMatrix, XMMatrixTranslation(m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z));
+	XMStoreFloat4x4(&m_GrabHandPivotMatrix, XMMatrixTranslation(m_vGrabHandPivotTrans.x, m_vGrabHandPivotTrans.y, m_vGrabHandPivotTrans.z));
 
 	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 	return S_OK;
@@ -141,6 +148,27 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
 	}
 
+	{
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = COL_GRAB_HAND_TEXT;
+		PxSphereDesc.vPos = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fRadius = 0.4f;
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 10.f;
+		PxSphereDesc.fLinearDamping = 10.f;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+		PxSphereDesc.isTrigger = true;
+
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_WARRIOR_GRAB_HAND));
+		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
+	}
+
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
 	for (auto& Pair : m_mapEffect)
@@ -151,6 +179,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 
 void CBossWarrior::Tick(_float fTimeDelta)
 {		
+	m_bReadySpawn = true;
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -245,6 +274,10 @@ void CBossWarrior::Imgui_RenderProperty()
 	float fLegTrans[3] = { m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z };
 	ImGui::DragFloat3("Leg Trans", fLegTrans, 0.01f, -100.f, 100.0f);
 	memcpy(&m_vRightLegPivotTrans, fLegTrans, sizeof(_float3));
+
+	float fHandTrans[3] = { m_vGrabHandPivotTrans.x, m_vGrabHandPivotTrans.y, m_vGrabHandPivotTrans.z };
+	ImGui::DragFloat3("GrabHand Trans", fHandTrans, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vGrabHandPivotTrans, fHandTrans, sizeof(_float3));
 }
 
 void CBossWarrior::ImGui_AnimationProperty()
@@ -360,6 +393,10 @@ void CBossWarrior::Push_EventFunctions()
 
 	Play_BossBaseSound(true, 0.0f);
 	Play_BossDingSound(true, 0.0f);
+
+	Play_Elemental1Sound(true, 0.0f);
+	Play_Elemental2Sound(true, 0.0f);
+	Play_Elemental11Sound(true, 0.0f);
 }
 
 HRESULT CBossWarrior::SetUp_State()
@@ -427,8 +464,6 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-
-
 		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
@@ -451,41 +486,102 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fJumpBackRange);
 	})
-		.AddTransition("IDLE to CHARGE_ATTACK", "CHARGE_ATTACK") // 내려찍기
+		.AddTransition("IDLE to CHASE_RUN", "CHASE_RUN")
 		.Predicator([this]()
 	{
-		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 0;
-	})
-		.AddTransition("IDLE to COMBO_ATTACK", "UPPER_CUT") // 내려찍기 트레일 돌리면 될듯
-		.Predicator([this]()
-	{
-		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 1;
-	})
-		.AddTransition("IDLE to COMBO_ATTACK", "COMBO_ATTACK") // 트레일 돌리면 될듯
-		.Predicator([this]()
-	{
-		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
-	})
-		.AddTransition("IDLE to COMBO_ATTACK", "SWEEP_ATTACK") // 트레일 돌리면 될듯
-		.Predicator([this]()
-	{
-		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 3;
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && (m_eAttackType == AT_CHARGE || m_eAttackType == AT_UPPER_CUT || m_eAttackType == AT_COMBO || m_eAttackType == AT_SWEEP || m_eAttackType == AT_GRAB);
 	})		
-		.AddTransition("IDLE to JUMP_ATTACK", "JUMP_ATTACK") // 점프해서 바닥을 찍는다
+		.AddTransition("IDLE to CHASE_WALK", "CHASE_WALK")
 		.Predicator([this]()
-	{
-		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 0;
+	{				
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && (m_eAttackType == AT_JUMP || m_eAttackType == AT_TRIP_UPPERCUT);
 	})		
-		.AddTransition("IDLE to TRIP_UPPERCUT", "TRIP_UPPERCUT") // 3단 공격 1,2번째 공격에 검기가 날라가고 3번째에 터지는 듯한 느낌
+		
+
+
+		.AddState("CHASE_RUN")
+		.OnStart([this]()
+	{	
+		m_pModelCom->ResetAnimIdx_PlayTime(RUN);
+		m_pTransformCom->Speed_Boost(true, 1.2f);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(RUN);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta);
+	})
+		.OnExit([this]()
+	{
+		m_pTransformCom->Speed_Boost(true, 1.f);
+	})
+		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 1;
+		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("IDLE to CHASE", "CHASE")
+		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && !DistanceTrigger(m_fFarAttackRange);
+		return IsParried();
 	})
+		.AddTransition("CHASE_RUN to CHARGE_ATTACK", "CHARGE_ATTACK")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(m_fCloseAttackRange) && m_eAttackType == AT_CHARGE;
+	})
+		.AddTransition("CHASE_RUN to UPPER_CUT", "UPPER_CUT")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(m_fCloseAttackRange) && m_eAttackType == AT_UPPER_CUT;
+	})
+		.AddTransition("CHASE_RUN to COMBO_ATTACK", "COMBO_ATTACK")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(m_fCloseAttackRange) && m_eAttackType == AT_COMBO;
+	})
+		.AddTransition("CHASE_RUN to SWEEP_ATTACK", "SWEEP_ATTACK")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(m_fCloseAttackRange) && m_eAttackType == AT_SWEEP;
+	})
+		.AddTransition("CHASE_RUN to GRAB", "GRAB")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(m_fCloseAttackRange) && m_eAttackType == AT_GRAB;
+	})
+		
+
+		.AddState("CHASE_WALK")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(WALK);		
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(WALK);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta);
+	})		
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("CHASE_WALK to JUMP_ATTACK", "JUMP_ATTACK")
+		.Predicator([this]()
+	{			
+		return DistanceTrigger(m_fFarAttackRange) && m_eAttackType == AT_JUMP;
+	})
+		.AddTransition("CHASE_WALK to TRIP_UPPERCUT", "TRIP_UPPERCUT")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(m_fFarAttackRange) && m_eAttackType == AT_TRIP_UPPERCUT;
+	})
+
 
 
 		.AddState("CHARGE_ATTACK")
@@ -496,19 +592,19 @@ HRESULT CBossWarrior::SetUp_State()
 		.OnExit([this]()
 	{
 		m_mapEffect["W_Trail"]->Set_Active(false);
-		Attack_End(&m_iCloseAttackIndex, WARRIR_CLOSE_ATTACK_COUNT, IDLE_LOOP);
+		Attack_End();
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return m_pMonsterStatusCom->IsDead();
+		m_mapEffect["W_Trail"]->Set_Active(false);
+		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return IsParried();
+		m_mapEffect["W_Trail"]->Set_Active(false);
+		return IsParried();
 	})
 		.AddTransition("CHARGE_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
@@ -524,13 +620,13 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		Attack_End(&m_iCloseAttackIndex, WARRIR_CLOSE_ATTACK_COUNT, IDLE_LOOP);
+		Attack_End();
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return m_pMonsterStatusCom->IsDead();
+		m_mapEffect["W_Trail"]->Set_Active(false);
+		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
@@ -540,8 +636,8 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("CHARGE_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return AnimFinishChecker(UPPER_CUT);
+		m_mapEffect["W_Trail"]->Set_Active(false);
+		return AnimFinishChecker(UPPER_CUT);
 	})
 		
 
@@ -552,28 +648,26 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		Attack_End(&m_iCloseAttackIndex, WARRIR_CLOSE_ATTACK_COUNT, IDLE_LOOP);
+		Attack_End();
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return m_pMonsterStatusCom->IsDead();
+		m_mapEffect["W_Trail"]->Set_Active(false);
+		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return IsParried();
+		m_mapEffect["W_Trail"]->Set_Active(false);
+		return IsParried();
 	})
 		.AddTransition("COMBO_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return AnimFinishChecker(COMBO_ATTACK);
+		m_mapEffect["W_Trail"]->Set_Active(false);
+		return AnimFinishChecker(COMBO_ATTACK);
 	})
-
-
 
 		.AddState("SWEEP_ATTACK")
 		.OnStart([this]()
@@ -582,28 +676,26 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		Attack_End(&m_iCloseAttackIndex, WARRIR_CLOSE_ATTACK_COUNT, IDLE_LOOP);
+		Attack_End();
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return m_pMonsterStatusCom->IsDead();
+		m_mapEffect["W_Trail"]->Set_Active(false);
+		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return IsParried();
+		m_mapEffect["W_Trail"]->Set_Active(false);
+		return IsParried();
 	})
 		.AddTransition("SWEEP_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return AnimFinishChecker(SWEEP_ATTACK);
+		m_mapEffect["W_Trail"]->Set_Active(false);
+		return AnimFinishChecker(SWEEP_ATTACK);
 	})
-
-
 
 		.AddState("ENRAGE")
 		.OnStart([this]()
@@ -611,9 +703,6 @@ HRESULT CBossWarrior::SetUp_State()
 		m_bEnRageReady = false;
 		m_pMonsterStatusCom->Add_CurrentHP(100);
 		Attack_Start(ENRAGE);
-		
-		// 광역 공격 이펙트(레인지)
-		
 	})
 		.OnExit([this]()
 	{
@@ -646,8 +735,6 @@ HRESULT CBossWarrior::SetUp_State()
 		return AnimFinishChecker(BELL_CALL);
 	})
 		
-
-
 		.AddState("BLOCK_INTO")
 		.OnStart([this]()
 	{	
@@ -672,8 +759,6 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		return AnimFinishChecker(BLOCK_INTO);
 	})
-
-
 
 		.AddState("BLOCK_HIT")
 		.OnStart([this]()
@@ -703,8 +788,6 @@ HRESULT CBossWarrior::SetUp_State()
 		return AnimFinishChecker(BLOCK_HIT_2);
 	})
 		
-
-
 		.AddState("JUMP_BACK")
 		.OnStart([this]()
 	{
@@ -722,7 +805,40 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 
 
-
+		.AddState("GRAB")
+		.OnStart([this]()
+	{
+		m_bKenaGrab = true;
+		Attack_Start(GRAB);
+	})		
+		.OnExit([this]()
+	{
+		m_bKenaGrab = false;
+		Attack_End();
+	})
+		.AddTransition("GRAB to GRAB_ATTACK", "GRAB_ATTACK")
+		.Predicator([this]()
+	{
+		return false;
+	})
+		.AddTransition("GRAB to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(GRAB);
+	})
+		
+		.AddState("GRAB_ATTACK")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(GRAB_ATTACK);
+		m_pModelCom->Set_AnimIndex(GRAB_ATTACK);
+	})		
+		.AddTransition("GRAB_ATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(GRAB_ATTACK);
+	})
+		
 		.AddState("JUMP_ATTACK")
 		.OnStart([this]()
 	{
@@ -730,7 +846,7 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
+		Attack_End();
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -755,59 +871,27 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
+		Attack_End();
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return m_pMonsterStatusCom->IsDead();
-	})
-		.AddTransition("To PARRIED", "PARRIED")
-		.Predicator([this]()
-	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return IsParried();
-	})
-		.AddTransition("JUMP_ATTACK to IDLE", "IDLE")
-		.Predicator([this]()
-	{
-				m_mapEffect["W_Trail"]->Set_Active(false);
-				return AnimFinishChecker(TRIP_UPPERCUT);
-	})
-
-
-
-		.AddState("CHASE")
-		.OnStart([this]()
-	{
-		m_pModelCom->ResetAnimIdx_PlayTime(WALK);
-		m_pModelCom->Set_AnimIndex(WALK);
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta);
-	})
-		.OnExit([this]()
-	{
-		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
-	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
+		m_mapEffect["W_Trail"]->Set_Active(false);
 		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
+		m_mapEffect["W_Trail"]->Set_Active(false);
 		return IsParried();
 	})
-		.AddTransition("CHASE to IDLE", "IDLE")
+		.AddTransition("JUMP_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fFarAttackRange - 1.f);
+		m_mapEffect["W_Trail"]->Set_Active(false);
+		return AnimFinishChecker(TRIP_UPPERCUT);
 	})
-		
+
 
 
 		.AddState("PARRIED")
@@ -852,13 +936,6 @@ HRESULT CBossWarrior::SetUp_State()
 
 		m_pKena->Dead_FocusRotIcon(this);
 		m_bDying = true;
-
-		/*
-		HW.For.MapGimmick
-		 Map Change  03_30 Test용임 */
-		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
-		pCtrlRoom->DeadZoneObject_Change(true);
-
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()
@@ -999,7 +1076,7 @@ HRESULT CBossWarrior::SetUp_Components()
 {
 	__super::SetUp_Components();
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Boss_Warrior", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Boss_Warrior", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/VillageWarrior_Uv_01_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/VillageWarrior_Uv_01_EMISSIVE.png")), E_FAIL);
@@ -1068,12 +1145,14 @@ void CBossWarrior::Update_Collider(_float fTimeDelta)
 		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
+		// imgui를 사용해서 실시간으로 피봇값을 변경하고 싶으면 주석 풀어서 하면 됨
+		/*
 		XMStoreFloat4x4(&m_WeaponPivotMatrix,
 			XMMatrixRotationX(m_vWeaPonPivotRot.x) * XMMatrixRotationY(m_vWeaPonPivotRot.y) * XMMatrixRotationZ(m_vWeaPonPivotRot.z)
 			* XMMatrixTranslation(m_vWeaPonPivotTrans.x, m_vWeaPonPivotTrans.y, m_vWeaPonPivotTrans.z));
+		*/
 
 		SocketMatrix = XMLoadFloat4x4(&m_WeaponPivotMatrix) * SocketMatrix;
-
 		_float4x4 mat;
 		XMStoreFloat4x4(&mat, SocketMatrix);
 		m_pTransformCom->Update_Collider(COL_WEAPON_TEXT, mat);
@@ -1085,13 +1164,29 @@ void CBossWarrior::Update_Collider(_float fTimeDelta)
 		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
-		XMStoreFloat4x4(&m_RightLegPivotMatrix, XMMatrixTranslation(m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z));
+		// imgui를 사용해서 실시간으로 피봇값을 변경하고 싶으면 주석 풀어서 하면 됨
+		// XMStoreFloat4x4(&m_RightLegPivotMatrix, XMMatrixTranslation(m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z));
 
 		SocketMatrix = XMLoadFloat4x4(&m_RightLegPivotMatrix) * SocketMatrix;
 
 		_float4x4 mat;
 		XMStoreFloat4x4(&mat, SocketMatrix);
 		m_pTransformCom->Update_Collider(COL_RIGHT_LEG_TEXT, mat);
+	}
+
+	{
+		_matrix SocketMatrix = m_pGrabHandBone->Get_OffsetMatrix() * m_pGrabHandBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+		XMStoreFloat4x4(&m_GrabHandPivotMatrix, XMMatrixTranslation(m_vGrabHandPivotTrans.x, m_vGrabHandPivotTrans.y, m_vGrabHandPivotTrans.z));
+
+		SocketMatrix = XMLoadFloat4x4(&m_GrabHandPivotMatrix) * SocketMatrix;
+
+		_float4x4 mat;
+		XMStoreFloat4x4(&mat, SocketMatrix);
+		m_pTransformCom->Update_Collider(COL_GRAB_HAND_TEXT, mat);
 	}
 }
 
@@ -1156,6 +1251,7 @@ void CBossWarrior::TurnOnSwipesCharged(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["Warrior_Charged"]->Set_Active(true);
 
 	Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_WEAPON, m_pTransformCom->Get_Position(),false);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL11], 0.5f);
 }
 
 void CBossWarrior::TurnOnHieroglyph(_bool bIsInit, _float fTimeDelta)
@@ -1221,6 +1317,7 @@ void CBossWarrior::TurnOnShockFrontExtended(_bool bIsInit, _float fTimeDelta)
 	_float4 vPosition = matSocket.r[3];
 	m_mapEffect["W_ShockFront"]->Set_Position(vPosition);
 	m_mapEffect["W_ShockFront"]->Set_Active(true);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL11], 0.5f);
 }
 
 void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
@@ -1255,6 +1352,7 @@ void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["W_FireSwipe"]->Set_Active(true);
 
 	Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_ATTACK, m_pTransformCom->Get_Position(), true, matWorld.r[2]);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL2], 0.5f);
 }
 
 void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
@@ -1287,6 +1385,7 @@ void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["Warrior_Charged"]->Set_Active(true);
 
 	Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_WEAPON, m_pTransformCom->Get_Position(), false);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL11], 0.5f);
 }
 
 void CBossWarrior::TurnOnRoot(_bool bIsInit, _float fTimeDelta)
@@ -1354,6 +1453,7 @@ void CBossWarrior::TurnOnEnrage_Into(_bool bIsInit, _float fTimeDelta)
 
 	m_mapEffect["W_Enrageinto"]->Set_Position(vWarriorPos);
 	m_mapEffect["W_Enrageinto"]->Set_Active(true);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL1], 0.3f);
 }
 
 void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
@@ -1371,7 +1471,7 @@ void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
 
 	m_mapEffect["W_DistortionPlane"]->Set_Position(vPosition);
 	m_mapEffect["W_DistortionPlane"]->Set_Active(true);
-
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL2], 0.5f);
 	// 기둥이랑 먼지가 전역적으로 나와야 함 
 }
 
@@ -1513,12 +1613,23 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 	return 0;
 }
 
-void CBossWarrior::Attack_End(_uint* pAttackIndex, _uint iMaxAttackIndex, _uint iAnimIndex)
+_int CBossWarrior::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	(*pAttackIndex)++;
-	(*pAttackIndex) %= iMaxAttackIndex;
+	if (m_bKenaGrab && pTarget && iTriggerIndex == (_uint)ON_TRIGGER_PARAM_TRIGGER && iColliderIndex == (_int)COL_PLAYER)
+	{
+		// Grab 애니메이션 중에 캐나의 바디와 워리어의 그랩핸드 트리거가 충돌
+	}
 
-	CMonster::Attack_End(iAnimIndex);
+	return 0; 
+}
+
+void CBossWarrior::Attack_End()
+{
+	m_bRealAttack = false;
+
+	_uint iAttack = m_eAttackType + 1;
+	iAttack %= ATTACKTYPE_END;
+	m_eAttackType = (ATTACKTYPE)iAttack;	
 }
 
 void CBossWarrior::Create_CopySoundKey()
@@ -1557,6 +1668,10 @@ void CBossWarrior::Create_CopySoundKey()
 		TEXT("Mon_Knife2.ogg"),
 		TEXT("Mon_BossSound_Ding.ogg"),
 		TEXT("Mon_BossSound_Base.ogg"),
+
+		TEXT("Mon_BossHunter_Elemental1.ogg"),
+		TEXT("Mon_BossHunter_Elemental2.ogg"),
+		TEXT("Mon_BossHunter_Elemental11.ogg"),
 	};
 
 	_tchar szTemp[MAX_PATH] = { 0, };
@@ -1961,4 +2076,40 @@ void CBossWarrior::Play_BossBaseSound(_bool bIsInit, _float fTimeDelta)
 	}
 
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_BOSS_BASE], 0.5f);
+}
+
+void CBossWarrior::Play_Elemental1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_Elemental1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL1], 0.5f);
+}
+
+void CBossWarrior::Play_Elemental2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_Elemental2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL2], 0.5f);
+}
+
+void CBossWarrior::Play_Elemental11Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Play_Elemental11Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL11], 0.5f);
 }

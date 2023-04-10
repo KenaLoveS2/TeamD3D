@@ -31,7 +31,9 @@ public:
 	void Tick(double fTimeDelta);
 	HRESULT Reserve_Manager(const char *pFilePath, _uint iNumManualChannels = 0);
 	
-	_int Play_Sound(const _tchar *pSoundKey, _float fVolume, _bool bIsBGM = false, _int iManualChannelIndex = -1);	
+	_int Play_Sound(const _tchar *pSoundKey, _float fVolume, _bool bIsBGM = false, _int iManualChannelIndex = -1);
+	_int Play_ManualSound(const _tchar* pSoundKey, _float fVolume, _bool bIsBGM = false, _int iManualChannelIndex = -1);
+
 	void Stop_Sound(_uint iManualChannelIndex);	
 	void Set_Volume(_uint iManualChannelIndex, _float fVolume);		
 	void Set_MasterVolume(_float fVolume);	

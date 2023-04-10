@@ -23,16 +23,22 @@ public:
 	virtual HRESULT Render() override;
 	virtual void	Imgui_RenderProperty() override;
 
-public:
 	void			Reset();
+	void			Set_Dissolve(_bool bDissolve) { m_bDissolve = bDissolve; }
 
 private:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_Components();
 
+	HRESULT SetUp_Effects();
+
 private:
 	class CTexture* m_pShamanTextureCom = nullptr;
 	_uint			m_iShamanTexture = 0;
+
+	_bool			m_bTurnInto = false;
+	_bool			m_bDissolve = false;
+	_float			m_fDissolveTime = 1.0f;
 
 public:
 	static  CE_ShamanSummons* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath = nullptr);

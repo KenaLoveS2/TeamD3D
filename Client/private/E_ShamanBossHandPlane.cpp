@@ -37,8 +37,9 @@ HRESULT CE_ShamanBossHandPlane::Initialize(void* pArg)
 	m_eEFfectDesc.bActive = false;
 	m_fHDRValue = 2.f;
 	m_eEFfectDesc.vColor = XMVectorSet(153.f, 195.f, 255.f, 255.f) / 255.f;
-	m_pTransformCom->Set_Scaled(_float3(11.f, 11.f, 11.f));
-	//m_pTransformCom->Set_Scaled(_float3(8.f, 8.f, 8.f));
+	m_pTransformCom->Set_Scaled(_float3(6.f, 1.f, 6.f));
+
+	m_eEFfectDesc.fFrame[0] = 63.f;
 	return S_OK;
 }
 
@@ -52,6 +53,7 @@ HRESULT CE_ShamanBossHandPlane::Late_Initialize(void* pArg)
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	pEffectBase->Set_Parent(this);
 	dynamic_cast<CE_ShamanBossPlate*>(pEffectBase)->Set_EffectType(CE_ShamanBossPlate::EFFECT_HANDSET);
+	m_pChildTransformCom = pEffectBase->Get_TransformCom();
 	m_vecChild.push_back(pEffectBase);
 
 	return S_OK;
@@ -70,6 +72,23 @@ void CE_ShamanBossHandPlane::Tick(_float fTimeDelta)
 
 	m_fTimeDelta += fTimeDelta;
 	__super::Tick(fTimeDelta);
+
+	if (m_bDissolve)
+	{
+		if (m_bTurnInto == false)
+		{
+			_bool bTurn = TurnOnDissolveSystem(m_fDissolveTime, m_bDissolve, fTimeDelta);
+			if (bTurn == true) m_bTurnInto = true;
+		}
+		else
+		{
+			_float3 vScaled = m_pTransformCom->Get_Scaled();
+			dynamic_cast<CE_ShamanBossPlate*>(m_vecChild[0])->Set_Dissolve(true);
+			m_pTransformCom->Set_Scaled(vScaled * (fTimeDelta + 1.0f));
+			_bool bResult = TurnOffSystem(m_fDissolveTime, 1.f, fTimeDelta);
+			if (bResult == true) Reset();
+		}
+	}
 }
 
 void CE_ShamanBossHandPlane::Late_Tick(_float fTimeDelta)
@@ -79,29 +98,34 @@ void CE_ShamanBossHandPlane::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
+	/*  For.Billboard */
 	if (m_pParent != nullptr)
 	{
-		/*  Billboard */
 		_float4 vCamLook = CGameInstance::GetInstance()->Get_CamLook_Float4();
 		_float4 vCamUp = CGameInstance::GetInstance()->Get_CamUp_Float4();
 		_float4 vCamRight = CGameInstance::GetInstance()->Get_CamRight_Float4();
-		_float4 vPos = m_pTransformCom->Get_Position();
 
-		_float4 vDir = XMVector3Normalize(vCamLook - vPos);
-		_float3 vScaled = _float3(8.f, 8.f, 8.f);
+		_float4 vDir = XMVector3Normalize(vCamLook - m_pTransformCom->Get_Position());
+		_float3 vScaled = m_pTransformCom->Get_Scaled();
 
-		m_pTransformCom->Set_Right(vCamRight * -1.f * vScaled.x);
-		m_pTransformCom->Set_Up(vDir * vScaled.y);
-		m_pTransformCom->Set_Look(vCamUp * vScaled.x);
+ 		m_pTransformCom->Set_Right(vCamRight * -1.f * vScaled.x);
+ 		m_pTransformCom->Set_Up(vDir * vScaled.y);
+ 		m_pTransformCom->Set_Look(vCamUp * vScaled.x);
 
-		_matrix WorldMatrix = m_pTransformCom->Get_WorldMatrix();
-		_float4x4 WorldMatrix_float4x4;
-		XMStoreFloat4x4(&WorldMatrix_float4x4, WorldMatrix);
-		m_vecChild[0]->Set_WorldMatrix(WorldMatrix_float4x4);
-		/*  Billboard */
+		m_pChildTransformCom->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());
 
-		//_vector vLook = XMVector3Normalize(WorldMatrix.r[2]);
-		//m_vecChild[0]->Get_TransformCom()->Turn(vDir, fTimeDelta);
+		m_fAngle += fTimeDelta * 4.f;
+		_vector vUp = m_pTransformCom->Get_State(CTransform::STATE_UP);
+		m_pTransformCom->RotationFromNow(vUp, m_fAngle);
+
+		if (m_fAngle > 180.f)
+		{
+			m_bDissolve = true;
+			dynamic_cast<CE_ShamanBossPlate*>(m_vecChild[0])->Set_Dissolve(true);
+			m_pTransformCom->Set_Scaled(vScaled * (fTimeDelta + 1.0f));
+			_bool bResult = TurnOffSystem(m_fDissolveTime, 1.f, fTimeDelta);
+			if (bResult == true) Reset();
+		}
 	}
 
 	if (nullptr != m_pRendererCom)
@@ -203,6 +227,14 @@ void CE_ShamanBossHandPlane::Imgui_RenderProperty()
 
 void CE_ShamanBossHandPlane::Reset()
 {
+	m_fAngle = 0.0f;
+	m_fTimeDelta = 0.0f;
+	m_bDissolve = false;
+	m_fDissolveTime = 1.0f;
+	m_eEFfectDesc.bActive = false;
+	m_bTurnInto = false;
+
+	m_pTransformCom->Set_Scaled(_float3(6.f, 1.f, 6.f));
 }
 
 HRESULT CE_ShamanBossHandPlane::SetUp_ShaderResources()
@@ -212,6 +244,8 @@ HRESULT CE_ShamanBossHandPlane::SetUp_ShaderResources()
 
 	FAILED_CHECK_RETURN(m_pShamanTextureCom->Bind_ShaderResource(m_pShaderCom, "g_ShamanTexture", m_iShamanTexture), E_FAIL);
 
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
 	return S_OK;
 }
 

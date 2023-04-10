@@ -586,6 +586,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video">
       <UniqueIdentifier>{badeb5f1-e152-420c-83a3-f331d15d888d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\BossRock">
+      <UniqueIdentifier>{af6e2ed7-fbcf-476d-b449-80988ade864c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1521,6 +1524,12 @@
     <ClInclude Include="..\public\UI_Node_Video.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BossRock.h">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossRock_Pool.h">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2435,6 +2444,12 @@
     <ClCompile Include="..\private\E_HunterTrail.cpp" />
     <ClCompile Include="..\private\UI_Node_Video.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossRock.cpp">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossRock_Pool.cpp">
+      <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

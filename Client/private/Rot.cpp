@@ -71,6 +71,10 @@ HRESULT CRot::Initialize(void* pArg)
 	m_iEveryRotCount++;
 	m_iObjectProperty = OP_ROT;
 
+	wstring wstrTag = wstring(m_szCloneObjectTag) + TEXT("Wisp");
+	m_pRotWisp = static_cast<CRotWisp*>(CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp"), CUtile::Create_StringAuto(wstrTag.c_str())));
+	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
+
 	return S_OK;
 }
 
@@ -113,17 +117,14 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	m_pMyCam = static_cast<CCameraForRot*>(pGameInstance->Find_Camera(L"ROT_CAM"));
 	RELEASE_INSTANCE(CGameInstance)
 
-	if (wcscmp(m_szCloneObjectTag, TEXT("Saiya_Rot")))
+	if (wcscmp(m_szCloneObjectTag, TEXT("Saiya_Rot")) && m_bManualWakeUp == false)
 		CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f));
 	else
 		m_bWakeUp = true;
 
-	if (m_iThisRotIndex == FIRST_ROT)
+	if (m_iThisRotIndex == FIRST_ROT && m_bManualWakeUp == false)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
 
-	wstring wstrTag = wstring(m_szCloneObjectTag) + TEXT("Wisp");
-	m_pRotWisp = static_cast<CRotWisp*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp"), CUtile::Create_StringAuto(wstrTag.c_str())));
-	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
 	return S_OK;
 }
 
@@ -285,11 +286,20 @@ void CRot::ImGui_PhysXValueProperty()
 	m_pTransformCom->Set_PxPivot(vPxPivot);
 }
 
+void CRot::AlreadyRot()
+{
+	m_iThisRotIndex = m_iKenaFindRotCount++;
+	m_vecKenaConnectRot.push_back(this);
+	
+	m_bManualWakeUp = true;
+	m_pRotWisp->Set_Collect(true);
+}
+
 HRESULT CRot::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Rot", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Rot", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	m_pModelCom->Set_RootBone("Rot_RIG");
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Rot/rh_body_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Rot/rot_fur_ALPHA.png")), E_FAIL);
@@ -370,25 +380,35 @@ HRESULT CRot::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		m_iThisRotIndex = m_iKenaFindRotCount++;
-		//m_pkenaState->Set_RotCount(m_iKenaFindRotCount);
-		m_pkenaState->Add_RotCount();
+			if(m_bManualWakeUp == false)
+			{
+				m_iThisRotIndex = m_iKenaFindRotCount++;
+				//m_pkenaState->Set_RotCount(m_iKenaFindRotCount);
+				m_pkenaState->Add_RotCount();
 
-		m_vecKenaConnectRot.push_back(this);
+				m_vecKenaConnectRot.push_back(this);
 
-		if (m_iThisRotIndex == FIRST_ROT)
-		{
-			m_pKena->Set_FirstRotPtr(this);
-			m_vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
-		}	
+				if (m_iThisRotIndex == FIRST_ROT)
+				{
+					m_pKena->Set_FirstRotPtr(this);
+					m_vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+				}
 
-		m_pTransformCom->Set_Position(m_vWakeUpPosition);
+				m_pTransformCom->Set_Position(m_vWakeUpPosition);
+			}
+		
 	})
+		.AddTransition("SLEEP to IDLE", "IDLE")
+		.Predicator([this]()
+		{
+			return m_bManualWakeUp;
+		})
 		.AddTransition("SLEEP to WAKE_UP", "WAKE_UP")
 		.Predicator([this]()
 	{
 		return m_bWakeUp;
 	})
+		
 		
 		.AddState("WAKE_UP")
 		.OnStart([this]()
@@ -603,4 +623,11 @@ _int CRot::Get_NoHatRotCount()
 	if (m_iThisRotIndex != FIRST_ROT) return -1;
 
 	return (_int)m_vecKenaConnectRot.size() - m_iBuyHatIndex;
+}
+
+void CRot::Clear()
+{
+	m_iEveryRotCount = 0;
+	m_iKenaFindRotCount = 0;
+	m_vecKenaConnectRot.clear();
 }

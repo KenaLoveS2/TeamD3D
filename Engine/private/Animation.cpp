@@ -597,6 +597,16 @@ void CAnimation::Reverse_Play(_float fTimeDelta)
 		pChannel->Set_KeyFrameIndex(m_PlayTime);
 }
 
+void CAnimation::Fixed_Animation(_float fTime)
+{
+	m_PlayTime = fTime;
+
+	for (auto& pChannel : m_Channels)
+		pChannel->Set_KeyFrameIndex(m_PlayTime);
+
+	m_isFinished = true;
+}
+
 void CAnimation::Reset_Animation()
 {
 	for (auto& pChannel : m_Channels)

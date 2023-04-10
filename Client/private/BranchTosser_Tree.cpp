@@ -111,7 +111,7 @@ HRESULT CBranchTosser_Tree::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_MY_BranchTosser_Tree"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_MY_BranchTosser_Tree"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

@@ -75,6 +75,13 @@ HRESULT CBowTarget::Late_Initialize(void* pArg)
 
 void CBowTarget::Tick(_float fTimeDelta)
 {
+	if (CGameInstance::GetInstance()->Key_Down(DIK_E))
+		m_bLaunch = true;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_R))
+		Reset();
+	if (CGameInstance::GetInstance()->Key_Down(DIK_T))
+		m_bArrowHit = true;
+
 	if (m_bDead == true)
 		return;
 
@@ -86,13 +93,6 @@ void CBowTarget::Tick(_float fTimeDelta)
 	m_pAnimation->Play_Animation(fTimeDelta);
 
 	m_pTransformCom->Tick(fTimeDelta);
-
-// 	if (CGameInstance::GetInstance()->Key_Down(DIK_E))
-// 		m_bLaunch = true;
-// 	if (CGameInstance::GetInstance()->Key_Down(DIK_R))
-// 		Reset();
-// 	if (CGameInstance::GetInstance()->Key_Down(DIK_T))
-// 		m_bArrowHit = true;
 }
 
 void CBowTarget::Late_Tick(_float fTimeDelta)
@@ -123,7 +123,7 @@ HRESULT CBowTarget::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_AO_R_MTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 34);
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 35);
 	}
 
 	return S_OK;
@@ -358,7 +358,7 @@ HRESULT CBowTarget::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	/* For.Com_DISSOLVETEX */
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Component_Texture_Dissolve_BowTarget", L"COM_DISSOLVETEX", (CComponent**)&m_pDissolveTexture), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Texture_Dissolve_BowTarget", L"COM_DISSOLVETEX", (CComponent**)&m_pDissolveTexture), E_FAIL);
 	
 
 	return S_OK;

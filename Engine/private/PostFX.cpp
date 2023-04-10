@@ -7,8 +7,8 @@ IMPLEMENT_SINGLETON(CPostFX)
 CPostFX::CPostFX()
 {
 	m_bOn = true;
-	m_fMiddleGrey = 8.f;
-	m_fWhite = 3.f;
+	m_fMiddleGrey = 10.f;
+	m_fWhite = 2.f;
 	m_fBloomThreshold = 0.8f;
 	m_fBloomScale = 0.4f;
 	m_fAdaptation = 0.5f;
@@ -835,11 +835,11 @@ void CPostFX::Day()
 
 void CPostFX::Night()
 {
-	if (m_fMiddleGrey > 0.2f)
+	if (m_fMiddleGrey > 1.f)
 	{
 		m_fMiddleGrey -= TIMEDELTA * 2.f;
-		if (m_fMiddleGrey <= 0.2f)
-			m_fMiddleGrey = 0.2f;
+		if (m_fMiddleGrey <= 0.5f)
+			m_fMiddleGrey = 0.5f;
 	}
 
 	if (m_fWhite <= 5.f)
