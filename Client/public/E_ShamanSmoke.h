@@ -25,7 +25,7 @@ public:
 	virtual void	Imgui_RenderProperty() override;
 
 public:
-	void			Set_State(STATE eState, _float4 vPos);
+	void			Set_State(STATE eState, _float4 vPos, _float4 vLeftHandPos = _float4(0.0f, 0.0f, 0.0f, 1.0f));
 
 private:
 	HRESULT			SetUp_Components();
@@ -33,6 +33,7 @@ private:
 
 private:
 	STATE			m_eState = STATE_IDLE;
+	_float			m_fChildDurationTime = 0.0f;
 
 public:
 	static CE_ShamanSmoke*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath =nullptr);

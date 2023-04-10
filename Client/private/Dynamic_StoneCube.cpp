@@ -180,8 +180,7 @@ HRESULT CDynamic_StoneCube::Render()
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
+			
 			if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
 			{
 				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
@@ -272,6 +271,7 @@ void CDynamic_StoneCube::Actor_Clear()
 {
 	m_pTransformCom->Clear_Actor();
 }
+
 
 //void CDynamic_StoneCube::ImGui_PhysXValueProperty()
 //{

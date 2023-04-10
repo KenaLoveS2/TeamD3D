@@ -1534,6 +1534,11 @@
     <ClInclude Include="..\public\E_ShamanIceDagger.h" />
     <ClInclude Include="..\public\E_ShamanLazer.h" />
     <ClInclude Include="..\public\SceneChangePortal.h" />
+    <ClInclude Include="..\public\E_Common_CIrcleSp.h" />
+    <ClInclude Include="..\public\E_LazerTrail.h" />
+    <ClInclude Include="..\public\DeadZoneBossTree.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2459,6 +2464,11 @@
     <ClCompile Include="..\private\E_ShamanIceDagger.cpp" />
     <ClCompile Include="..\private\E_ShamanLazer.cpp" />
     <ClCompile Include="..\private\SceneChangePortal.cpp" />
+    <ClCompile Include="..\private\E_Common_CIrcleSp.cpp" />
+    <ClCompile Include="..\private\E_LazerTrail.cpp" />
+    <ClCompile Include="..\private\DeadZoneBossTree.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

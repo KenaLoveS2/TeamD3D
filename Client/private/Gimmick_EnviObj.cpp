@@ -5,6 +5,7 @@
 #include "Interaction_Com.h"
 
 #include "ControlRoom.h"
+#include "BossWarrior.h"
 
 /* 기믹 클래스는 1개씩입니다. */
 CGimmick_EnviObj::CGimmick_EnviObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -56,6 +57,12 @@ HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 
 void CGimmick_EnviObj::Tick(_float fTimeDelta)
 {
+	if(!m_bTestOnce)
+	{
+		Late_Initialize();
+		m_bTestOnce = true;
+	}
+
 	__super::Tick(fTimeDelta);
 
 	if (m_bColliderOn == false && true == Gimmik_Start(fTimeDelta))
@@ -68,24 +75,14 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 			vPos = _float3(0.0f, 0.f, 0.0f);
 		}
 		
-		if (m_pModelCom->Get_UseTriangleMeshActor())
+		if (m_pModelCom->Get_UseTriangleMeshActor() && m_EnviromentDesc.iRoomIndex != 4)
 			m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
 
 		m_bColliderOn = true;
 	}
 
-	/* To do */
 
-	if(m_EnviromentDesc.iRoomIndex == 4)
-	{
-		/*
-		 if ==  Boss Dead
-		
-			m_bGimmick_Active =true;
-			Gimmik_Start(m_bGimmick_Active);
-		*/
-	
-	}
+
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
