@@ -270,15 +270,15 @@ HRESULT CKena_Staff::Render()
 				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
 				/******************************************************************/
-				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 9);
+				m_pModelCom->Render(m_pShaderCom, i, nullptr, 9);
 			}
 
-			if (i == 3) // M_bowTrails == 3
+			if (i == 3) // M_bowTrails == 3 가운데 꾸불
 			{
 				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 				/******************************************************************/
-				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 8);
+				m_pModelCom->Render(m_pShaderCom, i, nullptr, 8);
 			}
 
 			if (i == 4)
@@ -288,7 +288,7 @@ HRESULT CKena_Staff::Render()
 				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
 				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_GradientTexture");
 				/******************************************************************/
-				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 10);
+				m_pModelCom->Render(m_pShaderCom, i, nullptr, 10);
 			}
 		}
 	}
@@ -407,7 +407,7 @@ HRESULT CKena_Staff::SetUp_Components()
 			// Diffuse
 			m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_54.png"));
 			// Diffuse2
-			m_pModelCom->SetUp_Material(i, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_6.png"));
+			m_pModelCom->SetUp_Material(i, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_107.png"));
 		}
 	}
 	/******************************************************************/
@@ -424,11 +424,12 @@ HRESULT CKena_Staff::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
-	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
-	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
-	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
-	m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float));
-	m_pShaderCom->Set_RawValue("g_BowDurationTime", &m_fBowDurationTime, sizeof(_float));
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_BowDurationTime", &m_fBowDurationTime, sizeof(_float)), E_FAIL);
+
 	return S_OK;
 }
 

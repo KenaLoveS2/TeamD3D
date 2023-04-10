@@ -68,6 +68,7 @@ public:
 
 		_float	fTerm = 0.0f;
 		_float	fTermAcc = 0.0f;
+		_float	fPowValue = 2.f;
 
 	}POINTDESC;
 

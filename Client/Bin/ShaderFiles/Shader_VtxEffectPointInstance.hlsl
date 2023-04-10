@@ -49,7 +49,9 @@ float _FadeSpeed = 1.5f;
 
 /* Option */
 bool  g_bTurn;
+float4 g_RandomColor;
 /* Option */
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -173,6 +175,8 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 {
 	GS_OUT		Out[4];
 
+	float       fCurWidth = In[0].fLife;
+
 	float3      vLook = g_vCamPosition.xyz - In[0].vPosition;
 	float3      vDir = normalize(In[0].vPosition - In[0].vCenterPosition);
 	float3      vRight = normalize(cross(vDir, vLook)) * In[0].fSize * 0.5f;
@@ -181,22 +185,22 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float3      vPosition;
 
-	vPosition = In[0].vPosition + vRight + vUp;
+	vPosition = In[0].vPosition + vRight + vUp * fCurWidth;
 	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[0].vTexUV = float2(0.f, 0.f);
 	Out[0].fLife = In[0].fLife;
 
-	vPosition = In[0].vPosition - vRight + vUp;
+	vPosition = In[0].vPosition - vRight + vUp * fCurWidth;
 	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[1].vTexUV = float2(1.f, 0.f);
 	Out[1].fLife = In[0].fLife;
 
-	vPosition = In[0].vPosition - vRight - vUp;
+	vPosition = In[0].vPosition - vRight - vUp * fCurWidth;
 	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[2].vTexUV = float2(1.f, 1.f);
 	Out[2].fLife = In[0].fLife;
 
-	vPosition = In[0].vPosition + vRight - vUp;
+	vPosition = In[0].vPosition + vRight - vUp * fCurWidth;
 	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[3].vTexUV = float2(0.f, 1.f);
 	Out[3].fLife = In[0].fLife;
@@ -837,7 +841,7 @@ PS_OUT PS_DOT(PS_IN In)
 	if (0.5f < fTIme)
 		finalcolor = finalcolor * (1.f - fTIme);
 
-	Out.vColor = finalcolor;
+	Out.vColor = CalcHDRColor(finalcolor, g_fHDRValue);
 	return Out;
 }
 
@@ -1068,17 +1072,18 @@ PS_OUT PS_FRONTVIEWBLINK(PS_IN In)
 
       In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
       In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
-
    }
 
-   vector    vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-   vDiffuse *= /** (float3)0.f */g_vColor;
+   /* Diffuse */
+   vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+   Diffuse.a = Diffuse.r;
 
-   Out.vColor = vDiffuse/* * 1.5f*/;
+   Out.vColor = Diffuse * g_vColor;
+   Out.vColor.rgb *= 2.5f;
+   Out.vColor.a *= (1.0f - In.fLife);
 
-   //float ftime = min(g_time, 2.f);
-   //out.vcolor.a = out.vcolor.a * (2.f - ftime);
-
+   if (Out.vColor.a < 0.1f)
+	   discard;
    return Out;
 }
 
@@ -1199,6 +1204,32 @@ PS_OUT PS_SHAMANRECTTRAIL(PS_TRAILIN In)
 	Out.vColor = CalcHDRColor(finalcolor, g_fHDRValue);
 	return Out;
 }
+
+float random(float2 Input)
+{
+	return frac(sin(dot(Input, float2(12.9898, 78.233)))) * 43758.5453123;
+}
+
+PS_OUT PS_RANDOMCOLOR_PARTICLE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	Diffuse.a = Diffuse.r;
+
+	vector vColor;
+	vColor.rgb = g_vColor.rgb * g_RandomColor.rgb;
+	vColor.a = g_vColor.a;
+
+	float4 finalcolor = Diffuse + vColor;
+	finalcolor.a = Diffuse * vColor;
+	if (finalcolor.a < 0.1f)
+		discard;
+
+	Out.vColor = CalcHDRColor(finalcolor, g_fHDRValue);
+	return Out;
+}
+
 
 technique11 DefaultTechnique
 {
@@ -1449,5 +1480,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_BOMBTRAIL();
+	}
+
+	pass RandomColor_Particle // 19
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_RANDOMCOLOR_PARTICLE();
 	}
 }
