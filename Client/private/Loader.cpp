@@ -103,6 +103,7 @@
 
 #include "BossRock.h"
 #include "BossRock_Pool.h"
+#include "DeadZoneBossTree.h"
 
 /* UI */
 #include "BackGround.h"
@@ -436,58 +437,80 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Frog"), CFrog::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	PivotMatrix = XMMatrixScaling(0.004f, 0.004f, 0.004f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall03",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.json"))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	PivotMatrix = XMMatrixScaling(0.004f, 0.004f, 0.004f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall04",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_04.mdat"), 
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_04.json"))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	PivotMatrix = XMMatrixScaling(0.004f, 0.004f, 0.004f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall05",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_05.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_05.json"))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	PivotMatrix = XMMatrixScaling(0.004f, 0.004f, 0.004f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockSmall06",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_06.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_06.json"))))
 		return E_FAIL;
 
 
-	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_MaskShrine_Rock_09",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.json"))))
 		return E_FAIL;
 
 
-	PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+	PivotMatrix = XMMatrixScaling(0.002f, 0.002f, 0.002f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockMedium04",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.json"))))
 		return E_FAIL;
 
 
-	PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+	PivotMatrix = XMMatrixScaling(0.002f, 0.002f, 0.002f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockMedium06",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.json"))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+	PivotMatrix = XMMatrixScaling(0.002f, 0.002f, 0.002f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Dy_RockMedium07",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.json"))))
 		return E_FAIL;
 
 
+
+#pragma region Boss_Attack DissolveTree
+
+	PivotMatrix = XMMatrixScaling(0.002f, 0.003f, 0.002f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_BossDissolveGodTree",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.json", false, true))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.002f, 0.003f, 0.002f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_BossDissolveGodTree02",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree02.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree02.json", false, true))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.002f, 0.003f, 0.002f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_BossDissolveGodTree03",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree03.json", false, true))))
+		return E_FAIL;
+
+#pragma  endregion
 
 
 #pragma  endregion ANIM_OBJ
@@ -1487,8 +1510,13 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dynamic_StoneCube"),
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
 
+	/* For.Prototype_GameObject_DeadZoneBossTree */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneBossTree"),
+		CDeadZoneBossTree::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
@@ -2822,28 +2850,55 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Frog/Frog.model"), PivotMatrix))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	PivotMatrix = XMMatrixScaling(0.004f, 0.004f, 0.004f);
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockSmall03",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_03.json"))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	PivotMatrix = XMMatrixScaling(0.004f, 0.004f, 0.004f);
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockSmall04",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_04.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_04.json"))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	PivotMatrix = XMMatrixScaling(0.004f, 0.004f, 0.004f);
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockSmall05",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_05.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_05.json"))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f);
+	PivotMatrix = XMMatrixScaling(0.004f, 0.004f, 0.004f);
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockSmall06",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_06.mdat"),
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Small/Rock_Small_06.json"))))
+		return E_FAIL;
+
+
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_MaskShrine_Rock_09",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.json"))))
+		return E_FAIL;
+
+
+	PivotMatrix = XMMatrixScaling(0.002f, 0.002f, 0.002f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium04",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.json"))))
+		return E_FAIL;
+
+
+	PivotMatrix = XMMatrixScaling(0.002f, 0.002f, 0.002f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium06",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.json"))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.002f, 0.002f, 0.002f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium07",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.mdat"),
+			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.json"))))
 		return E_FAIL;
 
 
@@ -2857,11 +2912,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_CherryBlossomTreeAlive",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Sakura/CherryBlossomTreeAlive.mdat"), PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Sakura/CherryBlossomTreeAlive.json", false))))
 		return E_FAIL;
-
-// 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-// 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RuinsKit_BombPlatForm",
-// 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.mdat"), PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.json", false))))
-// 		return E_FAIL;
 
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Map4/Bell", true, true, true)))
 		assert(!"Map4/Bell");
@@ -3205,32 +3255,31 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
 			return E_FAIL;
 
-		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
-		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_MaskShrine_Rock_09",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.mdat"),
-				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Map4/HouseKit/Rock/M4_MaskShrine_Rock_09.json"))))
-			return E_FAIL;
-
-		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
-		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium04",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.mdat"),
-				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_04.json"))))
-			return E_FAIL;
-
-		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
-		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium06",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.mdat"),
-				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_06.json"))))
-			return E_FAIL;
-
-		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
-		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Dy_RockMedium07",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.mdat"),
-				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Rock/Rock_Medium/Rock_Medium_07.json"))))
-			return E_FAIL;
 
 
 #pragma  endregion Born_GroundCover
+
+#pragma region Boss_Attack DissolveTree
+
+		PivotMatrix = XMMatrixScaling(0.002f, 0.003f, 0.002f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BossDissolveGodTree",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.mdat"),
+				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.json", false, true))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.002f, 0.003f, 0.002f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BossDissolveGodTree02",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree02.mdat"),
+				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree02.json", false, true))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.002f, 0.003f, 0.002f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BossDissolveGodTree03",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.mdat"),
+				PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree03.json", false, true))))
+			return E_FAIL;
+
+#pragma  endregion
 
 #pragma  region HHW_OBJ
 	/* For.Prototype_GameObject_Cave_Rock */
@@ -3447,7 +3496,10 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CDynamic_StoneCube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	
+	/* For.Prototype_GameObject_DeadZoneBossTree */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneBossTree"),
+		CDeadZoneBossTree::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pet"), CPet::Create(m_pDevice, m_pContext)))) return E_FAIL;

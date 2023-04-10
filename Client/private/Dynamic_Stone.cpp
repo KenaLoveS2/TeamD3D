@@ -69,7 +69,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall03");
 		vColiderSize = _float3(0.7f, 2.5f, 0.7f); //본체의 콜라이더 사이즈
 	}
@@ -84,7 +84,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall04");
 		vColiderSize = _float3(1.13f, 2.88f, 1.13f); //본체의 콜라이더 사이즈
 	}
@@ -99,7 +99,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall05");
 		vColiderSize = _float3(0.9f, 3.3f, 0.9f); //본체의 콜라이더 사이즈
 	}
@@ -114,7 +114,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall06");
 		vColiderSize = _float3(1.f, 2.8f, 1.f); //본체의 콜라이더 사이즈
 
@@ -126,11 +126,11 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		StoneCubeDesc.fLinearDamping = 0.5f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.20f; // 상자 중심과 원의 중심 사이의 거리
+		boxRadius = 0.4f; // 상자 중심과 원의 중심 사이의 거리
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 9; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_MaskShrine_Rock_09");
 		vColiderSize = _float3( 0.26f,1.2f,0.26f ); //본체의 콜라이더 사이즈
 
@@ -147,7 +147,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium04");
 		vColiderSize = _float3(0.9f, 2.44f, 0.9f); //본체의 콜라이더 사이즈
 	}
@@ -158,11 +158,11 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		StoneCubeDesc.fLinearDamping = 3.f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 		
-		boxRadius = 0.4f; // 상자 중심과 원의 중심 사이의 거리
+		boxRadius = 0.7f; // 상자 중심과 원의 중심 사이의 거리
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium06");
 		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //본체의 콜라이더 사이즈
 	}
@@ -173,11 +173,11 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		StoneCubeDesc.fLinearDamping = 3.f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.5f; // 상자 중심과 원의 중심 사이의 거리
+		boxRadius = 0.7f; // 상자 중심과 원의 중심 사이의 거리
 		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
 		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
-		layerCount = 10; // 전체 레이어 개수
+		layerCount = 5; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium07");
 		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //본체의 콜라이더 사이즈
 	}
@@ -296,9 +296,12 @@ void CDynamic_Stone::Tick(_float fTimeDelta)
 	for (auto& pObj : m_pDynamicObj_List)
 	{
 		if (pObj != nullptr)
+		{
 			pObj->Tick(fTimeDelta);
+		}
 	}
 
+	
 
 	//CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
 
