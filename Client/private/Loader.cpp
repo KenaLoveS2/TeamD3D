@@ -97,7 +97,7 @@
 #include "Dynamic_Stone.h"
 #include "Dynamic_StoneCube.h"
 #include "BombPlatform.h"
-
+#include "SceneChangePortal.h"
 #include "MannequinRot.h"
 #include "Meditation_Spot.h"
 
@@ -493,8 +493,8 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = false;
-	_bool bFlowerCheck = true;
+	_bool bRealObject = true;
+	_bool bFlowerCheck = false;
 
 #ifdef FOR_MAPTOOL   
 
@@ -1420,12 +1420,18 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneObj"),
 		CDeadZoneObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	/* For.Prototype_GameObject_SceneChangePortal */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SceneChangePortal"),
+		CSceneChangePortal::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
+
 	/* For.Prototype_GameObject_Meditation_Spot */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Meditation_Spot"),
 		CMeditation_Spot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_DeadZoneObj */
+	/* For.Prototype_GameObject_GimmickObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
 		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -3365,8 +3371,12 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CMeditation_Spot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_SceneChangePortal */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SceneChangePortal"),
+		CSceneChangePortal::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
-	/* For.Prototype_GameObject_DeadZoneObj */
+	/* For.Prototype_GameObject_GimmickObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
 		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;

@@ -181,12 +181,14 @@ struct GS_OUT
 };
 
 
-[maxvertexcount(24)]
-void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
-{
-    
-
-}
+//[maxvertexcount(24)]
+//void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
+//{
+//    
+//    GS_OUT Out = (GS_OUT)0;
+//
+//
+//}
 
 struct PS_IN
 {
@@ -925,18 +927,18 @@ technique11 DefaultTechnique
     }//22
 
 
-    pass GeoMeryTest
-    {
-        SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-        SetDepthStencilState(DS_Default, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+    //pass GeoMeryTest
+    //{
+    //    SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+    //    SetDepthStencilState(DS_Default, 0);
+    //    SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-        VertexShader = compile vs_5_0 VS_MAIN_INSTANCE_GEOMETRY();
-        GeometryShader = compile gs_5_0 GS_MAIN();
-        HullShader = NULL;
-        DomainShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_PointSampler();
-    }//23
+    //    VertexShader = compile vs_5_0 VS_MAIN_INSTANCE_GEOMETRY();
+    //    GeometryShader = NULL;  // compile gs_5_0 GS_MAIN();
+    //    HullShader = NULL;
+    //    DomainShader = NULL;
+    //    PixelShader = compile ps_5_0 PS_MAIN_PointSampler();
+    //}//23
 
 
 

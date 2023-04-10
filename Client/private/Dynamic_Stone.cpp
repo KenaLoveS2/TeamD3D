@@ -60,32 +60,64 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 
 	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall03")
 	{
-		StoneCubeDesc.vSize = _float3(0.29f, 0.12f, 0.13f);
-		StoneCubeDesc.fMass = 100.f;
-		StoneCubeDesc.fLinearDamping = 100.f;
-		lstrcpy(StoneCubeDesc.pModelName , L"Prototype_Component_Model_Dy_RockSmall03");
+		StoneCubeDesc.vSize = _float3(0.7f, 0.29f, 0.7f);
+		StoneCubeDesc.fMass = 30.f;
+		StoneCubeDesc.fLinearDamping = 1.f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
+
+		boxRadius = 0.8f; // 상자 중심과 원의 중심 사이의 거리
+		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
+		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
+		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
+		layerCount = 10; // 전체 레이어 개수
+		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall03");
+		vColiderSize = _float3(0.7f, 2.5f, 0.7f); //본체의 콜라이더 사이즈
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall04")
 	{
-		StoneCubeDesc.vSize = _float3(0.13f, 0.09f, 0.17f);
-		StoneCubeDesc.fMass = 50.f;
-		StoneCubeDesc.fLinearDamping = 3.f;
-		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall04");
+		StoneCubeDesc.vSize = _float3(0.38f, 0.25f, 0.45f);
+		StoneCubeDesc.fMass = 100.f;
+		StoneCubeDesc.fLinearDamping = 2.f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
+
+		boxRadius = 0.5f; // 상자 중심과 원의 중심 사이의 거리
+		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
+		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
+		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
+		layerCount = 10; // 전체 레이어 개수
+		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall04");
+		vColiderSize = _float3(1.13f, 2.88f, 1.13f); //본체의 콜라이더 사이즈
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall05")
 	{
+		StoneCubeDesc.vSize = _float3(2.5f, 0.315f, 2.5f);
+		StoneCubeDesc.fMass = 100.f;
+		StoneCubeDesc.fLinearDamping = 2.f;
+		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
+
+		boxRadius = 0.7f; // 상자 중심과 원의 중심 사이의 거리
+		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
+		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
+		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
+		layerCount = 10; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall05");
-		StoneCubeDesc.vSize = _float3(0.2f, 0.21f, 0.1f);
+		vColiderSize = _float3(0.9f, 3.3f, 0.9f); //본체의 콜라이더 사이즈
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall06")
 	{
-		StoneCubeDesc.vSize = _float3(0.23f, 0.14f, 0.19f);
-		StoneCubeDesc.fMass = 50.f;
-		StoneCubeDesc.fLinearDamping = 3.f;
-		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall06");
+		StoneCubeDesc.vSize = _float3(1.3f, 0.28f, 1.3f);
+		StoneCubeDesc.fMass = 10.f;
+		StoneCubeDesc.fLinearDamping = 1.f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
+
+		boxRadius = 0.8f; // 상자 중심과 원의 중심 사이의 거리
+		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
+		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
+		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
+		layerCount = 10; // 전체 레이어 개수
+		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall06");
+		vColiderSize = _float3(1.f, 2.8f, 1.f); //본체의 콜라이더 사이즈
+
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_MaskShrine_Rock_09")
 	{
@@ -100,32 +132,54 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
 		layerCount = 9; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_MaskShrine_Rock_09");
-		vColiderSize = _float3( 0.19f,0.87f,0.21f ); //본체의 콜라이더 사이즈
+		vColiderSize = _float3( 0.26f,1.2f,0.26f ); //본체의 콜라이더 사이즈
 
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium04")
 	{
-		StoneCubeDesc.vSize = _float3(0.17f, 0.1f, 0.14f);
+		StoneCubeDesc.vSize = _float3(0.37f, 0.23f, 0.37f);
 		StoneCubeDesc.fMass = 100.f;
 		StoneCubeDesc.fLinearDamping = 3.f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
+
+
+		boxRadius = 0.65f; // 상자 중심과 원의 중심 사이의 거리
+		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
+		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
+		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
+		layerCount = 10; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium04");
+		vColiderSize = _float3(0.9f, 2.44f, 0.9f); //본체의 콜라이더 사이즈
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium06")
 	{
-		StoneCubeDesc.vSize = _float3(0.15f, 0.1f, 0.2f);
+		StoneCubeDesc.vSize = _float3(0.4f, 0.23f, 0.4f);
 		StoneCubeDesc.fMass = 100.f;
 		StoneCubeDesc.fLinearDamping = 3.f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
+		
+		boxRadius = 0.4f; // 상자 중심과 원의 중심 사이의 거리
+		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
+		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
+		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
+		layerCount = 10; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium06");
+		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //본체의 콜라이더 사이즈
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium07")
 	{
-		StoneCubeDesc.vSize = _float3(0.19f, 0.11f, 0.19f);
+		StoneCubeDesc.vSize = _float3(0.5f, 0.23f, 0.5f);
 		StoneCubeDesc.fMass = 100.f;
 		StoneCubeDesc.fLinearDamping = 3.f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
+
+		boxRadius = 0.5f; // 상자 중심과 원의 중심 사이의 거리
+		boxCountPerLayer = 2; // 한 레이어에 포함될 박스 개수
+		layerHeight = StoneCubeDesc.vSize.y; // 레이어 간 높이 차
+		layerRadiusStep = 0.0f; // 레이어 간 반지름 차이
+		layerCount = 10; // 전체 레이어 개수
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium07");
+		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //본체의 콜라이더 사이즈
 	}
 
 	vSize.x += 0.05f;
@@ -180,7 +234,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 			
 			pCreateObject = nullptr;
 
-			const _tchar* NewName = CUtile::Create_DummyString(m_szCloneObjectTag, iTemp++);
+			const _tchar* NewName = CUtile::Create_DummyString(m_szCloneObjectTag, ++iTemp);
 
 			pCreateObject = pGameInst->Clone_GameObject(
 				TEXT("Prototype_GameObject_Dynamic_StoneCube"),
@@ -198,7 +252,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	BoxDesc.pActortag = m_szCloneObjectTag;
-	BoxDesc.eType = BOX_STATIC;		// 원래는 박스 스태틱으로 만들어야함
+	BoxDesc.eType = BOX_STATIC;		
 	BoxDesc.vPos = CUtile::Float_4to3(vPos);
 	BoxDesc.vSize = vColiderSize;
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
@@ -214,7 +268,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	BoxDesc.fDynamicFriction = 0.5f;
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
-
+	BoxDesc.bKinematic = true;
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
 	
 	/*내일 먼저 생성하고 슬립으로 바꾸기*/
@@ -227,6 +281,16 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 
 void CDynamic_Stone::Tick(_float fTimeDelta)
 {
+
+#ifdef FOR_MAP_GIMMICK
+
+#else
+	if(m_bTestLateInit == false)
+	{
+		Late_Initialize();
+		m_bTestLateInit = true;
+	}
+#endif
 
 
 	for (auto& pObj : m_pDynamicObj_List)
@@ -247,10 +311,13 @@ void CDynamic_Stone::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	size_t size = m_pDynamicObj_List.size();
+	size_t iIndex = 0;
 	for (auto& pObj : m_pDynamicObj_List)
 	{
 		if (pObj != nullptr)
 			pObj->Late_Tick(fTimeDelta);
+
 	}
 
 //	if (m_pRendererCom && m_bRenderActive)
@@ -431,6 +498,24 @@ _int CDynamic_Stone::Execute_Collision(CGameObject* pTarget, _float3 vCollisionP
 	}
 
 	return 0;
+}
+
+void CDynamic_Stone::ImGui_PhysXValueProperty()
+{
+	CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
+
+	if(ImGui::Button("TestTest"))
+	{
+		for (auto& pObj : m_pDynamicObj_List)
+		{
+			if (pObj != nullptr)
+			{
+				static_cast<CDynamic_StoneCube*>(pObj)->Set_CollActive();
+				// static_cast<CDynamic_StoneCube*>(pObj)->Execute_SleepEnd();
+			}
+		}
+	}
+
 }
 
 HRESULT CDynamic_Stone::Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)

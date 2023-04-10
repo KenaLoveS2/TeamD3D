@@ -99,7 +99,7 @@ HRESULT CDeadZoneObj::Render()
 			}
 			else
 			{
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
 			}
 		}
 	}
