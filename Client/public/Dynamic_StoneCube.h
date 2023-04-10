@@ -21,9 +21,6 @@ public:
 		_float3 vPos;
 		_float fLinearDamping;
 		_float fMass;
-
-
-
 	}Dynamic_StoneCube_DESC;
 
 

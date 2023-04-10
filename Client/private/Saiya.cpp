@@ -433,6 +433,7 @@ HRESULT CSaiya::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
+		Play_LaughSound();
 		// 사라질때 이펙트 	
 	})
 		.OnExit([this]()
@@ -453,6 +454,7 @@ HRESULT CSaiya::SetUp_State()
 		.AddState("ACTION_3")
 		.Tick([this](_float fTimeDelta)
 	{
+		Play_LaughSound();
 		m_pModelCom->Set_AnimIndex(SAIYA_CHASINGLOOP);
 	})
 		.AddTransition("ACTION_3 to ACTION_4", "ACTION_4")
@@ -468,12 +470,14 @@ HRESULT CSaiya::SetUp_State()
 		CGameInstance::GetInstance()->Work_Camera(L"NPC_CINE1");
 		m_pCinecam[NPC_CINE1]->Play();
 		m_bCinecam[NPC_CINE1] = true;
+		Play_LaughSound();
 	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(SAIYA_RUN);
 		m_pTransformCom->Set_Look(CUtile::Float3toFloat4Look(m_keyframes[3].vLook));
 		m_pTransformCom->Go_Straight(fTimeDelta);
+		Play_LaughSound();
 	})
 		.AddTransition("ACTION_4 to ACTION_5", "ACTION_5")
 		.Predicator([this]()
@@ -489,6 +493,7 @@ HRESULT CSaiya::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
+		Play_LaughSound();
 		// 사라질때 이펙트 	
 	})
 		.OnExit([this]()
@@ -562,6 +567,10 @@ HRESULT CSaiya::SetUp_State()
 	{
 		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
 	})
+		.OnExit([this]()
+	{
+		Play_LaughSound();
+	})
 		.AddTransition("IDLE to CHEER", "CHEER")
 		.Predicator([this]()
 	{
@@ -608,6 +617,7 @@ HRESULT CSaiya::SetUp_State()
 
 		if (CGameInstance::GetInstance()->Key_Down(DIK_E))
 		{
+			Play_LaughSound();
 			if (m_iLineIndex == (int)m_vecChat[m_iChatIndex].size())
 			{
 				m_iLineIndex++;
@@ -621,12 +631,11 @@ HRESULT CSaiya::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		Set_PlayerLock(false);
 		/* Chat End */
 		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 		_bool bVal = false;
 		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
-
-		Set_PlayerLock(false);
 
 		m_iLineIndex = 0;
 		m_iChatIndex++;
@@ -650,6 +659,7 @@ HRESULT CSaiya::SetUp_State()
 		.AddState("ACTION_10")
 		.OnStart([this]()
 	{
+		Play_LaughSound();
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -691,6 +701,7 @@ HRESULT CSaiya::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+
 	}) // 플레이어 또 가까이오면 시네마캠 NPC_CINE2 동작 
 
 		.OnExit([this]()
@@ -698,7 +709,6 @@ HRESULT CSaiya::SetUp_State()
 		CGameInstance::GetInstance()->Work_Camera(m_pCinecam[NPC_CINE2]->Get_ObjectCloneName());
 		m_pCinecam[NPC_CINE2]->Play();
 		m_bCinecam[NPC_CINE2] = true;
-		Set_PlayerLock(true);
 	})
 		.AddTransition("ACTION_12 to ACTION_13", "ACTION_13")
 		.Predicator([this]()
@@ -707,10 +717,6 @@ HRESULT CSaiya::SetUp_State()
 	})
 
 		.AddState("ACTION_13")
-		.OnStart([this]()
-	{
-		Set_PlayerLock(false);
-	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(SAIYA_IDLE); // 어느정도 가까이 오면 아이들 상태에서 Curious한 애니메이션 실행 펄스로 했을때 옆에 NPC 닿으면 Pulse 그 애니메이션하고 놀라워하기 
@@ -740,6 +746,7 @@ HRESULT CSaiya::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
+		Play_LaughSound();
 		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
 	}) // 펄스 닿으면 애니메이션 진행
 		.AddTransition("ACTION_15 to ACTION_16", "ACTION_16")
@@ -769,6 +776,7 @@ HRESULT CSaiya::SetUp_State()
 		.AddState("ACTION_17")
 		.OnStart([this]()
 	{
+		Set_PlayerLock(true);
 		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 		_bool bVal = true;
 		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][0]);
@@ -780,6 +788,7 @@ HRESULT CSaiya::SetUp_State()
 
 		if (CGameInstance::GetInstance()->Key_Down(DIK_E))
 		{
+			Play_LaughSound();
 			if (m_iLineIndex == (int)m_vecChat[m_iChatIndex].size())
 			{
 				m_iLineIndex++;
@@ -793,6 +802,7 @@ HRESULT CSaiya::SetUp_State()
 	}) //대화
 		.OnExit([this]()
 	{
+			Set_PlayerLock(false);
 			/* Chat End */
 			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 			_bool bVal = false;
@@ -820,6 +830,7 @@ HRESULT CSaiya::SetUp_State()
 		.AddState("ACTION_18")
 		.OnStart([this]()
 	{
+		Play_LaughSound();
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -877,6 +888,7 @@ HRESULT CSaiya::SetUp_State()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_PULSE);
 		m_pModelCom->Set_AnimIndex(SAIYA_PULSE);
+		Play_LaughSound();
 	})
 		.AddTransition("ACTION_21 to ACTION_22", "ACTION_22")
 		.Predicator([this]()
@@ -885,9 +897,6 @@ HRESULT CSaiya::SetUp_State()
 	})
 
 		.AddState("ACTION_22")
-		.OnStart([this]()
-	{
-	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(SAIYA_RUN);
@@ -954,6 +963,7 @@ HRESULT CSaiya::SetUp_State()
 		.AddState("ACTION_26")
 		.OnStart([this]()
 	{
+		Set_PlayerLock(true);
 		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 		_bool bVal = true;
 		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][0]);
@@ -964,6 +974,7 @@ HRESULT CSaiya::SetUp_State()
 		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
 		if (CGameInstance::GetInstance()->Key_Down(DIK_E))
 		{
+			Play_LaughSound();
 			if (m_iLineIndex == (int)m_vecChat[m_iChatIndex].size())
 			{
 				m_iLineIndex++;
@@ -977,6 +988,7 @@ HRESULT CSaiya::SetUp_State()
 	}) //대화
 		.OnExit([this]()
 	{
+		Set_PlayerLock(false);
 		/* Chat End */
 		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 		_bool bVal = false;
