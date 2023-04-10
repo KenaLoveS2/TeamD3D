@@ -3,12 +3,14 @@
 #include "GameInstance.h"
 #include "Bone.h"
 #include "BossWarrior_Hat.h"
+#include "CameraForNpc.h"
 #include "E_WarriorTrail.h"
 #include "E_RectTrail.h"
 #include "E_Hieroglyph.h"
 #include "ControlRoom.h"
 #include "E_Warrior_FireSwipe.h"
 #include "SpiritArrow.h"
+#include "CinematicCamera.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -168,6 +170,9 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_WARRIOR_GRAB_HAND));
 		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
 	}
+
+	m_pCineCam[0] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("BOSSHUNTER_START")));
+	m_pCineCam[1] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("BOSSHUNTER_END")));
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
@@ -412,12 +417,23 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_bReadySpawn = true;
 	})
-		.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
+		.AddTransition("SLEEP to CINEMA", "CINEMA")
 		.Predicator([this]()
 	{	
 		// 대기 종결 조건 수정 필요
-		m_fSpawnRange = 10.f;
+		m_fSpawnRange = 20.f;
 		return DistanceTrigger(m_fSpawnRange);				
+	})
+
+		.AddState("CINEMA")
+		.OnStart([this]()
+	{
+		BossFight_Start();
+	})
+		.AddTransition("CINEMA to READY_SPAWN", "READY_SPAWN")
+		.Predicator([this]()
+	{
+		return m_pCineCam[0]->CameraFinishedChecker(0.3f);
 	})
 
 		.AddState("READY_SPAWN")
@@ -427,24 +443,34 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
-		g_bDayOrNight = false;
-
 		/* HP Bar Active */
 		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = 10.f; /* == BossWarrior Name */
 		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
 		/* ~HP Bar Active */
 	})
+		.Tick([this](_float fTimeDelta)
+	{
+				m_fDissolveTime -= fTimeDelta;
+				if (m_fDissolveTime < -0.5f)
+					m_bDissolve = false;
+
+				if (AnimIntervalChecker(AWAKE, 0.9f, 1.f))
+					m_pModelCom->FixedAnimIdx_PlayTime(AWAKE, 0.95f);
+	})
 		.OnExit([this]()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);		
 		m_bSpawn = true;
 		m_pKena->Set_State(CKena::STATE_BOSSBATTLE, true);
+		CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
+		m_pCineCam[0]->CinemaUIOff();
+		m_pKena->Set_StateLock(false);
 	})
 		.AddTransition("READY_SPAWN to IDLE", "IDLE")
 		.Predicator([this]()
 	{	
-		return AnimFinishChecker(AWAKE);
+		return m_pCineCam[0]->CameraFinishedChecker() && m_bDissolve == false;
 	})
 
 	
@@ -938,6 +964,7 @@ HRESULT CBossWarrior::SetUp_State()
 
 		m_pKena->Dead_FocusRotIcon(this);
 		m_bDying = true;
+		BossFight_End();
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()
@@ -949,16 +976,35 @@ HRESULT CBossWarrior::SetUp_State()
 		.OnStart([this]()
 	{
 		// 죽은 애니메이션 후 죽음 연출 State
+		m_bDissolve = true;
+		m_fEndTime = 0.f;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fEndTime += fTimeDelta;
+		m_fDissolveTime = m_fEndTime * 0.1f;
+		if (m_fDissolveTime >= 1.f)
+			m_bDissolve = false;
+	})
+		.OnExit([this]()
+	{
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->Boss_WarriorDeadGimmick();
+
+		// 시네캠 하나 만들자
+		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[1]->Get_ObjectCloneName());
+		m_pCineCam[1]->Play();
 	})
 		.AddTransition("DEATH_SCENE to DEATH", "DEATH")
 		.Predicator([this]()
 	{
-		return true;
+		return m_fEndTime >= 10.f;
 	})
 
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
+		g_bDayOrNight = true;
 		m_pTransformCom->Clear_Actor();
 		Clear_Death();
 		m_pKena->Set_State(CKena::STATE_BOSSBATTLE, false);
@@ -1118,8 +1164,9 @@ HRESULT CBossWarrior::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_EmissiveColor", &m_fEmissiveColor, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &m_fHDRIntensity, sizeof(_float)), E_FAIL);
-	
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bFalse, sizeof(_bool)), E_FAIL);
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
 	// m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
@@ -1195,6 +1242,25 @@ void CBossWarrior::Update_Collider(_float fTimeDelta)
 void CBossWarrior::AdditiveAnim(_float fTimeDelta)
 {
 	CMonster::AdditiveAnim(fTimeDelta);
+}
+
+void CBossWarrior::BossFight_Start()
+{
+	g_bDayOrNight = false;
+	CGameInstance::GetInstance()->Work_Camera(m_pCineCam[0]->Get_ObjectCloneName());
+	m_pCineCam[0]->Play();
+	m_bDissolve = true;
+	m_fDissolveTime = 1.f;
+}
+
+void CBossWarrior::BossFight_End()
+{
+	CGameInstance::GetInstance()->Work_Camera(TEXT("NPC_CAM"));
+
+	const _float3 vOffset = _float3(0.f, 1.5f, 0.f);
+	const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
+
+	dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")))->Set_Target(this, CCameraForNpc::OFFSET_FRONT_LERP, vOffset, vLookOffset, 0.9f, 2.f);
 }
 
 void CBossWarrior::Set_AttackType()

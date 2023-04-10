@@ -104,6 +104,13 @@ private:
 	void AdditiveAnim(_float fTimeDelta) override;
 
 private:
+	void	BossFight_Start();
+	void  BossFight_End();
+	_float m_fEndTime = 0.f;
+
+	class CCinematicCamera* m_pCineCam[2] = { nullptr, };
+
+private:
 	void Set_AttackType();
 	void Reset_Attack();
 	void Tick_Attack(_float fTimeDelta);

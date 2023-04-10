@@ -160,7 +160,7 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
 	CGameObject* p_game_object = nullptr;
-	m_pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, L"Layer_Monster", TEXT("Prototype_GameObject_ShamanTrapHex"), L"ShamanTrapHex_0", nullptr, &p_game_object);
+	m_pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Monster", TEXT("Prototype_GameObject_ShamanTrapHex"), L"ShamanTrapHex_0", nullptr, &p_game_object);
 	m_pShamanTapHex = (CShamanTrapHex*)p_game_object;
 	assert(m_pShamanTapHex && "FAILED!! -> CBossShaman::Late_Initialize()");
 

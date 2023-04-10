@@ -63,7 +63,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	m_pTransformCom->Set_PxPivot(m_vInitPivot);
-	const _float4 vPos = _float4(55.741f, 15.093f, 1066.333f, 1.f);
+	const _float4 vPos = _float4(51.128f, 14.616f, 1030.681f, 1.f);
 	m_pTransformCom->Set_Position(vPos);
 	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	
@@ -100,9 +100,7 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 void CRope_RotRock::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	//m_iNumMeshes = m_pModelCom->Get_NumMeshes();
-
+	
 	if (m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
@@ -145,6 +143,8 @@ HRESULT CRope_RotRock::SetUp_Components()
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
+
+	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	return S_OK;
 }
