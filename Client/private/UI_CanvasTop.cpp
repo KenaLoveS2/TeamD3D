@@ -155,34 +155,39 @@ HRESULT CUI_CanvasTop::Render()
 
 HRESULT CUI_CanvasTop::Bind()
 {
-	
 	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
 		L"Layer_Player", L"Kena"));
 	if (pKena == nullptr)
 		return E_FAIL;
 
-	/* Boss Warrior Bind */
-	//CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-	//	L"Layer_Monster", L"BossWarrior_0"));
-	//if (pBossWarrior == nullptr)
-	//	return E_FAIL;
+	if (g_LEVEL == LEVEL_FINAL || g_LEVEL == LEVEL_GAMEPLAY)
+	{
+		/* Boss Warrior Bind */
+		CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+			L"Layer_Monster", L"BossWarrior_0"));
+		if (pBossWarrior == nullptr)
+			return E_FAIL;
 
-	/* Boss Shaman Bind */
-	//CBossShaman* pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-	//	L"Layer_Monster", L"BossShaman_0"));
-	//if (pShaman == nullptr)
-	//	return E_FAIL;
+		/* Boss Shaman Bind */
+		CBossShaman* pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+			L"Layer_Monster", L"BossShaman_0"));
+		if (pShaman == nullptr)
+			return E_FAIL;
 
-	/* Boss Hunter Bind */
-	CBossHunter* pBossHunter = dynamic_cast<CBossHunter*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-		L"Layer_Monster", L"BossHunter_0"));
-	if (pBossHunter == nullptr)
-		return E_FAIL;
+		pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+		pShaman->m_BossShamanDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	}
+	else if (g_LEVEL == LEVEL_TESTPLAY || g_LEVEL == LEVEL_GAMEPLAY)
+	{
+		/* Boss Hunter Bind */
+		CBossHunter* pBossHunter = dynamic_cast<CBossHunter*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+			L"Layer_Monster", L"BossHunter_0"));
+		if (pBossHunter == nullptr)
+			return E_FAIL;
 
+		pBossHunter->m_BossHunterDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	}
 	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-	//pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-	//pShaman->m_BossShamanDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-	pBossHunter->m_BossHunterDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
 	m_bBindFinished = true;
 	return S_OK;
