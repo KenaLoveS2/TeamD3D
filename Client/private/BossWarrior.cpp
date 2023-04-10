@@ -153,7 +153,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		PxSphereDesc.eType = SPHERE_DYNAMIC;
 		PxSphereDesc.pActortag = COL_GRAB_HAND_TEXT;
 		PxSphereDesc.vPos = _float3(0.f, 0.f, 0.f);
-		PxSphereDesc.fRadius = 0.4f;
+		PxSphereDesc.fRadius = 0.6f;
 		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxSphereDesc.fDensity = 1.f;
 		PxSphereDesc.fAngularDamping = 0.5f;
@@ -819,7 +819,9 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("GRAB to GRAB_ATTACK", "GRAB_ATTACK")
 		.Predicator([this]()
 	{
-		return false;
+		_bool	bPass = m_pKena->Get_State(CKena::STATE_GRAB_WARRIOR);
+
+		return bPass;
 	})
 		.AddTransition("GRAB to IDLE", "IDLE")
 		.Predicator([this]()
@@ -936,12 +938,6 @@ HRESULT CBossWarrior::SetUp_State()
 
 		m_pKena->Dead_FocusRotIcon(this);
 		m_bDying = true;
-
-		/*
-		HW.For.MapGimmick
-		 Map Change  03_30 TestøÎ¿” */
-		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
-		pCtrlRoom->DeadZoneObject_Change(true);
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()
@@ -1082,7 +1078,7 @@ HRESULT CBossWarrior::SetUp_Components()
 {
 	__super::SetUp_Components();
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Boss_Warrior", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Boss_Warrior", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/VillageWarrior_Uv_01_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/VillageWarrior_Uv_01_EMISSIVE.png")), E_FAIL);

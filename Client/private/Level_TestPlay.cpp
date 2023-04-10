@@ -47,7 +47,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImGui_Rot::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImGui_Rot::Create(m_pDevice, m_pContext));
 
 	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
 	{
@@ -118,7 +118,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
 
-	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
+	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 0.3f, true, SOUND_BGM);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -179,6 +179,18 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
 
+	/*LightDesc.eType = LIGHTDESC::TYPE_POINT;
+	LightDesc.isEnable = true;
+	LightDesc.vPosition = _float4(13.f, 0.f, 9.f, 1.f);
+	LightDesc.fRange = 10.0f;
+	LightDesc.vDiffuse = _float4(10.f, 0.f, 10.f, 1.f);
+	LightDesc.vAmbient = _float4(10.f, 0.f, 10.f, 1.f);
+	LightDesc.vSpecular = _float4(10.f, 0.f, 10.f, 0.f);
+	LightDesc.szLightName = "PointLight_0";
+
+	if (FAILED(CGameInstance::GetInstance()->Add_Light(m_pDevice, m_pContext, LightDesc)))
+		return E_FAIL;*/
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -217,12 +229,6 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
-
-	// 얘 할 필요없어 FINAL에서 해야됨 
-	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-    //FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr), E_FAIL);
-	//RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 
@@ -438,6 +444,38 @@ HRESULT CLevel_TestPlay::Ready_Layer_CineCamera(const _tchar * pLayerTag)
 			v.clear();
 	}
 
+	{
+		vector<CCinematicCamera::CAMERAKEYFRAME> v;
+		string chatFileName;
+		CCinematicCamera::Clone_Load_Data("BossHunter_Start.json", v, chatFileName);
+		CGameObject* p_game_object = nullptr;
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+		CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"BOSSHUNTER_START", &v));
+		//f (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"BOSSHUNTER_START", &v, &p_game_object))) return E_FAIL;
+		//CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
+		NULL_CHECK_RETURN(pCamera, E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"BOSSHUNTER_START", pCamera), E_FAIL);
+		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
+		RELEASE_INSTANCE(CGameInstance)
+			v.clear();
+	}
+
+	{
+		vector<CCinematicCamera::CAMERAKEYFRAME> v;
+		string chatFileName;
+		CCinematicCamera::Clone_Load_Data("BossHunter_End.json", v, chatFileName);
+		CGameObject* p_game_object = nullptr;
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+		CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"BOSSHUNTER_END", &v));
+		//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"BOSSHUNTER_END", &v, &p_game_object))) return E_FAIL;
+		//CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
+		NULL_CHECK_RETURN(pCamera, E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"BOSSHUNTER_END", pCamera), E_FAIL);
+		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
+		RELEASE_INSTANCE(CGameInstance)
+			v.clear();
+	}
+
 	return S_OK;
 }
 
@@ -459,8 +497,8 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain1_2_Monster.json");
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain3_Monster.json");
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level0_Chap0_Monster.json");
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level0_Chap1_Monster.json");
 	return S_OK;
 }
 
@@ -468,8 +506,6 @@ HRESULT CLevel_TestPlay::Ready_Layer_Rot(const _tchar* pLayerTag)
 {
 	CImGui_Rot::Load_RotObjects(g_LEVEL, "Rot_Chap1.json");
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	// 얘도 Final에 필요함
-	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_LiftRot_Master"), L"LiftRot_Master", nullptr), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance)
 	return S_OK;
 }

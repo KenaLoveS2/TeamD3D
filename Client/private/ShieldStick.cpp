@@ -157,7 +157,12 @@ HRESULT CShieldStick::RenderShadow()
 		return E_FAIL;
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		if (i == 2) continue;
+
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", SHADOW);
+	}
+		
 
 	return S_OK;
 }
@@ -433,7 +438,7 @@ HRESULT CShieldStick::SetUp_Components()
 {
 	__super::SetUp_Components();
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_ShieldStick", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_ShieldStick", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_ShieldSticks.json");

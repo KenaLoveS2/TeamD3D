@@ -75,7 +75,7 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 	PxSphereDesc.fRestitution = 0.1f;
 	PxSphereDesc.isTrigger = true;
 
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(m_pParent, false, COL_MONSTER_WEAPON));
 
 	_smatrix   matPivot = XMMatrixIdentity();
 	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);

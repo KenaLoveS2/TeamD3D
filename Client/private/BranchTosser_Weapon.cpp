@@ -214,7 +214,7 @@ HRESULT CBranchTosser_Weapon::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_BranchTosser_Projectile"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_BranchTosser_Projectile"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

@@ -1,9 +1,13 @@
 #include "stdafx.h"
 #include "..\public\BossHunter.h"
+
+#include "CameraForNpc.h"
+#include "CinematicCamera.h"
 #include "GameInstance.h"
 #include "Effect_Base_S2.h"
 #include "SpiritArrow.h"
 #include "E_RectTrail.h"
+#include "ControlRoom.h"
 #include "E_HunterTrail.h"
 #include "E_Swipes_Charged.h"
 
@@ -143,6 +147,9 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 		m_pTransformCom->Add_Collider(TEXT_COL_HUNTER_WEAPON, g_IdentityFloat4x4);
 	}
 
+	m_pCineCam[0] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("BOSSHUNTER_START")));
+	m_pCineCam[1] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("BOSSHUNTER_END")));
+
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 	m_pHunterTrail->Late_Initialize(nullptr);
 
@@ -227,6 +234,10 @@ void CBossHunter::Tick(_float fTimeDelta)
 
 	for (auto& pEffect : m_vecEffects)
 		pEffect->Tick(fTimeDelta);
+
+	if (ImGui::Button("DamageHunter"))
+		m_pMonsterStatusCom->UnderAttack(50);
+		
 }
 
 void CBossHunter::Late_Tick(_float fTimeDelta)
@@ -257,7 +268,7 @@ HRESULT CBossHunter::Render()
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		if (i == 0) // ArrowString
+		if (i == 0 && !m_bDissolve) // ArrowString
 		{
 			// ArrowString
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
@@ -288,7 +299,7 @@ HRESULT CBossHunter::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", HUNTER_HAIR), E_FAIL);
 		}
-		else 
+		else if(i != 0)
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
@@ -507,40 +518,66 @@ HRESULT CBossHunter::SetUp_State()
 	.Tick([this](_float fTimeDelta)
 	{
 		m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fFlyHeightY);
+		m_bDissolve = true;
+		m_fDissolveTime = 1.f;
 	})
 	.OnExit([this]()
 	{	
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_bReadySpawn = true;
 	})
-	.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
+	.AddTransition("SLEEP to CINEMA", "CINEMA")
 	.Predicator([this]()
 	{
-		m_fSpawnRange = 10.f;
+		m_fSpawnRange = 20.f;
 		return DistanceTrigger(m_fSpawnRange);
 	})
 
+	.AddState("CINEMA")
+	.OnStart([this]()
+	{
+		BossFight_Start();
+	})
+	.AddTransition("CINEMA to READY_SPAWN", "READY_SPAWN")
+	.Predicator([this]()
+	{
+		return m_pCineCam[0]->CameraFinishedChecker(0.3f);
+	})
 
 	.AddState("READY_SPAWN")
 	.OnStart([this]()
 	{
-	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-	m_pModelCom->ResetAnimIdx_PlayTime(RAMPAGE);
-	m_pModelCom->Set_AnimIndex(RAMPAGE);
+		m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fFlyHeightY);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+		m_pModelCom->ResetAnimIdx_PlayTime(RAMPAGE);
+		m_pModelCom->Set_AnimIndex(RAMPAGE);
 
-	CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
-	_float fValue = 30.f; /* == BossHunter Name */
-	m_BossHunterDelegator.broadcast(eBossHP, fValue);
+		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+		_float fValue = 30.f; /* == BossHunter Name */
+		m_BossHunterDelegator.broadcast(eBossHP, fValue);
+	})
+	.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fFlyHeightY);
+
+		m_fDissolveTime -= fTimeDelta;
+		if (m_fDissolveTime < -0.5f)
+			m_bDissolve = false;
+
+		if(AnimIntervalChecker(RAMPAGE,0.9f,1.f))
+			m_pModelCom->FixedAnimIdx_PlayTime(RAMPAGE, 0.95f);
 	})
 	.OnExit([this]()
 	{
-	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-	m_bSpawn = true;
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+		m_bSpawn = true;
+		CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
+		m_pCineCam[0]->CinemaUIOff();
 	})
 	.AddTransition("READY_SPAWN to IDLE", "IDLE")
 	.Predicator([this]()
 	{
-	return AnimFinishChecker(RAMPAGE);
+		return m_pCineCam[0]->CameraFinishedChecker() && m_bDissolve == false;
 	})
 
 	.AddState("IDLE")
@@ -573,7 +610,7 @@ HRESULT CBossHunter::SetUp_State()
 	Reset_HitFlag();
 	m_pTransformCom->Speed_Boost(true, 1.f);
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -633,7 +670,7 @@ HRESULT CBossHunter::SetUp_State()
 	m_iDodgeAnimIndex = m_iDodgeAnimIndex > DODGE_FAR_RIGHT ? DODGE_DOWN : m_iDodgeAnimIndex;
 	ResetAndSet_Animation(m_iDodgeAnimIndex);
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -660,7 +697,7 @@ HRESULT CBossHunter::SetUp_State()
 	m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
 	m_pTransformCom->Speed_Boost(true, 1.f);
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -683,7 +720,7 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	m_bRealAttack = false;
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -710,7 +747,7 @@ HRESULT CBossHunter::SetUp_State()
 	{
 
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -740,7 +777,7 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	m_bRealAttack = false;
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -763,7 +800,7 @@ HRESULT CBossHunter::SetUp_State()
 	m_bStronglyHit = false;
 	ResetAndSet_Animation(KNIFE_PARRY);
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -790,7 +827,7 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	m_fStunTimeCheck = 0.f;
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -807,7 +844,7 @@ HRESULT CBossHunter::SetUp_State()
 	m_bStronglyHit = false;
 	ResetAndSet_Animation(KNIFE_PARRY_EXIT);
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -835,7 +872,7 @@ HRESULT CBossHunter::SetUp_State()
 	m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
 	m_pTransformCom->Speed_Boost(true, 1.f);
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -857,7 +894,7 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	m_bRealAttack = false;
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -884,7 +921,7 @@ HRESULT CBossHunter::SetUp_State()
 	{
 
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -903,7 +940,7 @@ HRESULT CBossHunter::SetUp_State()
 	m_pTransformCom->LookAt(m_vKenaPos);
 	Set_NextAttack();
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -936,7 +973,7 @@ HRESULT CBossHunter::SetUp_State()
 	Update_ArrowIndex();
 	}
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -972,7 +1009,7 @@ HRESULT CBossHunter::SetUp_State()
 		}
 	})
 
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
@@ -989,7 +1026,7 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	ResetAndSet_Animation(SHOCK_ARROW_EXIT);
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -1019,7 +1056,7 @@ HRESULT CBossHunter::SetUp_State()
 	Update_ArrowIndex();
 	}
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -1041,7 +1078,7 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	ResetAndSet_Animation(CHARGE_ARROW_EXIT);
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -1070,7 +1107,7 @@ HRESULT CBossHunter::SetUp_State()
 	m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
 	m_pTransformCom->Speed_Boost(true, 1.f);
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -1087,7 +1124,7 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	ResetAndSet_Animation(STUN_INTO);
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -1108,7 +1145,7 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	m_fStunTimeCheck += fTimeDelta;
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -1125,7 +1162,7 @@ HRESULT CBossHunter::SetUp_State()
 	{
 	ResetAndSet_Animation(STUN_EXIT);
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -1176,7 +1213,7 @@ HRESULT CBossHunter::SetUp_State()
 	m_vFlyTargetIndex = 0;
 	m_bFlyEnd = false;
 	})
-	.AddTransition("To DYING", "DYING")
+	.AddTransition("To DYING", "DYING_DOWN")
 	.Predicator([this]()
 	{
 	return m_pMonsterStatusCom->IsDead();
@@ -1188,19 +1225,40 @@ HRESULT CBossHunter::SetUp_State()
 	})
 
 
+		.AddState("DYING_DOWN")
+		.OnStart([this]()
+			{
+				m_pModelCom->Set_AnimIndex(IDLE);
+			})
+		.Tick([this](_float fTimeDelta)
+			{
+				if (m_pTransformCom->Get_PositionY() >= m_vKenaPos.y + m_fKenaPosOffsetY)
+				{
+					m_pTransformCom->Go_AxisNegY(fTimeDelta);
+					if (m_pTransformCom->Get_PositionY() < m_vKenaPos.y + m_fKenaPosOffsetY)
+						m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
+				}
+			})
+		.AddTransition("DYING_DOWN to DYING", "DYING")
+		.Predicator([this]()
+					{
+						return m_pTransformCom->Get_PositionY() <= m_vKenaPos.y + m_fKenaPosOffsetY;
+					})
+
 	.AddState("DYING")
 	.OnStart([this]()
 	{
-	CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
-	_float fValue = -1.f;
-	m_BossHunterDelegator.broadcast(eBossHP, fValue);
+		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+		_float fValue = -1.f;
+		m_BossHunterDelegator.broadcast(eBossHP, fValue);
+		
+		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
+		m_pModelCom->Set_AnimIndex(DEATH);
 
-	m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
-	m_pModelCom->Set_AnimIndex(DEATH);
+		m_pKena->Dead_FocusRotIcon(this);
 
-	m_pKena->Dead_FocusRotIcon(this);
-
-	m_bDying = true;
+		m_bDying = true;
+		BossFight_End();
 	})
 	.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 	.Predicator([this]()
@@ -1211,19 +1269,37 @@ HRESULT CBossHunter::SetUp_State()
 	.AddState("DEATH_SCENE")
 	.OnStart([this]()
 	{
-	
+		m_bDissolve = true;
+		m_fEndTime = 0.f;
+	})
+	.Tick([this](_float fTimeDelta)
+	{
+		m_fEndTime += fTimeDelta;
+		m_fDissolveTime = m_fEndTime * 0.1f;
+		if (m_fDissolveTime >= 1.f)
+			m_bDissolve = false;
+	})
+	.OnExit([this]()
+	{
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->DeadZoneObject_Change(true);
+
+		// 시네캠 하나 만들자
+		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[1]->Get_ObjectCloneName());
+		m_pCineCam[1]->Play();
 	})
 	.AddTransition("DEATH_SCENE to DEATH", "DEATH")
 	.Predicator([this]()
 	{
-	return true;
+			return m_fEndTime >= 10.f;
 	})
 
 	.AddState("DEATH")
 	.OnStart([this]()
 	{
-	m_pTransformCom->Clear_Actor();
-	Clear_Death();
+		g_bDayOrNight = true;
+		m_pTransformCom->Clear_Actor();
+		Clear_Death();
 	})
 
 	.Build();
@@ -1234,7 +1310,7 @@ HRESULT CBossHunter::SetUp_Components()
 {
 	__super::SetUp_Components();
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Boss_Hunter", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Boss_Hunter", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	// String
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_64.png")), E_FAIL);
@@ -1269,8 +1345,9 @@ HRESULT CBossHunter::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_EmissiveColor", &_float4(1.f, 1.f, 1.f, 1.f), sizeof(_float4)), E_FAIL);
 	float fHDRIntensity = 0.f;
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &fHDRIntensity, sizeof(_float)), E_FAIL);
-
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bFalse, sizeof(_bool)), E_FAIL);
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
 
 	/* For. String */
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fStringHDR", &m_fStringHDRIntensity, sizeof(_float)), E_FAIL);
@@ -1318,6 +1395,25 @@ void CBossHunter::Update_Collider(_float fTimeDelta)
 void CBossHunter::AdditiveAnim(_float fTimeDelta)
 {
 	CMonster::AdditiveAnim(fTimeDelta);
+}
+
+void CBossHunter::BossFight_Start()
+{
+	g_bDayOrNight = false;
+	CGameInstance::GetInstance()->Work_Camera(m_pCineCam[0]->Get_ObjectCloneName());
+	m_pCineCam[0]->Play();
+	m_bDissolve = true;
+	m_fDissolveTime = 1.f;
+}
+
+void CBossHunter::BossFight_End()
+{
+	CGameInstance::GetInstance()->Work_Camera(TEXT("NPC_CAM"));
+
+	const _float3 vOffset = _float3(0.f, 1.5f, 0.f);
+	const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
+
+	dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")))->Set_Target(this, CCameraForNpc::OFFSET_FRONT_LERP, vOffset, vLookOffset,0.9f, 2.f);
 }
 
 CBossHunter* CBossHunter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -183,6 +183,8 @@ void CRockGolem::Imgui_RenderProperty()
 	if (ImGui::Button("SPAWN"))
 		m_bSpawn = true;
 
+	ImGui::Checkbox("ReadySpawn", &m_bReadySpawn);
+
 	ImGui::Text("Possible EXPLODEATTACK");
 	if(ImGui::Button("TAKEDAMAGE"))
 	{
@@ -544,7 +546,7 @@ HRESULT CRockGolem::SetUp_Components()
 {
 	__super::SetUp_Components();
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_RockGolem", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_RockGolem", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_RockGolem.json");

@@ -148,7 +148,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vShade.a = 1.f;
 
 	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
-	Out.vSpecular.rgb *= CalcSpecular(vWorldPos.xyz, vNormal.xyz, -vLook.xyz, g_vLightDir, Out.vShade.rgb, vReflect.xyz, g_MtrlAmbientTexture, In.vTexUV);
+	Out.vSpecular.rgb *= CalcSpecular(vWorldPos.xyz, vNormal.xyz, -vLook.xyz, g_vLightDir.xyz, Out.vShade.rgb, vReflect.xyz, g_MtrlAmbientTexture, In.vTexUV);
 	Out.vSpecular.a = 0.f;
 
 	return Out;
@@ -203,6 +203,11 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 
 	return Out;
 }
+
+bool  g_bFog = false;
+float4 g_FogColor = float4(1.f, 1.f, 1.f, 0.f);
+float  g_FogStart = 0.f;
+float  g_FogRange = 50.f;
 
 PS_OUT PS_MAIN_BLEND(PS_IN In)
 {
@@ -275,6 +280,27 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 		fShadowRate *= 0.3f;
 		
 		Out.vColor *= (1.f - fShadowRate);
+	}
+
+	if (g_bFog)
+	{
+		float fViewZ = vDepthDesc.y * g_fFar;
+		vector vWorldPos;
+
+		vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
+		vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
+		vWorldPos.z = vDepthDesc.x;
+		vWorldPos.w = 1.f;
+		vWorldPos *= fViewZ;
+		vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
+		vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
+
+		// 투영좌표까지 올라와 있는거 월드 좌표까지 내려야함
+		float fDist = length(vWorldPos.xyz - g_vCamPosition.xyz);
+		float fogFactor = saturate((fDist - g_FogStart) / g_FogRange);
+
+		float4 FinalColor = Out.vColor;
+		Out.vColor.rgb = lerp(FinalColor.rgb, g_FogColor.rgb, fogFactor);
 	}
 
 	return Out;
