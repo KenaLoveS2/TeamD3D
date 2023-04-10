@@ -92,7 +92,7 @@ const _bool CKena::Get_State(STATERETURN eState) const
 {
 	/* Used by Camera */
 	if (eState == CKena::STATERETURN_END)
-		return !m_bDeath && !m_bHeavyAttack && !m_bMask && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
+		return !m_bDeath && !m_bGrabWarrior && !m_bHeavyAttack && !m_bMask && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
 
 	switch (eState)
 	{
@@ -1144,6 +1144,9 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 
 void CKena::Push_EventFunctions()
 {
+	UnderAttack(true, 0.f);
+	Grab_CameraShake(true, 0.f);
+
 	TurnOnFootStep_Left(true, 0.f);
 	TurnOnFootStep_Right(true, 0.f);
 	TurnOnAttack(true, 0.f);
@@ -1827,7 +1830,8 @@ void CKena::Play_Animation(_float fTimeDelta, _float fTimeRate)
 				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
 				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD &&
 				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_FRONT &&
-				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_BACK)
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_BACK &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::WARRIOR_GRAB)
 				m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
 			else
 				m_pAnimation->Play_Animation(fTimeDelta);
@@ -2014,6 +2018,50 @@ CKena:: DAMAGED_FROM CKena::Calc_DirToMonster_2Way(CGameObject* pTarget)
 		eDir = CKena::DAMAGED_BACK;
 
 	return eDir;
+}
+
+void CKena::UnderAttack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::UnderAttack);
+		return;
+	}
+
+	if (m_pAttackObject == nullptr)
+		return;
+
+	m_bCommonHit = true;
+	m_bHitRim = true;
+	m_fHitRimIntensity = 1.f;
+
+	CMonster_Status*	pStatus = dynamic_cast<CMonster*>(m_pAttackObject)->Get_MonsterStatusPtr();
+	if (m_bDeath = m_pKenaStatus->UnderAttack(pStatus))
+		m_eDamagedDir = Calc_DirToMonster_2Way(m_pAttackObject);
+}
+
+void CKena::Grab_CameraShake(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::Grab_CameraShake);
+		return;
+	}
+
+	CTransform* pCamTransform = m_pCamera->Get_TransformCom();
+	_vector	vNegRight = pCamTransform->Get_State(CTransform::STATE_RIGHT) * -1.f;
+	_vector	vLook = XMVector3Normalize(pCamTransform->Get_State(CTransform::STATE_LOOK));
+
+	_vector	vDir = XMVector3TransformNormal(vNegRight, XMMatrixRotationAxis(vLook, XMConvertToRadians(-25.f)));
+
+	m_pCamera->Camera_Shake(vDir, XMConvertToRadians(80.f));
+	m_pCamera->Camera_Shake(0.008f, 30);
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.2f);
+	Add_HitStopTime(0.25f);
+	m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CKena::TurnOnAttack(_bool bIsInit, _float fTimeDelta)
