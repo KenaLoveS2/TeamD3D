@@ -16,29 +16,30 @@ private:
 	virtual ~CModel() = default;
 
 public:
-	_uint							Get_NumMeshes() const { return m_iNumMeshes; }
+	_uint						Get_NumMeshes() const { return m_iNumMeshes; }
 	_matrix						Get_PivotMatrix() const { return XMLoadFloat4x4(&m_PivotMatrix); }
-	_float4x4						Get_PivotFloat4x4() const { return m_PivotMatrix; }
-	class CBone* Get_BonePtr(const char* pBoneName);
-	class CBone* Get_BonePtr(_int iBoneIndex);
-	const _double& Get_PlayTime() const;
-	const _double& Get_LastPlayTime() const;
-	const _float					Get_AnimationProgress() const;
-	const _double					Get_AnimationDuration() const;
-	const _bool& Get_PausePlay() const { return m_bPausePlay; }
-	const _bool& Get_Preview() const { return m_bPreview; }
-	const _uint& Get_AnimIndex() const { return m_iCurrentAnimIndex; }
-	const _uint& Get_LastAnimIndex() const { return m_iPreAnimIndex; }
-	const _bool& Get_AnimationFinish() const;
-	vector<KEYFRAME>* Get_KeyFrames(const char* pBoneName);
-	void							Set_PlayTime(_double dPlayTime);
-	void							Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }
-	void							Set_AnimIndex(_uint iAnimIndex);
-	void							Set_PivotMatrix(_fmatrix matPivot) { XMStoreFloat4x4(&m_PivotMatrix, matPivot); }
-	void							Set_BoneLocked(const char* pBoneName, _bool bLock);
-	void							Set_AllBonesUnlock();
-	void							Set_RootBone(const string & strRootBone) { m_strRootBone = strRootBone; }
-	HRESULT					Set_BoneIndex(const _tchar * pFilePath);
+	_float4x4					Get_PivotFloat4x4() const { return m_PivotMatrix; }
+	class CBone*				Get_BonePtr(const char* pBoneName);
+	class CBone*				Get_BonePtr(_int iBoneIndex);
+	const _double&				Get_PlayTime() const;
+	const _double&				Get_LastPlayTime() const;
+	const _float				Get_AnimationProgress() const;
+	const _double				Get_AnimationDuration() const;
+	const _bool&				Get_PausePlay() const { return m_bPausePlay; }
+	const _bool&				Get_Preview() const { return m_bPreview; }
+	const _uint&				Get_AnimIndex() const { return m_iCurrentAnimIndex; }
+	const _uint&				Get_LastAnimIndex() const { return m_iPreAnimIndex; }
+	const _bool&				Get_AnimationFinish() const;
+	vector<KEYFRAME>*			Get_KeyFrames(const char* pBoneName);
+	void						Set_PlayTime(_double dPlayTime);
+	void						Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }
+	void						Set_AnimIndex(_uint iAnimIndex);
+	void						Set_PivotMatrix(_fmatrix matPivot) { XMStoreFloat4x4(&m_PivotMatrix, matPivot); }
+	void						Set_BoneLocked(const char* pBoneName, _bool bLock);
+	void						Set_AllBonesUnlock();
+	void						Set_RootBone(const string & strRootBone) { m_strRootBone = strRootBone; }
+	HRESULT						Set_BoneIndex(const _tchar * pFilePath);
+	void						Set_AnimationBlendDuration(_uint iAnimIndex, _float fBlendDuration);
 
 	void							FixedAnimIdx_PlayTime(_uint iAnimIndex, _float fTime);
 	void							ResetAnimIdx_PlayTime(_uint iAnimIndex);

@@ -11,6 +11,7 @@
 #include "E_Warrior_FireSwipe.h"
 #include "SpiritArrow.h"
 #include "CinematicCamera.h"
+#include "BossRock_Pool.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -75,13 +76,21 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	XMStoreFloat4x4(&m_GrabHandPivotMatrix, XMMatrixTranslation(m_vGrabHandPivotTrans.x, m_vGrabHandPivotTrans.y, m_vGrabHandPivotTrans.z));
 
 	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
+
+	CBossRock_Pool::DESC BossRockPoolDesc;
+	BossRockPoolDesc.iRockCount = 30;
+	BossRockPoolDesc.vCenterPos = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
+	m_pBossRockPool = (CBossRock_Pool*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossRockPool"), TEXT("Warrior_BossRockPool"), &BossRockPoolDesc);
+	assert(m_pBossRockPool && "CBossWarrior::Initialize()");
+	m_pBossRockPool->Late_Initialize(nullptr);
+
 	return S_OK;
 }
 
 HRESULT CBossWarrior::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
-	// ¸öÅë
+	// ï¿½ï¿½ï¿½ï¿½
 	{	
 		_float3 vPivotScale = _float3(0.8f, 1.f, 1.f); // _float3(0.8f, 3.f, 1.f); 
 		_float3 vPivotPos = _float3(0.f, 1.8f, 0.f);    // _float3(0.f, 3.8f, 0.f)
@@ -105,7 +114,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
-		// ¿©±â µÚ¿¡ ¼¼ÆÃÇÑ vPivotPos¸¦ ³Ö¾îÁÖ¸éµÈ´Ù.
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ vPivotPosï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö¸ï¿½È´ï¿½.
 		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
 	}
 	
@@ -195,12 +204,18 @@ void CBossWarrior::Tick(_float fTimeDelta)
 	m_pHat->Tick(fTimeDelta);
 
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+
+
+
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
+	//m_pTransformCom->Set_Position(XMVectorSet(0.f, 0.f, 0.f, 1.f));
 	AdditiveAnim(fTimeDelta);
+
+	m_pBossRockPool->Tick(fTimeDelta);
 }
 
 void CBossWarrior::Late_Tick(_float fTimeDelta)
@@ -218,6 +233,8 @@ void CBossWarrior::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
+		
+	m_pBossRockPool->Late_Tick(fTimeDelta);
 }
 
 HRESULT CBossWarrior::Render()
@@ -357,6 +374,8 @@ void CBossWarrior::Push_EventFunctions()
 
 	TurnOnCamShake(true, 0.0f);
 
+	Grab_Turn(true, 0.f);
+
 	// Sound CallBack
 	Play_Attack1Sound(true, 0.0f);
 	Play_Attack2Sound(true, 0.0f);
@@ -412,6 +431,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+		m_pModelCom->Set_AnimationBlendDuration((_uint)IDLE_LOOP, 0.2f);
 	})
 		.OnExit([this]()
 	{
@@ -420,7 +440,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("SLEEP to CINEMA", "CINEMA")
 		.Predicator([this]()
 	{	
-		// ´ë±â Á¾°á Á¶°Ç ¼öÁ¤ ÇÊ¿ä
+		// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 		m_fSpawnRange = 20.f;
 		return DistanceTrigger(m_fSpawnRange);				
 	})
@@ -481,6 +501,7 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE_LOOP);
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+
 		m_fIdleTimeCheck = 0.f;
 	})
 		.Tick([this](_float fTimeDelta)
@@ -747,7 +768,7 @@ HRESULT CBossWarrior::SetUp_State()
 		m_bBellCall = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(BELL_CALL);
 		m_pModelCom->Set_AnimIndex(BELL_CALL);
-		// ¸ó½ºÅÍ ¼ÒÈ¯
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 	})
 		.OnExit([this]()
 	{
@@ -860,11 +881,22 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(GRAB_ATTACK);
 		m_pModelCom->Set_AnimIndex(GRAB_ATTACK);
-	})		
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		_float	fProgress = m_pModelCom->Get_AnimationProgress();
+		if (fProgress > 0.493f && fProgress < 0.496f)
+			m_pTransformCom->RotationFromNow(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(-90.f));
+			//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), -fTimeDelta * 2.f);
+	})
 		.AddTransition("GRAB_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(GRAB_ATTACK);
+		_bool IsEnd = AnimFinishChecker(GRAB_ATTACK);
+		if (IsEnd)
+			m_pModelCom->Set_AnimationBlendDuration((_uint)IDLE_LOOP, 0.f);
+
+		return IsEnd;
 	})
 		
 		.AddState("JUMP_ATTACK")
@@ -925,7 +957,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
-				/* ÀÌ»óÅÂ¿¡¼­ ¸Â´Â°Ô ÇÊ¿äÇÒ°Å°°À½ */
+				/* ï¿½Ì»ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ ï¿½Â´Â°ï¿½ ï¿½Ê¿ï¿½ï¿½Ò°Å°ï¿½ï¿½ï¿½ */
 		Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_PARRY, m_pTransformCom->Get_Position(),false);
 
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRIED);
@@ -975,7 +1007,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("DEATH_SCENE")
 		.OnStart([this]()
 	{
-		// Á×Àº ¾Ö´Ï¸ÞÀÌ¼Ç ÈÄ Á×À½ ¿¬Ãâ State
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ State
 		m_bDissolve = true;
 		m_fEndTime = 0.f;
 	})
@@ -991,7 +1023,7 @@ HRESULT CBossWarrior::SetUp_State()
 		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
 		pCtrlRoom->Boss_WarriorDeadGimmick();
 
-		// ½Ã³×Ä· ÇÏ³ª ¸¸µéÀÚ
+		// ï¿½Ã³ï¿½Ä· ï¿½Ï³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[1]->Get_ObjectCloneName());
 		m_pCineCam[1]->Play();
 	})
@@ -1194,7 +1226,7 @@ void CBossWarrior::Update_Collider(_float fTimeDelta)
 		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
-		// imgui¸¦ »ç¿ëÇØ¼­ ½Ç½Ã°£À¸·Î ÇÇº¿°ªÀ» º¯°æÇÏ°í ½ÍÀ¸¸é ÁÖ¼® Ç®¾î¼­ ÇÏ¸é µÊ
+		// imguiï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ç½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ Ç®ï¿½î¼­ ï¿½Ï¸ï¿½ ï¿½ï¿½
 		/*
 		XMStoreFloat4x4(&m_WeaponPivotMatrix,
 			XMMatrixRotationX(m_vWeaPonPivotRot.x) * XMMatrixRotationY(m_vWeaPonPivotRot.y) * XMMatrixRotationZ(m_vWeaPonPivotRot.z)
@@ -1213,7 +1245,7 @@ void CBossWarrior::Update_Collider(_float fTimeDelta)
 		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
-		// imgui¸¦ »ç¿ëÇØ¼­ ½Ç½Ã°£À¸·Î ÇÇº¿°ªÀ» º¯°æÇÏ°í ½ÍÀ¸¸é ÁÖ¼® Ç®¾î¼­ ÇÏ¸é µÊ
+		// imguiï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ç½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ Ç®ï¿½î¼­ ï¿½Ï¸ï¿½ ï¿½ï¿½
 		// XMStoreFloat4x4(&m_RightLegPivotMatrix, XMMatrixTranslation(m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z));
 
 		SocketMatrix = XMLoadFloat4x4(&m_RightLegPivotMatrix) * SocketMatrix;
@@ -1340,22 +1372,22 @@ void CBossWarrior::TurnOnHieroglyph(_bool bIsInit, _float fTimeDelta)
 				_float4 WarriorPos = m_pTransformCom->Get_WorldMatrix().r[3];
 				_float4 vPos;
 				_float	fRange = 1.0f;
-				if (Pair.first == "W_Hieroglyph0") // ¿ÞÂÊ¾Æ·¡
+				if (Pair.first == "W_Hieroglyph0") // ï¿½ï¿½ï¿½Ê¾Æ·ï¿½
 				{
 					vPos = _float4(WarriorPos.x + 0.7f, WarriorPos.y + fRange, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(0);
 				}
-				if (Pair.first == "W_Hieroglyph1") // ¿ÞÂÊ À§
+				if (Pair.first == "W_Hieroglyph1") // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 				{
 					vPos = _float4(WarriorPos.x + fRange, WarriorPos.y + fRange * 2.f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(1);
 				}
-				if (Pair.first == "W_Hieroglyph2") // ¿À¸¥ÂÊ ¾Æ·¡
+				if (Pair.first == "W_Hieroglyph2") // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ·ï¿½
 				{
 					vPos = _float4(WarriorPos.x - 0.4f, WarriorPos.y + fRange + 0.2f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(2);
 				}
-				if (Pair.first == "W_Hieroglyph3") // ¿À¸¥ÂÊ À§
+				if (Pair.first == "W_Hieroglyph3") // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 				{
 					vPos = _float4(WarriorPos.x - 0.7f, WarriorPos.y + fRange * 2.5f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(3);
@@ -1386,6 +1418,8 @@ void CBossWarrior::TurnOnShockFrontExtended(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["W_ShockFront"]->Set_Position(vPosition);
 	m_mapEffect["W_ShockFront"]->Set_Active(true);
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL11], 0.5f);
+
+	m_pBossRockPool->Execute_UpRocks();
 }
 
 void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
@@ -1454,6 +1488,8 @@ void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
 
 	Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_WEAPON, m_pTransformCom->Get_Position(), false);
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL11], 0.5f);
+
+	m_pBossRockPool->Execute_UpRocks();
 }
 
 void CBossWarrior::TurnOnRoot(_bool bIsInit, _float fTimeDelta)
@@ -1540,7 +1576,9 @@ void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["W_DistortionPlane"]->Set_Position(vPosition);
 	m_mapEffect["W_DistortionPlane"]->Set_Active(true);
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL2], 0.5f);
-	// ±âµÕÀÌ¶û ¸ÕÁö°¡ Àü¿ªÀûÀ¸·Î ³ª¿Í¾ß ÇÔ 
+	// ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¾ï¿½ ï¿½ï¿½ 
+
+	m_pBossRockPool->Execute_UpRocks();
 }
 
 void CBossWarrior::TurnOnCamShake(_bool bIsInit, _float fTimeDelta)
@@ -1685,7 +1723,7 @@ _int CBossWarrior::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTrigge
 {
 	if (m_bKenaGrab && pTarget && iTriggerIndex == (_uint)ON_TRIGGER_PARAM_TRIGGER && iColliderIndex == (_int)COL_PLAYER)
 	{
-		// Grab ¾Ö´Ï¸ÞÀÌ¼Ç Áß¿¡ Ä³³ªÀÇ ¹Ùµð¿Í ¿ö¸®¾îÀÇ ±×·¦ÇÚµå Æ®¸®°Å°¡ Ãæµ¹
+		// Grab ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ß¿ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ùµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½Úµï¿½ Æ®ï¿½ï¿½ï¿½Å°ï¿½ ï¿½æµ¹
 	}
 
 	return 0; 
@@ -1698,6 +1736,19 @@ void CBossWarrior::Attack_End()
 	_uint iAttack = m_eAttackType + 1;
 	iAttack %= ATTACKTYPE_END;
 	m_eAttackType = (ATTACKTYPE)iAttack;	
+}
+
+void CBossWarrior::Grab_Turn(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Grab_Turn);
+		return;
+	}
+
+	//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), -fTimeDelta);
+	m_pTransformCom->RotationFromNow(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(90.f));
 }
 
 void CBossWarrior::Create_CopySoundKey()

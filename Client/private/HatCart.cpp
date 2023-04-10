@@ -85,18 +85,21 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 		if (fDist <= 10.f)
 		{
 			if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
-			{
+			{	
 				CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
 				m_CartDelegator.broadcast(eCart, m_pPlayer, m_pUIShown);
 				
 				if (*m_pUIShown == true) /* Cart Open */
 				{
+					CGameInstance::GetInstance()->Play_Sound(TEXT("Rot (9).ogg"), 0.8f);
 					m_pPlayer->Set_StateLock(true);
+
 					Update_MannequinRotMatrix();
 					m_pMannequinRot->Start_FashiomShow();
 				}
 				else /* Cart Close */
 				{
+					CGameInstance::GetInstance()->Play_Sound(TEXT("Rot (9).ogg"), 0.8f);
 					m_pPlayer->Set_StateLock(false);
 					m_pMannequinRot->End_FashiomShow();
 				}
@@ -329,15 +332,12 @@ void CHatCart::Free()
 
 void CHatCart::Create_MannequinRot()
 {
-	
-
 	// m_pTransformCom->Set_Position(_float4(2.f, -1.f, 2.f, 1.f));
-
-	
 
 	m_pMannequinRot = (CMannequinRot*)CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_MannequinRot"), TEXT("MannequinRot"));
 	assert(m_pMannequinRot && "CHatCart::Initialize()");
-	
+	m_pMannequinRot->Late_Initialize(nullptr);
+
 	Update_MannequinRotMatrix();
 }
 
