@@ -39,7 +39,7 @@ public:  /*For.Gimmick*/
 	void				Trigger_Active(_int iRoomIndex,CEnviromentObj::CHAPTER eChpater, _bool IsTrigger);
 	void				DeadZoneObject_Change(_bool bChange);
 
-
+	void				Boss_WarriorDeadGimmick();
 
 private:
 	HRESULT SetUp_Components();

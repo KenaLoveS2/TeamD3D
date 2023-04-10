@@ -174,7 +174,14 @@ void CControlRoom::DeadZoneObject_Change(_bool bChnage)
 	static_cast<CDZ_FallenTree_Anim*>(pObj)->Set_BossClear(true);
 }
 
+void CControlRoom::Boss_WarriorDeadGimmick()
+{
+	for (auto& pGimmickObj : m_GimmcikObj_List[4])
+	{
+		static_cast<CGimmick_EnviObj*>(pGimmickObj.second)->Set_Gimmick_Active(4, true);
+	}
 
+}
 
 HRESULT CControlRoom::SetUp_Components()
 {

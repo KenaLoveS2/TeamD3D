@@ -60,21 +60,22 @@ public:
 
 private:
 	vector<CAMERAKEYFRAME>		m_keyframes;
-	_bool						m_bPlay			= false;
-	_float						m_fDeltaTime	= 0.f;
-	_float						m_fInputTime	= 0.5f;
+	_bool											m_bPlay			= false;
+	_float											m_fDeltaTime	= 0.f;
+	_float											m_fInputTime	= 0.5f;
 
 private:
 	CRenderer*					m_pRendererCom	= nullptr;
 	CShader*						m_pShaderCom	= nullptr;
 	CModel*						m_pModelCom		= nullptr;
+	CGameObject*				m_pPlayer = nullptr;
 
 private:
 	char								m_szChatFileName[MAX_PATH] = "";
 	vector<wstring>			m_vecChat;
 	_int								m_iChatIndex;
 	_bool							m_bDebugRender = false;
-#pragma region Render Variable
+
 #ifdef _DEBUG
 private:
 	PrimitiveBatch<VertexPositionColor>*		m_pBatch		= nullptr;

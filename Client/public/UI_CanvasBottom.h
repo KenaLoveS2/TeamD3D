@@ -8,7 +8,7 @@ class CUI_CanvasBottom final : public CUI_Canvas
 {
 public:
 	/* should be same with the order of m_vecNode.push_back()*/
-	enum UI_ORDER { UI_LETTERBOX, UI_CHAT, UI_END };
+	enum UI_ORDER { UI_LETTERBOX, UI_CHAT, UI_KEY1, UI_KEY2, UI_END };
 private:
 	CUI_CanvasBottom(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_CanvasBottom(const CUI_CanvasBottom& rhs);

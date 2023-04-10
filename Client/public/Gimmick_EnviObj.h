@@ -50,7 +50,7 @@ private:
 	_float4							m_vOriginPos;
 	_bool							m_bGimmick_Active = false;
 	_bool							m_bColliderOn = false;
-	
+	_bool							m_bTestOnce = false;
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
 

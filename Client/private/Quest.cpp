@@ -99,8 +99,9 @@ HRESULT CQuest::Load_File(const _tchar * fileName)
 
 	wstring name = L"../Bin/Data/Quest/";
 	name += fileName;
-	string filePath;
-	filePath.assign(name.begin(), name.end());
+	string filePath = CUtile::wstring_to_utf8(name);
+	//filePath.assign(name.begin(), name.end());
+
 	m_FilePath = filePath;
 
 	ifstream file(filePath);

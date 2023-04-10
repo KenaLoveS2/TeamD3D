@@ -583,6 +583,9 @@
     <Filter Include="02.GameObjects\Envrioment\Meditation_Spot">
       <UniqueIdentifier>{d809b4cf-2aab-455c-a361-d30849842e35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video">
+      <UniqueIdentifier>{badeb5f1-e152-420c-83a3-f331d15d888d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Monster\BossRock">
       <UniqueIdentifier>{af6e2ed7-fbcf-476d-b449-80988ade864c}</UniqueIdentifier>
     </Filter>
@@ -1433,6 +1436,27 @@
     <ClInclude Include="..\public\Frog.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_ExplosionGravity.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanBossHandPlane.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanBossPlate.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanSmoke.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanSummons.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanThunderCylinder.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\CinematicCamera.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
@@ -1496,51 +1520,24 @@
     <ClInclude Include="..\public\Meditation_Spot.h">
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_HunterTrail.h" />
+    <ClInclude Include="..\public\UI_NodeVideo.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\BossRock.h">
       <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BossRock_Pool.h">
       <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_ShamanTeleport.h" />
+    <ClInclude Include="..\public\E_ShamanIceDagger.h" />
+    <ClInclude Include="..\public\E_ShamanLazer.h" />
     <ClInclude Include="..\public\SceneChangePortal.h" />
-    <ClInclude Include="..\public\E_P_ExplosionGravity.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanBossHandPlane.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossHandPlane</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanBossPlate.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossPlane</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanSmoke.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanSummons.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Summons</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_HunterTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_P_ShamanTeleport.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanIceDagger.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanLazer.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_Common_CIrcleSp.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_LazerTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanThunderCylinder.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
+    <ClInclude Include="..\public\E_Common_CIrcleSp.h" />
+    <ClInclude Include="..\public\E_LazerTrail.h" />
+    <ClInclude Include="..\public\DeadZoneBossTree.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2375,6 +2372,27 @@
     <ClCompile Include="..\private\Pet.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_P_ExplosionGravity.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanBossHandPlane.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanBossPlate.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanSmoke.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanSummons.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanThunderCylinder.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Dynamic_Stone.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
@@ -2432,51 +2450,24 @@
     <ClCompile Include="..\private\Meditation_Spot.cpp">
       <Filter>02.GameObjects\Envrioment\Meditation_Spot</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_HunterTrail.cpp" />
+    <ClCompile Include="..\private\UI_NodeVideo.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Video</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\BossRock.cpp">
       <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BossRock_Pool.cpp">
       <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_P_ShamanTeleport.cpp" />
+    <ClCompile Include="..\private\E_ShamanIceDagger.cpp" />
+    <ClCompile Include="..\private\E_ShamanLazer.cpp" />
     <ClCompile Include="..\private\SceneChangePortal.cpp" />
-    <ClCompile Include="..\private\E_P_ExplosionGravity.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanBossHandPlane.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossHandPlane</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanBossPlate.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossPlane</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanSmoke.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanSummons.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Summons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanThunderCylinder.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\ThunderCylinder</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_HunterTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_P_ShamanTeleport.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanIceDagger.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanLazer.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_Common_CIrcleSp.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_LazerTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    <ClCompile Include="..\private\E_Common_CIrcleSp.cpp" />
+    <ClCompile Include="..\private\E_LazerTrail.cpp" />
+    <ClCompile Include="..\private\DeadZoneBossTree.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2574,8 +2565,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\SSLR.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl">
-      <Filter>97.ShaderFiles\Effect</Filter>
-    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl" />
   </ItemGroup>
 </Project>

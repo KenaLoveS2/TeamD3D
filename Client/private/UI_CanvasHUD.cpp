@@ -377,6 +377,33 @@ void CUI_CanvasHUD::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 		}
 
 		break;
+	case CUI_ClientManager::HUD_PIP_UPGRADE:
+		m_iNumPips = (_uint)fValue;
+		m_iNumPipsNow = m_iNumPips;
+		if (2 == m_iNumPips)
+		{
+			m_vecNode[UI_PIPBAR2]->Set_Active(true);
+			m_vecNode[UI_PIPGAUGE2]->Set_Active(true);
+
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1] - 1])->ReArrangeX(); /* Frame */
+
+			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_1]])->Set_Guage(1.f);
+		}
+		else if (3 == m_iNumPips)
+		{
+			m_vecNode[UI_PIPBAR3]->Set_Active(true);
+			m_vecNode[UI_PIPGAUGE3]->Set_Active(true);
+
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1] - 1])->ReArrangeX(); /* Frame */
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_2]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_2] - 1])->ReArrangeX(); /* Frame */
+
+			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_1]])->Set_Guage(1.f);
+			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_2]])->Set_Guage(1.f);
+		}
+		break;
 	case CUI_ClientManager::HUD_ROT:
 		static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(fValue);
 		break;
@@ -444,6 +471,7 @@ void CUI_CanvasHUD::Default(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 		}
 	
 		break;
+
 	case CUI_ClientManager::HUD_ROT:
 		static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(fValue);
 		break;
@@ -492,7 +520,6 @@ void CUI_CanvasHUD::LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel)
 			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_1]])->Set_Guage(1.f);
 			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_2]])->Set_Guage(1.f);
 		}
-		break;
 		break;
 	}
 }

@@ -101,10 +101,10 @@ HRESULT CUI_CanvasAmmo::Initialize(void * pArg)
 	m_qLeft.push(0);
 
 	/* temp */
-	m_bActive = true;
-	m_vecNode[UI_ARROWGUAGE]->Set_Active(true);
-	m_vecNode[UI_BOMBFRAME1]->Set_Active(true);
-	m_vecNode[UI_BOMBGUAGE1]->Set_Active(true);
+	//m_bActive = true;
+	//m_vecNode[UI_ARROWGUAGE]->Set_Active(true);
+	//m_vecNode[UI_BOMBFRAME1]->Set_Active(true);
+	//m_vecNode[UI_BOMBGUAGE1]->Set_Active(true);
 
 	return S_OK;
 }
@@ -156,9 +156,7 @@ HRESULT CUI_CanvasAmmo::Render()
 
 HRESULT CUI_CanvasAmmo::Bind()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(), L"Layer_Player", L"Kena"));
-	RELEASE_INSTANCE(CGameInstance);
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 
 	if (pKena == nullptr)
 		return E_FAIL;
@@ -310,8 +308,19 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue
 	case CUI_ClientManager::AMMO_ARROWUPRADE:
 		m_iNumArrows = (_uint)fValue;
 		m_iNumArrowNow = m_iNumArrows;
-		static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(1.f);
-		pCanvas->LevelUp(CUI_ClientManager::AMMO_ARROW, 2);
+		if (m_iNumArrows == 4)
+		{
+			m_bActive = true;
+			m_vecNode[UI_ARROWGUAGE]->Set_Active(true);
+			static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(1.f);
+			pCanvas->LevelUp(CUI_ClientManager::AMMO_ARROW, 1);
+		}
+		else
+		{
+			static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(1.f);
+			pCanvas->LevelUp(CUI_ClientManager::AMMO_ARROW, 2);
+		}
+
 		break;
 
 	/* Bomb */
@@ -349,23 +358,36 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue
 	case CUI_ClientManager::AMMO_BOMBUPGRADE:
 		m_iNumBombs = (_uint)fValue;
 		m_iNumBombNow = m_iNumBombs;
-		m_qUsed.swap(queue<_int>());
-		m_qLeft.swap(queue<_int>());
-		m_qLeft.push(0);
-		m_qLeft.push(1);
-		
-		m_vecNode[UI_BOMBFRAME2]->Set_Active(true);
-		m_vecNode[UI_BOMBGUAGE2]->Set_Active(true);
-		static_cast<CUI_Node*>(m_vecNode[UI_BOMBGUAGE1])->ReArrangeX();
-		static_cast<CUI_Node*>(m_vecNode[UI_BOMBFRAME1])->ReArrangeX();
-		
-		/* initialize */
-		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Set_Guage(1.0f);
-		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Change_To_FullFilledImage();
-		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Set_Guage(1.0f);
-		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Change_To_FullFilledImage();
+		if (m_iNumBombs == 1)
+		{
+			m_vecNode[UI_BOMBFRAME1]->Set_Active(true);
+			m_vecNode[UI_BOMBGUAGE1]->Set_Active(true);
+			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Set_Guage(1.0f);
+			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Change_To_FullFilledImage();
+			pCanvas->LevelUp(CUI_ClientManager::AMMO_BOMB, 1);
 
-		pCanvas->LevelUp(CUI_ClientManager::AMMO_BOMB, 2);
+		}
+		else
+		{
+			//m_qUsed.swap(queue<_int>());
+			//m_qLeft.swap(queue<_int>());
+			//m_qLeft.push(0);
+			//m_qLeft.push(1);
+
+			m_vecNode[UI_BOMBFRAME2]->Set_Active(true);
+			m_vecNode[UI_BOMBGUAGE2]->Set_Active(true);
+			static_cast<CUI_Node*>(m_vecNode[UI_BOMBGUAGE1])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[UI_BOMBFRAME1])->ReArrangeX();
+
+			/* initialize */
+			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Set_Guage(1.0f);
+			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE1])->Change_To_FullFilledImage();
+			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE2])->Set_Guage(1.0f);
+			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE2])->Change_To_FullFilledImage();
+
+			pCanvas->LevelUp(CUI_ClientManager::AMMO_BOMB, 2);
+		}
+
 		break;
 	}
 }

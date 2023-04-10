@@ -16,6 +16,7 @@ public:
 	void	Start_Effect(CUI* pTarget, _float fX, _float fY);
 	void	Change_Scale(_float fData);
 	void	BackToOriginalScale();
+	void	Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
