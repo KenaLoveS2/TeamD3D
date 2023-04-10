@@ -381,13 +381,6 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 		m_eState = STATE_END;
 		break;
 	}
-
-	case STATE_END:
-	{
-		m_eEFfectDesc.bActive = false;
-		break;
-	}
-
 	}
 }
 

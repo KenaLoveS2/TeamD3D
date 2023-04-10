@@ -30,7 +30,7 @@ HRESULT CE_ShamanIceDagger::Initialize(void* pArg)
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 8.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
@@ -58,7 +58,11 @@ void CE_ShamanIceDagger::Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 		return;
-	
+
+	CTransform::TRANSFORMDESC eTransform = m_pTransformCom->Get_TransformDesc();
+	eTransform.fSpeedPerSec = 8.f;
+	m_pTransformCom->Set_TransformDesc(eTransform);
+
 	m_fTimeDelta += fTimeDelta;
 	__super::Tick(fTimeDelta);
 
@@ -70,7 +74,7 @@ void CE_ShamanIceDagger::Tick(_float fTimeDelta)
 	if (m_bFinalposition)
 	{
 		m_fIdle2Chase += fTimeDelta;
-		if (m_fIdle2Chase > 3.f)
+		if (m_fIdle2Chase > 3.f + (m_iIndex * 0.1f))
 		{
 			m_bFinalposition = false;
 			m_bChase = true;
@@ -80,9 +84,9 @@ void CE_ShamanIceDagger::Tick(_float fTimeDelta)
 
 	/* MoveMentTrail */
 	{
-		m_vecChild[0]->Set_Active(true);
+		m_vecChild[CHILD_TRAIL]->Set_Active(true);
 		_vector vPos = m_pTransformCom->Get_Position();
-		dynamic_cast<CE_RectTrail*>(m_vecChild[0])->Trail_InputPos(vPos);
+		dynamic_cast<CE_RectTrail*>(m_vecChild[CHILD_TRAIL])->Trail_InputPos(vPos);
 	}
 }
 
@@ -184,15 +188,32 @@ void CE_ShamanIceDagger::Imgui_RenderProperty()
 
 void CE_ShamanIceDagger::Reset()
 {
-	for (auto& pChild : m_vecChild)
-		pChild->Set_Active(false);
+	//for (auto& pChild : m_vecChild)
+	//	pChild->Set_Active(false);
+	m_vecChild[CHILD_BREAK]->Set_Effect(m_pTransformCom->Get_Position(), true);
+	m_vecChild[CHILD_TRAIL]->Set_Active(false);
 
-	m_eEFfectDesc.bActive = false;
+	m_pTransformCom->Set_PositionY(-1000.f);
 	m_pKenaPosition = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	m_fDurateionTime = 0.0f;
 	m_fIdle2Chase = 0.0f;
+	m_eEFfectDesc.bActive = false;
 	m_bFinalposition = false;
 	m_bChase = false;
+}
+
+void CE_ShamanIceDagger::Set_IceDaggerMatrix()
+{
+	_float4 vCamLook = CGameInstance::GetInstance()->Get_CamLook_Float4();
+	_float4 vCamUp = CGameInstance::GetInstance()->Get_CamUp_Float4();
+	_float4 vCamRight = CGameInstance::GetInstance()->Get_CamRight_Float4();
+
+	_float4 vLook = XMVector3Normalize(vCamLook - m_pTransformCom->Get_Position());
+	_float3 vScaled = m_pTransformCom->Get_Scaled();
+
+	m_pTransformCom->Set_Right(vCamRight * -1.f * vScaled.x);
+	m_pTransformCom->Set_Up(vLook * vScaled.y);
+	m_pTransformCom->Set_Look(vCamUp * vScaled.x);
 }
 
 void CE_ShamanIceDagger::Tick_IceDagger(_float fTimeDelta)
@@ -209,8 +230,7 @@ void CE_ShamanIceDagger::Tick_IceDagger(_float fTimeDelta)
 
 	_vector vMovePos = m_pUpdateMatrix.r[3] + vDir;
 	_float fDistance = XMVectorGetX(XMVector3Length(vMovePos - XMLoadFloat4(&m_pTransformCom->Get_Position())));
-	m_pTransformCom->LookAt_NoUpDown(pGameInstance->Get_CamPosition());
-	m_pTransformCom->RotationFromNow(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), XMConvertToRadians(90.0f));
+	Set_IceDaggerMatrix();
 
 	if (fDistance < 0.1f)
 	{
@@ -228,18 +248,22 @@ void CE_ShamanIceDagger::Tick_Chase(_float fTimeDelta)
 	if (m_bFinalposition == false && m_bChase == false)
 		return;
 
-	m_fDurateionTime += fTimeDelta;
+	m_pKenaPosition = XMVectorSetY(m_pKenaPosition, m_pKena->Get_TransformCom()->Get_PositionY() + 1.0f);
 	m_pTransformCom->Chase(m_pKenaPosition, fTimeDelta, 0.1f, true);
 
-	_bool bReset = TurnOffSystem(m_fDurateionTime, 3.f, fTimeDelta);
-	if (bReset == true) 
-		Reset();
+	Set_IceDaggerMatrix();
+
+	_bool bReset = TurnOffSystem(m_fDurateionTime, 3.f, fTimeDelta, false);
+	if (bReset == true) Reset();
 }
 
 HRESULT CE_ShamanIceDagger::SetUp_ShaderResources()
 {
 	if (m_pShaderCom == nullptr)
 		return E_FAIL;
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
 
 	return S_OK;
 }
@@ -258,16 +282,31 @@ HRESULT CE_ShamanIceDagger::SetUp_Effects()
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	CEffect_Base* pEffectBase = nullptr;
 
-	wstring strCloneTag = m_szCloneObjectTag;
-	strCloneTag += L"CloudTrail";
-	_tchar* szCloneTag = CUtile::Create_StringAuto(strCloneTag.c_str());
+	/* Child_ trail */
+	{
+		wstring strCloneTag = m_szCloneObjectTag;
+		strCloneTag += L"CloudTrail";
+		_tchar* szCloneTag = CUtile::Create_StringAuto(strCloneTag.c_str());
 
-	pEffectBase = dynamic_cast<CE_RectTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", szCloneTag));
-	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	pEffectBase->Set_Parent(this);
-	dynamic_cast<CE_RectTrail*>(pEffectBase)->SetUp_Option(CE_RectTrail::OBJ_TRAIL);
-	dynamic_cast<CE_RectTrail*>(pEffectBase)->Set_ObjectTrail(10.f, _float4(1.f, 1.f, 1.f, 0.4f));
-	m_vecChild.push_back(pEffectBase);
+		pEffectBase = dynamic_cast<CE_RectTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", szCloneTag));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+		pEffectBase->Set_Parent(this);
+		dynamic_cast<CE_RectTrail*>(pEffectBase)->SetUp_Option(CE_RectTrail::OBJ_TRAIL);
+		dynamic_cast<CE_RectTrail*>(pEffectBase)->Set_ObjectTrail(10.f, _float4(1.f, 1.f, 1.f, 0.4f));
+		m_vecChild.push_back(pEffectBase);
+	}
+
+	/* Explosion Effect */
+	{
+		wstring strCloneTag = m_szCloneObjectTag;
+		strCloneTag += L"CommonCircleSp";
+		_tchar* szCloneTag = CUtile::Create_StringAuto(strCloneTag.c_str());
+
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CommonCircleSp", szCloneTag));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+		pEffectBase->Set_Parent(this);
+		m_vecChild.push_back(pEffectBase);
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

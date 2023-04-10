@@ -13,6 +13,7 @@
 #include "E_ShamanBossPlate.h"
 #include "E_ShamanSummons.h"
 #include "E_ShamanIceDagger.h"
+#include "E_ShamanLazer.h"
 
 // #define EFFECTDEBUG
 
@@ -184,7 +185,7 @@ void CBossShaman::Tick(_float fTimeDelta)
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
-	
+
 	SwordRenderProc(fTimeDelta);
 	Update_Collider(fTimeDelta);
 	Tick_Effects(fTimeDelta);
@@ -818,24 +819,32 @@ HRESULT CBossShaman::SetUp_State()
 		return m_bTraptBreak;
 	})
 
-
 		.AddState("LASER_FIRE")
 		.OnStart([this]()
 	{
 		Attack_Start(false, TRAP_LOOP);
 	})
-		.Tick([this](_float fTimeDelta)
-	{
-		Update_LazerPos();
-	})
 		.OnExit([this]()
 	{
+		m_bTrap = false;
 		Attack_End(false, IDLE_LOOP);
 	})		
-		.AddTransition("LASER_FIRE to TRAP_END", "TRAP_END")
+		.AddTransition("LASER_FIRE to TRAP_END", "TRAP_END") // 레이저 발사가 끝나면 아이들로
 		.Predicator([this]()
 	{
-		// 레이저 발사가 끝나면 아이들로
+		if (m_bTrap == false)
+		{
+			_matrix Head_SocketMatrix = m_pHeadBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+			dynamic_cast<CE_ShamanLazer*>(m_mapEffect["S_Lazer"])->Set_SpawnPos(Head_SocketMatrix.r[3]);
+
+			if (dynamic_cast<CE_ShamanLazer*>(m_mapEffect["S_Lazer"])->Get_FinalState() == true)
+			{
+				_float4 vPos = m_pShamanTapHex->Get_TransformCom()->Get_Position();
+				m_mapEffect["Shaman_Charged"]->Set_Effect(vPos, true);
+				m_bTrap = true;
+			}
+		}
+		
 		return m_mapEffect["S_Lazer"]->Get_Active() == false;
 	})
 
@@ -898,6 +907,7 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("STUN")
 		.OnStart([this]()
 	{
+		m_pModelCom->ResetAnimIdx_PlayTime(STUN_TAKE_DAMAGE);
 		m_pModelCom->Set_AnimIndex(STUN_TAKE_DAMAGE);		
 		m_fStunTime = 0.f;
 	})
@@ -1183,13 +1193,13 @@ HRESULT CBossShaman::Ready_Effects()
 	_tchar* pCloneTag = nullptr;
 	string strMapTag = "";
 	CBone* pBonePtr = m_pModelCom->Get_BonePtr("char_neck_jnt");
-	for (_int i = 0; i < 5; ++i)
+	for (_int i = 0; i < ICEDAGGER_COUNT; ++i)
 	{
 		pCloneTag = CUtile::Create_DummyString(L"S_IceDagger", i);
 		strMapTag = "S_IceDagger_" + to_string(i);
 		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShammanIceDagger", pCloneTag));
 		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-		dynamic_cast<CE_ShamanIceDagger*>(pEffectBase)->Set_CenterBone(pBonePtr, XMConvertToRadians(i * 45.f));
+		dynamic_cast<CE_ShamanIceDagger*>(pEffectBase)->Set_CenterBone(pBonePtr, XMConvertToRadians(i * 45.f), i);
 		m_mapEffect.emplace(strMapTag, pEffectBase);
 	}
 
@@ -1254,15 +1264,12 @@ void CBossShaman::Update_IceDagger()
 	{
 		if (dynamic_cast<CE_ShamanIceDagger*>(Pair.second))
 		{
-			if (Pair.second->Get_Active() == false)
+			CE_ShamanIceDagger* pObject = dynamic_cast<CE_ShamanIceDagger*>(Pair.second);
+			if (pObject->Get_Active() == false/* && pObject->Get_Index() == m_iIceDaggerIdx*/)
 			{
 				CBone*  pBonePtr = m_pModelCom->Get_BonePtr("char_neck_jnt");
 				_matrix SocketMatrix = m_pWeaponBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
-
-				_float4 vPos = SocketMatrix.r[3];
-				Pair.second->Set_Position(vPos);
-
-				Pair.second->Set_Active(true);
+				pObject->Set_Effect(SocketMatrix.r[3], true);
 			}
 		}
 	}
@@ -1272,7 +1279,8 @@ void CBossShaman::Update_LazerPos()
 {
 	_matrix SocketMatrix = m_pHeadBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
 	_float4 vPos = SocketMatrix.r[3];
-	vPos.x += 2.f; vPos.z += 2.f;
+	vPos.x += 2.f;
+	vPos.z += 2.f;
 	m_mapEffect["S_Lazer"]->Set_Position(vPos);
 	m_mapEffect["S_Lazer"]->Set_Active(true);
 }
@@ -1451,7 +1459,7 @@ void CBossShaman::TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnSwipeChareged);
 		return;
 	}
-	_float4 vPos = m_pTransformCom->Get_Position();	_float fRange = 5.f;
+	_float4 vPos = m_pTransformCom->Get_Position();	_float fRange = 3.f;
 	_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 	vPos += vLook * fRange;
 	vPos.y = -1.5f;

@@ -293,7 +293,7 @@ private:
 
 private:
 	vector<CEffect_Base_S2*>		m_vecEffects;
-	class CE_HunterTrail* m_pHunterTrail = nullptr;
+	class CE_HunterTrail*           m_pHunterTrail = nullptr;
 
 private: /* For. String */
 	_float							m_fUVSpeeds[2];

@@ -205,6 +205,8 @@
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\public\CLevel_Final.h" />
+    <ClInclude Include="..\public\E_Common_CIrcleSp.h" />
+    <ClInclude Include="..\public\E_LazerTrail.h" />
     <ClInclude Include="..\public\E_P_ShamanTeleport.h" />
     <ClInclude Include="..\public\E_ShamanIceDagger.h" />
     <ClInclude Include="..\public\E_ShamanLazer.h" />
@@ -496,6 +498,8 @@
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\CLevel_Final.cpp" />
+    <ClCompile Include="..\private\E_Common_CIrcleSp.cpp" />
+    <ClCompile Include="..\private\E_LazerTrail.cpp" />
     <ClCompile Include="..\private\E_P_ShamanTeleport.cpp" />
     <ClCompile Include="..\private\E_ShamanIceDagger.cpp" />
     <ClCompile Include="..\private\E_ShamanLazer.cpp" />

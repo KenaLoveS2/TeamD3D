@@ -130,10 +130,10 @@ HRESULT CUI_CanvasTop::Bind()
 	//	return E_FAIL;
 
 	/* Boss Shaman Bind */
-	//CBossShaman* pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-	//	L"Layer_Monster", L"BossShaman_0"));
-	//if (pShaman == nullptr)
-	//	return E_FAIL;
+	CBossShaman* pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+		L"Layer_Monster", L"BossShaman_0"));
+	if (pShaman == nullptr)
+		return E_FAIL;
 
 	/* Boss Hunter Bind */
 	//CBossHunter* pBossHunter = dynamic_cast<CBossHunter*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
@@ -143,7 +143,7 @@ HRESULT CUI_CanvasTop::Bind()
 
 	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 	//pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
-	//pShaman->m_BossShamanDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	pShaman->m_BossShamanDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 	//pBossHunter->m_BossHunterDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
 

@@ -11,6 +11,13 @@ BEGIN(Client)
 
 class CE_ShamanIceDagger final : public CEffect_Mesh
 {
+public:
+	enum CHILD
+	{
+		CHILD_TRAIL,
+		CHILD_BREAK,
+		CHILD_END
+	};
 private:
 	CE_ShamanIceDagger(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CE_ShamanIceDagger(const CE_ShamanIceDagger& rhs);
@@ -27,13 +34,18 @@ public:
 
 public:
 	void	Reset();
-	void	Set_CenterBone(CBone* pBone, _float fAngle) { 
+	void	Set_CenterBone(CBone* pBone, _float fAngle, _int iIndex) { 
+		m_iIndex = iIndex;
 		m_fAngle = fAngle;
 		m_pCenterBone = pBone;
 	}
 
 	_bool 	Get_Finalposition() { return m_bFinalposition; }
+	_bool 	Get_Chase() { return m_bChase; }
+	_int	Get_Index() { return m_iIndex; }
+
 	void	Set_Chase(_bool bChase) { m_bChase = bChase; }
+	void	Set_IceDaggerMatrix();
 
 public:
 	void	Tick_IceDagger(_float fTimeDelta);
@@ -51,12 +63,16 @@ private:
 	_vector		 m_pKenaPosition;
 	_matrix		 m_pUpdateMatrix = XMMatrixIdentity();
 	_float		 m_fAngle = 0.0f;
-	_float		 m_fRange = 1.5f;
+	_float		 m_fRange = 0.8f;
 	_float		 m_fDurateionTime = 0.0f;
 	_float		 m_fIdle2Chase = 0.0f;
+	_float	    m_fDissolveTime = 0.0f;
+
+	_int		 m_iIndex = 0;
 
 	_bool		 m_bFinalposition = false;
 	_bool		 m_bChase = false;
+	_bool		 m_bDissolve = false;
 
 public:
 	static  CE_ShamanIceDagger* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath = nullptr);

@@ -5,6 +5,7 @@
 #include "SpiritArrow.h"
 #include "E_RectTrail.h"
 #include "E_HunterTrail.h"
+#include "E_Swipes_Charged.h"
 
 CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -924,7 +925,7 @@ HRESULT CBossHunter::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_bShockArrowUpY ? m_pTransformCom->Go_AxisY(fTimeDelta) : 0;		
+		m_bShockArrowUpY ? m_pTransformCom->Go_AxisY(fTimeDelta) : 0;
 	})
 	.OnExit([this]()
 	{
@@ -1404,7 +1405,7 @@ _int CBossHunter::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos,
 				{
 					_vector	vDir = vecWeaponPos->back() - vecWeaponPos->front();
 					vDir = XMVectorSetZ(vDir, 0.f);
-					dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians(30.f));
+					pCamera->Camera_Shake(vDir, XMConvertToRadians(30.f));
 				}
 			}
 		}
@@ -1846,7 +1847,6 @@ HRESULT CBossHunter::Create_Trail()
 	m_pHunterTrail->Set_Parent(this);
 	/* Trail */
 
-	// m_pHunterTrail
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
