@@ -37,7 +37,16 @@ void CRotWisp::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if(CGameInstance::GetInstance()->Key_Down(DIK_Q))
+	CGameObject* p_game_object = 	CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+
+	if(p_game_object)
+	{
+		_float4 vPlayerPos = p_game_object->Get_TransformCom()->Get_Position();
+		_float4 vPos = m_pTransformCom->Get_Position();
+		m_fDistance = _float4::Distance(vPlayerPos, vPos);
+	}
+
+	if(CGameInstance::GetInstance()->Key_Down(DIK_Q) && m_fDistance <= 10.f)
 		m_bPulse = true;
 
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);

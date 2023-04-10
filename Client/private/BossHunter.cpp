@@ -1411,6 +1411,16 @@ void CBossHunter::BossFight_End()
 	const _float3 vOffset = _float3(0.f, 1.5f, 0.f);
 	const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
 	dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")))->Set_Target(this, CCameraForNpc::OFFSET_FRONT_LERP, vOffset, vLookOffset,0.9f, 2.f);
+
+	_float4 vRotPos = _float4(192.3f, 28.f, 490.f,1.f);
+	if (m_pRot)
+	{
+		CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(TEXT("Hunter_Rot"), this, TRIGGER_ROT, CUtile::Float_4to3(vRotPos), 1.f));
+		m_pRot->Set_Position(vRotPos);
+		m_pRot->Set_WispPos(vRotPos);
+		m_pRot->Set_WakeUpPos(vRotPos);
+		m_pRot->Get_TransformCom()->Set_Look(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * -1.f);
+	}
 }
 
 CBossHunter* CBossHunter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -74,7 +74,6 @@ HRESULT CRot::Initialize(void* pArg)
 	wstring wstrTag = wstring(m_szCloneObjectTag) + TEXT("Wisp");
 	m_pRotWisp = static_cast<CRotWisp*>(CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp"), CUtile::Create_StringAuto(wstrTag.c_str())));
 	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
-
 	return S_OK;
 }
 
@@ -117,10 +116,10 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	m_pMyCam = static_cast<CCameraForRot*>(pGameInstance->Find_Camera(L"ROT_CAM"));
 	RELEASE_INSTANCE(CGameInstance)
 
-	if (wcscmp(m_szCloneObjectTag, TEXT("Saiya_Rot")) && m_bManualWakeUp == false)
-		CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f));
-	else
+	if(!wcscmp(m_szCloneObjectTag, TEXT("Saiya_Rot")) || !wcscmp(m_szCloneObjectTag, TEXT("Hunter_Rot")))
 		m_bWakeUp = true;
+	else if(!m_bManualWakeUp)
+		CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f));
 
 	if (m_iThisRotIndex == FIRST_ROT && m_bManualWakeUp == false)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);

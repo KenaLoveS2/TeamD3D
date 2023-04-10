@@ -659,10 +659,10 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_Delegator.broadcast(ePip, fCurGuage);
 	}
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
-	{
-		m_pKenaStatus->Add_RotCount();
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+	//{
+	//	m_pKenaStatus->Add_RotCount();
+	//}
 
 	//	//static _float fTag = 0.0f;
 	//	//if (fTag < 1.0f)

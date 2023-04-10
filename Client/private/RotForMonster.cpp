@@ -32,13 +32,13 @@ HRESULT CRotForMonster::Initialize(void* pArg)
 		memcpy(&m_Desc, pArg, sizeof(DESC));
 	}
 
-	CGameObject::GAMEOBJECTDESC		GaemObjectDesc;
-	ZeroMemory(&GaemObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
+	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
+	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 
-	GaemObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
-	GaemObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
-	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_FSM(), E_FAIL);
 	FAILED_CHECK_RETURN(Set_RotTrail(), E_FAIL);
