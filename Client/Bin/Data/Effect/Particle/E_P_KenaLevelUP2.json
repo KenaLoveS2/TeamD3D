@@ -1,0 +1,47 @@
+{
+    "0. FileTag": "Kena_LvUP",
+    "1. Data": [
+        {
+            "A-1. TextureRenderType": 0,
+            "A-1_0. Sprite_Width": 0,
+            "A-1_1. Sprite_Height": 0,
+            "A-1_2. Sprite_DurationeTime": 0.0,
+            "A. Type": 4,
+            "B. Pass": 2,
+            "C. HDRValue": 2.0,
+            "D. Color": [
+                1.0,
+                1.0,
+                0.4000000059604645,
+                0.30000001192092896
+            ],
+            "E. DiffuseTex": [
+                53.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "F. Spread": true,
+            "G. Max": [
+                1.0,
+                3.0,
+                1.0
+            ],
+            "G. Min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "H. InstanceSpeed": 1.0,
+            "I. CreateRange": 0.10000000149011612,
+            "J. Range": 3.0,
+            "K. Term": 1.0,
+            "L. PowValue": 2.0,
+            "M. Size": [
+                0.1,
+                1.0
+            ]
+        }
+    ]
+}

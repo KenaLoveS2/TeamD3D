@@ -52,11 +52,14 @@ HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
-//	if (m_eType == TYPE_DEFAULT)
 	//if (!lstrcmp(Get_ObjectCloneName(), L"Explosion"))
- //		Set_OptionTool();
- //	else
-//		m_fLife += fTimeDelta;
+	if (m_eType == TYPE_DEFAULT)
+ 		Set_OptionTool();
+ 	else
+		m_fLife += fTimeDelta;
+
+	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
+		Tick_Sprite(m_fDurationTime, fTimeDelta);
 
 	__super::Tick(fTimeDelta);
 	if (m_eEFfectDesc.bActive == false)
@@ -67,9 +70,9 @@ void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 	else
 		m_pTransformCom->Set_Position(m_vFixPos);
 
-	m_fLife += fTimeDelta;
+	//m_fLife += fTimeDelta;
 	/*m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && */
-	if (m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
+	if (m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
 		m_eEFfectDesc.bActive = false;
 }
 
@@ -92,6 +95,9 @@ HRESULT CE_P_ExplosionGravity::SetUp_ShaderResources()
 	if (m_pShaderCom == nullptr)
 		return E_FAIL;
 
+	m_fRandomColor = _float4(rand() % 1, rand() % 1, rand() % 1, rand() % 1) * 1.f;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_RandomColor", &m_fRandomColor, sizeof(_float4)), E_FAIL);
+
 	return S_OK;
 }
 
@@ -102,6 +108,204 @@ HRESULT CE_P_ExplosionGravity::SetUp_Components()
 
 HRESULT CE_P_ExplosionGravity::SetUp_ChangeBuffer()
 {
+	return S_OK;
+}
+
+HRESULT CE_P_ExplosionGravity::Save_Desc(const char* pFileTag)
+{
+	string strFilePath = "../Bin/Data/Effect/Particle/";
+	strFilePath += pFileTag;
+	strFilePath += ".json";
+
+	Json	jTag;
+	Json	jDesc;
+
+	CVIBuffer_Point_Instancing::POINTDESC* ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
+	CVIBuffer_Point_Instancing::INSTANCEDATA* eInstanceData = m_pVIInstancingBufferCom->Get_InstanceData();
+
+	jTag["0. FileTag"] = pFileTag;
+
+	jDesc["A. Type"] = ePointDesc->eShapeType;
+	jDesc["A-1. TextureRenderType"] = m_eEFfectDesc.eTextureRenderType;
+	jDesc["A-1_0. Sprite_Width"] = m_eEFfectDesc.iWidthCnt;
+	jDesc["A-1_1. Sprite_Height"] = m_eEFfectDesc.iHeightCnt;
+	jDesc["A-1_2. Sprite_DurationeTime"] = m_eEFfectDesc.fTimeDelta;
+	jDesc["B. Pass"] = m_eEFfectDesc.iPassCnt;
+	jDesc["C. HDRValue"] = m_fHDRValue;
+
+	_float	vColor = 0.f, vScale = 0.f;
+	for (_int i = 0; i < 4; ++i)
+	{
+		vColor = 0.0f;
+		memcpy(&vColor, (_float*)&m_eEFfectDesc.vColor + i, sizeof(_float));
+		jDesc["D. Color"].push_back(vColor);
+	}
+
+	_float fFrame = 0.0f;
+	for (_int i = 0; i < MAX_TEXTURECNT; ++i) 
+	{
+		fFrame = 0.0f;
+		memcpy(&fFrame, &m_eEFfectDesc.fFrame[i], sizeof(_float));
+		jDesc["E. DiffuseTex"].push_back(fFrame);
+	}
+
+	jDesc["F. Spread"] = ePointDesc->bSpread;
+
+	_float fMin = 0.0f, fMax = 0.0f;
+	for (_int k = 0; k < 3; k++)
+	{
+		fMin = 0.0f;
+		memcpy(&fMin, (_float*)&ePointDesc->fMin + k, sizeof(_float));
+		jDesc["G. Min"].push_back(fMin);
+	}
+	for (_int k = 0; k < 3; k++)
+	{
+		fMax = 0.0f;
+		memcpy(&fMin, (_float*)&ePointDesc->fMax + k, sizeof(_float));
+		jDesc["G. Max"].push_back(fMax);
+	}
+	jDesc["H. InstanceSpeed"] = eInstanceData->pSpeeds;
+	jDesc["I. CreateRange"] = ePointDesc->fCreateRange;
+	jDesc["J. Range"] = ePointDesc->fRange;
+	jDesc["K. Term"] = ePointDesc->fTerm;
+	jDesc["L. PowValue"] = ePointDesc->fPowValue;
+
+	_float fSize = 0.0f;
+	for (_int k = 0; k < 2; k++)
+	{
+		fSize = 0.0f;
+		memcpy(&fSize, (_float*)&eInstanceData->fPSize + k, sizeof(_float));
+		jDesc["M. Size"].push_back(fSize);
+	}
+
+	jTag["1. Data"].push_back(jDesc);
+	ofstream	file(strFilePath.c_str());
+	file << jTag;
+	file.close();
+
+	return S_OK;
+}
+
+HRESULT CE_P_ExplosionGravity::Load_Desc(const char* pFilePath)
+{
+	string strFilePath = "../Bin/Data/Effect/Particle/";
+	strFilePath += pFilePath;
+	strFilePath += ".json";
+
+	ifstream	file(strFilePath.c_str());
+
+	Json	jTag;
+	file >> jTag;
+	file.close();
+
+	CVIBuffer_Point_Instancing::POINTDESC* ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
+	CVIBuffer_Point_Instancing::INSTANCEDATA* eInstanceData = m_pVIInstancingBufferCom->Get_InstanceData();
+
+	for (auto jDesc : jTag["1. Data"])
+	{
+		_uint iShapeType = 0;
+		jDesc["A. Type"].get_to<_uint>(iShapeType);
+		memcpy(&ePointDesc->eShapeType, &iShapeType, sizeof(_int));
+
+		_uint iTextureRenderType = 0;
+		jDesc["A-1. TextureRenderType"].get_to<_uint>(iTextureRenderType);
+		memcpy(&m_eEFfectDesc.eTextureRenderType, &iTextureRenderType, sizeof(_int));
+
+		jDesc["A-1_0. Sprite_Width"].get_to<_int>(m_eEFfectDesc.iWidthCnt);
+		jDesc["A-1_1. Sprite_Height"].get_to<_int>(m_eEFfectDesc.iHeightCnt);
+		jDesc["A-1_2. Sprite_DurationeTime"].get_to<_float>(m_eEFfectDesc.fTimeDelta);
+
+		jDesc["B. Pass"].get_to<_int>(m_eEFfectDesc.iPassCnt);
+		jDesc["C. HDRValue"].get_to<_float>(m_fHDRValue);
+
+		_int iColor = 0;
+		for (_float vColor : jDesc["D. Color"])
+			memcpy(((_float*)&m_eEFfectDesc.vColor) + (iColor++), &vColor, sizeof(_float));
+
+		_int iDiffuse = 0;
+		for (_float fFrame : jDesc["E. DiffuseTex"])
+			memcpy(((_float*)&m_eEFfectDesc.fFrame) + (iDiffuse++), &fFrame, sizeof(_float));
+
+		jDesc["F. Spread"].get_to<_bool>(ePointDesc->bSpread);
+
+		_int k = 0;
+		for (_float fMin : jDesc["G. Min"])
+			memcpy((_float*)&ePointDesc->fMin + (k++), &fMin, sizeof(_float));
+
+		k = 0;
+		for (_float fMax : jDesc["G. Max"])
+			memcpy((_float*)&ePointDesc->fMax + (k++), &fMax, sizeof(_float));
+
+		jDesc["H. InstanceSpeed"].get_to<_double>(eInstanceData->pSpeeds);
+		jDesc["I. CreateRange"].get_to<_float>(ePointDesc->fCreateRange);
+		jDesc["J. Range"].get_to<_float>(ePointDesc->fRange);
+		jDesc["K. Term"].get_to<_float>(ePointDesc->fTerm);
+		jDesc["L. PowValue"].get_to<_float>(ePointDesc->fPowValue);
+
+		k = 0;
+		for (_float fSize : jDesc["M. Size"])
+			memcpy((_float*)&eInstanceData->fPSize + (k++), &fSize, sizeof(_float));
+	}
+
+	switch (ePointDesc->eShapeType)
+	{
+	case 0:
+		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_BOX;
+		break;
+
+	case 1:
+		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_STRIGHT;
+		break;
+
+	case 2:
+		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_PLANECIRCLE;
+		break;
+
+	case 3:
+		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_CONE;
+		break;
+
+	case 4:
+		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_EXPLOSION;
+		break;
+
+	case 5:
+		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_EXPLOSION_GRAVITY;
+		break;
+
+	case 6:
+		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_PLANECIRCLE_HAZE;
+		break;
+
+	case 7:
+		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_HAZE;
+		break;
+
+	case 8:
+		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_GATHER;
+		break;
+
+	case 9:
+		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_PARABOLA;
+		break;
+
+	default:
+		break;
+	}
+	m_pVIInstancingBufferCom->Set_ShapePosition();
+
+	m_pVIInstancingBufferCom->Set_RandomPSize(eInstanceData->fPSize);
+	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.1f, (_float)eInstanceData->pSpeeds);
+	m_pVIInstancingBufferCom->SetRandomDir();
+	m_pVIInstancingBufferCom->Set_Position(ePointDesc->fMin, ePointDesc->fMax);
+	ePointDesc->fRange = ePointDesc->fRange;
+	ePointDesc->fPowValue = ePointDesc->fPowValue;
+	ePointDesc->fTerm = ePointDesc->fTerm;
+	ePointDesc->fCreateRange = ePointDesc->fCreateRange;
+
+	m_eEFfectDesc.iSeparateWidth = m_eEFfectDesc.iWidthCnt;
+	m_eEFfectDesc.iSeparateHeight = m_eEFfectDesc.iHeightCnt;
+
 	return S_OK;
 }
 
@@ -279,7 +483,25 @@ void CE_P_ExplosionGravity::Set_OptionTool()
 	if (ImGui::Button("Dir"))
 		m_pVIInstancingBufferCom->SetRandomDir();
 
-	ImGui::InputFloat4("Color", (_float*)&m_eEFfectDesc.vColor);
+	static bool alpha_preview = true;
+	static bool alpha_half_preview = false;
+	static bool drag_and_drop = true;
+	static bool options_menu = true;
+	static bool hdr = false;
+
+	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+	static bool   ref_color = false;
+	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	vSelectColor = m_eEFfectDesc.vColor;
+
+	ImGui::ColorPicker4("CurColor##4", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+	ImGui::ColorEdit4("Diffuse##2f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
+	m_eEFfectDesc.vColor = vSelectColor;
+
+	ImGui::InputFloat("HDRValue", &m_fHDRValue);
 
 	ImGui::InputInt("Pass", &m_eEFfectDesc.iPassCnt);
 	ImGui::InputFloat4("DiffuseTexture", (_float*)&m_eEFfectDesc.fFrame);
@@ -292,14 +514,25 @@ void CE_P_ExplosionGravity::Set_OptionTool()
 	static _float fRange = ePointDesc->fRange;
 	static _float fTerm = ePointDesc->fTerm;
 	static _float fCreateRange = ePointDesc->fCreateRange;
-	ImGui::InputFloat("Range", &fRange);
-	ImGui::InputFloat("Term", &fTerm);
-	ImGui::InputFloat("fCreateRange", &fCreateRange);
-
+	static _float fPowValue = ePointDesc->fPowValue;
+	static _float2 fSize = eInstanceData->fPSize;
 	static _int    iType = (_int)ePointDesc->eShapeType;
 	static _float3 fMin = _float3(0.0f, 0.0f, 0.0f);
 	static _float3 fMax = _float3(0.0f, 0.0f, 0.0f);
 	static _double fInstanceSpeed = eInstanceData->pSpeeds;
+
+	ImGui::InputFloat("Range", &fRange);
+	ImGui::InputFloat("Term", &fTerm);
+	ImGui::InputFloat("fCreateRange", &fCreateRange);
+	ImGui::InputFloat("fPowValue", &fPowValue);
+	ImGui::InputFloat2("fSize", (_float*)&fSize);
+
+	ImGui::InputInt("TextureRenderType", (_int*)&m_eEFfectDesc.eTextureRenderType);
+	ImGui::InputFloat("g_WidthFrame", &m_eEFfectDesc.fWidthFrame);
+	ImGui::InputFloat("g_HeightFrame", &m_eEFfectDesc.fHeightFrame);
+	ImGui::InputInt("g_SeparateWidth", &m_eEFfectDesc.iSeparateWidth);
+	ImGui::InputInt("g_SeparateHeight", &m_eEFfectDesc.iSeparateHeight);
+	ImGui::InputFloat("DurationTime", &m_eEFfectDesc.fTimeDelta);
 
 	ImGui::RadioButton("VIBUFFER_BOX", &iType, 0); ImGui::SameLine();
 	ImGui::RadioButton("VIBUFFER_STRIGHT", &iType, 1); ImGui::SameLine();
@@ -370,15 +603,48 @@ void CE_P_ExplosionGravity::Set_OptionTool()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Set_Option")) {
-		m_pVIInstancingBufferCom->Set_Speeds(fInstanceSpeed);
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(fSize.x, fSize.y));
+		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.1f, (_float)fInstanceSpeed);
 		m_pVIInstancingBufferCom->SetRandomDir();
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ePointDesc->fRange = fRange;
+		ePointDesc->fPowValue = fPowValue;
 		ePointDesc->fTerm = fTerm;
 		ePointDesc->fCreateRange = fCreateRange;
+
+		m_eEFfectDesc.iWidthCnt = m_eEFfectDesc.iSeparateWidth;
+		m_eEFfectDesc.iHeightCnt = m_eEFfectDesc.iSeparateHeight;
 	}
 	ImGui::SameLine();
+	if (ImGui::Button("Reset")) {
+		fRange = ePointDesc->fRange;
+		fTerm = ePointDesc->fTerm;
+		fCreateRange = ePointDesc->fCreateRange;
+		fPowValue = ePointDesc->fPowValue;
+		fSize = eInstanceData->fPSize;
+		iType = (_int)ePointDesc->eShapeType;
+		fMin = ePointDesc->fMin;
+		fMax = ePointDesc->fMax;
+		fInstanceSpeed = eInstanceData->pSpeeds;
+		
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(fSize.x, fSize.y));
+		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.1f, (_float)fInstanceSpeed);
+		m_pVIInstancingBufferCom->SetRandomDir();
+		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
+	}
+
+	ImGui::SameLine();
 	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+
+	static	char szSaveFileName[MAX_PATH] = "";
+	ImGui::InputTextWithHint("##SaveData", "Input Save Data File Name", szSaveFileName, MAX_PATH); ImGui::SameLine();
+	if (ImGui::Button("Save_Particle Desc"))
+		Save_Desc(szSaveFileName); 
+
+	static	char szLoadFileName[MAX_PATH] = "";
+	ImGui::InputTextWithHint("##LoadData", "Input Load Data File Name", szLoadFileName, MAX_PATH); ImGui::SameLine();
+	if (ImGui::Button("Load_Particle Desc"))
+		Load_Desc(szLoadFileName);
 
 	ImGui::End();
 }
