@@ -11,6 +11,7 @@
 #include "E_HunterTrail.h"
 #include "E_Swipes_Charged.h"
 #include "Rot.h"
+#include "Light.h"
 
 CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -561,6 +562,17 @@ HRESULT CBossHunter::SetUp_State()
 		m_fDissolveTime -= fTimeDelta;
 		if (m_fDissolveTime < -0.5f)
 			m_bDissolve = false;
+
+		m_fFogRange -= fTimeDelta * 50.f;
+		if (m_fFogRange < 60.f)
+			m_fFogRange = 60.f;
+		const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+		m_pRendererCom->Set_FogValue(vColor, m_fFogRange);
+		
+		m_fLightRange += fTimeDelta * 50.f;
+		if (m_fLightRange > 90.f)
+			m_fLightRange = 90.f;
+		CGameInstance::GetInstance()->Get_Light(1)->Set_Range(m_fLightRange);
 
 		if(AnimIntervalChecker(RAMPAGE,0.9f,1.f))
 			m_pModelCom->FixedAnimIdx_PlayTime(RAMPAGE, 0.95f);
@@ -1277,11 +1289,24 @@ HRESULT CBossHunter::SetUp_State()
 		m_fDissolveTime = m_fEndTime * 0.1f;
 		if (m_fDissolveTime >= 1.f)
 			m_bDissolve = false;
+
+		m_fFogRange += fTimeDelta * 100.f;
+		if (m_fFogRange >= 100.f)
+			m_pRendererCom->Set_Fog(false);
+		const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+		m_pRendererCom->Set_FogValue(vColor, m_fFogRange);
+
+		m_fLightRange -= fTimeDelta * 100.f;
+		if (m_fLightRange < 0.f)
+			CGameInstance::GetInstance()->Get_Light(1)->Set_Enable(false);
+
+		CGameInstance::GetInstance()->Get_Light(1)->Set_Range(m_fLightRange);
 	})
 	.OnExit([this]()
 	{
 		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
 		pCtrlRoom->DeadZoneObject_Change(true);
+		pCtrlRoom->Boss_HunterDeadGimmick();
 
 		// 시네캠 하나 만들자
 		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[1]->Get_ObjectCloneName());
@@ -1403,6 +1428,10 @@ void CBossHunter::BossFight_Start()
 	m_pCineCam[0]->Play();
 	m_bDissolve = true;
 	m_fDissolveTime = 1.f;
+	m_pRendererCom->Set_Fog(true);
+	const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+	m_pRendererCom->Set_FogValue(vColor, 100.f);
+	CGameInstance::GetInstance()->Get_Light(1)->Set_Enable(true);
 }
 
 void CBossHunter::BossFight_End()

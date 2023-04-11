@@ -342,7 +342,7 @@ HRESULT CBombPlatform::SetUp_Components()
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = g_LEVEL;
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_RuinsKit_BombPlatForm", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_RuinsKit_BombPlatForm", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxModelInstance", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 

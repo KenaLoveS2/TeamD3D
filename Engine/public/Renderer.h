@@ -43,6 +43,7 @@ public:
 	void			Set_Flare(_bool bFlare) { m_bFlare = bFlare; }
 	void			Set_MotionBlur(_bool bBlur) { m_bMotionBlur = bBlur; }
 	void			Set_Fog(bool bFog) { m_bFog = bFog; }
+	void			Set_FogValue(_float4 vColor, _float fFogRange) { m_vFogColor = vColor, m_fFogRange = fFogRange; }
 
 #ifdef _DEBUG
 	HRESULT Add_DebugRenderGroup(class CComponent* pComponent);

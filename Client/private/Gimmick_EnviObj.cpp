@@ -82,7 +82,7 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 
 		m_bColliderOn = true;
 
-		if (m_pModelCom->Get_UseTriangleMeshActor() && m_EnviromentDesc.iRoomIndex == 3)
+		if (m_EnviromentDesc.iRoomIndex == 3)
 		{
 			dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->
 				Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment",
@@ -93,9 +93,6 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 					L"3_BossDeadPortal_0"))->Set_GimmickRender(true);
 		}
 	}
-
-
-
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
