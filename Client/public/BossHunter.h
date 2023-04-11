@@ -8,8 +8,6 @@
 #define FLY_POS_COUNT				8
 #define SINGLE_SHOT_FRIEND_COUNT				3
 
-
-
 BEGIN(Client)
 class CEffect_Base_S2;
 class CBossHunter : public CMonster
@@ -300,6 +298,7 @@ private: /* For. String */
 	_float							m_fStringDissolveSpeed;
 	_float							m_fStringHDRIntensity;
 	_float4							m_vStringDiffuseColor;
+	class CRot*					m_pRot = nullptr;
 
 private: /* For. Tool */
 	void							ImGui_EffectProperty();
@@ -309,7 +308,6 @@ private:
 
 private:
 	CEffect_Base_S2* m_pSelectedEffect;
-
 };
 
 END

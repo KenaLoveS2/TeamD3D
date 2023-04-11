@@ -456,8 +456,8 @@ HRESULT CShieldStick::SetUp_Components()
 	XMStoreFloat4x4(&WeaponDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
 	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("Shield_Root_Jnt");
 	WeaponDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(WeaponDesc.pSocket);
-	Safe_AddRef(m_pTransformCom);
+	//Safe_AddRef(WeaponDesc.pSocket);
+	//Safe_AddRef(m_pTransformCom);
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 	m_pWeapon = (CShieldStick_Weapon*)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ShieldStickWeapon"), L"ShieldStickWeapon", &WeaponDesc);
