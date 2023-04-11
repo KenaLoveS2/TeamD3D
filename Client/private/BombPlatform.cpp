@@ -55,7 +55,14 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	{
 		m_vMovingPos = _float4(14.7f, 3.15f, 29.7f, 1.f);
 	}
-
+	else if (!lstrcmp(m_szCloneObjectTag, L"2_BombPlatForm_1"))
+	{
+		m_vMovingPos = _float4(169.898f, 17.422f, 433.78f, 1.f);
+	}
+	else if (!lstrcmp(m_szCloneObjectTag, L"2_BombPlatForm"))
+	{
+		m_vMovingPos = _float4(175.061f, 14.317f, 432.084f, 1.f);
+	}
 	
 	m_vMovingQuat = XMQuaternionRotationNormal(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(CUtile::Get_RandomFloat(0.f, 359.f)));
 	m_fReturnTime = 5.f;
