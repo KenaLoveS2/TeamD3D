@@ -181,14 +181,13 @@ struct GS_OUT
 };
 
 
-//[maxvertexcount(24)]
-//void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
-//{
-//    
-//    GS_OUT Out = (GS_OUT)0;
-//
-//
-//}
+[maxvertexcount(24)]
+void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
+{
+    GS_OUT Out = (GS_OUT)0;
+
+
+}
 
 struct PS_IN
 {

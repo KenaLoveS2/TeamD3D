@@ -2100,9 +2100,7 @@ void CModel::InitPhysxData()
 void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix,
 	_bool bPickingTerrain, _int iGroundCoverNum, _float fBetween, _bool IsMultipleCheck, _float fRaduis)
 {
-
 	_float3 vIncreateDIrRatio = m_vIncreateDir;
-
 
 	if (m_bXYZRatioUse[0]) {
 		vIncreateDIrRatio.y = 0; vIncreateDIrRatio.z = 0; m_bXYZRatioUse[1] = m_bXYZRatioUse[2] = false;
@@ -2171,7 +2169,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	{
 		if (bPickingTerrain == false)
 		{
-			if (ImGui::BeginListBox("##"))			// �����?* �θ����?���� ��ġ)
+			if (ImGui::BeginListBox("##"))			
 			{
 				_int iIndex = 0;
 				for (auto& ProtoPair : m_pInstancingMatrix)
@@ -2206,7 +2204,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 
 		}
 		else
-		{	/* ���� */
+		{	
 			if (IsMultipleCheck)
 			{
 				for (_int i = 0; i < iGroundCoverNum; ++i)
@@ -2217,7 +2215,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 
 					_float4 RenewalPos = vPickingPos;
 
-#pragma region �簢��
+#pragma region Rectangle
 					/*	_float fMaxX = vPickingPos.x + fRaduis *0.5f;
 				_float fMaxZ = vPickingPos.z + fRaduis *0.5f;
 				_float fxRatio = 0.f , fzRatio =0.f;*/
@@ -2234,7 +2232,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 				RenewalPos.x += fxRatio;
 				RenewalPos.z += fzRatio;
 				fxRatio += fBetween;*/
-#pragma  endregion �簢��
+#pragma  endregion ~Rectangle
 
 					_float fRandX = CUtile::Get_RandomFloat(vPickingPos.x - fRaduis * 0.5f, (vPickingPos.x + fRaduis * 0.5f));
 					_float fRandZ = CUtile::Get_RandomFloat(vPickingPos.z - fRaduis * 0.5f, (vPickingPos.z + fRaduis * 0.5f));
@@ -2251,9 +2249,6 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 			}
 			else
 			{
-
-
-
 				_float4x4* Temp = new _float4x4;
 				XMStoreFloat4x4(Temp, XMMatrixIdentity());
 
@@ -2268,6 +2263,42 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 
 		}
 	}
+
+	if (ImGui::Button("Size_Random")) // Only Ground Cover
+	{
+		size_t Instnace_size = m_pInstancingMatrix.size();
+
+		_float4x4 InstancingMatrix;
+		_float4 vRight, vUp, vLook;
+
+		_float	vRandomSize = 0.f;
+		for(size_t i =  0;  i< Instnace_size; ++i)
+		{
+			InstancingMatrix = *m_pInstancingMatrix[i];
+			memcpy(&vRight, &InstancingMatrix.m[0], sizeof(_float4));
+			memcpy(&vUp, &InstancingMatrix.m[1], sizeof(_float4));
+			memcpy(&vLook, &InstancingMatrix.m[2], sizeof(_float4));
+
+			XMStoreFloat4(&vRight, XMVector4Normalize(XMLoadFloat4(&vRight)));
+			XMStoreFloat4(&vUp, XMVector4Normalize(XMLoadFloat4(&vUp)));
+			XMStoreFloat4(&vLook, XMVector4Normalize(XMLoadFloat4(&vLook)));
+
+			vRandomSize = CUtile::Get_RandomFloat(0.5f, 1.f);
+
+			vRight *= vRandomSize;
+			vUp *= vRandomSize;
+			vLook *= vRandomSize;
+
+			memcpy(&InstancingMatrix.m[0], &vRight, sizeof(_float4));
+			memcpy(&InstancingMatrix.m[1], &vUp, sizeof(_float4));
+			memcpy(&InstancingMatrix.m[2], &vLook, sizeof(_float4));
+
+
+			*m_pInstancingMatrix[i] = InstancingMatrix;
+		}
+
+	}
+
 
 	if (ImGui::Button("Instancing Num Delete"))
 	{

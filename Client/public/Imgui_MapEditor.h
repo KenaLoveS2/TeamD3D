@@ -42,6 +42,8 @@ private:
 	void														imgui_ObjectList_Clear();
 	void														Imgui_Instance_Edit_Collider();
 
+
+	
 	void														Imgui_DZ_objClear();
 
 
