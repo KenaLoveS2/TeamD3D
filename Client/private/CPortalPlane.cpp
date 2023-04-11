@@ -109,11 +109,23 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PORTAL));
 
+
+	SetUp_DiffuseTexture();
+
 	return S_OK;
 }
 
 void CPortalPlane::Tick(_float fTimeDelta)
 {
+#ifdef FOR_MAP_GIMMICK
+	
+#else
+	if (!m_bTestOnce)
+	{
+		SetUp_DiffuseTexture();
+		m_bTestOnce = true;
+}
+#endif
 
 	CGameObject::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
@@ -211,12 +223,64 @@ HRESULT CPortalPlane::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_Water", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
+	return S_OK;
+}
+
+HRESULT CPortalPlane::SetUp_DiffuseTexture()
+{
+
+
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Test.png"));
+		if (!lstrcmp(m_szCloneObjectTag, L"3_Portal0"))
+		{
+			m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Test.png"));
+		}
+		else if (!lstrcmp(m_szCloneObjectTag, L"3_Portal1"))
+		{
+			m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/3_Portal1.png"));
+		}
+		else if (!lstrcmp(m_szCloneObjectTag, L"3_BossDeadPortal_0"))
+		{
+			m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/3_BossDeadPortal_0.png"));
+		
+		}
+		else if (!lstrcmp(m_szCloneObjectTag, L"3_BossDeadPortal_1"))
+		{
+			m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/3_BossDeadPortal_1.png"));
+		
+		}
+		else if (!lstrcmp(m_szCloneObjectTag, L"MG_CrystalGimmick_Portal"))
+		{
+			m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Gimmick_MapCrystal.png"));
+		}
+		else if (!lstrcmp(m_szCloneObjectTag, L"MG_TeleFlower_Gimmick_StartPortal"))
+		{
+			m_bRendaerPortal_Gimmick = false;
+			//m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Test.png"));
+		}
+		else if (!lstrcmp(m_szCloneObjectTag, L"MG_TeleFlower_Gimmick_Goal_Portal"))
+		{
+			m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/GimmickMap_Final.png"));
+		}
+		else if (!lstrcmp(m_szCloneObjectTag, L"MG_Final_Portal"))
+		{
+			m_bRendaerPortal_Gimmick = false;
+			//m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Test.png"));
+		}
+		else if (!lstrcmp(m_szCloneObjectTag, L"MG_StartPortal"))
+		{
+			m_bRendaerPortal_Gimmick = false;
+			
+		}
+		else
+			m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Test.png"));
+
 	}
+
+
 
 	return S_OK;
 }
