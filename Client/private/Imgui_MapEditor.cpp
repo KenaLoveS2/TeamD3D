@@ -898,6 +898,13 @@ void CImgui_MapEditor::Imgui_Instance_Edit_Collider()
 
 void CImgui_MapEditor::Imgui_DZ_objClear()
 {
+
+	if (ImGui::Button("DZ_Portal On"))
+	{
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->Boss_HunterDeadGimmick();
+	}
+
 	if(ImGui::Button("DZ_Obj Clear"))
 	{
 		CControlRoom* pCtrlRoom =static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom",L"ControlRoom"));

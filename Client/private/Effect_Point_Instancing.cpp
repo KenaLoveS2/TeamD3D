@@ -205,6 +205,7 @@ HRESULT CEffect_Point_Instancing::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PARTICLE;
+	Set_ShapePosition();
 	return S_OK;
 }
 

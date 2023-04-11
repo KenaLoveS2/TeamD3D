@@ -17,6 +17,7 @@ public:
 	typedef struct  tag_Dynamic_StoneCube
 	{
 		_tchar pModelName[64] =L"";
+		_float4 vParentPos;
 		_float3 vSize;
 		_float3 vPos;
 		_float fLinearDamping;
@@ -45,8 +46,8 @@ public:
 
 public:
 	void				Actor_Clear();
-
-	void				Imgui_Move(_float3 vParentPos);
+	void				Imgui_Move_Pos(_float4 vParentPos);
+	
 
 private:
 	class CShader* m_pShaderCom = nullptr;
@@ -54,8 +55,10 @@ private:
 	class CModel* m_pModelCom = nullptr;
 
 private:
-	Dynamic_StoneCube_DESC									m_StoneCubeDesc;
+	Dynamic_StoneCube_DESC		m_StoneCubeDesc;
 	_bool				m_bTestOnce = false;
+
+				
 
 private:
 	HRESULT SetUp_Components();

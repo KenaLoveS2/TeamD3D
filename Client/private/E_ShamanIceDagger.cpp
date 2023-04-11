@@ -33,12 +33,15 @@ HRESULT CE_ShamanIceDagger::Initialize(void* pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 8.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
+	m_iTotalDTextureComCnt = 2;
+
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Effects(), E_FAIL);
 
 	m_fHDRValue = 2.f;
 	m_eEFfectDesc.fFrame[0] = 20.f;
+	m_eEFfectDesc.fFrame[1] = 63.f;
 	m_eEFfectDesc.bActive = false;
 	m_eEFfectDesc.vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f);
 	m_pTransformCom->Set_Scaled(_float3(0.1f, 0.1f, 0.1f));
@@ -78,7 +81,6 @@ HRESULT CE_ShamanIceDagger::Late_Initialize(void* pArg)
 	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
 	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 
-
 	return S_OK;
 }
 
@@ -111,6 +113,15 @@ void CE_ShamanIceDagger::Tick(_float fTimeDelta)
 	}
 
 	m_pTransformCom->Tick(fTimeDelta);
+
+	if (m_bColl)
+	{
+		_bool bResult = TurnOffSystem(m_fDissolveTime, 1.f, fTimeDelta);
+		if (bResult) {
+			m_bColl = false;
+			Reset();
+		}
+	}
 
 	/* MoveMentTrail */
 	{
@@ -223,6 +234,18 @@ void CE_ShamanIceDagger::ImGui_PhysXValueProperty()
 	__super::ImGui_PhysXValueProperty();
 }
 
+_int CE_ShamanIceDagger::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	if (pTarget != nullptr)
+	{
+		if (iColliderIndex == (_int)COL_PLAYER_WEAPON)
+		{
+			m_bColl = true;
+		}
+	}
+	return 0;
+}
+
 void CE_ShamanIceDagger::Reset()
 {
 	//for (auto& pChild : m_vecChild)
@@ -299,8 +322,8 @@ HRESULT CE_ShamanIceDagger::SetUp_ShaderResources()
 	if (m_pShaderCom == nullptr)
 		return E_FAIL;
 
-// 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
-// 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
+ 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bColl, sizeof(_bool)), E_FAIL);
+ 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
 
 	return S_OK;
 }

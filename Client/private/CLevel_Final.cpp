@@ -354,19 +354,35 @@ HRESULT CLevel_Final::Ready_Layer_Camera(const _tchar* pLayerTag)
 HRESULT CLevel_Final::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 {
 	{
-		//vector<CCinematicCamera::CAMERAKEYFRAME> v;
-		//string chatFileName;
-		//CCinematicCamera::Clone_Load_Data("BossHunter_Start.json", v, chatFileName);
-		//CGameObject* p_game_object = nullptr;
-		//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-		////	CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"BOSSWARRIOR_START", &v));
+		vector<CCinematicCamera::CAMERAKEYFRAME> v;
+		string chatFileName;
+		CCinematicCamera::Clone_Load_Data("BossWarrior_Start.json", v, chatFileName);
+		CGameObject* p_game_object = nullptr;
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+		CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"BOSSWARRIOR_START", &v));
 		//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"BOSSWARRIOR_START", &v, &p_game_object))) return E_FAIL;
 		//CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
-		//NULL_CHECK_RETURN(pCamera, E_FAIL);
-		//FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"BOSSWARRIOR_START", pCamera), E_FAIL);
-		//static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
-		//RELEASE_INSTANCE(CGameInstance)
-		//	v.clear();
+		NULL_CHECK_RETURN(pCamera, E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"BOSSWARRIOR_START", pCamera), E_FAIL);
+		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
+		RELEASE_INSTANCE(CGameInstance)
+		v.clear();
+	}
+
+	{
+		vector<CCinematicCamera::CAMERAKEYFRAME> v;
+		string chatFileName;
+		CCinematicCamera::Clone_Load_Data("BossWarrior_End.json", v, chatFileName);
+		CGameObject* p_game_object = nullptr;
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"BOSSWARRIOR_END", &v));
+		//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"BOSSWARRIOR_END", &v, &p_game_object))) return E_FAIL;
+		//CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
+		NULL_CHECK_RETURN(pCamera, E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"BOSSWARRIOR_END", pCamera), E_FAIL);
+		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
+		RELEASE_INSTANCE(CGameInstance)
+			v.clear();
 	}
 
 	return S_OK;

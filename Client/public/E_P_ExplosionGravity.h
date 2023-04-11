@@ -43,6 +43,8 @@ public:
 	HRESULT SetUp_Components();
 
 	HRESULT SetUp_ChangeBuffer();
+	HRESULT Save_Desc(const char* pFileTag);
+	HRESULT Load_Desc(const char* pFilePath);
 
 public:
 	TYPE	Get_Type() { return m_eType; }
@@ -65,6 +67,7 @@ public:
 private:
 	TYPE	m_eType = TYPE_DEFAULT;
 	_float	m_fDurationTime = 0.0f;
+	_float4	m_fRandomColor = { 1.f,1.f,1.f,1.f };
 
 	_vector m_vFixPos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 

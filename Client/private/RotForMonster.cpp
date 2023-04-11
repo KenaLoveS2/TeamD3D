@@ -23,7 +23,7 @@ HRESULT CRotForMonster::Initialize_Prototype()
 
 HRESULT CRotForMonster::Initialize(void* pArg)
 {
-	// Æò¼Ò¿¡ IDLE »óÅÂ·Î µü ÀÖ´Ù°¡ ½ºÆùµÇ¸é¼­ ¸ó½ºÅÍ °¨½Î´Â Çü½Ä
+	// ï¿½ï¿½Ò¿ï¿½ IDLE ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ ï¿½Ö´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸é¼­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	ZeroMemory(&m_Desc, sizeof(DESC));
 	if(pArg != nullptr)

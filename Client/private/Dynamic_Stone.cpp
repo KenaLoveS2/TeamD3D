@@ -28,9 +28,6 @@ HRESULT CDynamic_Stone::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(SetUp_Components()))
-		return E_FAIL;
-
 	m_bRenderActive = true;
 	return S_OK;
 }
@@ -50,11 +47,11 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	StoneCubeDesc.fMass = 50.f;
 	StoneCubeDesc.fLinearDamping = 3.f;
 
-	float	boxRadius = 0.20f; // ���� �߽ɰ� ���� �߽� ������ �Ÿ�
-	int		boxCountPerLayer = 2; // �� ���̾ ���Ե� �ڽ� ����
-	float	layerHeight = 1.f;  //StoneCubeDesc.vSize.y; // ���̾� �� ���� ����
-	float	layerRadiusStep = 0.0f; // ���̾� �� ������ ����
-	int		layerCount = 5; // ��ü ���̾� ����
+	float	boxRadius = 0.20f; 
+	int		boxCountPerLayer = 2; 
+	float	layerHeight = 1.f;  //StoneCubeDesc.vSize.y; 
+	float	layerRadiusStep = 0.0f; 
+	int		layerCount = 5; 
 
 	_float3 vColiderSize = { 0.f,0.f,0.f };
 
@@ -62,124 +59,124 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	{
 		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
 		StoneCubeDesc.fMass = 10000.f;
-		StoneCubeDesc.fLinearDamping = 0.5f;
+		StoneCubeDesc.fLinearDamping = 0.1f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.8f; // ���� �߽ɰ� ���� �߽� ������ �Ÿ�
-		boxCountPerLayer = 2; // �� ���̾ ���Ե� �ڽ� ����
-		layerHeight = StoneCubeDesc.vSize.y; // ���̾� �� ���� ��
-		layerRadiusStep = 0.0f; // ���̾� �� ������ ����
-		layerCount = 5; // ��ü ���̾� ����
+		boxRadius = 0.8f; 
+		boxCountPerLayer = 2; 
+		layerHeight = 0.3f;
+		layerRadiusStep = 0.0f; 
+		layerCount = 5; 
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall03");
-		vColiderSize = _float3(0.7f, 2.5f, 0.7f); //��ü�� �ݶ��̴� ������
+		vColiderSize = _float3(0.7f, 2.5f, 0.7f);
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall04")
 	{
 		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
 		StoneCubeDesc.fMass = 10000.f;
-		StoneCubeDesc.fLinearDamping = 0.5f;
+		StoneCubeDesc.fLinearDamping = 0.01f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.5f; // ���� �߽ɰ� ���� �߽� ������ �Ÿ�
-		boxCountPerLayer = 2; // �� ���̾ ���Ե� �ڽ� ����
-		layerHeight = StoneCubeDesc.vSize.y; // ���̾� �� ���� ��
-		layerRadiusStep = 0.0f; // ���̾� �� ������ ����
-		layerCount = 5; // ��ü ���̾� ����
+		boxRadius = 0.5f; 
+		boxCountPerLayer = 2; 
+		layerHeight = 0.34f;
+		layerRadiusStep = 0.0f; 
+		layerCount = 5; 
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall04");
-		vColiderSize = _float3(1.13f, 2.88f, 1.13f); //��ü�� �ݶ��̴� ������
+		vColiderSize = _float3(1.13f, 2.88f, 1.13f); 
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall05")
 	{
 		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
 		StoneCubeDesc.fMass = 10000.f;
-		StoneCubeDesc.fLinearDamping = 0.5f;
+		StoneCubeDesc.fLinearDamping = 0.01f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.7f; // ���� �߽ɰ� ���� �߽� ������ �Ÿ�
-		boxCountPerLayer = 2; // �� ���̾ ���Ե� �ڽ� ����
-		layerHeight = StoneCubeDesc.vSize.y; // ���̾� �� ���� ��
-		layerRadiusStep = 0.0f; // ���̾� �� ������ ����
-		layerCount = 5; // ��ü ���̾� ����
+		boxRadius = 0.8f; 
+		boxCountPerLayer = 2; 
+		layerHeight = 0.4f;
+		layerRadiusStep = 0.0f; 
+		layerCount = 5; 
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall05");
-		vColiderSize = _float3(0.9f, 3.3f, 0.9f); //��ü�� �ݶ��̴� ������
+		vColiderSize = _float3(0.9f, 3.3f, 0.9f); 
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockSmall06")
 	{
 		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
 		StoneCubeDesc.fMass = 10000.f;
-		StoneCubeDesc.fLinearDamping = 0.5f;
+		StoneCubeDesc.fLinearDamping = 0.01f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.8f; // ���� �߽ɰ� ���� �߽� ������ �Ÿ�
-		boxCountPerLayer = 2; // �� ���̾ ���Ե� �ڽ� ����
-		layerHeight = StoneCubeDesc.vSize.y; // ���̾� �� ���� ��
-		layerRadiusStep = 0.0f; // ���̾� �� ������ ����
-		layerCount = 5; // ��ü ���̾� ����
+		boxRadius = 0.8f; 
+		boxCountPerLayer = 2; 
+		layerHeight = 0.3f;
+		layerRadiusStep = 0.0f; 
+		layerCount = 5; 
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockSmall06");
-		vColiderSize = _float3(1.f, 2.8f, 1.f); //��ü�� �ݶ��̴� ������
+		vColiderSize = _float3(1.f, 2.8f, 1.f); 
 
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_MaskShrine_Rock_09")
 	{
 		StoneCubeDesc.vSize = _float3(0.09f, 0.09f, 0.09f);
 		StoneCubeDesc.fMass = 10000.f;
-		StoneCubeDesc.fLinearDamping = 0.5f;
+		StoneCubeDesc.fLinearDamping = 0.01f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.4f; // ���� �߽ɰ� ���� �߽� ������ �Ÿ�
-		boxCountPerLayer = 2; // �� ���̾ ���Ե� �ڽ� ����
-		layerHeight = StoneCubeDesc.vSize.y; // ���̾� �� ���� ��
-		layerRadiusStep = 0.0f; // ���̾� �� ������ ����
-		layerCount = 5; // ��ü ���̾� ����
+		boxRadius = 0.4f; 
+		boxCountPerLayer = 2; 
+		layerHeight = 0.3f;
+		layerRadiusStep = 0.0f; 
+		layerCount = 6; 
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_MaskShrine_Rock_09");
-		vColiderSize = _float3( 0.26f,1.2f,0.26f ); //��ü�� �ݶ��̴� ������
+		vColiderSize = _float3( 0.26f,1.2f,0.26f ); 
 
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium04")
 	{
 		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
 		StoneCubeDesc.fMass = 10000.f;
-		StoneCubeDesc.fLinearDamping = 0.5f;
+		StoneCubeDesc.fLinearDamping = 0.01f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
 
-		boxRadius = 0.65f; // ���� �߽ɰ� ���� �߽� ������ �Ÿ�
-		boxCountPerLayer = 2; // �� ���̾ ���Ե� �ڽ� ����
-		layerHeight = StoneCubeDesc.vSize.y; // ���̾� �� ���� ��
-		layerRadiusStep = 0.0f; // ���̾� �� ������ ����
-		layerCount = 5; // ��ü ���̾� ����
+		boxRadius = 0.7f;
+		boxCountPerLayer = 2; 
+		layerHeight = 0.43f;
+		layerRadiusStep = 0.0f; 
+		layerCount = 5; 
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium04");
-		vColiderSize = _float3(0.9f, 2.44f, 0.9f); //��ü�� �ݶ��̴� ������
+		vColiderSize = _float3(0.9f, 2.44f, 0.9f);
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium06")
 	{
 		StoneCubeDesc.vSize = _float3(0.16f, 0.16f, 0.16f);
 		StoneCubeDesc.fMass = 10000.f;
-		StoneCubeDesc.fLinearDamping = 0.5f;
+		StoneCubeDesc.fLinearDamping = 0.01f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 		
-		boxRadius = 0.7f; // ���� �߽ɰ� ���� �߽� ������ �Ÿ�
-		boxCountPerLayer = 2; // �� ���̾ ���Ե� �ڽ� ����
-		layerHeight = StoneCubeDesc.vSize.y; // ���̾� �� ���� ��
-		layerRadiusStep = 0.0f; // ���̾� �� ������ ����
-		layerCount = 5; // ��ü ���̾� ����
+		boxRadius = 0.7f; 
+		boxCountPerLayer = 2; 
+		layerHeight = 0.3f;
+		layerRadiusStep = 0.0f; 
+		layerCount = 5; 
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium06");
-		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //��ü�� �ݶ��̴� ������
+		vColiderSize = _float3(0.67f, 2.4f, 0.67f); 
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Dy_RockMedium07")
 	{
 		StoneCubeDesc.vSize = _float3(0.16f,0.16f,0.16f);
 		StoneCubeDesc.fMass = 10000.f;
-		StoneCubeDesc.fLinearDamping = 0.5f;
+		StoneCubeDesc.fLinearDamping = 0.01f;
 		iMaxIndex = 3;  jMaxIndex = 4; kMaxIndex = 3;
 
-		boxRadius = 0.7f; // ���� �߽ɰ� ���� �߽� ������ �Ÿ�
-		boxCountPerLayer = 2; // �� ���̾ ���Ե� �ڽ� ����
-		layerHeight = StoneCubeDesc.vSize.y; // ���̾� �� ���� ��
-		layerRadiusStep = 0.0f; // ���̾� �� ������ ����
-		layerCount = 5; // ��ü ���̾� ����
+		boxRadius = 0.7f; 
+		boxCountPerLayer = 2; 
+		layerHeight = 0.5f;		//StoneCubeDesc.vSize.y; 
+		layerRadiusStep = 0.0f; 
+		layerCount = 5; 
 		lstrcpy(StoneCubeDesc.pModelName, L"Prototype_Component_Model_Dy_RockMedium07");
-		vColiderSize = _float3(0.67f, 2.4f, 0.67f); //��ü�� �ݶ��̴� ������
+		vColiderSize = _float3(0.67f, 2.4f, 0.67f); 
 	}
 
 	vSize.x += 0.05f;
@@ -212,7 +209,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 		}
 	}*/
 
-	/*���� ž*/
+	
 	
 	_uint iTemp = 0;
 	for (int layer = 0; layer < layerCount; ++layer) 
@@ -227,12 +224,14 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 				layerHeight* layer,
 				layerRadius * std::sin(angleStep *i ));
 
+			StoneCubeDesc.vParentPos = vPos;
 			Pxpos.x += vPos.x; StoneCubeDesc.vPos.x = Pxpos.x;
 			Pxpos.y += vPos.y; StoneCubeDesc.vPos.y = Pxpos.y;
 			Pxpos.z += vPos.z; StoneCubeDesc.vPos.z = Pxpos.z;
 			
 			pCreateObject = nullptr;
 
+		
 			const _tchar* NewName = CUtile::Create_DummyString(m_szCloneObjectTag, ++iTemp);
 
 			pCreateObject = pGameInst->Clone_GameObject(
@@ -272,8 +271,6 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 
 	m_pActor = pPhysX->Find_StaticActor(m_szCloneObjectTag);
 
-	/*���� ���� �����ϰ� �������� �ٲٱ�*/
-
 	return S_OK;
 }
 
@@ -290,16 +287,20 @@ void CDynamic_Stone::Tick(_float fTimeDelta)
 	}
 #endif
 
-
+	_float4 vPos;
+	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	for (auto& pObj : m_pDynamicObj_List)
 	{
 		if (pObj != nullptr)
 		{
+#ifdef FOR_MAP_GIMMICK
+
+#else
+			static_cast<CDynamic_StoneCube*>(pObj)->Imgui_Move_Pos(vPos);
+#endif
 			pObj->Tick(fTimeDelta);
 		}
 	}
-
-	//CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
 
 	__super::Tick(fTimeDelta);
 }
@@ -308,18 +309,23 @@ void CDynamic_Stone::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	if (m_bOnceColl && m_pActor)
+	{
+		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+		pPhysX->Delete_Actor(m_pActor);
+		m_pActor = nullptr;
+	}
+
+	if (m_bRenderActive == false)
+		return;
+
 	for (auto& pObj : m_pDynamicObj_List)
 	{
 		if (pObj != nullptr)
 			pObj->Late_Tick(fTimeDelta);
 	}
 
-	if(m_bOnceColl && m_pActor)
-	{
-		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
-		pPhysX->Delete_Actor(m_pActor);
-		m_pActor = nullptr;
-	}
+
 }
 
 HRESULT CDynamic_Stone::Render()
@@ -342,7 +348,7 @@ _int CDynamic_Stone::Execute_Collision(CGameObject* pTarget, _float3 vCollisionP
 	if (pTarget == nullptr || COL_DYNAMIC_ENVIOBJ == iColliderIndex)
 		return 0;
 
-	if (m_bOnceColl == true)		//�ѹ��� �����Ǳ����ؼ�
+	if (m_bOnceColl == true)		
 		return 0;
 
 	_bool bMonsterRealAttack = false;
@@ -385,91 +391,6 @@ void CDynamic_Stone::ImGui_PhysXValueProperty()
 
 }
 
-HRESULT CDynamic_Stone::Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)
-{
-	//__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
-
-	///* For.Com_CtrlMove */
-	//if (eComponentOption == COMPONENTS_CONTROL_MOVE)
-	//{
-	//	if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_ControlMove"), pComTag,
-	//		(CComponent**)&m_pControlMoveCom)))
-	//		return E_FAIL;
-	//}
-	///* For.Com_Interaction */
-	//else if (eComponentOption == COMPONENTS_INTERACTION)
-	//{
-	//	if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_Interaction_Com"), pComTag,
-	//		(CComponent**)&m_pInteractionCom)))
-	//		return E_FAIL;
-	//}
-	//else
-	//	return S_OK;
-
-	return S_OK;
-
-}
-
-HRESULT CDynamic_Stone::SetUp_Components()
-{
-	///* For.Com_Renderer */
-	//if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
-	//	(CComponent**)&m_pRendererCom)))
-	//	return E_FAIL;
-
-	///* For.Com_Shader */
-	///*���߿�  ���� �ε��� �����ؾ߉�*/
-	//if (m_EnviromentDesc.iCurLevel == 0)
-	//	m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
-
-	///* For.Com_Model */ 	/*���߿�  ���� �ε��� �����ؾ߉�*/
-	//if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
-	//	(CComponent**)&m_pModelCom)))
-	//	return E_FAIL;
-	///* For.Com_Shader */
-	///* For.Com_Shader */
-	//if (m_pModelCom->Get_IStancingModel())
-	//{
-	//	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
-	//		(CComponent**)&m_pShaderCom)))
-	//		return E_FAIL;
-	//	m_iShaderOption = 1;
-	//}
-	//else
-	//{
-	//	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
-	//		(CComponent**)&m_pShaderCom)))
-	//		return E_FAIL;
-	//	m_iShaderOption = 4;
-	//}
-
-
-	return S_OK;
-}
-
-HRESULT CDynamic_Stone::SetUp_ShaderResources()
-{
-	/*NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
-	RELEASE_INSTANCE(CGameInstance);*/
-	return S_OK;
-}
-
-HRESULT CDynamic_Stone::SetUp_ShadowShaderResources()
-{
-	/*NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
-	RELEASE_INSTANCE(CGameInstance);*/
-	return S_OK;
-}
 
 CDynamic_Stone* CDynamic_Stone::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -495,10 +416,11 @@ CGameObject* CDynamic_Stone::Clone(void* pArg)
 	return pInstance;
 }
 
-void CDynamic_Stone::Free() //���� free �Լ� ȣ�⺸�� 
+void CDynamic_Stone::Free() 
 {
 	if(m_isCloned)
 	{
+
 		for (auto& pObj : m_pDynamicObj_List)
 		{
 			if (pObj != nullptr)
