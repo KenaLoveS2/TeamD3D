@@ -35,7 +35,7 @@ public:
 
 private:
 	HRESULT			Late_init_For_GimmickLevel();
-
+	
 private:
 	CModel*					m_pModelCom = nullptr;
 
@@ -47,9 +47,12 @@ private:
 	_float					m_fTimeDelta = 0.f;
 	_bool					m_bRendaerPortal_Gimmick = true;
 
+	_bool					m_bTestOnce = false;
 
 private:
 	HRESULT  SetUp_Components();
+	HRESULT  SetUp_DiffuseTexture();
+
 	HRESULT  SetUp_ShaderResources();
 
 public:

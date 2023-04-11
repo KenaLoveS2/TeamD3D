@@ -49,6 +49,12 @@ HRESULT CPet::Late_Initialize(void* pArg)
 
 void CPet::Tick(_float fTimeDelta)
 {
+	if(!m_bTestOnce)
+	{
+		CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
+		m_bTestOnce = true;
+	}
+
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 
 #ifdef FOR_MAP_GIMMICK
@@ -118,8 +124,11 @@ HRESULT CPet::Render()
 
 void CPet::ImGui_AnimationProperty()
 {
-	//m_pTransformCom->Imgui_RenderProperty_ForJH();
-	//m_pModelCom->Imgui_RenderProperty();
+	if (CGameInstance::GetInstance()->Get_SelectObjectPtr() != this)
+		return;
+
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
+	m_pModelCom->Imgui_RenderProperty();
 }
 
 

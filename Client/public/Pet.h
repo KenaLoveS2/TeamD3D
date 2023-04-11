@@ -59,7 +59,7 @@ private:
 	class CControlMove* m_pControlMoveCom = nullptr;
 
 	_bool m_bAnimActive = false;
-
+	_bool	m_bTestOnce = false;
 
 private:
 	HRESULT SetUp_Components();

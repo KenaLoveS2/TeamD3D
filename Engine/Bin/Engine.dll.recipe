@@ -2,27 +2,27 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\sam51\Desktop\TeamD3D\Engine\Bin\Engine.dll</FullPath>
+      <FullPath>C:\Users\hsumi\Documents\GitHub\TeamD3D\Engine\Bin\Engine.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles>
     <ContentFile>
-      <FullPath>C:\Users\sam51\Desktop\TeamD3D\Engine\Bin\Shader_FXAA.cso</FullPath>
+      <FullPath>C:\Users\hsumi\Documents\GitHub\TeamD3D\Engine\Bin\Shader_FXAA.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\sam51\Desktop\TeamD3D\Engine\Bin\Shader_Deferred.cso</FullPath>
+      <FullPath>C:\Users\hsumi\Documents\GitHub\TeamD3D\Engine\Bin\Shader_Deferred.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\sam51\Desktop\TeamD3D\Engine\Bin\Shader_Navigation.cso</FullPath>
+      <FullPath>C:\Users\hsumi\Documents\GitHub\TeamD3D\Engine\Bin\Shader_Navigation.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\sam51\Desktop\TeamD3D\Engine\Bin\Shader_PhysX.cso</FullPath>
+      <FullPath>C:\Users\hsumi\Documents\GitHub\TeamD3D\Engine\Bin\Shader_PhysX.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\sam51\Desktop\TeamD3D\Engine\Bin\Shader_PostProcessVFX.cso</FullPath>
+      <FullPath>C:\Users\hsumi\Documents\GitHub\TeamD3D\Engine\Bin\Shader_PostProcessVFX.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\sam51\Desktop\TeamD3D\Engine\Bin\Shader_SSAO.cso</FullPath>
+      <FullPath>C:\Users\hsumi\Documents\GitHub\TeamD3D\Engine\Bin\Shader_SSAO.cso</FullPath>
     </ContentFile>
   </ContentFiles>
   <SatelliteDlls />

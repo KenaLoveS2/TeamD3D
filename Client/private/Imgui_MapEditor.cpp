@@ -771,7 +771,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	//if (pTerrainEditor == nullptr)
 	//	return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain2"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain3"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -1072,8 +1072,6 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 		EnviromentDesc.iCurLevel = iLevel;
 		EnviromentDesc.iShaderPass = iShaderPass;
 
-		if (wszCloneTag == L"RuinStairs_8_Set_Straight")
-			_bool b = false;
 
 		if (FAILED(pGameInstance->Clone_GameObject(iLevel,
 			wszLayerTag,
