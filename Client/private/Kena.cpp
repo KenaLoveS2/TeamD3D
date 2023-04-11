@@ -1236,7 +1236,7 @@ void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 		m_bRotActionPossible = true;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-		if (pGameInstance->Key_Down(DIK_R))
+		if (pGameInstance->Key_Down(DIK_B))		
 		{
 			/* UI Control */
 			m_pKenaStatus->Set_CurPIPGuage(m_pKenaStatus->Get_CurPIPGuage() - 1.f);
