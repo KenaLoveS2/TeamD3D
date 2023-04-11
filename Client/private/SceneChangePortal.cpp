@@ -151,7 +151,7 @@ HRESULT CSceneChangePortal::SetUp_Components()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Test.png"));
+		m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/SceneChange_Portal.png"));
 	}
 
 	return S_OK;

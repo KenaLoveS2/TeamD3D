@@ -68,7 +68,7 @@ void CEnviromentObj::Late_Tick(_float fTimeDelta)
 
 #ifdef _DEBUG
 	m_bRenderActive =  m_pEnviroment_Manager->Is_RenderIndex(m_EnviromentDesc.iRoomIndex);
-	if(m_bRenderActive==false &&  CGameInstance::GetInstance()->Get_CurLevelIndex() == 6)
+	//if(m_bRenderActive==false &&  CGameInstance::GetInstance()->Get_CurLevelIndex() == 6)
 		m_bRenderActive=true;
 #else
 	m_bRenderActive = m_pEnviroment_Manager->Is_RenderIndex(m_EnviromentDesc.iRoomIndex);
