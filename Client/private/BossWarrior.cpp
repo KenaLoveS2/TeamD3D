@@ -90,7 +90,7 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 HRESULT CBossWarrior::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
-	// ����
+	
 	{	
 		_float3 vPivotScale = _float3(0.85f, 0.8f, 1.f); // _float3(0.8f, 3.f, 1.f); 
 		_float3 vPivotPos = _float3(0.f, 1.6f, 0.f);    // _float3(0.f, 3.8f, 0.f)
@@ -113,8 +113,6 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
-
-		// ���� �ڿ� ������ vPivotPos�� �־��ָ�ȴ�.
 		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
 	}
 	
@@ -193,7 +191,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 
 void CBossWarrior::Tick(_float fTimeDelta)
 {		
-	m_bReadySpawn = true;
+	// m_bReadySpawn = true;
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -203,7 +201,7 @@ void CBossWarrior::Tick(_float fTimeDelta)
 
 	m_pHat->Tick(fTimeDelta);
 
-	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
