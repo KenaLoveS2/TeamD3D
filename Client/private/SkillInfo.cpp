@@ -100,7 +100,7 @@ HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pConte
 	protoTag += wtype;
 	m_pTextureProtoTag = CUtile::Create_String(protoTag.c_str());
 
-	if (g_LEVEL == LEVEL_TESTPLAY)
+	//if (g_LEVEL == LEVEL_TESTPLAY)
 	{
 		/* Create Texture Component */
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);

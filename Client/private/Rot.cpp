@@ -46,6 +46,10 @@ HRESULT CRot::Initialize(void* pArg)
 		m_Desc.WorldMatrix._43 = -5.f;
 	}
 
+	wstring wstrTag = wstring(m_szCloneObjectTag) + TEXT("Wisp");
+	m_pRotWisp = static_cast<CRotWisp*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp"), CUtile::Create_StringAuto(wstrTag.c_str())));
+	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
+
 	m_pRotHat = (CRotHat*)CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_RotHat"), CUtile::Create_DummyString(TEXT("Hat"), m_iEveryRotCount));
 	assert(m_pRotHat && " CRot::Initialize()");
 
@@ -64,10 +68,6 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	
 	m_pMyCam = static_cast<CCameraForRot*>(m_pGameInstance->Find_Camera(L"ROT_CAM"));	
 
-	wstring wstrTag = wstring(m_szCloneObjectTag) + TEXT("Wisp");
-	m_pRotWisp = static_cast<CRotWisp*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp"), CUtile::Create_StringAuto(wstrTag.c_str())));
-	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
-
 	if(!wcscmp(m_szCloneObjectTag, TEXT("Saiya_Rot")) || !wcscmp(m_szCloneObjectTag, TEXT("Hunter_Rot")))
 		m_bWakeUp = true;
 	else if(!m_bManualWakeUp)
@@ -81,12 +81,12 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 void CRot::Tick(_float fTimeDelta)
 {
-	 m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	 m_pModelCom->Play_Animation(fTimeDelta);
-	 m_pRotHat->Tick(fTimeDelta);
-	 // m_pTransformCom->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
-	 m_pTransformCom->Tick(fTimeDelta);
-	 return;
+	 //m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	 //m_pModelCom->Play_Animation(fTimeDelta);
+	 //m_pRotHat->Tick(fTimeDelta);
+	 //// m_pTransformCom->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
+	 //m_pTransformCom->Tick(fTimeDelta);
+	 //return;
 
 	__super::Tick(fTimeDelta);
 
@@ -112,11 +112,11 @@ void CRot::Tick(_float fTimeDelta)
 
 void CRot::Late_Tick(_float fTimeDelta)
 {
-	 __super::Late_Tick(fTimeDelta);
-	 m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-	 m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	 m_pRotHat->Late_Tick(fTimeDelta);
-	 return;
+	 //__super::Late_Tick(fTimeDelta);
+	 //m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	 //m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	 //m_pRotHat->Late_Tick(fTimeDelta);
+	 //return;
 
 	if(m_pRotWisp->Get_Collect())
 	{
