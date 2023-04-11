@@ -154,11 +154,8 @@ HRESULT CMage::Late_Initialize(void * pArg)
 
 void CMage::Tick(_float fTimeDelta)
 {
-	//m_bReadySpawn = true;
-	//m_pModelCom->Play_Animation(fTimeDelta);
-
-	//return;
-
+	// m_bReadySpawn = true;
+	
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -346,6 +343,8 @@ void CMage::Push_EventFunctions()
 	TurnOnFireBullet(true, 0.0f);
 	Play_AttackSound(true, 0.f);
 	Play_ImpactSound(true, 0.f);		
+
+	Stop_BindRotAttackSound(true, 0.f);
 }
 
 HRESULT CMage::SetUp_State()
@@ -737,7 +736,7 @@ HRESULT CMage::SetUp_State()
 	{
 		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HURT], 0.7f);
 		Start_Bind(COMMAND);
-	})
+	})	
 		.OnExit([this]()
 	{	
 		Reset_Attack();
