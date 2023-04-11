@@ -89,6 +89,9 @@ HRESULT CMonster::Initialize(void* pArg)
 HRESULT CMonster::Late_Initialize(void * pArg)
 {
 	/* Is In Camera? */
+	if (lstrcmp(m_Desc.pGroupName, L"N/A"))
+		CGameInstance::GetInstance()->Add_Member(wstring(m_Desc.pGroupName), this);
+
 	return S_OK;
 }
 
@@ -152,7 +155,7 @@ void CMonster::Imgui_RenderProperty()
 	//	m_bStronglyHit = true;
 	//if (ImGui::Button("WEALKYDMG"))
 	//	m_bWeaklyHit = true;
-	ImGui::InputInt("RoomIndex", &m_Desc.iRoomIndex);
+	//ImGui::InputText("RoomIndex", &m_Desc.iRoomIndex);
 }
 
 void CMonster::ImGui_AnimationProperty()

@@ -412,4 +412,3 @@ void CMainApp::Free()
 	CUI_ClientManager::GetInstance()->Release();
 	
 }
-

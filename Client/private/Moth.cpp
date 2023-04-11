@@ -34,7 +34,7 @@ HRESULT CMoth::Initialize(void* pArg)
 		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
 	else
 	{
-		m_Desc.iRoomIndex = 0;
+		m_Desc.pGroupName = L"";
 		m_Desc.WorldMatrix = _smatrix();
 		m_Desc.WorldMatrix._41 = -10.f;		
 		m_Desc.WorldMatrix._42 = 0.f;

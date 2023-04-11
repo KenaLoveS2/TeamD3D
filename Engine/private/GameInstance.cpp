@@ -14,6 +14,7 @@
 #include "PostFX.h"
 #include "Enviroment_Manager.h"
 #include "CTexture_Manager.h"
+#include "Group_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -38,6 +39,7 @@ CGameInstance::CGameInstance()
 	, m_pCamera_Manager(CCamera_Manager::GetInstance())
 	, m_pPostFX(CPostFX::GetInstance())
 	, m_pFunction_Manager(CFunction_Manager::GetInstance())
+	, m_pGroup_Manager(CGroup_Manager::GetInstance())
 	, m_pEnviroment_Manager(CEnviroment_Manager::GetInstance())
 	, m_pPhysX_Manager(CPhysX_Manager::GetInstance()) // kbj PhysX
 {
@@ -59,6 +61,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pCamera_Manager);
 	Safe_AddRef(m_pPostFX);
 	Safe_AddRef(m_pFunction_Manager);
+	Safe_AddRef(m_pGroup_Manager);
 	Safe_AddRef(m_pPhysX_Manager); // kbj PhysX
 }
 
@@ -973,6 +976,29 @@ HRESULT CGameInstance::Call_Function(CBase * pObj, const _tchar * pFuncName, _fl
 	return m_pFunction_Manager->Call_Function(pObj, pFuncName, fTimeDelta);
 }
 
+HRESULT CGameInstance::Add_Member(const wstring& wstrGroupName, CGameObject* pObject)
+{
+	NULL_CHECK_RETURN(m_pGroup_Manager, E_FAIL);
+
+	return m_pGroup_Manager->Add_Member(wstrGroupName, pObject);
+}
+
+template<typename T>
+_bool CGameInstance::Check_MemberState_byFunction(const wstring& wstrGroupName, _bool (T::* memFunc)())
+{
+	NULL_CHECK_RETURN(m_pGroup_Manager, false);
+
+	return m_pGroup_Manager->Check_MemberState_byFunction(wstrGroupName, memFunc);
+}
+
+template<typename T>
+void CGameInstance::SetState_byFunction(const wstring& wstrGroupName, void (T::* memFunc)(_bool), _bool bValue)
+{
+	NULL_CHECK_RETURN(m_pGroup_Manager, );
+
+	return m_pGroup_Manager->SetState_byFunction(wstrGroupName, memFunc, bValue);
+}
+
 void CGameInstance::Set_PlayerPtr(CGameObject * pPlayer)
 {
 	assert(nullptr !=m_pEnviroment_Manager && "CGameInstance::Set_PlayerPtr");
@@ -1015,6 +1041,7 @@ void CGameInstance::Release_Engine()
 	CGameInstance::GetInstance()->DestroyInstance();
 
 	CPostFX::GetInstance()->DestroyInstance();
+	CGroup_Manager::GetInstance()->DestroyInstance();
 	CObject_Manager::GetInstance()->DestroyInstance();
 	CFunction_Manager::GetInstance()->DestroyInstance();
 	CCamera_Manager::GetInstance()->DestroyInstance();
@@ -1038,6 +1065,7 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pGroup_Manager);
 	Safe_Release(m_pFunction_Manager);
 	Safe_Release(m_pEnviroment_Manager);
 	Safe_Release(m_pCamera_Manager);	

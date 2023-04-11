@@ -60,7 +60,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	}
 	else
 	{
-		m_Desc.iRoomIndex = 0;
+		m_Desc.pGroupName = L"";
 		m_Desc.WorldMatrix = _smatrix();
 		m_Desc.WorldMatrix._41 = -12.f;
 		m_Desc.WorldMatrix._42 = m_fFlyHeightY;
@@ -1691,7 +1691,7 @@ void CBossHunter::FireArrow_Single(_bool bIsInit, _float fTimeDelta)
 	{
 		for (_uint j = 0; j < SINGLE_SHOT_FRIEND_COUNT; j++)
 		{
-			m_vSingleShotTargetPosTable[i * SINGLE_SHOT_FRIEND_COUNT + j] = vKenaPos + vDirTable[i] * (j + 1) * fDist;
+			m_vSingleShotTargetPosTable[i * SINGLE_SHOT_FRIEND_COUNT + j] = vKenaPos + vDirTable[i] * _float(j + 1) * fDist;
 		}
 	}
 	

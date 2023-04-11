@@ -22,6 +22,7 @@
 #include "UI.h"
 #include "Level_Loading.h"
 #include "ControlRoom.h"
+#include "Monster.h"
 
 CLevel_TestPlay::CLevel_TestPlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -127,6 +128,9 @@ HRESULT CLevel_TestPlay::Initialize()
 void CLevel_TestPlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (CGameInstance::GetInstance()->Check_MemberState_byFunction(L"Level0_MonsterGroup_0", &CMonster::Is_DeadTest) == true)
+		int a = 0;
 }
 
 void CLevel_TestPlay::Late_Tick(_float fTimeDelta)

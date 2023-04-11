@@ -219,6 +219,16 @@ public: /* For.PipeLine */
 		};
 		HRESULT		Call_Function(CBase* pObj, const _tchar* pFuncName, _float fTimeDelta);
 
+	public:		/* For Group Manager */
+		HRESULT					Add_Member(const wstring& wstrGroupName, class CGameObject* pObject);
+
+		template<typename T>
+		_bool					Check_MemberState_byFunction(const wstring& wstrGroupName, _bool (T::* memFunc)());
+
+		template<typename T>
+		void					SetState_byFunction(const wstring& wstrGroupName, void (T::* memFunc)(_bool), _bool bValue);
+
+
 	public: // for m_pEnviroment_Manager
 		void	Set_PlayerPtr(class CGameObject* pPlayer);
 		_bool	Is_RenderIndex(_uint iObjRoomIndex);
@@ -251,6 +261,7 @@ public:
 		class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
 		class CPostFX* m_pPostFX = nullptr;
 		class CFunction_Manager*	m_pFunction_Manager = nullptr;
+		class CGroup_Manager* m_pGroup_Manager = nullptr;
 		class CPhysX_Manager* m_pPhysX_Manager = nullptr;
 		class CTexture_Manager* m_pTexture_Manager = nullptr;
 	public:
@@ -261,4 +272,3 @@ public:
 };
 
 END
-

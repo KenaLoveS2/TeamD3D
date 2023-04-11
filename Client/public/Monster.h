@@ -25,8 +25,8 @@ class CMonster  : public CGameObject
 public:
 	typedef  struct tagMonsterDesc
 	{
-		_int			iRoomIndex;
-		_float4x4 WorldMatrix;
+		_tchar*		pGroupName;
+		_float4x4	WorldMatrix;
 	}DESC;
 
 protected:
@@ -71,6 +71,7 @@ public:
 	DESC							Get_Desc() { return m_Desc; };
 	virtual _vector				Get_FocusPosition();
 	const _bool&					Is_Dead() const { return m_bDeath; }
+	_bool							Is_DeadTest() { return m_bDeath; }
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;

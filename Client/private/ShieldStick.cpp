@@ -35,7 +35,7 @@ HRESULT CShieldStick::Initialize(void* pArg)
 		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
 	else
 	{
-		m_Desc.iRoomIndex = 0;
+		m_Desc.pGroupName = L"";
 		m_Desc.WorldMatrix = _smatrix();
 		m_Desc.WorldMatrix._41 = -14.f;
 		m_Desc.WorldMatrix._43 = -14.f;
