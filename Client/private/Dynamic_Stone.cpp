@@ -309,18 +309,23 @@ void CDynamic_Stone::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	if (m_bOnceColl && m_pActor)
+	{
+		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+		pPhysX->Delete_Actor(m_pActor);
+		m_pActor = nullptr;
+	}
+
+	if (m_bRenderActive == false)
+		return;
+
 	for (auto& pObj : m_pDynamicObj_List)
 	{
 		if (pObj != nullptr)
 			pObj->Late_Tick(fTimeDelta);
 	}
 
-	if(m_bOnceColl && m_pActor)
-	{
-		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
-		pPhysX->Delete_Actor(m_pActor);
-		m_pActor = nullptr;
-	}
+
 }
 
 HRESULT CDynamic_Stone::Render()
