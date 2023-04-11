@@ -564,6 +564,13 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;*/
 
 #else
+
+	/* Prototype_Component_Model_BowTarget */
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_BowTarget", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/BowTarget/BowTarget.model", PivotMatrix)), E_FAIL);
+	/* Prototype_GameObject_BowTarget */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_BowTarget", CBowTarget::Create(m_pDevice, m_pContext)), E_FAIL);
+
 	/* Prototype_Component_Model_TeleportFlower */
 	
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f));
@@ -1084,6 +1091,16 @@ HRESULT CLoader::Loading_ForMapTool()
 			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
 			return E_FAIL;
 
+		/* Prototype_Component_Model_RuinsKit_BombPlatForm */
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(90.f));
+		FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_RuinsKit_BombPlatForm",
+			CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.mdat", PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.json", false)), E_FAIL);
+		/* Prototype_GameObject_BombPlatform */
+		FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_RuinsKit_BombPlatForm", CBombPlatform::Create(m_pDevice, m_pContext)), E_FAIL);
+
+	
+
+
 #pragma  endregion Born_GroundCover
 
 #pragma  region Start_Forest_Room
@@ -1361,10 +1378,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Crystal"),
 		CCrystal::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	/* For.Prototype_GameObject_BowTarget */
-// 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
-// 		CBowTarget::Create(m_pDevice, m_pContext))))
-// 		return E_FAIL;
 	/* For.Prototype_GameObject_PulseStone */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulseStone"),
 		CPulseStone::Create(m_pDevice, m_pContext))))
@@ -1795,6 +1808,8 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	/* Prototype_Component_Model_BowTarget */
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BowTarget", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/BowTarget/BowTarget.model", PivotMatrix)), E_FAIL);
+	/* Prototype_GameObject_BowTarget */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_BowTarget", CBowTarget::Create(m_pDevice, m_pContext)), E_FAIL);
 
 	/* Prototype_Component_Model_BowTarget_Husk */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BowTarget_Husk", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/BowTarget/BowTarget_Husk.mdat", PivotMatrix)), E_FAIL);
@@ -1840,19 +1855,10 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	/* Prototype_GameObject_HealthFlower */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_HealthFlower_Anim", CHealthFlower_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
 	
-	/* Prototype_GameObject_BowTarget */
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_BowTarget", CBowTarget::Create(m_pDevice, m_pContext)), E_FAIL);
-
+	
 	/* Prototype_GameObject_Player_Camera */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Camera_Player", CCamera_Player::Create(m_pDevice, m_pContext)), E_FAIL);
 
-	/* Prototype_Component_Model_RuinsKit_BombPlatForm */
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(90.f));
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RuinsKit_BombPlatForm",
-		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.mdat", PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.json", false)), E_FAIL);
-
-	/* Prototype_GameObject_BombPlatform */
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_RuinsKit_BombPlatForm", CBombPlatform::Create(m_pDevice, m_pContext)), E_FAIL);
 
 	return S_OK;
 }
@@ -3261,7 +3267,12 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Plants3",
 			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
 			return E_FAIL;
-
+		/* Prototype_Component_Model_RuinsKit_BombPlatForm */
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(90.f));
+		FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RuinsKit_BombPlatForm",
+			CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.mdat", PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.json", false)), E_FAIL);
+		/* Prototype_GameObject_BombPlatform */
+		FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_RuinsKit_BombPlatForm", CBombPlatform::Create(m_pDevice, m_pContext)), E_FAIL);
 
 
 #pragma  endregion Born_GroundCover
@@ -3310,13 +3321,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Crystal"),
 		CCrystal::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
-
-	/* For.Prototype_GameObject_BowTarget */
-// 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
-// 		CBowTarget::Create(m_pDevice, m_pContext))))
-// 		return E_FAIL;
-	
 
 	/* For.Prototype_GameObject_PulseStone */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulseStone"),
