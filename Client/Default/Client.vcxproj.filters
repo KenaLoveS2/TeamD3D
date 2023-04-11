@@ -1539,6 +1539,7 @@
     <ClInclude Include="..\public\DeadZoneBossTree.h">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Rot_Base.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2469,6 +2470,7 @@
     <ClCompile Include="..\private\DeadZoneBossTree.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Rot_Base.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

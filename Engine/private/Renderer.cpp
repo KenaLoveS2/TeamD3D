@@ -497,6 +497,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
+		if (FAILED(Render_UIHDR()))
+			return E_FAIL;
 		if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_HDR"))))
 			return E_FAIL;
 		if (FAILED(Render_HDR()))
@@ -909,6 +911,31 @@ HRESULT CRenderer::Render_AlphaBlend()
 	}
 
 	m_RenderObjects[RENDER_ALPHABLEND].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_UIHDR()
+{
+	for (auto& pGameObject : m_RenderObjects[RENDER_UIHDR])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Compute_CamDistance();
+	}
+
+	m_RenderObjects[RENDER_UIHDR].sort([](CGameObject* pSour, CGameObject* pDest)->_bool
+		{
+			return pSour->Get_CamDistance() > pDest->Get_CamDistance();
+		});
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_UIHDR])
+	{
+		pGameObject&& pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_UIHDR].clear();
 
 	return S_OK;
 }

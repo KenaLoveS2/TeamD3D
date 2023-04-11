@@ -35,6 +35,10 @@ public:
 	virtual void					Activate_Reflecting(_float4 vLook, _float4 vPos, _float fAngle) override;
 	virtual void					DeActivate()													override;
 
+public:
+	void	Activate_BufferUpdate();
+	void	Stop_Buffer();
+
 private:
 	HRESULT							SetUp_Components();
 	HRESULT							SetUp_ShaderResources();
@@ -56,6 +60,7 @@ private:
 	_float							m_fTimeAcc;
 	/* ~ For. Recording */
 
+	_bool							m_bUI;
 
 public:
 	static CEffect_Particle_Base* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
