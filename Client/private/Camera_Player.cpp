@@ -363,7 +363,9 @@ void CCamera_Player::Tick(_float fTimeDelta)
 		}
 		else
 		{
-			vCamPos = _float4::Lerp(m_pPreOffset->vLastPos, vCamPos, m_fCurLerpTime / m_pCurOffset->fLerpDuration);
+			_float	fRatio = m_fCurLerpTime / m_pCurOffset->fLerpDuration;
+			CUtile::Saturate<_float>(fRatio, 0.f, 1.f);
+			vCamPos = _float4::Lerp(m_pPreOffset->vLastPos, vCamPos, fRatio);
 			_vector   vCamLook = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_State(CTransform::STATE_LOOK), 0.f));
 			_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMVectorSetY(vKenaLook, 0.f)), vCamLook)));
 			fAngle = XMConvertToDegrees(fAngle);
