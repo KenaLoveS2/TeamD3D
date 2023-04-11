@@ -20,7 +20,7 @@ Texture2D<float4>		g_AlphaTexture;
 Texture2D		g_NoiseTexture;
 Texture2D		g_SwipeTexture;
 Texture2D		g_GradientTexture;
-float				g_BowDurationTime;
+float			g_BowDurationTime;
 /* Kena Bow_String Texture */
 
 bool					g_Hit = false;
@@ -61,10 +61,10 @@ float4			  g_vColor;
 
 /* Dissolve */
 Texture2D<float4>	g_DissolveTexture;
-bool							g_bDissolve;
-float							g_fDissolveTime;
-float							_DissolveSpeed = 0.2f;
-float							_FadeSpeed = 1.5f;
+bool				g_bDissolve;
+float				g_fDissolveTime;
+float				_DissolveSpeed = 0.2f;
+float				_FadeSpeed = 1.5f;
 /* ~Dissolve */
 
 /* Options */
@@ -520,26 +520,24 @@ PS_OUT PS_MAIN_STAFF_BOWTRAIL(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float  time = frac(g_Time * 0.7f);
-	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(2.f, 1.f), float2(0.f, -time));
-
 	vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	vector vMask = g_MaskTexture.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y));
+	vector Gradient = g_MaskTexture.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y + g_BowDurationTime));
 
 	float4 vColor = vector(29.0f, 142.f, 176.f, 255.f) / 255.f;
-	Out.vDiffuse = (vDiffuse * vMask) * 2.f + vColor;
-	Out.vDiffuse.a = Out.vDiffuse.r;
-	Out.vDiffuse = saturate(Out.vDiffuse.r * vColor) * 4.5f;
-	if (Out.vDiffuse.a < 0.01)
-		discard;
+	float4 finalcolor = vDiffuse + Gradient;
+	Out.vDiffuse = saturate(finalcolor * vColor);
+	//Out.vDiffuse.a = Out.vDiffuse.r;
+	//Out.vDiffuse = saturate(Out.vDiffuse.r * vColor) * 4.5f;
+	//if (Out.vDiffuse.a < 0.01)
+	//	discard;
 
-	if (g_BowDurationTime > 4.f)
+	if (g_Time > 4.f)
 		Out.vDiffuse.rgb = Out.vDiffuse.rgb * 4.f;
 	else
-		Out.vDiffuse.rgb = Out.vDiffuse.rgb * g_BowDurationTime;
+		Out.vDiffuse.rgb = Out.vDiffuse.rgb * g_Time;
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 3.0f, 0.f);
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
@@ -588,7 +586,7 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	/* UV Moving */
-	float  time = frac(g_Time * 0.5f);
+	float  time = frac(g_BowDurationTime * 0.5f);
 	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.f, 1.f), float2(0.0f, -time));
 
 	/* Texture */
@@ -618,7 +616,7 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 		discard;
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 2.f, 0.f);
 	Out.vAmbient = (vector)1.f;
 
 	return Out;

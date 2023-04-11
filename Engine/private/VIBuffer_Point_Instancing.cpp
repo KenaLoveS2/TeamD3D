@@ -67,6 +67,9 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 }
 HRESULT CVIBuffer_Point_Instancing::Set_Position(_float3 fMin, _float3 fMax)
 {
+	m_ePointDesc->fMin = fMin;
+	m_ePointDesc->fMax = fMax;
+
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	CONTEXT_LOCK
@@ -143,6 +146,8 @@ HRESULT CVIBuffer_Point_Instancing::Set_PSize(_float2 PSize)
 
 HRESULT CVIBuffer_Point_Instancing::Set_RandomPSize(_float2 PSizeMinMax)
 {
+	m_InstanceData->fPSize = PSizeMinMax;
+
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	CONTEXT_LOCK
@@ -170,7 +175,10 @@ void CVIBuffer_Point_Instancing::Set_Speeds(_double pSpeed)
 void CVIBuffer_Point_Instancing::Set_RandomSpeeds(_float fmin, _float fmax)
 {
 	for (_uint i = 0; i < m_iNumInstance; i++)
-		m_InstanceData[i].pSpeeds = CUtile::Get_RandomFloat(fmin, fmax);
+	{
+		_float fSpeed = CUtile::Get_RandomFloat(fmin, fmax);
+		m_InstanceData[i].pSpeeds = fSpeed;
+	}
 }
 
 void CVIBuffer_Point_Instancing::Set_ResetOriginPos()
@@ -354,16 +362,17 @@ HRESULT CVIBuffer_Point_Instancing::Tick_PlaneCircle(_float fTimeDelta)
 				{
 					_vector vMoveDir = XMVector3Cross(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f),
 						XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f) - XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition));
-					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + XMVector3Normalize(vMoveDir) * _float(m_InstanceData[i].pSpeeds) * m_ePointDesc->fTimeDelta;
+					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + XMVector3Normalize(vMoveDir) * _float(m_InstanceData[i].pSpeeds) * fTimeDelta;
 				}
 				else
 					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + XMVector3Normalize(m_ePointDesc[i].vDir) * _float(m_InstanceData[i].pSpeeds) * fTimeDelta;
 
 				fDistance = XMVectorGetX(XMVector3Length(vMovePos));
 				fDistance > m_ePointDesc->fRange ? XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition,
-					m_ePointDesc[i].vOriginPos) : XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vMovePos);
+					m_ePointDesc[i].vOriginPos), ((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1 : XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vMovePos);
 
 				m_InstanceData[i].fPos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition);
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1 - fDistance / m_ePointDesc->fRange;
 			}
 		}
 		else
@@ -373,10 +382,10 @@ HRESULT CVIBuffer_Point_Instancing::Tick_PlaneCircle(_float fTimeDelta)
 				if (m_ePointDesc->bRotation)
 				{
 					_vector vMoveDir = XMVector3Cross(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f), XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f) - XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition));
-					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - XMVector3Normalize(vMoveDir) * _float(m_InstanceData->pSpeeds) * m_ePointDesc->fTimeDelta;
+					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - XMVector3Normalize(vMoveDir) * _float(m_InstanceData->pSpeeds) * fTimeDelta;
 				}
 				else
-					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - XMVector3Normalize(m_ePointDesc[i].vDir) * _float(m_InstanceData->pSpeeds) * m_ePointDesc->fTimeDelta;
+					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - XMVector3Normalize(m_ePointDesc[i].vDir) * _float(m_InstanceData[i].pSpeeds) * fTimeDelta;
 
 				fDistance = XMVectorGetX(XMVector3Length(vMovePos - XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
 				fDistance < 0.05f ? XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition,
@@ -448,6 +457,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Explosion(_float fTimeDelta)
 	_float     fDistance = 0.f;
 	CONTEXT_LOCK
 	HRESULT hr =m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
 	if (SUCCEEDED(hr))
 	{
 		m_fGravity += fTimeDelta;
@@ -481,9 +491,14 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Explosion(_float fTimeDelta)
 					fDistance = XMVectorGetX(XMVector3Length(vMovePos - XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
 
 					if (fDistance > m_ePointDesc->fRange)
+					{
 						XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, m_ePointDesc[i].vOriginPos);
+						((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+					}
 					else
 						XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vMovePos);
+
+					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1 - fDistance / m_ePointDesc->fRange;
 				}
 			}
 			else
@@ -714,7 +729,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Parabola(_float fTimeDelta)
 
 		for (_uint i = 0; i < m_iNumInstance; ++i)
 		{
-			_float fDownSpeedY = _float(m_InstanceData[i].pSpeeds) * pow(m_ePointDesc->fTermAcc, 2.f);
+			_float fDownSpeedY = _float(m_InstanceData[i].pSpeeds) * pow(m_ePointDesc->fTermAcc, m_ePointDesc->fPowValue);
 
 			/* Reset Condition */
 			if (m_ePointDesc->fTermAcc > m_ePointDesc->fTerm)
@@ -745,10 +760,10 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Parabola(_float fTimeDelta)
 				vPos.y += _float(m_InstanceData[i].pSpeeds * fTimeDelta) - fDownSpeedY;
 				vPos.x += _float(m_InstanceData[i].pSpeeds * fTimeDelta);
 				vPos.z += _float(m_InstanceData[i].pSpeeds * fTimeDelta);
+				((VTXMATRIX*)SubResource.pData)[i].vPosition = vPos;
 
 				/* Life */
-				vPos.w = 1 - m_ePointDesc->fTermAcc / m_ePointDesc->fTerm;
-				((VTXMATRIX*)SubResource.pData)[i].vPosition = vPos;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1 - m_ePointDesc->fTermAcc + 0.01f / m_ePointDesc->fTerm;
 			}
 
 		}

@@ -39,8 +39,8 @@ public:  /*For.Gimmick*/
 	void				Trigger_Active(_int iRoomIndex,CEnviromentObj::CHAPTER eChpater, _bool IsTrigger);
 	void				DeadZoneObject_Change(_bool bChange);
 
-	void				Boss_WarriorDeadGimmick();
-
+	void				Boss_WarriorDeadGimmick();		// Door Up
+	void				Boss_HunterDeadGimmick();		// Portal On
 private:
 	HRESULT SetUp_Components();
 	

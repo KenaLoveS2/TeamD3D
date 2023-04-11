@@ -1,0 +1,47 @@
+{
+    "0. FileTag": "E_Common_Dust",
+    "1. Data": [
+        {
+            "A-1. TextureRenderType": 1,
+            "A-1_0. Sprite_Width": 8,
+            "A-1_1. Sprite_Height": 8,
+            "A-1_2. Sprite_DurationeTime": 0.30000001192092896,
+            "A. Type": 2,
+            "B. Pass": 2,
+            "C. HDRValue": 0.0,
+            "D. Color": [
+                0.4413774609565735,
+                0.3063463866710663,
+                0.15624435245990753,
+                0.16894197463989258
+            ],
+            "E. DiffuseTex": [
+                91.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "F. Spread": true,
+            "G. Max": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "G. Min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "H. InstanceSpeed": 4.028159141540527,
+            "I. CreateRange": 1.0,
+            "J. Range": 10.0,
+            "K. Term": 1.0,
+            "L. PowValue": 1.0,
+            "M. Size": [
+                1.0,
+                10.0
+            ]
+        }
+    ]
+}

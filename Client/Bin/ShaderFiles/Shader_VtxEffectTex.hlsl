@@ -306,6 +306,8 @@ PS_OUT PS_MAIN_E_CHARGING_LIGHT(PS_IN In)
 	albedo.rgb = float3(1.f, 1.f, 1.f) * 3.f;
 	albedo = albedo * g_vColor;
 	//albedo.a = g_vColor.a;
+	if (albedo.a < 0.1f)
+		discard;
 
 	float fTime = min(g_Time, 1.f);
 	if (0.5f < fTime)   // Time 이상 컬러값이 내려가야함
@@ -451,11 +453,11 @@ PS_OUT PS_MAIN_E_SPRITE(PS_IN In)
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	albedo.a = albedo.r;
 	albedo.a = albedo.g * 0.55;
-	if (albedo.a < 0.1f)
-		discard;
 
 	float4 vColor = float4(99.f, 248.f, 255.f, 255.f) / 255.f;
 	albedo.rgb = vColor.rgb * 1.3f;
+	if (albedo.a < 0.1f)
+		discard;
 
 	Out.vColor = albedo;
 	return Out;

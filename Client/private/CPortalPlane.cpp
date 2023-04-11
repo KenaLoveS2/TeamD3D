@@ -63,6 +63,21 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 		NULL_CHECK_RETURN(m_pLinkedPortal, E_FAIL);
 	}
 
+	else if (!lstrcmp(m_szCloneObjectTag, L"3_BossDeadPortal_0"))
+	{
+		m_pLinkedPortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"3_BossDeadPortal_1"));
+		NULL_CHECK_RETURN(m_pLinkedPortal, E_FAIL);
+		m_bRendaerPortal_Gimmick = false;
+	}
+
+	else if (!lstrcmp(m_szCloneObjectTag, L"3_BossDeadPortal_1"))
+	{
+		m_pLinkedPortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"3_BossDeadPortal_0"));
+		NULL_CHECK_RETURN(m_pLinkedPortal, E_FAIL);
+		m_bRendaerPortal_Gimmick = false;
+	}
+
+
 	Late_init_For_GimmickLevel();
 		
 	

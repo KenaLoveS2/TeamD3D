@@ -40,13 +40,6 @@ private:
 
 	PxRigidActor* m_pActor = nullptr;
 
-public:
-	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
-
-private:
-	HRESULT SetUp_Components();
-	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
 
 public:
 	static  CDynamic_Stone* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
