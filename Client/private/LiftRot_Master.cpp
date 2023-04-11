@@ -42,7 +42,7 @@ HRESULT CLiftRot_Master::Late_Initialize(void * pArg)
 		swprintf_s(szCloneRotTag, L"LiftRot_%d", i);
 		m_pLiftRotArr[i] = (CLiftRot*)m_pGameInstacne->Clone_GameObject(TEXT("Prototype_GameObject_LiftRot"), CUtile::Create_StringAuto(szCloneRotTag), &Desc);
 		assert(m_pLiftRotArr[i] != nullptr && "CLiftRot_Master::Late_Initialize");		
-		m_pLiftRotArr[i]->Set_OwnerLiftRotMasterPtr(this);
+		m_pLiftRotArr[i]->Set_OwnerLiftRotMasterPtr(this);		
 	}
 
 	return S_OK;
@@ -127,10 +127,10 @@ void CLiftRot_Master::Execute_WakeUp(_fmatrix ParentMatrix, _float3* pCreateLoca
 	}
 }
 
-void CLiftRot_Master::Execute_LiftStart()
+void CLiftRot_Master::Execute_LiftStart(_float4 vLookPos)
 {
 	for (auto& pLiftRot : m_pLiftRotArr)
-		pLiftRot->Execute_LiftStart();
+		pLiftRot->Execute_LiftStart(vLookPos);
 }
 
 void CLiftRot_Master::Execute_LiftMoveStart()

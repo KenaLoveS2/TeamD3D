@@ -62,7 +62,7 @@ HRESULT CVillageGuard::Late_Initialize(void * pArg)
 		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
 		PxCapsuleDesc.vPos = { 0.f, 0.f, 0.f };
 		PxCapsuleDesc.fRadius = 0.5f;
-		PxCapsuleDesc.fHalfHeight = 0.6f;
+		PxCapsuleDesc.fHalfHeight = 0.4f;
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fDensity = 1.f;
 		PxCapsuleDesc.fLinearDamping = MONSTER_LINEAR_DAMING;
@@ -74,7 +74,7 @@ HRESULT CVillageGuard::Late_Initialize(void * pArg)
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
-		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.6f, 0.f));
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.8f, 0.f));
 	}
 
 	{
