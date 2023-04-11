@@ -30,7 +30,8 @@ protected:
 	CGameInstance* m_pGameInstance = nullptr;
 
 	enum COPY_SOUND_KEY {
-		CSK_1, CSK_2, CSK_3, CSK_4, CSK_5, CSK_6, CSK_7, CSK_8, CSK_9, CSK_10, CSK_11, CSK_12, CSK_MOVE, CSK_CROSS,
+		CSK_1, CSK_2, CSK_3, CSK_4, CSK_5, CSK_6, CSK_7, CSK_8, CSK_9, CSK_10, CSK_11, CSK_12, 
+		CSK_MOVE, CSK_CROSS, CSK_ANGER, CSK_BOMB_SPAWN,
 		COPY_SOUND_KEY_END,
 	};
 
