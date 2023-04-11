@@ -6958,6 +6958,9 @@ void CKena_State::Start_Shield_Impact(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SHIELD_IMPACT");
 
+	if (!m_pKena->m_pAttackObject)
+		return;
+
 	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_TransformCom()->Get_Position());
 
 	m_pKena->m_bCommonHit = false;
@@ -6970,6 +6973,9 @@ void CKena_State::Start_Shield_Impact_Medium(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SHIELD_IMPACT_MEDIUM");
 
+	if (!m_pKena->m_pAttackObject)
+		return;
+
 	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_TransformCom()->Get_Position());
 
 	m_pKena->m_bCommonHit = false;
@@ -6981,6 +6987,9 @@ void CKena_State::Start_Shield_Impact_Medium(_float fTimeDelta)
 void CKena_State::Start_Shield_Impact_Big(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SHIELD_IMPACT_BIG");
+
+	if (!m_pKena->m_pAttackObject)
+		return;
 
 	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_TransformCom()->Get_Position());
 
@@ -9048,7 +9057,7 @@ _bool CKena_State::Dash_Portal()
 
 _bool CKena_State::Falling()
 {
-	return m_pKena->m_bJump && m_pKena->m_fCurJumpSpeed == 0.f;
+	return false;// m_pKena->m_bJump&& m_pKena->m_fCurJumpSpeed == 0.f;
 }
 
 _bool CKena_State::Pulse_Jump()

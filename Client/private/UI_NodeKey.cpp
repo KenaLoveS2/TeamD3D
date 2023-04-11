@@ -42,7 +42,7 @@ HRESULT CUI_NodeKey::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	//m_bActive = true;
 
 	/* event */
 	m_vecEvents.push_back(CUI_Event_Fade::Create(0.08f, 0.5f));

@@ -121,6 +121,8 @@ HRESULT CLevel_TestPlay::Initialize()
 
 	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 0.3f, true, SOUND_BGM);
 
+	CGameInstance::GetInstance()->Set_MasterVolume(0.f);
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -204,17 +206,17 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
 
-	/*LightDesc.eType = LIGHTDESC::TYPE_POINT;
-	LightDesc.isEnable = true;
-	LightDesc.vPosition = _float4(13.f, 0.f, 9.f, 1.f);
-	LightDesc.fRange = 10.0f;
-	LightDesc.vDiffuse = _float4(10.f, 0.f, 10.f, 1.f);
-	LightDesc.vAmbient = _float4(10.f, 0.f, 10.f, 1.f);
-	LightDesc.vSpecular = _float4(10.f, 0.f, 10.f, 0.f);
+	LightDesc.eType = LIGHTDESC::TYPE_POINT;
+	LightDesc.isEnable = false;
+	LightDesc.vPosition = _float4(35.f, 0.f, 500.f, 1.f);
+	LightDesc.fRange = 10.0f; // ~90
+	LightDesc.vDiffuse = _float4(0.f, 0.7f, 0.8f, 1.f);
+	LightDesc.vAmbient = _float4(0.f, 0.7f, 0.8f, 1.f);
+	LightDesc.vSpecular = _float4(0.f, 0.7f, 0.8f, 0.f);
 	LightDesc.szLightName = "PointLight_0";
 
 	if (FAILED(CGameInstance::GetInstance()->Add_Light(m_pDevice, m_pContext, LightDesc)))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

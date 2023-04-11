@@ -147,8 +147,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vShade.rgb *= CalcAmbientOcclusion(vWorldPos.xyz, vNormal.xyz, g_MtrlAmbientTexture, In.vTexUV);
 	Out.vShade.a = 1.f;
 
-	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
-	Out.vSpecular.rgb *= CalcSpecular(vWorldPos.xyz, vNormal.xyz, -vLook.xyz, g_vLightDir.xyz, Out.vShade.rgb, vReflect.xyz, g_MtrlAmbientTexture, In.vTexUV);
+	//Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
+	Out.vSpecular.rgb = CalcSpecular(vWorldPos.xyz, vNormal.xyz, -vLook.xyz, g_vLightDir.xyz, Out.vShade.rgb, vReflect.xyz, g_MtrlAmbientTexture, In.vTexUV);
 	Out.vSpecular.a = 0.f;
 
 	return Out;
@@ -198,7 +198,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	vector		vLook = vWorldPos - g_vCamPosition;
 
 	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f) * fAtt;
-	Out.vSpecular.rgb *= CalcSpecular(vWorldPos.xyz, vNormal.xyz, -vLook.xyz, vLightDir, Out.vShade.rgb, vReflect.xyz, g_MtrlAmbientTexture, In.vTexUV);
+	Out.vSpecular.rgb *= CalcSpecular(vWorldPos.xyz, vNormal.xyz, -vLook.xyz, vLightDir.xyz, Out.vShade.rgb, vReflect.xyz, g_MtrlAmbientTexture, In.vTexUV);
 	Out.vSpecular.a = 0.f;
 
 	return Out;
