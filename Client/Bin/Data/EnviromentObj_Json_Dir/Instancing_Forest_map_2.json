@@ -310,15 +310,7 @@
       "5_ChapterType": 0,
       "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 84.90620422363281, 16.369457244873047, 319.5411071777344, 1.0 ]
     },
-    {
-      "0_ProtoTag": "Prototype_GameObject_Dynamic_Stone",
-      "1_ModelTag": "Prototype_Component_Model_Dy_RockSmall06",
-      "2_ShaderOption": 0,
-      "3_CloneTag": "2_Dy_RockSmall06_0",
-      "4_RoomIndex": 2,
-      "5_ChapterType": 0,
-      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 167.39645385742188, 16.76572608947754, 389.44744873046875, 1.0 ]
-    },
+ 
     {
       "0_ProtoTag": "Prototype_GameObject_Stone",
       "1_ModelTag": "Prototype_Component_Model_Rock_Medium_04",
