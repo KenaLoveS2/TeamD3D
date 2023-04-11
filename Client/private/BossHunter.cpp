@@ -1550,6 +1550,10 @@ _int CBossHunter::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos,
 			//m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 			m_pMonsterStatusCom->UnderAttack(pArrow->Get_Damage());
 
+			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
+			m_BossHunterDelegator.broadcast(eBossHP, fGauge);
+
 			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);
 			//m_bWeaklyHit = !m_bStronglyHit;
 			

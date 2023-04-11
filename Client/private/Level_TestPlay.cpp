@@ -121,6 +121,8 @@ HRESULT CLevel_TestPlay::Initialize()
 
 	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 0.3f, true, SOUND_BGM);
 
+	CGameInstance::GetInstance()->Set_MasterVolume(0.f);
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

@@ -54,7 +54,7 @@ void CE_P_Level::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == true)
 		Tick_Rotation(fTimeDelta);
 
-	ImGui::Begin("CE_P_Level");
+	/*ImGui::Begin("CE_P_Level");
 	if (ImGui::Button("active"))
 	{
 		m_eEFfectDesc.bActive = true;
@@ -72,7 +72,7 @@ void CE_P_Level::Tick(_float fTimeDelta)
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.05f, 0.2f));
 	}
 
-	ImGui::End();
+	ImGui::End();*/
 
 	__super::Tick(fTimeDelta);
 

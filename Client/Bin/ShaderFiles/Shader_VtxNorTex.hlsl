@@ -73,11 +73,11 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 	
-	vector		vSourDiffuse = g_BaseTexture.Sample(LinearSampler, In.vTexUV * 30.f);
-	vector		vDestDiffuse0 = g_DiffuseTexture_0.Sample(LinearSampler, In.vTexUV * 70.f);
+	vector		vSourDiffuse = g_BaseTexture.Sample(LinearSampler, In.vTexUV * 100.f);
+	vector		vDestDiffuse0 = g_DiffuseTexture_0.Sample(LinearSampler, In.vTexUV * 100.f);
 
-	vector vDestDiffuse1 = g_DiffuseTexture_1.Sample(LinearSampler, In.vTexUV * 30.f);
-	vector vDestDiffuse2 = g_DiffuseTexture_2.Sample(LinearSampler, In.vTexUV * 30.f);
+	vector vDestDiffuse1 = g_DiffuseTexture_1.Sample(LinearSampler, In.vTexUV * 100.f);
+	vector vDestDiffuse2 = g_DiffuseTexture_2.Sample(LinearSampler, In.vTexUV * 100.f);
 
 	vector		vFilter = g_FilterTexture[0].Sample(LinearSampler, In.vTexUV);			// 원본
 	vector		vFilter1 = g_FilterTexture[1].Sample(LinearSampler, In.vTexUV);
@@ -108,7 +108,6 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	//vMtrlDiffuse = (vSourDiffuse * vFilter.r * vFilter1.r* vFilter2.r)		//원본
 	//	+ vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse1 * (1.f - vFilter1.r) ;
-
 	//if (vMtrlDiffuse.a > 1.f)
 	//	vMtrlDiffusea =0.5f;
 
