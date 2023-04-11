@@ -92,8 +92,8 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 	// ����
 	{	
-		_float3 vPivotScale = _float3(0.8f, 1.f, 1.f); // _float3(0.8f, 3.f, 1.f); 
-		_float3 vPivotPos = _float3(0.f, 1.8f, 0.f);    // _float3(0.f, 3.8f, 0.f)
+		_float3 vPivotScale = _float3(0.85f, 0.8f, 1.f); // _float3(0.8f, 3.f, 1.f); 
+		_float3 vPivotPos = _float3(0.f, 1.6f, 0.f);    // _float3(0.f, 3.8f, 0.f)
 
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
@@ -124,7 +124,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		PxCapsuleDesc.pActortag = COL_WEAPON_TEXT;
 		PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fRadius = 0.18f;
-		PxCapsuleDesc.fHalfHeight = 2.4f;
+		PxCapsuleDesc.fHalfHeight = 2.0f;
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fDensity = 1.f;
 		PxCapsuleDesc.fAngularDamping = 0.5f;
@@ -203,9 +203,7 @@ void CBossWarrior::Tick(_float fTimeDelta)
 
 	m_pHat->Tick(fTimeDelta);
 
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
-
-
+	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
@@ -421,6 +419,9 @@ void CBossWarrior::Push_EventFunctions()
 	Play_Elemental1Sound(true, 0.0f);
 	Play_Elemental2Sound(true, 0.0f);
 	Play_Elemental11Sound(true, 0.0f);
+
+	Start_RealAttack(true, 0.0f);
+	End_RealAttack(true, 0.0f);
 }
 
 HRESULT CBossWarrior::SetUp_State()
@@ -816,7 +817,7 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		m_bRealAttack = true;
+		m_bRealAttack = false;
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
 	})
 		.AddTransition("To DYING", "DYING")
@@ -1225,14 +1226,11 @@ void CBossWarrior::Update_Collider(_float fTimeDelta)
 		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
 		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
-
-		// imgui�� ����ؼ� �ǽð����� �Ǻ����� �����ϰ� ������ �ּ� Ǯ� �ϸ� ��
-		/*
-		XMStoreFloat4x4(&m_WeaponPivotMatrix,
+				
+		/*XMStoreFloat4x4(&m_WeaponPivotMatrix,
 			XMMatrixRotationX(m_vWeaPonPivotRot.x) * XMMatrixRotationY(m_vWeaPonPivotRot.y) * XMMatrixRotationZ(m_vWeaPonPivotRot.z)
-			* XMMatrixTranslation(m_vWeaPonPivotTrans.x, m_vWeaPonPivotTrans.y, m_vWeaPonPivotTrans.z));
-		*/
-
+			* XMMatrixTranslation(m_vWeaPonPivotTrans.x, m_vWeaPonPivotTrans.y, m_vWeaPonPivotTrans.z));*/
+		
 		SocketMatrix = XMLoadFloat4x4(&m_WeaponPivotMatrix) * SocketMatrix;
 		_float4x4 mat;
 		XMStoreFloat4x4(&mat, SocketMatrix);
@@ -1244,8 +1242,7 @@ void CBossWarrior::Update_Collider(_float fTimeDelta)
 		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
 		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
-
-		// imgui�� ����ؼ� �ǽð����� �Ǻ����� �����ϰ� ������ �ּ� Ǯ� �ϸ� ��
+				
 		// XMStoreFloat4x4(&m_RightLegPivotMatrix, XMMatrixTranslation(m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z));
 
 		SocketMatrix = XMLoadFloat4x4(&m_RightLegPivotMatrix) * SocketMatrix;
@@ -1261,7 +1258,7 @@ void CBossWarrior::Update_Collider(_float fTimeDelta)
 		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
-		XMStoreFloat4x4(&m_GrabHandPivotMatrix, XMMatrixTranslation(m_vGrabHandPivotTrans.x, m_vGrabHandPivotTrans.y, m_vGrabHandPivotTrans.z));
+		// XMStoreFloat4x4(&m_GrabHandPivotMatrix, XMMatrixTranslation(m_vGrabHandPivotTrans.x, m_vGrabHandPivotTrans.y, m_vGrabHandPivotTrans.z));
 
 		SocketMatrix = XMLoadFloat4x4(&m_GrabHandPivotMatrix) * SocketMatrix;
 
