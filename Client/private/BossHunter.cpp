@@ -1290,13 +1290,13 @@ HRESULT CBossHunter::SetUp_State()
 		if (m_fDissolveTime >= 1.f)
 			m_bDissolve = false;
 
-		m_fFogRange += fTimeDelta * 100.f;
+		m_fFogRange += fTimeDelta * 50.f;
 		if (m_fFogRange >= 100.f)
 			m_pRendererCom->Set_Fog(false);
 		const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
 		m_pRendererCom->Set_FogValue(vColor, m_fFogRange);
 
-		m_fLightRange -= fTimeDelta * 100.f;
+		m_fLightRange -= fTimeDelta * 50.f;
 		if (m_fLightRange < 0.f)
 			CGameInstance::GetInstance()->Get_Light(1)->Set_Enable(false);
 
