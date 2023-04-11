@@ -345,16 +345,16 @@ VS_TRAILOUT VS_TRAIL(VS_TRAILIN In)
 
 
 // constant buffer
-cbuffer Constants : register(b0)
-{
-	float3	vPositionP1;
-	float3	vPositionP2;
-}
-
-float3 GetPos1() { return vPositionP1; }
-float3 GetPos2() { return vPositionP2; }
-void SetPos1(float3 x) { vPositionP1 = x; }
-void SetPos2(float3 x) { vPositionP2 = x; }
+//cbuffer Constants : register(b0)
+//{
+//	float3	vPositionP1;
+//	float3	vPositionP2;
+//}
+//
+//float3 GetPos1() { return vPositionP1; }
+//float3 GetPos2() { return vPositionP2; }
+//void SetPos1(float3 x) { vPositionP1 = x; }
+//void SetPos2(float3 x) { vPositionP2 = x; }
 
 
 
@@ -395,13 +395,13 @@ void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices
 		Out[0].fLife = In[0].fLife;
 		
 		vResultPos = vPosition + vRight + vUp;
-		vPositionP1 = vResultPos;
+		//vPositionP1 = vResultPos;
 		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[1].vTexUV = float2(1.f, 0.f);
 		Out[1].fLife = In[0].fLife;
 
 		vResultPos = vPosition + vRight - vUp;
-		vPositionP2 = vResultPos;
+		//vPositionP2 = vResultPos;
 		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[2].vTexUV = float2(1.f, 1.f);
 		Out[2].fLife = In[0].fLife;
@@ -414,25 +414,26 @@ void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices
 	}
 	else
 	{
-		//vResultPos = vPosition - vRight + vUp;
-		vResultPos = vPosition1;
+		vResultPos = vPosition - vRight + vUp;
+		//vResultPos = vPosition1;
 		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[0].vTexUV = float2(0.f, 0.f);
 		Out[0].fLife = In[0].fLife;
 
 		vResultPos = vPosition + vRight + vUp;
-		vPositionP1 = vResultPos;
+		//vPositionP1 = vResultPos;
 		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[1].vTexUV = float2(1.f, 0.f);
 		Out[1].fLife = In[0].fLife;
 
 		vResultPos = vPosition + vRight - vUp;
-		vPositionP2 = vResultPos;
+		//vPositionP2 = vResultPos;
 		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[2].vTexUV = float2(1.f, 1.f);
 		Out[2].fLife = In[0].fLife;
 
-		vResultPos = vPosition2;
+		vResultPos = vPosition - vRight - vUp;
+		//vResultPos = vPosition2;
 		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[3].vTexUV = float2(0.f, 1.f);
 		Out[3].fLife = In[0].fLife;
