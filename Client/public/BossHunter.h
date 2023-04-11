@@ -300,6 +300,9 @@ private: /* For. String */
 	_float4							m_vStringDiffuseColor;
 	class CRot*					m_pRot = nullptr;
 
+	_float							m_fFogRange = 100.f;
+	_float							m_fLightRange = 10.f;
+
 private: /* For. Tool */
 	void							ImGui_EffectProperty();
 

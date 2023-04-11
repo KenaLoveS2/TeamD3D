@@ -93,9 +93,6 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 					L"3_BossDeadPortal_0"))->Set_GimmickRender(true);
 		}
 	}
-
-
-
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
