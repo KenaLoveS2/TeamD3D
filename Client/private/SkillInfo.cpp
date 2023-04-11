@@ -22,22 +22,22 @@ CSkillInfo::CSkillInfo()
 	//switch (eResult)
 	//{
 	//case CHECK_PREVSKILL:
-	//	msg = L"¼±Çà ´É·Â ÇÊ¿ä";
+	//	msg = L"ï¿½ï¿½ï¿½ï¿½ ï¿½É·ï¿½ ï¿½Ê¿ï¿½";
 	//	break;
 	//case CHECK_ROTLEVEL:
-	//	msg = L"ºÎ½Ä·É ·¹º§ " + to_wstring(m_tDesc[iLevel].conditions[CHECK_ROTLEVEL]) + L" ÇÊ¿ä";
+	//	msg = L"ï¿½Î½Ä·ï¿½ ï¿½ï¿½ï¿½ï¿½ " + to_wstring(m_tDesc[iLevel].conditions[CHECK_ROTLEVEL]) + L" ï¿½Ê¿ï¿½";
 	//	break;
 	//case  CHECK_KARMA:
-	//	msg = L"Ä«¸£¸¶ ºÎÁ·";
+	//	msg = L"Ä«ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½";
 	//	break;
 	//case CHECK_UNLOCKED_AVAILABLE:
-	//	msg = L"¾÷±×·¹ÀÌµå °¡´É";
+	//	msg = L"ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½";
 	//	break;
 	//case CHECK_UNLOCKED_ALREADY:
-	//	msg = L"Ãß°¡ Ä«¸£¸¶ ÇÊ¿ä";
+	//	msg = L"ï¿½ß°ï¿½ Ä«ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½";
 	//	break;
 	//default:
-	//	msg = L"µ¹¾Æ°¡";
+	//	msg = L"ï¿½ï¿½ï¿½Æ°ï¿½";
 	//	break;
 	//}
 	//return msg;
@@ -100,14 +100,17 @@ HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pConte
 	protoTag += wtype;
 	m_pTextureProtoTag = CUtile::Create_String(protoTag.c_str());
 
-	/* Create Texture Component */
-	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	//if (g_LEVEL == LEVEL_TESTPLAY)
+	{
+		/* Create Texture Component */
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(CGameInstance::GetInstance()->Add_Prototype(CGameInstance::Get_StaticLevelIndex(),
-		m_pTextureProtoTag, CTexture::Create(pDevice, pContext, CUtile::Create_StringAuto(wstrImageFilePath.c_str()), 5))))
-		return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(),
+			m_pTextureProtoTag, CTexture::Create(pDevice, pContext, CUtile::Create_StringAuto(wstrImageFilePath.c_str()), 5))))
+			return E_FAIL;
 
-	//RELEASE_INSTANCE(CGameInstance);
+		RELEASE_INSTANCE(CGameInstance);
+	}
 
 	/* 2. Name, Description, Condition ,State */
 	//using convert_type = codecvt_utf8<wchar_t>;

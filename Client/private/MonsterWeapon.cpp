@@ -85,8 +85,8 @@ void Client::CMonsterWeapon::Free()
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_WeaponDesc.pSocket);
-		Safe_Release(m_WeaponDesc.pTargetTransform);
+		//Safe_Release(m_WeaponDesc.pSocket);
+		//Safe_Release(m_WeaponDesc.pTargetTransform);
 	}
 
 	Safe_Release(m_pModelCom);

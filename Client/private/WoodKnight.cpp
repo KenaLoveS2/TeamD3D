@@ -195,12 +195,8 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 
 void CWoodKnight::Tick(_float fTimeDelta)
 {
-	//m_bReadySpawn = true;
-	//m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	//m_pModelCom->Play_Animation(fTimeDelta);	
-
-	//return;
-
+	// m_bReadySpawn = true;
+		
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -417,6 +413,8 @@ void CWoodKnight::Push_EventFunctions()
 	Play_CatchSound(true, 0.f);	
 	Play_HurtSound(true, 0.f);
 	LookAt_Kena(true, 0.f);
+
+	Stop_BindRotAttackSound(true, 0.f);
 }
 
 HRESULT CWoodKnight::SetUp_State()

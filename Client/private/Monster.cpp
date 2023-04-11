@@ -630,3 +630,40 @@ void CMonster::SaveBufferCopySound(_tchar* pOriginSoundKey, _tchar* pTempBuffer,
 	m_pGameInstance->Copy_Sound(pOriginSoundKey, pTempBuffer);
 	*ppOutBuffer = CUtile::Create_StringAuto(pTempBuffer);
 }
+
+void CMonster::Stop_BindRotAttackSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CMonster::Stop_BindRotAttackSound);
+		return;
+	}
+
+	for(auto& p : m_pRotForMonster)
+		p ? p->Set_AttackSound(false) : 0;
+}
+
+void CMonster::Start_RealAttack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CMonster::Start_RealAttack);
+		return;
+	}
+
+	m_bRealAttack = true;
+}
+
+void CMonster::End_RealAttack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CMonster::End_RealAttack);
+		return;
+	}
+
+	m_bRealAttack = false;
+}

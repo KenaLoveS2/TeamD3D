@@ -34,7 +34,7 @@ HRESULT CBossWarrior_Hat::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(&GameObjDesc)))
 		return E_FAIL;
 
-	m_vPivotPos = _float4(0.f, 0.03f, -3.78f, 0.f);
+	m_vPivotPos = _float4(0.f, 0.03f, -2.78f, 0.f);
 	m_vPivotRot = _float4(-1.58f, 0.f, 3.15f, 0.f);
 	
 	XMStoreFloat4x4(&m_SocketPivotMatrix,
@@ -59,7 +59,7 @@ HRESULT CBossWarrior_Hat::Late_Initialize(void* pArg)
 		PxBoxDesc.eType = BOX_DYNAMIC;
 		PxBoxDesc.pActortag = m_szCloneObjectTag;
 		PxBoxDesc.vPos = _float3(0.f, 0.f, 0.f);		
-		PxBoxDesc.vSize = _float3(0.6f, 0.08f, 0.6f);
+		PxBoxDesc.vSize = _float3(0.4f, 0.08f, 0.4f);
 		PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_PARTS;
 
 		CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COL_MONSTER));
@@ -94,21 +94,21 @@ void CBossWarrior_Hat::Tick(_float fTimeDelta)
 	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 	
-	//XMStoreFloat4x4(&m_SocketPivotMatrix,
-	//XMMatrixRotationX(m_vPivotRot.x)
-	//* XMMatrixRotationY(m_vPivotRot.y)
-	//* XMMatrixRotationZ(m_vPivotRot.z)
-	//*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z));
+	/*XMStoreFloat4x4(&m_SocketPivotMatrix,
+	XMMatrixRotationX(m_vPivotRot.x)
+	* XMMatrixRotationY(m_vPivotRot.y)
+	* XMMatrixRotationZ(m_vPivotRot.z)
+	*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z));*/
 	
 	SocketMatrix = XMLoadFloat4x4(&m_SocketPivotMatrix) * SocketMatrix * m_WeaponDesc.pTargetTransform->Get_WorldMatrix();
 	XMStoreFloat4x4(&m_SocketMatrix, SocketMatrix);
 
 	{
-	/*	XMStoreFloat4x4(&m_ColliderPivotMatrix,
-			XMMatrixRotationX(m_vColliderPivotRot.x) * 
-			XMMatrixRotationY(m_vColliderPivotRot.y) * 
-			XMMatrixRotationZ(m_vColliderPivotRot.z) *
-			XMMatrixTranslation(m_vColliderPivotPos.x, m_vColliderPivotPos.y, m_vColliderPivotPos.z));*/
+		//XMStoreFloat4x4(&m_ColliderPivotMatrix,
+		//	XMMatrixRotationX(m_vColliderPivotRot.x) * 
+		//	XMMatrixRotationY(m_vColliderPivotRot.y) * 
+		//	XMMatrixRotationZ(m_vColliderPivotRot.z) *
+		//	XMMatrixTranslation(m_vColliderPivotPos.x, m_vColliderPivotPos.y, m_vColliderPivotPos.z));
 
 		_float4x4 vCollderMatrix;
 		XMStoreFloat4x4(&vCollderMatrix, XMLoadFloat4x4(&m_ColliderPivotMatrix) * SocketMatrix);

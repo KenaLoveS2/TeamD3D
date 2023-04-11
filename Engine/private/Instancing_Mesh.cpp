@@ -886,6 +886,10 @@ _bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapter
 				_float fRandomSpeed = CUtile::Get_RandomFloat(0.7f, 1.6f);
 				((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fRandomSpeed)*fTimeDelta;
 			}
+			else if (eChapterGimmcik == CEnviromentObj::Gimmick_TYPE_BOSSDEAD_GATE_PORTAL)
+			{
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (4.f)*fTimeDelta;
+			}
 
 			iFinishCnt += 1;
 		}
@@ -907,6 +911,8 @@ void CInstancing_Mesh::InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChap
 		fMinus_YPos = 10.f;
 	else if (eChapterGimmcik == CEnviromentObj::CHAPTER::Gimmick_TYPE_FLOWER)
 		fMinus_YPos = 4.f;
+	else if (eChapterGimmcik == CEnviromentObj::CHAPTER::Gimmick_TYPE_BOSSDEAD_GATE_PORTAL)
+		fMinus_YPos = 20.f;
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));

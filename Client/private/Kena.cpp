@@ -33,6 +33,8 @@
 #include "Layer.h"
 #include "BossWarrior.h"
 
+#include "ControlRoom.h"
+#include "Level_Loading.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -657,10 +659,10 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_Delegator.broadcast(ePip, fCurGuage);
 	}
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
-	{
-		m_pKenaStatus->Add_RotCount();
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+	//{
+	//	m_pKenaStatus->Add_RotCount();
+	//}
 
 	//	//static _float fTag = 0.0f;
 	//	//if (fTag < 1.0f)
@@ -1255,7 +1257,7 @@ void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 		m_bRotActionPossible = true;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-		if (pGameInstance->Key_Down(DIK_R))
+		if (pGameInstance->Key_Down(DIK_R))	
 		{
 			/* UI Control */
 			m_pKenaStatus->Set_CurPIPGuage(m_pKenaStatus->Get_CurPIPGuage() - 1.f);
@@ -2888,6 +2890,11 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 				vPos.y -= 4.f;
 				m_pTransformCom->Set_Position(vPos);
 			}
+		}
+
+		if (iColliderIndex == (_int)COL_SCENECHANGE_PORTAL && m_bDash == true)
+		{
+			m_bSceneChange = true;
 		}
 	}
 

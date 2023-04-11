@@ -52,8 +52,7 @@ private:
 	_bool							m_bColliderOn = false;
 	_bool							m_bTestOnce = false;
 public:
-	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
-
+	
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

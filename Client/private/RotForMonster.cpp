@@ -23,7 +23,7 @@ HRESULT CRotForMonster::Initialize_Prototype()
 
 HRESULT CRotForMonster::Initialize(void* pArg)
 {
-	// Æò¼Ò¿¡ IDLE »óÅÂ·Î µü ÀÖ´Ù°¡ ½ºÆùµÇ¸é¼­ ¸ó½ºÅÍ °¨½Î´Â Çü½Ä
+	// ï¿½ï¿½Ò¿ï¿½ IDLE ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ ï¿½Ö´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸é¼­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	ZeroMemory(&m_Desc, sizeof(DESC));
 	if(pArg != nullptr)
@@ -41,6 +41,8 @@ HRESULT CRotForMonster::Initialize(void* pArg)
 
 void CRotForMonster::Tick(_float fTimeDelta)
 {
+	m_pTeleportRot->Tick(fTimeDelta);
+
 	__super::Tick(fTimeDelta);
 	
 	if (m_pFSM)
@@ -51,17 +53,15 @@ void CRotForMonster::Tick(_float fTimeDelta)
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
+	
 	m_pTransformCom->Tick(fTimeDelta);
-
-	/* Trail */
-	m_pTeleportRot->Tick(fTimeDelta);
-	if (m_pRotTrail != nullptr)
-		m_pRotTrail->Tick(fTimeDelta);
-	/* Trail */
+	m_pRotTrail->Tick(fTimeDelta);
 }
 
 void CRotForMonster::Late_Tick(_float fTimeDelta)
 {
+	m_pTeleportRot->Late_Tick(fTimeDelta);
+
 	if (!m_bBind)
 		return;
 
@@ -77,7 +77,6 @@ void CRotForMonster::Late_Tick(_float fTimeDelta)
 
 		m_pRotTrail->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
 		m_pRotTrail->Late_Tick(fTimeDelta);
-		m_pTeleportRot->Late_Tick(fTimeDelta);
 	}
 	/* Trail */
 
@@ -138,9 +137,7 @@ HRESULT CRotForMonster::SetUp_State()
 		m_pTransformCom->LookAt_NoUpDown(m_pTarget->Get_Position());
 		
 		m_iRandTeleportAnimIndex = rand() % 7;
-		TurnOn_TeleportEffect(vPos, m_iTeleportAnimIndexTable[m_iRandTeleportAnimIndex]);
-		
-		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CROSS], 0.5f);
+		TurnOn_TeleportEffect(vPos, m_iTeleportAnimIndexTable[m_iRandTeleportAnimIndex]);		
 	})
 		.AddTransition("READY_BIND to BIND_MONSTER", "BIND_MONSTER")
 		.Predicator([this]()
@@ -152,6 +149,9 @@ HRESULT CRotForMonster::SetUp_State()
 		.OnStart([this]()
 	{
 		m_pRotTrail->Set_Active(true);
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CROSS + m_iRandTeleportAnimIndex % 2], 0.5f);
+		m_fAttackSoundTime = CUtile::Get_RandomFloat(1.f, 2.5f);
+		m_bAttackSound = true;
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -175,17 +175,30 @@ HRESULT CRotForMonster::SetUp_State()
 			XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
 			_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
 			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f), true);
+
+			if (m_bAttackSound)
+			{
+				m_fAttackSoundTimeCheck += fTimeDelta;
+				if (m_fAttackSoundTimeCheck >= m_fAttackSoundTime)
+				{
+					m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_BOMB_SPAWN], 0.5f);
+					m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CROSS + rand() % 2], 0.5f);
+					m_fAttackSoundTimeCheck = 0.f;
+				}
+			}
 		}
 	})
 		.OnExit([this]()
 	{
+		m_bAttackSound = false;
 		m_pRotTrail->Set_Active(false);
+		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), IDLE);
+		m_pTransformCom->Set_Position(m_vInvisiblePos);
 	})
-
 		.AddTransition("BIND_MONSTER to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return !m_bBind;
+		return !m_bBind && m_pTeleportRot->Get_Active() == false;
 	})
 
 		.Build();

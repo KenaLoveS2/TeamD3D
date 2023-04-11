@@ -104,6 +104,13 @@ private:
 	void AdditiveAnim(_float fTimeDelta) override;
 
 private:
+	void	BossFight_Start();
+	void  BossFight_End();
+	_float m_fEndTime = 0.f;
+
+	class CCinematicCamera* m_pCineCam[2] = { nullptr, };
+
+private:
 	void Set_AttackType();
 	void Reset_Attack();
 	void Tick_Attack(_float fTimeDelta);
@@ -130,8 +137,8 @@ private:	/* Animation Event Func */
 	void TurnOnCamShake(_bool bIsInit, _float fTimeDelta);
 
 private:
-	_float3 m_vWeaPonPivotTrans = {-1.76f, 0.03f, -2.2f};
-	_float3 m_vWeaPonPivotRot= {1.57f, 3.13f, -0.31f};
+	_float3 m_vWeaPonPivotTrans = {-1.36f, 0.0f, -1.73f};
+	_float3 m_vWeaPonPivotRot= {1.57f, 3.13f, 0.6f};
 	_float4x4 m_WeaponPivotMatrix;
 
 	_float3 m_vRightLegPivotTrans = { -0.26f, -0.02f, -0.06f};	

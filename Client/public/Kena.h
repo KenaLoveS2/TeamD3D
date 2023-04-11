@@ -322,6 +322,10 @@ public:
 	_float m_fTest = 0.f;
 	_bool  m_bStateLock;
 	_float m_fLinearDamping = KENA_LINEAR_DAMING, m_fAngularDamping = KENA_ANGULAR_DAMING, m_fMass = KENA_MASS;
+	const	_bool& Get_SceneChange() { return m_bSceneChange; }
+
+private:
+	_bool m_bSceneChange = false;
 
 public:
 	static CKena*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -341,7 +345,7 @@ public:
 	void						Setup_TerrainPtr();
 	void						End_LiftRotRock();
 	void						Buy_RotHat(_uint iHatIndex);
-	_bool						IsBuyPossible_RotHat();
+	_bool					IsBuyPossible_RotHat();
 	void						Set_HatCartPtr(class CHatCart* pHatCart) { m_pHatCart = pHatCart; }
 };
 

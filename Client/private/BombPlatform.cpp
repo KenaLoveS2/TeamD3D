@@ -43,7 +43,20 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	XMMatrixDecompose(&vScale, (_vector*)&m_vInitQuat, &vTrans, m_pTransformCom->Get_WorldMatrix());
 
 	/* CloneTag로 m_vMovingPos 다르게 주면 돼 */
-	m_vMovingPos = _float4(50.f, 1.f, 35.f, 1.f);
+	if(!lstrcmp(m_szCloneObjectTag,L"MG_BombPlatform_0"))
+	{
+		m_vMovingPos = _float4(4.142f, 0.658f, 30.304f, 1.f);
+	}
+	else if (!lstrcmp(m_szCloneObjectTag, L"MG_BombPlatform_1"))
+	{
+		m_vMovingPos = _float4(8.18f, 5.367f, 31.f, 1.f);
+	}
+	else if (!lstrcmp(m_szCloneObjectTag, L"MG_BombPlatform_2"))
+	{
+		m_vMovingPos = _float4(14.7f, 3.15f, 29.7f, 1.f);
+	}
+
+	
 	m_vMovingQuat = XMQuaternionRotationNormal(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(CUtile::Get_RandomFloat(0.f, 359.f)));
 	m_fReturnTime = 5.f;
 
@@ -134,6 +147,9 @@ void CBombPlatform::Imgui_RenderProperty()
 void CBombPlatform::ImGui_PhysXValueProperty()
 {
 	PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_StaticActor(m_szCloneObjectTag);
+
+	if (pActor == nullptr)
+		return;
 
 	PxShape* pShape = nullptr;
 	pActor->getShapes(&pShape, sizeof(PxShape));
