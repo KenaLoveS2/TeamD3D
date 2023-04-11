@@ -272,6 +272,17 @@ void CDynamic_StoneCube::Actor_Clear()
 	m_pTransformCom->Clear_Actor();
 }
 
+void CDynamic_StoneCube::Imgui_Move_Pos(_float4 vParentPos)
+{
+	_vector vChangePos = 
+		XMVectorSetW(XMLoadFloat3(&m_StoneCubeDesc.vPos),1.f) - XMLoadFloat4(&m_StoneCubeDesc.vParentPos);
+
+	vChangePos += XMLoadFloat4(&vParentPos);
+
+	m_pTransformCom->Set_Position(vChangePos);
+
+}
+
 
 //void CDynamic_StoneCube::ImGui_PhysXValueProperty()
 //{
