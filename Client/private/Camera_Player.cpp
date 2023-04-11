@@ -101,6 +101,17 @@ void CCamera_Player::Tick(_float fTimeDelta)
 	if (CGameInstance::GetInstance()->Key_Down(DIK_F1))
 		m_bMouseFix = !m_bMouseFix;
 
+	if (m_pKena == nullptr || m_pKenaTransform == nullptr)
+	{
+		m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+		m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Find_Component(L"Com_Transform"));
+		Initialize_Position();
+
+		__super::Tick(fTimeDelta);
+
+		return;
+	}
+
 	if (m_pKena->Get_State(CKena::STATE_AIM) == true && m_pKena->Get_State(CKena::STATE_INJECTBOW) == false)
 	{
 		if (m_pKena->Get_State(CKena::STATE_JUMP) == true)
@@ -124,17 +135,6 @@ void CCamera_Player::Tick(_float fTimeDelta)
 			Set_CamOffset(CCamera_Player::CAMOFFSET_BOSSBATTLE);
 		else
 			Set_CamOffset(CCamera_Player::CAMOFFSET_DEFAULT);
-	}
-	
-	if (m_pKena == nullptr || m_pKenaTransform == nullptr)
-	{
-		m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
-		m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Find_Component(L"Com_Transform"));
-		Initialize_Position();
-
-		__super::Tick(fTimeDelta);
-
-		return;
 	}
 
 	_vector   vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);

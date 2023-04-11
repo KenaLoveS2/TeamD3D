@@ -2171,7 +2171,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	{
 		if (bPickingTerrain == false)
 		{
-			if (ImGui::BeginListBox("##"))			// �����?* �θ����?���� ��ġ)
+			if (ImGui::BeginListBox("##"))			// �����?* �θ����?���� ��ġ)
 			{
 				_int iIndex = 0;
 				for (auto& ProtoPair : m_pInstancingMatrix)
@@ -2347,7 +2347,6 @@ void CModel::Imgui_Mesh_InstancingSort_EditOrCreate()
 	 ImGui::Checkbox("Z_Ratio Use", &m_bXYZRatioUse[2]);
 }
 
-
 void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
 {
 	if (m_bIsInstancing == true)
@@ -2358,7 +2357,6 @@ void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
 }
 
 #endif
-
 
 void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 {
@@ -2389,7 +2387,6 @@ void CModel::InstanceModelPosInit(_fmatrix parentMatrix)
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
 
 }
-
 
 void CModel::Set_DurationRate(_uint iAnimIndex, _float fRate)
 {

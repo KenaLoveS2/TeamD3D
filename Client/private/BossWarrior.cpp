@@ -3,12 +3,14 @@
 #include "GameInstance.h"
 #include "Bone.h"
 #include "BossWarrior_Hat.h"
+#include "CameraForNpc.h"
 #include "E_WarriorTrail.h"
 #include "E_RectTrail.h"
 #include "E_Hieroglyph.h"
 #include "ControlRoom.h"
 #include "E_Warrior_FireSwipe.h"
 #include "SpiritArrow.h"
+#include "CinematicCamera.h"
 #include "BossRock_Pool.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -77,7 +79,7 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 
 	CBossRock_Pool::DESC BossRockPoolDesc;
 	BossRockPoolDesc.iRockCount = 30;
-	BossRockPoolDesc.vCenterPos = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
+	BossRockPoolDesc.vCenterPos = _float4(60.449f, 14.639f, 869.108f, 1.f);
 	m_pBossRockPool = (CBossRock_Pool*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossRockPool"), TEXT("Warrior_BossRockPool"), &BossRockPoolDesc);
 	assert(m_pBossRockPool && "CBossWarrior::Initialize()");
 	m_pBossRockPool->Late_Initialize(nullptr);
@@ -88,7 +90,7 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 HRESULT CBossWarrior::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
-	// ¸öÅë
+	// ï¿½ï¿½ï¿½ï¿½
 	{	
 		_float3 vPivotScale = _float3(0.8f, 1.f, 1.f); // _float3(0.8f, 3.f, 1.f); 
 		_float3 vPivotPos = _float3(0.f, 1.8f, 0.f);    // _float3(0.f, 3.8f, 0.f)
@@ -112,7 +114,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
-		// ¿©±â µÚ¿¡ ¼¼ÆÃÇÑ vPivotPos¸¦ ³Ö¾îÁÖ¸éµÈ´Ù.
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ vPivotPosï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö¸ï¿½È´ï¿½.
 		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
 	}
 	
@@ -177,6 +179,9 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_WARRIOR_GRAB_HAND));
 		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
 	}
+
+	m_pCineCam[0] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("BOSSWARRIOR_START")));
+	m_pCineCam[1] = dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Find_Camera(TEXT("BOSSWARRIOR_END")));
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
@@ -432,12 +437,23 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_bReadySpawn = true;
 	})
-		.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
+		.AddTransition("SLEEP to CINEMA", "CINEMA")
 		.Predicator([this]()
 	{	
-		// ´ë±â Á¾°á Á¶°Ç ¼öÁ¤ ÇÊ¿ä
-		m_fSpawnRange = 10.f;
+		// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
+		m_fSpawnRange = 20.f;
 		return DistanceTrigger(m_fSpawnRange);				
+	})
+
+		.AddState("CINEMA")
+		.OnStart([this]()
+	{
+		BossFight_Start();
+	})
+		.AddTransition("CINEMA to READY_SPAWN", "READY_SPAWN")
+		.Predicator([this]()
+	{
+		return m_pCineCam[0]->CameraFinishedChecker(0.3f);
 	})
 
 		.AddState("READY_SPAWN")
@@ -447,24 +463,34 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
-		g_bDayOrNight = false;
-
 		/* HP Bar Active */
 		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = 10.f; /* == BossWarrior Name */
 		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
 		/* ~HP Bar Active */
 	})
+		.Tick([this](_float fTimeDelta)
+	{
+				m_fDissolveTime -= fTimeDelta * 0.5f;
+				if (m_fDissolveTime < -0.5f)
+					m_bDissolve = false;
+
+				if (AnimIntervalChecker(AWAKE, 0.9f, 1.f))
+					m_pModelCom->FixedAnimIdx_PlayTime(AWAKE, 0.95f);
+	})
 		.OnExit([this]()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);		
 		m_bSpawn = true;
 		m_pKena->Set_State(CKena::STATE_BOSSBATTLE, true);
+		CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
+		m_pCineCam[0]->CinemaUIOff();
+		m_pKena->Set_StateLock(false);
 	})
 		.AddTransition("READY_SPAWN to IDLE", "IDLE")
 		.Predicator([this]()
 	{	
-		return AnimFinishChecker(AWAKE);
+		return m_pCineCam[0]->CameraFinishedChecker() && m_bDissolve == false;
 	})
 
 	
@@ -742,7 +768,7 @@ HRESULT CBossWarrior::SetUp_State()
 		m_bBellCall = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(BELL_CALL);
 		m_pModelCom->Set_AnimIndex(BELL_CALL);
-		// ¸ó½ºÅÍ ¼ÒÈ¯
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 	})
 		.OnExit([this]()
 	{
@@ -931,7 +957,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
-				/* ÀÌ»óÅÂ¿¡¼­ ¸Â´Â°Ô ÇÊ¿äÇÒ°Å°°À½ */
+				/* ï¿½Ì»ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ ï¿½Â´Â°ï¿½ ï¿½Ê¿ï¿½ï¿½Ò°Å°ï¿½ï¿½ï¿½ */
 		Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_PARRY, m_pTransformCom->Get_Position(),false);
 
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRIED);
@@ -970,6 +996,7 @@ HRESULT CBossWarrior::SetUp_State()
 
 		m_pKena->Dead_FocusRotIcon(this);
 		m_bDying = true;
+		BossFight_End();
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()
@@ -980,17 +1007,36 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("DEATH_SCENE")
 		.OnStart([this]()
 	{
-		// Á×Àº ¾Ö´Ï¸ÞÀÌ¼Ç ÈÄ Á×À½ ¿¬Ãâ State
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ State
+		m_bDissolve = true;
+		m_fEndTime = 0.f;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fEndTime += fTimeDelta;
+		m_fDissolveTime = m_fEndTime * 0.3f;
+		if (m_fDissolveTime >= 1.f)
+			m_bDissolve = false;
+	})
+		.OnExit([this]()
+	{
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->Boss_WarriorDeadGimmick();
+
+		// ï¿½Ã³ï¿½Ä· ï¿½Ï³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[1]->Get_ObjectCloneName());
+		m_pCineCam[1]->Play();
 	})
 		.AddTransition("DEATH_SCENE to DEATH", "DEATH")
 		.Predicator([this]()
 	{
-		return true;
+		return m_fEndTime >= 10.f;
 	})
 
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
+		g_bDayOrNight = true;
 		m_pTransformCom->Clear_Actor();
 		Clear_Death();
 		m_pKena->Set_State(CKena::STATE_BOSSBATTLE, false);
@@ -1123,15 +1169,15 @@ HRESULT CBossWarrior::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_BossWarrior.json");
 
-	CBossWarrior_Hat::MONSTERWEAPONDESC		WeaponDesc;
-	ZeroMemory(&WeaponDesc, sizeof(CBossWarrior_Hat::MONSTERWEAPONDESC));
+	CMonsterWeapon::MONSTERWEAPONDESC		WeaponDesc;
+	ZeroMemory(&WeaponDesc, sizeof(CMonsterWeapon::MONSTERWEAPONDESC));
 
 	XMStoreFloat4x4(&WeaponDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
 	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("HatJoint");
 	WeaponDesc.pTargetTransform = m_pTransformCom;
 	WeaponDesc.pOwnerMonster = this;
-	Safe_AddRef(WeaponDesc.pSocket);
-	Safe_AddRef(m_pTransformCom);
+	//Safe_AddRef(WeaponDesc.pSocket);
+	//Safe_AddRef(m_pTransformCom);
 		
 	m_pHat = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossWarrior_Hat"), L"BossWarrior_Hat", &WeaponDesc);
 	assert(m_pHat && "Boss Warrior Hat is nullptr");
@@ -1150,8 +1196,9 @@ HRESULT CBossWarrior::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_EmissiveColor", &m_fEmissiveColor, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &m_fHDRIntensity, sizeof(_float)), E_FAIL);
-	
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bFalse, sizeof(_bool)), E_FAIL);
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
 	// m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
@@ -1179,7 +1226,7 @@ void CBossWarrior::Update_Collider(_float fTimeDelta)
 		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
-		// imgui¸¦ »ç¿ëÇØ¼­ ½Ç½Ã°£À¸·Î ÇÇº¿°ªÀ» º¯°æÇÏ°í ½ÍÀ¸¸é ÁÖ¼® Ç®¾î¼­ ÇÏ¸é µÊ
+		// imguiï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ç½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ Ç®ï¿½î¼­ ï¿½Ï¸ï¿½ ï¿½ï¿½
 		/*
 		XMStoreFloat4x4(&m_WeaponPivotMatrix,
 			XMMatrixRotationX(m_vWeaPonPivotRot.x) * XMMatrixRotationY(m_vWeaPonPivotRot.y) * XMMatrixRotationZ(m_vWeaPonPivotRot.z)
@@ -1198,7 +1245,7 @@ void CBossWarrior::Update_Collider(_float fTimeDelta)
 		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
-		// imgui¸¦ »ç¿ëÇØ¼­ ½Ç½Ã°£À¸·Î ÇÇº¿°ªÀ» º¯°æÇÏ°í ½ÍÀ¸¸é ÁÖ¼® Ç®¾î¼­ ÇÏ¸é µÊ
+		// imguiï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ç½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ Ç®ï¿½î¼­ ï¿½Ï¸ï¿½ ï¿½ï¿½
 		// XMStoreFloat4x4(&m_RightLegPivotMatrix, XMMatrixTranslation(m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z));
 
 		SocketMatrix = XMLoadFloat4x4(&m_RightLegPivotMatrix) * SocketMatrix;
@@ -1227,6 +1274,25 @@ void CBossWarrior::Update_Collider(_float fTimeDelta)
 void CBossWarrior::AdditiveAnim(_float fTimeDelta)
 {
 	CMonster::AdditiveAnim(fTimeDelta);
+}
+
+void CBossWarrior::BossFight_Start()
+{
+	g_bDayOrNight = false;
+	CGameInstance::GetInstance()->Work_Camera(m_pCineCam[0]->Get_ObjectCloneName());
+	m_pCineCam[0]->Play();
+	m_bDissolve = true;
+	m_fDissolveTime = 1.f;
+}
+
+void CBossWarrior::BossFight_End()
+{
+	CGameInstance::GetInstance()->Work_Camera(TEXT("NPC_CAM"));
+
+	const _float3 vOffset = _float3(0.f, 1.5f, 0.f);
+	const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
+
+	dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")))->Set_Target(this, CCameraForNpc::OFFSET_FRONT_LERP, vOffset, vLookOffset, 0.9f, 3.f);
 }
 
 void CBossWarrior::Set_AttackType()
@@ -1306,22 +1372,22 @@ void CBossWarrior::TurnOnHieroglyph(_bool bIsInit, _float fTimeDelta)
 				_float4 WarriorPos = m_pTransformCom->Get_WorldMatrix().r[3];
 				_float4 vPos;
 				_float	fRange = 1.0f;
-				if (Pair.first == "W_Hieroglyph0") // ¿ÞÂÊ¾Æ·¡
+				if (Pair.first == "W_Hieroglyph0") // ï¿½ï¿½ï¿½Ê¾Æ·ï¿½
 				{
 					vPos = _float4(WarriorPos.x + 0.7f, WarriorPos.y + fRange, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(0);
 				}
-				if (Pair.first == "W_Hieroglyph1") // ¿ÞÂÊ À§
+				if (Pair.first == "W_Hieroglyph1") // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 				{
 					vPos = _float4(WarriorPos.x + fRange, WarriorPos.y + fRange * 2.f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(1);
 				}
-				if (Pair.first == "W_Hieroglyph2") // ¿À¸¥ÂÊ ¾Æ·¡
+				if (Pair.first == "W_Hieroglyph2") // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ·ï¿½
 				{
 					vPos = _float4(WarriorPos.x - 0.4f, WarriorPos.y + fRange + 0.2f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(2);
 				}
-				if (Pair.first == "W_Hieroglyph3") // ¿À¸¥ÂÊ À§
+				if (Pair.first == "W_Hieroglyph3") // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 				{
 					vPos = _float4(WarriorPos.x - 0.7f, WarriorPos.y + fRange * 2.5f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(3);
@@ -1510,7 +1576,7 @@ void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["W_DistortionPlane"]->Set_Position(vPosition);
 	m_mapEffect["W_DistortionPlane"]->Set_Active(true);
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL2], 0.5f);
-	// ±âµÕÀÌ¶û ¸ÕÁö°¡ Àü¿ªÀûÀ¸·Î ³ª¿Í¾ß ÇÔ 
+	// ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¾ï¿½ ï¿½ï¿½ 
 
 	m_pBossRockPool->Execute_UpRocks();
 }
@@ -1657,7 +1723,7 @@ _int CBossWarrior::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTrigge
 {
 	if (m_bKenaGrab && pTarget && iTriggerIndex == (_uint)ON_TRIGGER_PARAM_TRIGGER && iColliderIndex == (_int)COL_PLAYER)
 	{
-		// Grab ¾Ö´Ï¸ÞÀÌ¼Ç Áß¿¡ Ä³³ªÀÇ ¹Ùµð¿Í ¿ö¸®¾îÀÇ ±×·¦ÇÚµå Æ®¸®°Å°¡ Ãæµ¹
+		// Grab ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ß¿ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ùµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½Úµï¿½ Æ®ï¿½ï¿½ï¿½Å°ï¿½ ï¿½æµ¹
 	}
 
 	return 0; 
