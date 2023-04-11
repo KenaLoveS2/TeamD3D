@@ -128,13 +128,13 @@ private:
 	class CHatCart*				m_pHatCart = nullptr;
 
 private:
+	map<const string, class CEffect_Base*>		m_mapEffect;
 	vector<class CKena_Parts*>					m_vecPart;
 	vector<class CSpiritArrow*>					m_vecArrow;
-	class CSpiritArrow*							m_pCurArrow = nullptr;
 	vector<class CRotBomb*>						m_vecBomb;
-	class CRotBomb*								m_pCurBomb = nullptr;
-	map<const string, class CEffect_Base*>		m_mapEffect;
 	vector<_float4>								m_vecWeaposPos;
+	class CSpiritArrow*							m_pCurArrow = nullptr;
+	class CRotBomb*								m_pCurBomb = nullptr;
 
 private:
 	/* State variables*/
@@ -209,10 +209,12 @@ private:
 	_bool						m_bHitRim = false;
 	_bool						m_bParryRim = false;
 	_bool						m_bDashRim = false;
+	_bool						m_bLevelUpRim = false;
 
 	_float						m_fHitRimIntensity = 0.f;
 	_float						m_fParryRimIntensity = 0.f;
 	_float						m_fDashRimIntensity = 0.f;
+	_float						m_fLevelUpRimIntensity = 0.f;
 
 	_bool						m_bRotRockChoiceFlag = false;
 	_bool						m_bRotRockMoveFlag = false;
@@ -226,7 +228,7 @@ public:
 private:
 	/* UI */
 	CUI_RotIcon*				m_pUI_FocusRot;
-	CUI_FocusMonster*		m_pUI_FocusMonster;
+	CUI_FocusMonster*			m_pUI_FocusMonster;
 
 	_float4						m_vStaffLightPos;
 	CLight*						m_pStaffLight = nullptr;
@@ -287,6 +289,8 @@ private:	/* Effect Event Func */
 	void	TurnOnDashLp(_bool bIsInit, _float fTimeDelta);
 	void	TurnOffDashLp(_bool bIsInit, _float fTimeDelta);
 	void	TurnOnDashEd(_bool bIsInit, _float fTimeDelta);
+
+	void	TurnOnLvUp(_bool bIsInit, _float fTimeDelta);
 
 private:	/* Sound Event Func */
 	void	PlaySound_Jump(_bool bIsInit, _float fTimeDelta);
