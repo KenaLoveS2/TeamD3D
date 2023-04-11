@@ -90,9 +90,9 @@ struct PS_OUT_LIGHT
 	float4		vSpecular : SV_TARGET1;
 };
 
-float3 CalcAmbientOcclusion(float3 worldPos, float3 normal, Texture2D<float4> g_AO_R_MTexture, float2 UV)
+float3 CalcAmbientOcclusion(float3 worldPos, float3 normal, Texture2D<float4> AO_R_MTexture, float2 UV)
 {
-	float ao = g_AO_R_MTexture.Sample(LinearSampler, UV).r;
+	float ao = AO_R_MTexture.Sample(LinearSampler, UV).r;
 	return lerp(float3(1.0f, 1.0f, 1.0f), ao, normal);
 }
 
@@ -115,9 +115,9 @@ float3 CalcSpecular(float3 worldPos, float3 normal, float3 viewDir, float3 light
 	float D = DistributionGGX(normal, halfwayDir, roughnessFactor);
 	float G = GeometrySchlickGGX(NoV, roughnessFactor) * GeometrySchlickGGX(NoL, roughnessFactor);
 	float3 F = F0 + (1.0f - F0) * pow(1.0f - dot(viewDir, halfwayDir), 5.0f);
-	float3 specular = F * G * D * g_vLightSpecular.rgb / (4 * NoV * NoL);
+	float3 specular = F * G * D / (4 * NoV * NoL);
 	float3 diffuse = (1.0f - metallic) * (1.0f - F);
-	return specular + diffuse;
+	return (specular + diffuse) * g_vLightSpecular.rgb;
 }
 
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
@@ -147,8 +147,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vShade.rgb *= CalcAmbientOcclusion(vWorldPos.xyz, vNormal.xyz, g_MtrlAmbientTexture, In.vTexUV);
 	Out.vShade.a = 1.f;
 
-	//Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
-	Out.vSpecular.rgb = CalcSpecular(vWorldPos.xyz, vNormal.xyz, -vLook.xyz, g_vLightDir.xyz, Out.vShade.rgb, vReflect.xyz, g_MtrlAmbientTexture, In.vTexUV);
+	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
+	Out.vSpecular.rgb *= CalcSpecular(vWorldPos.xyz, vNormal.xyz, -vLook.xyz, g_vLightDir.xyz, Out.vShade.rgb, vReflect.xyz, g_MtrlAmbientTexture, In.vTexUV);
 	Out.vSpecular.a = 0.f;
 
 	return Out;
