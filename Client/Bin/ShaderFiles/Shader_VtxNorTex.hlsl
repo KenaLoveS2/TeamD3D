@@ -16,11 +16,14 @@ Texture2D<float4>		g_DiffuseTexture_2;
 Texture2D<float4>		g_BrushTexture;
 Texture2D<float4>		g_FilterTexture[3];
 
+Texture2D<float4>		g_NormalTexture;
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
 	float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
+	float3		vTangent : TANGENT;
 };
 
 struct VS_OUT
@@ -30,6 +33,8 @@ struct VS_OUT
 	float2		vTexUV : TEXCOORD0;
 	float4		vWorldPos : TEXCOORD1;
 	float4		vProjPos : TEXCOORD2;
+	float4		vTangent : TANGENT;
+	float3		vBinormal : BINORMAL;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -47,7 +52,8 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vWorldPos = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vProjPos = Out.vPosition;
-
+	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
+	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 	return Out;
 }
 
@@ -58,6 +64,8 @@ struct PS_IN
 	float2		vTexUV : TEXCOORD0;
 	float4		vWorldPos : TEXCOORD1;
 	float4		vProjPos : TEXCOORD2;
+	float4		vTangent : TANGENT;
+	float3		vBinormal : BINORMAL;
 };
 
 struct PS_OUT
@@ -75,6 +83,12 @@ PS_OUT PS_MAIN(PS_IN In)
 	
 	vector		vSourDiffuse = g_BaseTexture.Sample(LinearSampler, In.vTexUV * 100.f);
 	vector		vDestDiffuse0 = g_DiffuseTexture_0.Sample(LinearSampler, In.vTexUV * 100.f);
+
+	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV * 100.f);
+
+	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
 
 	vector vDestDiffuse1 = g_DiffuseTexture_1.Sample(LinearSampler, In.vTexUV * 100.f);
 	vector vDestDiffuse2 = g_DiffuseTexture_2.Sample(LinearSampler, In.vTexUV * 100.f);
@@ -139,11 +153,10 @@ PS_OUT PS_MAIN(PS_IN In)
 			vMtrlDiffuse = vDestDiffuse0;
 		}
 	}
-
 	Out.vDiffuse = vMtrlDiffuse;
 	Out.vDiffuse.a = 1.f;
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.8f, 0.f);
 	Out.vAmbient = (vector)1.f;
 
 	return Out;

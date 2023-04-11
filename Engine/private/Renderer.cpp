@@ -497,12 +497,15 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
+		// UI
+		// ÆÄÆ¼Å¬
 		if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_HDR"))))
 			return E_FAIL;
 		if (FAILED(Render_HDR()))
 			return E_FAIL;
 		if (FAILED(Render_Effect()))
 			return E_FAIL;
+		
 		if (FAILED(Render_PostProcess()))
 			return E_FAIL;
 	}

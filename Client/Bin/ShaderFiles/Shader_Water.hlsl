@@ -26,21 +26,16 @@ struct VS_OUT
 	float4		vProjPos : TEXCOORD1;
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
-//float4       vReflectionMapSamplingPos : TEXCOORD2;
-//float4		vRefractionMapSamplingPos : TEXCOORD3;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
 
-	matrix		matWV, matWVP;//, matRVP, matWRVP;
+	matrix		matWV, matWVP;
 
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
-
-//matRVP = mul(g_ReflectedViewMatrix, g_ProjMatrix);
-//matWRVP = mul(g_WorldMatrix, matRVP);
 
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vPosition.y += sin(In.vPosition.x + In.vPosition.z + g_fTime * 5.0f) * 0.1f;
@@ -49,8 +44,6 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vProjPos = Out.vPosition;
 	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
 	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
-//Out.vReflectionMapSamplingPos = mul(float4(In.vPosition, 1.f), matWRVP);
-//Out.vRefractionMapSamplingPos = mul(float4(In.vPosition, 1.f), matRVP);
 	return Out;
 }
 
@@ -62,8 +55,6 @@ struct PS_IN
 	float4		vProjPos : TEXCOORD1;
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
-	//float4       vReflectionMapSamplingPos : TEXCOORD2;
-	//float4		vRefractionMapSamplingPos : TEXCOORD3;
 };
 
 struct PS_OUT
@@ -79,12 +70,6 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	/* Sampling Texture */
-	/*float2  vProjectedTexCoord;
-	vProjectedTexCoord.x = In.vReflectionMapSamplingPos.x / In.vReflectionMapSamplingPos.w / 2.f + 0.5f;
-	vProjectedTexCoord.y = -In.vReflectionMapSamplingPos.y / In.vReflectionMapSamplingPos.w / 2.f + 0.5f;
-	float4  vReflectiveColor = g_ReflectTexture.Sample(LinearSampler, vProjectedTexCoord);*/
-
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	float4 		vDiffuse = float4(0.f, 0.5f, 1.f, 1.f);
 
@@ -92,8 +77,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
-
-	//float4 FinalColor = lerp(vDiffuse, vReflectiveColor, 0.5f);
 
 	Out.vDiffuse = float4(vDiffuse.rgb, 0.3f);
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);

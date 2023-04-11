@@ -14,8 +14,8 @@ BEGIN(Client)
 class CTerrain final : public CGameObject
 {
 public:
-	enum TEXTURE { TYPE_DIFFUSE, TYPE_BRUSH, TYPE_FILTER, TYPE_END };
-
+	enum TEXTURE { TYPE_DIFFUSE, TYPE_BRUSH, TYPE_FILTER, TYPE_NORMAL, TYPE_TEST, TYPE_END };
+	 
 	typedef struct tag_TerrainDesc
 	{
 		wstring			wstrDiffuseTag;
@@ -61,7 +61,7 @@ private:
 	CShader*						m_pShaderCom = nullptr;
 	CRenderer*						m_pRendererCom = nullptr;
 	CTexture*						m_pTextureCom[TYPE_END] = { nullptr };
-	CVIBuffer_Terrain*				m_pVIBufferCom = nullptr;
+	CVIBuffer_Terrain* m_pVIBufferCom = nullptr;
 
 	_float4 m_vBrushPos;
 	_float m_vBrushRange = 0.8f;

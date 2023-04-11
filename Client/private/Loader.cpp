@@ -2775,6 +2775,16 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Filter*/
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_TerrainDiffuse"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/T_GDC_Grass01_D_NoisyAlpha.png")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Filter*/
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_TerrainNormal"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/T_Ground_Grass_N.png")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Filter*/
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Filter"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3))))
 		return E_FAIL;
