@@ -282,8 +282,8 @@ HRESULT CUI_NodeEffect::Save_Data()
 	//filePath += this->Get_ObjectCloneName();
 	filePath += L"_Property.json";
 
-	string fileName;
-	fileName = fileName.assign(filePath.begin(), filePath.end());
+	string fileName = CUtile::wstring_to_utf8(filePath);
+	//fileName = fileName.assign(filePath.begin(), filePath.end());
 
 	ofstream	file(fileName);
 	file << json;
@@ -312,8 +312,8 @@ HRESULT CUI_NodeEffect::Load_Data(wstring fileName)
 	}
 
 	name += L"_Property.json";
-	string filePath;
-	filePath.assign(name.begin(), name.end());
+	string filePath = CUtile::wstring_to_utf8(name);
+	//filePath.assign(name.begin(), name.end());
 
 	ifstream file(filePath);
 	if (file.fail())
@@ -336,9 +336,7 @@ HRESULT CUI_NodeEffect::Load_Data(wstring fileName)
 		jLoad["Alpha"].get_to<_float>(m_fAlpha);
 	}
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	vector<wstring>* pTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
-	RELEASE_INSTANCE(CGameInstance);
+	vector<wstring>* pTags = CGameInstance::GetInstance()->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
 
 	if (-1 != m_TextureListIndices[TEXTURE_DIFFUSE])
 	{
@@ -397,8 +395,6 @@ HRESULT CUI_NodeEffect::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -440,7 +436,6 @@ HRESULT CUI_NodeEffect::SetUp_ShaderResources()
 			return E_FAIL;
 
 	}
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

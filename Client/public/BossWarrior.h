@@ -182,6 +182,8 @@ private:
 
 	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
 
+	class CBossRock_Pool* m_pBossRockPool = nullptr;
+
 public:
 	static CBossWarrior*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
@@ -196,6 +198,7 @@ public:
 
 	void Attack_End();
 
+	void Grab_Turn(_bool bIsInit, _float fTimeDelta);
 	void Create_CopySoundKey();
 	void Play_Attack1Sound(_bool bIsInit, _float fTimeDelta);
 	void Play_Attack2Sound(_bool bIsInit, _float fTimeDelta);

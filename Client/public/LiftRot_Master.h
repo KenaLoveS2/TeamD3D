@@ -40,7 +40,7 @@ public:
 
 	void Execute_WakeUp(_float4 vCenterPos, _float3* pCreatePosOffsetArr, _float3* pLiftPosOffsetArr);
 	void Execute_WakeUp(_fmatrix ParentMatrix, _float3* pCreateLocalPos, _float3* pLiftLocalPos);
-	void Execute_LiftStart();
+	void Execute_LiftStart(_float4 vLookPos);
 	void Execute_LiftMoveStart();
 	void Execute_Move(_float4 vCenterPos, _float3 *pOffsetPosArr);
 	void Execute_Move(_fmatrix ParentMatrix, _float3* pLocalPosArr);

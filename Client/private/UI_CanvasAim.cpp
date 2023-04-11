@@ -122,12 +122,12 @@ HRESULT CUI_CanvasAim::Initialize(void * pArg)
 	m_fTime = 0.5f;
 	m_fTimeAcc = 0.f;
 
-	m_vecNode[UI_ARROW1]->Set_Active(true);
-	m_vecNode[UI_ARROW2]->Set_Active(true);
-	m_vecNode[UI_ARROW3]->Set_Active(true);
-	m_vecNode[UI_ARROW4]->Set_Active(true);
-
-	m_vecNode[UI_BOMB1]->Set_Active(true);
+	//m_vecNode[UI_ARROW1]->Set_Active(true);
+	//m_vecNode[UI_ARROW2]->Set_Active(true);
+	//m_vecNode[UI_ARROW3]->Set_Active(true);
+	//m_vecNode[UI_ARROW4]->Set_Active(true);
+	//
+	//m_vecNode[UI_BOMB1]->Set_Active(true);
 
 	return S_OK;
 }
@@ -186,9 +186,7 @@ HRESULT CUI_CanvasAim::Render()
 
 HRESULT CUI_CanvasAim::Bind()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(), L"Layer_Player", L"Kena"));
-	RELEASE_INSTANCE(CGameInstance);
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 	
 	if (pKena == nullptr)
 		return E_FAIL;

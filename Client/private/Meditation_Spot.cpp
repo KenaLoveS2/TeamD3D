@@ -118,6 +118,9 @@ void CMeditation_Spot::Tick(_float fTimeDelta)
 
 					/* NEED : UI HP GUAGE UP */
 					//m_pKena->m_Delegator
+					CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::HUD_HP_UPGRADE;
+					fHPRate = pStatus->Get_PercentHP();
+					pStatus->m_StatusDelegator.broadcast(eUpgrade, fHPRate);
 				}
 			}
 			else

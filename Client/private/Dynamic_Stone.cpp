@@ -370,7 +370,7 @@ _int CDynamic_Stone::Execute_Collision(CGameObject* pTarget, _float3 vCollisionP
 
 void CDynamic_Stone::ImGui_PhysXValueProperty()
 {
-	CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
+	//CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
 
 	//if(ImGui::Button("TestTest"))
 	//{

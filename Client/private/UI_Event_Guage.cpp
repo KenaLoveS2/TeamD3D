@@ -209,8 +209,8 @@ HRESULT CUI_Event_Guage::Load_Data(wstring fileName)
 	wstring name = L"../Bin/Data/UI/";
 	name += fileName;
 	name += L"_Property.json";
-	string filePath;
-	filePath.assign(name.begin(), name.end());
+	string filePath = CUtile::wstring_to_utf8(name);
+	//filePath.assign(name.begin(), name.end());
 
 	ifstream file(filePath);
 	if (file.fail())

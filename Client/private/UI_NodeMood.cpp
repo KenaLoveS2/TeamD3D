@@ -113,22 +113,37 @@ HRESULT CUI_NodeMood::Render()
 
 void CUI_NodeMood::MoodOn(STATE eState)
 {
-	m_vecEvents[0]->Call_Event(true);
-
+	m_bActive = true;
 	m_eState = eState;
 
 	switch(m_eState)
 	{
 	case STATE_HIT:
 		m_vColor = _float4{0.388f, 0.024f, 0.024f, 1.0f};
+		m_iTextureIdx = 0;
 		break;
 	case STATE_PARRY:
 		m_vColor = _float4{ 0.439f, 0.662f, 0.914f, 1.0f };
+		m_iTextureIdx = 0;
 		break;
 	case STATE_HEAL:
 		m_vColor = _float4{ 0.835f, 0.883f, 0.883f, 1.0f };
+		m_iTextureIdx = 0;
 		break;
+	case STATE_FADE:
+		m_vColor = _float4{ 0.f, 0.f, 0.f , 1.0f };
+		m_iTextureIdx = 1;
+		break;
+	case STATE_DAZZLE:
+		m_vColor = _float4{ 1.f, 1.f, 1.f , 1.0f };
+		m_iTextureIdx = 1;
+		break;
+
 	}
+
+	static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Change_Data(0.08f, 0.5f);
+	m_vecEvents[EVENT_FADE]->Call_Event(true);
+
 }
 
 HRESULT CUI_NodeMood::SetUp_Components()
@@ -154,8 +169,6 @@ HRESULT CUI_NodeMood::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -167,7 +180,7 @@ HRESULT CUI_NodeMood::SetUp_ShaderResources()
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
-		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture",m_iTextureIdx)))
 			return E_FAIL;
 	}
 
@@ -183,8 +196,6 @@ HRESULT CUI_NodeMood::SetUp_ShaderResources()
 	_float fAmount = 0.6f; /* Max Alpha Control */
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAmount", &fAmount, sizeof(_float))))
 		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

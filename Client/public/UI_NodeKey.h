@@ -8,12 +8,14 @@ class CUI_NodeKey final : public CUI_Node
 public:
 	enum EVENT		{ EVENT_FADE ,EVENT_END };
 	enum KEYTYPE	{ TYPE_R, TYPE_B, TYPE_Q, TYPE_LB, TYPE_RB, TYPE_END };
-	enum LEVEL		{ LV_1, LV_2, LV_END };
 
 private:
 	CUI_NodeKey(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUI_NodeKey(const CUI_NodeKey& rhs);
 	virtual ~CUI_NodeKey() = default;
+
+public:
+	void	Set_Key(wstring wstr, KEYTYPE eType);
 
 public:
 	virtual HRESULT			Initialize_Prototype()					override;
@@ -31,6 +33,7 @@ private:
 	//KEY					m_eState;
 	_tchar*					m_szKeyDesc;
 
+	/* Idle */
 	_float					m_fRotSpeed;
 	_float					m_fRotAngle; /* ring ring ring */
 

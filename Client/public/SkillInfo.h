@@ -20,6 +20,7 @@ public:
 		wstring		wstrDesc;
 		_int		conditions[CONDITION_END];
 		STATE		eState;
+		wstring		wstrVideo;
 	}SKILLDESC;
 
 private:

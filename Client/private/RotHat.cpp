@@ -100,7 +100,8 @@ void CRotHat::Tick(_float fTimeDelta)
 
 void CRotHat::Late_Tick(_float fTimeDelta)
 {
-	if (m_bShowFlag == false) return;
+	if (m_bShowFlag == false) 
+		return;
 
 	__super::Late_Tick(fTimeDelta);	
 	

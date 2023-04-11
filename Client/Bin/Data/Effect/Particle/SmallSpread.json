@@ -1,0 +1,39 @@
+{
+    "0. FileTag": "SmallSpread",
+    "1. Data": [
+        {
+            "A. Type": 4,
+            "B. Pass": 2,
+            "C. HDRValue": 2.0,
+            "D. Color": [
+                1.0,
+                1.0,
+                1.0,
+                0.20000000298023224
+            ],
+            "E. DiffuseTex": [
+                53.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "F. Spread": true,
+            "G. Max": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "G. Min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "H. InstanceSpeed": 0.4,
+            "I. CreateRange": 1.0,
+            "J. Range": 0.5,
+            "K. Term": 1.0,
+            "L. PowValue":2.0
+        }
+    ]
+}

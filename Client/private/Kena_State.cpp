@@ -6272,6 +6272,7 @@ void CKena_State::Start_Dash(_float fTimeDelta)
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 
 	/* NEED : UI SCREEN FX DASH */
+	/* Hold */
 }
 
 void CKena_State::Start_Dash_Settle(_float fTimeDelta)
@@ -6808,7 +6809,9 @@ void CKena_State::Start_Pulse_Parry(_float fTimeDelta)
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
 
-	/* NEED : UI SCREEN FX PARRY */
+	CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::TOP_MOOD_PARRY;
+	_float fDefault = 1.f;
+	m_pKena->m_Delegator.broadcast(tag, fDefault);
 }
 
 void CKena_State::Start_Pulse_Walk(_float fTimeDelta)
@@ -6897,6 +6900,21 @@ void CKena_State::Start_Rot_Action(_float fTimeDelta)
 	m_pAnimationState->State_Animation("ROT_ACTION");
 
 	m_pKena->m_bRotActionPossible = false;
+
+	/* UI Control */
+	CKena_Status* pStatus = m_pKena->Get_Status();
+	pStatus->Set_CurPIPGuage(pStatus->Get_CurPIPGuage() - 1.f);
+	pStatus->Set_RotState(CKena_Status::RS_ACTIVE);
+	
+	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
+	CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
+
+	_float fZero = 0.f;
+	m_pKena->m_Delegator.broadcast(ePip, fZero);
+	_float fRot = 2;
+	m_pKena->m_Delegator.broadcast(eRot, fRot);
+	/* ~UI Control */
+
 }
 
 void CKena_State::Start_Rot_Action_Run(_float fTimeDelta)
@@ -6913,6 +6931,19 @@ void CKena_State::Start_Rot_Action_Aim(_float fTimeDelta)
 
 void CKena_State::Start_Rot_Action_Aim_Run(_float fTimeDelta)
 {
+	/* UI Control */
+	CKena_Status* pStatus = m_pKena->Get_Status();
+	pStatus->Set_CurPIPGuage(pStatus->Get_CurPIPGuage() - 1.f);
+	pStatus->Set_RotState(CKena_Status::RS_ACTIVE);
+
+	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
+	CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
+
+	_float fZero = 0.f;
+	m_pKena->m_Delegator.broadcast(ePip, fZero);
+	_float fRot = 2;
+	m_pKena->m_Delegator.broadcast(eRot, fRot);
+	/* ~UI Control */
 }
 
 void CKena_State::Start_Shield_Impact(_float fTimeDelta)
@@ -7626,6 +7657,14 @@ void CKena_State::Tick_Fall_Into_Run(_float fTimeDelta)
 
 void CKena_State::Tick_Warrior_Grab(_float fTimeDelta)
 {
+	if (m_pAnimationState->Get_AnimationProgress() > 0.765f)
+		m_pKena->m_bGrabWarrior = false;
+	else if (m_pAnimationState->Get_AnimationProgress() > 0.6f)
+	{
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+		m_pKena->m_pRendererCom->Set_MotionBlur(false);
+	}
+
 	if (m_pKena->m_pAttackObject == nullptr)
 		return;
 
@@ -7644,6 +7683,7 @@ void CKena_State::Tick_Warrior_Grab(_float fTimeDelta)
 
 		if (vGrabPos != vWarriorPos)
 		{
+			vGrabPos.y -= 0.52f;
 			m_pTransform->Set_Position(vGrabPos);
 
 			if (pWarriorModel->Get_AnimationProgress() < 0.55f)

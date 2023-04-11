@@ -356,6 +356,7 @@
     <ClInclude Include="..\public\RotForMonster.h" />
     <ClInclude Include="..\public\RotHat.h" />
     <ClInclude Include="..\public\RotWisp.h" />
+    <ClInclude Include="..\public\Rot_Base.h" />
     <ClInclude Include="..\public\Saiya.h" />
     <ClInclude Include="..\public\SceneChangePortal.h" />
     <ClInclude Include="..\public\ShamanTrapGeo.h" />
@@ -464,6 +465,7 @@
     <ClInclude Include="..\public\UI_NodeSkillName.h" />
     <ClInclude Include="..\public\UI_NodeSkillVideo.h" />
     <ClInclude Include="..\public\UI_NodeTitle.h" />
+    <ClInclude Include="..\public\UI_NodeVideo.h" />
     <ClInclude Include="..\public\UI_RotIcon.h" />
     <ClInclude Include="..\public\UI_Weakpoint.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
@@ -650,6 +652,7 @@
     <ClCompile Include="..\private\RotHat.cpp" />
     <ClCompile Include="..\private\MannequinRot.cpp" />
     <ClCompile Include="..\private\RotWisp.cpp" />
+    <ClCompile Include="..\private\Rot_Base.cpp" />
     <ClCompile Include="..\private\Saiya.cpp" />
     <ClCompile Include="..\private\SceneChangePortal.cpp" />
     <ClCompile Include="..\private\ShamanTrapGeo.cpp" />
@@ -758,6 +761,7 @@
     <ClCompile Include="..\private\UI_NodeSkillName.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillVideo.cpp" />
     <ClCompile Include="..\private\UI_NodeTitle.cpp" />
+    <ClCompile Include="..\private\UI_NodeVideo.cpp" />
     <ClCompile Include="..\private\UI_RotIcon.cpp" />
     <ClCompile Include="..\private\UI_Weakpoint.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />

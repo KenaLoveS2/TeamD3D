@@ -1,6 +1,8 @@
 #pragma once
 #include "Client_Defines.h"
 #include "EnviromentObj.h"
+#include "UI_ClientManager.h"
+#include "Delegator.h"
 
 BEGIN(Engine)
 class CShader;
@@ -34,6 +36,9 @@ public:
 
 public:
 	HRESULT				SetUp_Effects();
+
+public:
+	Delegator<CUI_ClientManager::UI_PRESENT, _float>	m_FlowerDelegator;
 
 private:
 	CShader*			m_pShaderCom = nullptr;
