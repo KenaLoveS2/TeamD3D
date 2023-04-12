@@ -18,14 +18,6 @@ float			g_fUVSpeedX = 0.f, g_fUVSpeedY = 0.f;
 int				g_XFrames = 1, g_YFrames = 1;
 int				g_XFrameNow = 0, g_YFrameNow = 0;
 
-struct	tInstanceInfo
-{
-	float4x4			Matrix;
-	float				fLife;
-};
-
-//RWStructuredBuffer<tInstanceInfo>	g_WriteBuffer;
-
 struct VS_IN
 {
 	float3		vPosition		: POSITION;
@@ -47,9 +39,8 @@ VS_OUT VS_MAIN(VS_IN In)
 	VS_OUT		Out = (VS_OUT)0;
 
 	float4x4	Matrix = In.Matrix;
-
 	/* Option */
-	Out.fLife = In.Matrix[3][3];
+	Out.fLife	= In.Matrix[3][3];
 
 	/* Return to Original Matrix */
 	/* It means... we can make 4 options.. */
@@ -62,8 +53,8 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	vector		vPosition = mul(float4(In.vPosition, 1.f), Matrix);
 
-	Out.vPosition = mul(vPosition, g_WorldMatrix).xyz;
-	Out.vPSize = In.vPSize;
+	Out.vPosition		= mul(vPosition, g_WorldMatrix).xyz;
+	Out.vPSize			= In.vPSize;
 	Out.vCenterPosition = matrix_postion(g_WorldMatrix);
 
 	return Out;
@@ -184,6 +175,58 @@ void GS_MAIN_GATHER(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 
 }
 
+[maxvertexcount(6)]
+void GS_UI(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
+{
+	GS_OUT		Out[4];
+
+	//float3		vLook	= In[0].fLife * float4(0.f, 0.f, -1.f, 0.f);// (g_vCamPosition.xyz - In[0].vPosition);
+	//float3		vRight	= In[0].fLife * (normalize(cross(float3(0.f, 1.f, 0.f), vLook)) * In[0].vPSize.x * 0.5f);
+	//float3		vUp		= In[0].fLife * (normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f);
+
+	float3		vLook	= (1 - In[0].fLife) * float4(0.f, 0.f, -1.f, 0.f);
+	float3		vDir	= normalize(In[0].vPosition - In[0].vCenterPosition);
+	float3		vRight	= (1 - In[0].fLife) * (normalize(cross(vDir, vLook)) * In[0].vPSize.x * 0.5f);
+	float3		vUp		= (1 - In[0].fLife) * (normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f);
+
+
+
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+
+	float3		vPosition;
+
+	vPosition = In[0].vPosition + vRight + vUp;
+	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[0].vTexUV = float2(0.f, 0.f);
+	Out[0].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition - vRight + vUp;
+	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[1].vTexUV = float2(1.f, 0.f);
+	Out[1].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition - vRight - vUp;
+	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[2].vTexUV = float2(1.f, 1.f);
+	Out[2].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition + vRight - vUp;
+	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[3].vTexUV = float2(0.f, 1.f);
+	Out[3].fLife = In[0].fLife;
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[1]);
+	Vertices.Append(Out[2]);
+	Vertices.RestartStrip();
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[2]);
+	Vertices.Append(Out[3]);
+	Vertices.RestartStrip();
+
+}
+
 struct PS_IN
 {
 	float4		vPosition	: SV_POSITION;
@@ -242,6 +285,35 @@ PS_OUT PS_MAIN(PS_IN In)
 		discard;
 
 	Out.vColor.rgb *= g_float_0;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_V2(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+	if (g_bool_0)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_int_2;
+		In.vTexUV.y = In.vTexUV.y + g_int_3;
+
+		In.vTexUV.x = In.vTexUV.x / g_int_0;
+		In.vTexUV.y = In.vTexUV.y / g_int_1;
+	}
+
+	float4 vDiffuse = g_tex_0.Sample(PointSampler, In.vTexUV);
+	vDiffuse.rgb *= g_float4_0.rgb;
+	Out.vColor = CalcHDRColor(vDiffuse, g_float_0);
+	Out.vColor.a *= (1 - In.fLife);
+
+	if (Out.vColor.a < 0.01f)
+		discard;
+
+	//Out.vColor.rgb *= g_float_0;
+
+
+
 
 	return Out;
 }
@@ -353,74 +425,19 @@ VS_TRAILOUT VS_TRAIL(VS_TRAILIN In)
 }
 
 
-//
-//struct HS_CONSTANT_DATA
+// constant buffer
+//cbuffer Constants : register(b0)
 //{
-//	float edges[4] : SV_TessFactor;
-//};
-//
-//struct HS_OUTPUT
-//{
-//	float4				vPosition	: POSITION;
-//	float2				vPSize		: PSIZE;
-//	float				fLife		: TEXCOORD0;
-//	row_major float4x4	Matrix		: WORLD;
-//	uint				InstanceID	: SV_InstanceID;
-//};
-//
-//HS_CONSTANT_DATA HSConstantFunction(InputPatch<VS_TRAILOUT, 4> patch, uint patchID : SV_PrimitiveID)
-//{
-//	HS_CONSTANT_DATA output;
-//
-//	// 헐셰이더에서 RWStructuredBuffer에 값을 쓰는 예시 코드
-//	int iIndex = patch[patchID].InstanceID % 2;
-//	tInstanceInfo tInfo;
-//	tInfo.Matrix = patch[patchID].Matrix;
-//	tInfo.fLife = patch[patchID].fLife;
-//	g_WriteBuffer[iIndex] = tInfo;
-//
-//
-//	// 패치 테셀레이션을 위한 테셀레이션 팩터 설정
-//	//output.maxVertexCount = 2048;
-//	output.edges[0] = 1;
-//	//output.inside = 1;
-//
-//	return output;
+//	float3	vPositionP1;
+//	float3	vPositionP2;
 //}
 //
-//void HS_TRAIL(InputPatch<VS_TRAILOUT, 4> patch,
-//	uint patchID : SV_PrimitiveID,
-//	out HS_CONSTANT_DATA output[4])
-//{
-//	for (int i = 0; i < 4; ++i)
-//	{
-//		output[i] = HSConstantFunction(patch, patchID);
-//
-//	}
-//}
-//
-//struct DS_OUT
-//{
-//	float4				vPosition	: POSITION;
-//	float2				vPSize		: PSIZE;
-//	float				fLife : TEXCOORD0;
-//	row_major float4x4	Matrix		: WORLD;
-//	uint				InstanceID	: SV_InstanceID;
-//};
-//
-//[maxvertexcount(4)]
-//void DS_TRAIL(InputPatch<VS_TRAILOUT, 4> inputPatch,
-//	uint patchId : SV_PrimitiveID,
-//	out DS_OUT output[4])
-//{
-//	for (int i = 0; i < 4; ++i) {
-//		output[i].vPosition = inputPatch[i].vPosition;
-//		output[i].vPSize = inputPatch[i].vPSize;
-//		output[i].fLife = inputPatch[i].fLife;
-//		output[i].Matrix = inputPatch[i].Matrix;
-//		output[i].InstanceID = inputPatch[i].InstanceID;
-//	}
-//}
+//float3 GetPos1() { return vPositionP1; }
+//float3 GetPos2() { return vPositionP2; }
+//void SetPos1(float3 x) { vPositionP1 = x; }
+//void SetPos2(float3 x) { vPositionP2 = x; }
+
+
 
 struct GS_TRAILIN
 {
@@ -451,19 +468,21 @@ void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices
 	float3		vPosition	= matrix_postion(In[0].Matrix);
 
 	float3 vResultPos;
-	//if (In[0].InstanceID == 0)
-	//{
+	if (In[0].InstanceID == 0)
+	{
 		vResultPos = vPosition - vRight + vUp;
 		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[0].vTexUV = float2(0.f, 0.f);
 		Out[0].fLife = In[0].fLife;
 		
 		vResultPos = vPosition + vRight + vUp;
+		//vPositionP1 = vResultPos;
 		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[1].vTexUV = float2(1.f, 0.f);
 		Out[1].fLife = In[0].fLife;
 
 		vResultPos = vPosition + vRight - vUp;
+		//vPositionP2 = vResultPos;
 		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[2].vTexUV = float2(1.f, 1.f);
 		Out[2].fLife = In[0].fLife;
@@ -473,33 +492,35 @@ void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices
 		Out[3].vTexUV = float2(0.f, 1.f);
 		Out[3].fLife = In[0].fLife;
 
-	//}
-	//else
-	//{
-	//	//Prev[1] -> Now[0]
-	//	//vResultPos = vPositionPrev + vRightPrev + vUpPrev;
-	//	Out[0].vPosition	= mul(vector(g_WriteBuffer[0].vPosition), matVP);
-	//	Out[0].vTexUV		= float2(0.f, 0.f);
-	//	Out[0].fLife		= g_WriteBuffer[0].fLife;
+	}
+	else
+	{
+		vResultPos = vPosition - vRight + vUp;
+		//vResultPos = vPosition1;
+		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[0].vTexUV = float2(0.f, 0.f);
+		Out[0].fLife = In[0].fLife;
 
-	//	vResultPos = vPosition + vRight + vUp;
-	//	Out[1].vPosition	= mul(vector(vResultPos, 1.f), matVP);
-	//	Out[1].vTexUV		= float2(1.f, 0.f);
-	//	Out[1].fLife		= In[0].fLife;
+		vResultPos = vPosition + vRight + vUp;
+		//vPositionP1 = vResultPos;
+		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[1].vTexUV = float2(1.f, 0.f);
+		Out[1].fLife = In[0].fLife;
 
-	//	vResultPos = vPosition + vRight - vUp;
-	//	Out[2].vPosition	= mul(vector(vResultPos, 1.f), matVP);
-	//	Out[2].vTexUV		= float2(1.f, 1.f);
-	//	Out[2].fLife		= In[0].fLife;
+		vResultPos = vPosition + vRight - vUp;
+		//vPositionP2 = vResultPos;
+		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[2].vTexUV = float2(1.f, 1.f);
+		Out[2].fLife = In[0].fLife;
 
-	//	//Prev[2] -> Now[3]
-	//	//vResultPos = vPositionPrev + vRightPrev - vUpPrev;
-	//	Out[3].vPosition	= mul(vector(g_WriteBuffer[1].vPosition), matVP);
-	//	Out[3].vTexUV		= float2(0.f, 1.f);
-	//	Out[3].fLife		= g_WriteBuffer[1].fLife;
+		vResultPos = vPosition - vRight - vUp;
+		//vResultPos = vPosition2;
+		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[3].vTexUV = float2(0.f, 1.f);
+		Out[3].fLife = In[0].fLife;
+	}
 
-	//}
-
+	
 
 	//tInstanceInfo p1;
 	//p1.vPosition	= vPosition + vRight + vUp;
@@ -621,5 +642,18 @@ technique11 DefaultTechnique
 
 		DomainShader = NULL;// compile ds_5_0 DS_TRAIL();
 		PixelShader = compile ps_5_0 PS_TRAIL();
+	}
+
+	pass Default_UI // 5
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_UI();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_V2();
 	}
 }

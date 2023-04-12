@@ -9,8 +9,10 @@ CVIBuffer_Point_Instancing_S2::CVIBuffer_Point_Instancing_S2(ID3D11Device* pDevi
 	, m_pXSpeeds(nullptr)
 	, m_pYSpeeds(nullptr)
 	, m_pZSpeeds(nullptr)
+	, m_pVariables(nullptr)
 	, m_pPositions(nullptr)
 	, m_bFinished(false)
+	, m_bStop(false)
 {
 	ZeroMemory(&m_tInfo, sizeof(m_tInfo));
 }
@@ -20,8 +22,10 @@ CVIBuffer_Point_Instancing_S2::CVIBuffer_Point_Instancing_S2(const CVIBuffer_Poi
 	, m_pXSpeeds(nullptr)
 	, m_pYSpeeds(nullptr)
 	, m_pZSpeeds(nullptr)
+	, m_pVariables(nullptr)
 	, m_pPositions(nullptr)
 	, m_bFinished(false)
+	, m_bStop(false)
 {
 }
 
@@ -75,6 +79,16 @@ HRESULT CVIBuffer_Point_Instancing_S2::Initialize(void* pArg, CGameObject* pOwne
 			CUtile::Get_RandomFloat(m_tInfo.vMinPos.z, m_tInfo.vMaxPos.z) };
 	}
 
+	m_pVariables = new _float3[m_iNumInstance];
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+		m_pVariables[i] = { 0.0f, 0.0f, 0.0f };
+
+	if (POINTINFO::TYPE_SPREADREPEAT == m_tInfo.eType)
+	{
+		/* x: StartTime, y: TimeAcc, z: NewTimeAcc */
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+			m_pVariables[i] = { CUtile::Get_RandomFloat(0.0f, m_tInfo.fTerm),0.0f, 0.0f };
+	}
 
 
 #pragma region VERTEX_BUFFER
@@ -178,6 +192,8 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick(_float TimeDelta)
 		return Tick_Spread(TimeDelta);
 	case POINTINFO::TYPE_TRAIL:
 		return Tick_Trail(TimeDelta);
+	case POINTINFO::TYPE_SPREADREPEAT:
+		return Tick_SpreadRepeat(TimeDelta);
 	default:
 		MSG_BOX("Invalid Type : Instancing S2");
 		break;
@@ -445,12 +461,78 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Trail(_float TimeDelta)
 	return S_OK;
 }
 
+HRESULT CVIBuffer_Point_Instancing_S2::Tick_SpreadRepeat(_float TimeDelta)
+{
+	if (m_bFinished)
+		return S_OK;
+
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	CONTEXT_LOCK
+		HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	if (SUCCEEDED(hr))
+	{
+		_bool isAllStop = true;
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+		{
+			//x :  StartTime, y : StartTimeAcc
+			if (m_pVariables[i].y < m_pVariables[i].x)
+			{
+				isAllStop = false;
+				m_pVariables[i].y += TimeDelta;
+				continue;
+			}
+			
+			// z : TimeAcc
+			if (((VTXMATRIX*)SubResource.pData)[i].vPosition.w >= 1.f)
+			{
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pPositions[i].x;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_pPositions[i].y;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_pPositions[i].z;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 0.f;
+				m_pVariables[i].z = 0.0f;
+				m_pVariables[i].y = 0.0f;
+
+				if (m_bStop)
+					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f;
+				else
+					isAllStop = false;
+			}
+			else
+			{
+				isAllStop = false;
+
+				m_pVariables[i].z += TimeDelta;
+				_float fDownSpeedY = m_tInfo.fPlaySpeed * m_pVariables[i].z * m_pVariables[i].z;
+
+				_float4 vDir = ((VTXMATRIX*)SubResource.pData)[i].vPosition;
+				vDir.Normalize();
+				_float4 vMove = m_pXSpeeds[i] * TimeDelta * vDir;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y += vMove.y - fDownSpeedY;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.x += vMove.x;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.z += vMove.z;
+
+				/* Life */
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.w = m_pVariables[i].z / m_tInfo.fTerm;
+			}
+		}
+
+		if (isAllStop == true)
+			m_bFinished = true;
+
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	}
+	return S_OK;
+}
+
 void CVIBuffer_Point_Instancing_S2::Safe_Delete_Arrays()
 {
 	Safe_Delete_Array(m_pXSpeeds);
 	Safe_Delete_Array(m_pYSpeeds);
 	Safe_Delete_Array(m_pZSpeeds);
 	Safe_Delete_Array(m_pPositions);
+	Safe_Delete_Array(m_pVariables);
 }
 
 void CVIBuffer_Point_Instancing_S2::Reset()
@@ -465,6 +547,7 @@ void CVIBuffer_Point_Instancing_S2::Reset()
 	m_vecInstances.clear();
 
 	m_bFinished = false;
+	m_bStop = false;
 }
 
 CVIBuffer_Point_Instancing_S2* CVIBuffer_Point_Instancing_S2::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -11,6 +11,7 @@ CEffect_Particle_Base::CEffect_Particle_Base(ID3D11Device* pDevice, ID3D11Device
 	, m_pVIBufferCom(nullptr)
 	, m_fTime(0.0f)
 	, m_fTimeAcc(0.0f)
+	, m_bUI(false)
 {
 }
 
@@ -22,6 +23,7 @@ CEffect_Particle_Base::CEffect_Particle_Base(const CEffect_Particle_Base& rhs)
 	, m_pVIBufferCom(nullptr)
 	, m_fTime(0.0f)
 	, m_fTimeAcc(0.0f)
+	, m_bUI(false)
 {
 }
 
@@ -86,7 +88,6 @@ void CEffect_Particle_Base::Tick(_float fTimeDelta)
 	//		return;
 	//	}
 	//}
-
 	__super::Tick(fTimeDelta);
 
 	m_pVIBufferCom->Tick(fTimeDelta);
@@ -100,7 +101,12 @@ void CEffect_Particle_Base::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+	{
+		m_bUI ? m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UIHDR, this)
+			: m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	}
+
+
 }
 
 HRESULT CEffect_Particle_Base::Render()
@@ -141,21 +147,26 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 	/* Render */
 	if (ImGui::CollapsingHeader("Render Info"))
 	{
-		/* RenderPass */
-		static _int iRenderPass;
-		iRenderPass = m_iRenderPass;
-		const char* renderPass[5] = { "DefaultHaze", "BlackHaze", "BlackGather", "Spread", "Trail"};
-		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 5, 5))
-			m_iRenderPass = iRenderPass;
-
-		/* Color */
-		ColorCode();
-
 		if (ImGui::Button("ReCompile"))
 		{
 			m_pShaderCom->ReCompile();
 			m_pRendererCom->ReCompile();
 		}
+
+		/* RenderPass */
+		static _int iRenderPass;
+		iRenderPass = m_iRenderPass;
+		const char* renderPass[6] = { "DefaultHaze", "BlackHaze", "BlackGather", "Spread", "Trail", "UI"};
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 6, 6))
+			m_iRenderPass = iRenderPass;
+
+		/* Color */
+		ColorCode();
+
+		/* UI version */
+		ImGui::Checkbox("For.UI ? ", &m_bUI);
+
+
 	}
 
 
@@ -176,8 +187,8 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 		/* Type */
 		static _int iType = tInfo.eType;
-		const char* list[5] = { "Haze", "Gather", "Parabola", "Spread", "Trail"};
-		ImGui::ListBox("Type", &iType, list, 5, 5);
+		const char* list[6] = { "Haze", "Gather", "Parabola", "Spread", "Trail","SpreadRepeat"};
+		ImGui::ListBox("Type", &iType, list, 6,6);
 		tInfo.eType = (pointType)iType;
 
 		/* NumInstance */
@@ -250,6 +261,10 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 			m_bActive = true;
 		}
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("Stop Sign"))
+		m_pVIBufferCom->Set_Stop();
+
 
 	/* For. Hint (Trial) */
 	RecordPath();
@@ -317,6 +332,7 @@ HRESULT CEffect_Particle_Base::Save_Data()
 				json["03. Color"].push_back(fElement);
 			}
 			json["04. HDR Intensity"] = m_fHDRIntensity;
+			json["05. TYPE_UI"] = m_bUI;
 
 			CVIBuffer_Point_Instancing_S2::POINTINFO tInfo;
 			ZeroMemory(&tInfo, sizeof(tInfo));
@@ -418,6 +434,10 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 		fElement.get_to<_float>(*((_float*)&m_vColor + i++));
 
 	jLoad["04. HDR Intensity"].get_to<_float>(m_fHDRIntensity);
+
+	if(jLoad.contains("05. TYPE_UI"))
+		jLoad["05. TYPE_UI"].get_to<_bool>(m_bUI);
+
 
 	CVIBuffer_Point_Instancing_S2::POINTINFO tInfo;
 	using pointType = CVIBuffer_Point_Instancing_S2::POINTINFO::TYPE;
@@ -557,6 +577,17 @@ void CEffect_Particle_Base::DeActivate()
 	m_pVIBufferCom->Update_Buffer(nullptr);
 }
 
+void CEffect_Particle_Base::Activate_BufferUpdate()
+{
+	m_bActive = true;
+	m_pVIBufferCom->Update_Buffer();
+}
+
+void CEffect_Particle_Base::Stop_Buffer()
+{
+	m_pVIBufferCom->Set_Stop();
+}
+
 HRESULT CEffect_Particle_Base::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -587,10 +618,30 @@ HRESULT CEffect_Particle_Base::SetUp_ShaderResources()
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	if (m_bUI)
+	{
+		D3D11_VIEWPORT			ViewportDesc;
+		ZeroMemory(&ViewportDesc, sizeof ViewportDesc);
+		_uint			iNumViewports = 1;
+		m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+		_float4x4	matView, matProj;
+		XMStoreFloat4x4(&matView, XMMatrixIdentity());
+		XMStoreFloat4x4(&matProj, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
+
+
+		if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &matView)))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &matProj)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+			return E_FAIL;
+	}
+
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
@@ -600,7 +651,7 @@ HRESULT CEffect_Particle_Base::SetUp_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_float4_0", &m_vColor, sizeof(_float4))))
 		return E_FAIL;
-
+	
 	if (FAILED(m_pShaderCom->Set_RawValue("g_float_0", &m_fHDRIntensity, sizeof(_float))))
 		return E_FAIL;
 

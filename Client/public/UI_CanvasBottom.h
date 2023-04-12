@@ -29,6 +29,7 @@ private:
 
 private: /* Bind Functions */
 	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bValue, _float fValue, wstring wstr);
+	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fValue);
 
 public:
 	static	CUI_CanvasBottom*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

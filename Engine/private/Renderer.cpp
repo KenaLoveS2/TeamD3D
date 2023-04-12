@@ -187,7 +187,7 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
 
-	/* For.MRT_Deferred */ /* µðÆÛµå ·»´õ¸µ(ºû)À» ¼öÇàÇÏ±âÀ§ÇØ ÇÊ¿äÇÑ µ¥ÀÌÅÍµéÀ» ÀúÀåÇÑ ·»´õÅ¸°Ùµé. */
+	/* For.MRT_Deferred */ /* ï¿½ï¿½ï¿½Ûµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¸ï¿½Ùµï¿½. */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Normal"))))
@@ -197,20 +197,20 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_MtrlAmbient"))))
 		return E_FAIL;
 
-	/* For.MRT_LightAcc */ /* ºû ¿¬»êÀÇ °á°ú¸¦ ÀúÀåÇÒ ·»´õÅ¸°Ùµé.  */
+	/* For.MRT_LightAcc */ /* ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¸ï¿½Ùµï¿½.  */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
 		return E_FAIL;
 
-	// HDR ÅØ½ºÃÄ ·»´õ¸µ¿ë
+	// HDR ï¿½Ø½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_HDR"), TEXT("Target_HDR"))))
 		return E_FAIL;
-	// Effect ÅØ½ºÃÄ ·»´õ¸µ¿ë
+	// Effect ï¿½Ø½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_EFFECT"), TEXT("Target_Effect"))))
 		return E_FAIL;
 
-	// PrevFrame ÅØ½ºÃÄ ·»´õ¸µ¿ë
+	// PrevFrame ï¿½Ø½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_PrevFrame"), TEXT("Target_PrevFrame"))))
 		return E_FAIL;
 
@@ -328,7 +328,7 @@ HRESULT CRenderer::Initialize_ShadowResources(_uint iWidth, _uint iHeight)
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_StaticLightDepth", L"Target_StaticShadowDepth")))
 		return E_FAIL;
 
-	// shadow depth¿ë depthStencil view »ý¼º
+	// shadow depthï¿½ï¿½ depthStencil view ï¿½ï¿½ï¿½ï¿½
 	{
 		ID3D11Texture2D*		pDepthStencilTexture = nullptr;
 
@@ -358,7 +358,7 @@ HRESULT CRenderer::Initialize_ShadowResources(_uint iWidth, _uint iHeight)
 		Safe_Release(pDepthStencilTexture);
 	}
 
-	// shadow depth¿ë depthStencil view »ý¼º
+	// shadow depthï¿½ï¿½ depthStencil view ï¿½ï¿½ï¿½ï¿½
 	{
 		ID3D11Texture2D*		pDepthStencilTexture = nullptr;
 
@@ -400,7 +400,7 @@ HRESULT CRenderer::Initialize_CineResources(_uint iWidth, _uint iHeight)
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_CINE", L"Target_Cine")))
 		return E_FAIL;
 
-	// CINE ¿ë depthStencil view »ý¼º
+	// CINE ï¿½ï¿½ depthStencil view ï¿½ï¿½ï¿½ï¿½
 	{
 		ID3D11Texture2D*		pDepthStencilTexture = nullptr;
 
@@ -497,8 +497,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
-		// UI
-		// ÆÄÆ¼Å¬
+		if (FAILED(Render_UIHDR()))
+			return E_FAIL;
 		if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_HDR"))))
 			return E_FAIL;
 		if (FAILED(Render_HDR()))
@@ -749,7 +749,7 @@ HRESULT CRenderer::Render_LightAcc()
 
 	RELEASE_INSTANCE(CPipeLine);
 
-	/* ºû °¹¼ö¸¸Å­ »ç°¢Çü ¹öÆÛ(¼ÎÀÌµåÅ¸°ÙÀÇ ÀüÃ¼ ÇÈ¼¿À» °»½ÅÇÒ ¼ö ÀÖ´Â »çÀÌÁî·Î ±×·ÁÁö´Â Á¤Á¡¹öÆÛ. )¸¦ ±×¸°´Ù. */
+	/* ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­ ï¿½ç°¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½Ìµï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. )ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½. */
 	m_pLight_Manager->Render_Light(m_pVIBuffer, m_pShader);
 	
 	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_LightAcc"))))
@@ -916,6 +916,31 @@ HRESULT CRenderer::Render_AlphaBlend()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_UIHDR()
+{
+	for (auto& pGameObject : m_RenderObjects[RENDER_UIHDR])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Compute_CamDistance();
+	}
+
+	m_RenderObjects[RENDER_UIHDR].sort([](CGameObject* pSour, CGameObject* pDest)->_bool
+		{
+			return pSour->Get_CamDistance() > pDest->Get_CamDistance();
+		});
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_UIHDR])
+	{
+		pGameObject&& pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_UIHDR].clear();
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_HDR()
 {
 	CRenderTarget* pLDR1 = m_pTarget_Manager->Get_Target(L"Target_LDR1");
@@ -1023,10 +1048,10 @@ HRESULT CRenderer::Render_PostProcess()
 	Safe_Release(pDepthStencilView);
 
 	// LDR to Backbuffer
-	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour->Get_SRV()))) // ÀÌ°ÍÀÌ ÇöÀç ÇÁ·¹ÀÓ
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour->Get_SRV()))) // ï¿½Ì°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		return E_FAIL;
 
-	// ÀÌ°É ±×¸®°í ³­°ÍÀ» ³ªÀÇ ·»´õÅ¸°Ù¿¡ ±×¸°´Ù.
+	// ï¿½Ì°ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¸ï¿½Ù¿ï¿½ ï¿½×¸ï¿½ï¿½ï¿½.
 	m_pShader_PostProcess->Begin(0);
 	m_pVIBuffer->Render();
 	
@@ -1129,8 +1154,8 @@ HRESULT CRenderer::Render_PrevFrame()
 
 HRESULT CRenderer::PostProcess_Distort()
 {
-	// ÀÌ ¶§ ÀÌ ½¦ÀÌ´õ¿¡ µé¾î°¥ ¼ö ÀÖ°Ô²û ÆÄ¶ó¹ÌÅÍ ÀüÇØÁÙ°Í.
-	// º¯¼ö¸¦ °øÀ¯ÇÏ±â ¶§¹®¿¡ Begin -> Render ÇÒ ¶§ Àß ÀüÇØÁà¾ßÇÔ
+	// ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½î°¥ ï¿½ï¿½ ï¿½Ö°Ô²ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ù°ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Begin -> Render ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_Time", &m_fDistortTime, sizeof(float))))
 		return E_FAIL;

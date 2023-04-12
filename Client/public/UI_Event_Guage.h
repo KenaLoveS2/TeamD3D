@@ -17,8 +17,9 @@ public:
 	_bool				Is_FullFilled() { if (m_fGuage >= 0.99f) return true; else return false; }
 	_bool				Is_Zero();
 	_float				Get_GuageNow() { return m_fGuageNew; }
+	_float				Get_Guage() { return m_fGuage; }
 	void				ReArrangeSettingOn() { m_bReArrangeSettingOn = true; }
-
+	_bool				Is_Stabilize() { if (m_fGuage == m_fGuageNew) return true; else return false; }
 
 
 public:
