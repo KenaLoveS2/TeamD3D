@@ -94,33 +94,6 @@ void CE_RotBombExplosion::Tick(_float fTimeDelta)
 
 	m_pTransformCom->Tick(fTimeDelta);
 
-	//if (m_bBomb) // »ç¶óÁü
-	//	TurnoffBomb(fTimeDelta);
-
-
-	//if (m_pParent == nullptr)
-	//{
-	//	ToolOption("CE_RotBombExplosion");
-	//	m_fTimeDelta += fTimeDelta;
-
-	//	ImGui::Begin("Plus");
-
-	//	if (ImGui::Button("retime"))
-	//	{
-	//		Reset();
-	//		dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_DissolveTime(0.0f);
-	//		dynamic_cast<CEffect_Mesh_T*>(m_vecChild[CHILD_COVER])->Set_Dissolve(false);
-	//	}
-
-	//	if (ImGui::Button("Dissolve"))
-	//		m_bBomb = true;
-
-	//	ImGui::End();
-
-	//	m_vecChild[CHILD_COVER]->ToolOption("CE_RotBombExplosion_cover");
-	//	return;
-	//}
-
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
@@ -133,12 +106,14 @@ void CE_RotBombExplosion::Tick(_float fTimeDelta)
 		if (m_fDissolveTime > 1.f)
 			Reset();
 	}
+	m_vecChild[CHILD_COVER]->Set_Active(false);
 }
 
 void CE_RotBombExplosion::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 		return;
+
 
 	__super::Late_Tick(fTimeDelta);
 	
@@ -222,6 +197,8 @@ void CE_RotBombExplosion::TurnonBomb(_float fTimeDelta)
 
 	PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
 	CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, vScaled.x * 1.7f);
+
+	m_vecChild[CHILD_COVER]->Set_Active(false);
 }
 
 void CE_RotBombExplosion::TurnoffBomb(_float fTimeDelta)

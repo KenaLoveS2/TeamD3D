@@ -66,6 +66,7 @@ protected:
 	vector<class CEffect_Trail*> m_vecTrailEffect;
 
 	_float					     m_fLife = 0.0f;
+	_bool						 m_bTurnOnfirst = false;
 
 public:
 	virtual void Free() override;

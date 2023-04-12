@@ -252,18 +252,32 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Box(_float fTimeDelta)
 				if (m_ePointDesc->eRotXYZ == CVIBuffer_Point_Instancing::tagPointDesc::DIR_X)
 				{
 					if (((VTXMATRIX*)SubResource.pData)[i].vPosition.x < m_ePointDesc->fMin.x)
+					{
 						((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_ePointDesc->fMax.x;
+						((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f;
+					}
 
 					if (((VTXMATRIX*)SubResource.pData)[i].vPosition.x > m_ePointDesc->fMax.x)
+					{
 						((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_ePointDesc->fMin.x;
+						((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f;
+					}
+					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f - ((VTXMATRIX*)SubResource.pData)[i].vPosition.x / (fabs(m_ePointDesc->fMin.x) + m_ePointDesc->fMax.x);
 				}
 				if (m_ePointDesc->eRotXYZ == CVIBuffer_Point_Instancing::tagPointDesc::DIR_Z)
 				{
 					if (((VTXMATRIX*)SubResource.pData)[i].vPosition.z < m_ePointDesc->fMin.z)
+					{
 						((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_ePointDesc->fMax.z;
+						((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f;
+					}
 
 					if (((VTXMATRIX*)SubResource.pData)[i].vPosition.z > m_ePointDesc->fMax.z)
+					{
 						((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_ePointDesc->fMin.z;
+						((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f;
+					}
+					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f - ((VTXMATRIX*)SubResource.pData)[i].vPosition.z / (fabs(m_ePointDesc->fMin.z) + m_ePointDesc->fMax.z);
 				}
 			}
 
@@ -272,17 +286,32 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Box(_float fTimeDelta)
 				vNormalLook = XMVector3Normalize(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 
 				if (m_ePointDesc->bSpread == true)
+				{
 					XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition,
 						XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + vNormalLook * _float(m_InstanceData[i].pSpeeds) * m_ePointDesc->fTimeDelta);
+
+					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f - ((VTXMATRIX*)SubResource.pData)[i].vPosition.y / (fabs(m_ePointDesc->fMin.y) + m_ePointDesc->fMax.y);
+				}
 				else
+				{
 					XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition,
 						XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - vNormalLook * _float(m_InstanceData[i].pSpeeds) * m_ePointDesc->fTimeDelta);
 
+					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = fabs(((VTXMATRIX*)SubResource.pData)[i].vPosition.y) * 10.f / m_ePointDesc->fMax.y;
+				}
+
 				if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y < m_ePointDesc->fMin.y)
+				{
 					((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_ePointDesc->fMax.y;
+					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f;
+				}
 
 				if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y > m_ePointDesc->fMax.y)
+				{
 					((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_ePointDesc->fMin.y;
+					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f;
+				}
+
 			}
 			m_InstanceData[i].fPos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition);
 		}
@@ -430,7 +459,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Cone(_float fTimeDelta)
 			if (m_ePointDesc->eRotXYZ == CVIBuffer_Point_Instancing::tagPointDesc::DIR_Y)
 			{
 				if (m_ePointDesc->bSpread == true)
-					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + XMLoadFloat4(&m_ePointDesc[i].vDir) * _float(m_InstanceData[i].pSpeeds) * m_ePointDesc->fTimeDelta;
+					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + XMLoadFloat4(&m_ePointDesc[i].vDir) * _float(m_InstanceData[i].pSpeeds) * fTimeDelta;
 				else
 					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - XMLoadFloat4(&m_ePointDesc[i].vDir) * _float(m_InstanceData[i].pSpeeds) * m_ePointDesc->fTimeDelta;
 

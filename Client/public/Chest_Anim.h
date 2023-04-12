@@ -62,6 +62,14 @@ private:
 	HRESULT						SetUp_Components();
 	HRESULT						SetUp_ShaderResources();
 
+private:
+	/* Effects */
+	class CE_Chest* m_pChestEffect = nullptr;
+	class CE_P_Chest* m_pChestEffect_P = nullptr;
+
+private:
+	HRESULT						Ready_Effect();
+
 public:
 	static  CChest_Anim*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr) override;

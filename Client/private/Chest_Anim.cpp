@@ -7,6 +7,8 @@
 #include "Kena.h"
 #include "Kena_State.h"
 #include "PhysX_Manager.h"
+#include "E_Chest.h"
+#include "E_P_Chest.h"
 #include "UI_ClientManager.h"
 
 CChest_Anim::CChest_Anim(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -32,11 +34,11 @@ HRESULT CChest_Anim::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effect(), E_FAIL);
 
 	//CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 
 	m_bRenderActive = true;
-
 	m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);
 
 	return S_OK;
@@ -80,6 +82,9 @@ HRESULT CChest_Anim::Late_Initialize(void * pArg)
 	
 	pPhysX->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_CHEST, vPos, 5.f));
 
+	if (m_pChestEffect) m_pChestEffect->Late_Initialize(nullptr);
+	if (m_pChestEffect_P) m_pChestEffect_P->Late_Initialize(nullptr);
+
 	return S_OK;
 }
 
@@ -87,6 +92,16 @@ void CChest_Anim::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	ImGui::Begin("Chest");
+
+	if (ImGui::Button("re"))
+	{
+		m_bOpened = false;
+		m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);
+		m_eCurState = CURSED_ACTIVATE;
+	}
+
+	ImGui::End();
 
 	/*Culling*/
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -100,7 +115,8 @@ void CChest_Anim::Tick(_float fTimeDelta)
 	if (m_bRenderCheck == true)
 		m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 100.f);
 
-
+	if (m_pChestEffect) m_pChestEffect->Tick(fTimeDelta);
+	if (m_pChestEffect_P) m_pChestEffect_P->Tick(fTimeDelta);
 
 	if (m_bOpened == true)
 		return;
@@ -109,6 +125,7 @@ void CChest_Anim::Tick(_float fTimeDelta)
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
 #endif
+
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
@@ -119,7 +136,10 @@ void CChest_Anim::Late_Tick(_float fTimeDelta)
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
 
-	if (m_pRendererCom && m_bRenderActive && false == m_bRenderCheck  )
+	if (m_pChestEffect) m_pChestEffect->Late_Tick(fTimeDelta);
+	if (m_pChestEffect_P) m_pChestEffect_P->Late_Tick(fTimeDelta);
+
+	if (m_pRendererCom && m_bRenderActive && false == m_bRenderCheck)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
@@ -202,7 +222,7 @@ _int CChest_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos
 
 _int CChest_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	if (iColliderIndex == (_uint)COL_PLAYER)
+	if (iColliderIndex == (_uint)COL_PLAYER && m_bOpened == false)
 	{
 		m_bKenaDetected = true;
 		m_pModelCom->ResetAnimIdx_PlayTime((_uint)CChest_Anim::CURSED_ACTIVATE);
@@ -222,7 +242,7 @@ _int CChest_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTrigger
 	if (iColliderIndex == (_uint)COL_PLAYER)
 	{
 		m_bKenaDetected = false;
-		m_pKena->Set_ChestInteractable(true);
+		m_pKena->Set_ChestInteractable(false);
 	}
 
 	return 0;
@@ -237,6 +257,9 @@ CChest_Anim::ANIMATION CChest_Anim::Check_State()
 	{
 	case CChest_Anim::CURSED_ACTIVATE:
 		{
+			/* Effect */
+			m_pChestEffect_P->Set_Effect(m_pTransformCom->Get_Position(), true);
+
 			if (iKenaState == (_uint)CKena_State::INTERACT_STAFF)
 			{
 				eState = CChest_Anim::OPEN;
@@ -259,6 +282,13 @@ CChest_Anim::ANIMATION CChest_Anim::Check_State()
 
 	case CChest_Anim::OPEN:
 		{
+			/* Effect */
+			m_pChestEffect_P->Set_TurnState(true);
+
+			_float4 vPos = m_pTransformCom->Get_Position();
+			vPos.y += 0.6f;
+			m_pChestEffect->Set_ChestLight(vPos, m_pTransformCom->Get_State(CTransform::STATE_LOOK), true);
+
 			if (m_pModelCom->Get_AnimationFinish() == true)
 				m_bOpened = true;
 
@@ -267,6 +297,10 @@ CChest_Anim::ANIMATION CChest_Anim::Check_State()
 
 	case CChest_Anim::ANIMATION_END:
 		{
+			/* Effect */
+			m_pChestEffect_P->Set_Effect(m_pTransformCom->Get_Position(), true);
+			m_pChestEffect->Set_Active(false);
+
 			eState = CChest_Anim::CURSED_CLEARED;
 			m_pModelCom->Set_AnimIndex((_uint)CChest_Anim::CURSED_CLEARED);
 
@@ -311,11 +345,10 @@ HRESULT CChest_Anim::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	/*나중에  레벨 인덱스 수정해야됌*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = g_LEVEL;
 
-	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
+	/* For.Com_Model */ 
 	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_ChestAnim"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
@@ -331,17 +364,27 @@ HRESULT CChest_Anim::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CChest_Anim::Ready_Effect()
+{
+	m_pChestEffect = (CE_Chest*)(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_E_Chest", CUtile::Create_DummyString()));
+	NULL_CHECK_RETURN(m_pChestEffect, E_FAIL);
+	m_pChestEffect->Set_Parent(this);
+
+	m_pChestEffect_P = (CE_P_Chest*)(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_E_P_Chest", CUtile::Create_DummyString()));
+	NULL_CHECK_RETURN(m_pChestEffect_P, E_FAIL);
+	m_pChestEffect_P->Set_Parent(this);
 
 	return S_OK;
 }
@@ -382,4 +425,8 @@ void CChest_Anim::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
+
+	/* Effect */
+	Safe_Release(m_pChestEffect);
+	Safe_Release(m_pChestEffect_P);
 }
