@@ -1622,6 +1622,7 @@ void CBossWarrior::Free()
 	CMonster::Free();
 
 	Safe_Release(m_pHat);
+	Safe_Release(m_pBossRockPool);
 
 	for (auto& Pair : m_mapEffect)
 		Safe_Release(Pair.second);

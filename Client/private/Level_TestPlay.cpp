@@ -83,23 +83,23 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//{
-	//	MSG_BOX("Layer_Monster");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	{
+		MSG_BOX("Layer_Monster");
+		return E_FAIL;
+	}
 
-	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
-	//{
-	//	MSG_BOX("Layer_NPC");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	{
+		MSG_BOX("Layer_NPC");
+		return E_FAIL;
+	}
 
-	//if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
-	//{
-	//	MSG_BOX("Layer_Rot");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
+	{
+		MSG_BOX("Layer_Rot");
+		return E_FAIL;
+	}
 
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	{
@@ -121,8 +121,6 @@ HRESULT CLevel_TestPlay::Initialize()
 
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
-
-	//CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 0.3f, true, SOUND_BGM);
 
 	//CGameInstance::GetInstance()->Set_MasterVolume(0.f);
 

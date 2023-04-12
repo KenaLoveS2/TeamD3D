@@ -125,6 +125,9 @@ void CBossRock::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pShaderCom);
 }
 
 HRESULT CBossRock::SetUp_Components()

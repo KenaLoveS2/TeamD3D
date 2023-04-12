@@ -40,7 +40,7 @@ HRESULT CSticks01::Initialize(void* pArg)
 	}	
 	else
 	{
-		m_Desc.pGroupName = L"";
+		m_Desc.pGroupName = L"N/A";
 		m_Desc.WorldMatrix = _smatrix();
 		m_Desc.WorldMatrix._41 = -15.f;
 		m_Desc.WorldMatrix._43 = -15.f;
