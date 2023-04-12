@@ -1776,8 +1776,11 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 	// Prototype_GameObject_WaterNormalTexture
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_GameObject_WaterNormalTexture"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Water/Texture/Normal/%d.png"), 13)))) return E_FAIL;
 
-	// Prototype_GameObject_WaterRippleTexture
-	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_GameObject_WaterRippleTexture"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Water/Texture/T_WaterRipples_M.png"))))) return E_FAIL;
+	// Prototype_GameObject_WaterNoiseTexture
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_GameObject_WaterNoiseTexture"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Water/Texture/Noise/%d.png"), 2)))) return E_FAIL;
+
+	// Prototype_GameObject_WaterMaskTexture
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_GameObject_WaterMaskTexture"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Water/Texture/Mask/%d.png"), 2)))) return E_FAIL;
 
 	// Prototype_GameObject_WaterPlane
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WaterPlane"), CWaterPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;

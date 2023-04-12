@@ -155,11 +155,11 @@ PS_OUT PS_DISTORTION(PS_IN In)
 
 	float4 FinalColor = float4(0.f, 0.f, 0.f, 0.f);
 
-	if (vEffect.a <= 0.3f)
+	if (vEffect.a <= 0.5f)
 	{
 		float2 distort = Distortion(In.vTexUV, g_Time, g_DistortionTexture);
 		vDiffuse = g_LDRTexture.Sample(LinearSampler, distort);
-		vEffect = g_EffectTexture.Sample(PointSampler, distort);
+		//vEffect = g_EffectTexture.Sample(PointSampler, distort);
 		FinalColor = vDiffuse;
 	}
 	else

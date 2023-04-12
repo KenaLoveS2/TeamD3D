@@ -209,6 +209,7 @@
     <ClInclude Include="..\public\E_Common_CIrcleSp.h" />
     <ClInclude Include="..\public\E_LazerTrail.h" />
     <ClInclude Include="..\public\E_P_Level.h" />
+    <ClInclude Include="..\public\E_P_Rain.h" />
     <ClInclude Include="..\public\E_P_ShamanTeleport.h" />
     <ClInclude Include="..\public\E_ShamanIceDagger.h" />
     <ClInclude Include="..\public\E_ShamanLazer.h" />
@@ -508,6 +509,7 @@
     <ClCompile Include="..\private\E_Common_CIrcleSp.cpp" />
     <ClCompile Include="..\private\E_LazerTrail.cpp" />
     <ClCompile Include="..\private\E_P_Level.cpp" />
+    <ClCompile Include="..\private\E_P_Rain.cpp" />
     <ClCompile Include="..\private\E_P_ShamanTeleport.cpp" />
     <ClCompile Include="..\private\E_ShamanIceDagger.cpp" />
     <ClCompile Include="..\private\E_ShamanLazer.cpp" />
