@@ -1,1 +1,25 @@
-{"0_LayerTag":"Layer_Enviroment","1_Data":[{"0_ProtoTag":"Prototype_GameObject_DeadZoneObj","1_ModelTag":"Prototype_Component_Model_TestGodTree","25_Instancing_Transform_matrix":[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0],"2_ShaderOption":0,"3_CloneTag":"Test","4_RoomIndex":0,"5_ChapterType":0,"7_Transform State":[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,1.892504334449768,-0.8999996185302734,0.665433406829834,1.0]},{"0_ProtoTag":"Prototype_GameObject_Tree","1_ModelTag":"Prototype_Component_Model_Giant_GodTree","25_Instancing_Transform_matrix":[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0],"2_ShaderOption":0,"3_CloneTag":"God_Tree","4_RoomIndex":0,"5_ChapterType":0,"7_Transform State":[0.10000000149011612,0.0,0.0,0.0,0.0,0.10000000149011612,0.0,0.0,0.0,0.0,0.10000000149011612,0.0,-4.318650245666504,-0.9908108711242676,-0.5067710876464844,1.0]}]}
+{
+  "0_LayerTag": "Layer_Enviroment",
+  "1_Data": [
+    {
+      "0_ProtoTag": "Prototype_GameObject_DeadZoneObj",
+      "1_ModelTag": "Prototype_Component_Model_TestGodTree",
+      "25_Instancing_Transform_matrix": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ],
+      "2_ShaderOption": 0,
+      "3_CloneTag": "Test",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.892504334449768, -0.8999996185302734, 0.665433406829834, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Tree",
+      "1_ModelTag": "Prototype_Component_Model_Giant_GodTree",
+      "25_Instancing_Transform_matrix": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ],
+      "2_ShaderOption": 0,
+      "3_CloneTag": "God_Tree",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 0.10000000149011612, 0.0, 0.0, 0.0, 0.0, 0.10000000149011612, 0.0, 0.0, 0.0, 0.0, 0.10000000149011612, 0.0, -4.318650245666504, -0.9908108711242676, -0.5067710876464844, 1.0 ]
+    }
+  ]
+}

@@ -43,8 +43,6 @@ HRESULT CMeditation_Spot::Late_Initialize(void* pArg)
 	m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 	NULL_CHECK_RETURN(m_pKena, E_FAIL);
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(-10.f, 0.f, -10.f, 1.f));
-
 	_float3 vPos;
 	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
