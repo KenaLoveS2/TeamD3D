@@ -131,9 +131,11 @@ public:
 	ID3D11ShaderResourceView*		Get_LDRTexture() { return m_pLDRTexture; }
 	const _bool&		Get_Fog() { return m_bFog; }
 	const _float4& Get_FogColor() { return m_vFogColor; }
+	void Set_CaptureMode(_bool bCapture) { m_bCaptureMode = bCapture; }
 
 private:
 	ID3D11ShaderResourceView*		m_pLDRTexture = nullptr;
+	_bool											m_bCaptureMode = false;
 
 private:
 	HRESULT CreateTexture(const _tchar* pTextureFilePath, ID3D11ShaderResourceView**& OUT pTexture);

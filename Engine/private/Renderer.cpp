@@ -923,6 +923,11 @@ HRESULT CRenderer::Render_HDR()
 	pLDR1->Clear();
 	pLDR2->Clear();
 
+	if (m_bCaptureMode)
+		CPostFX::GetInstance()->BlurCapture();
+	else
+		CPostFX::GetInstance()->CaptureOff();
+
 	CPostFX::GetInstance()->PostProcessing(m_pTarget_Manager->Get_SRV(L"Target_HDR"), pLDR1->Get_RTV(), m_pTarget_Manager->Get_SRV(L"Target_Depth"));
 	return S_OK;
 }
@@ -1020,8 +1025,6 @@ HRESULT CRenderer::Render_PostProcess()
 	// LDR to Backbuffer
 	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour->Get_SRV()))) // 이것이 현재 프레임
 		return E_FAIL;
-
-	m_pLDRTexture = pLDRSour->Get_SRV();
 
 	// 이걸 그리고 난것을 나의 렌더타겟에 그린다.
 	m_pShader_PostProcess->Begin(0);

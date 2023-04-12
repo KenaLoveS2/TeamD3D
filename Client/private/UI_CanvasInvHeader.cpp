@@ -69,6 +69,7 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 	/* Return To Play */
 	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
+		m_pRendererCom->Set_CaptureMode(false);
 		CGameInstance::GetInstance()->Get_Back();
 		m_bActive = false;
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(false);
@@ -85,9 +86,6 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 		static_cast<CUI_NodeCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal(m_pPlayer->Get_Status()->Get_Crystal());
 
 	}
-
-
-
 
 	__super::Tick(fTimeDelta);
 }
@@ -124,7 +122,7 @@ HRESULT CUI_CanvasInvHeader::Bind()
 HRESULT CUI_CanvasInvHeader::Ready_Nodes()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
+	
 	string KarmaTag = "Node_Karma";
 	CUI* pKarma = nullptr;
 	CUI::UIDESC tKara;
@@ -216,6 +214,7 @@ void CUI_CanvasInvHeader::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_
 	if (eType == CUI_ClientManager::INV_)
 	{
 		m_bActive = true;
+		m_pRendererCom->Set_CaptureMode(true);
 		CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(true);
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(false);

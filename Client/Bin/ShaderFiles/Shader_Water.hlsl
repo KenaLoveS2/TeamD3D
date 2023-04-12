@@ -9,6 +9,7 @@ float				g_fTime;
 
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
+Texture2D<float4>		g_RippleTexture;
 
 struct VS_IN
 {
@@ -28,6 +29,17 @@ struct VS_OUT
 	float3		vBinormal : BINORMAL;
 };
 
+float3 WaterDistortion(float3 position, float time)
+{
+	// Calculate distortion based on position and time
+	float3 distortion = float3(
+		sin(position.x * 10.0f + time * 0.1f) * 0.05f + sin(position.y * 5.0f + time * 0.05f) * 0.02f,
+		cos(position.y * 10.0f + time * 0.2f) * 0.1f,
+		0.0f
+		);
+	return distortion;
+}
+
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
@@ -37,8 +49,10 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
-	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
-	Out.vPosition.y += sin(In.vPosition.x + In.vPosition.z + g_fTime * 5.0f) * 0.1f;
+	float3 distortion = WaterDistortion(In.vPosition, g_fTime * 10.f);
+	float3 position = In.vPosition + distortion;
+
+	Out.vPosition = mul(float4(position, 1.f), matWVP);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
@@ -70,17 +84,22 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
+	float2 texCoord = float2(In.vTexUV.x, In.vTexUV.y + g_fTime * 0.1f);
+
+	float4 		vDiffuse = g_NormalTexture.Sample(LinearSampler, texCoord);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-	float4 		vDiffuse = float4(0.f, 0.5f, 1.f, 1.f);
+	//float4 		vDiffuse = float4(0.f, 0.5f, 1.f, 1.f);
 
 	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	Out.vDiffuse = float4(vDiffuse.rgb, 0.3f);
+	float3	FinalColor = lerp(vDiffuse.rgb, float3(0.8f, 0.f, 0.8f), 0.2f);
+
+	Out.vDiffuse = float4(FinalColor, 0.3f);
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = (float4)1.f;
 	return Out;
 }
