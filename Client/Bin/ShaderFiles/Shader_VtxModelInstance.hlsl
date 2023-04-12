@@ -22,7 +22,8 @@ Texture2D<float4>       g_RoughnessTexture;
 float                   g_TimeDelta;
 
 float4                  g_CenterPos;
-
+float4                  vColorData;
+int                     g_iSign = 1;
 struct VS_IN
 {
     float3      vPosition : POSITION;
@@ -171,24 +172,34 @@ VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
     vector      vNormal = mul(float4(In.vNormal, 0.f), Transform);
     vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), Transform);
 
-	float3 vDir = normalize(In.vPosition.xyz - g_CenterPos);
-    //float3 vDir = normalize(g_CenterPos -In.vPosition.xyz);
-    
-    //float distance = length(In.vPosition.xyz - g_CenterPos.xyz);
 
-    float moveDistance = g_TimeDelta * 1.f ;
-	// float3 CenterPos = mul(g_CenterPos.xyz, Transform);
 
-    float3 vPosition = In.vPosition.xyz + (vDir * moveDistance);
+   float moveDistance = g_TimeDelta * 1.f ;
+ 
+   float3 vDir;
+   if(g_iSign == 1)
+   {
+       vDir = normalize(In.vPosition.xyz - g_CenterPos);
+   }
+   else
+   {
+       vDir = normalize(g_CenterPos - In.vPosition.xyz);
+   }
+   // float3 vDir = normalize(g_CenterPos -In.vPosition.xyz);
+   float distance = length(In.vPosition.xyz - g_CenterPos.xyz);
+	float3 CenterPos = mul(g_CenterPos.xyz, Transform);
+    float3 vPosition = In.vPosition.xyz + (vDir * moveDistance );
+
+
+   // float3 vPosition = In.vPosition.xyz + (  0.5f *  moveDistance);   //
+   
 
     vPosition = mul(float4(vPosition.xyz, 1.f), Transform);
-    vPosition = mul(vPosition, g_WorldMatrix);
-    vRealPosition = mul(vRealPosition, g_WorldMatrix);
-
-    
+   
+    //vRealPosition = mul(vRealPosition, g_WorldMatrix);
 	vPosition.y = vRealPosition.y;
 
-    Out.vPosition = vPosition.xyz;
+    Out.vPosition = vPosition.xyz;  //mul(vPosition, g_WorldMatrix);
     Out.vNormal = normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
     Out.vTexUV = In.vTexUV;
     Out.vProjPos =vector(Out.vPosition,1.f);
@@ -224,10 +235,14 @@ void GS_MAIN(point GS_IN In[1], inout PointStream<GS_OUT> Stream)
 {
     GS_OUT Out = (GS_OUT)0;
 
-    matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+    matrix      matWV, matWVP;
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+
+    //matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 
     // 1
-    Out.vPosition = mul(float4(In[0].vPosition, 1.0f),matVP);
+    Out.vPosition = mul(float4(In[0].vPosition, 1.0f), matWVP);
     Out.vNormal = In[0].vNormal;
     Out.vTexUV = In[0].vTexUV;
     Out.vProjPos = Out.vPosition;
@@ -236,56 +251,56 @@ void GS_MAIN(point GS_IN In[1], inout PointStream<GS_OUT> Stream)
     Stream.Append(Out);
 
     // 2
-    Out.vPosition =    mul(float4(In[0].vPosition + float3(0.2f, 0.0f, 0.0f), 1.0f),matVP);
+    Out.vPosition =    mul(float4(In[0].vPosition + float3(0.2f, 0.0f, 0.0f), 1.0f), matWVP);
     Out.vProjPos = Out.vPosition;
 	Stream.Append(Out);
 
     // 3
-    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.2f, 0.0f), 1.0f),matVP);
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.2f, 0.0f), 1.0f), matWVP);
     Out.vProjPos = Out.vPosition;
 	Stream.Append(Out);
 
     // 4
-    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.0f, 0.2f), 1.0f),matVP);
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.0f, 0.2f), 1.0f), matWVP);
     Out.vProjPos = Out.vPosition;
     Stream.Append(Out);
 
     // 5
-    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.0f, 0.2f), 1.0f), matVP);
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.0f, 0.2f), 1.0f), matWVP);
     Out.vProjPos = Out.vPosition;
     Stream.Append(Out);
 
     // 6
-    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.2f, 0.f), 1.0f), matVP);
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.2f, 0.f), 1.0f), matWVP);
     Out.vProjPos = Out.vPosition;
     Stream.Append(Out);
 
     // 7
-    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.2f, 0.2f), 1.0f), matVP);
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.2f, 0.2f), 1.0f), matWVP);
     Out.vProjPos = Out.vPosition;
     Stream.Append(Out);
 
     // 8
-    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.2f, 0.2f), 1.0f), matVP);
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.2f, 0.2f), 1.0f), matWVP);
     Out.vProjPos = Out.vPosition;
     Stream.Append(Out);
 
     // 9
-    Out.vPosition = mul(float4(In[0].vPosition + float3(0.3f, 0.f, 0.f), 1.0f), matVP);
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.3f, 0.f, 0.f), 1.0f), matWVP);
     Out.vProjPos = Out.vPosition;
     Stream.Append(Out);
 
     // 10
-    Out.vPosition = mul(float4(In[0].vPosition + float3(0.f, 0.3f, 0.f), 1.0f), matVP);
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.f, 0.3f, 0.f), 1.0f), matWVP);
     Out.vProjPos = Out.vPosition;
 
     // 11
-    Out.vPosition = mul(float4(In[0].vPosition + float3(0.f, 0.f, 0.3f), 1.0f), matVP);
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.f, 0.f, 0.3f), 1.0f), matWVP);
     Out.vProjPos = Out.vPosition;
     Stream.Append(Out);
 
  
-    // �����? �����մϴ�.
+    // �����? �����մϴ�.
     Stream.RestartStrip();
 }
 
@@ -664,7 +679,7 @@ PS_OUT PS_MAIN_ONLY_ROUGHNESS(PS_IN In)
 
     Out.vDiffuse = FinalColor;
     Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 2.f, 0.f);
     Out.vAmbient = AO_R_M;
 
     return Out;
@@ -709,13 +724,19 @@ PS_OUT PS_MAIN_PointSampler(PS_IN In)
     if (0.1f > vDiffuse.a)
         discard;
 
-    vector      vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexUV);
+    vDiffuse.r = vColorData.x;
+    vDiffuse.g = vColorData.y;
+    vDiffuse.b = vColorData.z;
+    vDiffuse.a = vColorData.w;
 
+    vector      vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexUV);
+    
+ 
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));
 
-    Out.vDiffuse = vDiffuse;
+    Out.vDiffuse = vDiffuse * g_TimeDelta;//CalcHDRColor(vDiffuse,5.f) ;
     Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
     Out.vAmbient = (vector)1.f;
@@ -1024,7 +1045,7 @@ technique11 DefaultTechnique
     }//22
 
 
-    pass GeoMeryTest
+    pass GS_Default //
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
         SetDepthStencilState(DS_Default, 0);
