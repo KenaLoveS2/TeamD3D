@@ -15,7 +15,8 @@ private:
 	virtual ~CUI_NodeKey() = default;
 
 public:
-	void	Set_Key(wstring wstr, KEYTYPE eType);
+	void	Set_Key(wstring wstr, KEYTYPE eType, _float fTerm = 0.0f);
+	void	SetOff_Key();
 
 public:
 	virtual HRESULT			Initialize_Prototype()					override;
@@ -32,6 +33,11 @@ private:
 private:
 	//KEY					m_eState;
 	_tchar*					m_szKeyDesc;
+
+	/* Appear */
+	_float					m_fTime;
+	_float					m_fTimeAcc;
+	_float					m_fTerm;
 
 	/* Idle */
 	_float					m_fRotSpeed;

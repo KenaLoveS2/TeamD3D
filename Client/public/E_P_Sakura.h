@@ -10,7 +10,6 @@ class CModel;
 class CTexture;
 END
 
-
 BEGIN(Client)
 
 class CE_P_Sakura final : public CEnviromentObj
@@ -30,12 +29,11 @@ public:
 
 private:
 	CModel* m_pModelCom = nullptr;
-
 	_bool	m_bStart_InstMove = false;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
-
 
 public:
 	static  CE_P_Sakura*  Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

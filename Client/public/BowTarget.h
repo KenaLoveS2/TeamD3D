@@ -8,6 +8,7 @@ class CRenderer;
 class CModel;
 class CAnimationState;
 class CTexture;
+class CBone;
 END
 
 BEGIN(Client)
@@ -49,6 +50,7 @@ private:
 	CAnimationState*				m_pAnimation = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
+	class CE_RectTrail*				m_pTrail = nullptr;
 	_bool							m_bRenderCheck = false;
 
 private:
@@ -65,10 +67,12 @@ private:
 
 	_float							m_fDissolveTime = 0.f;
 	CTexture*						m_pDissolveTexture = nullptr;
+	CBone* m_pTrailBone = nullptr;
 
 private:
 	ANIMATION						Check_State();
 	void							Update_State(_float fTimeDelta);
+	void							Update_Trail(const char* pBoneTag);
 	void							Reset();
 
 private:
@@ -76,6 +80,7 @@ private:
 	HRESULT							SetUp_State();
 	HRESULT							SetUp_ShaderResources();
 	HRESULT							Bind_Dissolve(class CShader* pShader);
+	HRESULT							Ready_Effect();
 
 public:
 	static  CBowTarget*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

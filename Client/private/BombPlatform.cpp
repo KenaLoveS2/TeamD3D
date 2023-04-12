@@ -6,6 +6,7 @@
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 #include "RotBomb.h"
+#include "E_P_Bombplatform.h"
 
 CBombPlatform::CBombPlatform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnviromentObj(pDevice, pContext)
@@ -29,6 +30,7 @@ HRESULT CBombPlatform::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effect(), E_FAIL);
 
 	m_bRenderActive = true;
 
@@ -55,8 +57,19 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	{
 		m_vMovingPos = _float4(14.7f, 3.15f, 29.7f, 1.f);
 	}
+	else if (!lstrcmp(m_szCloneObjectTag, L"2_BombPlatForm_1"))
+	{
+		m_vMovingPos = _float4(169.898f, 17.422f, 433.78f, 1.f);
+	}
+	else if (!lstrcmp(m_szCloneObjectTag, L"2_BombPlatForm"))
+	{
+		m_vMovingPos = _float4(175.061f, 14.317f, 432.084f, 1.f);
+	}
+	else
+	{
+		m_vMovingPos = _float4(10.f, 10.f, 10.f, 1.f);
+	}
 
-	
 	m_vMovingQuat = XMQuaternionRotationNormal(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(CUtile::Get_RandomFloat(0.f, 359.f)));
 	m_fReturnTime = 5.f;
 
@@ -100,6 +113,8 @@ void CBombPlatform::Tick(_float fTimeDelta)
 
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
+
+	if (m_pBombplatformEffect) m_pBombplatformEffect->Tick(fTimeDelta);
 }
 
 void CBombPlatform::Late_Tick(_float fTimeDelta)
@@ -108,6 +123,8 @@ void CBombPlatform::Late_Tick(_float fTimeDelta)
 
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
+
+	if (m_pBombplatformEffect) m_pBombplatformEffect->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom != nullptr && m_bRenderActive == true)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -198,6 +215,7 @@ CBombPlatform::STATE CBombPlatform::Check_State()
 			{
 				if (m_pDetectedBomb->Get_CurrentState() == CRotBomb::BOMB_BOOM)
 				{
+					m_pBombplatformEffect->Set_Active(true);
 					eState = CBombPlatform::STATE_OPEN;
 					m_pDetectedBomb = nullptr;
 				}
@@ -222,7 +240,10 @@ CBombPlatform::STATE CBombPlatform::Check_State()
 		case CBombPlatform::STATE_ACTIVATE:
 		{
 			if (m_fTimer >= m_fReturnTime)
+			{
+				m_pBombplatformEffect->TurnOffPlatform(true);
 				eState = CBombPlatform::STATE_CLOSE;
+			}
 
 			break;
 		}
@@ -363,6 +384,16 @@ HRESULT CBombPlatform::SetUp_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CBombPlatform::Ready_Effect()
+{
+	m_pBombplatformEffect = (CE_P_Bombplatform*)(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_P_BombPlatform", CUtile::Create_DummyString()));
+	NULL_CHECK_RETURN(m_pBombplatformEffect, E_FAIL);
+	m_pBombplatformEffect->Set_Parent(this);
+	m_pBombplatformEffect->Late_Initialize(nullptr);
+
+	return S_OK;
+}
+
 CBombPlatform* CBombPlatform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CBombPlatform* pInstance = new CBombPlatform(pDevice, pContext);
@@ -399,4 +430,6 @@ void CBombPlatform::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
+
+	Safe_Release(m_pBombplatformEffect);
 }

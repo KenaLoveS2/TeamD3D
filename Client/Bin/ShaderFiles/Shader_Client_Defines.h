@@ -81,6 +81,13 @@ DepthStencilState DS_Default
 	DepthFunc = less_equal;
 };
 
+DepthStencilState DS_TEST2 
+{
+	DepthEnable = true;
+	DepthWriteMask = ZERO;
+	DepthFunc = LESS;
+};
+
 DepthStencilState DS_TEST
 {
 	DepthEnable = false;

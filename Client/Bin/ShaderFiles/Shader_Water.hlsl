@@ -9,6 +9,9 @@ float				g_fTime;
 
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
+Texture2D<float4>		g_NoiseTexture;
+Texture2D<float4>		g_MaskTexture;
+Texture2D<float4>		g_DepthTexture;
 
 struct VS_IN
 {
@@ -26,31 +29,38 @@ struct VS_OUT
 	float4		vProjPos : TEXCOORD1;
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
-//float4       vReflectionMapSamplingPos : TEXCOORD2;
-//float4		vRefractionMapSamplingPos : TEXCOORD3;
 };
+
+float3 WaterDistortion(float3 position, float time)
+{
+	// Calculate distortion based on position and time
+	float3 distortion = float3(
+		sin(position.x * 10.0f + time * 0.1f) * 0.05f + sin(position.y * 5.0f + time * 0.05f) * 0.02f,
+		cos(position.y * 10.0f + time * 0.2f) * 0.1f,
+		0.f);
+	return distortion;
+}
 
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
 
-	matrix		matWV, matWVP;//, matRVP, matWRVP;
+	matrix		matWV, matWVP;
 
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
-//matRVP = mul(g_ReflectedViewMatrix, g_ProjMatrix);
-//matWRVP = mul(g_WorldMatrix, matRVP);
+	vector vNoiseDesc = g_NoiseTexture.SampleLevel(LinearSampler, In.vTexUV * 5.f, 0);
+
+	In.vPosition.x += vNoiseDesc.r * WaterDistortion(In.vPosition, g_fTime * 10.f).x;
+	In.vPosition.y += vNoiseDesc.g * WaterDistortion(In.vPosition, g_fTime * 10.f).y;
 
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
-	Out.vPosition.y += sin(In.vPosition.x + In.vPosition.z + g_fTime * 5.0f) * 0.1f;
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
 	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
 	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
-//Out.vReflectionMapSamplingPos = mul(float4(In.vPosition, 1.f), matWRVP);
-//Out.vRefractionMapSamplingPos = mul(float4(In.vPosition, 1.f), matRVP);
 	return Out;
 }
 
@@ -62,8 +72,6 @@ struct PS_IN
 	float4		vProjPos : TEXCOORD1;
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
-	//float4       vReflectionMapSamplingPos : TEXCOORD2;
-	//float4		vRefractionMapSamplingPos : TEXCOORD3;
 };
 
 struct PS_OUT
@@ -79,13 +87,10 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	/* Sampling Texture */
-	/*float2  vProjectedTexCoord;
-	vProjectedTexCoord.x = In.vReflectionMapSamplingPos.x / In.vReflectionMapSamplingPos.w / 2.f + 0.5f;
-	vProjectedTexCoord.y = -In.vReflectionMapSamplingPos.y / In.vReflectionMapSamplingPos.w / 2.f + 0.5f;
-	float4  vReflectiveColor = g_ReflectTexture.Sample(LinearSampler, vProjectedTexCoord);*/
+	float2 texCoord = float2(In.vTexUV.x  , In.vTexUV.y + g_fTime * 0.01f);
 
-	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	//vector		vMaskDesc = g_MaskTexture.Sample(LinearSampler, texCoord);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, texCoord);
 	float4 		vDiffuse = float4(0.f, 0.5f, 1.f, 1.f);
 
 	/* 탄젠트스페이스 */
@@ -93,11 +98,27 @@ PS_OUT PS_MAIN(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	//float4 FinalColor = lerp(vDiffuse, vReflectiveColor, 0.5f);
+	float3 toCamera = normalize(g_vCamPosition.xyz - In.vPosition.xyz);
+	float3 reflected = reflect(toCamera, vNormal);
+	float specular = pow(saturate(dot(reflected, toCamera)), 30.0f);
+	vDiffuse += specular;
 
-	Out.vDiffuse = float4(vDiffuse.rgb, 0.3f);
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+	float		fOldViewZ = vDepthDesc.y * g_fFar; // 카메라의 far
+	float		fViewZ = In.vProjPos.w;
+
+	Out.vDiffuse = float4(vDiffuse.rgb, 0.5f);
+	Out.vDiffuse.a = Out.vDiffuse.a * (saturate(fOldViewZ - fViewZ));
+
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+
+	//if (vMaskDesc.r <= 0.1f)
+		//discard;
 	Out.vAmbient = (float4)1.f;
 	return Out;
 }

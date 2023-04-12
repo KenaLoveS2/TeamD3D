@@ -33,6 +33,7 @@ private:
 private:
 	STATE			m_eState;
 	_float4			m_vColor;
+	_float			m_fAmount;
 
 public:
 	static	CUI_NodeMood*	Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

@@ -76,6 +76,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	m_pWeaponTrailBone = m_pModelCom->Get_BonePtr("Knife_EndJnt");
 
 	Create_Arrow();
+
 	/********************************************/
 	/*			For. Shader & Effect			*/
 	/********************************************/
@@ -1425,8 +1426,11 @@ void CBossHunter::AdditiveAnim(_float fTimeDelta)
 void CBossHunter::BossFight_Start()
 {
 	g_bDayOrNight = false;
-	CGameInstance::GetInstance()->Work_Camera(m_pCineCam[0]->Get_ObjectCloneName());
-	m_pCineCam[0]->Play();
+	if(m_pCineCam[0])
+	{
+		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[0]->Get_ObjectCloneName());
+		m_pCineCam[0]->Play();
+	}
 	m_bDissolve = true;
 	m_fDissolveTime = 1.f;
 	m_pRendererCom->Set_Fog(true);

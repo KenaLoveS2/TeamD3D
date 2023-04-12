@@ -35,6 +35,10 @@ public:
 public:
 	void Day();
 	void Night();
+	void BlurCapture();
+	void CaptureOff();
+
+	_bool Get_Capture();
 
 private:
 	_bool					m_bOn = false;
@@ -93,12 +97,15 @@ private:
 	_float							m_fBloomThreshold = 0.f;
 	_float							m_fBloomScale = 0.f;
 	_float							m_fDOFFarStart = 0.f;
+	_float							m_fPreDOFFarStart = 0.f;
 	_float							m_fDOFFarRange = 0.f;
 	_float							m_fDOFFarRangeRcp = 0.f;
 	_float							m_fBokehLumThreshold = 0.f;
 	_float							m_fBokehBlurThreshold = 0.f;
 	_float							m_fBokehRadiusScale = 0.f;
 	_float							m_fBokehColorScale = 0.f;
+
+	_bool							m_bCapture = false;
 
 	typedef struct
 	{

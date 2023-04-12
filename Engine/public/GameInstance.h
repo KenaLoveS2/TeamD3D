@@ -235,9 +235,11 @@ public: /* For.PipeLine */
 		_bool	Is_Render_TerrainIndex(_uint iTerrainRoomIndex);
 		_uint Get_CurrentPlayerRoomIndex();
 		void	Scene_EnviMgr_Change();
-public:
+public:// For.Texture_Manager
 	HRESULT	   Texture_Manager_SceneChange();
-	private:
+	HRESULT		Texture_Erase(const _tchar* pTextureFilePath);
+
+private:
 		static _uint m_iStaticLevelIndex;
 		HWND m_hClientWnd = NULL;
 		_float m_fTimeDelta = 0.f;

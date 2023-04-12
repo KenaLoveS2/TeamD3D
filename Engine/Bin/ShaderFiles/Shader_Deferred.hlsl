@@ -142,13 +142,12 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
 	vector		vLook = normalize(vWorldPos - g_vCamPosition);
-	
-	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient));
-	Out.vShade.rgb *= CalcAmbientOcclusion(vWorldPos.xyz, vNormal.xyz, g_MtrlAmbientTexture, In.vTexUV);
+	float ao = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV).r;
+	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient * ao));
 	Out.vShade.a = 1.f;
 
-	//Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
-	Out.vSpecular.rgb = CalcSpecular(vWorldPos.xyz, vNormal.xyz, -vLook.xyz, g_vLightDir.xyz, Out.vShade.rgb, vReflect.xyz, g_MtrlAmbientTexture, In.vTexUV);
+	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
+	Out.vSpecular.rgb *= CalcSpecular(vWorldPos.xyz, vNormal.xyz, -vLook.xyz, g_vLightDir.xyz, Out.vShade.rgb, vReflect.xyz, g_MtrlAmbientTexture, In.vTexUV);
 	Out.vSpecular.a = 0.f;
 
 	return Out;
