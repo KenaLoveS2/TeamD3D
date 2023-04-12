@@ -567,8 +567,8 @@ HRESULT CInstancing_Mesh::Initialize(void* pArg, CGameObject* pOwner)
 	m_corners[6] = XMVectorSet(fMinX, fMaxY, fMaxZ, 1.0f);
 	m_corners[7] = XMVectorSet(fMaxX, fMaxY, fMaxZ, 1.0f);
 
-
-
+	m_center = _float4((fMinX + fMaxX) / 2.f, (fMinY + fMaxY) / 2.f, (fMinZ + fMaxZ) / 2.f, 1.f);
+	
 
 	return S_OK;
 }
@@ -857,6 +857,7 @@ void CInstancing_Mesh::Set_InstanceMeshEffect(CTransform* pParentTransform, _int
 
 
 }
+
 
 _bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _float fTimeDelta)
 {
