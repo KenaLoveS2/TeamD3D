@@ -59,7 +59,7 @@ void CE_P_Flower::Tick(_float fTimeDelta)
 	_float vDistance = XMVectorGetX(XMVector3Length(vKenaPos - vMyPos));
 	if(vDistance > 20.f)
 	{
-		vKenaPos.y = 1.0f;
+		vKenaPos.y = m_pKena->Get_TransformCom()->Get_Position().y + 1.0f;
 		m_pTransformCom->Set_Position(vKenaPos);
 		m_fLife = 0.0f;
 		m_bTurn = true;

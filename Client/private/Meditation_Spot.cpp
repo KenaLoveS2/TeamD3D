@@ -7,6 +7,7 @@
 #include "AnimationState.h"
 #include "Kena_State.h"
 #include "Kena_Status.h"
+#include "E_P_Meditation_Spot.h"
 
 CMeditation_Spot::CMeditation_Spot(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -28,11 +29,9 @@ HRESULT CMeditation_Spot::Initialize_Prototype()
 
 HRESULT CMeditation_Spot::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
-
-	if (FAILED(SetUp_Components()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effect(), E_FAIL);
 
 	m_bRenderActive = true;
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
@@ -103,8 +102,11 @@ void CMeditation_Spot::Tick(_float fTimeDelta)
 
 			if (m_bUsed == false)
 			{
+				m_pMeditationSpotEffect->TurnOff_Meditation(true);
+
 				if (pAnimState->Get_AnimationProgress() > 0.4f)
 				{
+
 					m_bKenaDetected = false;
 					m_bUsed = true;
 
@@ -123,6 +125,8 @@ void CMeditation_Spot::Tick(_float fTimeDelta)
 			}
 			else
 			{
+				m_pMeditationSpotEffect->TurnOff_Meditation(true);
+
 				if (iHP + 1 <= pStatus->Get_MaxHP())
 					pStatus->Add_HealAmount(1);
 			}
@@ -150,6 +154,9 @@ void CMeditation_Spot::Tick(_float fTimeDelta)
 		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
 		m_bOncePosUpdate = true;
 	}
+
+	m_pTransformCom->Tick(fTimeDelta);
+	if (m_pMeditationSpotEffect) m_pMeditationSpotEffect->Tick(fTimeDelta);
 }
 
 void CMeditation_Spot::Late_Tick(_float fTimeDelta)
@@ -165,6 +172,8 @@ void CMeditation_Spot::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 #endif
 	}
+
+	if (m_pMeditationSpotEffect) m_pMeditationSpotEffect->Late_Tick(fTimeDelta);
 }
 
 HRESULT CMeditation_Spot::Render()
@@ -441,7 +450,7 @@ _int CMeditation_Spot::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTri
 		if (iColliderIndex == (_int)COL_PLAYER)
 		{
 			m_bKenaDetected = false;
-			m_pKena->Set_MeditationPossible(true);
+			m_pKena->Set_MeditationPossible(false);
 		}
 	}
 
@@ -496,6 +505,16 @@ HRESULT CMeditation_Spot::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
+HRESULT CMeditation_Spot::Ready_Effect()
+{
+	m_pMeditationSpotEffect = (CE_P_Meditation_Spot*)CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_P_Meditation", CUtile::Create_DummyString());
+	NULL_CHECK_RETURN(m_pMeditationSpotEffect, E_FAIL);
+	m_pMeditationSpotEffect->Set_Parent(this);
+	m_pMeditationSpotEffect->Late_Initialize(nullptr);
+
+	return S_OK;
+}
+
 CMeditation_Spot* CMeditation_Spot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CMeditation_Spot* pInstance = new CMeditation_Spot(pDevice, pContext);
@@ -530,4 +549,6 @@ void CMeditation_Spot::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
+
+	Safe_Release(m_pMeditationSpotEffect);
 }

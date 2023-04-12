@@ -1562,6 +1562,36 @@
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Fire_Brazier.h" />
+    <ClInclude Include="..\public\E_P_Rain.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Chest.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Rot.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_FireBrazier.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Meditation_Spot.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Chest.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Maple.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Beech.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Bombplatform.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_CommonBox.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2509,6 +2539,36 @@
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Fire_Brazier.cpp" />
+    <ClCompile Include="..\private\E_P_Rain.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Maple.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Beech.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_CommonBox.cpp">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_FireBrazier.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Chest.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Chest.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Meditation_Spot.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Bombplatform.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Rot.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

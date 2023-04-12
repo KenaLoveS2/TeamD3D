@@ -23,6 +23,8 @@ public:
 	void	Reset();
 
 private:
+	_bool	m_bReset = false;
+
 	_float	m_fDurationTime = 0.0f;
 	CVIBuffer_Point_Instancing::POINTDESC* m_ePointDesc;
 

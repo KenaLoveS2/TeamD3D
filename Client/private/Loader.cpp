@@ -218,6 +218,15 @@ unsigned int	g_LEVEL = 0;
 #include "E_Common_CIrcleSp.h"
 #include "E_LazerTrail.h"
 #include "E_P_Level.h"
+#include "E_P_Rot.h"
+#include "E_Chest.h"
+#include "E_P_Chest.h"
+#include "E_P_Bombplatform.h"
+#include "E_P_CommonBox.h"
+#include "E_P_Maple.h"
+#include "E_P_Beech.h"
+#include "E_P_Meditation_Spot.h"
+#include "E_FireBrazier.h"
 
 
 
@@ -1792,6 +1801,15 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 	// Prototype_Component_Model_CineCam
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_CineCam", CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/CineCam.mdat"), PivotMatrix)))) return E_FAIL;
 
+	// Prototype_GameObject_WaterNormalTexture
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_GameObject_WaterNormalTexture"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Water/Texture/Normal/%d.png"), 13)))) return E_FAIL;
+
+	// Prototype_GameObject_WaterNoiseTexture
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_GameObject_WaterNoiseTexture"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Water/Texture/Noise/%d.png"), 2)))) return E_FAIL;
+
+	// Prototype_GameObject_WaterMaskTexture
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_GameObject_WaterMaskTexture"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Water/Texture/Mask/%d.png"), 2)))) return E_FAIL;
+
 	// Prototype_GameObject_WaterPlane
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WaterPlane"), CWaterPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
@@ -2284,7 +2302,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 146))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 147))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_NormalEffect */
@@ -2410,6 +2428,16 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_Component_Model_IceDagger */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_IceDagger",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/IceDagger.mdat"), PivotMatrix))))
+		return E_FAIL;
+	
+	/* For.Prototype_Component_Model_MapleLeaf */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_MapleLeaf",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/MapleLeaf.mdat"), PivotMatrix, nullptr, false, true))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Beech */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Beech",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Beech.mdat"), PivotMatrix, nullptr, false, true))))
 		return E_FAIL;
 
 #pragma endregion EFFECT_COMPONENT
@@ -2778,7 +2806,47 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LevelUp"), CE_P_Level::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_KenaLvUp.json"))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Rot_P */ 
+ 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot_P"), CE_P_Rot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_Rot.json"))))
+		return E_FAIL;
+
 #pragma endregion Effect_Object
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Effects MapObject..."));
+#pragma region MapObject
+	/* For.Prototype_GameObject_E_Chest */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_E_Chest"), CE_Chest::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Chest.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_E_P_Chest */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_E_P_Chest"), CE_P_Chest::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Chest.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_P_BombPlatform */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_P_BombPlatform"), CE_P_Bombplatform::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_BombPlate.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_P_CommonBox */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_P_CommonBox"), CE_P_CommonBox::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_CommonBox.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_P_Meditation */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_P_Meditation"), CE_P_Meditation_Spot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Meditation_Spot.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_MapleLeaf */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MapleLeaf"), CE_P_Maple::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_BeechLeaf */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BeechLeaf"), CE_P_Beech::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBrazier */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBrazier"), CE_FireBrazier::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_ObjectFire.json"))))
+		return E_FAIL;
+
+#pragma endregion MapObject
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Effects Distortion..."));
 
@@ -2806,6 +2874,16 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	/* For.Prototype_Component_Texture_Brush*/
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Normal"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Flter_Texture_%d.png"), 2))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Filter*/
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_TerrainDiffuse"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/T_GDC_Grass01_D_NoisyAlpha.png")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Filter*/
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_TerrainNormal"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/T_Ground_Grass_N.png")))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Filter*/
@@ -3322,7 +3400,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 			CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.mdat", PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.json", false)), E_FAIL);
 		/* Prototype_GameObject_BombPlatform */
 		FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_RuinsKit_BombPlatForm", CBombPlatform::Create(m_pDevice, m_pContext)), E_FAIL);
-
 
 #pragma  endregion Born_GroundCover
 

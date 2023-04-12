@@ -150,8 +150,6 @@ struct VS_OUT_INSTANCE_GEOMETRY
 //    float3 center = float3(0, 0, 0);
 //    int count = 0;
 //
-//    // ÀÎ½ºÅÏ½º µ¥ÀÌÅÍ¿¡¼­ °¢ °´Ã¼ÀÇ À§Ä¡¿Í È¸Àü°ªÀ» ³ªÅ¸³»´Â Çà·ÄµéÀ» ÃßÃâÇÏ¿©
-//    // ÀÌ¸¦ ÀÌ¿ëÇØ °¢ °´Ã¼ÀÇ Áß½ÉÁ¡À» °è»êÇÕ´Ï´Ù.
 //    for (int i = 0; i < g_InstasncingCount; ++i)
 //    {
 //        float4x4 instanceTransform = g_InstanceTransforms[i];
@@ -177,7 +175,7 @@ VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
 
 
    float moveDistance = g_TimeDelta * 1.f ;
-    /*Áß½É ÁÂÇ¥ ·Î ÀÌµ¿*/
+ 
    float3 vDir;
    if(g_iSign == 1)
    {
@@ -192,7 +190,7 @@ VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
 	float3 CenterPos = mul(g_CenterPos.xyz, Transform);
     float3 vPosition = In.vPosition.xyz + (vDir * moveDistance );
 
-	/*~Áß½É ÁÂÇ¥ ·Î ÀÌµ¿*/
+
    // float3 vPosition = In.vPosition.xyz + (  0.5f *  moveDistance);   //
    
 
@@ -302,7 +300,7 @@ void GS_MAIN(point GS_IN In[1], inout PointStream<GS_OUT> Stream)
     Stream.Append(Out);
 
  
-    // Ãâ·ÂÀ» Á¾·áÇÕ´Ï´Ù.
+    // ï¿½ï¿½ï¿½ï¿½ï¿½? ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
     Stream.RestartStrip();
 }
 
@@ -335,7 +333,7 @@ PS_OUT PS_MAIN_TESS(PS_IN In)
 
     vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
-    /* ÅºÁ¨Æ®½ºÆäÀÌ½º */
+    /* Åºï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ */
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));
@@ -733,7 +731,7 @@ PS_OUT PS_MAIN_PointSampler(PS_IN In)
 
     vector      vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexUV);
     
-    /* ÅºÁ¨Æ®½ºÆäÀÌ½º */
+ 
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));
@@ -744,7 +742,6 @@ PS_OUT PS_MAIN_PointSampler(PS_IN In)
     Out.vAmbient = (vector)1.f;
     return Out;
 }//1
-
 
 technique11 DefaultTechnique
 {

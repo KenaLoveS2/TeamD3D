@@ -40,6 +40,7 @@ private:
 	class CControlMove*		m_pControlMoveCom = nullptr;
 
 	class CKena*			m_pKena = nullptr;
+	class CE_P_Meditation_Spot* m_pMeditationSpotEffect = nullptr;
 
 	_bool					m_bPulseTest = true;
 	_float					m_fEmissivePulse = 0.f;
@@ -60,6 +61,7 @@ private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
+	HRESULT					Ready_Effect();
 
 public:
 	static  CMeditation_Spot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
