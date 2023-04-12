@@ -404,6 +404,17 @@ HRESULT CLoader::Loading_ForMapTool()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Textures/T_GDC_Grass01_D_NoisyAlpha.png")))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_Filter*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_TerrainDiffuse"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/T_GDC_Grass01_D_NoisyAlpha.png")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Filter*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_TerrainNormal"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/T_Ground_Grass_N.png")))))
+		return E_FAIL;
+
+
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 #pragma region ANIM_OBJ
 	_matrix			PivotMatrix = XMMatrixIdentity();

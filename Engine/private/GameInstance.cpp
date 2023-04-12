@@ -40,6 +40,7 @@ CGameInstance::CGameInstance()
 	, m_pFunction_Manager(CFunction_Manager::GetInstance())
 	, m_pEnviroment_Manager(CEnviroment_Manager::GetInstance())
 	, m_pPhysX_Manager(CPhysX_Manager::GetInstance()) // kbj PhysX
+	, m_pTexture_Manager(CTexture_Manager::GetInstance())
 {
 	Safe_AddRef(m_pEnviroment_Manager);
 	Safe_AddRef(m_pTarget_Manager);
@@ -1008,6 +1009,12 @@ HRESULT CGameInstance::Texture_Manager_SceneChange()
 {
 	assert(nullptr != m_pTexture_Manager && "CGameInstance::Texture_Manager_SceneChange");
 	return m_pTexture_Manager->Scene_Chane_Clear();
+}
+
+HRESULT CGameInstance::Texture_Erase(const _tchar* pTextureFilePath)
+{
+	assert(nullptr != m_pTexture_Manager && "CGameInstance::Texture_Erase");
+	return m_pTexture_Manager->Texture_Erase(pTextureFilePath);
 }
 
 void CGameInstance::Release_Engine()

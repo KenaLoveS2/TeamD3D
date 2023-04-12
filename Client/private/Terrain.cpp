@@ -176,6 +176,8 @@ void CTerrain::Erase_FilterCom()
 {
 	Delete_Component(TEXT("Com_Filter"));
 	Safe_Release(m_pTextureCom[TYPE_FILTER]);
+
+	
 }
 
 void CTerrain::Change_HeightMap(const _tchar * pHeightMapFilePath)		// 여기서 버퍼를 바꾸기때문에

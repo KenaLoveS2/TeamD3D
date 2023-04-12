@@ -448,6 +448,7 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 
 	m_pGameInstance->Delete_ProtoComponent(g_LEVEL, ComponentProtoTag.c_str());
 
+	CGameInstance::GetInstance()->Texture_Erase(ComponentPathTag.c_str());
 	m_pGameInstance->Add_Prototype(g_LEVEL, ComponentProtoTag.c_str(),
 		CTexture::Create(m_pDevice, m_pContext, ComponentPathTag.c_str(), 3));
 
@@ -598,6 +599,7 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 	Safe_Release(pTexture2D);
 
 	m_pGameInstance->Delete_ProtoComponent(g_LEVEL, ComponentProtoTag.c_str());
+	CGameInstance::GetInstance()->Texture_Erase(ComponentPathTag.c_str());
 
 	m_pGameInstance->Add_Prototype(g_LEVEL, ComponentProtoTag.c_str(),
 	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3));
@@ -757,6 +759,7 @@ void CImgui_TerrainEditor::UnDraw_FilterTexture()
 
 	m_pGameInstance->Delete_ProtoComponent(g_LEVEL, ComponentProtoTag.c_str());
 
+	CGameInstance::GetInstance()->Texture_Erase(ComponentPathTag.c_str());
 	m_pGameInstance->Add_Prototype(g_LEVEL, ComponentProtoTag.c_str(),
 		CTexture::Create(m_pDevice, m_pContext, ComponentPathTag.c_str(), 3));
 
