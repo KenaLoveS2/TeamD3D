@@ -44,7 +44,7 @@ HRESULT CUI_CanvasInfo::Initialize(void* pArg)
 	}
 
 	/*temp*/
-	m_bActive = true;
+	//m_bActive = true;
 
 	return S_OK;
 }
@@ -60,6 +60,9 @@ void CUI_CanvasInfo::Tick(_float fTimeDelta)
 			return;
 		}
 	}
+	//m_bActive = true;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_X))
+		BindFunction(CUI_ClientManager::INFO_, 1.f);
 
 	if (!m_bActive)
 		return;
@@ -99,11 +102,6 @@ HRESULT CUI_CanvasInfo::Bind()
 
 HRESULT CUI_CanvasInfo::Ready_Nodes()
 {
-	return CUI_Canvas::Ready_Nodes();
-}
-
-HRESULT CUI_CanvasInfo::SetUp_Components()
-{
 	/* Video */
 	{
 		CUI* pUI = nullptr;
@@ -118,9 +116,11 @@ HRESULT CUI_CanvasInfo::SetUp_Components()
 		m_vecNodeCloneTag.push_back(strCloneTag);
 		CGameInstance::GetInstance()->Add_String(wstrCloneTag);
 	}
+
+	return S_OK;
 }
 
-HRESULT CUI_CanvasInfo::SetUp_ShaderResources()
+HRESULT CUI_CanvasInfo::SetUp_Components()
 {
 	/* Renderer */
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))
@@ -137,12 +137,42 @@ HRESULT CUI_CanvasInfo::SetUp_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CUI_CanvasInfo::SetUp_ShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	CUI::SetUp_ShaderResources();
+
+	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_tDesc.ProjMatrix)))
+		return E_FAIL;
+
+	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
+	{
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 void CUI_CanvasInfo::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 {
 	switch (eType)
 	{
 		case CUI_ClientManager::INFO_ :
-			static_cast<CUI_NodeVideo*>(m_vecNode[UI_VIDEO])->Play_Video(L"", true, 0.05f /* speed */);
+			m_bActive = true;
+			//CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
+
+			//CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+
+			m_iTextureIdx = INFO_FIGHTIN;
+			static_cast<CUI_NodeVideo*>(m_vecNode[UI_VIDEO])->Play_Video(L"RotActionSelector", true, 0.05f /* speed */);
 		break;
 	}
 }

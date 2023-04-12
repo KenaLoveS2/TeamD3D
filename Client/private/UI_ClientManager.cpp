@@ -570,6 +570,16 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_SimpleRotIcon"); // 67
 
+	/********************************************/
+	/*				For. InfoWindow				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_InfoWindow"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/04. Menu/Information_0.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_InfoWindow"); // 67
+
+
+
 
 
 	/* Not Include in the Texture List */
@@ -666,6 +676,11 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	// IntoTheFray
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_IntoTheFray"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/IntoTheFray/IntoTheFray_Tutorial_PC%03d.png"), 221))))
+		return E_FAIL;
+
+	// RotActionSelector
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotActionSelector"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/RotActionSelector/RotActionSelector_Tutorial_PC%03d.png"), 226))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -993,7 +1008,15 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_SideBar");
 
+	/********************************************/
+	/*				For. InfoWindow				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_InfoWindow"), CUI_CanvasInfo::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_InfoWindow");
 
+
+	/* Commons */
 	/********************************************/
 	/*				For. Effects				*/
 	/********************************************/
@@ -1027,6 +1050,8 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Video"), CUI_NodeVideo::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Video");
+
+
 
 	/********************************************/
 	/*				For. WorldUI				*/
