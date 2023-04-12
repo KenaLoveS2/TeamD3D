@@ -3057,7 +3057,7 @@ HRESULT CKena_State::SetUp_State_Combat()
 		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, &CKena_State::Check_Shield)
 		.Init_Changer(L"COMBAT_IDLE_INTO_RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"LOCK_ON_TO_IDLE", this, &CKena_State::CombatTimeToIdle)
-
+		
 		.Add_State(L"LOCK_ON_TO_IDLE")
 		.Init_Start(this, &CKena_State::Start_Lock_On_To_Idle)
 		.Init_Tick(this, &CKena_State::Tick_Lock_On_To_Idle)
@@ -9415,11 +9415,25 @@ _bool CKena_State::KeyInput_LShift()
 {
 	if (m_pGameInstance->Key_Pressing(DIK_LSHIFT))
 	{
-		/* Turn Off Canvas Aim */
-		CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
-		CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+		CUI_ClientManager::UI_PRESENT eAim			= CUI_ClientManager::AIM_;
+		CUI_ClientManager::UI_FUNCTION funcSwitch	= CUI_ClientManager::FUNC_SWITCH;
 		_float fTag = 1.f;
 		m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+
+
+		/* If Bow Skill Unlocked */
+		if (m_pKena->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOW, 0))
+		{
+			CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_AIMARROW;
+			m_pKena->m_Delegator.broadcast(tag, fTag);
+		}
+
+		/* If Bomb Skill Unlocked */
+		if (m_pKena->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOMB, 0))
+		{
+			CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_AIMBOMB;
+			m_pKena->m_Delegator.broadcast(tag, fTag);
+		}
 
 		return true;
 	}
@@ -9564,6 +9578,11 @@ _bool CKena_State::KeyUp_LShift()
 		CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
 		_float fTag = 0.f;
 		m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+
+
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OFF;
+		m_pKena->m_Delegator.broadcast(tag, fTag);
+
 
 		return true;
 	}

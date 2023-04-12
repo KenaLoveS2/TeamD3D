@@ -620,6 +620,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	/* ~UI Control */
 
 	/************** Delegator Test *************/
+	
+
 	//CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
 	//CUI_ClientManager::UI_PRESENT eType3 = CUI_ClientManager::HUD_SHIELD;
