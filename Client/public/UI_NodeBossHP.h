@@ -3,6 +3,7 @@
 #include "UI_Node.h"
 
 BEGIN(Client)
+class CEffect_Particle_Base;
 class CUI_NodeBossHP final : public CUI_Node
 {
 public:
@@ -29,7 +30,8 @@ private:
 	virtual HRESULT			SetUp_ShaderResources() override;
 
 private:
-	_tchar*				m_szTitle;
+	_tchar*							m_szTitle;
+	CEffect_Particle_Base*			m_pEffect;
 
 public:
 	static	CUI_NodeBossHP*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

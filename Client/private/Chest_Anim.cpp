@@ -7,6 +7,7 @@
 #include "Kena.h"
 #include "Kena_State.h"
 #include "PhysX_Manager.h"
+#include "UI_ClientManager.h"
 
 CChest_Anim::CChest_Anim(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -206,6 +207,11 @@ _int CChest_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTrigge
 		m_bKenaDetected = true;
 		m_pModelCom->ResetAnimIdx_PlayTime((_uint)CChest_Anim::CURSED_ACTIVATE);
 		m_pKena->Set_ChestInteractable(true);
+
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OPENCHEST;
+		_float fValue = 1.f;
+		m_pKena->m_Delegator.broadcast(tag, fValue);
+
 	}
 
 	return 0;

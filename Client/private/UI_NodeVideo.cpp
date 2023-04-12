@@ -82,7 +82,7 @@ void CUI_NodeVideo::Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
-	m_iRenderPass = 0;
+	//m_iRenderPass = 0;
 	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
 		return;
 
