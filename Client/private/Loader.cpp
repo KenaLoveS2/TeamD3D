@@ -326,7 +326,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyunwook
-	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	//FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyaewon
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
@@ -530,7 +530,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 
 	_bool bRealObject = true;
-	_bool bFlowerCheck = false;
+	_bool bFlowerCheck = false;//true;
 
 #ifdef FOR_MAPTOOL   
 
@@ -611,6 +611,8 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/HealthFlower/HealthFlower.model", PivotMatrix)), E_FAIL);
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HealthFlower_Anim"), CHealthFlower_Anim::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
+	/* Prototype Component_Texture_Dissolve_BowTarget */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Texture_Dissolve_BowTarget", CTexture::Create(m_pDevice, m_pContext, L"../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_37.png")), E_FAIL);
 
 
 #endif 
@@ -1780,6 +1782,15 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 	// Prototype_Component_Model_CineCam
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_CineCam", CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/CineCam.mdat"), PivotMatrix)))) return E_FAIL;
 
+	// Prototype_GameObject_WaterNormalTexture
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_GameObject_WaterNormalTexture"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Water/Texture/Normal/%d.png"), 13)))) return E_FAIL;
+
+	// Prototype_GameObject_WaterNoiseTexture
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_GameObject_WaterNoiseTexture"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Water/Texture/Noise/%d.png"), 2)))) return E_FAIL;
+
+	// Prototype_GameObject_WaterMaskTexture
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_GameObject_WaterMaskTexture"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Water/Texture/Mask/%d.png"), 2)))) return E_FAIL;
+
 	// Prototype_GameObject_WaterPlane
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WaterPlane"), CWaterPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
@@ -2844,6 +2855,16 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	/* For.Prototype_Component_Texture_Brush*/
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Normal"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Flter_Texture_%d.png"), 2))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Filter*/
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_TerrainDiffuse"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/T_GDC_Grass01_D_NoisyAlpha.png")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Filter*/
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_TerrainNormal"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/T_Ground_Grass_N.png")))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Filter*/

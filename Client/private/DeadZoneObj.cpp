@@ -83,6 +83,12 @@ void CDeadZoneObj::Tick(_float fTimeDelta)
 		m_bOnlyTest = true;
 	}
 #endif
+
+	m_fTimeDeltaTest += fTimeDelta;
+
+	if (m_fTimeDeltaTest >= 3.f)
+		m_fTimeDeltaTest = 0.f;
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -129,8 +135,8 @@ HRESULT CDeadZoneObj::Render()
 			}
 			else
 			{
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
-				//FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
+				//FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
 			}
 		}
 	}
@@ -276,6 +282,13 @@ HRESULT CDeadZoneObj::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_TimeDelta", &m_fTimeDeltaTest, sizeof(float)), E_FAIL);
+
+	_float4 vMeshCenterPos = m_pModelCom->GetMeshCenter();
+	
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_CenterPos", &vMeshCenterPos, sizeof(_float4)), E_FAIL);
+
+	
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

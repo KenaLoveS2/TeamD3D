@@ -9,6 +9,8 @@
 /* Bind Object */
 #include "Saiya.h"
 #include "CinematicCamera.h"
+#include "Kena.h"
+#include "Kena_State.h"
 
 CUI_CanvasBottom::CUI_CanvasBottom(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -86,27 +88,40 @@ HRESULT CUI_CanvasBottom::Render()
 
 HRESULT CUI_CanvasBottom::Bind()
 {
-	CSaiya* pSaiya = dynamic_cast<CSaiya*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_NPC", L"Saiya"));
-	if (pSaiya == nullptr)
-		return E_FAIL;
-	
-	map <const _tchar*, class CCamera*>* pMap = CGameInstance::GetInstance()->Get_CameraContainer();
-
-	if (pMap == nullptr)
-		return E_FAIL;
-
-	if (!pMap->empty())
+	if (g_LEVEL != LEVEL_GAMEPLAY)
 	{
-		for (auto pair : *pMap)
-		{
-			CCinematicCamera* pCam = dynamic_cast<CCinematicCamera*>(pair.second);
+		CSaiya* pSaiya = dynamic_cast<CSaiya*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_NPC", L"Saiya"));
+		if (pSaiya == nullptr)
+			return E_FAIL;
 
-			if(pCam != nullptr)
-				pCam->m_CinemaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
+		map <const _tchar*, class CCamera*>* pMap = CGameInstance::GetInstance()->Get_CameraContainer();
+
+		if (pMap == nullptr)
+			return E_FAIL;
+
+		if (!pMap->empty())
+		{
+			for (auto pair : *pMap)
+			{
+				CCinematicCamera* pCam = dynamic_cast<CCinematicCamera*>(pair.second);
+
+				if (pCam != nullptr)
+					pCam->m_CinemaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
+			}
 		}
+
+		pSaiya->m_SaiyaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
+	}
+	else
+	{
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+			L"Layer_Player", L"Kena"));
+		if (pKena == nullptr)
+			return E_FAIL;
+		
+		pKena->m_Delegator.bind(this, &CUI_CanvasBottom::BindFunction);
 	}
 
-	pSaiya->m_SaiyaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
 
 
 	m_bBindFinished = true;
@@ -257,6 +272,36 @@ void CUI_CanvasBottom::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool b
 	}
 
 
+}
+
+void CUI_CanvasBottom::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fValue)
+{
+	switch (eType)
+	{
+	case CUI_ClientManager::BOT_KEY_USEROT:
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"부식령 날리기", CUI_NodeKey::TYPE_Q);
+		break;
+	case CUI_ClientManager::BOT_KEY_OPENSHOP:
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"상점 둘러보기", CUI_NodeKey::TYPE_Q);
+		break;
+	case CUI_ClientManager::BOT_KEY_OPENCHEST:
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"상자 열기", CUI_NodeKey::TYPE_Q);
+		break;
+	case CUI_ClientManager::BOT_KEY_AIMARROW:
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"화살 조준", CUI_NodeKey::TYPE_LB);
+		break;
+	case CUI_ClientManager::BOT_KEY_AIMBOMB:
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY2])->Set_Key(L"폭탄 조준", CUI_NodeKey::TYPE_RB, 0.3f);
+		break;
+	case CUI_ClientManager::BOT_KEY_MOVEROT:
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"조준하기", CUI_NodeKey::TYPE_R);
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY2])->Set_Key(L"두기", CUI_NodeKey::TYPE_B, 0.3f);
+		break;
+	case CUI_ClientManager::BOT_KEY_OFF:
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->SetOff_Key();
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY2])->SetOff_Key();
+		break;
+	}
 }
 
 CUI_CanvasBottom * CUI_CanvasBottom::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

@@ -75,12 +75,12 @@ HRESULT CBowTarget::Late_Initialize(void* pArg)
 
 void CBowTarget::Tick(_float fTimeDelta)
 {
-	if (CGameInstance::GetInstance()->Key_Down(DIK_E))
+	/*if (CGameInstance::GetInstance()->Key_Down(DIK_E))
 		m_bLaunch = true;
 	if (CGameInstance::GetInstance()->Key_Down(DIK_R))
 		Reset();
 	if (CGameInstance::GetInstance()->Key_Down(DIK_T))
-		m_bArrowHit = true;
+		m_bArrowHit = true;*/
 
 	if (m_bDead == true)
 		return;

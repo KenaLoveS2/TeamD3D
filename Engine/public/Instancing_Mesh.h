@@ -67,7 +67,10 @@ public:
 
 public:
 	void Set_InstanceMeshEffect(CTransform* pParentTransform,_int iInstanceNum, _float fMinSpeed, _float fMaxSpeed);
-
+	const _float4		Get_MeshCenter()const
+	{
+		return m_center;
+	}
 
 private:				/*For.OriginMeshData*/
 	CModel::TYPE						m_eType;
@@ -97,7 +100,7 @@ private:		/*For.Instancing*/
 	_float* m_fInstancingEffect_Speed = nullptr;
 	list<PxRigidStatic*>				m_StaticRigid_List;
 	_bool								m_bTriangle_Collider = false;
-	
+	_float4								m_center = _float4(0.f, 0.f, 0.f, 1.f);
 private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
 	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);

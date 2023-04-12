@@ -192,7 +192,6 @@ HRESULT CFire_Brazier::RenderCine()
 	{
 		for (_uint i = 0; i < iNumMeshes; ++i)
 		{
-			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 20), E_FAIL);
 		}
@@ -250,12 +249,11 @@ HRESULT CFire_Brazier::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	/*나중에  레벨 인덱스 수정해야됌*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
-	/* For.Com_Model */    /*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Fire_Brazier", TEXT("Com_Model"),
+	/* For.Com_Model */ 
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT,L"Prototype_Component_Model_Fire_Brazier", TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

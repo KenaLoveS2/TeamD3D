@@ -9,6 +9,7 @@
 #include "PhysX_Manager.h"
 #include "E_Chest.h"
 #include "E_P_Chest.h"
+#include "UI_ClientManager.h"
 
 CChest_Anim::CChest_Anim(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -228,6 +229,11 @@ _int CChest_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTrigge
 		m_bKenaDetected = true;
 		m_pModelCom->ResetAnimIdx_PlayTime((_uint)CChest_Anim::CURSED_ACTIVATE);
 		m_pKena->Set_ChestInteractable(true);
+
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OPENCHEST;
+		_float fValue = 1.f;
+		m_pKena->m_Delegator.broadcast(tag, fValue);
+
 	}
 
 	return 0;
@@ -341,11 +347,10 @@ HRESULT CChest_Anim::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	/*나중에  레벨 인덱스 수정해야됌*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = g_LEVEL;
 
-	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
+	/* For.Com_Model */ 
 	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Model_ChestAnim"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;

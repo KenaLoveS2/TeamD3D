@@ -238,6 +238,16 @@ HRESULT CTerrain::SetUp_Components()
 		(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
 		return E_FAIL;
 
+	/* For.Com_Brush*/
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_TerrainDiffuse"), TEXT("Com_Terrain_1"),
+		(CComponent**)&m_pTextureCom[TYPE_TEST])))
+		return E_FAIL;
+
+	/* For.Com_Brush*/
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_TerrainNormal"), TEXT("Com_Terrain_2"),
+		(CComponent**)&m_pTextureCom[TYPE_NORMAL])))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -268,6 +278,9 @@ HRESULT CTerrain::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture_2", m_TerrainDesc.iFillterThree_TextureNum)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom[TYPE_NORMAL]->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom[TYPE_BRUSH]->Bind_ShaderResource(m_pShaderCom, "g_BrushTexture", 1)))
