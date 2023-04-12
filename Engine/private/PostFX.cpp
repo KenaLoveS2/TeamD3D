@@ -853,19 +853,20 @@ void CPostFX::Night()
 
 void CPostFX::BlurCapture()
 {
-	if(!m_bCapture)
-	{
-		m_fPreDOFFarStart = m_fDOFFarStart;
-		m_bCapture = true;
-	}
-	
+	m_fPreDOFFarStart = m_fDOFFarStart;
 	m_fDOFFarStart = 0.f;
+	m_bCapture = true;
 }
 
 void CPostFX::CaptureOff()
 {
 	m_fDOFFarStart = m_fPreDOFFarStart;
 	m_bCapture = false;
+}
+
+_bool CPostFX::Get_Capture()
+{
+	return m_bCapture;
 }
 
 void CPostFX::SetDebugName(ID3D11DeviceChild * pObj, const char * pName)

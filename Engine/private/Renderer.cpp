@@ -187,7 +187,7 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
 
-	/* For.MRT_Deferred */ /* ���۵� ������(��)�� �����ϱ����� �ʿ��� �����͵��� ������ ����Ÿ�ٵ�. */
+	/* For.MRT_Deferred */ /* 디퍼드 렌더링(빛)을 수행하기위해 필요한 데이터들을 저장한 렌더타겟들. */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Normal"))))
@@ -197,20 +197,20 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_MtrlAmbient"))))
 		return E_FAIL;
 
-	/* For.MRT_LightAcc */ /* �� ������ ����� ������ ����Ÿ�ٵ�.  */
+	/* For.MRT_LightAcc */ /* 빛 연산의 결과를 저장할 렌더타겟들.  */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
 		return E_FAIL;
 
-	// HDR �ؽ��� ��������
+	// HDR 텍스쳐 렌더링용
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_HDR"), TEXT("Target_HDR"))))
 		return E_FAIL;
-	// Effect �ؽ��� ��������
+	// Effect 텍스쳐 렌더링용
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_EFFECT"), TEXT("Target_Effect"))))
 		return E_FAIL;
 
-	// PrevFrame �ؽ��� ��������
+	// PrevFrame 텍스쳐 렌더링용
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_PrevFrame"), TEXT("Target_PrevFrame"))))
 		return E_FAIL;
 
@@ -328,7 +328,7 @@ HRESULT CRenderer::Initialize_ShadowResources(_uint iWidth, _uint iHeight)
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_StaticLightDepth", L"Target_StaticShadowDepth")))
 		return E_FAIL;
 
-	// shadow depth�� depthStencil view ����
+	// shadow depth용 depthStencil view 생성
 	{
 		ID3D11Texture2D*		pDepthStencilTexture = nullptr;
 
@@ -358,7 +358,7 @@ HRESULT CRenderer::Initialize_ShadowResources(_uint iWidth, _uint iHeight)
 		Safe_Release(pDepthStencilTexture);
 	}
 
-	// shadow depth�� depthStencil view ����
+	// shadow depth용 depthStencil view 생성
 	{
 		ID3D11Texture2D*		pDepthStencilTexture = nullptr;
 
@@ -400,7 +400,7 @@ HRESULT CRenderer::Initialize_CineResources(_uint iWidth, _uint iHeight)
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_CINE", L"Target_Cine")))
 		return E_FAIL;
 
-	// CINE �� depthStencil view ����
+	// CINE 용 depthStencil view 생성
 	{
 		ID3D11Texture2D*		pDepthStencilTexture = nullptr;
 
@@ -497,8 +497,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
-		if (FAILED(Render_UIHDR()))
-			return E_FAIL;
+		// UI
+		// 파티클
 		if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_HDR"))))
 			return E_FAIL;
 		if (FAILED(Render_HDR()))
@@ -749,7 +749,7 @@ HRESULT CRenderer::Render_LightAcc()
 
 	RELEASE_INSTANCE(CPipeLine);
 
-	/* �� ������ŭ �簢�� ����(���̵�Ÿ���� ��ü �ȼ��� ������ �� �ִ� ������� �׷����� ��������. )�� �׸���. */
+	/* 빛 갯수만큼 사각형 버퍼(셰이드타겟의 전체 픽셀을 갱신할 수 있는 사이즈로 그려지는 정점버퍼. )를 그린다. */
 	m_pLight_Manager->Render_Light(m_pVIBuffer, m_pShader);
 	
 	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_LightAcc"))))
@@ -948,11 +948,6 @@ HRESULT CRenderer::Render_HDR()
 	pLDR1->Clear();
 	pLDR2->Clear();
 
-	if (m_bCaptureMode)
-		CPostFX::GetInstance()->BlurCapture();
-	else
-		CPostFX::GetInstance()->CaptureOff();
-
 	CPostFX::GetInstance()->PostProcessing(m_pTarget_Manager->Get_SRV(L"Target_HDR"), pLDR1->Get_RTV(), m_pTarget_Manager->Get_SRV(L"Target_Depth"));
 	return S_OK;
 }
@@ -1048,13 +1043,16 @@ HRESULT CRenderer::Render_PostProcess()
 	Safe_Release(pDepthStencilView);
 
 	// LDR to Backbuffer
-	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour->Get_SRV()))) // �̰��� ���� ������
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour->Get_SRV()))) // 이것이 현재 프레임
 		return E_FAIL;
 
-	// �̰� �׸��� ������ ���� ����Ÿ�ٿ� �׸���.
+	// 이걸 그리고 난것을 나의 렌더타겟에 그린다.
 	m_pShader_PostProcess->Begin(0);
 	m_pVIBuffer->Render();
-	
+
+	if (!m_bCaptureMode)
+		m_pLDRTexture = pLDRSour->Get_SRV();
+
 	return S_OK;
 }
 
@@ -1154,8 +1152,8 @@ HRESULT CRenderer::Render_PrevFrame()
 
 HRESULT CRenderer::PostProcess_Distort()
 {
-	// �� �� �� ���̴��� �� �� �ְԲ� �Ķ���� �����ٰ�.
-	// ������ �����ϱ� ������ Begin -> Render �� �� �� ���������
+	// 이 때 이 쉐이더에 들어갈 수 있게끔 파라미터 전해줄것.
+	// 변수를 공유하기 때문에 Begin -> Render 할 때 잘 전해줘야함
 
 	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_Time", &m_fDistortTime, sizeof(float))))
 		return E_FAIL;
@@ -1340,8 +1338,6 @@ void CRenderer::Free()
 
 	Safe_Release(*m_pDistortionTexture);
 	Safe_Delete(m_pDistortionTexture);
-
-	Safe_Release(m_pVideoRenderTargetTexture);
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);

@@ -153,7 +153,7 @@ VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
     vector      vNormal = mul(float4(In.vNormal, 0.f), Transform);
     vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), Transform);
 
-    Out.vPosition = mul(vPosition, matWVP);
+    Out.vPosition = mul(vPosition.xyz, (float3x3)matWVP);
     Out.vNormal = normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
     Out.vTexUV = In.vTexUV;
     Out.vProjPos =vector(Out.vPosition,1.f);

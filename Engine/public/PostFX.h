@@ -38,6 +38,8 @@ public:
 	void BlurCapture();
 	void CaptureOff();
 
+	_bool Get_Capture();
+
 private:
 	_bool					m_bOn = false;
 

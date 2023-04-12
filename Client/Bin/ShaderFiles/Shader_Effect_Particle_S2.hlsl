@@ -184,7 +184,7 @@ void GS_UI(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	//float3		vRight	= In[0].fLife * (normalize(cross(float3(0.f, 1.f, 0.f), vLook)) * In[0].vPSize.x * 0.5f);
 	//float3		vUp		= In[0].fLife * (normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f);
 
-	float3		vLook	= (1 - In[0].fLife) * float4(0.f, 0.f, -1.f, 0.f);
+	float3		vLook	= (1 - In[0].fLife) * float3(0.f, 0.f, -1.f);
 	float3		vDir	= normalize(In[0].vPosition - In[0].vCenterPosition);
 	float3		vRight	= (1 - In[0].fLife) * (normalize(cross(vDir, vLook)) * In[0].vPSize.x * 0.5f);
 	float3		vUp		= (1 - In[0].fLife) * (normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f);
