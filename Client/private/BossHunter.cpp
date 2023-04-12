@@ -160,40 +160,46 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 	m_pHunterTrail->Late_Initialize(nullptr);
 
+	
+	m_vecEffects[EFFECT_BOWTRAIL1]->Activate(this, "Bow_TopJnt9");
+	m_vecEffects[EFFECT_BOWTRAIL2]->Activate(this, "Bow_BotJoint9");
+
 	return S_OK;
 }
 
 void CBossHunter::Tick(_float fTimeDelta)
 {	
-	//m_pModelCom->Play_Animation(fTimeDelta);
-	//Update_Collider(fTimeDelta);
-	//m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
-	////if (m_pFSM) m_pFSM->Tick(fTimeDelta);
-	//if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
-	//if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
 
-	// /* For. String */
-	//m_fUVSpeeds[0] += 0.245f * fTimeDelta;
-	//m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
-	//m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
-	//if (m_fStringDissolve > 0.5)
-	//{
-	//	m_fStringDissolve = 0.5f;
-	//	m_fStringDissolveSpeed *= -1;
-	//	m_fStringDissolveSpeed = -0.9f;
-	//}
-	//else if (m_fStringDissolve < 0.f)
-	//{
-	//	m_fStringDissolve = 0.f;
-	//	m_fStringDissolveSpeed *= -1;
-	//	m_fStringDissolveSpeed = 0.9f;
-	//}
-	///* ~ For. String */
-	//for (auto& pArrow : m_pArrows)
-	//	pArrow->Tick(fTimeDelta);
-	//for (auto& pEffect : m_vecEffects)
-	//	pEffect->Tick(fTimeDelta);
-	//return;
+	m_bDissolve = false;
+	m_pModelCom->Play_Animation(fTimeDelta);
+	Update_Collider(fTimeDelta);
+	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
+	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
+	if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
+
+	 /* For. String */
+	m_fUVSpeeds[0] += 0.245f * fTimeDelta;
+	m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
+	m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
+	if (m_fStringDissolve > 0.5)
+	{
+		m_fStringDissolve = 0.5f;
+		m_fStringDissolveSpeed *= -1;
+		m_fStringDissolveSpeed = -0.9f;
+	}
+	else if (m_fStringDissolve < 0.f)
+	{
+		m_fStringDissolve = 0.f;
+		m_fStringDissolveSpeed *= -1;
+		m_fStringDissolveSpeed = 0.9f;
+	}
+	/* ~ For. String */
+	for (auto& pArrow : m_pArrows)
+		pArrow->Tick(fTimeDelta);
+	for (auto& pEffect : m_vecEffects)
+		pEffect->Tick(fTimeDelta);
+	return;
 
 	if (m_bDeath) return;
 
@@ -438,6 +444,8 @@ void CBossHunter::Push_EventFunctions()
 	DustEffect_On(true, 0.f);
 	StunEffect_On(true, 0.f);
 	StunEffect_Off(true, 0.f);
+	BowTrailEffect_On(true, 0.f);
+	BowTrailEffect_Off(true, 0.f);
 
 	TurnOnTrail(true, 0.f);
 	TUrnOffTrail(true, 0.f);
@@ -507,6 +515,22 @@ void CBossHunter::Push_EventFunctions()
 	Play_ArrowChargeSound(true, 0.f);
 
 	Stop_ShockArrowUpY(true, 0.f);
+}
+
+_float4 CBossHunter::Get_ComputeBonePosition(const char* pBoneName)
+{
+	_float4 vPos;
+	CBone* pBone = m_pModelCom->Get_BonePtr(pBoneName);
+	if (pBone != nullptr)
+	{
+		_matrix SocketMatrix = pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+		vPos = matWorldSocket.r[3];
+	}
+	else
+		vPos = m_pTransformCom->Get_Position();
+
+	return vPos;
 }
 
 HRESULT CBossHunter::SetUp_State()
@@ -1207,6 +1231,7 @@ HRESULT CBossHunter::SetUp_State()
 	m_vFlyTargetPos[i].w = 1.f;
 	}
 	Set_NextAttack();
+
 	})
 	.Tick([this](_float fTimeDelta)
 	{
@@ -1865,6 +1890,32 @@ void CBossHunter::StunEffect_Off(_bool bIsInit, _float fTimeDelta)
 
 }
 
+void CBossHunter::BowTrailEffect_On(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::BowTrailEffect_On);
+		return;
+	}
+
+	m_vecEffects[EFFECT_BOWTRAIL1]->Activate(this, "Bow_TopJnt9");
+	m_vecEffects[EFFECT_BOWTRAIL2]->Activate(this, "Bow_BotJoint9");
+}
+
+void CBossHunter::BowTrailEffect_Off(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::BowTrailEffect_Off);
+		return;
+	}
+
+	m_vecEffects[EFFECT_BOWTRAIL1]->DeActivate();
+	m_vecEffects[EFFECT_BOWTRAIL2]->DeActivate();
+}
+
 void CBossHunter::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
@@ -1966,6 +2017,9 @@ HRESULT CBossHunter::Create_Effects()
 			//pEffect->Set_Target(this);
 			m_vecEffects.push_back(pEffect);
 		}
+		else
+			return E_FAIL;
+
 	}
 
 

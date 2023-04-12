@@ -71,6 +71,9 @@ private:
 		EFFECT_STUN_MESH_BASE,
 		EFFECT_STUN_MESH_BASE2,
 
+		EFFECT_BOWTRAIL1,
+		EFFECT_BOWTRAIL2,
+
 		EFFECT_END
 	};
 
@@ -151,6 +154,7 @@ public:
 	virtual void ImGui_PhysXValueProperty() override;
 	virtual HRESULT Call_EventFunction(const string& strFuncName) override;
 	virtual void Push_EventFunctions() override;
+	virtual _float4		Get_ComputeBonePosition(const char* pBoneName) override;
 
 protected:
 	virtual HRESULT SetUp_State() override;
@@ -208,6 +212,9 @@ public:
 	void DustEffect_On(_bool bIsInit, _float fTimeDelta);
 	void StunEffect_On(_bool bIsInit, _float fTimeDelta);
 	void StunEffect_Off(_bool bIsInit, _float fTimeDelta);
+	void BowTrailEffect_On(_bool bIsInit, _float fTimeDelta);
+	void BowTrailEffect_Off(_bool bIsInit, _float fTimeDelta);
+
 
 	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
 	void TUrnOffTrail(_bool bIsInit, _float fTimeDelta);

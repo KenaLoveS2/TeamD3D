@@ -32,6 +32,8 @@ public:
 public:
 	virtual	void					Activate(_float4 vPos)											override;
 	virtual	void					Activate(CGameObject* pTarget)									override;
+	virtual void					Activate(CGameObject* pTarget, _float4 vCorrectPos)				override;
+	virtual void					Activate(CGameObject* pTarget, const char* pBoneName)			override;
 	virtual void					Activate_Reflecting(_float4 vLook, _float4 vPos, _float fAngle) override;
 	virtual void					DeActivate()													override;
 
@@ -60,7 +62,12 @@ private:
 	_float							m_fTimeAcc;
 	/* ~ For. Recording */
 
+	/* For. UI Type */
+private:
 	_bool							m_bUI;
+	_float4x4						m_matView;
+	_float4x4						m_matProj;
+
 
 public:
 	static CEffect_Particle_Base* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

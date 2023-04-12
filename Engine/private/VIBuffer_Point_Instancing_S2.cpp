@@ -250,6 +250,14 @@ HRESULT CVIBuffer_Point_Instancing_S2::Update_Buffer(POINTINFO* pInfo)
 	return S_OK;
 }
 
+HRESULT CVIBuffer_Point_Instancing_S2::Bind_ShaderResouce(CShader* pShaderCom, const char* pConstanctName)
+{
+	if (pShaderCom == nullptr)
+		return E_FAIL;
+
+	return pShaderCom->Set_MatrixArray(pConstanctName, (_float4x4*)m_vecInstances.data(), (_uint)m_vecInstances.size());
+}
+
 HRESULT CVIBuffer_Point_Instancing_S2::Tick_Haze(_float TimeDelta)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;

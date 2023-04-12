@@ -18,6 +18,9 @@ float			g_fUVSpeedX = 0.f, g_fUVSpeedY = 0.f;
 int				g_XFrames = 1, g_YFrames = 1;
 int				g_XFrameNow = 0, g_YFrameNow = 0;
 
+/* Trail */
+matrix    g_InstanceBuffer[300];
+
 struct VS_IN
 {
 	float3		vPosition		: POSITION;
@@ -184,12 +187,10 @@ void GS_UI(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	//float3		vRight	= In[0].fLife * (normalize(cross(float3(0.f, 1.f, 0.f), vLook)) * In[0].vPSize.x * 0.5f);
 	//float3		vUp		= In[0].fLife * (normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f);
 
-	float3		vLook	= (1 - In[0].fLife) * float4(0.f, 0.f, -1.f, 0.f);
+	float3		vLook	= (1 - In[0].fLife) * float3(0.f, 0.f, -1.f);
 	float3		vDir	= normalize(In[0].vPosition - In[0].vCenterPosition);
 	float3		vRight	= (1 - In[0].fLife) * (normalize(cross(vDir, vLook)) * In[0].vPSize.x * 0.5f);
 	float3		vUp		= (1 - In[0].fLife) * (normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f);
-
-
 
 	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 
@@ -424,21 +425,6 @@ VS_TRAILOUT VS_TRAIL(VS_TRAILIN In)
 	return Out;
 }
 
-
-// constant buffer
-//cbuffer Constants : register(b0)
-//{
-//	float3	vPositionP1;
-//	float3	vPositionP2;
-//}
-//
-//float3 GetPos1() { return vPositionP1; }
-//float3 GetPos2() { return vPositionP2; }
-//void SetPos1(float3 x) { vPositionP1 = x; }
-//void SetPos2(float3 x) { vPositionP2 = x; }
-
-
-
 struct GS_TRAILIN
 {
 	float4				vPosition   : POSITION;
@@ -476,13 +462,11 @@ void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices
 		Out[0].fLife = In[0].fLife;
 		
 		vResultPos = vPosition + vRight + vUp;
-		//vPositionP1 = vResultPos;
 		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[1].vTexUV = float2(1.f, 0.f);
 		Out[1].fLife = In[0].fLife;
 
 		vResultPos = vPosition + vRight - vUp;
-		//vPositionP2 = vResultPos;
 		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[2].vTexUV = float2(1.f, 1.f);
 		Out[2].fLife = In[0].fLife;
@@ -495,26 +479,35 @@ void GS_TRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices
 	}
 	else
 	{
-		vResultPos = vPosition - vRight + vUp;
-		//vResultPos = vPosition1;
+		matrix PreWorld		= g_InstanceBuffer[In[0].InstanceID - 1];
+		float fPreLife		= PreWorld[3][3];
+		PreWorld[0][3] = 0.f;
+		PreWorld[1][3] = 0.f;
+		PreWorld[2][3] = 0.f;
+		PreWorld[3][3] = 1.f;
+		
+		float3 vPreUp		= fPreLife * matrix_up(PreWorld) * In[0].vPSize.y * 0.5f;
+		float3 vPreRight	= fPreLife * matrix_right(PreWorld) * In[0].vPSize.x * 0.5f;
+		float3 vPrePosition = matrix_postion(PreWorld);
+
+		// 1 -> 0
+		vResultPos = vPrePosition + vPreRight + vPreUp;
 		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[0].vTexUV = float2(0.f, 0.f);
 		Out[0].fLife = In[0].fLife;
 
 		vResultPos = vPosition + vRight + vUp;
-		//vPositionP1 = vResultPos;
 		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[1].vTexUV = float2(1.f, 0.f);
 		Out[1].fLife = In[0].fLife;
 
 		vResultPos = vPosition + vRight - vUp;
-		//vPositionP2 = vResultPos;
 		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[2].vTexUV = float2(1.f, 1.f);
 		Out[2].fLife = In[0].fLife;
 
-		vResultPos = vPosition - vRight - vUp;
-		//vResultPos = vPosition2;
+		// 2 -> 3
+		vResultPos = vPrePosition + vPreRight - vPreUp;
 		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[3].vTexUV = float2(0.f, 1.f);
 		Out[3].fLife = In[0].fLife;
@@ -558,17 +551,11 @@ PS_OUT PS_TRAIL(PS_TRAILIN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector vDiffuse = g_tex_0.Sample(LinearSampler, In.vTexUV);
-	//
-	//vDiffuse.a = vDiffuse.r;
-	//if (vDiffuse.a < 0.1f)
-	//	discard;
-	//Out.vColor = vDiffuse + g_vColor;
-	//Out.vColor.a *= In.fLife;
+	float4 vDiffuse = g_tex_0.Sample(PointSampler, In.vTexUV);
+	vDiffuse.rgb *= g_float4_0.rgb;
+	Out.vColor = CalcHDRColor(vDiffuse, g_float_0);
+	Out.vColor.a *= In.fLife;
 
-	// Out.vColor.a = Out.vColor.a * In.fLife;
-
-	Out.vColor = float4(1.f, 1.f, 1.f, In.fLife);
 	return Out;
 }
 
@@ -631,7 +618,7 @@ technique11 DefaultTechnique
 
 	pass DefaultTrail // 4
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_CULLNONE);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
