@@ -19,7 +19,9 @@ Texture2D<float4>      g_DetailNormalTexture;
 Texture2D<float4>      g_MaskTexture;
 Texture2D<float4>       g_RoughnessTexture;
 
-float                   g_PointTest;
+float                   g_TimeDelta;
+
+float4                  g_CenterPos;
 
 struct VS_IN
 {
@@ -119,6 +121,8 @@ VS_OUT_INSTANCE VS_MAIN_INSTANCE(VS_IN_INSTANCE In)
     vector      vNormal = mul(float4(In.vNormal, 0.f), Transform);
     vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), Transform);
 
+
+
     Out.vPosition = mul(vPosition, matWVP);
     Out.vNormal = normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
     Out.vTexUV = In.vTexUV;
@@ -140,20 +144,55 @@ struct VS_OUT_INSTANCE_GEOMETRY
     float3      vBinormal : BINORMAL;
 };
 
+//float3 CalculateInstanceCenter(VS_IN_INSTANCE In, float4x4  Transform)
+//{
+//    float3 center = float3(0, 0, 0);
+//    int count = 0;
+//
+//    // ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Äµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½
+//    // ï¿½Ì¸ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ß½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+//    for (int i = 0; i < g_InstasncingCount; ++i)
+//    {
+//        float4x4 instanceTransform = g_InstanceTransforms[i];
+//        float3 position = mul(float4(In.vPosition, 1.0f), mul(Transform, instanceTransform)).xyz;
+//        center += position;
+//        count++;
+//    }
+//
+//    return center / count;
+//}
+
 VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
 {
     VS_OUT_INSTANCE_GEOMETRY      Out = (VS_OUT_INSTANCE_GEOMETRY)0;
 
-    matrix      matWV, matWVP;
-    matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);
+
     float4x4   Transform = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
 
-    vector      vPosition = mul(float4(In.vPosition, 1.f), Transform);
+    vector      vRealPosition = mul(float4(In.vPosition, 1.f), Transform);
     vector      vNormal = mul(float4(In.vNormal, 0.f), Transform);
     vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), Transform);
 
-    Out.vPosition = mul(vPosition.xyz, (float3x3)matWVP);
+	float3 vDir = normalize(In.vPosition.xyz - g_CenterPos);
+    //float3 vDir = normalize(g_CenterPos -In.vPosition.xyz);
+    
+    //float distance = length(In.vPosition.xyz - g_CenterPos.xyz);
+
+    float moveDistance = g_TimeDelta * 1.f ;
+    /*ï¿½ß½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ ï¿½Ìµï¿½*/
+	// float3 CenterPos = mul(g_CenterPos.xyz, Transform);
+
+    float3 vPosition = In.vPosition.xyz + (vDir * moveDistance);
+
+    /*~ï¿½ß½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ ï¿½Ìµï¿½*/
+    vPosition = mul(float4(vPosition.xyz, 1.f), Transform);
+    vPosition = mul(vPosition, g_WorldMatrix);
+    vRealPosition = mul(vRealPosition, g_WorldMatrix);
+
+    
+	vPosition.y = vRealPosition.y;
+
+    Out.vPosition = vPosition.xyz;
     Out.vNormal = normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
     Out.vTexUV = In.vTexUV;
     Out.vProjPos =vector(Out.vPosition,1.f);
@@ -184,25 +223,74 @@ struct GS_OUT
 };
 
 
-[maxvertexcount(6)]
-void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
+[maxvertexcount(11)]
+void GS_MAIN(point GS_IN In[1], inout PointStream<GS_OUT> Stream)
 {
     GS_OUT Out = (GS_OUT)0;
-    float3 centerPos = In[0].vPosition; // Áß¾Ó À§Ä¡
 
-    float3 TestCode = float3(0.5f, 0.5f, 0.f);
+    matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 
-    Out.vPosition = vector((TestCode + centerPos) / 2.f, 1.f);
+    // 1
+    Out.vPosition = mul(float4(In[0].vPosition, 1.0f),matVP);
     Out.vNormal = In[0].vNormal;
     Out.vTexUV = In[0].vTexUV;
-    Out.vProjPos = In[0].vProjPos;
+    Out.vProjPos = Out.vPosition;
     Out.vTangent = In[0].vTangent;
     Out.vBinormal = In[0].vBinormal;
+    Stream.Append(Out);
 
-    triStream.Append(Out);
-    triStream.RestartStrip();
+    // 2
+    Out.vPosition =    mul(float4(In[0].vPosition + float3(0.2f, 0.0f, 0.0f), 1.0f),matVP);
+    Out.vProjPos = Out.vPosition;
+	Stream.Append(Out);
 
+    // 3
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.2f, 0.0f), 1.0f),matVP);
+    Out.vProjPos = Out.vPosition;
+	Stream.Append(Out);
 
+    // 4
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.0f, 0.2f), 1.0f),matVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 5
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.0f, 0.2f), 1.0f), matVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 6
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.2f, 0.f), 1.0f), matVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 7
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.2f, 0.2f), 1.0f), matVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 8
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.2f, 0.2f), 1.0f), matVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 9
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.3f, 0.f, 0.f), 1.0f), matVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 10
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.f, 0.3f, 0.f), 1.0f), matVP);
+    Out.vProjPos = Out.vPosition;
+
+    // 11
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.f, 0.f, 0.3f), 1.0f), matVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+ 
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+    Stream.RestartStrip();
 }
 
 struct PS_IN
@@ -234,7 +322,7 @@ PS_OUT PS_MAIN_TESS(PS_IN In)
 
     vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
-    /* ÅºÁ¨Æ®½ºÆäÀÌ½º */
+    /* Åºï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ */
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));
@@ -627,7 +715,7 @@ PS_OUT PS_MAIN_PointSampler(PS_IN In)
 
     vector      vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexUV);
 
-    /* ÅºÁ¨Æ®½ºÆäÀÌ½º */
+    /* Åºï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ */
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));
