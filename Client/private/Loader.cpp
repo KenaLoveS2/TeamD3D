@@ -521,7 +521,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 
 	_bool bRealObject = true;
-	_bool bFlowerCheck = false;
+	_bool bFlowerCheck = false;//true;
 
 #ifdef FOR_MAPTOOL   
 
@@ -602,6 +602,8 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/HealthFlower/HealthFlower.model", PivotMatrix)), E_FAIL);
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HealthFlower_Anim"), CHealthFlower_Anim::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
+	/* Prototype Component_Texture_Dissolve_BowTarget */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Texture_Dissolve_BowTarget", CTexture::Create(m_pDevice, m_pContext, L"../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_37.png")), E_FAIL);
 
 
 #endif 
