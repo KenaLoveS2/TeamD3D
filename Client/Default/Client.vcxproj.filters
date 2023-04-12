@@ -1592,6 +1592,9 @@
     <ClInclude Include="..\public\E_P_CommonBox.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_EnvironmentDust.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2567,6 +2570,9 @@
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_P_Rot.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_EnvironmentDust.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
   </ItemGroup>

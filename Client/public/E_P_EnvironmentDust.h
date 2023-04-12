@@ -3,12 +3,12 @@
 
 BEGIN(Client)
 
-class CE_P_Rain final : public CEffect_Point_Instancing
+class CE_P_EnvironmentDust final : public CEffect_Point_Instancing
 {
 private:
-	CE_P_Rain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CE_P_Rain(const CE_P_Rain& rhs);
-	virtual ~CE_P_Rain() = default;
+	CE_P_EnvironmentDust(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CE_P_EnvironmentDust(const CE_P_EnvironmentDust& rhs);
+	virtual ~CE_P_EnvironmentDust() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr);
@@ -23,11 +23,11 @@ public:
 	HRESULT			SetUp_ShaderResources();
 
 public:
-	void			Reset();
+	void	Reset();
 
 public:
-	static  CE_P_Rain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
-	virtual CGameObject* Clone(void* pArg = nullptr) override;
+	static  CE_P_EnvironmentDust* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
+	virtual CGameObject*  Clone(void* pArg = nullptr) override;
 	virtual void          Free() override;
 };
 

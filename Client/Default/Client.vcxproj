@@ -214,6 +214,7 @@
     <ClInclude Include="..\public\E_P_Bombplatform.h" />
     <ClInclude Include="..\public\E_P_Chest.h" />
     <ClInclude Include="..\public\E_P_CommonBox.h" />
+    <ClInclude Include="..\public\E_P_EnvironmentDust.h" />
     <ClInclude Include="..\public\E_P_Level.h" />
     <ClInclude Include="..\public\E_P_Maple.h" />
     <ClInclude Include="..\public\E_P_Meditation_Spot.h" />
@@ -523,6 +524,7 @@
     <ClCompile Include="..\private\E_P_Bombplatform.cpp" />
     <ClCompile Include="..\private\E_P_Chest.cpp" />
     <ClCompile Include="..\private\E_P_CommonBox.cpp" />
+    <ClCompile Include="..\private\E_P_EnvironmentDust.cpp" />
     <ClCompile Include="..\private\E_P_Level.cpp" />
     <ClCompile Include="..\private\E_P_Maple.cpp" />
     <ClCompile Include="..\private\E_P_Meditation_Spot.cpp" />
