@@ -544,14 +544,18 @@ void CEffect_Particle_Base::Activate(CGameObject* pTarget, _float4 vCorrectPos)
 	m_ParentPosition = vCorrectPos;
 }
 
-void CEffect_Particle_Base::Activate(CGameObject* pTarget, const char* pBoneName)
+void CEffect_Particle_Base::Activate(CGameObject* pTarget, char* pBoneName)
 {
-	m_bActive = true;
-	m_pTarget = pTarget;
+	if (m_pBoneName == nullptr)
+	{
+		m_bActive = true;
+		m_pTarget = pTarget;
 
-	//m_pVIBufferCom->Update_Buffer();
-	Safe_Delete_Array(m_pBoneName);
-	m_pBoneName = CUtile::Create_String(pBoneName);
+		//m_pVIBufferCom->Update_Buffer();
+		//Safe_Delete_Array(m_pBoneName);
+		m_pBoneName = CUtile::Create_String(pBoneName);
+
+	}
 }
 
 void CEffect_Particle_Base::Activate_Reflecting(_float4 vLook, _float4 vPos, _float fAngle)
@@ -601,6 +605,7 @@ void CEffect_Particle_Base::DeActivate()
 	__super::DeActivate();
 
 	m_pVIBufferCom->Update_Buffer(nullptr);
+	Safe_Delete_Array(m_pBoneName);
 }
 
 void CEffect_Particle_Base::Activate_BufferUpdate()

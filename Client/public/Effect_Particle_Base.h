@@ -33,7 +33,7 @@ public:
 	virtual	void					Activate(_float4 vPos)											override;
 	virtual	void					Activate(CGameObject* pTarget)									override;
 	virtual void					Activate(CGameObject* pTarget, _float4 vCorrectPos)				override;
-	virtual void					Activate(CGameObject* pTarget, const char* pBoneName)			override;
+	virtual void					Activate(CGameObject* pTarget, char* pBoneName)					override;
 	virtual void					Activate_Reflecting(_float4 vLook, _float4 vPos, _float fAngle) override;
 	virtual void					DeActivate()													override;
 

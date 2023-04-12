@@ -169,7 +169,6 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 
 void CBossHunter::Tick(_float fTimeDelta)
 {	
-
 	m_bDissolve = false;
 	m_pModelCom->Play_Animation(fTimeDelta);
 	Update_Collider(fTimeDelta);
@@ -1287,6 +1286,9 @@ HRESULT CBossHunter::SetUp_State()
 		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = -1.f;
 		m_BossHunterDelegator.broadcast(eBossHP, fValue);
+
+		m_vecEffects[EFFECT_BOWTRAIL1]->Activate(this, "Bow_TopJnt9");
+		m_vecEffects[EFFECT_BOWTRAIL2]->Activate(this, "Bow_BotJoint9");
 		
 		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
 		m_pModelCom->Set_AnimIndex(DEATH);

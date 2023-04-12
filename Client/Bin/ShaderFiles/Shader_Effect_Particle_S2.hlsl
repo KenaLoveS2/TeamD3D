@@ -552,7 +552,7 @@ PS_OUT PS_TRAIL(PS_TRAILIN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	float4 vDiffuse = g_tex_0.Sample(PointSampler, In.vTexUV);
-	vDiffuse.rgb *= g_float4_0.rgb;
+	vDiffuse *= g_float4_0;
 	Out.vColor = CalcHDRColor(vDiffuse, g_float_0);
 	Out.vColor.a *= In.fLife;
 

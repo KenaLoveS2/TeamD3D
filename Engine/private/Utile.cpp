@@ -126,7 +126,7 @@ char* CUtile::Create_String(const char * pText)
 	_int iSize = (_int)strlen(pText) + 1;
 
 	char* pString = new char[iSize];
-	ZeroMemory(pString, sizeof(_tchar) * iSize);
+	ZeroMemory(pString, sizeof(char) * iSize);
 
 	strcpy_s(pString, iSize, pText);
 

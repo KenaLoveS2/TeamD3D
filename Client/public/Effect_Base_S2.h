@@ -37,7 +37,7 @@ public: /* Activation Function */
 	virtual	void					Activate(_float4 vPos) {};
 	virtual	void					Activate(CGameObject* pTarget) {};
 	virtual void					Activate(CGameObject* pTarget, _float4 vCorrectPos) {};
-	virtual void					Activate(CGameObject* pTarget, const char* pBoneName) {};
+	virtual void					Activate(CGameObject* pTarget, char* pBoneName) {};
 	virtual void					Activate_Scaling(CGameObject* pTarget, _float2 vScaleSpeed) {};
 	virtual void					Activate_Scaling(_float4 vPos, _float2 vScaleSpeed) {};
 	virtual void					Activate_Scaling(_float4 vDir, _float4 vPos, _float2 vScaleSpeed) {};
