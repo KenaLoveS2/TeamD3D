@@ -281,7 +281,8 @@ PS_OUT PS_MAIN_SHAMANTRAP(PS_IN In)
 	finalcolor = CalcHDRColor(finalcolor, g_fHDRValue) ;
 
 	Out.vDiffuse = finalcolor + vEdgeLineTexture;
-	Out.vDiffuse.a = finalcolor * g_vColor;
+	// Out.vDiffuse.a = finalcolor * g_vColor;
+	Out.vDiffuse.a = (finalcolor * g_vColor).a;
 	return Out;
 }//4
 

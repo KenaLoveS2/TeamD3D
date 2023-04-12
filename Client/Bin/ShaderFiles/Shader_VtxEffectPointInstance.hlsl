@@ -810,6 +810,48 @@ PS_OUT PS_MAIN(PS_IN In)
 	else
 		Out.vColor = Out.vColor * g_vColor;
 
+	if (g_bTimer)
+	{
+		float fTime = min(g_Time, 1.f);
+		if (g_bDissolve)
+			Out.vColor.a = Out.vColor.a * (1.f - fTime);
+		else
+			Out.vColor.a = Out.vColor.a * (fTime / 1.f);
+	}
+
+	return Out;
+}
+
+PS_OUT PS_PARTICLEMAINPS_PARTICLEMAIN(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	if (g_TextureRenderType == 1) // Sprite
+	{
+		In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+		In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+		In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+		In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+	}
+
+	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	float4 finalcolor = albedo;
+
+	if (g_bTimer)
+	{
+		float fTime = min(g_Time, 1.f);
+		if (g_bDissolve)
+			finalcolor.a = finalcolor.a * (1.f - fTime);
+		else
+			finalcolor.a = finalcolor.a * (fTime / 1.f);
+	}
+
+	Out.vColor = finalcolor * g_vColor;
+
+	if (Out.vColor.a == 0.0f)
+		Out.vColor.rgb = 0.25f;
+
 	return Out;
 }
 
@@ -1079,10 +1121,14 @@ PS_OUT PS_FRONTVIEWBLINK(PS_IN In)
 
    Out.vColor = Diffuse * g_vColor;
    Out.vColor.rgb *= 2.5f;
-   Out.vColor.a *= (1.0f - In.fLife);
+   Out.vColor.a *= In.fLife;
 
    if (Out.vColor.a < 0.1f)
 	   discard;
+
+   if (g_fHDRValue != 0.0f)
+	   Out.vColor = CalcHDRColor(Out.vColor, g_fHDRValue);
+
    return Out;
 }
 
@@ -1221,7 +1267,8 @@ PS_OUT PS_RANDOMCOLOR_PARTICLE(PS_IN In)
 	vColor.a = g_vColor.a;
 
 	float4 finalcolor = Diffuse + vColor;
-	finalcolor.a = Diffuse * vColor;
+	// finalcolor.a = Diffuse * vColor;
+	finalcolor.a = (Diffuse * vColor).a;
 	if (finalcolor.a < 0.1f)
 		discard;
 
@@ -1492,5 +1539,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_RANDOMCOLOR_PARTICLE();
+	}
+
+	pass Particle_Default_Zwrite // 20
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_TEST2, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_PARTICLEMAINPS_PARTICLEMAIN();
 	}
 }

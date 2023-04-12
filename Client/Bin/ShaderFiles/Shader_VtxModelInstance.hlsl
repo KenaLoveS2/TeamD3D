@@ -149,8 +149,6 @@ struct VS_OUT_INSTANCE_GEOMETRY
 //    float3 center = float3(0, 0, 0);
 //    int count = 0;
 //
-//    // �ν��Ͻ� �����Ϳ��� �� ��ü�� ��ġ�� ȸ������ ��Ÿ���� ��ĵ��� �����Ͽ�
-//    // �̸� �̿��� �� ��ü�� �߽����� ����մϴ�.
 //    for (int i = 0; i < g_InstasncingCount; ++i)
 //    {
 //        float4x4 instanceTransform = g_InstanceTransforms[i];
@@ -179,12 +177,10 @@ VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
     //float distance = length(In.vPosition.xyz - g_CenterPos.xyz);
 
     float moveDistance = g_TimeDelta * 1.f ;
-    /*�߽� ��ǥ �� �̵�*/
 	// float3 CenterPos = mul(g_CenterPos.xyz, Transform);
 
     float3 vPosition = In.vPosition.xyz + (vDir * moveDistance);
 
-    /*~�߽� ��ǥ �� �̵�*/
     vPosition = mul(float4(vPosition.xyz, 1.f), Transform);
     vPosition = mul(vPosition, g_WorldMatrix);
     vRealPosition = mul(vRealPosition, g_WorldMatrix);
@@ -289,7 +285,7 @@ void GS_MAIN(point GS_IN In[1], inout PointStream<GS_OUT> Stream)
     Stream.Append(Out);
 
  
-    // ����� �����մϴ�.
+    // �����? �����մϴ�.
     Stream.RestartStrip();
 }
 
@@ -715,7 +711,6 @@ PS_OUT PS_MAIN_PointSampler(PS_IN In)
 
     vector      vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexUV);
 
-    /* ź��Ʈ�����̽� */
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));
@@ -726,7 +721,6 @@ PS_OUT PS_MAIN_PointSampler(PS_IN In)
     Out.vAmbient = (vector)1.f;
     return Out;
 }//1
-
 
 technique11 DefaultTechnique
 {
