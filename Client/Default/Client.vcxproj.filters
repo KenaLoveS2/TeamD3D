@@ -1561,6 +1561,7 @@
     <ClInclude Include="..\public\E_P_Level.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Fire_Brazier.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2507,6 +2508,7 @@
     <ClCompile Include="..\private\E_P_Level.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Fire_Brazier.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

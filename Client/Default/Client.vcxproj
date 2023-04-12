@@ -212,6 +212,7 @@
     <ClInclude Include="..\public\E_P_ShamanTeleport.h" />
     <ClInclude Include="..\public\E_ShamanIceDagger.h" />
     <ClInclude Include="..\public\E_ShamanLazer.h" />
+    <ClInclude Include="..\public\Fire_Brazier.h" />
     <ClInclude Include="..\public\Level_Gimmick.h" />
     <ClInclude Include="..\public\ControlRoom.h" />
     <ClInclude Include="..\public\CPortalPlane.h" />
@@ -510,6 +511,7 @@
     <ClCompile Include="..\private\E_P_ShamanTeleport.cpp" />
     <ClCompile Include="..\private\E_ShamanIceDagger.cpp" />
     <ClCompile Include="..\private\E_ShamanLazer.cpp" />
+    <ClCompile Include="..\private\Fire_Brazier.cpp" />
     <ClCompile Include="..\private\Level_Gimmick.cpp" />
     <ClCompile Include="..\private\ControlRoom.cpp" />
     <ClCompile Include="..\private\CPortalPlane.cpp" />

@@ -104,7 +104,7 @@
 #include "BossRock.h"
 #include "BossRock_Pool.h"
 #include "DeadZoneBossTree.h"
-
+#include "Fire_Brazier.h"
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
@@ -511,6 +511,7 @@ HRESULT CLoader::Loading_ForMapTool()
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree03.json", false, true))))
 		return E_FAIL;
 
+
 #pragma  endregion
 
 
@@ -535,6 +536,10 @@ HRESULT CLoader::Loading_ForMapTool()
 			return E_FAIL;
 
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Giant", true, true, true)))
+			assert(!"Issue");
+
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Fire_Brazier", false, false, true)))
 			assert(!"Issue");
 
 	}
@@ -1317,6 +1322,9 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "MeditationStump", true, false, true, false, true)))
 			assert(!"Issue");
 
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Fire_Brazier", false, false, true)))
+			assert(!"Issue");
+
 #pragma endregion ~Start_Forest_Room
 		}
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
@@ -1530,6 +1538,11 @@ HRESULT CLoader::Loading_ForMapTool()
 		CDeadZoneBossTree::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Fire_Brazier */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Fire_Brazier"),
+		CFire_Brazier::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
 	
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
@@ -3193,6 +3206,16 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "MeditationStump", true, false, true, false, true)))
 		assert(!"Issue");
+
+
+	/*화로 */
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Fire_Brazier", false, false, true)))
+		assert(!"Issue");
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Fire_Brazier"),
+		CFire_Brazier::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+
 
 #pragma region GroundCover
 		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "GroundCover/Branches", true, true, true, true)))
