@@ -32,6 +32,33 @@ HRESULT CDeadZoneObj::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_DeadZone_Plant_01")
+		m_iDeadZoneModelID = 0;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_SmallDeadTree_05")
+		m_iDeadZoneModelID = 1;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_SmallDeadTree_02")
+		m_iDeadZoneModelID = 2;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_SmallDeadTree_04")
+		m_iDeadZoneModelID = 3;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_SmallDeadTree_03")
+		m_iDeadZoneModelID = 4;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_FallenLog_a")
+		m_iDeadZoneModelID = 5;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_BushDead_02")
+		m_iDeadZoneModelID = 6;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_DZ_Clump_Tall")
+		m_iDeadZoneModelID = 7;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_DZ_Clump_01")
+		m_iDeadZoneModelID = 8;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_DZ_ClumpNoSpike_01")
+		m_iDeadZoneModelID = 9;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_DeadBranch4")
+		m_iDeadZoneModelID = 10;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_DeadzonePlant")
+		m_iDeadZoneModelID = 11;
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_DeadBranch3")
+		m_iDeadZoneModelID = 12;
+
 	m_bRenderActive = true;
 	return S_OK;
 }
@@ -48,11 +75,14 @@ HRESULT CDeadZoneObj::Late_Initialize(void* pArg)
 
 void CDeadZoneObj::Tick(_float fTimeDelta)
 {
+#ifdef FOR_MAP_GIMMICK
+#else
 	if (!m_bOnlyTest) /*Test*/
 	{
 		Late_Initialize();
 		m_bOnlyTest = true;
 	}
+#endif
 	__super::Tick(fTimeDelta);
 }
 
@@ -100,6 +130,7 @@ HRESULT CDeadZoneObj::Render()
 			else
 			{
 				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
+				//FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
 			}
 		}
 	}
@@ -151,14 +182,21 @@ void CDeadZoneObj::Change_Model(_int iDissolveTimer)
 	if (m_iDeadZoneModelID == -1)
 		return;
 
-	 _tchar pModelName[6][64] =
+	 _tchar pModelName[13][64] =
 	{
-		{ L"Prototype_Component_Model_Giant_GodTreeSmall_01"},
-		{ L"Prototype_Component_Model_Giant_GodTreeSmall_02"},
-		{ L"Prototype_Component_Model_Giant_GodTreeSmall_03"},
-		{ L"Prototype_Component_Model_CadarTree_03"},
-		{ L"Prototype_Component_Model_BigBushes_04"},
-		{ L"Prototype_Component_Model_BigTreeLog"}
+		{ L"Prototype_Component_Model_Flower4"},//0
+		{ L"Prototype_Component_Model_Giant_GodTreeSmall_03"},//1
+		{ L"Prototype_Component_Model_Giant_GodTreeSmall_02"},//2
+		{ L"Prototype_Component_Model_Giant_GodTreeSmall_01"},//3
+		{ L"Prototype_Component_Model_CadarTree_03"},//4
+		{ L"Prototype_Component_Model_BigTreeLog"},//5
+		{ L"Prototype_Component_Model_BigBushes_06"},//6
+		{ L"Prototype_Component_Model_BigBushes_03"},//7
+		{ L"Prototype_Component_Model_BigBushes_04"},//8
+		{ L"Prototype_Component_Model_BigBushes_03"},//9
+		{ L"Prototype_Component_Model_BigBushes_06"},//10
+		{ L"Prototype_Component_Model_Flower2"},//11
+		{ L"Prototype_Component_Model_Flower3"}, //12
 	};
 
 

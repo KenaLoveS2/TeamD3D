@@ -142,6 +142,10 @@ void CBowTarget::ImGui_AnimationProperty()
 void CBowTarget::ImGui_PhysXValueProperty()
 {
 	PxRigidActor* pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+
+	if (pActor == nullptr)
+		return;
+
 	PxShape* pShape = nullptr;
 	pActor->getShapes(&pShape, sizeof(PxShape));
 	PxSphereGeometry& Geometry = pShape->getGeometry().sphere();

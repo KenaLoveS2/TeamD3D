@@ -118,7 +118,7 @@ void CLight_Manager::Imgui_Render()
 		case LIGHTDESC::TYPE_POINT:
 			{
 				_float  fPostion[3] = { pLight->Get_LightDesc()->vPosition.x,	pLight->Get_LightDesc()->vPosition.y, pLight->Get_LightDesc()->vPosition.z };
-				static _float2 dirMinMax{ -100.f, 100.f };
+				static _float2 dirMinMax{ -100.f, 1000.f };
 				ImGui::InputFloat2("PosMinMax", (float*)&dirMinMax);
 				ImGui::DragFloat3("Pos", fPostion, 0.1f, dirMinMax.x, dirMinMax.y);
 				pLight->Set_Position(_float4(fPostion[0], fPostion[1], fPostion[2], 1.f));

@@ -6,7 +6,7 @@
 
 #include "ControlRoom.h"
 #include "BossWarrior.h"
-
+#include "CPortalPlane.h"
 /* 기믹 클래스는 1개씩입니다. */
 CGimmick_EnviObj::CGimmick_EnviObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -45,44 +45,54 @@ HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 	//m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
 	//m_pModelCom->Instaincing_GimmkicInit(m_EnviromentDesc.eChapterType);
 
-
-
 	m_pControlRoom = dynamic_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
 	assert(m_pControlRoom != nullptr  && "CPulse_Plate_Anim::Late_Initialize(void * pArg)");
 
-	m_pControlRoom->Add_GimmickObj(m_EnviromentDesc.iRoomIndex,this,m_EnviromentDesc.eChapterType);
+	m_pControlRoom->Add_GimmickObj(m_EnviromentDesc.iRoomIndex,
+		this,m_EnviromentDesc.eChapterType);
 
 	return S_OK;
 }
 
 void CGimmick_EnviObj::Tick(_float fTimeDelta)
 {
+#ifdef FOR_MAP_GIMMICK
+
+#else
 	if(!m_bTestOnce)
 	{
 		Late_Initialize();
 		m_bTestOnce = true;
 	}
-
+#endif
 	__super::Tick(fTimeDelta);
 
-	if (m_bColliderOn == false && true == Gimmik_Start(fTimeDelta))
+	if ( m_bColliderOn == false && true == Gimmik_Start(fTimeDelta))
 	{
-		_float3 vPos = _float3(0.f,0.f,0.f), vSize;
+	/*	_float3 vPos = _float3(0.f,0.f,0.f), vSize;
 		
 		if (m_EnviromentDesc.iRoomIndex == 2)
 		{
 			vSize = _float3(0.8f, 0.81f, 0.8f);
 			vPos = _float3(0.0f, 0.f, 0.0f);
-		}
+		}*/
 		
 		if (m_pModelCom->Get_UseTriangleMeshActor() && m_EnviromentDesc.iRoomIndex != 4)
 			m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
 
 		m_bColliderOn = true;
+
+		if (m_EnviromentDesc.iRoomIndex == 3)
+		{
+			dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->
+				Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment",
+					L"3_BossDeadPortal_1"))->Set_GimmickRender(true);
+
+			dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->
+				Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment",
+					L"3_BossDeadPortal_0"))->Set_GimmickRender(true);
+		}
 	}
-
-
-
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
@@ -218,14 +228,19 @@ _bool CGimmick_EnviObj::Gimmik_Start(_float fTimeDelta)
 
 	_bool bResult = false;
 
-	switch (m_EnviromentDesc.eChapterType)
-	{
-	case Gimmick_TYPE_GO_UP:
-		bResult = Gimmick_Go_up(fTimeDelta);
-		break;
-	default:
-		break;
-	}
+	//switch (m_EnviromentDesc.eChapterType)
+	//{
+	//case Gimmick_TYPE_GO_UP:
+	//	bResult = Gimmick_Go_up(fTimeDelta);
+	//	break;
+	//case Gimmick_TYPE_GO_UP:
+	//	bResult = Gimmick_Go_up(fTimeDelta);
+	//	break;
+	//default:
+	//	break;
+	//}
+
+	bResult = Gimmick_Go_up(fTimeDelta);
 
 	return bResult;
 }
@@ -235,30 +250,6 @@ _bool CGimmick_EnviObj::Gimmick_Go_up(_float fTimeDelta)
 	return m_pModelCom->Instaincing_MoveControl(m_EnviromentDesc.eChapterType,fTimeDelta);
 }
 
-HRESULT CGimmick_EnviObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
-{
-	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
-
-	/* For.Com_CtrlMove */
-	if (eComponentOption == COMPONENTS_CONTROL_MOVE)
-	{
-		if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_ControlMove"), pComTag,
-			(CComponent**)&m_pControlMoveCom)))
-			return E_FAIL;
-	}
-	/* For.Com_Interaction */
-	else if (eComponentOption == COMPONENTS_INTERACTION)
-	{
-		if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_Interaction_Com"), pComTag,
-			(CComponent**)&m_pInteractionCom)))
-			return E_FAIL;
-	}
-	else
-		return S_OK;
-
-	return S_OK;
-
-}
 
 HRESULT CGimmick_EnviObj::SetUp_Components()
 {

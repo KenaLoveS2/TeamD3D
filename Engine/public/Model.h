@@ -41,10 +41,10 @@ public:
 	HRESULT						Set_BoneIndex(const _tchar * pFilePath);
 	void						Set_AnimationBlendDuration(_uint iAnimIndex, _float fBlendDuration);
 
-	void							FixedAnimIdx_PlayTime(_uint iAnimIndex, _float fTime);
-	void							ResetAnimIdx_PlayTime(_uint iAnimIndex);
-	void							Set_AdditiveAnimIndexForMonster(_uint iAnimIndex);
-	void							Play_AdditiveAnimForMonster(_float fTimeDelta, _float fRatio, const string & strRootBone = "");
+	void						FixedAnimIdx_PlayTime(_uint iAnimIndex, _float fTime);
+	void						ResetAnimIdx_PlayTime(_uint iAnimIndex);
+	void						Set_AdditiveAnimIndexForMonster(_uint iAnimIndex);
+	void						Play_AdditiveAnimForMonster(_float fTimeDelta, _float fRatio, const string & strRootBone = "");
 
 	vector<MODELMATERIAL>* Get_Material() { return &m_Materials; }
 	vector<_float3>* Get_ColiderSize() { return	&m_VecInstancingColiderSize; }
@@ -74,7 +74,6 @@ public:
 	void						Update_BonesMatrix(CModel * pModel);
 	void						Set_AllAnimCommonType();
 	void						Print_Animation_Names(const string & strFilePath);
-
 	void						InstanceModelPosInit(_fmatrix parentMatrix);
 
 public:
@@ -85,19 +84,18 @@ public:
 
 public:
 	void						Play_Animation(_float fTimeDelta);
-	HRESULT						Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);
-	HRESULT						Render(CShader * pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
+	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);
+	HRESULT				Render(CShader * pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 	void						Imgui_MaterialPath();
 
 
-	void						Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
-	_bool						Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
+	void					Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
+	_bool					Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
 
-	_bool						Culling_InstancingMeshs(_float fCameraDistance, _fmatrix ParentMat);
+	_bool					Culling_InstancingMeshs(_float fCameraDistance, _fmatrix ParentMat);
 
 private:
 	void						MODELMATERIAL_Create_Model(const char* jSonPath);
-
 
 public:
 	void						Set_InstanceEffect_Info(CTransform * pParentTransform,_int iInstanceNum,_float fMinSpeed, _float fMaxSpeed);
@@ -110,14 +108,14 @@ private:
 
 	/* 하나의 모델은 교체가 가능한 여러개의 메시로 구성되어있다. */
 	_uint										m_iNumMeshes = 0;
-	vector<class CMesh*>			m_Meshes;
+	vector<class CMesh*>						m_Meshes;
 
 	_uint										m_iNumMaterials = 0;
-	vector<MODELMATERIAL>	m_Materials;
+	vector<MODELMATERIAL>						m_Materials;
 
 	/* 전체 뼈의 갯수. */
 	_uint										m_iNumBones = 0;
-	vector<class CBone*>			m_Bones;
+	vector<class CBone*>						m_Bones;
 	string									m_strRootBone = "";
 
 	_uint										m_iPreAnimIndex = 0;

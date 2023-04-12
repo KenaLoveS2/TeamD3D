@@ -212,6 +212,10 @@ public:
 	void Create_CommonCopySoundKey();
 	void SaveBufferCopySound(_tchar* pOriginSoundKey, _tchar* pTempBuffer, _tchar** ppOutBuffer);
 	virtual void Create_CopySoundKey() {};
+	
+	void Stop_BindRotAttackSound(_bool bIsInit, _float fTimeDelta);
+	void Start_RealAttack(_bool bIsInit, _float fTimeDelta);
+	void End_RealAttack(_bool bIsInit, _float fTimeDelta);
 };
 
 END

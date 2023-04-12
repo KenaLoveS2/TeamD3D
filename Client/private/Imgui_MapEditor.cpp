@@ -771,7 +771,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	//if (pTerrainEditor == nullptr)
 	//	return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain2"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain4"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -898,6 +898,13 @@ void CImgui_MapEditor::Imgui_Instance_Edit_Collider()
 
 void CImgui_MapEditor::Imgui_DZ_objClear()
 {
+
+	if (ImGui::Button("DZ_Portal On"))
+	{
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->Boss_HunterDeadGimmick();
+	}
+
 	if(ImGui::Button("DZ_Obj Clear"))
 	{
 		CControlRoom* pCtrlRoom =static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom",L"ControlRoom"));
@@ -1065,8 +1072,6 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 		EnviromentDesc.iCurLevel = iLevel;
 		EnviromentDesc.iShaderPass = iShaderPass;
 
-		if (wszCloneTag == L"RuinStairs_8_Set_Straight")
-			_bool b = false;
 
 		if (FAILED(pGameInstance->Clone_GameObject(iLevel,
 			wszLayerTag,

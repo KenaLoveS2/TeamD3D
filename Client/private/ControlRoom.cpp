@@ -165,8 +165,8 @@ void CControlRoom::DeadZoneObject_Change(_bool bChnage)
 	if (bChnage != true)
 		return;
 
-	//_int iDissovleTimer = 0;
-	//m_DeadZoneChangeDelegator.broadcast(iDissovleTimer);
+	_int iDissovleTimer = 0;
+	m_DeadZoneChangeDelegator.broadcast(iDissovleTimer);
 
 	CGameObject* pObj = Get_Find_TriggerObj(L"3_DeadzoneAnim_Tree");
 	assert(pObj != nullptr && "CControlRoom::DeadZoneObject_Change(_bool bChnage) ");
@@ -179,6 +179,15 @@ void CControlRoom::Boss_WarriorDeadGimmick()
 	for (auto& pGimmickObj : m_GimmcikObj_List[4])
 	{
 		static_cast<CGimmick_EnviObj*>(pGimmickObj.second)->Set_Gimmick_Active(4, true);
+	}
+
+}
+
+void CControlRoom::Boss_HunterDeadGimmick()
+{
+	for (auto& pGimmickObj : m_GimmcikObj_List[3])
+	{
+		static_cast<CGimmick_EnviObj*>(pGimmickObj.second)->Set_Gimmick_Active(3, true);
 	}
 
 }

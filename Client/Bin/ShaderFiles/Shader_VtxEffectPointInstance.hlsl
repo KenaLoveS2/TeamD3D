@@ -803,7 +803,6 @@ PS_OUT PS_MAIN(PS_IN In)
 			vector maskTex2 = g_MTexture_2.Sample(LinearSampler, In.vTexUV);
 			vector maskTex3 = g_MTexture_3.Sample(LinearSampler, In.vTexUV);
 			vector maskTex4 = g_MTexture_4.Sample(LinearSampler, In.vTexUV);
-
 			vector maskTex = saturate(maskTex0 * maskTex1* maskTex2* maskTex3* maskTex4* 2.0f);
 			Out.vColor = Out.vColor * maskTex * g_vColor;
 		}
@@ -1260,7 +1259,7 @@ technique11 DefaultTechnique
 	pass Effect_Black // 2
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();

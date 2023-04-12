@@ -104,7 +104,7 @@
 #include "BossRock.h"
 #include "BossRock_Pool.h"
 #include "DeadZoneBossTree.h"
-
+#include "Fire_Brazier.h"
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
@@ -217,6 +217,7 @@ unsigned int	g_LEVEL = 0;
 #include "E_P_ShamanTeleport.h"
 #include "E_Common_CIrcleSp.h"
 #include "E_LazerTrail.h"
+#include "E_P_Level.h"
 
 
 
@@ -316,7 +317,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyunwook
-	//FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyaewon
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
@@ -510,6 +511,7 @@ HRESULT CLoader::Loading_ForMapTool()
 			PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree03.json", false, true))))
 		return E_FAIL;
 
+
 #pragma  endregion
 
 
@@ -534,6 +536,10 @@ HRESULT CLoader::Loading_ForMapTool()
 			return E_FAIL;
 
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Giant", true, true, true)))
+			assert(!"Issue");
+
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Fire_Brazier", false, false, true)))
 			assert(!"Issue");
 
 	}
@@ -564,6 +570,13 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;*/
 
 #else
+
+	/* Prototype_Component_Model_BowTarget */
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_BowTarget", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/BowTarget/BowTarget.model", PivotMatrix)), E_FAIL);
+	/* Prototype_GameObject_BowTarget */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_BowTarget", CBowTarget::Create(m_pDevice, m_pContext)), E_FAIL);
+
 	/* Prototype_Component_Model_TeleportFlower */
 	
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f));
@@ -1084,6 +1097,16 @@ HRESULT CLoader::Loading_ForMapTool()
 			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
 			return E_FAIL;
 
+		/* Prototype_Component_Model_RuinsKit_BombPlatForm */
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(90.f));
+		FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_RuinsKit_BombPlatForm",
+			CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.mdat", PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.json", false)), E_FAIL);
+		/* Prototype_GameObject_BombPlatform */
+		FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_RuinsKit_BombPlatForm", CBombPlatform::Create(m_pDevice, m_pContext)), E_FAIL);
+
+	
+
+
 #pragma  endregion Born_GroundCover
 
 #pragma  region Start_Forest_Room
@@ -1299,6 +1322,9 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "MeditationStump", true, false, true, false, true)))
 			assert(!"Issue");
 
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Fire_Brazier", false, false, true)))
+			assert(!"Issue");
+
 #pragma endregion ~Start_Forest_Room
 		}
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
@@ -1361,10 +1387,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Crystal"),
 		CCrystal::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	/* For.Prototype_GameObject_BowTarget */
-// 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
-// 		CBowTarget::Create(m_pDevice, m_pContext))))
-// 		return E_FAIL;
 	/* For.Prototype_GameObject_PulseStone */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulseStone"),
 		CPulseStone::Create(m_pDevice, m_pContext))))
@@ -1516,6 +1538,11 @@ HRESULT CLoader::Loading_ForMapTool()
 		CDeadZoneBossTree::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Fire_Brazier */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Fire_Brazier"),
+		CFire_Brazier::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
 	
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
@@ -1795,6 +1822,8 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	/* Prototype_Component_Model_BowTarget */
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BowTarget", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/BowTarget/BowTarget.model", PivotMatrix)), E_FAIL);
+	/* Prototype_GameObject_BowTarget */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_BowTarget", CBowTarget::Create(m_pDevice, m_pContext)), E_FAIL);
 
 	/* Prototype_Component_Model_BowTarget_Husk */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BowTarget_Husk", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/BowTarget/BowTarget_Husk.mdat", PivotMatrix)), E_FAIL);
@@ -1840,19 +1869,10 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	/* Prototype_GameObject_HealthFlower */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_HealthFlower_Anim", CHealthFlower_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
 	
-	/* Prototype_GameObject_BowTarget */
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_BowTarget", CBowTarget::Create(m_pDevice, m_pContext)), E_FAIL);
-
+	
 	/* Prototype_GameObject_Player_Camera */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Camera_Player", CCamera_Player::Create(m_pDevice, m_pContext)), E_FAIL);
 
-	/* Prototype_Component_Model_RuinsKit_BombPlatForm */
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(90.f));
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RuinsKit_BombPlatForm",
-		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.mdat", PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.json", false)), E_FAIL);
-
-	/* Prototype_GameObject_BombPlatform */
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_RuinsKit_BombPlatForm", CBombPlatform::Create(m_pDevice, m_pContext)), E_FAIL);
 
 	return S_OK;
 }
@@ -2733,6 +2753,10 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LazerTrail"), CE_LazerTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_LevelUp */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LevelUp"), CE_P_Level::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_KenaLvUp.json"))))
+		return E_FAIL;
+
 #pragma endregion Effect_Object
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Effects Distortion..."));
@@ -3173,6 +3197,16 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "MeditationStump", true, false, true, false, true)))
 		assert(!"Issue");
 
+
+	/*화로 */
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Fire_Brazier", false, false, true)))
+		assert(!"Issue");
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Fire_Brazier"),
+		CFire_Brazier::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+
+
 #pragma region GroundCover
 		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "GroundCover/Branches", true, true, true, true)))
 			assert(!"Issue");
@@ -3261,7 +3295,12 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Plants3",
 			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
 			return E_FAIL;
-
+		/* Prototype_Component_Model_RuinsKit_BombPlatForm */
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(90.f));
+		FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_RuinsKit_BombPlatForm",
+			CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.mdat", PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.json", false)), E_FAIL);
+		/* Prototype_GameObject_BombPlatform */
+		FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_RuinsKit_BombPlatForm", CBombPlatform::Create(m_pDevice, m_pContext)), E_FAIL);
 
 
 #pragma  endregion Born_GroundCover
@@ -3310,13 +3349,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Crystal"),
 		CCrystal::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
-
-	/* For.Prototype_GameObject_BowTarget */
-// 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
-// 		CBowTarget::Create(m_pDevice, m_pContext))))
-// 		return E_FAIL;
-	
 
 	/* For.Prototype_GameObject_PulseStone */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulseStone"),

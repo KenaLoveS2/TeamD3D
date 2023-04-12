@@ -150,7 +150,6 @@ private:
 	_uint												m_iNumKeyFrame = 0;
 	_uint												m_iKeyFrame = 0;
 	_float3											m_vCamOffset;
-
 	_bool											m_bPulse = false;
 
 	_bool											m_bSoundCheck[7] = { false, };

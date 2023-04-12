@@ -59,7 +59,7 @@ public:
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual void					Calc_RootBoneDisplacement(_fvector vDisplacement) override;
-	virtual void			ImGui_AnimationProperty() override;
+	virtual void					ImGui_AnimationProperty() override;
 
 private:
 	HRESULT						SetUp_Components();
@@ -92,6 +92,8 @@ private:
 	_bool							m_bPulse = false;
 	_bool							m_bCollect = false;
 	_bool							m_bAppear = false;
+
+	_float							m_fDistance = 0.f;
 
 private:
 	class CE_InteractStaff*			m_pEffect = nullptr;

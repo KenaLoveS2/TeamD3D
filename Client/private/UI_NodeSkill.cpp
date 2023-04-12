@@ -226,7 +226,7 @@ HRESULT CUI_NodeSkill::Load_Data(wstring fileName)
 
 HRESULT CUI_NodeSkill::Setting(_tchar * textureProtoTag, _uint iLevel)
 {
-	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), textureProtoTag, m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE]))
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), textureProtoTag, m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE])))
 		return E_FAIL;
 
 	m_iLevel = iLevel;
@@ -237,15 +237,15 @@ HRESULT CUI_NodeSkill::Setting(_tchar * textureProtoTag, _uint iLevel)
 HRESULT CUI_NodeSkill::SetUp_Components()
 {
 	/* Renderer */
-	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
 	/* Shader */
-	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxTex"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom))
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxTex"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	/* VIBuffer_Rect */
-	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
 
