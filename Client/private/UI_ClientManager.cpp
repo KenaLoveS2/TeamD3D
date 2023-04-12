@@ -84,6 +84,9 @@
 #include "UI_NodeHatCartBG.h"
 #include "UI_NodeSideBar.h"
 
+/* InfoWindow */
+#include "UI_CanvasInfo.h"
+
 /* World UI */
 #include "UI_MonsterHP.h"
 #include "UI_RotIcon.h"

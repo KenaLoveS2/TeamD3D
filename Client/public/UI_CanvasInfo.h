@@ -8,7 +8,7 @@ class CUI_CanvasInfo final : public CUI_Canvas
 {
 public:
 	/* should be same with the order of m_vecNode.push_back()*/
-	enum UI_ORDER { UI_END	};
+	enum UI_ORDER { UI_VIDEO, UI_END	};
 private:
 	CUI_CanvasInfo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUI_CanvasInfo(const CUI_CanvasInfo& rhs);
