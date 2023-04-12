@@ -49,7 +49,7 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	}
 	else
 	{
-		m_Desc.iRoomIndex = 0;
+		m_Desc.pGroupName = L"";
 		m_Desc.WorldMatrix = _smatrix();
 		m_Desc.WorldMatrix._41 = -15.f;
 		m_Desc.WorldMatrix._43 = -15.f;
@@ -1622,6 +1622,7 @@ void CBossWarrior::Free()
 	CMonster::Free();
 
 	Safe_Release(m_pHat);
+	Safe_Release(m_pBossRockPool);
 
 	for (auto& Pair : m_mapEffect)
 		Safe_Release(Pair.second);
