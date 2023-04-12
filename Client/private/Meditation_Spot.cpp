@@ -507,10 +507,14 @@ HRESULT CMeditation_Spot::SetUp_ShadowShaderResources()
 
 HRESULT CMeditation_Spot::Ready_Effect()
 {
+#ifdef FOR_MAP_GIMMICK
 	m_pMeditationSpotEffect = (CE_P_Meditation_Spot*)CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_P_Meditation", CUtile::Create_DummyString());
 	NULL_CHECK_RETURN(m_pMeditationSpotEffect, E_FAIL);
 	m_pMeditationSpotEffect->Set_Parent(this);
 	m_pMeditationSpotEffect->Late_Initialize(nullptr);
+#else
+
+#endif
 
 	return S_OK;
 }
