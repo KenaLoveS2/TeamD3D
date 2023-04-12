@@ -301,15 +301,7 @@
       "5_ChapterType": 0,
       "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 70.36270141601563, 10.88599967956543, 461.84246826171875, 1.0 ]
     },
-    {
-      "0_ProtoTag": "Prototype_GameObject_Dynamic_Stone",
-      "1_ModelTag": "Prototype_Component_Model_Dy_MaskShrine_Rock_09",
-      "2_ShaderOption": 0,
-      "3_CloneTag": "2_Dy_MaskShrine_Rock_09_0",
-      "4_RoomIndex": 2,
-      "5_ChapterType": 0,
-      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 84.90620422363281, 16.369457244873047, 319.5411071777344, 1.0 ]
-    },
+   
  
     {
       "0_ProtoTag": "Prototype_GameObject_Stone",
@@ -1725,15 +1717,7 @@
       "4_RoomIndex": 2,
       "5_ChapterType": 0,
       "7_Transform State": [ 7.0, 0.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0.0, 0.0, 7.0, 0.0, 105.11273193359375, 8.456860542297363, 426.4458923339844, 1.0 ]
-    },
-    {
-      "0_ProtoTag": "Prototype_GameObject_Dynamic_Stone",
-      "1_ModelTag": "Prototype_Component_Model_Dy_RockSmall05",
-      "2_ShaderOption": 0,
-      "3_CloneTag": "2_Dy_RockSmall05_0",
-      "4_RoomIndex": 2,
-      "5_ChapterType": 0,
-      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 183.7287139892578, 15.885089874267578, 396.56072998046875, 1.0 ]
     }
+    
   ]
 }

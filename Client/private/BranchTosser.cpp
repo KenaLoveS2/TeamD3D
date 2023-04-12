@@ -509,14 +509,14 @@ HRESULT CBranchTosser::SetUp_ShadowShaderResources()
 
 HRESULT CBranchTosser::SetUp_Weapon()
 {
-	CBranchTosser_Weapon::MONSTERWEAPONDESC		WeaponDesc;
-	ZeroMemory(&WeaponDesc, sizeof(CBranchTosser_Weapon::MONSTERWEAPONDESC));
+	CMonsterWeapon::MONSTERWEAPONDESC		WeaponDesc;
+	ZeroMemory(&WeaponDesc, sizeof(CMonsterWeapon::MONSTERWEAPONDESC));
 	XMStoreFloat4x4(&WeaponDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
 	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
 	WeaponDesc.pTargetTransform = m_pTransformCom;
 	WeaponDesc.pOwnerMonster = this;
-	Safe_AddRef(WeaponDesc.pSocket);
-	Safe_AddRef(m_pTransformCom);
+	//Safe_AddRef(WeaponDesc.pSocket);
+	//Safe_AddRef(m_pTransformCom);
 
 	for (_uint i = 0; i < BRANCH_TOSSER_WEAPON_COUNT; i++)
 	{
@@ -578,11 +578,11 @@ CGameObject* CBranchTosser::Clone(void* pArg)
 
 void CBranchTosser::Free()
 {
-	CMonster::Free();
-
-	for (_uint i = 0; i < BRANCH_TOSSER_WEAPON_COUNT; i++)
+	for (_uint i = 0; i <  BRANCH_TOSSER_WEAPON_COUNT; i++)
 		Safe_Release(m_pWeapon[i]);
 	
+	CMonster::Free();
+		
 	Safe_Release(m_pTree);
 }
 

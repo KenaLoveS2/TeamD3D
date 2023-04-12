@@ -70,7 +70,7 @@ HRESULT CSceneChangePortal::Late_Initialize(void* pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PORTAL));
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_SCENECHANGE_PORTAL));
 
 	return S_OK;
 }
@@ -151,7 +151,7 @@ HRESULT CSceneChangePortal::SetUp_Components()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Test.png"));
+		m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/SceneChange_Portal.png"));
 	}
 
 	return S_OK;

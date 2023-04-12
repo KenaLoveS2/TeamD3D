@@ -50,10 +50,18 @@ private:
 		TELEPORT1, TELEPORT2, TELEPORT3, TELEPORT4, TELEPORT5, TELEPORT6 ,TELEPORT7, 
 	};
 
+	_float m_fAttackSoundTimeCheck = 0.f;
+	_float m_fAttackSoundTime = 0.f;
+	_float4 m_vInvisiblePos = { -100.f, 0.f, - 100.f, 1.f };
+
+	_bool m_bAttackSound = false;
+
 public:
 	static CRotForMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
+
+	void Set_AttackSound(_bool bFlag) { m_bAttackSound = bFlag; }
 };
 
 END

@@ -193,7 +193,7 @@ HRESULT CUI_NodeMood::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
 		return E_FAIL;
 
-	_float fAmount = 0.6f; /* Max Alpha Control */
+	_float fAmount = 0.3f; /* Max Alpha Control */
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAmount", &fAmount, sizeof(_float))))
 		return E_FAIL;
 

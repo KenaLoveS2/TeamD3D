@@ -122,11 +122,8 @@ HRESULT CVillageGuard::Late_Initialize(void * pArg)
 
 void CVillageGuard::Tick(_float fTimeDelta)
 {
-	//m_bReadySpawn = true;
-	//Update_Collider(fTimeDelta);
-	//m_pModelCom->Play_Animation(fTimeDelta);
-	//return;
-
+	// m_bReadySpawn = true;
+	
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -247,6 +244,8 @@ void CVillageGuard::Push_EventFunctions()
 	Play_ImpactSound(true, 0.f);	
 	Play_HurtSound(true, 0.f);
 	Play_PainSound(true, 0.f);
+
+	Stop_BindRotAttackSound(true, 0.f);
 }
 
 HRESULT CVillageGuard::SetUp_State()

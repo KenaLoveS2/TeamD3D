@@ -6263,6 +6263,10 @@ void CKena_State::Start_Dash(_float fTimeDelta)
 
 	m_pKena->m_bDash = true;
 
+	/* Rim Color Value */
+	m_pKena->m_bDashRim = true;
+	m_pKena->m_fDashRimIntensity = 1.f;
+
 	Move(0.f, m_eDir);
 
 	CE_KenaPulse* pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
@@ -6662,6 +6666,10 @@ void CKena_State::Start_Level_Up(_float fTimeDelta)
 	m_pKena->m_bLevelUp = false;
 	m_pKena->m_bLevelUp_Ready = false;
 
+	/* Rim Color Value */
+	m_pKena->m_bLevelUpRim = true;
+	m_pKena->m_fLevelUpRimIntensity = 1.f;
+
 	/* NEED : UI PRINT LEVELUP */
 }
 
@@ -6950,6 +6958,9 @@ void CKena_State::Start_Shield_Impact(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SHIELD_IMPACT");
 
+	if (!m_pKena->m_pAttackObject)
+		return;
+
 	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_TransformCom()->Get_Position());
 
 	m_pKena->m_bCommonHit = false;
@@ -6962,6 +6973,9 @@ void CKena_State::Start_Shield_Impact_Medium(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SHIELD_IMPACT_MEDIUM");
 
+	if (!m_pKena->m_pAttackObject)
+		return;
+
 	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_TransformCom()->Get_Position());
 
 	m_pKena->m_bCommonHit = false;
@@ -6973,6 +6987,9 @@ void CKena_State::Start_Shield_Impact_Medium(_float fTimeDelta)
 void CKena_State::Start_Shield_Impact_Big(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SHIELD_IMPACT_BIG");
+
+	if (!m_pKena->m_pAttackObject)
+		return;
 
 	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_TransformCom()->Get_Position());
 
@@ -9040,7 +9057,7 @@ _bool CKena_State::Dash_Portal()
 
 _bool CKena_State::Falling()
 {
-	return m_pKena->m_bJump && m_pKena->m_fCurJumpSpeed == 0.f;
+	return false;// m_pKena->m_bJump&& m_pKena->m_fCurJumpSpeed == 0.f;
 }
 
 _bool CKena_State::Pulse_Jump()

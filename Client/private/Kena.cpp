@@ -33,6 +33,8 @@
 #include "Layer.h"
 #include "BossWarrior.h"
 
+#include "ControlRoom.h"
+#include "Level_Loading.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -657,10 +659,10 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_Delegator.broadcast(ePip, fCurGuage);
 	}
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
-	{
-		m_pKenaStatus->Add_RotCount();
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+	//{
+	//	m_pKenaStatus->Add_RotCount();
+	//}
 
 	//	//static _float fTag = 0.0f;
 	//	//if (fTag < 1.0f)
@@ -868,9 +870,26 @@ void CKena::Imgui_RenderProperty()
 	}
 
 	if (ImGui::Button("m_bHeavyHit"))
-		m_bHeavyHit = true;
-	if (ImGui::Button("m_bCommonHit"))
-		m_bCommonHit = true;
+	{
+		m_bHitRim = true;
+		m_fHitRimIntensity = 1.f;
+	}
+	if (ImGui::Button("m_bParry"))
+	{
+		m_bParryRim = true;
+		m_fParryRimIntensity = 1.f;
+	}
+	if (ImGui::Button("m_bDash"))
+	{
+		m_bDashRim = true;
+		m_fDashRimIntensity = 1.f;
+	}
+	if (ImGui::Button("m_bLevelUp"))
+	{
+		m_bLevelUpRim = true;
+		m_fLevelUpRimIntensity = 1.f;
+	}
+	
 	if (ImGui::Button("m_bParryLaunch"))
 		m_bParryLaunch = !m_bParryLaunch;
 
@@ -1153,6 +1172,8 @@ void CKena::Push_EventFunctions()
 	TurnOffDashLp(true, 0.f);
 	TurnOnDashEd(true, 0.f);
 
+	TurnOnLvUp(true, 0.0f);
+
 	PlaySound_Jump(true, 0.f);
 	PlaySound_PulseJump(true, 0.f);
 	PlaySound_Land(true, 0.f);
@@ -1236,7 +1257,7 @@ void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 		m_bRotActionPossible = true;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-		if (pGameInstance->Key_Down(DIK_R))
+		if (pGameInstance->Key_Down(DIK_R))	
 		{
 			/* UI Control */
 			m_pKenaStatus->Set_CurPIPGuage(m_pKenaStatus->Get_CurPIPGuage() - 1.f);
@@ -1303,7 +1324,7 @@ void CKena::RimColorValue()
 		m_pShaderCom->Set_RawValue("g_Parry", &m_bParryRim, sizeof(_bool));
 		m_pShaderCom->Set_RawValue("g_ParryRimIntensity", &m_fParryRimIntensity, sizeof(_float));
 	}
-
+	
 	{
 		if (m_fHitRimIntensity > 0.f)
 			m_fHitRimIntensity -= TIMEDELTA;
@@ -1326,6 +1347,18 @@ void CKena::RimColorValue()
 		}
 		m_pShaderCom->Set_RawValue("g_Dash", &m_bDashRim, sizeof(_bool));
 		m_pShaderCom->Set_RawValue("g_DashRimIntensity", &m_fDashRimIntensity, sizeof(_float));
+	}
+	// LevelUp Rim 
+	{	
+		if (m_fLevelUpRimIntensity > 0.f)
+			m_fLevelUpRimIntensity -= TIMEDELTA;
+		else
+		{
+			m_fLevelUpRimIntensity = 0.f;
+			m_bLevelUpRim = false;
+		}
+		m_pShaderCom->Set_RawValue("g_LevelUp", &m_bLevelUpRim, sizeof(_bool));
+		m_pShaderCom->Set_RawValue("g_LevelUpRimIntensity", &m_fLevelUpRimIntensity, sizeof(_float));
 	}
 }
 
@@ -1419,9 +1452,9 @@ HRESULT CKena::Ready_Bombs()
 
 HRESULT CKena::Ready_Effects() 
 {
+	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
 	CEffect_Base*	pEffectBase = nullptr;
 	_tchar*			pCloneTag = nullptr;
-	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
 
 	/* Pulse */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"KenaPulse"));
@@ -1482,6 +1515,17 @@ HRESULT CKena::Ready_Effects()
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_DistortionSphere", L"K_D_Sphere"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("K_D_Sphere", pEffectBase);
+
+	/* LevelUp */
+	string		strLevelUp = "";
+	for (_uint i = 0; i < 2; ++i)
+	{
+		pCloneTag = CUtile::Create_DummyString(L"K_LevelUp", i);
+		strLevelUp = "K_LevelUp" + to_string(i);
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_LevelUp", pCloneTag));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+		m_mapEffect.emplace(strLevelUp, pEffectBase);
+	}
 
 	for (auto& pEffects : m_mapEffect)
 		pEffects.second->Set_Parent(this);
@@ -2324,8 +2368,7 @@ void CKena::TurnOnDashSt(_bool bIsInit, _float fTimeDelta)
 	_float4 vPos = m_pTransformCom->Get_Position();
 	vPos.y += 1.f;
 
-	m_mapEffect["KenaDamage"]->Set_Position(vPos);
-	m_mapEffect["KenaDamage"]->Set_Active(true);
+	m_mapEffect["KenaDamage"]->Set_Effect(vPos, true);
 }
 
 void CKena::TurnOnDashLp(_bool bIsInit, _float fTimeDelta)
@@ -2337,10 +2380,8 @@ void CKena::TurnOnDashLp(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	_float4 vPos = m_pTransformCom->Get_Position();
-	m_mapEffect["K_D_Sphere"]->Set_Position(vPos);
 	m_mapEffect["K_D_Sphere"]->Set_Scale(_float3(3.f, 3.f, 3.f));
-	m_mapEffect["K_D_Sphere"]->Set_Active(true);
+	m_mapEffect["K_D_Sphere"]->Set_Effect(m_pTransformCom->Get_Position(), true);
 }
 
 void CKena::TurnOffDashLp(_bool bIsInit, _float fTimeDelta)
@@ -2366,6 +2407,21 @@ void CKena::TurnOnDashEd(_bool bIsInit, _float fTimeDelta)
 
 	_float4 vPos = m_pTransformCom->Get_Position();
 	dynamic_cast<CE_KenaDash*>(m_mapEffect["KenaDash"])->Tick_State(vPos);
+}
+
+void CKena::TurnOnLvUp(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnLvUp);
+		return;
+	}
+	_float4 vPos = m_pTransformCom->Get_Position();
+	vPos.y += 1.f;
+
+	m_mapEffect["K_LevelUp0"]->Set_Effect(vPos, true);
+	m_mapEffect["K_LevelUp1"]->Set_Effect(vPos, true);
 }
 
 void CKena::PlaySound_Jump(_bool bIsInit, _float fTimeDelta)
@@ -2834,6 +2890,11 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 				vPos.y -= 4.f;
 				m_pTransformCom->Set_Position(vPos);
 			}
+		}
+
+		if (iColliderIndex == (_int)COL_SCENECHANGE_PORTAL && m_bDash == true)
+		{
+			m_bSceneChange = true;
 		}
 	}
 

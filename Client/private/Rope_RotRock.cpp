@@ -63,9 +63,8 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	m_pTransformCom->Set_PxPivot(m_vInitPivot);
-	const _float4 vPos = _float4(55.741f, 15.093f, 1066.333f, 1.f);	
-	// m_pTransformCom->Set_Position(vPos);
-	m_pTransformCom->Set_Position(_float4(-5.f, 0.f, -5.f, 1.f));
+	const _float4 vPos = _float4(51.128f, 14.616f, 1030.681f, 1.f);
+	m_pTransformCom->Set_Position(vPos);
 	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	
 	m_pKena = (CKena*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
@@ -101,9 +100,7 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 void CRope_RotRock::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	//m_iNumMeshes = m_pModelCom->Get_NumMeshes();
-
+	
 	if (m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
@@ -119,7 +116,7 @@ HRESULT CRope_RotRock::Render()
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		/* ÀÌ ¸ðµ¨À» ±×¸®±âÀ§ÇÑ ¼ÎÀÌ´õ¿¡ ¸ÓÅ×¸®¾ó ÅØ½ºÃÄ¸¦ Àü´ÞÇÏ³®. */
+		/* ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¸ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½ï¿½Ä¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 		//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
@@ -146,6 +143,8 @@ HRESULT CRope_RotRock::SetUp_Components()
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
+
+	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	return S_OK;
 }

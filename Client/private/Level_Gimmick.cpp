@@ -47,6 +47,7 @@ HRESULT CLevel_Gimmick::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
@@ -79,7 +80,6 @@ HRESULT CLevel_Gimmick::Initialize()
 	}
 
 	/*
-
 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 	{
 		MSG_BOX("Layer_Rot");
@@ -91,13 +91,13 @@ HRESULT CLevel_Gimmick::Initialize()
 		MSG_BOX("Layer_Effect");
 		return E_FAIL;
 	}
+	*/
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas"))))
 	{
 		MSG_BOX("Layer_Canvas");
 		return E_FAIL;
 	}
-	*/
 
 	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
 	{
@@ -109,7 +109,6 @@ HRESULT CLevel_Gimmick::Initialize()
 		return E_FAIL;
 
 	// p_game_instance->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
-
 
 	return S_OK;
 }

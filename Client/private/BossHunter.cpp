@@ -10,6 +10,8 @@
 #include "ControlRoom.h"
 #include "E_HunterTrail.h"
 #include "E_Swipes_Charged.h"
+#include "Rot.h"
+#include "Light.h"
 
 CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -74,8 +76,6 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	m_pWeaponTrailBone = m_pModelCom->Get_BonePtr("Knife_EndJnt");
 
 	Create_Arrow();
-
-
 	/********************************************/
 	/*			For. Shader & Effect			*/
 	/********************************************/
@@ -90,6 +90,13 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	m_vStringDiffuseColor = _float4(1.0f, 0.05f, 0.46f, 1.f) ;
 
 	FAILED_CHECK_RETURN(Create_Trail(), E_FAIL);
+
+	if (g_LEVEL == LEVEL_TESTPLAY)
+	{
+		CGameObject* p_game_object = nullptr;
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", L"Hunter_Rot", nullptr, &p_game_object);
+		m_pRot = dynamic_cast<CRot*>(p_game_object);
+	}
 
 	return S_OK;
 }
@@ -160,9 +167,7 @@ void CBossHunter::Tick(_float fTimeDelta)
 {	
 	//m_pModelCom->Play_Animation(fTimeDelta);
 	//Update_Collider(fTimeDelta);
-
 	//m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
-
 	////if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	//if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
 	//if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
@@ -170,30 +175,24 @@ void CBossHunter::Tick(_float fTimeDelta)
 	// /* For. String */
 	//m_fUVSpeeds[0] += 0.245f * fTimeDelta;
 	//m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
-
 	//m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
 	//if (m_fStringDissolve > 0.5)
 	//{
 	//	m_fStringDissolve = 0.5f;
 	//	m_fStringDissolveSpeed *= -1;
 	//	m_fStringDissolveSpeed = -0.9f;
-
 	//}
 	//else if (m_fStringDissolve < 0.f)
 	//{
 	//	m_fStringDissolve = 0.f;
 	//	m_fStringDissolveSpeed *= -1;
 	//	m_fStringDissolveSpeed = 0.9f;
-
 	//}
 	///* ~ For. String */
-
 	//for (auto& pArrow : m_pArrows)
 	//	pArrow->Tick(fTimeDelta);
-
 	//for (auto& pEffect : m_vecEffects)
 	//	pEffect->Tick(fTimeDelta);
-
 	//return;
 
 	if (m_bDeath) return;
@@ -563,6 +562,17 @@ HRESULT CBossHunter::SetUp_State()
 		m_fDissolveTime -= fTimeDelta;
 		if (m_fDissolveTime < -0.5f)
 			m_bDissolve = false;
+
+		m_fFogRange -= fTimeDelta * 50.f;
+		if (m_fFogRange < 60.f)
+			m_fFogRange = 60.f;
+		const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+		m_pRendererCom->Set_FogValue(vColor, m_fFogRange);
+		
+		m_fLightRange += fTimeDelta * 50.f;
+		if (m_fLightRange > 90.f)
+			m_fLightRange = 90.f;
+		CGameInstance::GetInstance()->Get_Light(1)->Set_Range(m_fLightRange);
 
 		if(AnimIntervalChecker(RAMPAGE,0.9f,1.f))
 			m_pModelCom->FixedAnimIdx_PlayTime(RAMPAGE, 0.95f);
@@ -1226,25 +1236,25 @@ HRESULT CBossHunter::SetUp_State()
 	})
 
 
-		.AddState("DYING_DOWN")
-		.OnStart([this]()
-			{
-				m_pModelCom->Set_AnimIndex(IDLE);
-			})
-		.Tick([this](_float fTimeDelta)
-			{
-				if (m_pTransformCom->Get_PositionY() >= m_vKenaPos.y + m_fKenaPosOffsetY)
-				{
-					m_pTransformCom->Go_AxisNegY(fTimeDelta);
-					if (m_pTransformCom->Get_PositionY() < m_vKenaPos.y + m_fKenaPosOffsetY)
-						m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
-				}
-			})
-		.AddTransition("DYING_DOWN to DYING", "DYING")
-		.Predicator([this]()
-					{
-						return m_pTransformCom->Get_PositionY() <= m_vKenaPos.y + m_fKenaPosOffsetY;
-					})
+	.AddState("DYING_DOWN")
+	.OnStart([this]()
+	{
+	m_pModelCom->Set_AnimIndex(IDLE);
+	})
+	.Tick([this](_float fTimeDelta)
+	{
+		if (m_pTransformCom->Get_PositionY() >= m_vKenaPos.y + m_fKenaPosOffsetY)
+		{
+			m_pTransformCom->Go_AxisNegY(fTimeDelta);
+			if (m_pTransformCom->Get_PositionY() < m_vKenaPos.y + m_fKenaPosOffsetY)
+				m_pTransformCom->Set_PositionY(m_vKenaPos.y + m_fKenaPosOffsetY);
+		}
+	})
+	.AddTransition("DYING_DOWN to DYING", "DYING")
+	.Predicator([this]()
+	{
+	return m_pTransformCom->Get_PositionY() <= m_vKenaPos.y + m_fKenaPosOffsetY;
+	})
 
 	.AddState("DYING")
 	.OnStart([this]()
@@ -1279,11 +1289,24 @@ HRESULT CBossHunter::SetUp_State()
 		m_fDissolveTime = m_fEndTime * 0.1f;
 		if (m_fDissolveTime >= 1.f)
 			m_bDissolve = false;
+
+		m_fFogRange += fTimeDelta * 50.f;
+		if (m_fFogRange >= 100.f)
+			m_pRendererCom->Set_Fog(false);
+		const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+		m_pRendererCom->Set_FogValue(vColor, m_fFogRange);
+
+		m_fLightRange -= fTimeDelta * 50.f;
+		if (m_fLightRange < 0.f)
+			CGameInstance::GetInstance()->Get_Light(1)->Set_Enable(false);
+
+		CGameInstance::GetInstance()->Get_Light(1)->Set_Range(m_fLightRange);
 	})
 	.OnExit([this]()
 	{
 		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
 		pCtrlRoom->DeadZoneObject_Change(true);
+		pCtrlRoom->Boss_HunterDeadGimmick();
 
 		// 시네캠 하나 만들자
 		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[1]->Get_ObjectCloneName());
@@ -1405,16 +1428,28 @@ void CBossHunter::BossFight_Start()
 	m_pCineCam[0]->Play();
 	m_bDissolve = true;
 	m_fDissolveTime = 1.f;
+	m_pRendererCom->Set_Fog(true);
+	const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+	m_pRendererCom->Set_FogValue(vColor, 100.f);
+	CGameInstance::GetInstance()->Get_Light(1)->Set_Enable(true);
 }
 
 void CBossHunter::BossFight_End()
 {
 	CGameInstance::GetInstance()->Work_Camera(TEXT("NPC_CAM"));
-
 	const _float3 vOffset = _float3(0.f, 1.5f, 0.f);
 	const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
-
 	dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")))->Set_Target(this, CCameraForNpc::OFFSET_FRONT_LERP, vOffset, vLookOffset,0.9f, 2.f);
+
+	_float4 vRotPos = _float4(192.3f, 28.f, 490.f,1.f);
+	if (m_pRot)
+	{
+		CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(TEXT("Hunter_Rot"), this, TRIGGER_ROT, CUtile::Float_4to3(vRotPos), 1.f));
+		m_pRot->Set_Position(vRotPos);
+		m_pRot->Set_WispPos(vRotPos);
+		m_pRot->Set_WakeUpPos(vRotPos);
+		m_pRot->Get_TransformCom()->Set_Look(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * -1.f);
+	}
 }
 
 CBossHunter* CBossHunter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1515,6 +1550,10 @@ _int CBossHunter::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos,
 			//m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 			m_pMonsterStatusCom->UnderAttack(pArrow->Get_Damage());
 
+			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
+			m_BossHunterDelegator.broadcast(eBossHP, fGauge);
+
 			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);
 			//m_bWeaklyHit = !m_bStronglyHit;
 			
@@ -1555,7 +1594,6 @@ void CBossHunter::Create_Arrow()
 {
 	CMonsterWeapon::MONSTERWEAPONDESC ArrowDesc;
 	ZeroMemory(&ArrowDesc, sizeof(CMonsterWeapon::MONSTERWEAPONDESC));
-
 	XMStoreFloat4x4(&ArrowDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
 	ArrowDesc.pSocket = m_pModelCom->Get_BonePtr("char_lf_hand_jnt"); // Bow_RootJnt // Bow_BotJoint1 // Bow_TopStringJnt
 	ArrowDesc.pTargetTransform = m_pTransformCom;
@@ -1568,8 +1606,8 @@ void CBossHunter::Create_Arrow()
 		m_pArrows[i]->Late_Initialize(nullptr);
 		m_pArrows[i]->Set_BowBonePtr(m_pModelCom->Get_BonePtr("Bow_RootJnt"));
 
-		Safe_AddRef(ArrowDesc.pSocket);
-		Safe_AddRef(m_pTransformCom);
+		//Safe_AddRef(ArrowDesc.pSocket);
+		//Safe_AddRef(m_pTransformCom);
 	}
 }
 

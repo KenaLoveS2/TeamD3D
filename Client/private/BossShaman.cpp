@@ -159,15 +159,10 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
-	CGameObject* p_game_object = nullptr;
-	m_pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, L"Layer_Monster", TEXT("Prototype_GameObject_ShamanTrapHex"), L"ShamanTrapHex_0", nullptr, &p_game_object);
-	m_pShamanTapHex = (CShamanTrapHex*)p_game_object;
-	assert(m_pShamanTapHex && "FAILED!! -> CBossShaman::Late_Initialize()");
+
 
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Late_Initialize(nullptr);
-
-	m_pShamanTapHex->Late_Initialize(nullptr);
 
 	// m_bReadySpawn = true;
 	return S_OK;
@@ -437,6 +432,7 @@ HRESULT CBossShaman::SetUp_State()
 		.OnStart([this]()
 	{
 		// 등장 연출 필요
+		BossFight_Start();
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
@@ -1050,6 +1046,7 @@ HRESULT CBossShaman::SetUp_State()
 		.OnStart([this]()
 	{
 		// 죽은 애니메이션 후 죽음 연출 State
+		BossFight_End();
 	})
 		.AddTransition("DEATH_SCENE to DEATH", "DEATH")
 		.Predicator([this]()
@@ -1219,6 +1216,11 @@ HRESULT CBossShaman::Ready_Effects()
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Set_Parent(this);
 
+	CGameObject* p_game_object = nullptr;
+	m_pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Monster", TEXT("Prototype_GameObject_ShamanTrapHex"), L"ShamanTrapHex_0", nullptr, &p_game_object);
+	m_pShamanTapHex = (CShamanTrapHex*)p_game_object;
+	assert(m_pShamanTapHex && "FAILED!! -> CBossShaman::Late_Initialize()");
+
 	return S_OK;
 }
 
@@ -1342,6 +1344,20 @@ void CBossShaman::Set_AFType()
 
 void CBossShaman::Reset_AF()
 {
+}
+
+void CBossShaman::BossFight_Start()
+{
+	g_bDayOrNight = false;
+	m_pRendererCom->Set_Fog(true);
+	const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+	m_pRendererCom->Set_FogValue(vColor, 60.f);
+}
+
+void CBossShaman::BossFight_End()
+{
+	g_bDayOrNight = true;
+	m_pRendererCom->Set_Fog(false);
 }
 
 void CBossShaman::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
