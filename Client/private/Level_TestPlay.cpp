@@ -24,6 +24,8 @@
 #include "ControlRoom.h"
 #include "Monster.h"
 #include "Kena.h"
+#include "Monster_Manager.h"
+#include "BGM_Manager.h"
 
 CLevel_TestPlay::CLevel_TestPlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -120,20 +122,20 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
 
-	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 0.3f, true, SOUND_BGM);
+	//CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 0.3f, true, SOUND_BGM);
 
-	CGameInstance::GetInstance()->Set_MasterVolume(0.f);
+	//CGameInstance::GetInstance()->Set_MasterVolume(0.f);
 
 	RELEASE_INSTANCE(CGameInstance);
+
+	CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_IDLE);
+
 	return S_OK;
 }
 
 void CLevel_TestPlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	if (CGameInstance::GetInstance()->Check_MemberState_byFunction(L"Level0_MonsterGroup_0", &CMonster::Is_DeadTest) == true)
-		int a = 0;
 }
 
 void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
@@ -156,8 +158,12 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 			CPhysX_Manager::GetInstance()->Clear(true);
 			pGameInstance->Clear();
 			pGameInstance->Scene_EnviMgr_Change();
+
+			CMonster_Manager::GetInstance()->Clear_Groups();
+
 			if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_GIMMICK)))))
 				return;
+
 
 			// 잘 작동 되지만 끝나고 모션블러를 하는듯
 		}
@@ -175,6 +181,8 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 		CPhysX_Manager::GetInstance()->Clear(true);
 		pGameInstance->Clear();
 		pGameInstance->Scene_EnviMgr_Change();
+
+		CMonster_Manager::GetInstance()->Clear_Groups();
 
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
 			return;

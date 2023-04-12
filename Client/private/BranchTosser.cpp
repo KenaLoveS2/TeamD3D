@@ -52,6 +52,8 @@ HRESULT CBranchTosser::Initialize(void* pArg)
 
 HRESULT CBranchTosser::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL); 
+
 	// ¸öÅë
 	{
 

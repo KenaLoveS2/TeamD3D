@@ -51,6 +51,8 @@ HRESULT CMoth::Initialize(void* pArg)
 
 HRESULT CMoth::Late_Initialize(void * pArg)
 {	
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+
 	{
 		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 		PxSphereDesc.eType = SPHERE_DYNAMIC;

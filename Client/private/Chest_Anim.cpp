@@ -216,7 +216,7 @@ _int CChest_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTrigger
 	if (iColliderIndex == (_uint)COL_PLAYER)
 	{
 		m_bKenaDetected = false;
-		m_pKena->Set_ChestInteractable(true);
+		m_pKena->Set_ChestInteractable(false);
 	}
 
 	return 0;

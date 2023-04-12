@@ -232,9 +232,6 @@
     <Filter Include="01.Utility\03.Components\05.Texture\Manager">
       <UniqueIdentifier>{b000d535-0bde-4de9-8762-06f1184482e8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\96.Group Manager">
-      <UniqueIdentifier>{971bf2ee-7885-4efa-832b-c3aa05dd744d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -553,9 +550,6 @@
     <ClInclude Include="..\public\CTexture_Manager.h">
       <Filter>01.Utility\03.Components\05.Texture\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Group_Manager.h">
-      <Filter>01.Utility\96.Group Manager</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -828,9 +822,6 @@
     </ClCompile>
     <ClCompile Include="..\private\CTexture_Manager.cpp">
       <Filter>01.Utility\03.Components\05.Texture\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Group_Manager.cpp">
-      <Filter>01.Utility\96.Group Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

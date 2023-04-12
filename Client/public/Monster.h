@@ -66,12 +66,12 @@ protected:
 	virtual ~CMonster() = default;
 
 public:
-	const _double&			Get_AnimationPlayTime();
+	const _double&				Get_AnimationPlayTime();
 	_vector						Get_Position();
-	DESC							Get_Desc() { return m_Desc; };
+	DESC						Get_Desc() { return m_Desc; };
 	virtual _vector				Get_FocusPosition();
-	const _bool&					Is_Dead() const { return m_bDeath; }
-	_bool							Is_DeadTest() { return m_bDeath; }
+	const _bool&				Is_Spawned() const { return m_bSpawn; }
+	const _bool&				Is_Dead() const { return m_bDeath; }
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;

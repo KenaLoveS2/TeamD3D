@@ -213,7 +213,6 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\GameInstance.h" />
     <ClInclude Include="..\public\GameObject.h" />
     <ClInclude Include="..\public\Graphic_Device.h" />
-    <ClInclude Include="..\public\Group_Manager.h" />
     <ClInclude Include="..\public\ImguiObject.h" />
     <ClInclude Include="..\public\ImGui\dirent.h" />
     <ClInclude Include="..\public\ImGui\GraphEditor.h" />
@@ -315,7 +314,6 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\GameInstance.cpp" />
     <ClCompile Include="..\private\GameObject.cpp" />
     <ClCompile Include="..\private\Graphic_Device.cpp" />
-    <ClCompile Include="..\private\Group_Manager.cpp" />
     <ClCompile Include="..\private\ImguiObject.cpp" />
     <ClCompile Include="..\private\Imgui_Manager.cpp" />
     <ClCompile Include="..\private\ImGui_PhysX.cpp" />

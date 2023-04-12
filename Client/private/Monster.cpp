@@ -3,11 +3,12 @@
 #include "GameInstance.h"
 #include "FSMComponent.h"
 #include "RotForMonster.h"
-
+#include "Monster_Manager.h"
 #include "UI_MonsterHP.h"
 #include "E_RectTrail.h"
 #include "E_P_ExplosionGravity.h"
 #include "SpiritArrow.h"
+#include "BGM_Manager.h"
 
 _float4 CMonster::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 
@@ -90,7 +91,7 @@ HRESULT CMonster::Late_Initialize(void * pArg)
 {
 	/* Is In Camera? */
 	if (lstrcmp(m_Desc.pGroupName, L"N/A"))
-		CGameInstance::GetInstance()->Add_Member(wstring(m_Desc.pGroupName), this);
+		CMonster_Manager::GetInstance()->Add_Member(wstring(m_Desc.pGroupName), this);
 
 	return S_OK;
 }
@@ -540,6 +541,12 @@ void CMonster::Clear_Death()
 {
 	m_bDeath = true;
 	m_bSpawn = false;
+
+	if (lstrcmp(m_Desc.pGroupName, L"N/A") && CMonster_Manager::GetInstance()->Is_CurrentGroup(m_Desc.pGroupName) == true)
+	{
+		if (CMonster_Manager::GetInstance()->Check_CurrentGroup_Dead() == true)
+			CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_FROM_BATTLE);
+	}
 }
 
 void CMonster::Start_Bind(_uint iBindAnimIndex)
@@ -599,6 +606,12 @@ void CMonster::Start_Spawn()
 	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 
 	m_pGameInstance->Play_Sound(m_pSoundKey_Wisp, 0.5f);
+
+	if (lstrcmp(m_Desc.pGroupName, L"N/A"))
+	{
+		if (CMonster_Manager::GetInstance()->Group_Active(m_Desc.pGroupName) == S_OK)
+			CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_INTO_BATTLE);
+	}
 }
 
 void CMonster::Tick_Spawn(_float fTimeDelta)
@@ -618,6 +631,12 @@ void CMonster::End_Spawn()
 
 	m_bDissolve = false;
 	m_fDissolveTime = 0.f;
+
+	if (lstrcmp(m_Desc.pGroupName, L"N/A"))
+	{
+		if (CMonster_Manager::GetInstance()->Group_Active(m_Desc.pGroupName) == S_FALSE)
+			CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_BATTLE);
+	}
 }
 
 void CMonster::Create_CommonCopySoundKey()

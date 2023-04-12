@@ -54,6 +54,8 @@ HRESULT CVillageGuard::Initialize(void* pArg)
 
 HRESULT CVillageGuard::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+
 	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
 	
 	{

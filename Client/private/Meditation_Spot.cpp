@@ -443,7 +443,7 @@ _int CMeditation_Spot::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTri
 		if (iColliderIndex == (_int)COL_PLAYER)
 		{
 			m_bKenaDetected = false;
-			m_pKena->Set_MeditationPossible(true);
+			m_pKena->Set_MeditationPossible(false);
 		}
 	}
 

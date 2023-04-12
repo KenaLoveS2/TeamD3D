@@ -104,6 +104,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 HRESULT CBossHunter::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+
 	{
 		_float3 vPivotScale = _float3(0.5f, 0.5f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);

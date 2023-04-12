@@ -595,6 +595,15 @@
     <Filter Include="02.GameObjects\Effect\Object\Kena\Level">
       <UniqueIdentifier>{0cca6986-e45f-48bf-bfc0-51b0dff372ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="94.Group Manager">
+      <UniqueIdentifier>{ad6358ac-339b-4fac-8485-b3873f2a4228}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="93. BGM Manager">
+      <UniqueIdentifier>{46b0e07b-14c3-49d5-baf1-bf36d7a0fa54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Manager">
+      <UniqueIdentifier>{39b7d1ad-56a8-480e-95c4-dc24e0d981e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1561,6 +1570,15 @@
     <ClInclude Include="..\public\E_P_Level.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Group_Manager.h">
+      <Filter>94.Group Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Manager.h">
+      <Filter>02.GameObjects\Monster\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BGM_Manager.h">
+      <Filter>93. BGM Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2506,6 +2524,15 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_Level.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Group_Manager.cpp">
+      <Filter>94.Group Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Manager.cpp">
+      <Filter>02.GameObjects\Monster\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BGM_Manager.cpp">
+      <Filter>93. BGM Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
