@@ -18,7 +18,6 @@ public:
 	void SetParameters(int iSSAOSampRadius, float fRadius) { m_iSSAOSampRadius = iSSAOSampRadius; m_fRadius = fRadius; }
 
 	ID3D11ShaderResourceView* GetSSAOSRV() { return m_pSSAO_SRV; }
-
 	ID3D11ShaderResourceView* GetMiniDepthSRV() { return m_pSSAO_SRV; }
 
 private:
@@ -29,9 +28,8 @@ private:
 
 	void Blur();
 
-	void			SetDebugName(ID3D11DeviceChild* pObj, const char* pName);
+	void					SetDebugName(ID3D11DeviceChild* pObj, const char* pName);
 	HRESULT			CompileShader(PWCHAR strPath, D3D10_SHADER_MACRO* pMacros, char* strEntryPoint, char* strProfile, DWORD dwShaderFlags, ID3DBlob** ppVertexShaderBuffer);
-
 
 	UINT m_nWidth;
 	UINT m_nHeight;

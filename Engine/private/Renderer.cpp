@@ -10,7 +10,7 @@
 #include "PostFX.h"
 #include "GameInstance.h"
 #include "Level_Manager.h"
-
+#include "CSSAO.h"
 #include "stb_image.h"
 
 CRenderer::CRenderer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -34,6 +34,8 @@ void CRenderer::Imgui_Render()
 	ImGui::Checkbox("FLARE", &m_bFlare);
 	ImGui::Checkbox("CINE", &m_bCine);
 	ImGui::Checkbox("FOG", &m_bFog);
+	ImGui::Checkbox("LightShaft", &m_bLightShaft);
+
 	if (m_bFog)
 	{
 		ImGui::DragFloat("FogStart", &m_fFogStart, 0.1f, 0.f, 1000.f);
@@ -52,6 +54,17 @@ void CRenderer::Imgui_Render()
 		ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
 		m_vFogColor = vSelectColor;
 	}
+
+	if(m_bLightShaft)
+	{
+		float LightShaftValue[4] = { m_vLightShaftValue.x,m_vLightShaftValue.y ,m_vLightShaftValue.z ,m_vLightShaftValue.w };
+		ImGui::DragFloat4("LightShaftValue", LightShaftValue, 0.01f, 0.f, 10.f);
+		m_vLightShaftValue.x = LightShaftValue[0];
+		m_vLightShaftValue.y = LightShaftValue[1];
+		m_vLightShaftValue.z = LightShaftValue[2];
+		m_vLightShaftValue.w = LightShaftValue[3];
+	}
+
 	if(ImGui::Button("ReCompile"))
 		ReCompile();
 }
@@ -1038,6 +1051,20 @@ HRESULT CRenderer::Render_PostProcess()
 		PostProcess_Flare();
 	}
 
+	/***5***/
+	if (m_bLightShaft)
+	{
+		pLDRSour_SRV = pLDRSour->Get_SRV();
+		pLDRDest_RTV = pLDRDest->Get_RTV();
+		if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour_SRV)))
+			return E_FAIL;
+		m_pContext->OMSetRenderTargets(1, &pLDRDest_RTV, pDepthStencilView);
+		pLDRTmp = pLDRSour;
+		pLDRSour = pLDRDest;
+		pLDRDest = pLDRTmp;
+		PostProcess_LightShaft();
+	}
+
 	m_pContext->OMSetRenderTargets(1, &pBackBufferView, pDepthStencilView);
 	Safe_Release(pBackBufferView);
 	Safe_Release(pDepthStencilView);
@@ -1200,6 +1227,31 @@ HRESULT CRenderer::PostProcess_Flare()
 		return E_FAIL;
 
 	m_pShader_PostProcess->Begin(5);
+	m_pVIBuffer->Render();
+	return S_OK;
+}
+
+HRESULT CRenderer::PostProcess_LightShaft()
+{
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_LightShaftValue", &m_vLightShaftValue, sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_CamViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_CamProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_ViewMatrixInv", &CGameInstance::GetInstance()->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_ProjMatrixInv", &CGameInstance::GetInstance()->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+
+	m_pShader_PostProcess->Begin(6);
 	m_pVIBuffer->Render();
 	return S_OK;
 }

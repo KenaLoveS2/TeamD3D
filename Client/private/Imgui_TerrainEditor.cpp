@@ -133,12 +133,8 @@ void CImgui_TerrainEditor::Imgui_FreeRender()
 		
 		Imgui_Change_HeightBmp();
 		Imgui_Save_Load();
-		
-	
-	
 	}
 	ImGui::End();
-
 }
 
 void CImgui_TerrainEditor::Terrain_Selecte()
@@ -169,8 +165,6 @@ void CImgui_TerrainEditor::Terrain_Selecte()
 	
 	if (m_iFilterCaseNum < _int(FILTER_FIRST))	// 예외처리
 		m_iFilterCaseNum = _int(FILTER_FIRST);
-
-
 }
 
 void CImgui_TerrainEditor::Imgui_Save_Load()
@@ -223,7 +217,6 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 			ImGuiFileDialog::Instance()->Close();
 	}
 
-
 	ImGui::SameLine();
 
 	if (ImGui::Button("Confirm_Fillter_Pixels_Load"))
@@ -239,8 +232,6 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel 눌렀을 때
 			ImGuiFileDialog::Instance()->Close();
 	}
-	
-
 }
 
 void CImgui_TerrainEditor::Imgui_FilterPixel_Save()
@@ -283,7 +274,6 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Save()
 	}
 	CloseHandle(hFile);
 	MSG_BOX("Save_Complete");
-
 }
 
 void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
@@ -401,7 +391,6 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3));
 
 	m_pSelectedTerrain->Imgui_Tool_Add_Component(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"));
-
 }
 
 void CImgui_TerrainEditor::Imgui_FilterControl()
@@ -647,7 +636,6 @@ void CImgui_TerrainEditor::Create_Terrain()
 			TEXT("Prototype_GameObject_Terrain"),
 			pCloneName, nullptr, &pCreateObject)))
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
-
 	}
 }
 
@@ -665,8 +653,6 @@ void CImgui_TerrainEditor::Clear_Filter_Pixel()
 		}
 		m_FilterIndexSet[Filter_index].clear();
 	}
-
-
 }
 
 void CImgui_TerrainEditor::Save_Terrain()

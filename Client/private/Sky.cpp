@@ -42,11 +42,11 @@ void CSky::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	/*if(g_bDayOrNight == true)
+	if(g_bDayOrNight == true)
 	{
 		CPostFX::GetInstance()->Day();
 		
-		m_pRendererCom->Set_Flare(true);
+		//m_pRendererCom->Set_Flare(true);
 		if (g_fSkyColorIntensity <= 1.f)
 		{
 			g_fSkyColorIntensity += fTimeDelta * 0.5f;
@@ -60,7 +60,7 @@ void CSky::Tick(_float fTimeDelta)
 	else if(g_bDayOrNight == false)
 	{
 		CPostFX::GetInstance()->Night();
-		m_pRendererCom->Set_Flare(false);
+		//m_pRendererCom->Set_Flare(false);
 		if(g_fSkyColorIntensity >= 0.5f)
 		{
 			g_fSkyColorIntensity -= fTimeDelta * 0.5f;
@@ -70,7 +70,7 @@ void CSky::Tick(_float fTimeDelta)
 
 		_float4 vDiffuse = _float4(g_fSkyColorIntensity, g_fSkyColorIntensity, g_fSkyColorIntensity, 1.f);
 		CGameInstance::GetInstance()->Get_Light(0)->Set_Diffuse(vDiffuse);
-	}*/
+	}
 }
 
 void CSky::Late_Tick(_float fTimeDelta)

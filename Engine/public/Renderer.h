@@ -63,14 +63,14 @@ private:
 	typedef list<class CComponent*>		DEBUGOBJECTS;
 #endif
 private:
-	class CTarget_Manager*			m_pTarget_Manager = nullptr;
+	class CTarget_Manager*		m_pTarget_Manager = nullptr;
 	class CLight_Manager*			m_pLight_Manager = nullptr;
-	class CLevel_Manager*			m_pLevel_Manager = nullptr;
+	class CLevel_Manager*		m_pLevel_Manager = nullptr;
 	class CVIBuffer_Rect*			m_pVIBuffer = nullptr;
-	class CShader*					m_pShader = nullptr;
-	class CShader*					m_pShader_PostProcess = nullptr;
-	class CShader*					m_pShader_SSAO = nullptr;
-	_float4x4						m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
+	class CShader*						m_pShader = nullptr;
+	class CShader*						m_pShader_PostProcess = nullptr;
+	class CShader*						m_pShader_SSAO = nullptr;
+	_float4x4								m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
 	ID3D11DepthStencilView*			m_pShadowDepthStencilView = nullptr;
 	ID3D11DepthStencilView*			m_pStaticShadowDepthStencilView = nullptr;
@@ -117,6 +117,8 @@ private:
 	_bool		m_bMotionBlur = false;
 	HRESULT PostProcess_Flare();
 	_bool		m_bFlare = false;
+	HRESULT PostProcess_LightShaft();
+	_bool		m_bLightShaft = false;
 
 	_bool		m_bFog = false;
 	_float4		m_vFogColor;
@@ -141,6 +143,7 @@ private:
 	ID3D11ShaderResourceView*		m_pLDRTexture = nullptr;
 	_bool											m_bCaptureMode = false;
 	_bool											m_bBlurCapture = false;
+	_float4											m_vLightShaftValue = _float4(0.4f, 0.9f,0.5f,0.3f);
 
 private:
 	HRESULT CreateTexture(const _tchar* pTextureFilePath, ID3D11ShaderResourceView**& OUT pTexture);
