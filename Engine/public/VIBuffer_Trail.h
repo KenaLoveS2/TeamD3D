@@ -18,6 +18,7 @@ public:
 		OBJ_B_HUNTER,
 		OBJ_DEFAULT,
 		OBJ_TRAIL,
+		OBJ_BOWTARGET,
 		OBJ_END
 	};
 

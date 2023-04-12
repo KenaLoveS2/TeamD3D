@@ -262,6 +262,50 @@ void GS_DEFAULT(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 }
 
 [maxvertexcount(6)]
+void GS_RAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
+{
+	GS_OUT		Out[4];
+
+	float3		vLook = g_vCamPosition.xyz - In[0].vPosition;
+	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].fSize * 0.1f;
+	float3		vUp = normalize(cross(vLook, vRight)) * In[0].fSize * 0.8f;
+
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	float3		vPosition;
+
+	vPosition = In[0].vPosition + vRight + vUp;
+	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[0].vTexUV = float2(0.f, 0.f);
+	Out[0].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition - vRight + vUp;
+	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[1].vTexUV = float2(1.f, 0.f);
+	Out[1].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition - vRight - vUp;
+	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[2].vTexUV = float2(1.f, 1.f);
+	Out[2].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition + vRight - vUp;
+	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[3].vTexUV = float2(0.f, 1.f);
+	Out[3].fLife = In[0].fLife;
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[1]);
+	Vertices.Append(Out[2]);
+	Vertices.RestartStrip();
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[2]);
+	Vertices.Append(Out[3]);
+	Vertices.RestartStrip();
+
+}
+
+[maxvertexcount(6)]
 void GS_RECTTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices)
 {
 	GS_TRAILOUT		Out[4];
@@ -269,7 +313,7 @@ void GS_RECTTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 	matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float4x4    WorldMatrix = In[0].Matrix;
 
-	float       fCurWidth = (In[0].fLife / g_fLife);
+	float       fCurWidth = In[0].fLife / g_fLife;
 
 	float3      vUp = matrix_up(WorldMatrix) * In[0].vPSize.y * In[0].fWidth * fCurWidth;
 	float3		vRight = matrix_right(WorldMatrix) * In[0].vPSize.x * In[0].fWidth * fCurWidth;
@@ -295,6 +339,55 @@ void GS_RECTTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 	Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
 	Out[3].vTexUV = float2(0.f, 1.f);
 	Out[3].fLife = In[0].fLife / g_fLife;
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[1]);
+	Vertices.Append(Out[2]);
+	Vertices.RestartStrip();
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[2]);
+	Vertices.Append(Out[3]);
+	Vertices.RestartStrip();
+
+}
+
+[maxvertexcount(6)]
+void GS_RECTTRAIL_SLOWLIFE(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices)
+{
+	GS_TRAILOUT		Out[4];
+
+	matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	float4x4    WorldMatrix = In[0].Matrix;
+
+	float       fCurWidth = In[0].fLife / g_fLife;
+
+	float3      vUp = matrix_up(WorldMatrix) * In[0].vPSize.y * In[0].fWidth * fCurWidth;
+	float3		vRight = matrix_right(WorldMatrix) * In[0].vPSize.x * In[0].fWidth * fCurWidth;
+	float3		vPosition = matrix_postion(In[0].Matrix);
+
+	float fPerSlowIntensity = 0.1f;
+
+	float3 vResultPos;
+	vResultPos = vPosition - vRight + vUp;
+	Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
+	Out[0].vTexUV = float2(0.f, 0.f);
+	Out[0].fLife = In[0].fLife * fPerSlowIntensity;// / g_fLife;
+
+	vResultPos = vPosition + vRight + vUp;
+	Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
+	Out[1].vTexUV = float2(1.f, 0.f);
+	Out[1].fLife = In[0].fLife * fPerSlowIntensity;//  / g_fLife;
+
+	vResultPos = vPosition + vRight - vUp;
+	Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
+	Out[2].vTexUV = float2(1.f, 1.f);
+	Out[2].fLife = In[0].fLife * fPerSlowIntensity;//  / g_fLife;
+
+	vResultPos = vPosition - vRight - vUp;
+	Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
+	Out[3].vTexUV = float2(0.f, 1.f);
+	Out[3].fLife = In[0].fLife * fPerSlowIntensity;//  / g_fLife;
 
 	Vertices.Append(Out[0]);
 	Vertices.Append(Out[1]);
@@ -1276,6 +1369,26 @@ PS_OUT PS_RANDOMCOLOR_PARTICLE(PS_IN In)
 	return Out;
 }
 
+// PS_ENVIRONMENTOBJECT
+PS_OUT PS_ENVIRONMENTOBJECT(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	if (g_TextureRenderType == 1)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+		In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+		In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+		In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+	}
+
+	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	Diffuse *= g_vColor;
+	Diffuse = CalcHDRColor(Diffuse, g_fHDRValue);
+	Out.vColor = Diffuse;
+	return Out;
+}
 
 technique11 DefaultTechnique
 {
@@ -1552,5 +1665,44 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_PARTICLEMAINPS_PARTICLEMAIN();
+	}
+
+	pass BowTarget_SlowLife // 21
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_TRAILMAIN();
+		GeometryShader = compile gs_5_0 GS_RECTTRAIL_SLOWLIFE();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SHAMANRECTTRAIL();
+	}
+
+	pass EnvironmentDust // 22
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_TEST2, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_DEFAULT();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_PARTICLEMAINPS_PARTICLEMAIN();
+	}
+
+	pass EnvironmentObject // 23
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_TEST2, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_RAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_ENVIRONMENTOBJECT();
 	}
 }
