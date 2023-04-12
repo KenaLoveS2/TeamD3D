@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\E_P_CommonBox.h"
 #include "GameInstance.h"
+#include "Fire_Brazier.h"
 
 CE_P_CommonBox::CE_P_CommonBox(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Point_Instancing(pDevice, pContext)
@@ -42,14 +43,28 @@ HRESULT CE_P_CommonBox::Late_Initialize(void* pArg)
 	m_ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
 	m_iNumInstance = m_pVIInstancingBufferCom->Get_InstanceNum();
 
-	Reset();
 	return S_OK;
 }
 
 void CE_P_CommonBox::Tick(_float fTimeDelta)
 {
-	if (m_pParent)
-		m_eEFfectDesc.bActive = dynamic_cast<CEffect_Base*>(m_pParent)->Get_Active();
+	if (m_bTurnOnfirst == false)
+	{
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.2f));
+		m_bTurnOnfirst = true;
+
+		if (dynamic_cast<CFire_Brazier*>(m_pParent))
+		{
+			m_iNumInstance = 30;
+			m_pVIInstancingBufferCom->Set_InstanceNum(m_iNumInstance);
+
+			m_ePointDesc->bSpread = true;
+			m_eEFfectDesc.bActive = true;
+
+			m_ePointDesc->fMin = _float3(-0.5f, -0.5f, -0.5f);
+			m_ePointDesc->fMax = _float3(0.5f, 2.0f, 0.5f);
+		}
+	}
 
 	__super::Tick(fTimeDelta);
 
@@ -59,11 +74,15 @@ void CE_P_CommonBox::Tick(_float fTimeDelta)
 
 void CE_P_CommonBox::Late_Tick(_float fTimeDelta)
 {
+	if (dynamic_cast<CFire_Brazier*>(m_pParent))
+	{
+		_float4 vPos = m_pParent->Get_TransformCom()->Get_Position();
+		vPos.y += 3.0f;
+		m_pTransformCom->Set_Position(vPos);
+	}
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
-	if (m_pParent != nullptr)
-		m_pTransformCom->Set_Position(m_pParent->Get_TransformCom()->Get_Position());
 
 	__super::Late_Tick(fTimeDelta);
 }
@@ -95,7 +114,7 @@ void CE_P_CommonBox::Update_Particle(_float fTimeDelta)
 	m_fMinusTime += fTimeDelta;
 	if (m_fMinusTime > 1.f)
 	{
-		m_fOverInstanceCnt -= 10.f;
+		m_fOverInstanceCnt -= 10;
 		m_pVIInstancingBufferCom->Set_InstanceNum(m_fOverInstanceCnt);
 
 		if (m_fOverInstanceCnt < 1.f)

@@ -8,7 +8,7 @@
                 {
                     "Child Count": 0,
                     "CloneObject Component InstnaceData PSizeX": 1.0,
-                    "CloneObject Component InstnaceData PSizeY": 3.0,
+                    "CloneObject Component InstnaceData PSizeY": 4.0,
                     "CloneObject Component InstnaceData Position": [
                         -0.7568000555038452,
                         0.0,
@@ -117,7 +117,7 @@
                             "MovingPosition": false,
                             "NormalTexture Index": 0.0,
                             "Particle Type": 0,
-                            "PassCnt": 0,
+                            "PassCnt": 20,
                             "Pixed Dir": [
                                 0.0,
                                 0.0,

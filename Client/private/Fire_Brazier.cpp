@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "..\public\Fire_Brazier.h"
 #include "GameInstance.h"
-
+#include "E_FireBrazier.h"
+#include "E_P_CommonBox.h"
 
 CFire_Brazier::CFire_Brazier(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -28,6 +29,8 @@ HRESULT CFire_Brazier::Initialize(void* pArg)
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
+
+	FAILED_CHECK_RETURN(Ready_Effect(), E_FAIL);
 
 	m_bRenderActive = true;
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
@@ -66,6 +69,9 @@ void CFire_Brazier::Tick(_float fTimeDelta)
 		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
 		m_bOncePosUpdate = true;
 	}
+
+	if (m_pFireBrazierEffect)m_pFireBrazierEffect->Tick(fTimeDelta);
+	if (m_pCommonBox)m_pCommonBox->Tick(fTimeDelta);
 }
 
 void CFire_Brazier::Late_Tick(_float fTimeDelta)
@@ -81,6 +87,9 @@ void CFire_Brazier::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 #endif
 	}
+
+	if (m_pFireBrazierEffect)m_pFireBrazierEffect->Late_Tick(fTimeDelta);
+	if (m_pCommonBox)m_pCommonBox->Late_Tick(fTimeDelta);
 }
 
 HRESULT CFire_Brazier::Render()
@@ -92,8 +101,6 @@ HRESULT CFire_Brazier::Render()
 		return E_FAIL;
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	
 		
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
@@ -107,26 +114,26 @@ HRESULT CFire_Brazier::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFire_BrazierPulseIntensity", &m_fEmissivePulse, sizeof(float)), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 17), E_FAIL);
 		}
 		else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 17), E_FAIL);
 		}
 		else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 18), E_FAIL);
 		}
 		else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 16), E_FAIL);
 		}
 		else
 		{
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
 		}
 	}
 
@@ -247,10 +254,11 @@ HRESULT CFire_Brazier::SetUp_Components()
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
-	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
+	/* For.Com_Model */    /*나중에  레벨 인덱스 수정해야됌*/
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Fire_Brazier", TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
+
 	/* For.Com_Shader */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
@@ -280,6 +288,21 @@ HRESULT CFire_Brazier::SetUp_ShadowShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CFire_Brazier::Ready_Effect()
+{
+	m_pFireBrazierEffect = (CE_FireBrazier*)(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_FireBrazier", CUtile::Create_DummyString()));
+	NULL_CHECK_RETURN(m_pFireBrazierEffect, E_FAIL);
+	m_pFireBrazierEffect->Set_Parent(this);
+	m_pFireBrazierEffect->Late_Initialize(nullptr);
+
+	m_pCommonBox = (CE_P_CommonBox*)(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_P_CommonBox", CUtile::Create_DummyString()));
+	NULL_CHECK_RETURN(m_pCommonBox, E_FAIL);
+	m_pCommonBox->Set_Parent(this);
+	m_pCommonBox->Late_Initialize(nullptr);
+
 	return S_OK;
 }
 
@@ -315,5 +338,6 @@ void CFire_Brazier::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
-
+	Safe_Release(m_pFireBrazierEffect);
+	Safe_Release(m_pCommonBox);
 }

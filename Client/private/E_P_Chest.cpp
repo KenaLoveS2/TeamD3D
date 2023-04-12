@@ -32,7 +32,8 @@ HRESULT CE_P_Chest::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
-	m_eEFfectDesc.bActive = false;
+	m_fHDRValue = 3.f;
+	m_eEFfectDesc.bActive = true;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	return S_OK;
 }
@@ -42,15 +43,12 @@ HRESULT CE_P_Chest::Late_Initialize(void* pArg)
 	m_ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
 	m_iNumInstance = m_pVIInstancingBufferCom->Get_InstanceNum();
 
-	Reset();
+//	Reset();
 	return S_OK;
 }
 
 void CE_P_Chest::Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return;
-
 	__super::Tick(fTimeDelta);
 
 	if (m_bTurnState)
@@ -59,11 +57,17 @@ void CE_P_Chest::Tick(_float fTimeDelta)
 
 void CE_P_Chest::Late_Tick(_float fTimeDelta)
 {
+	if (m_bTurnOnfirst == false)
+	{
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.4f));
+		m_bTurnOnfirst = true;
+	}
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	if (m_pParent != nullptr)
-		Set_Matrix();
+	if (m_pParent)
+		m_pTransformCom->Set_Position(m_pParent->Get_TransformCom()->Get_Position());
 
 	__super::Late_Tick(fTimeDelta);
 }
@@ -95,7 +99,7 @@ void CE_P_Chest::Update_Particle(_float fTimeDelta)
 	m_fMinusTime += fTimeDelta;
 	if (m_fMinusTime > 1.f)
 	{
-		m_fOverInstanceCnt -= 3.0f;
+		m_fOverInstanceCnt -= 10 * (_int)fTimeDelta;
 		m_pVIInstancingBufferCom->Set_InstanceNum(m_fOverInstanceCnt);
 
 		if (m_fOverInstanceCnt < 1.f)
@@ -111,12 +115,15 @@ void CE_P_Chest::Reset()
 	m_fMinusTime = 0.0f;
 	m_fOverInstanceCnt = 0;
 
-	m_eEFfectDesc.bActive = false;
-	m_pVIInstancingBufferCom->Set_InstanceNum(m_iNumInstance);
+	if(m_bTurnOnfirst)
+	{
+		m_eEFfectDesc.bActive = false;
+		m_pVIInstancingBufferCom->Set_InstanceNum(m_iNumInstance);
+	}
 
 	Set_ShapePosition();
 	m_pVIInstancingBufferCom->Set_RandomSpeeds(1.f, 5.f);
-	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.5f));
+	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.4f));
 }
 
 CE_P_Chest * CE_P_Chest::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)

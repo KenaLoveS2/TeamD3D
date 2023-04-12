@@ -286,11 +286,19 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Box(_float fTimeDelta)
 				vNormalLook = XMVector3Normalize(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 
 				if (m_ePointDesc->bSpread == true)
+				{
 					XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition,
 						XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + vNormalLook * _float(m_InstanceData[i].pSpeeds) * m_ePointDesc->fTimeDelta);
+
+					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f - ((VTXMATRIX*)SubResource.pData)[i].vPosition.y / (fabs(m_ePointDesc->fMin.y) + m_ePointDesc->fMax.y);
+				}
 				else
+				{
 					XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition,
 						XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - vNormalLook * _float(m_InstanceData[i].pSpeeds) * m_ePointDesc->fTimeDelta);
+
+					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = fabs(((VTXMATRIX*)SubResource.pData)[i].vPosition.y) * 10.f / m_ePointDesc->fMax.y;
+				}
 
 				if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y < m_ePointDesc->fMin.y)
 				{
@@ -304,7 +312,6 @@ HRESULT CVIBuffer_Point_Instancing::Tick_Box(_float fTimeDelta)
 					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f;
 				}
 
-				((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.0f - ((VTXMATRIX*)SubResource.pData)[i].vPosition.y / (fabs(m_ePointDesc->fMin.y) + m_ePointDesc->fMax.y);
 			}
 			m_InstanceData[i].fPos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition);
 		}

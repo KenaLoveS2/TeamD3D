@@ -102,8 +102,11 @@ void CMeditation_Spot::Tick(_float fTimeDelta)
 
 			if (m_bUsed == false)
 			{
+				m_pMeditationSpotEffect->TurnOff_Meditation(true);
+
 				if (pAnimState->Get_AnimationProgress() > 0.4f)
 				{
+
 					m_bKenaDetected = false;
 					m_bUsed = true;
 
@@ -122,6 +125,8 @@ void CMeditation_Spot::Tick(_float fTimeDelta)
 			}
 			else
 			{
+				m_pMeditationSpotEffect->TurnOff_Meditation(true);
+
 				if (iHP + 1 <= pStatus->Get_MaxHP())
 					pStatus->Add_HealAmount(1);
 			}
@@ -150,6 +155,7 @@ void CMeditation_Spot::Tick(_float fTimeDelta)
 		m_bOncePosUpdate = true;
 	}
 
+	m_pTransformCom->Tick(fTimeDelta);
 	if (m_pMeditationSpotEffect) m_pMeditationSpotEffect->Tick(fTimeDelta);
 }
 
@@ -444,7 +450,7 @@ _int CMeditation_Spot::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTri
 		if (iColliderIndex == (_int)COL_PLAYER)
 		{
 			m_bKenaDetected = false;
-			m_pKena->Set_MeditationPossible(true);
+			m_pKena->Set_MeditationPossible(false);
 		}
 	}
 
@@ -501,7 +507,11 @@ HRESULT CMeditation_Spot::SetUp_ShadowShaderResources()
 
 HRESULT CMeditation_Spot::Ready_Effect()
 {
-	m_pMeditationSpotEffect = (CE_P_Meditation_Spot*)CGameInstance::GetInstance()->Clone_GameObject(L"")
+	m_pMeditationSpotEffect = (CE_P_Meditation_Spot*)CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_P_Meditation", CUtile::Create_DummyString());
+	NULL_CHECK_RETURN(m_pMeditationSpotEffect, E_FAIL);
+	m_pMeditationSpotEffect->Set_Parent(this);
+	m_pMeditationSpotEffect->Late_Initialize(nullptr);
+
 	return S_OK;
 }
 

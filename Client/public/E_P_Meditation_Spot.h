@@ -26,6 +26,8 @@ public:
 	void	Update_Particle(_float fTimeDelta);
 	void	Reset();
 
+	void	TurnOff_Meditation(_bool bTuroff);
+
 private:
 	CVIBuffer_Point_Instancing::POINTDESC* m_ePointDesc;
 	_float	m_fDurationTime = 0.0f;
@@ -33,6 +35,8 @@ private:
 	_uint	m_iNumInstance = 0;
 
 	_int	m_fOverInstanceCnt = 0;
+
+	_bool	m_bTurnoff = false;
 
 public:
 	static  CE_P_Meditation_Spot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

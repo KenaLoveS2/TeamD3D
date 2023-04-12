@@ -35,6 +35,16 @@ HRESULT CE_Chest::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
+
+	m_pTransformCom->RotationFromNow(m_pTransformCom->Get_State(CTransform::STATE_UP), XMConvertToRadians(180.0f));
+	m_pTransformCom->Set_Scaled(_float3(0.8f, 1.f, 1.f));
+
+	for(auto& pChild : m_vecChild)
+	{
+		pChild->Get_TransformCom()->RotationFromNow(m_pTransformCom->Get_State(CTransform::STATE_UP), XMConvertToRadians(180.0f));
+		pChild->Get_TransformCom()->Set_Scaled(_float3(0.8f, 1.f, 1.f));
+	}
+
 	return S_OK;
 }
 
@@ -51,6 +61,8 @@ void CE_Chest::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
+	Update_childPosition();
+
 	if (m_fShaderBindTime > 1.f)
 		Reset();
 }
@@ -59,8 +71,6 @@ void CE_Chest::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
-	if (m_pParent)	Set_Matrix();
 
 	__super::Late_Tick(fTimeDelta);
 }
@@ -92,6 +102,25 @@ void CE_Chest::Reset()
 	m_fShaderBindTime = 0.0f;
 	m_fHDRValue = 2.f;
 	m_bTimer = false;
+	m_eEFfectDesc.bActive = false;
+
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Active(false);
+}
+
+void CE_Chest::Update_childPosition()
+{
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Active(true);
+
+	_vector vPos = m_pParent->Get_TransformCom()->Get_Position();
+	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + 0.6f);
+	m_pTransformCom->Set_Position(vPos);
+
+	_float4 vChildPos0 = vPos + vParentDir * 0.2f;
+	_float4 vChildPos1 = vPos - vParentDir * 0.2f;
+	m_vecChild[CHILD_0]->Set_Position(vChildPos0);
+	m_vecChild[CHILD_1]->Set_Position(vChildPos1);
 }
 
 CE_Chest * CE_Chest::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

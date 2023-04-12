@@ -144,7 +144,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar* pModelFilePath, _fmatrix Pivo
 	if (JsonMatrialPath == nullptr)
 		JsonMatrialPath = "NULL";
 
-	m_bIsInstancing = bIsInstancing;			/* ���� ���� �ν��Ͻ��ΰ�?*/
+	m_bIsInstancing = bIsInstancing;	
 	m_bIsLodModel = bIsLod;
 	m_bUseTriangleMeshActor = bUseTriangleMeshActor;
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
@@ -219,7 +219,6 @@ HRESULT CModel::Initialize_Prototype(const _tchar* pModelFilePath, _fmatrix Pivo
 			}
 
 
-			// �ᱹ�� ���⸦ �պ����Ѵ�.
 
 		}
 

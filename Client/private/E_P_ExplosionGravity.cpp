@@ -95,7 +95,7 @@ HRESULT CE_P_ExplosionGravity::SetUp_ShaderResources()
 	if (m_pShaderCom == nullptr)
 		return E_FAIL;
 
-	m_fRandomColor = _float4(rand() % 1, rand() % 1, rand() % 1, rand() % 1) * 1.f;
+	m_fRandomColor = _float4(_float(rand() % 1), _float(rand() % 1), _float(rand() % 1), _float(rand() % 1));
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_RandomColor", &m_fRandomColor, sizeof(_float4)), E_FAIL);
 
 	return S_OK;

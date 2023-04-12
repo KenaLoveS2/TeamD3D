@@ -91,6 +91,17 @@ void CChest_Anim::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	ImGui::Begin("Chest");
+
+	if (ImGui::Button("re"))
+	{
+		m_bOpened = false;
+		m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);
+		m_eCurState = CURSED_ACTIVATE;
+	}
+
+	ImGui::End();
+
 	/*Culling*/
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
@@ -102,7 +113,10 @@ void CChest_Anim::Tick(_float fTimeDelta)
 		m_bRenderCheck = false;
 	if (m_bRenderCheck == true)
 		m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 100.f);
-	
+
+	if (m_pChestEffect) m_pChestEffect->Tick(fTimeDelta);
+	if (m_pChestEffect_P) m_pChestEffect_P->Tick(fTimeDelta);
+
 	if (m_bOpened == true)
 		return;
 
@@ -110,10 +124,10 @@ void CChest_Anim::Tick(_float fTimeDelta)
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
 #endif
-	m_pModelCom->Play_Animation(fTimeDelta);
+	m_eCurState = Check_State();
+	Update_State(fTimeDelta);
 
-	if (m_pChestEffect) m_pChestEffect->Tick(fTimeDelta);
-	if (m_pChestEffect_P) m_pChestEffect_P->Tick(fTimeDelta);
+	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CChest_Anim::Late_Tick(_float fTimeDelta)
@@ -209,7 +223,7 @@ _int CChest_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos
 
 _int CChest_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	if (iColliderIndex == (_uint)COL_PLAYER)
+	if (iColliderIndex == (_uint)COL_PLAYER && m_bOpened == false)
 	{
 		m_bKenaDetected = true;
 		m_pModelCom->ResetAnimIdx_PlayTime((_uint)CChest_Anim::CURSED_ACTIVATE);
@@ -224,7 +238,7 @@ _int CChest_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTrigger
 	if (iColliderIndex == (_uint)COL_PLAYER)
 	{
 		m_bKenaDetected = false;
-		m_pKena->Set_ChestInteractable(true);
+		m_pKena->Set_ChestInteractable(false);
 	}
 
 	return 0;
@@ -266,7 +280,10 @@ CChest_Anim::ANIMATION CChest_Anim::Check_State()
 		{
 			/* Effect */
 			m_pChestEffect_P->Set_TurnState(true);
-			m_pChestEffect->Set_Effect(m_pTransformCom->Get_Position(), true);
+
+			_float4 vPos = m_pTransformCom->Get_Position();
+			vPos.y += 0.6f;
+			m_pChestEffect->Set_ChestLight(vPos, m_pTransformCom->Get_State(CTransform::STATE_LOOK), true);
 
 			if (m_pModelCom->Get_AnimationFinish() == true)
 				m_bOpened = true;

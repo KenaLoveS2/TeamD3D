@@ -623,7 +623,6 @@ PS_OUT PS_MAIN_PointSampler(PS_IN In)
     return Out;
 }//1
 
-
 technique11 DefaultTechnique
 {
     pass Shadow
@@ -925,8 +924,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_H_R_AO();
     }//22
 
-
-    //pass GeoMeryTest
+     //pass GeoMeryTest
     //{
     //    SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
     //    SetDepthStencilState(DS_Default, 0);

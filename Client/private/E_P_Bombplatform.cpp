@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\public\E_P_Bombplatform.h"
 #include "GameInstance.h"
-#include "E_CommonBox.h"
 #include "E_P_CommonBox.h"
 
 CE_P_Bombplatform::CE_P_Bombplatform(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -36,7 +35,7 @@ HRESULT CE_P_Bombplatform::Initialize(void * pArg)
 
 	m_bTimer = true;
 	m_bDissolve = false;
-	m_eEFfectDesc.bActive = false;
+	m_eEFfectDesc.bActive = true;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	return S_OK;
 }
@@ -53,6 +52,12 @@ HRESULT CE_P_Bombplatform::Late_Initialize(void* pArg)
 
 void CE_P_Bombplatform::Tick(_float fTimeDelta)
 {
+	if (m_bTurnOnfirst == false)
+	{
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(2.f, 5.f));
+		m_bTurnOnfirst = true;
+	}
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
@@ -60,8 +65,11 @@ void CE_P_Bombplatform::Tick(_float fTimeDelta)
 
 	m_fLife += fTimeDelta;
 
-	if (m_bDissolve)Update_Particle(fTimeDelta);
-	if (m_pCommonBox)m_pCommonBox->Tick(fTimeDelta);
+	if (m_bDissolve)
+		Update_Particle(fTimeDelta);
+	if (m_pCommonBox)
+		m_pCommonBox->Tick(fTimeDelta);
+
 }
 
 void CE_P_Bombplatform::Late_Tick(_float fTimeDelta)
@@ -70,7 +78,13 @@ void CE_P_Bombplatform::Late_Tick(_float fTimeDelta)
 		return;
 
 	if (m_pParent != nullptr)
-		m_pTransformCom->Set_Position(m_pParent->Get_TransformCom()->Get_Position());
+	{
+		_float4 vPos = m_pParent->Get_TransformCom()->Get_Position();
+		vPos.y -= 2.f;
+		m_pTransformCom->Set_Position(vPos);
+		vPos.y -= 2.f;
+		m_pCommonBox->Set_Effect(vPos, true);
+	}
 
 	if (m_pCommonBox)m_pCommonBox->Late_Tick(fTimeDelta);
 
@@ -103,7 +117,7 @@ void CE_P_Bombplatform::Update_Particle(_float fTimeDelta)
 {
 	m_pCommonBox->TurnSystem_CommonBox(true);
 
-	if (m_fLife > 1.f)
+	if (m_fLife > 6.f)
 		Reset();
 }
 

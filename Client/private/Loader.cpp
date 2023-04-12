@@ -223,6 +223,10 @@ unsigned int	g_LEVEL = 0;
 #include "E_P_Chest.h"
 #include "E_P_Bombplatform.h"
 #include "E_P_CommonBox.h"
+#include "E_P_Maple.h"
+#include "E_P_Beech.h"
+#include "E_P_Meditation_Spot.h"
+#include "E_FireBrazier.h"
 
 
 
@@ -2395,6 +2399,16 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_IceDagger",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/IceDagger.mdat"), PivotMatrix))))
 		return E_FAIL;
+	
+	/* For.Prototype_Component_Model_MapleLeaf */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_MapleLeaf",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/MapleLeaf.mdat"), PivotMatrix, nullptr, false, true))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Beech */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Beech",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Beech.mdat"), PivotMatrix, nullptr, false, true))))
+		return E_FAIL;
 
 #pragma endregion EFFECT_COMPONENT
 
@@ -2784,6 +2798,22 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_P_CommonBox */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_P_CommonBox"), CE_P_CommonBox::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_CommonBox.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_P_Meditation */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_P_Meditation"), CE_P_Meditation_Spot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Meditation_Spot.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_MapleLeaf */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MapleLeaf"), CE_P_Maple::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_BeechLeaf */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BeechLeaf"), CE_P_Beech::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBrazier */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBrazier"), CE_FireBrazier::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_ObjectFire.json"))))
 		return E_FAIL;
 
 #pragma endregion MapObject
@@ -3330,7 +3360,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 			CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.mdat", PivotMatrix, nullptr, false, false, "../Bin/Resources/NonAnim/RuinPlatform/RuinPlatform05.json", false)), E_FAIL);
 		/* Prototype_GameObject_BombPlatform */
 		FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_RuinsKit_BombPlatForm", CBombPlatform::Create(m_pDevice, m_pContext)), E_FAIL);
-
 
 #pragma  endregion Born_GroundCover
 

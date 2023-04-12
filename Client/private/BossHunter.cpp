@@ -76,6 +76,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	m_pWeaponTrailBone = m_pModelCom->Get_BonePtr("Knife_EndJnt");
 
 	Create_Arrow();
+
 	/********************************************/
 	/*			For. Shader & Effect			*/
 	/********************************************/

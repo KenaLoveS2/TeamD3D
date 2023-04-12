@@ -14,9 +14,9 @@
                             "Billboard": true,
                             "Blend Type": 0,
                             "Color": [
-                                0.15101170539855957,
-                                0.3556978106498718,
-                                0.4929577708244324,
+                                0.0,
+                                0.2,
+                                1.0,
                                 1.0
                             ],
                             "CreateRange": 0.0,
@@ -27,7 +27,7 @@
                                 0.0,
                                 0.0
                             ],
-                            "DurationTime": 0.5,
+                            "DurationTime": 0.2,
                             "Effect Type": 0,
                             "FreeMove": false,
                             "Have Trail": false,
@@ -52,7 +52,7 @@
                             "MovingPosition": false,
                             "NormalTexture Index": 0.0,
                             "Particle Type": 0,
-                            "PassCnt": 0,
+                            "PassCnt": 12,
                             "Pixed Dir": [
                                 0.0,
                                 0.0,
@@ -62,9 +62,9 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                1.0,
-                                1.0,
-                                1.0,
+                                2.0,
+                                2.0,
+                                2.0,
                                 1.0
                             ],
                             "SeparateHeight": 8,
@@ -77,7 +77,7 @@
                             "Use Child": false,
                             "Use Mask": false,
                             "Use Normal": false,
-                            "Width Frame": 6.0,
+                            "Width Frame": 8.0,
                             "WidthCnt": 8
                         }
                     ],

@@ -39,22 +39,21 @@ HRESULT CE_P_Meditation_Spot::Initialize(void * pArg)
 
 HRESULT CE_P_Meditation_Spot::Late_Initialize(void* pArg)
 {
-	m_ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_PLANECIRCLE;
-	Set_ShapePosition();
+	m_ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
 
-	m_ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_BOX;
-	m_ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::tagPointDesc::DIR_Y;
-	m_ePointDesc->bSpread = true;
-	Set_ShapePosition();
+	//m_ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_PLANECIRCLE;
+	//m_ePointDesc->bRotation = true;
+	//Set_ShapePosition();
 
-	Reset();
+	//m_ePointDesc->eShapeType = CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE::VIBUFFER_BOX;
+	//m_ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::tagPointDesc::DIR_Y;
+
+	//Reset();
 	return S_OK;
 }
 
 void CE_P_Meditation_Spot::Tick(_float fTimeDelta)
 {
-	if (m_pParent)	m_eEFfectDesc.bActive = dynamic_cast<CEffect_Base*>(m_pParent)->Get_Active();
-
 	__super::Tick(fTimeDelta);
 
 	// m_fLife += fTimeDelta;
@@ -63,6 +62,12 @@ void CE_P_Meditation_Spot::Tick(_float fTimeDelta)
 
 void CE_P_Meditation_Spot::Late_Tick(_float fTimeDelta)
 {
+	if (m_bTurnOnfirst == false)
+	{
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.2f));
+		m_bTurnOnfirst = true;
+	}
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
@@ -99,7 +104,7 @@ void CE_P_Meditation_Spot::Update_Particle(_float fTimeDelta)
 	m_fMinusTime += fTimeDelta;
 	if (m_fMinusTime > 1.f)
 	{
-		m_fOverInstanceCnt -= 10.f;
+		m_fOverInstanceCnt--;
 		m_pVIInstancingBufferCom->Set_InstanceNum(m_fOverInstanceCnt);
 
 		if (m_fOverInstanceCnt < 1.f)
@@ -117,8 +122,14 @@ void CE_P_Meditation_Spot::Reset()
 	m_pVIInstancingBufferCom->Set_InstanceNum(m_iNumInstance);
 
 	Set_ShapePosition();
-	m_pVIInstancingBufferCom->Set_RandomSpeeds(1.0f, 3.0f);
-	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.2f));
+	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.1f, 1.0f);
+	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.05f, 0.1f));
+}
+
+void CE_P_Meditation_Spot::TurnOff_Meditation(_bool bTuroff)
+{
+	m_ePointDesc->fMax.y = 6.f;
+	m_bTurnoff = bTuroff;
 }
 
 CE_P_Meditation_Spot * CE_P_Meditation_Spot::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)

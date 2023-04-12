@@ -64,8 +64,8 @@ HRESULT CLevel_GamePlay::Initialize()
  	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
  		return E_FAIL;
 
- 	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
- 	//	return E_FAIL;
+//  	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+//  		return E_FAIL;
 
 	// Ready_Thread_CloneObject(TEXT(""));
 	
@@ -345,14 +345,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	CGameObject* pGameObject = nullptr;
 	
- 	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ShammanIceDagger"), L"IceDagger", nullptr, &pGameObject), E_FAIL);
-	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ShamanTrapHex"), L"TrapHex", nullptr, &pGameObject), E_FAIL);
- 	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ShammanLazer"), L"Lazer", nullptr, &pGameObject), E_FAIL);
-// 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ShamanTrapPlane"), L"ShamanTrapPlane", nullptr, &pGameObject), E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Explosion", nullptr, &pGameObject), E_FAIL);
-	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot_P"), L"Rot_P", nullptr, &pGameObject), E_FAIL);
+// 	FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_MapleLeaf"), L"Maple", nullptr, &pGameObject), E_FAIL);
+// 	FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BeechLeaf"), L"Beech", nullptr, &pGameObject), E_FAIL);
+	FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Chest"), L"Chest", nullptr, &pGameObject), E_FAIL);
 
-	FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Chest"), L"ChestAnim", nullptr, &pGameObject), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
