@@ -810,6 +810,15 @@ PS_OUT PS_MAIN(PS_IN In)
 	else
 		Out.vColor = Out.vColor * g_vColor;
 
+	if (g_bTimer)
+	{
+		float fTime = min(g_Time, 1.f);
+		if (g_bDissolve)
+			Out.vColor.a = Out.vColor.a * (1.f - fTime);
+		else
+			Out.vColor.a = Out.vColor.a * (fTime / 1.f);
+	}
+
 	return Out;
 }
 
@@ -1079,10 +1088,14 @@ PS_OUT PS_FRONTVIEWBLINK(PS_IN In)
 
    Out.vColor = Diffuse * g_vColor;
    Out.vColor.rgb *= 2.5f;
-   Out.vColor.a *= (1.0f - In.fLife);
+   Out.vColor.a *= In.fLife;
 
    if (Out.vColor.a < 0.1f)
 	   discard;
+
+   if (g_fHDRValue != 0.0f)
+	   Out.vColor = CalcHDRColor(Out.vColor, g_fHDRValue);
+
    return Out;
 }
 

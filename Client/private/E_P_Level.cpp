@@ -40,39 +40,41 @@ HRESULT CE_P_Level::Initialize(void * pArg)
 
 HRESULT CE_P_Level::Late_Initialize(void* pArg)
 {
-	if (m_pVIInstancingBufferCom)
-	{
-		m_ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
-		Reset();
-	}
+	m_ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
+	Reset();
 
 	return S_OK;
 }
 
 void CE_P_Level::Tick(_float fTimeDelta)
 {
+	if (m_bReset == false)
+		Reset();
+
 	if (m_eEFfectDesc.bActive == true)
 		Tick_Rotation(fTimeDelta);
 
-	ImGui::Begin("CE_P_Level");
-	if (ImGui::Button("active"))
-	{
-		m_eEFfectDesc.bActive = true;
-	}
-	if (ImGui::Button("recom"))
-	{
-		m_pShaderCom->ReCompile();
-	}
+#ifdef _DEBUG
+	//ImGui::Begin("CE_P_Level");
+	//if (ImGui::Button("active"))
+	//{
+	//	m_eEFfectDesc.bActive = true;
+	//}
+	//if (ImGui::Button("recom"))
+	//{
+	//	m_pShaderCom->ReCompile();
+	//}
 
-	if (ImGui::Button("re"))
-	{	
-		m_ePointDesc->bRotation = true;
+	//if (ImGui::Button("re"))
+	//{	
+	//	m_ePointDesc->bRotation = true;
 
-		m_pVIInstancingBufferCom->Set_RandomSpeeds(1.f, 2.f);
-		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.05f, 0.2f));
-	}
+	//	m_pVIInstancingBufferCom->Set_RandomSpeeds(1.f, 2.f);
+	//	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.05f, 0.2f));
+	//}
 
-	ImGui::End();
+	//ImGui::End();
+#endif // _DEBUG
 
 	__super::Tick(fTimeDelta);
 
@@ -119,6 +121,7 @@ void CE_P_Level::Tick_Rotation(_float fTimeDelta)
 
 void CE_P_Level::Reset()
 {
+	m_bReset = true;
 	m_ePointDesc->bRotation = true;
 	m_ePointDesc->fRange = 3.f;
 

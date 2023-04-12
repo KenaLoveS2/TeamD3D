@@ -46,6 +46,7 @@ private:
 
 private:
 	class CRotBomb*				m_pDetectedBomb = nullptr;
+	class CE_P_Bombplatform* m_pBombplatformEffect = nullptr;
 
 private:
 	_float4						m_vInitPos;
@@ -64,6 +65,8 @@ private:
 private:
 	HRESULT						SetUp_Components();
 	HRESULT						SetUp_ShaderResources();
+
+	HRESULT						Ready_Effect();
 
 public:
 	static CBombPlatform*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

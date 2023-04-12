@@ -26,7 +26,8 @@ private:
 	_float4 m_vWakeUpPosition;
 	
 	class CRotHat* m_pRotHat = nullptr;
-	
+	class CE_P_Rot* m_pRotAcc = nullptr;
+
 private:
 	_bool m_bWakeUp = false, m_bManualWakeUp = false;
 	_uint m_iCuteAnimIndex = 0;

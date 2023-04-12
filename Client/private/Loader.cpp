@@ -218,6 +218,11 @@ unsigned int	g_LEVEL = 0;
 #include "E_Common_CIrcleSp.h"
 #include "E_LazerTrail.h"
 #include "E_P_Level.h"
+#include "E_P_Rot.h"
+#include "E_Chest.h"
+#include "E_P_Chest.h"
+#include "E_P_Bombplatform.h"
+#include "E_P_CommonBox.h"
 
 
 
@@ -2250,7 +2255,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 146))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 147))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_NormalEffect */
@@ -2744,7 +2749,31 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LevelUp"), CE_P_Level::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_KenaLvUp.json"))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Rot_P */ 
+ 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot_P"), CE_P_Rot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_Rot.json"))))
+		return E_FAIL;
+
 #pragma endregion Effect_Object
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Effects MapObject..."));
+#pragma region MapObject
+	/* For.Prototype_GameObject_E_Chest */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_E_Chest"), CE_Chest::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Chest.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_E_P_Chest */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_E_P_Chest"), CE_P_Chest::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Chest.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_P_BombPlatform */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_P_BombPlatform"), CE_P_Bombplatform::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_BombPlate.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_P_CommonBox */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_P_CommonBox"), CE_P_CommonBox::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_CommonBox.json"))))
+		return E_FAIL;
+
+#pragma endregion MapObject
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Effects Distortion..."));
 

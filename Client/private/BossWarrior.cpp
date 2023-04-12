@@ -1274,8 +1274,11 @@ void CBossWarrior::AdditiveAnim(_float fTimeDelta)
 void CBossWarrior::BossFight_Start()
 {
 	g_bDayOrNight = false;
-	CGameInstance::GetInstance()->Work_Camera(m_pCineCam[0]->Get_ObjectCloneName());
-	m_pCineCam[0]->Play();
+	if (m_pCineCam[0] != nullptr)
+	{
+		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[0]->Get_ObjectCloneName());
+		m_pCineCam[0]->Play();
+	}
 	m_bDissolve = true;
 	m_fDissolveTime = 1.f;
 }

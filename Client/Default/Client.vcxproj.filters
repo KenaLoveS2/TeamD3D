@@ -313,9 +313,6 @@
     <Filter Include="02.GameObjects\Effect\Environment\Wind">
       <UniqueIdentifier>{ded38e48-d4f3-4820-8190-f76a5acc5e62}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Environment\Flower">
-      <UniqueIdentifier>{277278c2-d295-409b-9b1a-12f02a71b8f0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Effect\Object">
       <UniqueIdentifier>{54b4a25a-1d60-4a3c-9839-ff3d22148a2c}</UniqueIdentifier>
     </Filter>
@@ -594,6 +591,21 @@
     </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Kena\Level">
       <UniqueIdentifier>{0cca6986-e45f-48bf-bfc0-51b0dff372ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Etc..\Rot">
+      <UniqueIdentifier>{8af6b679-d9f7-4ce6-9ed5-0805a8908848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Environment\Chest">
+      <UniqueIdentifier>{6ec32149-b195-486c-9774-0254469cd22e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Environment\Flower">
+      <UniqueIdentifier>{277278c2-d295-409b-9b1a-12f02a71b8f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Environment\BombPlatform">
+      <UniqueIdentifier>{e0cbbb56-7356-4bc1-b495-16eee93901b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Environment\Meditation_Spot">
+      <UniqueIdentifier>{f880d5dd-ede3-45f1-8391-aaedda6a1b0f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1561,6 +1573,24 @@
     <ClInclude Include="..\public\E_P_Level.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_Rot.h">
+      <Filter>02.GameObjects\Effect\Object\Etc..\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Chest.h">
+      <Filter>02.GameObjects\Effect\Environment\Chest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Chest.h">
+      <Filter>02.GameObjects\Effect\Environment\Chest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Bombplatform.h">
+      <Filter>02.GameObjects\Effect\Environment\BombPlatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_CommonBox.h">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Meditation_Spot.h">
+      <Filter>02.GameObjects\Effect\Environment\Meditation_Spot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2506,6 +2536,24 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_Level.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Rot.cpp">
+      <Filter>02.GameObjects\Effect\Object\Etc..\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Chest.cpp">
+      <Filter>02.GameObjects\Effect\Environment\Chest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Chest.cpp">
+      <Filter>02.GameObjects\Effect\Environment\Chest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Bombplatform.cpp">
+      <Filter>02.GameObjects\Effect\Environment\BombPlatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_CommonBox.cpp">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Meditation_Spot.cpp">
+      <Filter>02.GameObjects\Effect\Environment\Meditation_Spot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

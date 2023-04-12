@@ -7,17 +7,17 @@
             "Object Data": [
                 {
                     "Child Count": 0,
-                    "CloneObject Component InstnaceData PSizeX": 0.05000000074505806,
+                    "CloneObject Component InstnaceData PSizeX": 0.10000000149011612,
                     "CloneObject Component InstnaceData PSizeY": 0.10000000149011612,
                     "CloneObject Component InstnaceData Position": [
-                        -0.028436917811632156,
-                        0.526608943939209,
-                        -0.33692440390586853,
-                        0.31881093978881836
+                        -0.9179999828338623,
+                        0.1250966489315033,
+                        0.5159999132156372,
+                        0.9374516606330872
                     ],
-                    "CloneObject Component InstnaceData Speed": 0.0667250007390976,
-                    "CloneObject Component InstnaceData SpeedMinMax": 0.7100200057029724,
-                    "CloneObject Component InstnaceData SpeedMinMin": 0.7100200057029724,
+                    "CloneObject Component InstnaceData Speed": 0.20521000027656555,
+                    "CloneObject Component InstnaceData SpeedMinMax": 0.14094999432563782,
+                    "CloneObject Component InstnaceData SpeedMinMin": 0.14094999432563782,
                     "CloneObject Component PointDesc CirclePos": [
                         0.0,
                         0.0,
@@ -28,12 +28,12 @@
                         0.0,
                         0.0
                     ],
-                    "CloneObject Component PointDesc CreateInstance": 20,
-                    "CloneObject Component PointDesc CreateRange": 2.0,
+                    "CloneObject Component PointDesc CreateInstance": 100,
+                    "CloneObject Component PointDesc CreateRange": 3.0,
                     "CloneObject Component PointDesc Dir": [
-                        -0.16200017929077148,
-                        3.0,
-                        -1.9193999767303467,
+                        2.106815814971924,
+                        0.0,
+                        0.07357221096754074,
                         0.0
                     ],
                     "CloneObject Component PointDesc DurationTime": 0.0,
@@ -46,32 +46,32 @@
                     "CloneObject Component PointDesc InstanceIndex": 0,
                     "CloneObject Component PointDesc IsAlive": false,
                     "CloneObject Component PointDesc Max": [
-                        0.0,
-                        0.0,
-                        0.0
+                        1.0,
+                        2.0,
+                        1.0
                     ],
                     "CloneObject Component PointDesc MaxTime": 0.0,
                     "CloneObject Component PointDesc Min": [
+                        -1.0,
                         0.0,
-                        0.0,
-                        0.0
+                        -1.0
                     ],
                     "CloneObject Component PointDesc MoveY": 0.0,
                     "CloneObject Component PointDesc OriginPos": [
-                        0.0,
-                        0.0,
-                        0.0,
+                        -0.9179999828338623,
+                        0.9643999934196472,
+                        0.5159999132156372,
                         1.0
                     ],
                     "CloneObject Component PointDesc Range": 3.0,
-                    "CloneObject Component PointDesc RangeOffset": 0.05999999865889549,
+                    "CloneObject Component PointDesc RangeOffset": 0.0,
                     "CloneObject Component PointDesc RangeY": 0.0,
                     "CloneObject Component PointDesc RotXYZ": 1,
-                    "CloneObject Component PointDesc Rotation": false,
-                    "CloneObject Component PointDesc ShapeType": 3,
-                    "CloneObject Component PointDesc Spread": true,
+                    "CloneObject Component PointDesc Rotation": true,
+                    "CloneObject Component PointDesc ShapeType": 0,
+                    "CloneObject Component PointDesc Spread": false,
                     "CloneObject Component PointDesc bMoveY": false,
-                    "CloneObject Component ProtoTag": "Prototype_Component_E_P_Rot",
+                    "CloneObject Component ProtoTag": "Prototype_Component_E_P_Common_Box",
                     "Desc": [
                         {
                             "Alpha": 0.0,
@@ -79,14 +79,14 @@
                             "Billboard": false,
                             "Blend Type": 0,
                             "Color": [
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.7254902124404907
+                                0.8023715615272522,
+                                0.5122798085212708,
+                                0.25054287910461426,
+                                1.0
                             ],
                             "CreateRange": 0.0,
                             "DiffuseTexture Index": [
-                                71.0,
+                                58.0,
                                 0.0,
                                 0.0,
                                 0.0,
@@ -127,10 +127,10 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                0.7254902124404907,
-                                0.7254902124404907,
-                                0.7254902124404907,
-                                0.7254902124404907
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
                             ],
                             "SeparateHeight": 0,
                             "SeparateWidth": 0,
@@ -148,23 +148,23 @@
                     ],
                     "Have DTextureCnt": 1,
                     "Have MTextureCnt": 1,
-                    "Instance DataCnt": 20,
+                    "Instance DataCnt": 100,
                     "Point Data": "PointDesc Data",
                     "WorldMatrix": [
-                        0.9999893307685852,
+                        -0.7876416444778442,
+                        -1.433449369869777e-06,
+                        0.6161326169967651,
+                        0.0,
+                        -2.941242200904526e-06,
+                        1.0,
+                        -1.4334502793644788e-06,
+                        0.0,
+                        -0.6161326169967651,
+                        -2.9412403819151223e-06,
+                        -0.7876416444778442,
                         0.0,
                         0.0,
                         0.0,
-                        0.0,
-                        0.9999893307685852,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.9999966621398926,
-                        0.0,
-                        0.0,
-                        0.22509996592998505,
                         0.0,
                         1.0
                     ]

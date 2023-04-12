@@ -7,6 +7,7 @@
 #include "AnimationState.h"
 #include "Kena_State.h"
 #include "Kena_Status.h"
+#include "E_P_Meditation_Spot.h"
 
 CMeditation_Spot::CMeditation_Spot(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -28,11 +29,9 @@ HRESULT CMeditation_Spot::Initialize_Prototype()
 
 HRESULT CMeditation_Spot::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
-
-	if (FAILED(SetUp_Components()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effect(), E_FAIL);
 
 	m_bRenderActive = true;
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
@@ -152,6 +151,8 @@ void CMeditation_Spot::Tick(_float fTimeDelta)
 		m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
 		m_bOncePosUpdate = true;
 	}
+
+	if (m_pMeditationSpotEffect) m_pMeditationSpotEffect->Tick(fTimeDelta);
 }
 
 void CMeditation_Spot::Late_Tick(_float fTimeDelta)
@@ -167,6 +168,8 @@ void CMeditation_Spot::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 #endif
 	}
+
+	if (m_pMeditationSpotEffect) m_pMeditationSpotEffect->Late_Tick(fTimeDelta);
 }
 
 HRESULT CMeditation_Spot::Render()
@@ -498,6 +501,12 @@ HRESULT CMeditation_Spot::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
+HRESULT CMeditation_Spot::Ready_Effect()
+{
+	m_pMeditationSpotEffect = (CE_P_Meditation_Spot*)CGameInstance::GetInstance()->Clone_GameObject(L"")
+	return S_OK;
+}
+
 CMeditation_Spot* CMeditation_Spot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CMeditation_Spot* pInstance = new CMeditation_Spot(pDevice, pContext);
@@ -532,4 +541,6 @@ void CMeditation_Spot::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
+
+	Safe_Release(m_pMeditationSpotEffect);
 }
