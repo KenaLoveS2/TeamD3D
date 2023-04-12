@@ -188,6 +188,27 @@
 #include "E_ShamanTrail.h"
 #include "E_ShamanSmoke.h"
 #include "E_P_ExplosionGravity.h"
+#include "E_KenaDash.h"
+#include "E_KenaDashRing.h"
+#include "E_KenaDashCone.h"
+#include "E_HunterTrail.h"
+#include "E_ShamanIceDagger.h"
+#include "E_ShamanLazer.h"
+#include "E_P_ShamanTeleport.h"
+#include "E_Common_CIrcleSp.h"
+#include "E_LazerTrail.h"
+#include "E_P_Level.h"
+#include "E_P_Rot.h"
+#include "E_Chest.h"
+#include "E_P_Chest.h"
+#include "E_P_Bombplatform.h"
+#include "E_P_CommonBox.h"
+#include "E_P_Maple.h"
+#include "E_P_Beech.h"
+#include "E_P_Meditation_Spot.h"
+#include "E_FireBrazier.h"
+#include "E_P_EnvironmentDust.h"
+#include "E_P_Rain.h"
 /* ~Effects */
 
 /* Components*/
@@ -208,25 +229,7 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-#include "E_KenaDash.h"
-#include "E_KenaDashRing.h"
-#include "E_KenaDashCone.h"
-#include "E_HunterTrail.h"
-#include "E_ShamanIceDagger.h"
-#include "E_ShamanLazer.h"
-#include "E_P_ShamanTeleport.h"
-#include "E_Common_CIrcleSp.h"
-#include "E_LazerTrail.h"
-#include "E_P_Level.h"
-#include "E_P_Rot.h"
-#include "E_Chest.h"
-#include "E_P_Chest.h"
-#include "E_P_Bombplatform.h"
-#include "E_P_CommonBox.h"
-#include "E_P_Maple.h"
-#include "E_P_Beech.h"
-#include "E_P_Meditation_Spot.h"
-#include "E_FireBrazier.h"
+
 
 
 
@@ -326,7 +329,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyunwook
-	//FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyaewon
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
@@ -2315,7 +2318,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 147))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 150))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_NormalEffect */
@@ -2857,6 +2860,14 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_FireBrazier */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBrazier"), CE_FireBrazier::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_ObjectFire.json"))))
+		return E_FAIL;
+
+ 	/* For.Prototype_GameObject_EnvironmentDust */
+ 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnvironmentDust"), CE_P_EnvironmentDust::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_EnvironmentDust.json"))))
+ 		return E_FAIL;
+
+	/* For.Prototype_GameObject_P_Rain */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_P_Rain"), CE_P_Rain::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_Rain.json"))))
 		return E_FAIL;
 
 #pragma endregion MapObject

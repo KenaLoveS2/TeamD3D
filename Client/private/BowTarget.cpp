@@ -6,6 +6,7 @@
 #include "Interaction_Com.h"
 #include "BowTarget.h"
 #include "AnimationState.h"
+#include "E_RectTrail.h"
 
 CBowTarget::CBowTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnviromentObj(pDevice, pContext)
@@ -30,6 +31,7 @@ HRESULT CBowTarget::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effect(), E_FAIL);
 
 	m_bRenderActive = true;
 
@@ -37,6 +39,8 @@ HRESULT CBowTarget::Initialize(void* pArg)
 	Desc.fSpeedPerSec = 2.5f;
 	Desc.fRotationPerSec = XMConvertToRadians(90.f);
 	m_pTransformCom->Set_TransformDesc(Desc);
+
+	m_pTrailBone = m_pModelCom->Get_BonePtr("bottom_jnt");
 
 	return S_OK;
 }
@@ -87,12 +91,13 @@ void CBowTarget::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	m_eCurState = Check_State();
-	Update_State(fTimeDelta);
-
-	m_pAnimation->Play_Animation(fTimeDelta);
+ 	m_eCurState = Check_State();
+ 	Update_State(fTimeDelta);
+ 
+ 	m_pAnimation->Play_Animation(fTimeDelta);
 
 	m_pTransformCom->Tick(fTimeDelta);
+	if (m_pTrail) m_pTrail->Tick(fTimeDelta);
 }
 
 void CBowTarget::Late_Tick(_float fTimeDelta)
@@ -104,6 +109,8 @@ void CBowTarget::Late_Tick(_float fTimeDelta)
 
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
+
+	if (m_pTrail) m_pTrail->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom != nullptr && m_bRenderActive == true)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -223,7 +230,9 @@ CBowTarget::ANIMATION CBowTarget::Check_State()
 		}
 
 		case CBowTarget::LAUNCH:
-		{
+		{ 
+			Update_Trail("bottom_jnt");
+
 			if (m_pAnimation->Get_AnimationFinish() == true)
 			{
 				eState = CBowTarget::LOOP;
@@ -258,6 +267,8 @@ CBowTarget::ANIMATION CBowTarget::Check_State()
 
 		case CBowTarget::HIT:
 		{
+			m_pTrail->Set_Active(false);
+
 			if (m_fDissolveTime >= 1.f)
 			{
 				m_bDead = true;
@@ -344,6 +355,14 @@ void CBowTarget::Reset()
 	m_pTransformCom->Set_Position(m_vInitPosition);
 }
 
+void CBowTarget::Update_Trail(const char* pBoneTag)
+{
+	_matrix SocketMatrix = m_pTrailBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+	m_pTrail->Get_TransformCom()->Set_WorldMatrix(SocketMatrix);
+
+	m_pTrail->Trail_InputRandomPos(SocketMatrix.r[3]);
+}
+
 HRESULT CBowTarget::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -402,6 +421,19 @@ HRESULT CBowTarget::Bind_Dissolve(CShader* pShader)
 	return S_OK;
 }
 
+HRESULT CBowTarget::Ready_Effect()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+
+	_tchar* pDummyString = CUtile::Create_DummyString();
+	m_pTrail = dynamic_cast<CE_RectTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", pDummyString));
+	NULL_CHECK_RETURN(m_pTrail, E_FAIL);
+	m_pTrail->Set_Parent(this);
+	m_pTrail->SetUp_Option(CE_RectTrail::OBJ_BOWTARGET);
+	
+	return S_OK;
+}
+
 CBowTarget* CBowTarget::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CBowTarget* pInstance = new CBowTarget(pDevice, pContext);
@@ -438,4 +470,6 @@ void CBowTarget::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
+
+	Safe_Release(m_pTrail);
 }

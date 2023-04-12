@@ -85,24 +85,24 @@ void CE_RectTrail::Tick(_float fTimeDelta)
 	//	ImGui::End();
 	//}
 #pragma endregion Test
+	
+	//if (m_pParent && !lstrcmp(m_pParent->Get_ObjectCloneName(), L"BowTarget"))
+	//{
+	//	ImGui::Begin("RectTrail");
 
-	if (m_pParent && !lstrcmp(m_pParent->Get_ObjectCloneName(), L"S_IceDagger_0"))
-	{
-		ImGui::Begin("RectTrail");
+	//	if (ImGui::Button("Recompile"))
+	//		m_pShaderCom->ReCompile();
 
-		if (ImGui::Button("Recompile"))
-			m_pShaderCom->ReCompile();
+	//	ImGui::InputFloat("DiffuseTexture", &m_eEFfectDesc.fFrame[0]);
+	//	ImGui::InputFloat("MaskTexture", &m_eEFfectDesc.fMaskFrame[0]);
+	//	ImGui::InputFloat("Life", &m_eEFfectDesc.fLife);
+	//	ImGui::InputFloat("Width", &m_eEFfectDesc.fWidth);
+	//	ImGui::InputInt("Pass", &m_eEFfectDesc.iPassCnt);
+	//	ImGui::InputFloat("HDRValue", &m_fHDRValue);
+	//	ImGui::InputFloat4("vColor", (_float*)&m_eEFfectDesc.vColor);
 
-		ImGui::InputFloat("DiffuseTexture", &m_eEFfectDesc.fFrame[0]);
-		ImGui::InputFloat("MaskTexture", &m_eEFfectDesc.fMaskFrame[0]);
-		ImGui::InputFloat("Life", &m_eEFfectDesc.fLife);
-		ImGui::InputFloat("Width", &m_eEFfectDesc.fWidth);
-		ImGui::InputInt("Pass", &m_eEFfectDesc.iPassCnt);
-		ImGui::InputFloat("HDRValue", &m_fHDRValue);
-		ImGui::InputFloat4("vColor", (_float*)&m_eEFfectDesc.vColor);
-
-		ImGui::End();
-	}
+	//	ImGui::End();
+	//}
 
 	__super::Tick(fTimeDelta);
 
@@ -247,6 +247,16 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 		m_eEFfectDesc.iSeparateWidth = 8;
 		m_eEFfectDesc.iSeparateHeight = 8;
 		m_eEFfectDesc.fTimeDelta = 0.3f;
+		break;
+
+	case Client::CE_RectTrail::OBJ_BOWTARGET:
+		m_eEFfectDesc.fFrame[0] = 126.f;
+		m_eEFfectDesc.iPassCnt = 17;
+		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.fWidth = 1.3f;
+		m_eEFfectDesc.vColor = XMVectorSet(0.3f, 0.2f, 1.f, 1.f);
+		m_eEFfectDesc.bActive = true;
+		m_fHDRValue = 2.f;
 		break;
 
 	}

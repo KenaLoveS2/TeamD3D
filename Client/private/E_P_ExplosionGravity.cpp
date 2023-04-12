@@ -52,11 +52,11 @@ HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
-	//if (!lstrcmp(Get_ObjectCloneName(), L"Explosion"))
-	//if (m_eType == TYPE_DEFAULT)
- //		Set_OptionTool();
- //	else
-	//	m_fLife += fTimeDelta;
+	if (!lstrcmp(Get_ObjectCloneName(), L"Explosion"))
+	if (m_eType == TYPE_DEFAULT)
+ 		Set_OptionTool();
+ 	else
+		m_fLife += fTimeDelta;
 
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
 		Tick_Sprite(m_fDurationTime, fTimeDelta);
@@ -72,7 +72,7 @@ void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 
 	m_fLife += fTimeDelta;
 	/*m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && */
-	if (m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
+	if (m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
 		m_eEFfectDesc.bActive = false;
 }
 
