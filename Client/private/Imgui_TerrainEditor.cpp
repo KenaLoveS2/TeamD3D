@@ -289,7 +289,8 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Save()
 void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 {
 	Clear_Filter_Pixel();
-
+	wstring ComponentProtoTag;
+	wstring ComponentPathTag;
 	string      strSaveDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
 	if (m_bSaveWrite == true)
 	{
@@ -383,24 +384,74 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 		}
 
 		wstring wstr = TEXT("../Bin/Resources/Terrain_Texture/Filter/");
+	
+		if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain0"))
+		{
+			ComponentProtoTag = TEXT("Prototype_Component_Texture_Filter");
+			ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds");
+			if (m_iFilterCaseNum == 0)
+				wstr += TEXT("Filter_0.dds");
+			else if (m_iFilterCaseNum == 1)
+				wstr += TEXT("Filter_1.dds");
+			else if (m_iFilterCaseNum == 2)
+				wstr += TEXT("Filter_2.dds");
+		}
+		else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain1"))
+		{
+			ComponentProtoTag = TEXT("Prototype_Component_Terrain_Two_Filter");
+			ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain2_Filter_%d.dds");
+			if (m_iFilterCaseNum == 0)
+				wstr += TEXT("Terrain2_Filter_0.dds");
+			else if (m_iFilterCaseNum == 1)
+				wstr += TEXT("Terrain2_Filter_1.dds");
+			else if (m_iFilterCaseNum == 2)
+				wstr += TEXT("Terrain2_Filter_2.dds");
+		}
+		else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain2"))
+		{
+			ComponentProtoTag = TEXT("Prototype_Component_Terrain_Three_Filter");
+			ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain3_Filter_%d.dds");
+			if (m_iFilterCaseNum == 0)
+				wstr += TEXT("Terrain3_Filter_0.dds");
+			else if (m_iFilterCaseNum == 1)
+				wstr += TEXT("Terrain3_Filter_1.dds");
+			else if (m_iFilterCaseNum == 2)
+				wstr += TEXT("Terrain3_Filter_2.dds");
+		}
+		else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain3"))
+		{
+			ComponentProtoTag = TEXT("Prototype_Component_Terrain_Four_Filter");
+			ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain4_Filter_%d.dds");
+			if (m_iFilterCaseNum == 0)
+				wstr += TEXT("Terrain4_Filter_0.dds");
+			else if (m_iFilterCaseNum == 1)
+				wstr += TEXT("Terrain4_Filter_1.dds");
+			else if (m_iFilterCaseNum == 2)
+				wstr += TEXT("Terrain4_Filter_2.dds");
+		}
+		else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain4"))
+		{
+			ComponentProtoTag = TEXT("Prototype_Component_Terrain_Five_Filter");
+			ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain5_Filter_%d.dds");
+			if (m_iFilterCaseNum == 0)
+				wstr += TEXT("Terrain5_Filter_0.dds");
+			else if (m_iFilterCaseNum == 1)
+				wstr += TEXT("Terrain5_Filter_1.dds");
+			else if (m_iFilterCaseNum == 2)
+				wstr += TEXT("Terrain5_Filter_2.dds");
+		}
 
-		if (iPixelIndex == 0)
-			wstr += TEXT("Filter_0.dds");
-		else if (iPixelIndex == 1)
-			wstr += TEXT("Filter_1.dds");
-		else if (iPixelIndex == 2)
-			wstr += TEXT("Filter_2.dds");
 
 		DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, wstr.c_str());
 		Safe_Release(pTexture2D);
 	}
 
-	m_pGameInstance->Delete_ProtoComponent(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"));
+	m_pGameInstance->Delete_ProtoComponent(g_LEVEL, ComponentProtoTag.c_str());
 
-	m_pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3));
+	m_pGameInstance->Add_Prototype(g_LEVEL, ComponentProtoTag.c_str(),
+		CTexture::Create(m_pDevice, m_pContext, ComponentPathTag.c_str(), 3));
 
-	m_pSelectedTerrain->Imgui_Tool_Add_Component(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"));
+	m_pSelectedTerrain->Imgui_Tool_Add_Component(g_LEVEL, ComponentProtoTag.c_str(), TEXT("Com_Filter"));
 
 }
 
@@ -482,23 +533,78 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 	m_pSelectedTerrain->Erase_FilterCom();
 
 	wstring wstr = TEXT("../Bin/Resources/Terrain_Texture/Filter/");
+	wstring ComponentProtoTag;
+	wstring ComponentPathTag;
+	if(!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(),L"Terrain0"))
+	{
+		ComponentProtoTag = TEXT("Prototype_Component_Texture_Filter");
+		ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds");
+		if (m_iFilterCaseNum == 0)
+			wstr += TEXT("Filter_0.dds");
+		else if (m_iFilterCaseNum == 1)
+			wstr += TEXT("Filter_1.dds");
+		else if (m_iFilterCaseNum == 2)
+			wstr += TEXT("Filter_2.dds");
+	}
+	else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain1"))
+	{
+		ComponentProtoTag = TEXT("Prototype_Component_Terrain_Two_Filter");
+		ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain2_Filter_%d.dds");
+		if (m_iFilterCaseNum == 0)
+			wstr += TEXT("Terrain2_Filter_0.dds");
+		else if (m_iFilterCaseNum == 1)
+			wstr += TEXT("Terrain2_Filter_1.dds");
+		else if (m_iFilterCaseNum == 2)
+			wstr += TEXT("Terrain2_Filter_2.dds");
+	}
+	else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain2"))
+	{
+		ComponentProtoTag = TEXT("Prototype_Component_Terrain_Three_Filter");
+		ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain3_Filter_%d.dds");
+		if (m_iFilterCaseNum == 0)
+			wstr += TEXT("Terrain3_Filter_0.dds");
+		else if (m_iFilterCaseNum == 1)
+			wstr += TEXT("Terrain3_Filter_1.dds");
+		else if (m_iFilterCaseNum == 2)
+			wstr += TEXT("Terrain3_Filter_2.dds");
+	}
+	else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain3"))
+	{
+		ComponentProtoTag = TEXT("Prototype_Component_Terrain_Four_Filter");
+		ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain4_Filter_%d.dds");
+		if (m_iFilterCaseNum == 0)
+			wstr += TEXT("Terrain4_Filter_0.dds");
+		else if (m_iFilterCaseNum == 1)
+			wstr += TEXT("Terrain4_Filter_1.dds");
+		else if (m_iFilterCaseNum == 2)
+			wstr += TEXT("Terrain4_Filter_2.dds");
+	}
+	else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain4"))
+	{
+		ComponentProtoTag = TEXT("Prototype_Component_Terrain_Five_Filter");
+		ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain5_Filter_%d.dds");
+		if (m_iFilterCaseNum == 0)
+			wstr += TEXT("Terrain5_Filter_0.dds");
+		else if (m_iFilterCaseNum == 1)
+			wstr += TEXT("Terrain5_Filter_1.dds");
+		else if (m_iFilterCaseNum == 2)
+			wstr += TEXT("Terrain5_Filter_2.dds");
+	}
 
-	if (m_iFilterCaseNum == 0)
-		wstr += TEXT("Filter_0.dds");
-	else if(m_iFilterCaseNum == 1)
-		wstr += TEXT("Filter_1.dds");
-	else if (m_iFilterCaseNum == 2)
-		wstr += TEXT("Filter_2.dds");
+
+	
 
 	 DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, wstr.c_str());
 	Safe_Release(pTexture2D);
 
-	m_pGameInstance->Delete_ProtoComponent(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"));
+	m_pGameInstance->Delete_ProtoComponent(g_LEVEL, ComponentProtoTag.c_str());
 
-	m_pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3));
+	m_pGameInstance->Add_Prototype(g_LEVEL, ComponentProtoTag.c_str(),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3));
+		CTexture::Create(m_pDevice, m_pContext, ComponentPathTag.c_str(), 3));
 
-	m_pSelectedTerrain->Imgui_Tool_Add_Component(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"));
+
+	m_pSelectedTerrain->Imgui_Tool_Add_Component(g_LEVEL, ComponentProtoTag.c_str(), TEXT("Com_Filter"));
 }
 
 void CImgui_TerrainEditor::UnDraw_FilterTexture()
@@ -588,23 +694,73 @@ void CImgui_TerrainEditor::UnDraw_FilterTexture()
 	m_pSelectedTerrain->Erase_FilterCom();
 
 	wstring wstr = TEXT("../Bin/Resources/Terrain_Texture/Filter/");
-
-	if (m_iFilterCaseNum == 0)
-		wstr += TEXT("Filter_0.dds");
-	else if (m_iFilterCaseNum == 1)
-		wstr += TEXT("Filter_1.dds");
-	else if (m_iFilterCaseNum == 2)
-		wstr += TEXT("Filter_2.dds");
+	wstring ComponentProtoTag;
+	wstring ComponentPathTag;
+	if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain0"))
+	{
+		ComponentProtoTag = TEXT("Prototype_Component_Texture_Filter");
+		ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds");
+		if (m_iFilterCaseNum == 0)
+			wstr += TEXT("Filter_0.dds");
+		else if (m_iFilterCaseNum == 1)
+			wstr += TEXT("Filter_1.dds");
+		else if (m_iFilterCaseNum == 2)
+			wstr += TEXT("Filter_2.dds");
+	}
+	else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain1"))
+	{
+		ComponentProtoTag = TEXT("Prototype_Component_Terrain_Two_Filter");
+		ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain2_Filter_%d.dds");
+		if (m_iFilterCaseNum == 0)
+			wstr += TEXT("Terrain2_Filter_0.dds");
+		else if (m_iFilterCaseNum == 1)
+			wstr += TEXT("Terrain2_Filter_1.dds");
+		else if (m_iFilterCaseNum == 2)
+			wstr += TEXT("Terrain2_Filter_2.dds");
+	}
+	else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain2"))
+	{
+		ComponentProtoTag = TEXT("Prototype_Component_Terrain_Three_Filter");
+		ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain3_Filter_%d.dds");
+		if (m_iFilterCaseNum == 0)
+			wstr += TEXT("Terrain3_Filter_0.dds");
+		else if (m_iFilterCaseNum == 1)
+			wstr += TEXT("Terrain3_Filter_1.dds");
+		else if (m_iFilterCaseNum == 2)
+			wstr += TEXT("Terrain3_Filter_2.dds");
+	}
+	else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain3"))
+	{
+		ComponentProtoTag = TEXT("Prototype_Component_Terrain_Four_Filter");
+		ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain4_Filter_%d.dds");
+		if (m_iFilterCaseNum == 0)
+			wstr += TEXT("Terrain4_Filter_0.dds");
+		else if (m_iFilterCaseNum == 1)
+			wstr += TEXT("Terrain4_Filter_1.dds");
+		else if (m_iFilterCaseNum == 2)
+			wstr += TEXT("Terrain4_Filter_2.dds");
+	}
+	else if (!lstrcmp(m_pSelectedTerrain->Get_ObjectCloneName(), L"Terrain4"))
+	{
+		ComponentProtoTag = TEXT("Prototype_Component_Terrain_Five_Filter");
+		ComponentPathTag = TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain5_Filter_%d.dds");
+		if (m_iFilterCaseNum == 0)
+			wstr += TEXT("Terrain5_Filter_0.dds");
+		else if (m_iFilterCaseNum == 1)
+			wstr += TEXT("Terrain5_Filter_1.dds");
+		else if (m_iFilterCaseNum == 2)
+			wstr += TEXT("Terrain5_Filter_2.dds");
+	}
 
 	DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, wstr.c_str());
 	Safe_Release(pTexture2D);
 
-	m_pGameInstance->Delete_ProtoComponent(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"));
+	m_pGameInstance->Delete_ProtoComponent(g_LEVEL, ComponentProtoTag.c_str());
 
-	m_pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3));
+	m_pGameInstance->Add_Prototype(g_LEVEL, ComponentProtoTag.c_str(),
+		CTexture::Create(m_pDevice, m_pContext, ComponentPathTag.c_str(), 3));
 
-	m_pSelectedTerrain->Imgui_Tool_Add_Component(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"));
+	m_pSelectedTerrain->Imgui_Tool_Add_Component(g_LEVEL, ComponentProtoTag.c_str(), TEXT("Com_Filter"));
 
 }
 

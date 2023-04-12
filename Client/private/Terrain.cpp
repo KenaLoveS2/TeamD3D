@@ -167,7 +167,7 @@ HRESULT CTerrain::SetUp_CineShaderResources()
 
 void CTerrain::Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag)
 {
-	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_Filter"), ComTag,
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, ProtoTag, ComTag,
 		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
 		assert(!"Imgui_Tool_Add_Component");	
 }
