@@ -80,23 +80,23 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	{
-		MSG_BOX("Layer_Monster");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//{
+	//	MSG_BOX("Layer_Monster");
+	//	return E_FAIL;
+	//}
 
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
-	{
-		MSG_BOX("Layer_NPC");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	//{
+	//	MSG_BOX("Layer_NPC");
+	//	return E_FAIL;
+	//}
 
-	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
-	{
-		MSG_BOX("Layer_Rot");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
+	//{
+	//	MSG_BOX("Layer_Rot");
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	{
@@ -254,8 +254,11 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
+
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_WaterPlane"), TEXT("WaterPlaneWJ")), E_FAIL);
+
 	return S_OK;
 }
 

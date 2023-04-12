@@ -85,6 +85,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 			//pVertices[iIndex].vPosition = m_pVerticesPos[iIndex] = _float3((_float)j, 0.f, (_float)i);
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			pVertices[iIndex].vTexUV = _float2(j / (m_iNumVerticesX - 1.0f), i / (m_iNumVerticesZ - 1.0f));
+			pVertices[iIndex].vTangent = _float3(0.f, 0.f, 0.f);
 		}
 	}
 
@@ -118,17 +119,46 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 
 			_vector			vSour, vDest, vNormal;
 
+			_float3          vV1, vV2, vTangent;
+			_float2			vUV1, vUV2;
+			
 			pIndices[iNumFaces]._0 = iIndices[0];
 			pIndices[iNumFaces]._1 = iIndices[1];
 			pIndices[iNumFaces]._2 = iIndices[2];
 
 			vSour = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vPosition);
 			vDest = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vPosition);
+
 			vNormal = XMVector3Normalize(XMVector3Cross(vSour, vDest));
 
 			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._0].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vNormal) + vNormal));
 			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._1].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vNormal) + vNormal));
 			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._2].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vNormal) + vNormal));
+
+			vUV1 = XMLoadFloat2(&pVertices[pIndices[iNumFaces]._1].vTexUV) - XMLoadFloat2(&pVertices[pIndices[iNumFaces]._0].vTexUV);
+			vUV2 = XMLoadFloat2(&pVertices[pIndices[iNumFaces]._2].vTexUV) - XMLoadFloat2(&pVertices[pIndices[iNumFaces]._0].vTexUV);
+			vV1 = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vPosition);
+			vV2 = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vPosition);
+
+			// tuVector[0] = vUV1.x tvVector[0] = vUV1.y;
+			// tuVector[1] = vUV2.x tvVector[1] = vUV2.y;
+
+			float den = 1.f / (vUV1.x * vUV2.y - vUV2.x * vUV1.y);
+			vTangent.x =  (vUV2.y * vV1.x - vUV1.y * vV2.x) * den;
+			vTangent.y =  (vUV2.y* vV1.y - vUV1.y * vV2.y) * den;
+			vTangent.z =  (vUV2.y* vV1.z - vUV1.y * vV2.z) * den;
+			
+			float flengh = (float)sqrtf((vTangent.x * vTangent.x) + (vTangent.y * vTangent.y) + (vTangent.z * vTangent.z));
+
+			vTangent.x = vTangent.x / flengh;
+			vTangent.y = vTangent.y / flengh;
+			vTangent.z = vTangent.z / flengh;
+
+			_vector vT = vTangent;
+
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._0].vTangent, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vTangent) + vT));
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._1].vTangent, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vTangent) + vT));
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._2].vTangent, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vTangent) + vT));
 
 			++iNumFaces;
 
@@ -138,11 +168,40 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 
 			vSour = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vPosition);
 			vDest = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vPosition);
+
+			vUV1 = XMLoadFloat2(&pVertices[pIndices[iNumFaces]._1].vTexUV) - XMLoadFloat2(&pVertices[pIndices[iNumFaces]._0].vTexUV);
+			vUV2 = XMLoadFloat2(&pVertices[pIndices[iNumFaces]._2].vTexUV) - XMLoadFloat2(&pVertices[pIndices[iNumFaces]._1].vTexUV);
+
 			vNormal = XMVector3Normalize(XMVector3Cross(vSour, vDest));
 
 			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._0].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vNormal) + vNormal));
 			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._1].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vNormal) + vNormal));
 			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._2].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vNormal) + vNormal));
+
+			vUV1 = XMLoadFloat2(&pVertices[pIndices[iNumFaces]._1].vTexUV) - XMLoadFloat2(&pVertices[pIndices[iNumFaces]._0].vTexUV);
+			vUV2 = XMLoadFloat2(&pVertices[pIndices[iNumFaces]._2].vTexUV) - XMLoadFloat2(&pVertices[pIndices[iNumFaces]._0].vTexUV);
+			vV1 = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vPosition);
+			vV2 = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vPosition);
+
+			// tuVector[0] = vUV1.x tvVector[0] = vUV1.y;
+			// tuVector[1] = vUV2.x tvVector[1] = vUV2.y;
+
+			den = 1.f / (vUV1.x * vUV2.y - vUV2.x * vUV1.y);
+			vTangent.x = (vUV2.y * vV1.x - vUV1.y * vV2.x) * den;
+			vTangent.y = (vUV2.y * vV1.y - vUV1.y * vV2.y) * den;
+			vTangent.z = (vUV2.y * vV1.z - vUV1.y * vV2.z) * den;
+
+			flengh = (float)sqrtf((vTangent.x * vTangent.x) + (vTangent.y * vTangent.y) + (vTangent.z * vTangent.z));
+
+			vTangent.x = vTangent.x / flengh;
+			vTangent.y = vTangent.y / flengh;
+			vTangent.z = vTangent.z / flengh;
+
+			vT = vTangent;
+
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._0].vTangent, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vTangent) + vT));
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._1].vTangent, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vTangent) + vT));
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._2].vTangent, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vTangent) + vT));
 
 			++iNumFaces;
 		}

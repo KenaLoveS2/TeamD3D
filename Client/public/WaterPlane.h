@@ -31,8 +31,10 @@ public:
 
 private:
 	CModel*							m_pModelCom = nullptr;
-
-	float								m_fTimeDelta = 0.f;
+	CTexture*							m_pTextureCom = nullptr;
+	CTexture*							m_pRippleTextureCom = nullptr;
+	float									m_fTimeDelta = 0.f;
+	int									m_iTexNum = 0;
 
 private:
 	HRESULT  SetUp_Components();

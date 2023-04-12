@@ -81,15 +81,23 @@ void CWaterPlane::Tick(_float fTimeDelta)
 {
 	CGameObject::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
+
+	ImGui::Begin("WaterPlane");
+	if(ImGui::Button("Recompile"))
+		m_pShaderCom->ReCompile();
+	ImGui::InputInt("TexNum", &m_iTexNum);
+	if (m_iTexNum < 0)
+		m_iTexNum = 0;
+	if(m_iTexNum > 12)
+		m_iTexNum = 12;
+	ImGui::End();
 }
 
 void CWaterPlane::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-
 	/*NonCulling*/
-
 	if (m_pRendererCom && m_bRenderActive)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_EFFECT, this);
@@ -106,9 +114,11 @@ HRESULT CWaterPlane::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr);
+		FAILED_CHECK_RETURN(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture", m_iTexNum), E_FAIL);
+		FAILED_CHECK_RETURN(m_pRippleTextureCom->Bind_ShaderResource(m_pShaderCom, "g_RippleTexture"), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr), E_FAIL);
 	}
+
 	return S_OK;
 }
 
@@ -130,6 +140,8 @@ void CWaterPlane::ImGui_PhysXValueProperty()
 HRESULT CWaterPlane::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_WaterPlane", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_GameObject_WaterNormalTexture", L"Com_Texture", (CComponent**)&m_pTextureCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_GameObject_WaterRippleTexture", L"Com_Texture2", (CComponent**)&m_pRippleTextureCom, nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_Water", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 	return S_OK;
@@ -178,4 +190,6 @@ void CWaterPlane::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pRippleTextureCom);
 }

@@ -142,8 +142,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
 	vector		vLook = normalize(vWorldPos - g_vCamPosition);
-	
-	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient));
+	float ao = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV).r;
+	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient * ao));
 	Out.vShade.rgb *= CalcAmbientOcclusion(vWorldPos.xyz, vNormal.xyz, g_MtrlAmbientTexture, In.vTexUV);
 	Out.vShade.a = 1.f;
 
