@@ -144,7 +144,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vLook = normalize(vWorldPos - g_vCamPosition);
 	float ao = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV).r;
 	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient * ao));
-	Out.vShade.rgb *= CalcAmbientOcclusion(vWorldPos.xyz, vNormal.xyz, g_MtrlAmbientTexture, In.vTexUV);
 	Out.vShade.a = 1.f;
 
 	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);

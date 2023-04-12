@@ -1562,6 +1562,9 @@
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Fire_Brazier.h" />
+    <ClInclude Include="..\public\E_P_Rain.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2509,6 +2512,9 @@
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Fire_Brazier.cpp" />
+    <ClCompile Include="..\private\E_P_Rain.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

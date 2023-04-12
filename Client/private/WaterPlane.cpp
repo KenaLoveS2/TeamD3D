@@ -81,16 +81,6 @@ void CWaterPlane::Tick(_float fTimeDelta)
 {
 	CGameObject::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
-
-	ImGui::Begin("WaterPlane");
-	if(ImGui::Button("Recompile"))
-		m_pShaderCom->ReCompile();
-	ImGui::InputInt("TexNum", &m_iTexNum);
-	if (m_iTexNum < 0)
-		m_iTexNum = 0;
-	if(m_iTexNum > 12)
-		m_iTexNum = 12;
-	ImGui::End();
 }
 
 void CWaterPlane::Late_Tick(_float fTimeDelta)
@@ -114,8 +104,10 @@ HRESULT CWaterPlane::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		FAILED_CHECK_RETURN(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture", m_iTexNum), E_FAIL);
-		FAILED_CHECK_RETURN(m_pRippleTextureCom->Bind_ShaderResource(m_pShaderCom, "g_RippleTexture"), E_FAIL);
+		FAILED_CHECK_RETURN(m_pTextureCom[NORMAL]->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture", m_iTexNum), E_FAIL);
+		FAILED_CHECK_RETURN(m_pTextureCom[NOISE]->Bind_ShaderResource(m_pShaderCom, "g_NoiseTexture"), E_FAIL);
+		FAILED_CHECK_RETURN(m_pTextureCom[MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_iMaskTexNum), E_FAIL);
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", CGameInstance::GetInstance()->Get_DepthTargetSRV()), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr), E_FAIL);
 	}
 
@@ -125,6 +117,9 @@ HRESULT CWaterPlane::Render()
 void CWaterPlane::Imgui_RenderProperty()
 {
 	CGameObject::Imgui_RenderProperty();
+
+	if(ImGui::Button("Recompile"))
+	m_pShaderCom->ReCompile();
 }
 
 void CWaterPlane::ImGui_ShaderValueProperty()
@@ -140,8 +135,11 @@ void CWaterPlane::ImGui_PhysXValueProperty()
 HRESULT CWaterPlane::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_WaterPlane", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_GameObject_WaterNormalTexture", L"Com_Texture", (CComponent**)&m_pTextureCom, nullptr, this), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_GameObject_WaterRippleTexture", L"Com_Texture2", (CComponent**)&m_pRippleTextureCom, nullptr, this), E_FAIL);
+
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_GameObject_WaterNormalTexture", L"Com_Texture", (CComponent**)&m_pTextureCom[NORMAL], nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_GameObject_WaterNoiseTexture", L"Com_Texture2", (CComponent**)&m_pTextureCom[NOISE], nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_GameObject_WaterMaskTexture", L"Com_Texture3", (CComponent**)&m_pTextureCom[MASK], nullptr, this), E_FAIL);
+	
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_Water", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 	return S_OK;
@@ -190,6 +188,6 @@ void CWaterPlane::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pRippleTextureCom);
+	for(_uint i = 0; i < (_uint)TYPE_END; ++i)
+		Safe_Release(m_pTextureCom[i]);
 }
