@@ -44,6 +44,7 @@ private:
 
 	_bool				m_bOnlyTest = false;
 	_int				m_iDeadZoneModelID = -1;
+	_float				m_fTimeDeltaTest = 0.f;
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
 

@@ -19,6 +19,7 @@ Texture2D<float4>      g_DetailNormalTexture;
 Texture2D<float4>      g_MaskTexture;
 Texture2D<float4>       g_RoughnessTexture;
 
+float                   g_PointTest;
 
 struct VS_IN
 {
@@ -143,18 +144,20 @@ VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
 {
     VS_OUT_INSTANCE_GEOMETRY      Out = (VS_OUT_INSTANCE_GEOMETRY)0;
 
-
+    matrix      matWV, matWVP;
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
     float4x4   Transform = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
 
     vector      vPosition = mul(float4(In.vPosition, 1.f), Transform);
     vector      vNormal = mul(float4(In.vNormal, 0.f), Transform);
     vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), Transform);
 
-    Out.vPosition = mul(vPosition.xyz, g_WorldMatrix);
-    Out.vNormal =  normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
+    Out.vPosition = mul(vPosition, matWVP);
+    Out.vNormal = normalize(mul(float4(vNormal.xyz, 0.f), g_WorldMatrix));
     Out.vTexUV = In.vTexUV;
-    Out.vProjPos = vector(Out.vPosition,1.f);
-    Out.vTangent =   normalize(mul(vTangent, g_WorldMatrix));
+    Out.vProjPos =vector(Out.vPosition,1.f);
+    Out.vTangent = normalize(mul(vTangent, g_WorldMatrix));
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 
     return Out;
@@ -181,10 +184,23 @@ struct GS_OUT
 };
 
 
-[maxvertexcount(24)]
+[maxvertexcount(6)]
 void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
 {
     GS_OUT Out = (GS_OUT)0;
+    float3 centerPos = In[0].vPosition; // Áß¾Ó À§Ä¡
+
+    float3 TestCode = float3(0.5f, 0.5f, 0.f);
+
+    Out.vPosition = vector((TestCode + centerPos) / 2.f, 1.f);
+    Out.vNormal = In[0].vNormal;
+    Out.vTexUV = In[0].vTexUV;
+    Out.vProjPos = In[0].vProjPos;
+    Out.vTangent = In[0].vTangent;
+    Out.vBinormal = In[0].vBinormal;
+
+    triStream.Append(Out);
+    triStream.RestartStrip();
 
 
 }
@@ -926,18 +942,18 @@ technique11 DefaultTechnique
     }//22
 
 
-    //pass GeoMeryTest
-    //{
-    //    SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
-    //    SetDepthStencilState(DS_Default, 0);
-    //    SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+    pass GeoMeryTest
+    {
+        SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+        SetDepthStencilState(DS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-    //    VertexShader = compile vs_5_0 VS_MAIN_INSTANCE_GEOMETRY();
-    //    GeometryShader = NULL;  // compile gs_5_0 GS_MAIN();
-    //    HullShader = NULL;
-    //    DomainShader = NULL;
-    //    PixelShader = compile ps_5_0 PS_MAIN_PointSampler();
-    //}//23
+        VertexShader = compile vs_5_0 VS_MAIN_INSTANCE_GEOMETRY();
+        GeometryShader =  compile gs_5_0 GS_MAIN();
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_PointSampler();
+    }//23
 
 
 
