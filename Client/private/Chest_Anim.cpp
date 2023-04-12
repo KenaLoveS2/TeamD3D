@@ -125,8 +125,6 @@ void CChest_Anim::Tick(_float fTimeDelta)
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
 #endif
-	m_eCurState = Check_State();
-	Update_State(fTimeDelta);
 
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
