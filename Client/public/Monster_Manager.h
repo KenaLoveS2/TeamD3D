@@ -3,7 +3,6 @@
 #include "Client_Defines.h"
 
 BEGIN(Client)
-
 class CMonster_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CMonster_Manager);
@@ -20,7 +19,7 @@ private:
 	~CMonster_Manager() = default;
 
 public:
-	inline _bool			Is_Battle();
+	_bool					Is_Battle();
 	_bool					Is_CurrentGroup(const wstring& wstrGroupName);
 
 public:
