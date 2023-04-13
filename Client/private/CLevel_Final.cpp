@@ -22,6 +22,7 @@
 #include "UI.h"
 #include "Level_Loading.h"
 #include "Kena.h"
+#include "BGM_Manager.h"
 
 CLevel_Final::CLevel_Final(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -81,17 +82,17 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 	}
 
-// 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-// 	{
-// 		MSG_BOX("Layer_Monster");
-// 		return E_FAIL;
-// 	}
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	{
+		MSG_BOX("Layer_Monster");
+		return E_FAIL;
+	}
 
-	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Layer_NPC");
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 	{
@@ -99,11 +100,11 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	{
 		MSG_BOX("Layer_Effect");
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas"))))
 	{
@@ -126,9 +127,8 @@ HRESULT CLevel_Final::Initialize()
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_FINAL)))
 		return E_FAIL;
 
-	// p_game_instance->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
+	CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_IDLE);
 
-	
 	return S_OK;
 }
 
