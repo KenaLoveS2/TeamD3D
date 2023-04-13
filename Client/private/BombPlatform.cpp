@@ -71,7 +71,7 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	}
 
 	m_vMovingQuat = XMQuaternionRotationNormal(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(CUtile::Get_RandomFloat(0.f, 359.f)));
-	m_fReturnTime = 5.f;
+	m_fReturnTime = 10.f;
 
 	_float3	vPos = m_vInitPos;
 	_float3	vPivotScale = _float3(3.2f, 1.45f, 3.51f);

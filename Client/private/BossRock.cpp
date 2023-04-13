@@ -50,21 +50,25 @@ HRESULT CBossRock::Late_Initialize(void * pArg)
 {	
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 
+	_float fRandScale = CUtile::Get_RandomFloat(0.1f, 0.5f);
+	m_pTransformCom->Set_Scaled(_float3(fRandScale, fRandScale, fRandScale));
+
 	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
 	PxBoxDesc.eType = BOX_DYNAMIC;
 	PxBoxDesc.pActortag = m_szCloneObjectTag;
 	PxBoxDesc.vPos = { 0.f, 0.f, 0.f };
-	PxBoxDesc.vSize = { 0.18f, 0.18f, 0.18f };
+	PxBoxDesc.vSize = { 0.2f * fRandScale, 0.2f * fRandScale, 0.2f * fRandScale };
 	PxBoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
-	PxBoxDesc.fMass = 10000.f;
-	PxBoxDesc.fLinearDamping = 0.7f;
-	PxBoxDesc.fAngularDamping = 5.f;
+	PxBoxDesc.fMass = 30000.f;
+	PxBoxDesc.fLinearDamping = 2.1f;
+	PxBoxDesc.fAngularDamping = 2.1f;
+	PxBoxDesc.fRestitution = 1.f;
 
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, true, COLLISON_DUMMY, true));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.f, 0.f), true);
 
 	m_pTransformCom->Set_Position(m_Desc.vPosition);
-
+	
 	return S_OK;
 }
 

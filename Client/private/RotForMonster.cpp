@@ -4,6 +4,7 @@
 #include "Monster.h"
 #include "E_RotTrail.h"
 #include "E_TeleportRot.h"
+#include "HealthFlower_Anim.h"
 
 CRotForMonster::CRotForMonster(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	: CRot_Base(pDevice, p_context)
@@ -23,8 +24,6 @@ HRESULT CRotForMonster::Initialize_Prototype()
 
 HRESULT CRotForMonster::Initialize(void* pArg)
 {
-	// ��ҿ� IDLE ���·� �� �ִٰ� �����Ǹ鼭 ���� ���δ� ����
-
 	ZeroMemory(&m_Desc, sizeof(DESC));
 	if(pArg != nullptr)
 	{
@@ -40,15 +39,14 @@ HRESULT CRotForMonster::Initialize(void* pArg)
 }
 
 void CRotForMonster::Tick(_float fTimeDelta)
-{
+{	
 	m_pTeleportRot->Tick(fTimeDelta);
 
 	__super::Tick(fTimeDelta);
 	
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
-	if (!m_bBind)
+	if (!m_bBind && !m_bFlowerBind)
 		return;
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
@@ -62,7 +60,7 @@ void CRotForMonster::Late_Tick(_float fTimeDelta)
 {
 	m_pTeleportRot->Late_Tick(fTimeDelta);
 
-	if (!m_bBind)
+	if (!m_bBind && !m_bFlowerBind)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
@@ -80,7 +78,7 @@ void CRotForMonster::Late_Tick(_float fTimeDelta)
 	}
 	/* Trail */
 
-	if (m_pRendererCom != nullptr)
+	if (m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -107,106 +105,10 @@ void CRotForMonster::ImGui_PhysXValueProperty()
 	CGameObject::ImGui_PhysXValueProperty();
 }
 
-void CRotForMonster::Bind(_bool bBind, CMonster * pGameObject)
+void CRotForMonster::Bind(_bool bBind, CMonster* pGameObject)
 {
 	m_bBind = bBind;
 	m_pTarget = pGameObject;
-}
-
-HRESULT CRotForMonster::SetUp_State()
-{
-	m_pFSM = CFSMComponentBuilder()
-		.InitState("IDLE")
-		.AddState("IDLE")
-		.Tick([this](_float fTimeDelta)
-	{
-		m_pModelCom->Set_AnimIndex(IDLE);
-	})	
-		.AddTransition("IDLE to READY_BIND", "READY_BIND")
-		.Predicator([this]()
-	{
-		return m_bBind;
-	})
-
-		.AddState("READY_BIND")
-		.OnStart([this]()
-	{
-		_float4 vPos = _float4(m_pTarget->Get_Position()) + m_Desc.vPivotPos;
-		vPos.w = 1.f;
-		m_pTransformCom->Set_Position(vPos);
-		m_pTransformCom->LookAt_NoUpDown(m_pTarget->Get_Position());
-		
-		m_iRandTeleportAnimIndex = rand() % 7;
-		TurnOn_TeleportEffect(vPos, m_iTeleportAnimIndexTable[m_iRandTeleportAnimIndex]);		
-	})
-		.AddTransition("READY_BIND to BIND_MONSTER", "BIND_MONSTER")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(m_iTeleportAnimIndexTable[m_iRandTeleportAnimIndex]);
-	})
-
-		.AddState("BIND_MONSTER")
-		.OnStart([this]()
-	{
-		m_pRotTrail->Set_Active(true);
-		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CROSS + m_iRandTeleportAnimIndex % 2], 0.5f);
-		m_fAttackSoundTime = CUtile::Get_RandomFloat(1.f, 2.5f);
-		m_bAttackSound = true;
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-		m_pModelCom->Set_AnimIndex(SQUISH_U);
-		if(m_pTarget != nullptr)
-		{
-			CBone* pBone = m_pTarget->Get_Model()->Get_BonePtr("BindJoint");
-			NULL_CHECK_RETURN(pBone, );
-
-			_matrix			SocketMatrix = 
-				pBone->Get_OffsetMatrix() * 
-				pBone->Get_CombindMatrix() * 
-				m_pTarget->Get_Model()->Get_PivotMatrix() *
-				m_pTarget->Get_TransformCom()->Get_WorldMatrix();
-
-			SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
-			SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
-			SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
-
-			_float4x4 pivotMatrix;
-			XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
-			_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
-			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f), true);
-
-			if (m_bAttackSound)
-			{
-				m_fAttackSoundTimeCheck += fTimeDelta;
-				if (m_fAttackSoundTimeCheck >= m_fAttackSoundTime)
-				{
-					m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_BOMB_SPAWN], 0.5f);
-					m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CROSS + rand() % 2], 0.5f);
-					m_fAttackSoundTimeCheck = 0.f;
-				}
-			}
-		}
-	})
-		.OnExit([this]()
-	{
-		m_bAttackSound = false;
-		m_pRotTrail->Set_Active(false);
-		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), IDLE);
-		m_pTransformCom->Set_Position(m_vInvisiblePos);
-	})
-		.AddTransition("BIND_MONSTER to IDLE", "IDLE")
-		.Predicator([this]()
-	{
-		return !m_bBind && m_pTeleportRot->Get_Active() == false;
-	})
-
-		.Build();
-
-	if (m_pFSM)
-		return S_OK;
-	else
-		return E_FAIL;
 }
 
 HRESULT CRotForMonster::Set_RotTrail()
@@ -265,4 +167,170 @@ void CRotForMonster::Free()
 	__super::Free();
 
 	Safe_Release(m_pRotTrail);
+}
+
+HRESULT CRotForMonster::SetUp_State()
+{
+	m_pFSM = CFSMComponentBuilder()
+		.InitState("IDLE")
+		.AddState("IDLE")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(IDLE);
+	})
+		.AddTransition("IDLE to READY_BIND", "READY_BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("IDLE to BIND_FLOWER", "BIND_FLOWER")
+		.Predicator([this]()
+	{
+		return m_bFlowerBind;
+	})
+
+		.AddState("READY_BIND")
+		.OnStart([this]()
+	{
+		_float4 vPos = _float4(m_pTarget->Get_Position()) + m_Desc.vPivotPos;
+		vPos.w = 1.f;
+		m_pTransformCom->Set_Position(vPos);
+		m_pTransformCom->LookAt_NoUpDown(m_pTarget->Get_Position());
+
+		m_iRandTeleportAnimIndex = rand() % 7;
+		TurnOn_TeleportEffect(vPos, m_iTeleportAnimIndexTable[m_iRandTeleportAnimIndex]);
+	})
+		.AddTransition("READY_BIND to BIND_MONSTER", "BIND_MONSTER")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(m_iTeleportAnimIndexTable[m_iRandTeleportAnimIndex]);
+	})
+
+		.AddState("BIND_MONSTER")
+		.OnStart([this]()
+	{
+		m_pRotTrail->Set_Active(true);
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CROSS + m_iRandTeleportAnimIndex % 2], 0.5f);
+		m_fAttackSoundTime = CUtile::Get_RandomFloat(1.f, 2.5f);
+		m_bAttackSound = true;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SQUISH_U);
+		if (m_pTarget != nullptr)
+		{
+			CBone* pBone = m_pTarget->Get_Model()->Get_BonePtr("BindJoint");
+			NULL_CHECK_RETURN(pBone, );
+
+			_matrix			SocketMatrix =
+				pBone->Get_OffsetMatrix() *
+				pBone->Get_CombindMatrix() *
+				m_pTarget->Get_Model()->Get_PivotMatrix() *
+				m_pTarget->Get_TransformCom()->Get_WorldMatrix();
+
+			SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+			SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+			SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+			_float4x4 pivotMatrix;
+			XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+			_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
+			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f), true);
+
+			if (m_bAttackSound)
+			{
+				m_fAttackSoundTimeCheck += fTimeDelta;
+				if (m_fAttackSoundTimeCheck >= m_fAttackSoundTime)
+				{
+					m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_BOMB_SPAWN], 0.5f);
+					m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CROSS + rand() % 2], 0.5f);
+					m_fAttackSoundTimeCheck = 0.f;
+				}
+			}
+		}
+	})
+		.OnExit([this]()
+	{
+		m_bAttackSound = false;
+		m_pRotTrail->Set_Active(false);
+		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), IDLE);
+		m_pTransformCom->Set_Position(m_vInvisiblePos);
+	})
+		.AddTransition("BIND_MONSTER to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return !m_bBind && m_pTeleportRot->Get_Active() == false;
+	})
+
+
+		.AddState("BIND_FLOWER")
+		.OnStart([this]()
+	{
+		_float4 vPos = _float4(m_pTargetFlower->Get_Position()) + (m_Desc.vPivotPos * 0.5f);
+		vPos.w = 1.f;
+		m_pTransformCom->Set_Position(vPos);
+		m_pTransformCom->LookAt_NoUpDown(m_pTargetFlower->Get_Position());
+				
+		TurnOn_TeleportEffect(vPos, SQUISH_U);
+		m_pRotTrail->Set_Active(true);
+
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_BOMB_SPAWN], 0.5f);
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_CROSS + rand() % 2], 0.5f);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SQUISH_U);
+		if (m_pTargetFlower != nullptr)
+		{
+			CBone* pBone = m_pTargetFlower->Get_Model()->Get_BonePtr("BindJoint");
+			NULL_CHECK_RETURN(pBone, );
+
+			_matrix			SocketMatrix =
+				pBone->Get_OffsetMatrix() *
+				pBone->Get_CombindMatrix() *
+				m_pTargetFlower->Get_Model()->Get_PivotMatrix() *
+				m_pTargetFlower->Get_TransformCom()->Get_WorldMatrix();
+
+			SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+			SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+			SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+			_float4x4 pivotMatrix;
+			XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+			_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
+			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f), true);
+		}
+	})
+		.OnExit([this]()
+	{
+		m_pRotTrail->Set_Active(false);
+		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), IDLE);
+		m_pTransformCom->Set_Position(m_vInvisiblePos);
+	})
+		.AddTransition("BIND_FLOWER to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return !m_bFlowerBind && m_pTeleportRot->Get_Active() == false;
+	})
+
+		.Build();
+
+	if (m_pFSM) return S_OK;
+	else return E_FAIL;
+}
+
+void CRotForMonster::Start_BindFlower(CHealthFlower_Anim* pFlower)
+{	
+	m_pTargetFlower = pFlower;
+
+	m_bFlowerBind = true;
+	m_pTransformCom->Set_Speed(3.f);
+}
+
+void CRotForMonster::End_BindFlower()
+{	
+	m_pTargetFlower = nullptr;
+
+	m_bFlowerBind = false;
+	m_pTransformCom->Set_Speed(5.f);
 }

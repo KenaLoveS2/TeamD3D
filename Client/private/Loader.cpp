@@ -229,6 +229,8 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
+#include "BowTarget_Trigger.h"
+#include "Respawn_Trigger.h"
 
 
 
@@ -1897,11 +1899,15 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 	/* Prototype_GameObject_HealthFlower */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_HealthFlower_Anim", CHealthFlower_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
-	
+
+	/* Prototype_GameObject_BowTarget_Trigger */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_BowTarget_Trigger", CBowTarget_Trigger::Create(m_pDevice, m_pContext)), E_FAIL);
+
+	/* Prototype_GameObject_Respawn_Trigger */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Respawn_Trigger", CRespawn_Trigger::Create(m_pDevice, m_pContext)), E_FAIL);
 	
 	/* Prototype_GameObject_Player_Camera */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Camera_Player", CCamera_Player::Create(m_pDevice, m_pContext)), E_FAIL);
-
 
 	return S_OK;
 }

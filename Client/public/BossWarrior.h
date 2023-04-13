@@ -250,6 +250,8 @@ public:
 	void Play_Elemental1Sound(_bool bIsInit, _float fTimeDelta);
 	void Play_Elemental2Sound(_bool bIsInit, _float fTimeDelta);
 	void Play_Elemental11Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Execute_UpRocksPool(_bool bIsInit, _float fTimeDelta);
 };
 
 END
