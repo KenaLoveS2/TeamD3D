@@ -39,7 +39,25 @@ HRESULT CFire_Brazier::Initialize(void* pArg)
 
 HRESULT CFire_Brazier::Late_Initialize(void* pArg)
 {
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
+	LIGHTDESC			LightDesc;
+	ZeroMemory(&LightDesc, sizeof LightDesc);
+	LightDesc.eType = LIGHTDESC::TYPE_POINT;
+	LightDesc.isEnable = true;
+	LightDesc.vPosition = m_pTransformCom->Get_Position();
+	LightDesc.fRange = 10.0f; 
+	LightDesc.vDiffuse = _float4(0.0f,0.2f,1.0f,1.0f);
+	LightDesc.vAmbient = _float4(0.0f, 0.2f, 1.0f, 1.0f);
+	LightDesc.vSpecular = _float4(0.0f, 0.2f, 1.0f, 1.0f);
+	m_szLightName = new char[MAX_PATH];
+	CUtile::WideCharToChar(m_szCloneObjectTag, m_szLightName);
+	LightDesc.szLightName = m_szLightName;
+
+	if (FAILED(CGameInstance::GetInstance()->Add_Light(m_pDevice, m_pContext, LightDesc)))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -340,4 +358,5 @@ void CFire_Brazier::Free()
 
 	Safe_Release(m_pFireBrazierEffect);
 	Safe_Release(m_pCommonBox);
+	Safe_Delete_Array(m_szLightName);
 }

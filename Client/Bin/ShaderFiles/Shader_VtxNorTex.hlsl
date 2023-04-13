@@ -2,8 +2,8 @@
 
 /**********Constant Buffer***********/
 vector			g_vBrushPos;
-float			g_fBrushRange = 5.f;
-float			g_fFar = 500.f;
+float				g_fBrushRange = 5.f;
+float				g_fFar = 500.f;
 /*************************************/
 /* 재질정보 */
 
@@ -15,7 +15,6 @@ Texture2D<float4>		g_DiffuseTexture_2;
 /* 지형 셰이딩 */
 Texture2D<float4>		g_BrushTexture;
 Texture2D<float4>		g_FilterTexture[3];
-
 Texture2D<float4>		g_NormalTexture;
 
 struct VS_IN
@@ -80,18 +79,16 @@ struct PS_OUT
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
-	
-	vector		vSourDiffuse = g_BaseTexture.Sample(LinearSampler, In.vTexUV * 100.f);
-	vector		vDestDiffuse0 = g_DiffuseTexture_0.Sample(LinearSampler, In.vTexUV * 100.f);
 
 	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV * 50.f);
-
 	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	vector vDestDiffuse1 = g_DiffuseTexture_1.Sample(LinearSampler, In.vTexUV * 100.f);
-	vector vDestDiffuse2 = g_DiffuseTexture_2.Sample(LinearSampler, In.vTexUV * 100.f);
+	vector		vSourDiffuse = g_BaseTexture.Sample(LinearSampler, In.vTexUV * 100.f);
+	vector		vDestDiffuse0 = g_DiffuseTexture_0.Sample(LinearSampler, In.vTexUV * 100.f);
+	vector		vDestDiffuse1 = g_DiffuseTexture_1.Sample(LinearSampler, In.vTexUV * 100.f);
+	vector		vDestDiffuse2 = g_DiffuseTexture_2.Sample(LinearSampler, In.vTexUV * 100.f);
 
 	vector		vFilter = g_FilterTexture[0].Sample(LinearSampler, In.vTexUV);			// 원본
 	vector		vFilter1 = g_FilterTexture[1].Sample(LinearSampler, In.vTexUV);
@@ -104,59 +101,23 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	vector vBrush = (vector)0.f;
 	/* 브러쉬의 영역 내부인지 확인 */
-	if (g_fBrushRange >= abs(In.vWorldPos.x - g_vBrushPos.x)
-		&& g_fBrushRange >= abs(In.vWorldPos.z - g_vBrushPos.z))
+	if (g_fBrushRange >= abs(In.vWorldPos.x - g_vBrushPos.x) && g_fBrushRange >= abs(In.vWorldPos.z - g_vBrushPos.z))
 	{
 		/* 브러쉬 영역 내부에서의 정점의 상대위치 / 길이 => 정규화 LT(0,0)~RB(1,1) UV좌표 */
 		float2	vUV;
-
 		float	fFullRange = g_fBrushRange * 2.f;
 		vUV.x = (In.vWorldPos.x - (g_vBrushPos.x - g_fBrushRange)) / fFullRange;
 		vUV.y = ((g_vBrushPos.z + g_fBrushRange) - In.vWorldPos.z) / fFullRange;
-
 		vBrush = g_BrushTexture.Sample(LinearSampler, vUV);
 	}
 	
-	vMtrlDiffuse = (vSourDiffuse * vFilter.r * vFilter1.r* vFilter2.r)
-		+ vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse1 * (1.f - vFilter1.r) + vDestDiffuse2 * (1.f - vFilter2.r) + vBrush;
+	vMtrlDiffuse = saturate((vSourDiffuse * vFilter.r * vFilter1.r * vFilter2.r) + vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse1 * (1.f - vFilter1.r) + vDestDiffuse2 * (1.f - vFilter2.r)) + vBrush;
+	vMtrlDiffuse.a = 1.f;
 
-	//vMtrlDiffuse = (vSourDiffuse * vFilter.r * vFilter1.r* vFilter2.r)		//원본
-	//	+ vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse1 * (1.f - vFilter1.r) ;
-	//if (vMtrlDiffuse.a > 1.f)
-	//	vMtrlDiffusea =0.5f;
-
-	if (vSour.a > 1.f)
-	{
-		vMtrlDiffuse = vDestDiffuse0 * (1.f - vFilter.r) +
-			vDestDiffuse1 * (1.f - vFilter2.r);
-
-		if (vMtrlDiffuse.a <= 0.9f)
-		{
-			vMtrlDiffuse = vDestDiffuse0;
-		}
-
-
-	}
-
-	if (vDest.a > 1.f)
-	{
-		vMtrlDiffuse.a = 0.0f;
-	}
-
-	if (vTemp.a > 1.f)
-	{
-		vMtrlDiffuse = vDestDiffuse0 * (1.f - vFilter.r) +
-			vDestDiffuse2 * (1.f - vFilter1.r);
-
-		if (vMtrlDiffuse.a <= 0.9f)
-		{
-			vMtrlDiffuse = vDestDiffuse0;
-		}
-	}
 	Out.vDiffuse = vMtrlDiffuse;
 	Out.vDiffuse.a = 1.f;
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.8f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.2f, 0.f);
 	Out.vAmbient = (vector)1.f;
 
 	return Out;

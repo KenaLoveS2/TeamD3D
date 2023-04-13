@@ -47,7 +47,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_TerrainEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
@@ -83,35 +83,35 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//{
-	//	MSG_BOX("Layer_Monster");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	{
+		MSG_BOX("Layer_Monster");
+		return E_FAIL;
+	}
 
-	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
-	//{
-	//	MSG_BOX("Layer_NPC");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	{
+		MSG_BOX("Layer_NPC");
+		return E_FAIL;
+	}
 
-	//if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
-	//{
-	//	MSG_BOX("Layer_Rot");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
+	{
+		MSG_BOX("Layer_Rot");
+		return E_FAIL;
+	}
 
-	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-	//{
-	//	MSG_BOX("Layer_Effect");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	{
+		MSG_BOX("Layer_Effect");
+		return E_FAIL;
+	}
 
-	//if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
-	//{
-	//	MSG_BOX("Layer_Canvas");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
+	{
+		MSG_BOX("Layer_Canvas");
+		return E_FAIL;
+	}
 	
 	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
 	{
@@ -122,7 +122,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
 
-	//CGameInstance::GetInstance()->Set_MasterVolume(0.f);
+	CGameInstance::GetInstance()->Set_MasterVolume(0.f);
 
 	RELEASE_INSTANCE(CGameInstance);
 

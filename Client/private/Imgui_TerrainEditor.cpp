@@ -114,7 +114,7 @@ HRESULT CImgui_TerrainEditor::Initialize(void * pArg)
 	Ready_FilterBuffer();
 
 	m_pHeightTexture = static_cast<CTexture*>(m_pGameInstance->
-		Clone_Component(LEVEL_MAPTOOL, L"Prototype_Component_Terrain_HeightMaps"));
+		Clone_Component(g_LEVEL, L"Prototype_Component_Terrain_HeightMaps"));
 
 	assert(m_pHeightTexture != nullptr  &&" CImgui_TerrainEditor::Initialize");
 
@@ -468,7 +468,10 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 	_float3 iIndex = _float3(1.f, 1.f, 1.f);
 
 	m_CurFilterIndexSize =m_OldFilterIndexSize = (_int)m_FilterIndexSet[m_iFilterCaseNum].size();
- 
+
+	_float4 vPos;
+	m_pSelected_Buffer->Picking_Terrain(g_hWnd, m_pSelected_Tranform, &vPos);
+	m_pSelectedTerrain->Set_BrushPosition(vPos);
 
 	if (ImGui::IsMouseDragging(0))
 	{
@@ -494,7 +497,6 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
-
 	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// �������� �������� �� �������
 	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU�� �����Ҷ� ������
@@ -580,10 +582,7 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 		else if (m_iFilterCaseNum == 2)
 			wstr += TEXT("Terrain5_Filter_2.dds");
 	}
-
-
 	
-
 	 DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, wstr.c_str());
 	Safe_Release(pTexture2D);
 
@@ -593,7 +592,6 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 	m_pGameInstance->Add_Prototype(g_LEVEL, ComponentProtoTag.c_str(),
 	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3));
 		CTexture::Create(m_pDevice, m_pContext, ComponentPathTag.c_str(), 3));
-
 
 	m_pSelectedTerrain->Imgui_Tool_Add_Component(g_LEVEL, ComponentProtoTag.c_str(), TEXT("Com_Filter"));
 }
@@ -606,6 +604,10 @@ void CImgui_TerrainEditor::UnDraw_FilterTexture()
 	_float3 iIndex = _float3(1.f, 1.f, 1.f);
 
 	m_CurFilterIndexSize = m_OldFilterIndexSize = (_int)m_FilterIndexSet[m_iFilterCaseNum].size();
+
+	_float4 vPos;
+	m_pSelected_Buffer->Picking_Terrain(g_hWnd, m_pSelected_Tranform, &vPos);
+	m_pSelectedTerrain->Set_BrushPosition(vPos);
 
 	if (ImGui::IsMouseDragging(0))
 	{

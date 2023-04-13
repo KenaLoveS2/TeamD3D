@@ -179,22 +179,22 @@ VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
    float3 vDir;
    if(g_iSign == 1)
    {
-       vDir = normalize(In.vPosition.xyz - g_CenterPos);
+       vDir = normalize(In.vPosition.xyz - g_CenterPos.xyz);
    }
    else
    {
-       vDir = normalize(g_CenterPos - In.vPosition.xyz);
+       vDir = normalize(g_CenterPos.xyz - In.vPosition.xyz);
    }
    // float3 vDir = normalize(g_CenterPos -In.vPosition.xyz);
    float distance = length(In.vPosition.xyz - g_CenterPos.xyz);
-	float3 CenterPos = mul(g_CenterPos.xyz, Transform);
+	float3 CenterPos = mul(g_CenterPos.xyz, (float3x3)Transform);
     float3 vPosition = In.vPosition.xyz + (vDir * moveDistance );
 
 
    // float3 vPosition = In.vPosition.xyz + (  0.5f *  moveDistance);   //
    
 
-    vPosition = mul(float4(vPosition.xyz, 1.f), Transform);
+    vPosition = mul(vPosition.xyz, (float3x3)Transform);
    
     //vRealPosition = mul(vRealPosition, g_WorldMatrix);
 	vPosition.y = vRealPosition.y;

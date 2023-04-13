@@ -2983,7 +2983,7 @@ void CKena::LiftRotRockProc()
 	{
 		if (pCurTerrain && m_bRotRockMoveFlag == false)
 		{
-			pCurTerrain->Set_BrushPosition(_float3(-1000.f, 0.f, 0.f));
+			//pCurTerrain->Set_BrushPosition(_float3(-1000.f, 0.f, 0.f));
 		}	
 	}
 }
