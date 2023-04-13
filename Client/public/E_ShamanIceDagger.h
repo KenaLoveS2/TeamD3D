@@ -62,8 +62,8 @@ private:
 	CBone*		 m_pCenterBone = nullptr;
 	CKena*		 m_pKena = nullptr;
 
-	_vector		 m_pKenaPosition;
-	_matrix		 m_pUpdateMatrix = XMMatrixIdentity();
+	_float4		 m_pKenaPosition;
+	
 	_float		 m_fAngle = 0.0f;
 	_float		 m_fRange = 0.8f;
 	_float		 m_fDurateionTime = 0.0f;
@@ -76,11 +76,14 @@ private:
 	_bool		 m_bChase = false;
 	_bool		 m_bColl = false;
 
+	_tchar m_szCopySoundKey_Chase[64] = { 0, };
+	_tchar m_szCopySoundKey_Impact[64] = { 0, };
+	_bool m_bCollSound = false;
+
 public:
 	static  CE_ShamanIceDagger* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath = nullptr);
 	virtual CGameObject*	  Clone(void* pArg = nullptr) override;
 	virtual void			  Free() override;
-
 };
 
 END

@@ -348,6 +348,8 @@ public:
 	void						Buy_RotHat(_uint iHatIndex);
 	_bool					IsBuyPossible_RotHat();
 	void						Set_HatCartPtr(class CHatCart* pHatCart) { m_pHatCart = pHatCart; }
+
+	CRotForMonster** Get_RotForMonstrPtr() { return m_pRotForMonster; }
 };
 
 END
