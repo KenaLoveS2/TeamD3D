@@ -165,7 +165,7 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 	
 	m_vecEffects[EFFECT_BOWTRAIL1]->Activate(this, "Bow_TopJnt9");
 	m_vecEffects[EFFECT_BOWTRAIL2]->Activate(this, "Bow_BotJoint9");
-	m_vecEffects[EFFECT_AURA_TEXTURE]->Activate(this);
+	m_vecEffects[EFFECT_AURA_PARTICLE]->Activate(this, "char_rt_clavicle_jnt");
 
 
 	return S_OK;
@@ -173,36 +173,37 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 
 void CBossHunter::Tick(_float fTimeDelta)
 {	
-	//m_bDissolve = false;
-	//m_pModelCom->Play_Animation(fTimeDelta);
-	//Update_Collider(fTimeDelta);
-	//m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
-	////if (m_pFSM) m_pFSM->Tick(fTimeDelta);
-	//if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
-	//if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
+	m_bDissolve = false;
+	m_pModelCom->Play_Animation(fTimeDelta);
+	Update_Collider(fTimeDelta);
+	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
+	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
+	if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
 
-	// /* For. String */
-	//m_fUVSpeeds[0] += 0.245f * fTimeDelta;
-	//m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
-	//m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
-	//if (m_fStringDissolve > 0.5)
-	//{
-	//	m_fStringDissolve = 0.5f;
-	//	m_fStringDissolveSpeed *= -1;
-	//	m_fStringDissolveSpeed = -0.9f;
-	//}
-	//else if (m_fStringDissolve < 0.f)
-	//{
-	//	m_fStringDissolve = 0.f;
-	//	m_fStringDissolveSpeed *= -1;
-	//	m_fStringDissolveSpeed = 0.9f;
-	//}
-	///* ~ For. String */
-	//for (auto& pArrow : m_pArrows)
-	//	pArrow->Tick(fTimeDelta);
-	//for (auto& pEffect : m_vecEffects)
-	//	pEffect->Tick(fTimeDelta);
-	//return;
+	 /* For. String */
+	m_fUVSpeeds[0] += 0.245f * fTimeDelta;
+	m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
+	m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
+	if (m_fStringDissolve > 0.5)
+	{
+		m_fStringDissolve = 0.5f;
+		m_fStringDissolveSpeed *= -1;
+		m_fStringDissolveSpeed = -0.9f;
+	}
+	else if (m_fStringDissolve < 0.f)
+	{
+		m_fStringDissolve = 0.f;
+		m_fStringDissolveSpeed *= -1;
+		m_fStringDissolveSpeed = 0.9f;
+	}
+	/* ~ For. String */
+	for (auto& pArrow : m_pArrows)
+		pArrow->Tick(fTimeDelta);
+	for (auto& pEffect : m_vecEffects)
+		pEffect->Tick(fTimeDelta);
+	return;
+
 
 	if (m_bDeath) return;
 
@@ -1954,7 +1955,7 @@ void CBossHunter::MagicCircleEffect_On(_bool bIsInit, _float fTimeDelta)
 	_float4		vCenterPos = m_pTransformCom->Get_Position();
 	vPos.x = vCenterPos.x;
 	vPos.z = vCenterPos.z;
-	vPos.y += 0.1f;
+	vPos.y += 0.2f;
 
 	m_vecEffects[EFFECT_MAGIC_MESH]->Activate(vPos);
 }
@@ -1968,7 +1969,7 @@ void CBossHunter::AuraEffect_On(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_vecEffects[EFFECT_AURA_TEXTURE]->Activate_Slowly(this);
+	m_vecEffects[EFFECT_AURA_PARTICLE]->Activate(this, "char_rt_clavicle_jnt");
 }
 
 void CBossHunter::AuraEffect_Off(_bool bIsInit, _float fTimeDelta)
@@ -1980,7 +1981,7 @@ void CBossHunter::AuraEffect_Off(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_vecEffects[EFFECT_AURA_TEXTURE]->DeActivate_Slowly();
+	m_vecEffects[EFFECT_AURA_PARTICLE]->DeActivate_Slowly();
 }
 
 void CBossHunter::RoarEffect_On(_bool bIsInit, _float fTimeDelta)
@@ -2033,23 +2034,20 @@ void CBossHunter::DeathEffect_On(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	_float4 vPos;
-	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_lf_ball_jnt");
-	if (pStaffBonePtr != nullptr)
-	{
-		_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
-		vPos = matWorldSocket.r[3];
-	}
-	else
-		vPos = m_pTransformCom->Get_Position();
 
-	_float4		vCenterPos = m_pTransformCom->Get_Position();
-	vPos.x = vCenterPos.x;
-	vPos.z = vCenterPos.z;
+	//_float4 vPos;
+	//CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_rt_clavicle_jnt");
+	//if (pStaffBonePtr != nullptr)
+	//{
+	//	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	//	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+	//	vPos = matWorldSocket.r[3];
+	//}
+	//else
+	//	vPos = m_pTransformCom->Get_Position();
 
-	m_vecEffects[EFFECT_DEATH_PARTICLE1]->Activate(vPos);
-	m_vecEffects[EFFECT_DEATH_PARTICLE2]->Activate(vPos);
+	m_vecEffects[EFFECT_DEATH_PARTICLE1]->Activate(this, "char_rt_clavicle_jnt");
+	m_vecEffects[EFFECT_DEATH_PARTICLE2]->Activate(this, "char_rt_clavicle_jnt");
 }
 
 

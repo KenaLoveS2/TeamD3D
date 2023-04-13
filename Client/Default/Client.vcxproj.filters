@@ -604,6 +604,9 @@
     <Filter Include="02.GameObjects\Monster\Manager">
       <UniqueIdentifier>{39b7d1ad-56a8-480e-95c4-dc24e0d981e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object\WorldTrigger">
+      <UniqueIdentifier>{08644843-7444-47a4-941c-be47c23afbe3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1613,6 +1616,9 @@
     <ClInclude Include="..\public\E_P_EnvironmentDust.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\WorldTrigger.h">
+      <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2601,6 +2607,9 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_EnvironmentDust.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WorldTrigger.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

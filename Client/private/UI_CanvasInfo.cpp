@@ -83,7 +83,10 @@ void CUI_CanvasInfo::Tick(_float fTimeDelta)
 	{
 		CGameInstance::GetInstance()->Get_Back();
 		m_pRendererCom->Set_CaptureMode(false);
-		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+		//CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+		CUI_Canvas* pCanvas = CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO);
+		if (pCanvas != nullptr)
+			pCanvas->Set_Active(true);
 		m_bActive = false;
 		m_bReturn = false;
 	}
@@ -191,7 +194,9 @@ void CUI_CanvasInfo::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fV
 			m_bActive = true;
 			CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
 			m_pRendererCom->Set_CaptureMode(true);
-			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(false);
+			CUI_Canvas* pCanvas = CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO);
+			if(pCanvas != nullptr)
+				pCanvas->Set_Active(false);
 
 			m_iTextureIdx = INFO_FIGHTIN;
 			static_cast<CUI_NodeVideo*>(m_vecNode[UI_VIDEO])->Play_Video(L"RotActionSelector", true, 0.05f /* speed */);

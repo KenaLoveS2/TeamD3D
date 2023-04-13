@@ -83,12 +83,17 @@ HRESULT CVIBuffer_Point_Instancing_S2::Initialize(void* pArg, CGameObject* pOwne
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 		m_pVariables[i] = { 0.0f, 0.0f, 0.0f };
 
-	//if (POINTINFO::TYPE_SPREADREPEAT == m_tInfo.eType)
-	//{
+	if (POINTINFO::TYPE_SPREADREPEAT == m_tInfo.eType)
+	{
 		/* x: StartTime, y: TimeAcc, z: NewTimeAcc */
 		for (_uint i = 0; i < m_iNumInstance; ++i)
 			m_pVariables[i] = { CUtile::Get_RandomFloat(0.0f, m_tInfo.fTerm),0.0f, 0.0f };
-	//}
+	}
+	else if (POINTINFO::TYPE_HAZE == m_tInfo.eType)
+	{
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+			m_pVariables[i] = { CUtile::Get_RandomFloat(0.0f, 1.f),0.0f, 0.0f };
+	}
 
 
 #pragma region VERTEX_BUFFER
@@ -309,10 +314,12 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Haze(_float TimeDelta)
 				((VTXMATRIX*)SubResource.pData)[i].vPosition.w = (1 - m_pVariables[i].z / m_tInfo.fTerm);
 
 			}
+
+			if (isAllStop == true)
+				m_bFinished = true;
 		}
 
-		if (isAllStop == true)
-			m_bFinished = true;
+
 
 		m_pContext->Unmap(m_pInstanceBuffer, 0);
 	}
@@ -610,4 +617,6 @@ void CVIBuffer_Point_Instancing_S2::Free()
 
 	if (true == m_isCloned)
 		Safe_Delete_Arrays();
+
+	m_vecInstances.clear();
 }

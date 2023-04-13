@@ -738,6 +738,7 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "OnlyAlphaWithColorTexture");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "HDR");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "SwapMask");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "ForInfoWindow");
 
 
 	

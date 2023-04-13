@@ -31,6 +31,7 @@ public:
 	virtual HRESULT			Save_Data()						override;
 	virtual HRESULT			Load_Data(wstring fileName)		override;
 
+
 protected:
 	BBDESC		m_tBBDesc;
 
