@@ -21,6 +21,7 @@
 #include "UI_ClientManager.h"
 #include "UI.h"
 #include "Level_Loading.h"
+#include "Kena.h"
 
 CLevel_Final::CLevel_Final(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -394,7 +395,7 @@ HRESULT CLevel_Final::Ready_Layer_Player(const _tchar* pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", RUNTIME_STATUS_FILEPATH, &pGameObject)))
 		return E_FAIL;
 
 	CGameInstance::GetInstance()->Set_PlayerPtr(pGameObject);

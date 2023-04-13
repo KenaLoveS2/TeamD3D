@@ -25,6 +25,8 @@ private:
 
 public:
 	void							TurnOn_Launch() { m_bLaunch = true; }
+	const _bool&					Is_Launched() const { return m_bLaunch; }
+	const _bool&					Is_Hit() const { return m_bArrowHit; }
 	const _bool&					Is_Dead() const { return m_bDead; }
 
 public:

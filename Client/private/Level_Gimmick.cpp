@@ -22,6 +22,9 @@
 #include "UI.h"
 #include "Level_Loading.h"
 #include "ControlRoom.h"
+#include "Kena.h"
+#include "BGM_Manager.h"
+#include "BowTarget_Manager.h"
 
 CLevel_Gimmick::CLevel_Gimmick(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CLevel(pDevice, pContext)
@@ -109,6 +112,7 @@ HRESULT CLevel_Gimmick::Initialize()
 		return E_FAIL;
 
 	// p_game_instance->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
+	CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_PUZZLE);
 
 	return S_OK;
 }
@@ -135,9 +139,16 @@ void CLevel_Gimmick::Late_Tick(_float fTimeDelta)
 		pGameInstance->Clear();
 		pGameInstance->Scene_EnviMgr_Change();
 
+		CBowTarget_Manager::GetInstance()->Clear_Groups();
+
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
 			return;
 		
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena")));
+		if (pKena != nullptr)
+		{
+			FAILED_CHECK_RETURN(pKena->Change_Level(LEVEL_FINAL), );
+		}
 	}
 }
 
@@ -417,7 +428,7 @@ HRESULT CLevel_Gimmick::Ready_Layer_Player(const _tchar* pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", RUNTIME_STATUS_FILEPATH, &pGameObject)))
 		return E_FAIL;
 
 	CGameInstance::GetInstance()->Set_PlayerPtr(pGameObject);
@@ -470,7 +481,7 @@ HRESULT CLevel_Gimmick::Ready_Layer_UI(const _tchar* pLayerTag)
 	vector<wstring>* pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
 	vector<string>* pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
 
-	for (_uint i = 0; i < CUI_ClientManager::CANVAS_END; ++i)
+	for (_uint i = 0; i < (_uint)CUI_ClientManager::CANVAS_END; ++i)
 	{
 		CUI::tagUIDesc tDesc;
 		tDesc.fileName = (*pCanvasCloneTags)[i].c_str();

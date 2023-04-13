@@ -8,7 +8,7 @@
 #define KENA_LINEAR_DAMING		0.7f
 #define KENA_ANGULAR_DAMING		10.f
 #define KENA_MASS				100000.f * 1.1f
-
+#define RUNTIME_STATUS_FILEPATH	L"../Bin/Data/Status/Kena_Runtime_Status.json"
 
 BEGIN(Engine)
 class CRenderer;
@@ -100,6 +100,7 @@ public:
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 public:
+	HRESULT						Change_Level(LEVEL eNextLevel);
 	void						Respawn();
 	void						Respawn(_fvector vSpawnPos);
 	void						Smooth_Targeting(class CMonster* pMonster);

@@ -302,6 +302,9 @@ HRESULT CKena::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
+	if (pArg != nullptr)
+		m_pKenaStatus->Load_RunTime((const _tchar*)pArg);
+
 	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Find_Camera(L"PLAYER_CAM"));
 	NULL_CHECK_RETURN(m_pCamera, E_FAIL);
 	m_pCamera->Set_Player(this, m_pTransformCom);
@@ -1206,6 +1209,14 @@ void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	vPos = vPos + vDisplacement;
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
+}
+
+HRESULT CKena::Change_Level(LEVEL eNextLevel)
+{
+	if (eNextLevel == LEVEL_GIMMICK || eNextLevel == LEVEL_FINAL)
+		return m_pKenaStatus->Save_RunTime(RUNTIME_STATUS_FILEPATH);
+
+	return E_FAIL;
 }
 
 void CKena::Respawn()
@@ -2927,7 +2938,7 @@ _int CKena::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex
 		}
 	}
 
-	if (iColliderIndex == (_int)COL_WATER && g_LEVEL == LEVEL_GIMMICK)
+	if (iColliderIndex == (_int)COL_WATER && g_LEVEL == (_int)LEVEL_GIMMICK)
 	{
 		m_bWater = m_bDeath = m_pKenaStatus->UnderAttack(m_pKenaStatus->Get_MaxHP());
 	}

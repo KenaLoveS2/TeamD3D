@@ -6670,7 +6670,34 @@ void CKena_State::Start_Level_Up(_float fTimeDelta)
 	m_pKena->m_bLevelUpRim = true;
 	m_pKena->m_fLevelUpRimIntensity = 1.f;
 
+	/* UI Rot Get */
+	CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
+	CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
+	CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
+
+	_float fMin = 0.0f;
+
+	_int	iRotLevel = m_pStatus->Get_RotLevel();
+	if (iRotLevel == 2)
+		fMin = 2.0f;
+	else if (iRotLevel == 3)
+		fMin = 5.0f;
+	else if (iRotLevel == 4)
+		fMin = 8.0f;
+
+	_float fRotMax = (_float)m_pStatus->Get_RotMax();
+	_float fRotNow = (_float)m_pStatus->Get_RotCount();
+	_float fGuage = (fRotNow - fMin) / (fRotMax - fMin);
+
+	m_pStatus->m_StatusDelegator.broadcast(eNow, fRotNow);
+	m_pStatus->m_StatusDelegator.broadcast(eMax, fRotMax);
+	m_pStatus->m_StatusDelegator.broadcast(eGet, fGuage);
+	/* ~UI Rot Get */
+
 	/* NEED : UI PRINT LEVELUP */
+	CUI_ClientManager::UI_PRESENT eRotLvUp = CUI_ClientManager::TOP_ROT_LVUP;
+	_float fLevel = (_float)m_pStatus->Get_RotLevel();
+	m_pStatus->m_StatusDelegator.broadcast(eRotLvUp, fLevel);
 }
 
 void CKena_State::Start_Mask_On(_float fTimeDelta)

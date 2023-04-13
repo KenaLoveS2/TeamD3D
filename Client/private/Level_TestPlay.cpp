@@ -26,6 +26,7 @@
 #include "Kena.h"
 #include "Monster_Manager.h"
 #include "BGM_Manager.h"
+#include "BowTarget_Manager.h"
 
 CLevel_TestPlay::CLevel_TestPlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -141,10 +142,11 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	CGameObject* p_game_object = nullptr;
+	CKena* pKena = nullptr;
 	p_game_object = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-	if (p_game_object)
+	if (pKena = dynamic_cast<CKena*>(p_game_object))
 	{
-		if (dynamic_cast<CKena*>(p_game_object)->Get_SceneChange())
+		if (pKena->Get_SceneChange())
 		{
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
@@ -158,10 +160,12 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 			pGameInstance->Scene_EnviMgr_Change();
 
 			CMonster_Manager::GetInstance()->Clear_Groups();
+			CBowTarget_Manager::GetInstance()->Clear_Groups();
 
 			if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_GIMMICK)))))
 				return;
 
+			FAILED_CHECK_RETURN(pKena->Change_Level(LEVEL_GIMMICK), );
 
 			// 잘 작동 되지만 끝나고 모션블러를 하는듯
 		}
@@ -181,9 +185,12 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 		pGameInstance->Scene_EnviMgr_Change();
 
 		CMonster_Manager::GetInstance()->Clear_Groups();
+		CBowTarget_Manager::GetInstance()->Clear_Groups();
 
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
 			return;
+
+		FAILED_CHECK_RETURN(pKena->Change_Level(LEVEL_GIMMICK), );
 	}
 }
 
