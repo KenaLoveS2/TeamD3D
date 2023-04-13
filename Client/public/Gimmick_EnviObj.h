@@ -18,11 +18,7 @@ private:
 	virtual ~CGimmick_EnviObj() = default;
 
 public:
-	void				Set_Gimmick_Active(_int iRoomIndex,_bool bGimmick_Active) { 
-		if(m_EnviromentDesc.iRoomIndex == iRoomIndex)
-			m_bGimmick_Active = bGimmick_Active;
-		}
-
+	void				Set_Gimmick_Active(_int iRoomIndex, _bool bGimmick_Active);
 public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
@@ -35,10 +31,10 @@ public:
 
 public:
 	_bool				Gimmik_Start(_float fTimeDelta);
-
+	void				SetUp_GimmicKEffect_Pos();
 private:
 	_bool				Gimmick_Go_up(_float fTimeDelta);
-
+	HRESULT				Ready_Effect();
 private:
 	CShader*						m_pShaderCom = nullptr;
 	CRenderer*						m_pRendererCom = nullptr;
@@ -46,6 +42,9 @@ private:
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
 	class CControlRoom*					m_pControlRoom = nullptr;
+
+	class CE_P_EnvironmentDust*		m_pGimmickObjEffect = nullptr;
+
 private:
 	_float4							m_vOriginPos;
 	_bool							m_bGimmick_Active = false;

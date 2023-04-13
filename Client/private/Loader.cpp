@@ -549,6 +549,12 @@ HRESULT CLoader::Loading_ForMapTool()
 #ifdef FOR_MAPTOOL   
 
 #else
+	if(bFlowerCheck == true)
+	{
+		if (FAILED(Loading_ForHW(LEVEL_MAPTOOL)))
+			return E_FAIL;
+	}
+
 #pragma region Test_Gimmick_OBJ
 
 #pragma endregion

@@ -51,6 +51,10 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
 	NULL_CHECK_RETURN(m_pCamera, E_FAIL);*/
 
+	if (FAILED(SetUp_DiffuseTexture()))
+		return E_FAIL;
+
+
 	if (!lstrcmp(m_szCloneObjectTag, L"3_Portal0"))
 	{
 		m_pLinkedPortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"3_Portal1"));
@@ -68,6 +72,7 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 		m_pLinkedPortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"3_BossDeadPortal_1"));
 		NULL_CHECK_RETURN(m_pLinkedPortal, E_FAIL);
 		m_bRendaerPortal_Gimmick = false;
+		return S_OK;
 	}
 
 	else if (!lstrcmp(m_szCloneObjectTag, L"3_BossDeadPortal_1"))
@@ -75,12 +80,10 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 		m_pLinkedPortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"3_BossDeadPortal_0"));
 		NULL_CHECK_RETURN(m_pLinkedPortal, E_FAIL);
 		m_bRendaerPortal_Gimmick = false;
+		return S_OK;
 	}
 
-
 	Late_init_For_GimmickLevel();
-		
-	
 
 	_float3 vPos;
 	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
@@ -110,7 +113,7 @@ HRESULT CPortalPlane::Late_Initialize(void* pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PORTAL));
 
 
-	SetUp_DiffuseTexture();
+	
 
 	return S_OK;
 }
@@ -217,6 +220,36 @@ HRESULT CPortalPlane::Late_init_For_GimmickLevel()
 	return S_OK;
 }
 
+void CPortalPlane::HunterBoss_DeadPortalColliderOn()
+{
+	_float3 vPos;
+	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+	_float3 vSize = _float3(6.f, 6.f, 0.5f);
+
+	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	BoxDesc.pActortag = m_szCloneObjectTag;
+	BoxDesc.eType = BOX_STATIC;
+	BoxDesc.vPos = vPos;
+	BoxDesc.vSize = vSize;
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = false;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDensity = 0.2f;
+	BoxDesc.fMass = 150.f;
+	BoxDesc.fLinearDamping = 10.f;
+	BoxDesc.fAngularDamping = 5.f;
+	BoxDesc.bCCD = false;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
+
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PORTAL));
+}
+
 HRESULT CPortalPlane::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_WaterPlane", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
@@ -228,7 +261,6 @@ HRESULT CPortalPlane::SetUp_Components()
 
 HRESULT CPortalPlane::SetUp_DiffuseTexture()
 {
-
 
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 

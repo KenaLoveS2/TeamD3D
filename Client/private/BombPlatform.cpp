@@ -47,7 +47,7 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	/* CloneTag로 m_vMovingPos 다르게 주면 돼 */
 	if(!lstrcmp(m_szCloneObjectTag,L"MG_BombPlatform_0"))
 	{
-		m_vMovingPos = _float4(4.142f, 0.658f, 30.304f, 1.f);
+		m_vMovingPos = _float4(4.142f, 1.77f, 30.304f, 1.f);
 	}
 	else if (!lstrcmp(m_szCloneObjectTag, L"MG_BombPlatform_1"))
 	{

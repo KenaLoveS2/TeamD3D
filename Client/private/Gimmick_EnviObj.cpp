@@ -7,6 +7,8 @@
 #include "ControlRoom.h"
 #include "BossWarrior.h"
 #include "CPortalPlane.h"
+#include "E_P_EnvironmentDust.h"
+
 /* 기믹 클래스는 1개씩입니다. */
 CGimmick_EnviObj::CGimmick_EnviObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -16,6 +18,17 @@ CGimmick_EnviObj::CGimmick_EnviObj(ID3D11Device * pDevice, ID3D11DeviceContext *
 CGimmick_EnviObj::CGimmick_EnviObj(const CGimmick_EnviObj & rhs)
 	: CEnviromentObj(rhs)
 {
+}
+
+void CGimmick_EnviObj::Set_Gimmick_Active(_int iRoomIndex, _bool bGimmick_Active)
+{
+	
+	if (m_EnviromentDesc.iRoomIndex == iRoomIndex)
+		m_bGimmick_Active = bGimmick_Active;
+	
+	if (m_pGimmickObjEffect != nullptr)
+		m_pGimmickObjEffect->Set_Active(true);
+
 }
 
 HRESULT CGimmick_EnviObj::Initialize_Prototype()
@@ -32,6 +45,9 @@ HRESULT CGimmick_EnviObj::Initialize(void * pArg)
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Effect()))
 		return E_FAIL;
 
 	m_bRenderActive = true;
@@ -51,6 +67,7 @@ HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 	m_pControlRoom->Add_GimmickObj(m_EnviromentDesc.iRoomIndex,
 		this,m_EnviromentDesc.eChapterType);
 
+	
 	return S_OK;
 }
 
@@ -65,18 +82,20 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 		m_bTestOnce = true;
 	}
 #endif
+
+	if(ImGui::Button("Gimmick_Init"))
+	{
+
+		m_bColliderOn = false;
+		m_pModelCom->Instaincing_GimmkicInit(m_EnviromentDesc.eChapterType);
+		m_bGimmick_Active = false;
+
+	}
+
 	__super::Tick(fTimeDelta);
 
 	if ( m_bColliderOn == false && true == Gimmik_Start(fTimeDelta))
 	{
-	/*	_float3 vPos = _float3(0.f,0.f,0.f), vSize;
-		
-		if (m_EnviromentDesc.iRoomIndex == 2)
-		{
-			vSize = _float3(0.8f, 0.81f, 0.8f);
-			vPos = _float3(0.0f, 0.f, 0.0f);
-		}*/
-		
 		if (m_pModelCom->Get_UseTriangleMeshActor() && m_EnviromentDesc.iRoomIndex != 4)
 			m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
 
@@ -93,6 +112,14 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 					L"3_BossDeadPortal_0"))->Set_GimmickRender(true);
 		}
 	}
+
+
+	if (m_pGimmickObjEffect)
+	{
+		m_pGimmickObjEffect->Tick(fTimeDelta);
+	}
+	
+
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
@@ -107,6 +134,9 @@ void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 #endif
 	}
+
+	if (m_pGimmickObjEffect) m_pGimmickObjEffect->Late_Tick(fTimeDelta);
+
 }
 
 HRESULT CGimmick_EnviObj::Render()
@@ -242,7 +272,26 @@ _bool CGimmick_EnviObj::Gimmik_Start(_float fTimeDelta)
 
 	bResult = Gimmick_Go_up(fTimeDelta);
 
+
 	return bResult;
+}
+
+void CGimmick_EnviObj::SetUp_GimmicKEffect_Pos()
+{
+#ifdef FOR_MAP_GIMMICK
+	if (m_pModelCom->Get_IStancingModel() && (m_EnviromentDesc.iRoomIndex == 1))
+	{
+		_float4 vPos = _float4(72.097f, -1.747f, 202.843f, 1.f);
+		m_pGimmickObjEffect->Get_TransformCom()->Set_State(CTransform::STATE_TRANSLATION, 
+			XMLoadFloat4(&vPos));
+	}
+	else if(m_pModelCom->Get_IStancingModel() && (m_EnviromentDesc.iRoomIndex == 4))
+	{
+		_float4 vPos = _float4(61.604f, 13.330f, 901.225f, 1.f);
+		m_pGimmickObjEffect->Get_TransformCom()->Set_State(CTransform::STATE_TRANSLATION,
+			XMLoadFloat4(&vPos));
+	}
+#endif
 }
 
 _bool CGimmick_EnviObj::Gimmick_Go_up(_float fTimeDelta)
@@ -250,6 +299,24 @@ _bool CGimmick_EnviObj::Gimmick_Go_up(_float fTimeDelta)
 	return m_pModelCom->Instaincing_MoveControl(m_EnviromentDesc.eChapterType,fTimeDelta);
 }
 
+HRESULT CGimmick_EnviObj::Ready_Effect()
+{
+#ifdef FOR_MAP_GIMMICK
+	m_pGimmickObjEffect = (CE_P_EnvironmentDust*)(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_EnvironmentDust", CUtile::Create_DummyString()));
+	NULL_CHECK_RETURN(m_pGimmickObjEffect, E_FAIL);
+	m_pGimmickObjEffect->Set_Parent(this);
+#else
+
+	//m_pGimmickObjEffect = (CE_P_EnvironmentDust*)(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_EnvironmentDust", CUtile::Create_DummyString()));
+	//NULL_CHECK_RETURN(m_pGimmickObjEffect, E_FAIL);
+	//m_pGimmickObjEffect->Set_Parent(this);
+	
+#endif
+
+
+
+	return S_OK;
+}
 
 HRESULT CGimmick_EnviObj::SetUp_Components()
 {
