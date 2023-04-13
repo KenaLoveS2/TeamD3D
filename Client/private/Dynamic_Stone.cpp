@@ -268,6 +268,7 @@ HRESULT CDynamic_Stone::Late_Initialize(void* pArg)
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.bKinematic = true;
 	//pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
+
 	//m_pActor = pPhysX->Find_StaticActor(m_szCloneObjectTag);
 
 	return S_OK;

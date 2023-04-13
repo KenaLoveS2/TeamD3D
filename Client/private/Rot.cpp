@@ -9,6 +9,7 @@
 #include "Kena.h"
 #include "Kena_Status.h"
 #include "RotHat.h"
+#include "E_P_Rot.h"
 
 _uint CRot::m_iEveryRotCount = 0;
 _uint CRot::m_iKenaFindRotCount = 0;
@@ -53,6 +54,10 @@ HRESULT CRot::Initialize(void* pArg)
 	m_pRotHat = (CRotHat*)CGameInstance::GetInstance()->Clone_GameObject(TEXT("Prototype_GameObject_RotHat"), CUtile::Create_DummyString(TEXT("Hat"), m_iEveryRotCount));
 	assert(m_pRotHat && " CRot::Initialize()");
 
+	m_pRotAcc = dynamic_cast<CE_P_Rot*>(m_pGameInstance->Clone_GameObject(L"Prototype_GameObject_Rot_P", CUtile::Create_DummyString(TEXT("RotAcc"), m_iEveryRotCount)));
+	NULL_CHECK_RETURN(m_pRotAcc, E_FAIL);
+	m_pRotAcc->Set_Parent(this);
+
 	m_iEveryRotCount++;
 	m_iObjectProperty = OP_ROT;
 
@@ -75,6 +80,10 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 	if (m_iThisRotIndex == FIRST_ROT && m_bManualWakeUp == false)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
+
+	//m_pRotAcc
+	m_pRotAcc->Late_Initialize(nullptr);
+	//m_pRotAcc
 
 	return S_OK;
 }
@@ -106,6 +115,7 @@ void CRot::Tick(_float fTimeDelta)
 	if (m_pTeleportRot)
 		m_pTeleportRot->Tick(fTimeDelta);
 
+	if (m_pRotAcc) m_pRotAcc->Tick(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);
 	m_pRotHat->Tick(fTimeDelta);
 }
@@ -135,6 +145,7 @@ void CRot::Late_Tick(_float fTimeDelta)
 	if (m_pTeleportRot)
 		m_pTeleportRot->Late_Tick(fTimeDelta);
 
+	if (m_pRotAcc) m_pRotAcc->Late_Tick(fTimeDelta);
 	m_pRotHat->Late_Tick(fTimeDelta);
 }
 
@@ -226,7 +237,8 @@ void CRot::Free()
 	__super::Free();
 
 	Safe_Release(m_pRotWisp);
-	Safe_Release(m_pRotHat);	
+	Safe_Release(m_pRotHat);
+	Safe_Release(m_pRotAcc);
 }
 
 HRESULT CRot::SetUp_State()
@@ -323,6 +335,8 @@ HRESULT CRot::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
+				if (m_pRotAcc->Get_Active() == false)
+					m_pRotAcc->Set_Active(true);
 		m_pModelCom->Set_AnimIndex(IDLE);
 	})
 		.Tick([this](_float fTimeDelta)

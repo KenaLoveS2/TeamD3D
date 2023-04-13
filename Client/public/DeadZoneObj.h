@@ -33,23 +33,32 @@ public:
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
 
-
+	_float4				Set_ColorValue();
 public:
 	void	Change_Model(_int iDissolveTimer);
 
 private:
 	CModel*				m_pModelCom = nullptr;
-	class CInteraction_Com*			m_pInteractionCom = nullptr;
-	class CControlMove*				m_pControlMoveCom = nullptr;
+
+	CModel*				m_pModelChangeCom = nullptr;
 
 	_bool				m_bOnlyTest = false;
 	_int				m_iDeadZoneModelID = -1;
 	_float				m_fTimeDeltaTest = 0.f;
-public:
-	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
+
+	_bool				m_bDeadZoneRender = true;
+
+	_bool				m_bChangeModelRender = false;
+
+	_bool				m_bChaning_ModelRender = false;
+	_int				m_iSign = 1;
+
+	_float4 m_vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+	
 
 private:
 	HRESULT SetUp_Components();
+	HRESULT SetUp_ChangeModel();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources();
 

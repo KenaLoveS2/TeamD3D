@@ -13,6 +13,9 @@ public:
 
 public:
 	_uint	Get_InstanceNum() { return m_iNumInstance; }
+	void	Set_InstanceNum(_uint iInstanceNum) {
+		m_iNumInstance = iInstanceNum;
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype();

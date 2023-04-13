@@ -13,6 +13,15 @@ BEGIN(Client)
 
 class CWaterPlane : public CEnviromentObj
 {
+	enum Type
+	{
+		NORMAL,
+		MASK,
+		NOISE,
+		TYPE_END
+	};
+
+
 private:
 	CWaterPlane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CWaterPlane(const CWaterPlane& rhs);
@@ -31,8 +40,10 @@ public:
 
 private:
 	CModel*							m_pModelCom = nullptr;
-
-	float								m_fTimeDelta = 0.f;
+	CTexture* m_pTextureCom[TYPE_END] = { nullptr, };
+	float									m_fTimeDelta = 0.f;
+	int									m_iTexNum = 2;
+	int									m_iMaskTexNum = 1;
 
 private:
 	HRESULT  SetUp_Components();

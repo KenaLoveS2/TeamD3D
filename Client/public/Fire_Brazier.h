@@ -38,6 +38,9 @@ private:
 	class CInteraction_Com* m_pInteractionCom = nullptr;
 	class CControlMove* m_pControlMoveCom = nullptr;
 
+	class CE_FireBrazier* m_pFireBrazierEffect = nullptr;
+	class CE_P_CommonBox* m_pCommonBox = nullptr;
+
 	_bool										m_bPulseTest = true;
 	_float										m_fEmissivePulse = 0.f;
 	_float										m_fNegativeQuantity = 1.f;
@@ -52,6 +55,7 @@ private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources();
+	HRESULT Ready_Effect();
 
 public:
 	static  CFire_Brazier* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

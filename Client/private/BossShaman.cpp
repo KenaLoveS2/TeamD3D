@@ -54,7 +54,7 @@ HRESULT CBossShaman::Initialize(void* pArg)
 	}
 	else
 	{
-		m_Desc.iRoomIndex = 0;
+		m_Desc.pGroupName = L"";
 		m_Desc.WorldMatrix = _smatrix();
 		m_Desc.WorldMatrix._41 = -10.f;
 		m_Desc.WorldMatrix._43 = -10.f;

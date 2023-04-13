@@ -12,6 +12,7 @@ class CMainApp final : public CBase
 {
 private:
 	CGameInstance*			m_pGameInstance = nullptr;
+	class CBGM_Manager*		m_pBGM_Manager = nullptr;
 	CRenderer*				m_pRenderer = nullptr;
 
 	ID3D11Device*			m_pDevice = nullptr;
@@ -20,7 +21,7 @@ private:
 #ifdef _DEBUG
 private:
 	_tchar					m_szFPS[MAX_PATH] = TEXT("");
-	_uint						m_iNumCallDraw = 0;
+	_uint					m_iNumCallDraw = 0;
 	_float					m_TimeAcc = 0.f;
 #endif
 

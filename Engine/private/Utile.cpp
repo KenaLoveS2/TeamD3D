@@ -147,6 +147,19 @@ _tchar* CUtile::Create_StringAuto(const _tchar *pText)
 	return pString;
 }
 
+_tchar* CUtile::Create_StringAuto(const char* pText)
+{
+	_int	iSize = MultiByteToWideChar(CP_ACP, 0, pText, -1, NULL, NULL);;
+
+	_tchar* pString = new _tchar[iSize];
+	ZeroMemory(pString, sizeof(_tchar) * iSize);
+	MultiByteToWideChar(CP_ACP, 0, pText, strlen(pText) + 1, pString, iSize);
+
+	CString_Manager::GetInstance()->Add_String(pString);
+
+	return pString;
+}
+
 _float CUtile::Get_RandomFloat(_float fMinValue, _float fMaxValue)
 {
 	if (fMinValue >= fMaxValue)

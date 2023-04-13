@@ -2,6 +2,7 @@
 #include "UI_CanvasInfo.h"
 #include "GameInstance.h"
 #include "UI_NodeVideo.h"
+#include "PostFX.h"
 
 CUI_CanvasInfo::CUI_CanvasInfo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -56,23 +57,42 @@ void CUI_CanvasInfo::Tick(_float fTimeDelta)
 		if (FAILED(Bind()))
 		{
 			//	MSG_BOX("Bind Failed");
-
 			return;
 		}
 	}
 	//m_bActive = true;
-	if (CGameInstance::GetInstance()->Key_Down(DIK_X))
-		BindFunction(CUI_ClientManager::INFO_, 1.f);
 
-	if (!m_bActive)
+	// 한 프레임 늦게 Bind 되기 위하여 이렇게 처리해두었습니다. 블러가 먹힌 다음에 한프레임은 그려야해서
+	if(CPostFX::GetInstance()->Get_Capture() && !m_bCapture)
+	{
+		BindFunction(CUI_ClientManager::INFO_, 1.f);
+		m_bCapture = true;
+	}
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_X))
+	{
+		m_bCapture = false;
+		CPostFX::GetInstance()->BlurCapture();
+	}
+
+	if (!m_bActive)		
 		return;
 
+	// 마찬가지로 블러가 풀려져야해서 이렇게 처리해두었습니다
+	if (CPostFX::GetInstance()->Get_Capture() == false && m_bReturn)
+	{
+		CGameInstance::GetInstance()->Get_Back();
+		m_pRendererCom->Set_CaptureMode(false);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+		m_bActive = false;
+		m_bReturn = false;
+	}
 
 	/* Return To Play */
 	if (CGameInstance::GetInstance()->Key_Down(DIK_SPACE))
 	{
-		CGameInstance::GetInstance()->Get_Back();
-		m_bActive = false;
+		CPostFX::GetInstance()->CaptureOff();
+		m_bReturn = true;
 		return;
 	}
 
@@ -154,7 +174,9 @@ HRESULT CUI_CanvasInfo::SetUp_ShaderResources()
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
-		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+		//if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+		//	return E_FAIL;
+		if(FAILED(m_pShaderCom->Set_ShaderResourceView("g_Texture", m_pRendererCom->Get_LDRTexture())))
 			return E_FAIL;
 	}
 
@@ -167,9 +189,9 @@ void CUI_CanvasInfo::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fV
 	{
 		case CUI_ClientManager::INFO_ :
 			m_bActive = true;
-			//CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
-
-			//CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+			CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
+			m_pRendererCom->Set_CaptureMode(true);
+			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(false);
 
 			m_iTextureIdx = INFO_FIGHTIN;
 			static_cast<CUI_NodeVideo*>(m_vecNode[UI_VIDEO])->Play_Video(L"RotActionSelector", true, 0.05f /* speed */);

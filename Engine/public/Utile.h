@@ -27,6 +27,7 @@ public:
 	static _tchar* Create_String(const _tchar *pText);
 	static char* Create_String(const char *pText);
 	static _tchar* Create_StringAuto(const _tchar *pText);
+	static _tchar* Create_StringAuto(const char* pText);
 	
 	static char* Split_String(char * pSour, char szSymbol);
 

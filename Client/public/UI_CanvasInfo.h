@@ -21,8 +21,8 @@ public:
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
-	virtual void			Tick(_float fTimeDelta)			override;
-	virtual void			Late_Tick(_float fTimeDelta)	override;
+	virtual void					Tick(_float fTimeDelta)			override;
+	virtual void					Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
 private:
@@ -33,7 +33,10 @@ private:
 
 private: /* Bind Functions */
 	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fValue);
-	
+
+	_bool m_bCapture = false;
+	_bool m_bReturn = false;
+
 public:
 	static	CUI_CanvasInfo*		Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr);

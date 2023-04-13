@@ -33,6 +33,20 @@ HRESULT CTexture_Manager::Scene_Chane_Clear()
 	return S_OK;
 }
 
+HRESULT CTexture_Manager::Texture_Erase(const _tchar* pTextureFilePath)
+{
+	auto	iter = find_if(m_Textures.begin(), m_Textures.end(), CTag_Finder(pTextureFilePath));
+
+	if (iter == m_Textures.end())
+		return S_OK;
+
+	//Safe_Release(iter->second);
+
+	m_Textures.erase(iter);
+
+	return S_OK;
+}
+
 void CTexture_Manager::Free()
 {
 	for (auto& Pair : m_Textures)

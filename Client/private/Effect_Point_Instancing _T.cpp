@@ -195,6 +195,7 @@ HRESULT CEffect_Point_Instancing_T::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PARTICLE;
+	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
 
@@ -272,6 +273,8 @@ void CEffect_Point_Instancing_T::Imgui_RenderProperty()
 	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
 	ImGui::InputFloat("HDRValue", &m_fHDRValue);
 
+	if (ImGui::Button("SetShape"))
+		m_pVIInstancingBufferCom->Set_ShapePosition();
 }
 
 HRESULT CEffect_Point_Instancing_T::SetUp_Components()
@@ -333,6 +336,7 @@ HRESULT CEffect_Point_Instancing_T::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV()), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	/* Texture Total Cnt */
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_iTotalDTextureComCnt", &m_iTotalDTextureComCnt, sizeof(_uint)), E_FAIL);
@@ -352,6 +356,7 @@ HRESULT CEffect_Point_Instancing_T::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof(_int)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fLife, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRValue", &m_fHDRValue, sizeof(_float)), E_FAIL);
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{

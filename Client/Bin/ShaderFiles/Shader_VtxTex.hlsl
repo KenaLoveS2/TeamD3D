@@ -32,6 +32,7 @@ Texture2D<float4>		g_Texture;
 Texture2D<float4>		g_DepthTexture;
 Texture2D<float4>		g_MaskTexture;
 Texture2D<float4>		g_NoiseTexture;
+Texture2D<float4>		g_LDRTexture;
 
 int		g_XFrameNow = 0, g_YFrameNow = 0;	/* Current Sprite frame */
 int		g_XFrames = 1, g_YFrames = 1;		/* the number of sprites devided each side */

@@ -7,12 +7,14 @@
 CUI_NodeBossHP::CUI_NodeBossHP(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
 	, m_szTitle(nullptr)
+	,m_pEffect(nullptr)
 {
 }
 
 CUI_NodeBossHP::CUI_NodeBossHP(const CUI_NodeBossHP & rhs)
 	: CUI_Node(rhs)
 	, m_szTitle(nullptr)
+	, m_pEffect(nullptr)
 {
 }
 
@@ -244,4 +246,5 @@ void CUI_NodeBossHP::Free()
 {
 	__super::Free();
 	Safe_Delete_Array(m_szTitle);
+	Safe_Release(m_pEffect);
 }

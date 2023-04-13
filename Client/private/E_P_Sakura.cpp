@@ -33,13 +33,11 @@ HRESULT CE_P_Sakura::Initialize(void * pArg)
 
 HRESULT CE_P_Sakura::Late_Initialize(void* pArg)
 {
-
 	_int iInstanceNum = 450;
 	_float  fMinSpeed = 0.5f;
 	_float  fmaxSpeed = 2.0f;
 
 	m_pModelCom->Set_InstanceEffect_Info(m_pTransformCom , iInstanceNum, fMinSpeed, fmaxSpeed);
-
 
 	return S_OK;
 }
@@ -67,7 +65,6 @@ void CE_P_Sakura::Tick(_float fTimeDelta)
 
 void CE_P_Sakura::Late_Tick(_float fTimeDelta)
 {
-
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom && m_bRenderActive &&false == m_bStart_InstMove) 
@@ -102,7 +99,6 @@ HRESULT CE_P_Sakura::SetUp_Components()
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Sakura_Flower", TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
@@ -111,7 +107,6 @@ HRESULT CE_P_Sakura::SetUp_Components()
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-
 
 	return S_OK;
 }

@@ -184,6 +184,7 @@
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\Base_Ground.h" />
     <ClInclude Include="..\public\Beni.h" />
+    <ClInclude Include="..\public\BGM_Manager.h" />
     <ClInclude Include="..\public\BombPlatform.h" />
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
@@ -206,12 +207,26 @@
     <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\public\CLevel_Final.h" />
     <ClInclude Include="..\public\DeadZoneBossTree.h" />
+    <ClInclude Include="..\public\E_Chest.h" />
     <ClInclude Include="..\public\E_Common_CIrcleSp.h" />
+    <ClInclude Include="..\public\E_FireBrazier.h" />
     <ClInclude Include="..\public\E_LazerTrail.h" />
+    <ClInclude Include="..\public\E_P_Beech.h" />
+    <ClInclude Include="..\public\E_P_Bombplatform.h" />
+    <ClInclude Include="..\public\E_P_Chest.h" />
+    <ClInclude Include="..\public\E_P_CommonBox.h" />
+    <ClInclude Include="..\public\E_P_EnvironmentDust.h" />
     <ClInclude Include="..\public\E_P_Level.h" />
+    <ClInclude Include="..\public\E_P_Maple.h" />
+    <ClInclude Include="..\public\E_P_Meditation_Spot.h" />
+    <ClInclude Include="..\public\E_P_Rain.h" />
+    <ClInclude Include="..\public\E_P_Rot.h" />
     <ClInclude Include="..\public\E_P_ShamanTeleport.h" />
     <ClInclude Include="..\public\E_ShamanIceDagger.h" />
     <ClInclude Include="..\public\E_ShamanLazer.h" />
+    <ClInclude Include="..\public\Group_Manager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\public\Fire_Brazier.h" />
     <ClInclude Include="..\public\Level_Gimmick.h" />
     <ClInclude Include="..\public\ControlRoom.h" />
@@ -352,6 +367,7 @@
     <ClInclude Include="..\public\Meditation_Spot.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
+    <ClInclude Include="..\public\Monster_Manager.h" />
     <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\Pet.h" />
     <ClInclude Include="..\public\RotBomb.h" />
@@ -483,6 +499,7 @@
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Base_Ground.cpp" />
     <ClCompile Include="..\private\Beni.cpp" />
+    <ClCompile Include="..\private\BGM_Manager.cpp" />
     <ClCompile Include="..\private\BombPlatform.cpp" />
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
@@ -505,12 +522,26 @@
     <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\CLevel_Final.cpp" />
     <ClCompile Include="..\private\DeadZoneBossTree.cpp" />
+    <ClCompile Include="..\private\E_Chest.cpp" />
     <ClCompile Include="..\private\E_Common_CIrcleSp.cpp" />
+    <ClCompile Include="..\private\E_FireBrazier.cpp" />
     <ClCompile Include="..\private\E_LazerTrail.cpp" />
+    <ClCompile Include="..\private\E_P_Beech.cpp" />
+    <ClCompile Include="..\private\E_P_Bombplatform.cpp" />
+    <ClCompile Include="..\private\E_P_Chest.cpp" />
+    <ClCompile Include="..\private\E_P_CommonBox.cpp" />
+    <ClCompile Include="..\private\E_P_EnvironmentDust.cpp" />
     <ClCompile Include="..\private\E_P_Level.cpp" />
+    <ClCompile Include="..\private\E_P_Maple.cpp" />
+    <ClCompile Include="..\private\E_P_Meditation_Spot.cpp" />
+    <ClCompile Include="..\private\E_P_Rain.cpp" />
+    <ClCompile Include="..\private\E_P_Rot.cpp" />
     <ClCompile Include="..\private\E_P_ShamanTeleport.cpp" />
     <ClCompile Include="..\private\E_ShamanIceDagger.cpp" />
     <ClCompile Include="..\private\E_ShamanLazer.cpp" />
+    <ClCompile Include="..\private\Group_Manager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\private\Fire_Brazier.cpp" />
     <ClCompile Include="..\private\Level_Gimmick.cpp" />
     <ClCompile Include="..\private\ControlRoom.cpp" />
@@ -649,6 +680,7 @@
     <ClCompile Include="..\private\Meditation_Spot.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
+    <ClCompile Include="..\private\Monster_Manager.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\Pet.cpp" />
     <ClCompile Include="..\private\RotBomb.cpp" />

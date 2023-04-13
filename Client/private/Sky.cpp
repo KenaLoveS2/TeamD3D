@@ -105,6 +105,11 @@ HRESULT CSky::Render()
 void CSky::Imgui_RenderProperty()
 {
 	ImGui::Checkbox("DayOrNight", &g_bDayOrNight);
+	if(ImGui::Button("Recompile"))
+	{
+		m_pShaderCom->ReCompile();
+		m_pRendererCom->ReCompile();
+	}
 }
 
 HRESULT CSky::SetUp_Components()
