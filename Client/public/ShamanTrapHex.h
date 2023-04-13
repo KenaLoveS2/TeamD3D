@@ -1,10 +1,10 @@
 #pragma once
-
 #include "Effect_Mesh.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
 class CBone;
+class CGameInstance;
 END
 
 BEGIN(Client)
@@ -41,7 +41,7 @@ private:
 	HRESULT				SetUp_Effects();
 	void				SetColor(_float4& vColor, const char* pTag);
 
-	class CGameObject*	m_pPart[PARTS_END] = { nullptr, };
+	class CFakeShaman*	m_pPart[PARTS_END] = { nullptr, };
 	CBone*				m_pPartBone = nullptr;
 
 private:
@@ -56,6 +56,14 @@ private:
 	
 	_bool m_bTrapSuccess = false;
 
+	enum COPY_SOUND_KEY {
+		CSK_IMPACT5, CSK_TRAP, CSK_TRAP_BREAK,
+		COPY_SOUND_KEY_END,
+	};
+
+	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
+	CGameInstance* m_pGameInstance = nullptr;
+
 public:
 	static CShamanTrapHex*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	    Clone(void* pArg = nullptr)  override;
@@ -67,6 +75,9 @@ public:
 	void Execute_End();
 
 	_bool IsTrapSuccess() { return m_bTrapSuccess; }
+
+	void Create_CopySoundKey();
+	_float4 Get_FakeShamanPos(_uint iIndex);
 };
 
 END

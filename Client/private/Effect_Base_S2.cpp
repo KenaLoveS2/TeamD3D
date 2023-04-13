@@ -8,6 +8,7 @@ CEffect_Base_S2::CEffect_Base_S2(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	, m_iRenderPass(0)
 	, m_iTextureIndex(0)
 	, m_vColor(1.f, 1.f, 1.f, 1.f)
+	, m_vColorOriginal(1.f, 1.f, 1.f, 1.f)
 	, m_fHDRIntensity(1.f)
 	, m_bActive(false)
 	, m_fDissolveAlpha(0.f)
@@ -23,6 +24,7 @@ CEffect_Base_S2::CEffect_Base_S2(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	, m_bActiveSlowly(false)
 	, m_bDeActiveSlowly(false)
 	, m_vScaleOrignial(1.f, 1.f, 1.f)
+	, m_pBoneName(nullptr)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
@@ -48,6 +50,7 @@ CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2& rhs)
 	, m_iRenderPass(0)
 	, m_iTextureIndex(0)
 	, m_vColor(1.f, 1.f, 1.f, 1.f)
+	, m_vColorOriginal(1.f, 1.f, 1.f, 1.f)
 	, m_fHDRIntensity(1.f)
 	, m_bActive(false)
 	, m_fDissolveAlpha(0.f)
@@ -63,6 +66,7 @@ CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2& rhs)
 	, m_bActiveSlowly(false)
 	, m_bDeActiveSlowly(false)
 	, m_vScaleOrignial(1.f, 1.f, 1.f)
+	, m_pBoneName(nullptr)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
@@ -98,6 +102,8 @@ HRESULT CEffect_Base_S2::Initialize(void* pArg)
 
 HRESULT CEffect_Base_S2::Late_Initialize(void* pArg)
 {
+	m_vColorOriginal = m_vColor;
+
 	return S_OK;
 }
 
@@ -105,11 +111,20 @@ void CEffect_Base_S2::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pTarget != nullptr)
-	{
-		_float4 vTargetPos = m_pTarget->Get_TransformCom()->Get_Position();
-		m_pTransformCom->Set_Position(vTargetPos);
-	}
+	//if (m_pTarget != nullptr)
+	//{
+	//	if (m_pBoneName != nullptr)
+	//	{
+	//		_float4 vPos = m_pTarget->Get_ComputeBonePosition(m_pBoneName);
+	//		m_pTransformCom->Set_Position(
+	//			m_pTarget->Get_ComputeBonePosition(m_pBoneName));
+	//	}
+	//	else
+	//	{
+	//		_float4 vTargetPos = m_pTarget->Get_TransformCom()->Get_Position() + m_ParentPosition;/* correct */
+	//		m_pTransformCom->Set_Position(vTargetPos);
+	//	}
+	//}
 
 	/* UV Animation */
 	if (true == m_bOptions[OPTION_UV])
@@ -146,7 +161,10 @@ void CEffect_Base_S2::Tick(_float fTimeDelta)
 	{
 		m_fSelfStopTimeAcc += fTimeDelta;
 		if (m_fSelfStopTimeAcc > m_fSelfStopTime)
-			DeActivate();
+		{
+			//DeActivate();
+			DeActivate_Slowly();
+		}
 	}
 
 }
@@ -168,6 +186,8 @@ HRESULT CEffect_Base_S2::Render()
 void CEffect_Base_S2::DeActivate()
 {
 	m_bActive = false;
+	m_pTarget = nullptr;
+	//m_pTargetBone = nullptr;
 
 	m_fDissolveAlpha = 0.0f;
 	m_iFrameNow[0] = 0;
@@ -288,4 +308,6 @@ void CEffect_Base_S2::Options()
 void CEffect_Base_S2::Free()
 {
 	__super::Free();
+
+	Safe_Delete_Array(m_pBoneName);
 }

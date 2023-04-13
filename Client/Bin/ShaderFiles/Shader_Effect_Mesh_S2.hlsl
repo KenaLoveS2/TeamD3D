@@ -257,30 +257,73 @@ PS_OUT PS_MAIN_DISSOLVE(PS_IN In)
 	return Out;
 }
 
-PS_OUT PS_MAIN_HunterString(PS_IN In)
+//PS_OUT PS_MAIN_DefaultMask_V2(PS_IN In)
+//{
+//	PS_OUT		Out = (PS_OUT)0;
+//
+//	float2 MoveUV = In.vTexUV;
+//	MoveUV.x += g_float2_0.x;
+//	MoveUV.y += g_float2_0.y;
+//
+//	float4	vDiffuse	= g_tex_0.Sample(LinearSampler, In.vTexUV);
+//	float4	vMask		= g_tex_1.Sample(LinearSampler, MoveUV);
+//
+//	float	vDiffuseR	= vDiffuse.r;
+//	vMask *= g_float4_1;
+//
+//	Out.vDiffuse		= vDiffuse;
+//	Out.vDiffuse.a		= vMask.r;
+//
+//	Out.vDiffuse		*= g_float4_0;
+//	//Out.vDiffuse.rgb	*= g_float_0;
+//	Out.vDiffuse = CalcHDRColor(Out.vDiffuse, g_float_0);
+//
+//	if (In.vInPosition.y > g_float_1)
+//		discard;
+//
+//	if (vDiffuseR < g_float_2)
+//		discard;
+//
+//	return Out;
+//}
+
+PS_OUT PS_MAIN_DefaultMask_V2(PS_IN In)
 {
-	PS_OUT		Out = (PS_OUT)0;
+	PS_OUT			Out = (PS_OUT)0;
 
-	float2 MoveUV = In.vTexUV;
-	MoveUV.x += g_float2_0.x;
-	MoveUV.y += g_float2_0.y;
+	float4	vDiffuse = g_tex_0.Sample(LinearSampler, In.vTexUV);
 
-	float4	vDiffuse	= g_tex_0.Sample(LinearSampler, In.vTexUV);
-	float4	vMask		= g_tex_1.Sample(LinearSampler, MoveUV);
+	if (g_bool_0)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_int_2;
+		In.vTexUV.y = In.vTexUV.y + g_int_3;
 
-	float	vDiffuseR	= vDiffuse.r;
+		In.vTexUV.x = In.vTexUV.x / g_int_0;
+		In.vTexUV.y = In.vTexUV.y / g_int_1;
+	}
+
+	if (g_bool_1)
+	{
+		In.vTexUV.x *= g_float2_1.x;
+		In.vTexUV.x += g_float2_0.x;
+
+		In.vTexUV.y *= g_float2_1.y;
+		In.vTexUV.y += g_float2_0.y;
+	}
+
+	float4	vMask = g_tex_1.Sample(LinearSampler, In.vTexUV);
 	vMask *= g_float4_1;
 
-	Out.vDiffuse		= vDiffuse;
-	Out.vDiffuse.a		= vMask.r;
+	Out.vDiffuse = vDiffuse;
+	Out.vDiffuse.a = vMask.r;
 
-	Out.vDiffuse		*= g_float4_0;
-	Out.vDiffuse.rgb	*= g_float_0;
+	Out.vDiffuse *= g_float4_0;
+	Out.vDiffuse	= CalcHDRColor(Out.vDiffuse, g_float_0);
+	//Out.vDiffuse.rgb *= g_float_0;
+
+	Out.vDiffuse.a *= abs(g_float_1 - abs(In.vInPosition.y)) / g_float_1;
 
 	if (In.vInPosition.y > g_float_1)
-		discard;
-
-	if (vDiffuseR < g_float_2)
 		discard;
 
 	return Out;
@@ -319,8 +362,8 @@ PS_OUT PS_MAIN_MASK_DiffuseMove(PS_IN In)
 	Out.vDiffuse.a		= vMask.r;
 
 	Out.vDiffuse		*= g_float4_0;
-	//Out.vDiffuse = CalcHDRColor(Out.vDiffuse, g_float_0);
-	Out.vDiffuse.rgb *= g_float_0;
+	Out.vDiffuse = CalcHDRColor(Out.vDiffuse, g_float_0);
+	//Out.vDiffuse.rgb *= g_float_0;
 
 	Out.vDiffuse.a *= abs(g_float_1 - abs(In.vInPosition.y)) / g_float_1;
 
@@ -384,7 +427,7 @@ technique11  DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_DISSOLVE();
 	}
 
-	pass HunterString // 4
+	pass DefaultMask_V2 // 4
 	{
 		SetRasterizerState(RS_CULLNONE);
 		SetDepthStencilState(DS_Default, 0);
@@ -394,7 +437,7 @@ technique11  DefaultTechnique
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_HunterString();
+		PixelShader = compile ps_5_0 PS_MAIN_DefaultMask_V2();
 	}
 
 	pass DefaultMask_DiffuseMove // 5
