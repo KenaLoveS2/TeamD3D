@@ -44,7 +44,7 @@ private:
 		AT_TRIPLE_ATTACK,		
 		AT_TRAP,
 		AT_DASH_ATTACK,
-		AT_FREEZE_BLAST,
+		// AT_FREEZE_BLAST,
 		AT_ICE_DAGGER,
 		ATTACKTYPE_END
 	};
@@ -84,7 +84,8 @@ private:
 	const _float m_fBackFlipRange = 2.f;
 	const _float m_fTeleportRange = 2.f;
 	
-	_float m_fTrapOffstY = 1.f;
+	_float m_fTrapHeightY = -0.68f;
+	_float m_fTrapColliserHeightY = 3.2f;
 	_int   m_iIceDaggerIdx = 0;
 
 	_float m_fTeleportRangeTable[ATTACKTYPE_END] = { 1.5f, 3.f, 4.f, 5.f, 3.f, };
@@ -115,6 +116,14 @@ private:
 	_float4x4 m_WeaponPivotMatrix;
 	_float3 m_vWeaPonPivotRot = { 0.f, 0.f, 0.f };
 	_float3 m_vWeaPonPivotTrans = { -1.2f, -0.59f, -1.3f };
+
+	_int m_iFakeShamanLookIndex = 3;
+
+	_bool m_bLaserFire = false;
+	_float m_fAwakeLoopTimeCheck = 0.f;
+
+	_bool m_bMeleeAttackTeleport = false;
+	_bool m_bMeleeAttackDissolve = false;
 
 private:
 	CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -176,7 +185,13 @@ private:
 		CSK_HIT1, CSK_HIT2, CSK_HIT3, CSK_HIT4,
 		CSK_HURT1, CSK_HURT2, CSK_HURT3, CSK_HURT4, CSK_HURT5, CSK_HURT6, CSK_HURT7,
 		CSK_MOVE1, CSK_MOVE2, CSK_MOVE3, CSK_MOVE4, CSK_MOVE5, CSK_MOVE6,
-		CSK_TENSE1, CSK_TENSE2, CSK_TENSE3, CSK_TENSE4,		
+		CSK_TENSE1, CSK_TENSE2, CSK_TENSE3, CSK_TENSE4,
+		CSK_IMPACT1, CSK_IMPACT2, CSK_IMPACT3, CSK_IMPACT4, CSK_IMPACT5,
+		CSK_KNIFE1, CSK_KNIFE2, CSK_KNIFE3, CSK_SWORD1, CSK_SWORD2, CSK_SWING1, CSK_SWING2,
+		CSK_HANDCLAP, CSK_TELEPORT, CSK_DING, CSK_WALK,
+		CSK_ICE,
+		CSK_LASER_IMPACT,
+		CSK_ELEMENT,
 		COPY_SOUND_KEY_END,
 	};
 
@@ -221,6 +236,9 @@ private:
 	_bool	m_bTrail = false;
 	_bool	m_bIceDagger = false;
 	_bool	m_bDashAttackTrail = false;
+
+	_float3 m_vPivotPos = _float3(0.f, 1.f, 0.f);
+	_float m_fMeleeAttackTeleportDist = 3.0f;
 
 public:
 	static CBossShaman* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -268,6 +286,34 @@ public:
 	void Play_Move4Sound(_bool bIsInit, _float fTimeDelta);
 	void Play_Move5Sound(_bool bIsInit, _float fTimeDelta);
 	void Play_Move6Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Tense1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Tense2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Tense3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Tense4Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Impact1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact3Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact4Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Impact5Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Knife1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Knife2Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Knife3Sound(_bool bIsInit, _float fTimeDelta);
+
+	void Play_Sword1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Sword2Sound(_bool bIsInit, _float fTimeDelta);	
+
+	void Play_Swing1Sound(_bool bIsInit, _float fTimeDelta);
+	void Play_Swing2Sound(_bool bIsInit, _float fTimeDelta);
+	
+	void Play_HandclapSound(_bool bIsInit, _float fTimeDelta);
+	void Play_TeleportSound(_bool bIsInit, _float fTimeDelta);
+	void Play_DingSound(_bool bIsInit, _float fTimeDelta);
+	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
+
+	void Teleport_MeleeAttack(_bool bIsInit, _float fTimeDelta);
 };
 
 END

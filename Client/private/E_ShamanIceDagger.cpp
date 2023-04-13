@@ -47,6 +47,9 @@ HRESULT CE_ShamanIceDagger::Initialize(void* pArg)
 	m_pTransformCom->Set_Scaled(_float3(0.1f, 0.1f, 0.1f));
 	m_pTransformCom->Rotation(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), XMConvertToRadians(90.0f));
 
+	CGameInstance::GetInstance()->Copy_Sound(TEXT("Mon_BossShaman_IceChase.ogg"), m_szCopySoundKey_Chase);
+	CGameInstance::GetInstance()->Copy_Sound(TEXT("Mon_BossShaman_IceImpact.ogg"), m_szCopySoundKey_Impact);
+		
 	return S_OK;
 }
 
@@ -104,11 +107,12 @@ void CE_ShamanIceDagger::Tick(_float fTimeDelta)
 	if (m_bFinalposition)
 	{
 		m_fIdle2Chase += fTimeDelta;
-		if (m_fIdle2Chase > 3.f + (m_iIndex * 0.1f))
+		if (m_fIdle2Chase > 3.f + (m_iIndex * 0.2f))
 		{
 			m_bFinalposition = false;
 			m_bChase = true;
 			m_fIdle2Chase = 0.0f;
+			CGameInstance::GetInstance()->Play_Sound(m_szCopySoundKey_Chase, 0.5f);
 		}
 	}
 
@@ -116,6 +120,12 @@ void CE_ShamanIceDagger::Tick(_float fTimeDelta)
 
 	if (m_bColl)
 	{
+		if (m_bCollSound == false)
+		{
+			CGameInstance::GetInstance()->Play_Sound(m_szCopySoundKey_Impact, 0.5f);
+			m_bCollSound = true;
+		}
+
 		_bool bResult = TurnOffSystem(m_fDissolveTime, 1.f, fTimeDelta);
 		if (bResult) {
 			m_bColl = false;
@@ -236,9 +246,9 @@ void CE_ShamanIceDagger::ImGui_PhysXValueProperty()
 
 _int CE_ShamanIceDagger::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	if (pTarget != nullptr)
+	if (pTarget && m_bColl == false && m_bChase)
 	{
-		if (iColliderIndex == (_int)COL_PLAYER_WEAPON)
+		if (iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER)
 		{
 			m_bColl = true;
 		}
@@ -260,6 +270,11 @@ void CE_ShamanIceDagger::Reset()
 	m_eEFfectDesc.bActive = false;
 	m_bFinalposition = false;
 	m_bChase = false;
+
+	m_bColl = false;
+	m_fDissolveTime = 0.f;
+
+	m_bCollSound = false;
 }
 
 void CE_ShamanIceDagger::Set_IceDaggerMatrix()
@@ -283,12 +298,12 @@ void CE_ShamanIceDagger::Tick_IceDagger(_float fTimeDelta)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	CModel* pModel = dynamic_cast<CModel*>(m_pParent->Find_Component(L"Com_Model"));
 	CTransform* pTransform = m_pParent->Get_TransformCom();
+		
+	_matrix UpdateMatrix = m_pCenterBone->Get_CombindMatrix() * pModel->Get_PivotMatrix() * pTransform->Get_WorldMatrix();
+	_vector vDir = XMVector3Normalize(UpdateMatrix.r[0] * 1.0f) * m_fRange;
+	vDir = XMVector3TransformNormal(vDir, XMMatrixRotationAxis(XMVector3Normalize(UpdateMatrix.r[2]), m_fAngle));
 
-	m_pUpdateMatrix = m_pCenterBone->Get_CombindMatrix() * pModel->Get_PivotMatrix() * pTransform->Get_WorldMatrix();
-	_vector vDir = XMVector3Normalize(m_pUpdateMatrix.r[0] * 1.0f) * m_fRange;
-	vDir = XMVector3TransformNormal(vDir, XMMatrixRotationAxis(XMVector3Normalize(m_pUpdateMatrix.r[2]), m_fAngle));
-
-	_vector vMovePos = m_pUpdateMatrix.r[3] + vDir;
+	_vector vMovePos = UpdateMatrix.r[3] + vDir;
 	_float fDistance = XMVectorGetX(XMVector3Length(vMovePos - XMLoadFloat4(&m_pTransformCom->Get_Position())));
 	Set_IceDaggerMatrix();
 
@@ -305,7 +320,7 @@ void CE_ShamanIceDagger::Tick_IceDagger(_float fTimeDelta)
 
 void CE_ShamanIceDagger::Tick_Chase(_float fTimeDelta)
 {
-	if (m_bFinalposition == false && m_bChase == false)
+	if (m_bFinalposition == false && m_bChase == false || m_bColl)
 		return;
 
 	m_pKenaPosition = XMVectorSetY(m_pKenaPosition, m_pKena->Get_TransformCom()->Get_PositionY() + 1.0f);
@@ -313,8 +328,10 @@ void CE_ShamanIceDagger::Tick_Chase(_float fTimeDelta)
 
 	Set_IceDaggerMatrix();
 
-	_bool bReset = TurnOffSystem(m_fDurateionTime, 3.f, fTimeDelta, false);
-	if (bReset == true) Reset();
+	_bool bReset = TurnOffSystem(m_fDurateionTime, 3.f, fTimeDelta, false) || m_pTransformCom->IsClosed_XYZ(m_pKenaPosition, 0.05f);
+	if (bReset == true) { 
+		m_bColl = true;
+	}
 }
 
 HRESULT CE_ShamanIceDagger::SetUp_ShaderResources()
@@ -400,3 +417,5 @@ void CE_ShamanIceDagger::Free()
 {
 	__super::Free();
 }
+
+

@@ -60,6 +60,7 @@ HRESULT CBossShaman::Initialize(void* pArg)
 		m_Desc.WorldMatrix._43 = -10.f;
 	}
 
+	m_pModelCom->Init_AnimIndex(IDLE_LOOP);
 	m_pModelCom->Set_AllAnimCommonType();
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("sword_root_jnt");
@@ -83,7 +84,6 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
 		//_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
 		_float3 vPivotScale = _float3(0.5f, 0.5f, 1.f);
-		_float3 vPivotPos = _float3(0.f, 1.f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
@@ -107,9 +107,7 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
-		m_pTransformCom->Set_PxPivotScale(vPivotScale);
-		m_pTransformCom->Set_PxPivot(vPivotPos);
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, m_vPivotPos);
 	}
 	
 	{
@@ -157,14 +155,11 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 		m_pTransformCom->Add_Collider(TEXT_COL_SHAMAN_WEAPON, g_IdentityFloat4x4);
 	}
 
-	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
-
-
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);	
 
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Late_Initialize(nullptr);
-
-	// m_bReadySpawn = true;
+		
 	return S_OK;
 }
 
@@ -178,7 +173,7 @@ void CBossShaman::Tick(_float fTimeDelta)
 	// m_bDashAttackTrail = true;
 	//m_bSpawn = true;
 #endif // EFFECTDEBUG
-		
+	
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -188,6 +183,7 @@ void CBossShaman::Tick(_float fTimeDelta)
 	Tick_Effects(fTimeDelta);
 
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Tick(fTimeDelta);
 
@@ -297,6 +293,17 @@ void CBossShaman::Imgui_RenderProperty()
 	float fRot[3] = { m_vWeaPonPivotRot.x, m_vWeaPonPivotRot.y, m_vWeaPonPivotRot.z };
 	ImGui::DragFloat3("Weapon Rot", fRot, 0.01f, -100.f, 100.0f);
 	memcpy(&m_vWeaPonPivotRot, fRot, sizeof(_float3));
+
+	ImGui::DragFloat("m_fTrapHeightY", &m_fTrapHeightY, 0.01f, -100.f, 100.0f);
+	ImGui::DragFloat("m_fTrapColliserHeightY", &m_fTrapColliserHeightY, 0.01f, -100.f, 100.0f);
+
+	ImGui::InputInt("ShamanLookIndex", &m_iFakeShamanLookIndex);
+
+	float fTemp[3] = { m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z };
+	ImGui::DragFloat3("Body Collider", fTemp, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vPivotPos, fTemp, sizeof(_float3));	
+
+	ImGui::DragFloat("m_fMeleeAttackTeleportDist", &m_fMeleeAttackTeleportDist, 0.01f, -100.f, 100.0f);
 }
 
 void CBossShaman::ImGui_AnimationProperty()
@@ -407,6 +414,34 @@ void CBossShaman::Push_EventFunctions()
 	Play_Move4Sound(true, 0.0f);
 	Play_Move5Sound(true, 0.0f);
 	Play_Move6Sound(true, 0.0f);
+
+	Play_Tense1Sound(true, 0.0f);
+	Play_Tense2Sound(true, 0.0f);
+	Play_Tense3Sound(true, 0.0f);
+	Play_Tense4Sound(true, 0.0f);
+
+	Play_Impact1Sound(true, 0.0f);
+	Play_Impact2Sound(true, 0.0f);
+	Play_Impact3Sound(true, 0.0f);
+	Play_Impact4Sound(true, 0.0f);
+	Play_Impact5Sound(true, 0.0f);
+
+	Play_Knife1Sound(true, 0.0f);
+	Play_Knife2Sound(true, 0.0f);
+	Play_Knife3Sound(true, 0.0f);
+
+	Play_Sword1Sound(true, 0.0f);
+	Play_Sword2Sound(true, 0.0f);
+
+	Play_Swing1Sound(true, 0.0f);
+	Play_Swing2Sound(true, 0.0f);
+
+	Play_HandclapSound(true, 0.0f);
+	Play_TeleportSound(true, 0.0f);	
+	Play_DingSound(true, 0.0f);
+	Play_WalkSound(true, 0.0f);
+
+	Teleport_MeleeAttack(true, 0.0f);
 }
 
 HRESULT CBossShaman::SetUp_State()
@@ -438,6 +473,11 @@ HRESULT CBossShaman::SetUp_State()
 		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = 20.f; /* == BossWarrior Name */
 		m_BossShamanDelegator.broadcast(eBossHP, fValue);
+		m_fAwakeLoopTimeCheck = 0.f;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fAwakeLoopTimeCheck += fTimeDelta;
 	})
 		.OnExit([this]()
 	{
@@ -447,6 +487,7 @@ HRESULT CBossShaman::SetUp_State()
 		.AddTransition("READY_SPAWN to IDLE", "IDLE")
 		.Predicator([this]()
 	{
+		// return m_fAwakeLoopTimeCheck >= 2.f;
 		return AnimFinishChecker(AWAKE);
 	})
 
@@ -624,6 +665,8 @@ HRESULT CBossShaman::SetUp_State()
 
 		m_pModelCom->ResetAnimIdx_PlayTime(TELEPORT_LOOP);
 		m_pModelCom->Set_AnimIndex(TELEPORT_LOOP);
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENT], 0.5f);
+		// m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE4], 0.5f);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -683,11 +726,11 @@ HRESULT CBossShaman::SetUp_State()
 	{
 		return m_eAttackType == AT_DASH_ATTACK;
 	})
-		.AddTransition("TELEPORT_EXIT To FREEZE_BLAST", "FREEZE_BLAST")
+		/*.AddTransition("TELEPORT_EXIT To FREEZE_BLAST", "FREEZE_BLAST")
 		.Predicator([this]()
 	{
 		return m_eAttackType == AT_FREEZE_BLAST;
-	})
+	})*/
 		.AddTransition("TELEPORT_EXIT To ICE_DAGGER", "ICE_DAGGER")
 		.Predicator([this]()
 	{
@@ -699,10 +742,61 @@ HRESULT CBossShaman::SetUp_State()
 		.OnStart([this]()
 	{
 		Attack_Start(true, MELEE_ATTACK);
+		m_bMeleeAttackTeleport = false;
 	})	
+		.Tick([this](_float fTimeDelta)
+	{
+		if (m_bMeleeAttackTeleport)
+		{
+			if (!DistanceTrigger(4.f)) {
+				m_bTeleportDissolve = true;
+				m_fTeleportDissolveTime = 0.f;
+				m_bMeleeAttackDissolve = true;
+			}
+
+			m_bMeleeAttackTeleport = false;
+		}
+
+		if (m_bTeleportDissolve)
+		{
+			if (m_bMeleeAttackDissolve)
+			{
+				m_fTeleportDissolveTime += fTimeDelta;
+				if (m_fTeleportDissolveTime >= 1.f)
+				{
+					m_fTeleportDissolveTime = 1.f;
+					m_bMeleeAttackDissolve = false;
+					
+					_float3 vCamLook = CGameInstance::GetInstance()->Get_CamLook_Float3();
+					vCamLook.y = 0.f;
+					_float4 vTeleportPos = XMLoadFloat4(&m_vKenaPos) + XMVector3Normalize(vCamLook) * m_fMeleeAttackTeleportDist;
+					
+					m_pTransformCom->Set_Position(vTeleportPos);
+					m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+					
+					m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENT], 0.5f);
+				}
+			}
+			else
+			{
+				m_fTeleportDissolveTime -= fTimeDelta;
+				if (m_fTeleportDissolveTime <= 0.f)
+				{
+					m_fTeleportDissolveTime = 0.f;
+					m_bMeleeAttackDissolve = false;
+					m_bTeleportDissolve = false;
+				}
+			}
+		}
+	})
 		.OnExit([this]()
 	{	
 		Attack_End(true, IDLE_LOOP);
+
+		m_bMeleeAttackTeleport = false;
+		m_bMeleeAttackDissolve = false;
+		m_bTeleportDissolve = false;
+		m_fTeleportDissolveTime = 0.f;
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -784,19 +878,18 @@ HRESULT CBossShaman::SetUp_State()
 		m_bNoDamage = false;
 		m_pModelCom->Set_AnimIndex(TRAP_LOOP);
 
-		m_vTrapLookPos = m_vKenaPos;
 		m_pShamanTapHex->Execute_Trap(m_vKenaPos);
 		m_fTeleportDissolveTime = 0.f;
 		m_bTeleportDissolve = false;
 	})
 		.Tick([this](_float fTimeDelta)
-	{		
-		m_pTransformCom->LookAt_NoUpDown(m_vTrapLookPos);
+	{	
 		_float4 vTrapPos = m_pShamanTapHex->Get_JointBonePos();
-		vTrapPos.y = 0.f;
-		vTrapPos.y -= m_fTrapOffstY;
-		
+		vTrapPos.y = m_fTrapHeightY;
 		m_pTransformCom->Set_Position(vTrapPos);
+
+		_float4 vLookPos = m_pShamanTapHex->Get_FakeShamanPos(m_iFakeShamanLookIndex);
+		m_pTransformCom->LookAt_NoUpDown(vLookPos);
 	})
 		.OnExit([this]()
 	{	
@@ -806,13 +899,12 @@ HRESULT CBossShaman::SetUp_State()
 	})
 		.AddTransition("TRAP_LOOP to LASER_FIRE", "LASER_FIRE")
 		.Predicator([this]()
-	{	
-		// return false;
+	{			
 		return m_pShamanTapHex->IsTrapSuccess();
 	})
 		.AddTransition("TRAP_LOOP to TRAP_BREAK", "TRAP_BREAK")
 		.Predicator([this]()
-	{
+	{		
 		return m_bTraptBreak;
 	})
 
@@ -824,6 +916,7 @@ HRESULT CBossShaman::SetUp_State()
 		.OnExit([this]()
 	{
 		m_bTrap = false;
+		m_bLaserFire = false;
 		Attack_End(false, IDLE_LOOP);
 	})		
 		.AddTransition("LASER_FIRE to TRAP_END", "TRAP_END") // 레이저 발사가 끝나면 아이들로
@@ -831,18 +924,26 @@ HRESULT CBossShaman::SetUp_State()
 	{
 		if (m_bTrap == false)
 		{
-			_matrix Head_SocketMatrix = m_pHeadBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
-			dynamic_cast<CE_ShamanLazer*>(m_mapEffect["S_Lazer"])->Set_SpawnPos(Head_SocketMatrix.r[3]);
-
+			if (m_bLaserFire == false)
+			{
+				_matrix Head_SocketMatrix = m_pHeadBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+				dynamic_cast<CE_ShamanLazer*>(m_mapEffect["S_Lazer"])->Set_SpawnPos(Head_SocketMatrix.r[3]);
+				m_bLaserFire = true;
+			}
+			
 			if (dynamic_cast<CE_ShamanLazer*>(m_mapEffect["S_Lazer"])->Get_FinalState() == true)
 			{
-				_float4 vPos = m_pShamanTapHex->Get_TransformCom()->Get_Position();
+				_float4 vPos = m_pShamanTapHex->Get_TransformCom()->Get_Position();				
 				m_mapEffect["Shaman_Charged"]->Set_Effect(vPos, true);
 				m_bTrap = true;
 			}
 		}
 		
-		return m_mapEffect["S_Lazer"]->Get_Active() == false;
+		_bool bTemp = m_mapEffect["S_Lazer"]->Get_Active() == false;
+		if(bTemp) 
+			m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_LASER_IMPACT], 0.5f);
+		
+		return bTemp;
 	})
 
 		.AddState("TRAP_END")
@@ -981,7 +1082,8 @@ HRESULT CBossShaman::SetUp_State()
 
 		.AddState("ICE_DAGGER")
 		.OnStart([this]()
-	{		
+	{	
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ICE], 0.5f);
 		Attack_Start(false, ICE_DAGGER_INTO);
 	})		
 		.AddTransition("To DYING", "DYING")
@@ -1290,14 +1392,12 @@ void CBossShaman::Update_LazerPos()
 void CBossShaman::Update_Collider(_float fTimeDelta)
 {
 	{	
-		m_fTrapOffstY = 5.f;
-		_float fTemp[2] = { 1.f , 3.2f };
+		_float fTemp[2] = { m_vPivotPos.y, m_fTrapColliserHeightY };
 		_float4x4 PivotMatrix;
 		XMStoreFloat4x4(&PivotMatrix, XMMatrixTranslation(0.f, fTemp[m_bTrapOffset], 0.f));
 		m_pTransformCom->Update_Collider(TEXT_COL_SHAMAN_BODY, PivotMatrix);
 	}
 	
-
 	if (m_eSwordRenderState == RENDER)
 	{
 		_matrix SocketMatrix = m_pWeaponBone->Get_OffsetMatrix() * m_pWeaponBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
@@ -1315,6 +1415,9 @@ void CBossShaman::Update_Collider(_float fTimeDelta)
 		XMStoreFloat4x4(&mat, SocketMatrix);
 		m_pTransformCom->Update_Collider(TEXT_COL_SHAMAN_WEAPON, mat);
 	}
+
+
+	m_pTransformCom->Set_PxPivot(m_vPivotPos);
 
 	m_pTransformCom->Tick(fTimeDelta);
 }
@@ -1628,6 +1731,7 @@ void CBossShaman::Free()
 
 void CBossShaman::SwordRenderProc(_float fTimeDelta)
 {
+	// m_eSwordRenderState = RENDER;
 	switch (m_eSwordRenderState)
 	{
 	case NO_RENDER:
@@ -1672,7 +1776,7 @@ void CBossShaman::Attack_End(_bool bSwordRender, _uint iAnimIndex)
 	_uint iTemp = m_eAttackType + 1;
 	iTemp %= ATTACKTYPE_END;
 	m_eAttackType = (ATTACKTYPE)iTemp;
-
+	
 	CMonster::Attack_End(iAnimIndex);
 }
 
@@ -1819,35 +1923,26 @@ void CBossShaman::LookAt_Kena(_bool bIsInit, _float fTimeDelta)
 void CBossShaman::Create_CopySoundKey()
 {
 	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
-		TEXT("Mon_BossShaman_Attack1"),
-		TEXT("Mon_BossShaman_Attack2"),
-		TEXT("Mon_BossShaman_Attack3"),		
-		TEXT("Mon_BossShaman_Attack4"),
-		TEXT("Mon_BossShaman_Attack5"),
-		TEXT("Mon_BossShaman_Attack6"),
-		TEXT("Mon_BossShaman_Attack7"),
-		TEXT("Mon_BossShaman_Attack8"),
-		TEXT("Mon_BossShaman_Hit1"),
-		TEXT("Mon_BossShaman_Hit2"),
-		TEXT("Mon_BossShaman_Hit3"),
-		TEXT("Mon_BossShaman_Hit4"),
-		TEXT("Mon_BossShaman_Hurt1"),
-		TEXT("Mon_BossShaman_Hurt2"),
-		TEXT("Mon_BossShaman_Hurt3"),
-		TEXT("Mon_BossShaman_Hurt4"),
-		TEXT("Mon_BossShaman_Hurt5"),
-		TEXT("Mon_BossShaman_Hurt6"),		
-		TEXT("Mon_BossShaman_Hurt7"),
-		TEXT("Mon_BossShaman_Move1"),
-		TEXT("Mon_BossShaman_Move2"),
-		TEXT("Mon_BossShaman_Move3"),
-		TEXT("Mon_BossShaman_Move4"),
-		TEXT("Mon_BossShaman_Move5"),
-		TEXT("Mon_BossShaman_Move6"),
-		TEXT("Mon_BossShaman_Tense1"),
-		TEXT("Mon_BossShaman_Tense2"),
-		TEXT("Mon_BossShaman_Tense3"),
-		TEXT("Mon_BossShaman_Tense4"),
+		TEXT("Mon_BossShaman_Attack1.ogg"), TEXT("Mon_BossShaman_Attack2.ogg"), TEXT("Mon_BossShaman_Attack3.ogg"), TEXT("Mon_BossShaman_Attack4.ogg"),
+		TEXT("Mon_BossShaman_Attack5.ogg"), TEXT("Mon_BossShaman_Attack6.ogg"), TEXT("Mon_BossShaman_Attack7.ogg"), TEXT("Mon_BossShaman_Attack8.ogg"),
+		
+		TEXT("Mon_BossShaman_Hit1.ogg"), TEXT("Mon_BossShaman_Hit2.ogg"), TEXT("Mon_BossShaman_Hit3.ogg"), TEXT("Mon_BossShaman_Hit4.ogg"),
+		
+		TEXT("Mon_BossShaman_Hurt1.ogg"), TEXT("Mon_BossShaman_Hurt2.ogg"), TEXT("Mon_BossShaman_Hurt3.ogg"), TEXT("Mon_BossShaman_Hurt4.ogg"), TEXT("Mon_BossShaman_Hurt5.ogg"),
+		TEXT("Mon_BossShaman_Hurt6.ogg"), TEXT("Mon_BossShaman_Hurt7.ogg"), 
+		
+		TEXT("Mon_BossShaman_Move1.ogg"), TEXT("Mon_BossShaman_Move2.ogg"), TEXT("Mon_BossShaman_Move3.ogg"),
+		TEXT("Mon_BossShaman_Move4.ogg"), TEXT("Mon_BossShaman_Move5.ogg"), TEXT("Mon_BossShaman_Move6.ogg"),
+
+		TEXT("Mon_BossShaman_Tense1.ogg"), TEXT("Mon_BossShaman_Tense2.ogg"), TEXT("Mon_BossShaman_Tense3.ogg"), TEXT("Mon_BossShaman_Tense4.ogg"),
+
+		TEXT("Mon_Attack_Impact1.ogg"), TEXT("Mon_Attack_Impact2.ogg"), TEXT("Mon_Attack_Impact3.ogg"), TEXT("Mon_Attack_Impact4.ogg"), TEXT("Mon_Attack_Impact5.ogg"),	
+
+		TEXT("Mon_Knife1.ogg"), TEXT("Mon_Knife2.ogg"), TEXT("Mon_Knife3.ogg"), TEXT("Mon_Sword1.ogg"), TEXT("Mon_Sword2.ogg"), TEXT("Mon_Swing.ogg"), TEXT("Mon_Swing2.ogg"),
+		TEXT("Mon_BossShaman_Handclap.ogg"), TEXT("Mon_BossShaman_Teleport.ogg"), TEXT("Mon_BossSound_Ding.ogg"), TEXT("Mon_Walk_M.ogg"),
+		TEXT("Mon_BossShaman_Ice.ogg"),
+		TEXT("Mon_BossShaman_LaserImpact.ogg"),
+		TEXT("Mon_BossHunter_Elemental7.ogg"),		
 	};
 
 	_tchar szTemp[MAX_PATH] = { 0, };
@@ -2157,4 +2252,257 @@ void CBossShaman::Play_Move6Sound(_bool bIsInit, _float fTimeDelta)
 	}
 
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE6], 0.5f);
+}
+
+void CBossShaman::Play_Tense1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Tense1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE1], 0.5f);
+}
+
+void CBossShaman::Play_Tense2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Tense2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE2], 0.5f);
+}
+
+void CBossShaman::Play_Tense3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Tense3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE3], 0.5f);
+}
+
+void CBossShaman::Play_Tense4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Tense4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE4], 0.5f);
+}
+
+void CBossShaman::Play_Impact1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Impact1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT1], 0.7f);
+}
+
+void CBossShaman::Play_Impact2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Impact2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT2], 0.7f);
+}
+
+void CBossShaman::Play_Impact3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Impact3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT3], 0.7f);
+}
+
+void CBossShaman::Play_Impact4Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Impact4Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT4], 0.7f);
+}
+
+void CBossShaman::Play_Impact5Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Impact5Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT5], 0.7f);
+}
+
+
+void CBossShaman::Play_Knife1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Knife1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_KNIFE1], 0.5f);
+}
+
+void CBossShaman::Play_Knife2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Knife2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_KNIFE2], 0.5f);
+}
+
+void CBossShaman::Play_Knife3Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Knife3Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_KNIFE3], 0.5f);
+}
+
+void CBossShaman::Play_Sword1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Sword1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_SWORD1], 0.5f);
+}
+
+void CBossShaman::Play_Sword2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Sword2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_SWORD2], 0.5f);
+}
+
+void CBossShaman::Play_Swing1Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Swing1Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_SWING1], 0.5f);
+}
+
+void CBossShaman::Play_Swing2Sound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_Swing2Sound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_SWING2], 0.5f);
+}
+
+void CBossShaman::Play_HandclapSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_HandclapSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HANDCLAP], 0.5f);
+}
+
+void CBossShaman::Play_TeleportSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_TeleportSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TELEPORT], 0.5f);
+}
+
+void CBossShaman::Play_DingSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_DingSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DING], 0.5f);
+}
+
+void CBossShaman::Play_WalkSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Play_WalkSound);
+		return;
+	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_WALK], 0.5f);
+}
+
+void CBossShaman::Teleport_MeleeAttack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::Teleport_MeleeAttack);
+		return;
+	}
+
+	m_bMeleeAttackTeleport = true;
 }
