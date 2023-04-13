@@ -80,7 +80,9 @@ public:
 public:
 	void	Respawn();
 	HRESULT Save();
-	HRESULT Load(const string & strFilePath);
+	HRESULT Load(const string& strFilePath);
+	HRESULT	Save_RunTime(const wstring& wstrFilePath);
+	HRESULT	Load_RunTime(const wstring& wstrFilePath);
 
 public:
 	inline _float Get_MaxShield() { return m_fMaxShield; }
