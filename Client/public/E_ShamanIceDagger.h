@@ -84,7 +84,6 @@ public:
 	static  CE_ShamanIceDagger* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath = nullptr);
 	virtual CGameObject*	  Clone(void* pArg = nullptr) override;
 	virtual void			  Free() override;
-
 };
 
 END

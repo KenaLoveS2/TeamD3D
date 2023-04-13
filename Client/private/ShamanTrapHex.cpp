@@ -68,8 +68,6 @@ HRESULT CShamanTrapHex::Initialize(void* pArg)
 
 HRESULT CShamanTrapHex::Late_Initialize(void* pArg)
 {
-	return S_OK;
-
 	_float3		vPos, vPivotScale, vPivotPos, vPivotRot;
 	_smatrix	matPivot;
 	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;

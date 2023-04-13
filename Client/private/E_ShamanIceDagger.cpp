@@ -57,32 +57,62 @@ HRESULT CE_ShamanIceDagger::Late_Initialize(void* pArg)
 {
 	m_pKena = (CKena*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena");
 	NULL_CHECK_RETURN(m_pKena, E_FAIL);
+	{
+		_float3 vPos = _float3(0.f, 0.f, 0.f);
+		_float3 vPivotScale = _float3(0.15f, 0.f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
 
-	_float3 vPos = _float3(0.f, 0.f, 0.f);
-	_float3 vPivotScale = _float3(0.15f, 0.f, 1.f);
-	_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = CUtile::Create_CombinedString(m_szCloneObjectTag, TEXT("This"));
+		PxSphereDesc.vPos = vPos;
+		PxSphereDesc.fRadius = vPivotScale.x;
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 59.f;
+		PxSphereDesc.fLinearDamping = 1.f;
+		PxSphereDesc.bCCD = true;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
 
-	// Capsule X == radius , Y == halfHeight
-	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	PxSphereDesc.eType = SPHERE_DYNAMIC;
-	PxSphereDesc.pActortag = m_szCloneObjectTag;
-	PxSphereDesc.vPos = vPos;
-	PxSphereDesc.fRadius = vPivotScale.x;
-	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxSphereDesc.fDensity = 1.f;
-	PxSphereDesc.fAngularDamping = 0.5f;
-	PxSphereDesc.fMass = 59.f;
-	PxSphereDesc.fLinearDamping = 1.f;
-	PxSphereDesc.bCCD = true;
-	PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
-	PxSphereDesc.fDynamicFriction = 0.5f;
-	PxSphereDesc.fStaticFriction = 0.5f;
-	PxSphereDesc.fRestitution = 0.1f;
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COLLISON_DUMMY));
 
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+		_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+	}
 
-	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
-	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+
+	{
+		_float3 vPos = _float3(0.f, 0.f, 0.f);
+		_float3 vPivotScale = _float3(0.15f, 0.f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
+
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = CUtile::Create_CombinedString(m_szCloneObjectTag, TEXT("Shaman"));
+		PxSphereDesc.vPos = vPos;
+		PxSphereDesc.fRadius = vPivotScale.x;
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 59.f;
+		PxSphereDesc.fLinearDamping = 1.f;
+		PxSphereDesc.bCCD = true;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
+
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(m_pParent, false, COL_MONSTER_WEAPON));
+
+		_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+	}
 
 	return S_OK;
 }

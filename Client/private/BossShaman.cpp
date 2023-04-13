@@ -876,10 +876,13 @@ HRESULT CBossShaman::SetUp_State()
 		m_bTraptBreak = false;
 		m_bTraptLoop = true;
 		m_bTrapOffset = true;
-		m_bNoDamage = false;
+		m_bNoDamage = false;		
 		m_pModelCom->Set_AnimIndex(TRAP_LOOP);
+		
+		_float4 vTrapPos = m_vKenaPos;
+		vTrapPos.y = m_pTransformCom->Get_PositionY();
+		m_pShamanTapHex->Execute_Trap(vTrapPos);
 
-		m_pShamanTapHex->Execute_Trap(m_vKenaPos);
 		m_fTeleportDissolveTime = 0.f;
 		m_bTeleportDissolve = false;
 	})
@@ -1300,7 +1303,7 @@ HRESULT CBossShaman::Ready_Effects()
 		strMapTag = "S_IceDagger_" + to_string(i);
 		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShammanIceDagger", pCloneTag));
 		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-		dynamic_cast<CE_ShamanIceDagger*>(pEffectBase)->Set_CenterBone(pBonePtr, XMConvertToRadians(i * 45.f), i);
+		dynamic_cast<CE_ShamanIceDagger*>(pEffectBase)->Set_CenterBone(pBonePtr, XMConvertToRadians(i * 45.f), i);		
 		m_mapEffect.emplace(strMapTag, pEffectBase);
 	}
 
