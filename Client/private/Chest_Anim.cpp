@@ -378,6 +378,7 @@ HRESULT CChest_Anim::SetUp_ShaderResources()
 
 HRESULT CChest_Anim::Ready_Effect()
 {
+#ifdef FOR_MAP_GIMMICK
 	m_pChestEffect = (CE_Chest*)(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_E_Chest", CUtile::Create_DummyString()));
 	NULL_CHECK_RETURN(m_pChestEffect, E_FAIL);
 	m_pChestEffect->Set_Parent(this);
@@ -385,6 +386,7 @@ HRESULT CChest_Anim::Ready_Effect()
 	m_pChestEffect_P = (CE_P_Chest*)(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_E_P_Chest", CUtile::Create_DummyString()));
 	NULL_CHECK_RETURN(m_pChestEffect_P, E_FAIL);
 	m_pChestEffect_P->Set_Parent(this);
+#endif
 
 	return S_OK;
 }

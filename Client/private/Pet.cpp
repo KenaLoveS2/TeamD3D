@@ -49,11 +49,6 @@ HRESULT CPet::Late_Initialize(void* pArg)
 
 void CPet::Tick(_float fTimeDelta)
 {
-	if(!m_bTestOnce)
-	{
-		CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
-		m_bTestOnce = true;
-	}
 
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 
