@@ -423,14 +423,14 @@ HRESULT CBowTarget::Bind_Dissolve(CShader* pShader)
 
 HRESULT CBowTarget::Ready_Effect()
 {
+#ifdef FOR_MAP_GIMMICK
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-
 	_tchar* pDummyString = CUtile::Create_DummyString();
 	m_pTrail = dynamic_cast<CE_RectTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", pDummyString));
 	NULL_CHECK_RETURN(m_pTrail, E_FAIL);
 	m_pTrail->Set_Parent(this);
 	m_pTrail->SetUp_Option(CE_RectTrail::OBJ_BOWTARGET);
-	
+#endif
 	return S_OK;
 }
 
