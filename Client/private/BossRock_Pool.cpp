@@ -39,8 +39,8 @@ HRESULT CBossRock_Pool::Initialize(void* pArg)
 	{
 		BossRockDesc.eType = (CBossRock::ROCK_TPYE)(i % CBossRock::ROCK_TPYE_END);
 		BossRockDesc.vPosition = m_Desc.vCenterPos + _float4(CUtile::Get_RandomFloat(-7.f, 7.f), 0.01f, CUtile::Get_RandomFloat(-7.f, 7.f), 0.f);
-		BossRockDesc.fUpTime = CUtile::Get_RandomFloat(2.f, 4.f);
-		BossRockDesc.fSpeedY = CUtile::Get_RandomFloat(3.f, 4.f);
+		BossRockDesc.fUpTime = CUtile::Get_RandomFloat(1.f, 2.f);
+		BossRockDesc.fSpeedY = CUtile::Get_RandomFloat(8.f, 10.f);
 
 		pRock = (CBossRock*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossRock"), CUtile::Create_DummyString(), &BossRockDesc);
 		assert(pRock && "CBossRock_Pool::Initialize()");
