@@ -129,6 +129,8 @@ HRESULT CHunterArrow::Late_Initialize(void* pArg)
 
 	m_pHunter = (CBossHunter*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Monster"), TEXT("BossHunter_0"));
 
+
+
 	return S_OK;
 }
 
@@ -292,7 +294,8 @@ HRESULT CHunterArrow::SetUp_ShaderResources()
 	_float4 vColor = { 1.0f, 0.05f, 0.46f, 1.f };
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4)))) return E_FAIL;
 
-	_float fHDR = 4.f;
+	_float fHDR = 5.f;
+	
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &fHDR, sizeof(_float)))) return E_FAIL;
 
 	_bool bDissolve;
