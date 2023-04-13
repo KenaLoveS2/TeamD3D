@@ -131,8 +131,6 @@ void CUI_NodeBossHP::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UIHDR, this);
 #pragma endregion
 
-
-
 	if (m_pEffect != nullptr)
 	{
 		//if (static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Stabilize())
@@ -247,4 +245,6 @@ void CUI_NodeBossHP::Free()
 	__super::Free();
 	Safe_Delete_Array(m_szTitle);
 	Safe_Release(m_pEffect);
+
+	int a = 0;
 }

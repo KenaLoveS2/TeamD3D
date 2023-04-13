@@ -246,7 +246,6 @@ void CBossHunter::Tick(_float fTimeDelta)
 
 	if (ImGui::Button("DamageHunter"))
 		m_pMonsterStatusCom->UnderAttack(50);
-		
 }
 
 void CBossHunter::Late_Tick(_float fTimeDelta)
@@ -1473,6 +1472,7 @@ void CBossHunter::BossFight_Start()
 	m_pRendererCom->Set_FogValue(vColor, 100.f);
 	CGameInstance::GetInstance()->Get_Light(1)->Set_Enable(true);
 	dynamic_cast<CEffect_Point_Instancing*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Effect"), TEXT("Rain")))->Set_Active(true);
+	dynamic_cast<CEffect_Point_Instancing*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Effect"), TEXT("flower")))->Set_Active(false);
 }
 
 void CBossHunter::BossFight_End()
@@ -1492,6 +1492,7 @@ void CBossHunter::BossFight_End()
 		m_pRot->Get_TransformCom()->Set_Look(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * -1.f);
 	}
 	dynamic_cast<CEffect_Point_Instancing*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Effect"), TEXT("Rain")))->Set_Active(false);
+	dynamic_cast<CEffect_Point_Instancing*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Effect"), TEXT("flower")))->Set_Active(true);
 }
 
 CBossHunter* CBossHunter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1531,6 +1532,8 @@ void CBossHunter::Free()
 
 	for (auto& pArrow : m_pArrows)
 		Safe_Release(pArrow);
+
+	int a = 0;
 }
 
 

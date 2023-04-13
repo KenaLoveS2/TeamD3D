@@ -83,35 +83,35 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	{
-		MSG_BOX("Layer_Monster");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//{
+	//	MSG_BOX("Layer_Monster");
+	//	return E_FAIL;
+	//}
 
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
-	{
-		MSG_BOX("Layer_NPC");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	//{
+	//	MSG_BOX("Layer_NPC");
+	//	return E_FAIL;
+	//}
 
-	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
-	{
-		MSG_BOX("Layer_Rot");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
+	//{
+	//	MSG_BOX("Layer_Rot");
+	//	return E_FAIL;
+	//}
 
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-	{
-		MSG_BOX("Layer_Effect");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	//{
+	//	MSG_BOX("Layer_Effect");
+	//	return E_FAIL;
+	//}
 
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
-	{
-		MSG_BOX("Layer_Canvas");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
+	//{
+	//	MSG_BOX("Layer_Canvas");
+	//	return E_FAIL;
+	//}
 	
 	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
 	{
@@ -248,9 +248,6 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Wind"), CUtile::Create_StringAuto(szCloneRotTag))))
 			return E_FAIL;
 	}
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_EffectFlower"), L"flower")))
-		return E_FAIL;
 
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
@@ -562,6 +559,9 @@ HRESULT CLevel_TestPlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 		return E_FAIL;
 
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_P_Rain"), L"Rain", nullptr, &pGameObject), E_FAIL);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_EffectFlower"), L"flower")))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
