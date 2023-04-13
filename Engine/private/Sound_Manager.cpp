@@ -192,6 +192,25 @@ void CSound_Manager::Stop_Sound(_uint iManualChannelIndex)
 	m_Channels[iManualChannelIndex].second = NO_USE_CHNNEL;
 }
 
+const _tchar* CSound_Manager::Get_SoundKey(CHANNEL* pChannel)
+{
+	NULL_CHECK_RETURN(pChannel, nullptr);
+	
+	if (pChannel->second == NO_USE_CHNNEL)
+		return nullptr;
+
+	CSound* pSound = pChannel->second;
+
+	const auto iter = find_if(m_Sounds.begin(), m_Sounds.end(), [pSound](const pair<const _tchar*, CSound*>& Pair) {
+			return Pair.second == pSound;
+		});
+
+	if (iter == m_Sounds.end())
+		return nullptr;
+
+	return iter->first;
+}
+
 void CSound_Manager::Set_Volume(_uint iManualChannelIndex, _float fVolume)
 {
 	if (iManualChannelIndex >= MAX_CHANNEL_COUNT) return;
@@ -293,6 +312,19 @@ HRESULT CSound_Manager::Copy_Sound(_tchar* pOriginSoundKey, _tchar* pCopySoundKe
 	
 	lstrcpy(pCopySoundKeyOut, pSoundKey);
 	Pair->second->Add_CopyCount();
+
+	return S_OK;
+}
+
+HRESULT CSound_Manager::Copy_Sound(const _tchar* pSoundKey, SOUNDS* pSounds)
+{
+	const auto iter = find_if(m_Sounds.begin(), m_Sounds.end(), CTag_Finder(pSoundKey));
+	if (iter == m_Sounds.end())
+		return E_FAIL;
+
+	_bool bResult = pSounds->emplace(*iter).second;
+	if (bResult == false)
+		return E_FAIL;
 
 	return S_OK;
 }

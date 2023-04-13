@@ -3673,7 +3673,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 
 #pragma endregion HHW_OBJ
 
-	RELEASE_INSTANCE(CGameInstance);
+	//RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

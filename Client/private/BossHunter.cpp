@@ -62,7 +62,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	}
 	else
 	{
-		m_Desc.iRoomIndex = 0;
+		m_Desc.pGroupName = L"";
 		m_Desc.WorldMatrix = _smatrix();
 		m_Desc.WorldMatrix._41 = -12.f;
 		m_Desc.WorldMatrix._42 = m_fFlyHeightY;
@@ -105,6 +105,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 HRESULT CBossHunter::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+
 	{
 		_float3 vPivotScale = _float3(0.5f, 0.5f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
@@ -1733,7 +1734,7 @@ void CBossHunter::FireArrow_Single(_bool bIsInit, _float fTimeDelta)
 	{
 		for (_uint j = 0; j < SINGLE_SHOT_FRIEND_COUNT; j++)
 		{
-			m_vSingleShotTargetPosTable[i * SINGLE_SHOT_FRIEND_COUNT + j] = vKenaPos + vDirTable[i] * (j + 1) * fDist;
+			m_vSingleShotTargetPosTable[i * SINGLE_SHOT_FRIEND_COUNT + j] = vKenaPos + vDirTable[i] * _float(j + 1) * fDist;
 		}
 	}
 	
