@@ -298,13 +298,37 @@ PS_OUT PS_LIGHTSHAFT(PS_IN In)
 	PS_OUT Out = (PS_OUT)0;
 
 	// 광원의 위치
+	vector		vDepthDesc = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
+	float		fViewZ = vDepthDesc.y * g_fFar;
 
-	matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
-	float4 lightPos =  float4(10.f , 10.f, 10.f,1.f);
-	lightPos = mul(lightPos, matVP);
-	float2 dist = abs(In.vTexUV - lightPos.xy);
+	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
+	vector		vPosition;
+	vPosition.x = In.vTexUV.x * 2.f - 1.f;
+	vPosition.y = In.vTexUV.y * -2.f + 1.f;
+	vPosition.z = vDepthDesc.x; /* 0 ~ 1 */
+	vPosition.w = 1.0f;
+
+	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
+	vPosition *= fViewZ;
+
+	// 뷰 상
+	vPosition = mul(vPosition, g_ProjMatrixInv);
+	// 월드 상
+	vPosition = mul(vPosition, g_ViewMatrixInv);
+	vPosition = mul(vPosition, g_ViewMatrix);
+	vector	vUVPos = mul(vPosition, g_ProjMatrix);
+
+	float2	vNewUV;
+	vNewUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
+	vNewUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
+
+	//matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	//float4 lightPos =  float4(10.f , 10.f, 10.f,1.f);
+	//lightPos = mul(lightPos, matVP);
+
+	float2 dist = abs(In.vTexUV - vNewUV);
 	float2 texCoord = In.vTexUV;
-	float2 DeltaTexCoord = (In.vTexUV - lightPos.xy);
+	float2 DeltaTexCoord = (In.vTexUV - vNewUV);
 
 	// Calculate distance between current fragment and light source
 	//float dist = length(float4(vWorldPos - lightPos));
