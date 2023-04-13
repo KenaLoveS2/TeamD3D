@@ -512,8 +512,6 @@ HRESULT CMeditation_Spot::Ready_Effect()
 	NULL_CHECK_RETURN(m_pMeditationSpotEffect, E_FAIL);
 	m_pMeditationSpotEffect->Set_Parent(this);
 	m_pMeditationSpotEffect->Late_Initialize(nullptr);
-#else
-
 #endif
 
 	return S_OK;

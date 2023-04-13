@@ -291,6 +291,8 @@ HRESULT CFire_Brazier::SetUp_ShadowShaderResources()
 
 HRESULT CFire_Brazier::Ready_Effect()
 {
+
+#ifdef FOR_MAP_GIMMICK
 	m_pFireBrazierEffect = (CE_FireBrazier*)(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_FireBrazier", CUtile::Create_DummyString()));
 	NULL_CHECK_RETURN(m_pFireBrazierEffect, E_FAIL);
 	m_pFireBrazierEffect->Set_Parent(this);
@@ -300,7 +302,7 @@ HRESULT CFire_Brazier::Ready_Effect()
 	NULL_CHECK_RETURN(m_pCommonBox, E_FAIL);
 	m_pCommonBox->Set_Parent(this);
 	m_pCommonBox->Late_Initialize(nullptr);
-
+#endif
 	return S_OK;
 }
 
