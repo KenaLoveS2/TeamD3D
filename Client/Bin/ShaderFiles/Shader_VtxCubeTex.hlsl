@@ -59,7 +59,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	}
 	else
 	{
-		FinalColor.rgb *= g_vFogColor.rgb;
+		FinalColor.rgb = g_vFogColor.rgb;
 	}
 
 	Out.vColor = FinalColor;

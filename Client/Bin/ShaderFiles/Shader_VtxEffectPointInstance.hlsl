@@ -267,8 +267,8 @@ void GS_RAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	GS_OUT		Out[4];
 
 	float3		vLook = g_vCamPosition.xyz - In[0].vPosition;
-	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].fSize * 0.1f;
-	float3		vUp = normalize(cross(vLook, vRight)) * In[0].fSize * 0.8f;
+	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].fSize * 0.005f;
+	float3		vUp = normalize(cross(vLook, vRight)) * In[0].fSize * 0.03f;
 
 	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float3		vPosition;

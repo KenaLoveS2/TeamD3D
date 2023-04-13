@@ -342,6 +342,7 @@ PS_OUT PS_LIGHTSHAFT(PS_IN In)
 		FinalColor += vSample;
 		illuminationDecay *= g_LightShaftValue.y ;
 	}
+
 	Out.vColor = saturate(FinalColor * g_LightShaftValue.w);
 
 	return Out;
