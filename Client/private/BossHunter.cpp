@@ -163,6 +163,8 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 	
 	m_vecEffects[EFFECT_BOWTRAIL1]->Activate(this, "Bow_TopJnt9");
 	m_vecEffects[EFFECT_BOWTRAIL2]->Activate(this, "Bow_BotJoint9");
+	m_vecEffects[EFFECT_AURA_TEXTURE]->Activate(this);
+
 
 	return S_OK;
 }
@@ -445,6 +447,11 @@ void CBossHunter::Push_EventFunctions()
 	StunEffect_Off(true, 0.f);
 	BowTrailEffect_On(true, 0.f);
 	BowTrailEffect_Off(true, 0.f);
+	MagicCircleEffect_On(true, 0.f);
+	AuraEffect_On(true, 0.f);
+	AuraEffect_Off(true, 0.f);
+	RoarEffect_On(true, 0.f);
+	HitEffect_On(true, 0.f);
 
 	TurnOnTrail(true, 0.f);
 	TUrnOffTrail(true, 0.f);
@@ -1918,6 +1925,100 @@ void CBossHunter::BowTrailEffect_Off(_bool bIsInit, _float fTimeDelta)
 	m_vecEffects[EFFECT_BOWTRAIL2]->DeActivate();
 }
 
+void CBossHunter::MagicCircleEffect_On(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::MagicCircleEffect_On);
+		return;
+	}
+
+	_float4 vPos;
+
+	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_lf_ball_jnt");
+	if (pStaffBonePtr != nullptr)
+	{
+		_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+		vPos = matWorldSocket.r[3];
+	}
+	else
+		vPos = m_pTransformCom->Get_Position();
+
+	_float4		vCenterPos = m_pTransformCom->Get_Position();
+	vPos.x = vCenterPos.x;
+	vPos.z = vCenterPos.z;
+	vPos.y += 0.1f;
+
+	m_vecEffects[EFFECT_MAGIC_MESH]->Activate(vPos);
+}
+
+void CBossHunter::AuraEffect_On(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::AuraEffect_On);
+		return;
+	}
+
+	m_vecEffects[EFFECT_AURA_TEXTURE]->Activate_Slowly(this);
+}
+
+void CBossHunter::AuraEffect_Off(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::AuraEffect_Off);
+		return;
+	}
+
+	m_vecEffects[EFFECT_AURA_TEXTURE]->DeActivate_Slowly();
+}
+
+void CBossHunter::RoarEffect_On(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::RoarEffect_On);
+		return;
+	}
+
+	_float4 vPos;
+	CBone* pBone = m_pModelCom->Get_BonePtr("char_neck_jnt");
+	if (pBone != nullptr)
+	{
+		_matrix SocketMatrix = pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+		vPos = matWorldSocket.r[3];
+	}
+	else
+		vPos = m_pTransformCom->Get_Position();
+
+	static _int iIndex = EFFECT_ROAR_TEXTURE1;
+
+
+	m_vecEffects[iIndex]->Activate_Scaling(vPos, { -3.f, -3.f });
+	iIndex++;
+	if (iIndex > EFFECT_ROAR_TEXTURE4)
+		iIndex = EFFECT_ROAR_TEXTURE1;
+}
+
+void CBossHunter::HitEffect_On(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::HitEffect_On);
+		return;
+	}
+
+	//m_vecEffects[EFFECT_HIT_PARTICLE]->Activate_Reflecting();
+}
+
 void CBossHunter::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
@@ -1989,12 +2090,15 @@ HRESULT CBossHunter::Create_Effects()
 	_int iNumEffects;
 	jLoad["01. NumEffects"].get_to<_int>(iNumEffects);
 
+	_int iIndex = 0;
 	for (auto jSub : jLoad["02. FileName"])
 	{
 		string strEffect;
 		jSub.get_to<string>(strEffect);
 		wstring wstr;
 		wstr.assign(strEffect.begin(), strEffect.end());
+		_tchar* fileName = CUtile::Create_StringAuto(wstr.c_str());
+		wstr += to_wstring(iIndex);
 		_tchar* cloneTag = CUtile::Create_StringAuto(wstr.c_str());
 
 		string type;
@@ -2008,16 +2112,17 @@ HRESULT CBossHunter::Create_Effects()
 		CEffect_Base_S2* pEffect = nullptr;
 
 		if (type == "Particle")
-			pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base", cloneTag, cloneTag));
+			pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base", cloneTag, fileName));
 		else if (type == "Mesh")
-			pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Mesh_Base", cloneTag, cloneTag));
+			pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Mesh_Base", cloneTag, fileName));
 		else if (type == "Texture")
-			pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Texture_Base", cloneTag, cloneTag));
+			pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Texture_Base", cloneTag, fileName));
 
 		if (pEffect != nullptr)
 		{
 			//pEffect->Set_Target(this);
 			m_vecEffects.push_back(pEffect);
+			iIndex++;
 		}
 		else
 			return E_FAIL;

@@ -74,6 +74,17 @@ private:
 		EFFECT_BOWTRAIL1,
 		EFFECT_BOWTRAIL2,
 
+		EFFECT_MAGIC_MESH,
+		
+		EFFECT_AURA_TEXTURE,
+
+		EFFECT_ROAR_TEXTURE1,
+		EFFECT_ROAR_TEXTURE2,
+		EFFECT_ROAR_TEXTURE3,
+		EFFECT_ROAR_TEXTURE4,
+		
+		EFFECT_HIT_PARTICLE,
+
 		EFFECT_END
 	};
 
@@ -207,6 +218,7 @@ public:
 
 	void Reset_HitFlag();
 
+	/* SY */
 	void ShockEffect_On(_bool bIsInit, _float fTimeDelta);
 	void ShockEffect_Off(_bool bIsInit, _float fTimeDelta);
 	void DustEffect_On(_bool bIsInit, _float fTimeDelta);
@@ -214,6 +226,12 @@ public:
 	void StunEffect_Off(_bool bIsInit, _float fTimeDelta);
 	void BowTrailEffect_On(_bool bIsInit, _float fTimeDelta);
 	void BowTrailEffect_Off(_bool bIsInit, _float fTimeDelta);
+	void MagicCircleEffect_On(_bool bIsInit, _float fTimeDelta);
+	void AuraEffect_On(_bool bIsInit, _float fTimeDelta);
+	void AuraEffect_Off(_bool bIsInit, _float fTimeDelta);
+	void RoarEffect_On(_bool bIsInit, _float fTimeDelta);
+	void HitEffect_On(_bool bIsInit, _float fTimeDelta);
+	/* ~SY */
 
 
 	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
@@ -305,7 +323,7 @@ private: /* For. String */
 	_float							m_fStringDissolveSpeed;
 	_float							m_fStringHDRIntensity;
 	_float4							m_vStringDiffuseColor;
-	class CRot*					m_pRot = nullptr;
+	class CRot*						m_pRot = nullptr;
 
 	_float							m_fFogRange = 100.f;
 	_float							m_fLightRange = 10.f;

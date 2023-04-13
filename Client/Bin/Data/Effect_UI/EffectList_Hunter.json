@@ -1,5 +1,5 @@
 {
-    "01. NumEffects": 14,
+    "01. NumEffects": 21,
     "02. FileName": [
         "Texture_ChargeCircle",
         "Particle_Charge",
@@ -14,6 +14,13 @@
         "Mesh_StunChargeBase",
         "Mesh_StunChargeBaseDark",
         "Particle_BowTrail1",
-        "Particle_BowTrail2"
+        "Particle_BowTrail2",
+        "Mesh_MagicCircle",
+        "Texture_Aura2",
+        "Texture_Roar",
+        "Texture_Roar",
+        "Texture_Roar",
+        "Texture_Roar",
+        "Particle_HunterHit"
     ]
 }

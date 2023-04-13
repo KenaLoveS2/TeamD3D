@@ -337,11 +337,14 @@ PS_OUT PS_MAIN_BLACK(PS_IN In)
 	Out.vColor.a = Out.vColor.r;
 
 	Out.vColor *= g_float4_0;
+	Out.vColor.rgb *= g_float_0;
+	//Out.vColor.rgb = CalcHDRColor(Out.vColor, g_float_0);
 
 	if (Out.vColor.a < 0.01f)
 		discard;
 
-	Out.vColor.rgb *= g_float_0;
+	//
+
 
 	return Out;
 }
@@ -620,7 +623,7 @@ technique11 DefaultTechnique
 	{
 		SetRasterizerState(RS_CULLNONE);
 		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_TRAIL();
 		GeometryShader = compile gs_5_0 GS_TRAIL();
@@ -643,4 +646,5 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_V2();
 	}
+
 }

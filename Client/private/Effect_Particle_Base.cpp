@@ -109,6 +109,21 @@ void CEffect_Particle_Base::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
+	if (m_pTarget != nullptr)
+	{
+		if (m_pBoneName != nullptr)
+		{
+			_float4 vPos = m_pTarget->Get_ComputeBonePosition(m_pBoneName);
+			m_pTransformCom->Set_Position(
+				m_pTarget->Get_ComputeBonePosition(m_pBoneName));
+		}
+		else
+		{
+			_float4 vTargetPos = m_pTarget->Get_TransformCom()->Get_Position() + m_ParentPosition;/* correct */
+			m_pTransformCom->Set_Position(vTargetPos);
+		}
+	}
+
 	if (nullptr != m_pRendererCom)
 	{
 		m_bUI ? m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UIHDR, this)

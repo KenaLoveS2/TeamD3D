@@ -44,6 +44,7 @@ public: /* Activation Function */
 	virtual void					Activate_Spread(_float4 vPos, _float2 vScaleSpeed) {};
 	virtual void					Activate_Reflecting(_float4 vDir, _float4 vPos, _float fAngle) {};
 	virtual	void					Activate_Slowly(_float4 vPos) {};
+	virtual	void					Activate_Slowly(CGameObject* pTarget) {};
 	virtual void					DeActivate();
 	virtual void					DeActivate_Slowly();
 
@@ -63,6 +64,7 @@ protected: /* Property */
 	_int							m_iRenderPass;
 	_int							m_iTextureIndex;
 	_float4							m_vColor;
+	_float4							m_vColorOriginal;
 	_float							m_fHDRIntensity;
 	_bool							m_bOptions[OPTION_END];
 
