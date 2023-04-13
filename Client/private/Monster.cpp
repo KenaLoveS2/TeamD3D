@@ -32,11 +32,6 @@ const _double & CMonster::Get_AnimationPlayTime()
 	return m_pModelCom->Get_PlayTime();
 }
 
-_vector CMonster::Get_Position()
-{
-	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-}
-
 _vector CMonster::Get_FocusPosition()
 {
 	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)

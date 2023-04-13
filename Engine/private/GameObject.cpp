@@ -251,3 +251,8 @@ void CGameObject::Sync_ActorMatrix(_float4x4& Matrix)
 {
 	m_pTransformCom->Sync_ActorMatrix(Matrix);
 }
+
+_vector CGameObject::Get_Position()
+{
+	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+}
