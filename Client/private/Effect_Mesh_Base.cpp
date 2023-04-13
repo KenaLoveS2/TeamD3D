@@ -165,8 +165,6 @@ void CEffect_Mesh_Base::Tick(_float fTimeDelta)
 
 	}
 
-
-
 }
 
 void CEffect_Mesh_Base::Late_Tick(_float fTimeDelta)
@@ -175,6 +173,21 @@ void CEffect_Mesh_Base::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_pTarget != nullptr)
+	{
+		if (m_pBoneName != nullptr)
+		{
+			_float4 vPos = m_pTarget->Get_ComputeBonePosition(m_pBoneName);
+			m_pTransformCom->Set_Position(
+				m_pTarget->Get_ComputeBonePosition(m_pBoneName));
+		}
+		else
+		{
+			_float4 vTargetPos = m_pTarget->Get_TransformCom()->Get_Position() + m_ParentPosition;/* correct */
+			m_pTransformCom->Set_Position(vTargetPos);
+		}
+	}
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
@@ -245,8 +258,8 @@ void CEffect_Mesh_Base::Imgui_RenderProperty()
 		/* RenderPass */
 		static _int iRenderPass;
 		iRenderPass = m_iRenderPass;
-		const char* renderPass[5] = { "Default", "OnlyColor", "DefaultMask", "Dissolve", "HunterString"};
-		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 5, 5))
+		const char* renderPass[6] = { "Default", "OnlyColor", "DefaultMask", "Dissolve", "Mask_V2", "Mask_DiffuseMove"};
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 6, 5))
 			m_iRenderPass = iRenderPass;
 
 		/* HDR Intensity (Diffuse) */

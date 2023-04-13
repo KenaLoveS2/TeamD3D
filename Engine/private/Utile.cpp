@@ -126,7 +126,7 @@ char* CUtile::Create_String(const char * pText)
 	_int iSize = (_int)strlen(pText) + 1;
 
 	char* pString = new char[iSize];
-	ZeroMemory(pString, sizeof(_tchar) * iSize);
+	ZeroMemory(pString, sizeof(char) * iSize);
 
 	strcpy_s(pString, iSize, pText);
 
@@ -141,6 +141,19 @@ _tchar* CUtile::Create_StringAuto(const _tchar *pText)
 	ZeroMemory(pString, sizeof(_tchar) * iSize);
 
 	lstrcpy(pString, pText);
+
+	CString_Manager::GetInstance()->Add_String(pString);
+
+	return pString;
+}
+
+_tchar* CUtile::Create_StringAuto(const char* pText)
+{
+	_int	iSize = MultiByteToWideChar(CP_ACP, 0, pText, -1, NULL, NULL);;
+
+	_tchar* pString = new _tchar[iSize];
+	ZeroMemory(pString, sizeof(_tchar) * iSize);
+	MultiByteToWideChar(CP_ACP, 0, pText, strlen(pText) + 1, pString, iSize);
 
 	CString_Manager::GetInstance()->Add_String(pString);
 

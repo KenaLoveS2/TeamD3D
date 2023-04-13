@@ -70,8 +70,8 @@ HRESULT CLevel_GamePlay::Initialize()
  	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
  		return E_FAIL;
 
-//  	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-//  		return E_FAIL;
+  	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+  		return E_FAIL;
 
 	// Ready_Thread_CloneObject(TEXT(""));
 	
@@ -132,9 +132,31 @@ HRESULT CLevel_GamePlay::Render()
 
 HRESULT CLevel_GamePlay::Ready_Lights()
 {
-	CGameInstance*      pGameInstance = GET_INSTANCE(CGameInstance);
+	//CGameInstance*      pGameInstance = GET_INSTANCE(CGameInstance);
 
-	LIGHTDESC         LightDesc;
+	//LIGHTDESC         LightDesc;
+	//ZeroMemory(&LightDesc, sizeof LightDesc);
+
+	//LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
+	//LightDesc.isEnable = true;
+	//LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
+	//LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
+	//LightDesc.vSpecular = _float4(1.0f, 1.0f, 1.0f, 1.f);
+	//LightDesc.vPosition = _float4(-100.f, 100.f, -100.f, 1.f);
+	//LightDesc.szLightName = "DIRECTIONAL";
+
+	//if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
+	//	return E_FAIL;
+
+
+	//RELEASE_INSTANCE(CGameInstance);
+
+	//return S_OK;
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	LIGHTDESC			LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
@@ -149,17 +171,28 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
 
+	LightDesc.eType = LIGHTDESC::TYPE_POINT;
+	LightDesc.isEnable = false;
+	LightDesc.vPosition = _float4(35.f, 0.f, 500.f, 1.f);
+	LightDesc.fRange = 10.0f; // ~90
+	LightDesc.vDiffuse = _float4(0.f, 0.7f, 0.8f, 1.f);
+	LightDesc.vAmbient = _float4(0.f, 0.7f, 0.8f, 1.f);
+	LightDesc.vSpecular = _float4(0.f, 0.7f, 0.8f, 0.f);
+	LightDesc.szLightName = "PointLight_0";
+
+	if (FAILED(CGameInstance::GetInstance()->Add_Light(m_pDevice, m_pContext, LightDesc)))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
-	return S_OK;
+	return S_OK; 
 }
 
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		
-	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	// CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
@@ -327,14 +360,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 	{
 		vector<CCinematicCamera::CAMERAKEYFRAME> v;
 		string chatFileName;
-		CCinematicCamera::Clone_Load_Data("BossWarrior_Start.json", v, chatFileName);
+		CCinematicCamera::Clone_Load_Data("BossHunter_Start.json", v, chatFileName);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-			CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"BOSSWARRIOR_START", &v));
+			CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"BOSSHUNTER_START", &v));
 		//f (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"BOSSHUNTER_START", &v, &p_game_object))) return E_FAIL;
 		//CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
 		NULL_CHECK_RETURN(pCamera, E_FAIL);
-		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"BOSSWARRIOR_START", pCamera), E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"BOSSHUNTER_START", pCamera), E_FAIL);
 		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
 		RELEASE_INSTANCE(CGameInstance)
 			v.clear();
@@ -343,14 +376,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 	{
 		vector<CCinematicCamera::CAMERAKEYFRAME> v;
 		string chatFileName;
-		CCinematicCamera::Clone_Load_Data("BossWarrior_End.json", v, chatFileName);
+		CCinematicCamera::Clone_Load_Data("BossHunter_End.json", v, chatFileName);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-			CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"BOSSWARRIOR_END", &v));
+			CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"BOSSHUNTER_END", &v));
 		//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"BOSSHUNTER_END", &v, &p_game_object))) return E_FAIL;
 		//CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
 		NULL_CHECK_RETURN(pCamera, E_FAIL);
-		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"BOSSWARRIOR_END", pCamera), E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"BOSSHUNTER_END", pCamera), E_FAIL);
 		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
 		RELEASE_INSTANCE(CGameInstance)
 			v.clear();
@@ -436,9 +469,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ShieldStick"), L"SheildStick_0", nullptr, &pGameObject))) return E_FAIL;
 	// if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
 
-// 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossWarrior"), L"BossWarrior_0", nullptr, &pGameObject))) return E_FAIL;
-// 
- 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossShaman"), L"BossShaman_0", nullptr, &pGameObject))) return E_FAIL;	 
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossWarrior"), L"BossWarrior_0", nullptr, &pGameObject))) return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossShaman"), L"BossShaman_0", nullptr, &pGameObject))) return E_FAIL;	 
 	
 	 //if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossHunter"), L"BossHunter_0", nullptr, &pGameObject))) return E_FAIL;
 		
@@ -629,11 +662,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Rot(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), TEXT("Rot_JH")))) return E_FAIL;
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_LiftRot_Master"), TEXT("LiftRot_Master")))) return E_FAIL;
 
-	//for (_uint i = 0; i < 1; i++)
-	//{
-	//	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), CUtile::Create_DummyString(TEXT("TEST_Rot"), i))))
-	//		return E_FAIL;
-	//}
+	/*for (_uint i = 0; i < 1; i++)
+	{
+		if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), CUtile::Create_DummyString(TEXT("TEST_Rot"), i))))
+			return E_FAIL;
+	}*/
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

@@ -44,6 +44,8 @@ public:
 
 public:
 	HRESULT		Update_Buffer(POINTINFO * pInfo = nullptr);
+	HRESULT		Bind_ShaderResouce(class CShader* pShaderCom, const char* pConstanctName);
+
 
 private: /* Tick Function By Type */
 	HRESULT		Tick_Haze(_float TimeDelta);

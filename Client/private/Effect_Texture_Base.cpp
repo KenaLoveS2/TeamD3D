@@ -88,6 +88,27 @@ void CEffect_Texture_Base::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
+	if (m_bActiveSlowly)
+	{
+		m_vTextureColors[0].w += fTimeDelta;
+		if (m_vTextureColors[0].w > m_vColorOriginal.w)
+		{
+			m_vTextureColors[0].w = m_vColorOriginal.w;
+			m_bActiveSlowly = false;
+		}
+	}
+
+	if (m_bDeActiveSlowly)
+	{
+		m_vTextureColors[0].w -= fTimeDelta;
+		if (m_vTextureColors[0].w < 0.0f)
+		{
+			m_vTextureColors[0].w = m_vColorOriginal.w;
+			m_bDeActiveSlowly = false;
+			DeActivate();
+		}
+	}
+
 	if (0.0f != m_vScaleSpeed.Length())
 	{
 		_smatrix matLocal = m_LocalMatrix;
@@ -472,6 +493,15 @@ void CEffect_Texture_Base::Activate_Spread(_float4 vPos, _float2 vScaleSpeed)
 	matLocal.Up(0.1f * vUp);
 
 	m_LocalMatrix = matLocal;
+}
+
+void CEffect_Texture_Base::Activate_Slowly(CGameObject* pTarget)
+{
+	m_bActive = true;
+	m_pTarget = pTarget;
+	m_vTextureColors[0].w = 0.0f;
+	m_bActiveSlowly = true;
+	m_bDeActiveSlowly = false;
 }
 
 void CEffect_Texture_Base::DeActivate()

@@ -47,6 +47,9 @@ HRESULT CE_ShamanIceDagger::Initialize(void* pArg)
 	m_pTransformCom->Set_Scaled(_float3(0.1f, 0.1f, 0.1f));
 	m_pTransformCom->Rotation(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), XMConvertToRadians(90.0f));
 
+	CGameInstance::GetInstance()->Copy_Sound(TEXT("Mon_BossShaman_IceChase.ogg"), m_szCopySoundKey_Chase);
+	CGameInstance::GetInstance()->Copy_Sound(TEXT("Mon_BossShaman_IceImpact.ogg"), m_szCopySoundKey_Impact);
+		
 	return S_OK;
 }
 
@@ -54,32 +57,62 @@ HRESULT CE_ShamanIceDagger::Late_Initialize(void* pArg)
 {
 	m_pKena = (CKena*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena");
 	NULL_CHECK_RETURN(m_pKena, E_FAIL);
+	{
+		_float3 vPos = _float3(0.f, 0.f, 0.f);
+		_float3 vPivotScale = _float3(0.15f, 0.f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
 
-	_float3 vPos = _float3(0.f, 0.f, 0.f);
-	_float3 vPivotScale = _float3(0.15f, 0.f, 1.f);
-	_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = CUtile::Create_CombinedString(m_szCloneObjectTag, TEXT("This"));
+		PxSphereDesc.vPos = vPos;
+		PxSphereDesc.fRadius = vPivotScale.x;
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 59.f;
+		PxSphereDesc.fLinearDamping = 1.f;
+		PxSphereDesc.bCCD = true;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
 
-	// Capsule X == radius , Y == halfHeight
-	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	PxSphereDesc.eType = SPHERE_DYNAMIC;
-	PxSphereDesc.pActortag = m_szCloneObjectTag;
-	PxSphereDesc.vPos = vPos;
-	PxSphereDesc.fRadius = vPivotScale.x;
-	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxSphereDesc.fDensity = 1.f;
-	PxSphereDesc.fAngularDamping = 0.5f;
-	PxSphereDesc.fMass = 59.f;
-	PxSphereDesc.fLinearDamping = 1.f;
-	PxSphereDesc.bCCD = true;
-	PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
-	PxSphereDesc.fDynamicFriction = 0.5f;
-	PxSphereDesc.fStaticFriction = 0.5f;
-	PxSphereDesc.fRestitution = 0.1f;
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COLLISON_DUMMY));
 
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+		_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+	}
 
-	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
-	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+
+	{
+		_float3 vPos = _float3(0.f, 0.f, 0.f);
+		_float3 vPivotScale = _float3(0.15f, 0.f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
+
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = CUtile::Create_CombinedString(m_szCloneObjectTag, TEXT("Shaman"));
+		PxSphereDesc.vPos = vPos;
+		PxSphereDesc.fRadius = vPivotScale.x;
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 59.f;
+		PxSphereDesc.fLinearDamping = 1.f;
+		PxSphereDesc.bCCD = true;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
+
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(m_pParent, false, COL_MONSTER_WEAPON));
+
+		_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+	}
 
 	return S_OK;
 }
@@ -104,11 +137,12 @@ void CE_ShamanIceDagger::Tick(_float fTimeDelta)
 	if (m_bFinalposition)
 	{
 		m_fIdle2Chase += fTimeDelta;
-		if (m_fIdle2Chase > 3.f + (m_iIndex * 0.1f))
+		if (m_fIdle2Chase > 3.f + (m_iIndex * 0.2f))
 		{
 			m_bFinalposition = false;
 			m_bChase = true;
 			m_fIdle2Chase = 0.0f;
+			CGameInstance::GetInstance()->Play_Sound(m_szCopySoundKey_Chase, 0.5f);
 		}
 	}
 
@@ -116,6 +150,12 @@ void CE_ShamanIceDagger::Tick(_float fTimeDelta)
 
 	if (m_bColl)
 	{
+		if (m_bCollSound == false)
+		{
+			CGameInstance::GetInstance()->Play_Sound(m_szCopySoundKey_Impact, 0.5f);
+			m_bCollSound = true;
+		}
+
 		_bool bResult = TurnOffSystem(m_fDissolveTime, 1.f, fTimeDelta);
 		if (bResult) {
 			m_bColl = false;
@@ -236,9 +276,9 @@ void CE_ShamanIceDagger::ImGui_PhysXValueProperty()
 
 _int CE_ShamanIceDagger::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	if (pTarget != nullptr)
+	if (pTarget && m_bColl == false && m_bChase)
 	{
-		if (iColliderIndex == (_int)COL_PLAYER_WEAPON)
+		if (iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER)
 		{
 			m_bColl = true;
 		}
@@ -260,6 +300,11 @@ void CE_ShamanIceDagger::Reset()
 	m_eEFfectDesc.bActive = false;
 	m_bFinalposition = false;
 	m_bChase = false;
+
+	m_bColl = false;
+	m_fDissolveTime = 0.f;
+
+	m_bCollSound = false;
 }
 
 void CE_ShamanIceDagger::Set_IceDaggerMatrix()
@@ -283,12 +328,12 @@ void CE_ShamanIceDagger::Tick_IceDagger(_float fTimeDelta)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	CModel* pModel = dynamic_cast<CModel*>(m_pParent->Find_Component(L"Com_Model"));
 	CTransform* pTransform = m_pParent->Get_TransformCom();
+		
+	_matrix UpdateMatrix = m_pCenterBone->Get_CombindMatrix() * pModel->Get_PivotMatrix() * pTransform->Get_WorldMatrix();
+	_vector vDir = XMVector3Normalize(UpdateMatrix.r[0] * 1.0f) * m_fRange;
+	vDir = XMVector3TransformNormal(vDir, XMMatrixRotationAxis(XMVector3Normalize(UpdateMatrix.r[2]), m_fAngle));
 
-	m_pUpdateMatrix = m_pCenterBone->Get_CombindMatrix() * pModel->Get_PivotMatrix() * pTransform->Get_WorldMatrix();
-	_vector vDir = XMVector3Normalize(m_pUpdateMatrix.r[0] * 1.0f) * m_fRange;
-	vDir = XMVector3TransformNormal(vDir, XMMatrixRotationAxis(XMVector3Normalize(m_pUpdateMatrix.r[2]), m_fAngle));
-
-	_vector vMovePos = m_pUpdateMatrix.r[3] + vDir;
+	_vector vMovePos = UpdateMatrix.r[3] + vDir;
 	_float fDistance = XMVectorGetX(XMVector3Length(vMovePos - XMLoadFloat4(&m_pTransformCom->Get_Position())));
 	Set_IceDaggerMatrix();
 
@@ -305,7 +350,7 @@ void CE_ShamanIceDagger::Tick_IceDagger(_float fTimeDelta)
 
 void CE_ShamanIceDagger::Tick_Chase(_float fTimeDelta)
 {
-	if (m_bFinalposition == false && m_bChase == false)
+	if (m_bFinalposition == false && m_bChase == false || m_bColl)
 		return;
 
 	m_pKenaPosition = XMVectorSetY(m_pKenaPosition, m_pKena->Get_TransformCom()->Get_PositionY() + 1.0f);
@@ -313,8 +358,10 @@ void CE_ShamanIceDagger::Tick_Chase(_float fTimeDelta)
 
 	Set_IceDaggerMatrix();
 
-	_bool bReset = TurnOffSystem(m_fDurateionTime, 3.f, fTimeDelta, false);
-	if (bReset == true) Reset();
+	_bool bReset = TurnOffSystem(m_fDurateionTime, 3.f, fTimeDelta, false) || m_pTransformCom->IsClosed_XYZ(m_pKenaPosition, 0.05f);
+	if (bReset == true) { 
+		m_bColl = true;
+	}
 }
 
 HRESULT CE_ShamanIceDagger::SetUp_ShaderResources()
@@ -400,3 +447,5 @@ void CE_ShamanIceDagger::Free()
 {
 	__super::Free();
 }
+
+

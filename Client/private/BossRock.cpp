@@ -48,6 +48,8 @@ HRESULT CBossRock::Initialize(void* pArg)
 
 HRESULT CBossRock::Late_Initialize(void * pArg)
 {	
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+
 	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
 	PxBoxDesc.eType = BOX_DYNAMIC;
 	PxBoxDesc.pActortag = m_szCloneObjectTag;
@@ -124,8 +126,8 @@ void CBossRock::Free()
 	__super::Free();
 
 	Safe_Release(m_pRendererCom);
-	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pShaderCom);
 }
 
 HRESULT CBossRock::SetUp_Components()

@@ -87,6 +87,7 @@ HRESULT CDynamic_StoneCube::Late_Initialize(void* pArg)
 	
 	//pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_DYNAMIC_ENVIOBJ, true, false)); //뒤에 트루 써주면된다.   _bool bRightUpLookSync == true 쓰면됀다. _bool isActive == true 쓰면됀다.
 	//m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag,_float3(0.f,0.f,0.f), true); // Pivot 안슬거면 000 하면된다.   _bool bRightUpLookSync == true 로 주면된다. 
+
 	//m_pRendererCom->Set_PhysXRender(true);
 
 	/*

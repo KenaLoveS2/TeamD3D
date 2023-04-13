@@ -34,7 +34,7 @@ HRESULT CRockGolem::Initialize(void* pArg)
 		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
 	else
 	{
-		m_Desc.iRoomIndex = 0;
+		m_Desc.pGroupName = L"";
 		m_Desc.WorldMatrix = _smatrix();
 		m_Desc.WorldMatrix._41 = -8.f;
 		m_Desc.WorldMatrix._43 = -8.f;
@@ -48,6 +48,8 @@ HRESULT CRockGolem::Initialize(void* pArg)
 
 HRESULT CRockGolem::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);

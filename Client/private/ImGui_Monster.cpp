@@ -191,16 +191,16 @@ void CImGui_Monster::Load_MonsterObjects(_uint iLevel, string JsonFileName, _boo
 	string		strLayerTag = "Layer_Monster";
 	string		strProtoObjTag = "";
 	string		strCloneTag = "";
-	int			iLoadRoomIndex = 0;
+	string		strGroupName = "";
 
 	jLoadMonsterObjList["0_LayerTag"].get_to<string>(strLayerTag);
 	wszLayerTag = CUtile::StringToWideChar(strLayerTag);
 	pGameInstance->Add_String(wszLayerTag);
-		
+	
 
 	for (auto jLoadChild : jLoadMonsterObjList["1_Data"])
 	{
-		jLoadChild["2_Room Index"].get_to<int>(iLoadRoomIndex);
+		jLoadChild["2_Group Name"].get_to<string>(strGroupName);
 		jLoadChild["3_ProtoObjTag"].get_to<string>(strProtoObjTag);
 		jLoadChild["4_CloneObjTag"].get_to<string>(strCloneTag);
 
@@ -210,7 +210,7 @@ void CImGui_Monster::Load_MonsterObjects(_uint iLevel, string JsonFileName, _boo
 
 		ZeroMemory(&MonsterDesc, sizeof(CMonster::DESC));
 		MonsterDesc.WorldMatrix = fWroldMatrix;
-		MonsterDesc.iRoomIndex = iLoadRoomIndex;
+		MonsterDesc.pGroupName = CUtile::Create_StringAuto(strGroupName.c_str());
 
 		_tchar*		wszProtoObjTag = L"";
 		wszProtoObjTag = CUtile::StringToWideChar(strProtoObjTag);
@@ -292,7 +292,7 @@ void CImGui_Monster::Save()
 			jChild["1_Transform State"].push_back(fElement);		
 		}
 
- 		jChild["2_Room Index"] = pMonster->Get_Desc().iRoomIndex;
+ 		jChild["2_Group Name"] = pMonster->Get_Desc().pGroupName;
 
 		wstrProtoObjTag = pObject.second->Get_ProtoObjectName();
 		strProtoObjTag = CUtile::WstringToString(wstrProtoObjTag);
@@ -340,7 +340,7 @@ HRESULT CImGui_Monster::Load()
 	string		strLayerTag = "Layer_Monster";
 	string		strProtoObjTag = "";
 	string		strCloneTag = "";
-	int			iLoadRoomIndex = 0;
+	string		strGroupName = "";
 
 	jLoadMonsterObjList["0_LayerTag"].get_to<string>(strLayerTag);
 	wszLayerTag = CUtile::StringToWideChar(strLayerTag);
@@ -348,7 +348,7 @@ HRESULT CImGui_Monster::Load()
 
 	for (auto jLoadChild : jLoadMonsterObjList["1_Data"])
 	{
-		jLoadChild["2_Room Index"].get_to<int>(iLoadRoomIndex);
+		jLoadChild["2_Group Name"].get_to<string>(strGroupName);
 		jLoadChild["3_ProtoObjTag"].get_to<string>(strProtoObjTag);
 		jLoadChild["4_CloneObjTag"].get_to<string>(strCloneTag);
 
@@ -358,7 +358,7 @@ HRESULT CImGui_Monster::Load()
 
 		ZeroMemory(&monster_desc, sizeof(CMonster::DESC));
 		monster_desc.WorldMatrix = fWroldMatrix;
-		monster_desc.iRoomIndex = iLoadRoomIndex;
+		monster_desc.pGroupName = CUtile::Create_StringAuto(strGroupName.c_str());
 
 		_tchar*		wszProtoObjTag = L"";
 		wszProtoObjTag = CUtile::StringToWideChar(strProtoObjTag);
