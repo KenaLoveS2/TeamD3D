@@ -174,9 +174,9 @@ HRESULT CUI_CanvasInfo::SetUp_ShaderResources()
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
-		//if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
-		//	return E_FAIL;
-		if(FAILED(m_pShaderCom->Set_ShaderResourceView("g_Texture", m_pRendererCom->Get_LDRTexture())))
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+			return E_FAIL;
+		if(FAILED(m_pShaderCom->Set_ShaderResourceView("g_LDRTexture", m_pRendererCom->Get_LDRTexture())))
 			return E_FAIL;
 	}
 

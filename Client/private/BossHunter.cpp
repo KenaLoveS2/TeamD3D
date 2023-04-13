@@ -173,36 +173,36 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 
 void CBossHunter::Tick(_float fTimeDelta)
 {	
-	m_bDissolve = false;
-	m_pModelCom->Play_Animation(fTimeDelta);
-	Update_Collider(fTimeDelta);
-	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
-	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
-	if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
-	if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
+	//m_bDissolve = false;
+	//m_pModelCom->Play_Animation(fTimeDelta);
+	//Update_Collider(fTimeDelta);
+	//m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
+	////if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	//if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
+	//if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
 
-	 /* For. String */
-	m_fUVSpeeds[0] += 0.245f * fTimeDelta;
-	m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
-	m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
-	if (m_fStringDissolve > 0.5)
-	{
-		m_fStringDissolve = 0.5f;
-		m_fStringDissolveSpeed *= -1;
-		m_fStringDissolveSpeed = -0.9f;
-	}
-	else if (m_fStringDissolve < 0.f)
-	{
-		m_fStringDissolve = 0.f;
-		m_fStringDissolveSpeed *= -1;
-		m_fStringDissolveSpeed = 0.9f;
-	}
-	/* ~ For. String */
-	for (auto& pArrow : m_pArrows)
-		pArrow->Tick(fTimeDelta);
-	for (auto& pEffect : m_vecEffects)
-		pEffect->Tick(fTimeDelta);
-	return;
+	// /* For. String */
+	//m_fUVSpeeds[0] += 0.245f * fTimeDelta;
+	//m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
+	//m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
+	//if (m_fStringDissolve > 0.5)
+	//{
+	//	m_fStringDissolve = 0.5f;
+	//	m_fStringDissolveSpeed *= -1;
+	//	m_fStringDissolveSpeed = -0.9f;
+	//}
+	//else if (m_fStringDissolve < 0.f)
+	//{
+	//	m_fStringDissolve = 0.f;
+	//	m_fStringDissolveSpeed *= -1;
+	//	m_fStringDissolveSpeed = 0.9f;
+	//}
+	///* ~ For. String */
+	//for (auto& pArrow : m_pArrows)
+	//	pArrow->Tick(fTimeDelta);
+	//for (auto& pEffect : m_vecEffects)
+	//	pEffect->Tick(fTimeDelta);
+	//return;
 
 	if (m_bDeath) return;
 
@@ -454,6 +454,7 @@ void CBossHunter::Push_EventFunctions()
 	AuraEffect_Off(true, 0.f);
 	RoarEffect_On(true, 0.f);
 	HitEffect_On(true, 0.f);
+	DeathEffect_On(true, 0.f);
 
 	TurnOnTrail(true, 0.f);
 	TUrnOffTrail(true, 0.f);
@@ -1869,7 +1870,6 @@ void CBossHunter::DustEffect_On(_bool bIsInit, _float fTimeDelta)
 	}
 
 	_float4 vPos;
-
 	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_lf_ball_jnt");
 	if (pStaffBonePtr != nullptr)
 	{
@@ -2006,7 +2006,7 @@ void CBossHunter::RoarEffect_On(_bool bIsInit, _float fTimeDelta)
 	static _int iIndex = EFFECT_ROAR_TEXTURE1;
 
 
-	m_vecEffects[iIndex]->Activate_Scaling(vPos, { -3.f, -3.f });
+	m_vecEffects[iIndex]->Activate_Scaling(vPos, { 10.f, 10.f });
 	iIndex++;
 	if (iIndex > EFFECT_ROAR_TEXTURE4)
 		iIndex = EFFECT_ROAR_TEXTURE1;
@@ -2023,6 +2023,35 @@ void CBossHunter::HitEffect_On(_bool bIsInit, _float fTimeDelta)
 
 	//m_vecEffects[EFFECT_HIT_PARTICLE]->Activate_Reflecting();
 }
+
+void CBossHunter::DeathEffect_On(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::DeathEffect_On);
+		return;
+	}
+
+	_float4 vPos;
+	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_lf_ball_jnt");
+	if (pStaffBonePtr != nullptr)
+	{
+		_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+		vPos = matWorldSocket.r[3];
+	}
+	else
+		vPos = m_pTransformCom->Get_Position();
+
+	_float4		vCenterPos = m_pTransformCom->Get_Position();
+	vPos.x = vCenterPos.x;
+	vPos.z = vCenterPos.z;
+
+	m_vecEffects[EFFECT_DEATH_PARTICLE1]->Activate(vPos);
+	m_vecEffects[EFFECT_DEATH_PARTICLE2]->Activate(vPos);
+}
+
 
 void CBossHunter::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
 {

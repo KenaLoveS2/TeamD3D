@@ -337,8 +337,8 @@ PS_OUT PS_MAIN_BLACK(PS_IN In)
 	Out.vColor.a = Out.vColor.r;
 
 	Out.vColor *= g_float4_0;
-	Out.vColor.rgb *= g_float_0;
-	//Out.vColor.rgb = CalcHDRColor(Out.vColor, g_float_0);
+	//Out.vColor.rgb *= g_float_0;
+	Out.vColor.rgb = CalcHDRColor(Out.vColor, g_float_0);
 
 	if (Out.vColor.a < 0.01f)
 		discard;

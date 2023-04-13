@@ -85,6 +85,9 @@ private:
 		
 		EFFECT_HIT_PARTICLE,
 
+		EFFECT_DEATH_PARTICLE1,
+		EFFECT_DEATH_PARTICLE2,
+
 		EFFECT_END
 	};
 
@@ -231,6 +234,7 @@ public:
 	void AuraEffect_Off(_bool bIsInit, _float fTimeDelta);
 	void RoarEffect_On(_bool bIsInit, _float fTimeDelta);
 	void HitEffect_On(_bool bIsInit, _float fTimeDelta);
+	void DeathEffect_On(_bool bIsInit, _float fTimeDelta);
 	/* ~SY */
 
 

@@ -32,7 +32,11 @@ void CUI_NodeBossHP::Set_Guage(_float fGuage)
 	m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
 
 	_float4 vPos = m_pTransformCom->Get_Position();
-	m_pEffect->Activate_BufferUpdate();
+
+	if(fGuage != 0.0f)
+		m_pEffect->Activate_BufferUpdate();
+	else
+		m_pEffect->Stop_Buffer();
 }
 
 HRESULT CUI_NodeBossHP::Initialize_Prototype()

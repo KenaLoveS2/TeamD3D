@@ -126,8 +126,9 @@ void CEffect_Particle_Base::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRendererCom)
 	{
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 		m_bUI ? m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UIHDR, this)
-			: m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+			: m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 	}
 
 
@@ -571,6 +572,7 @@ void CEffect_Particle_Base::Activate(CGameObject* pTarget, char* pBoneName)
 		m_pBoneName = CUtile::Create_String(pBoneName);
 
 	}
+	m_pVIBufferCom->Update_Buffer();
 }
 
 void CEffect_Particle_Base::Activate_Reflecting(_float4 vLook, _float4 vPos, _float fAngle)
@@ -621,6 +623,14 @@ void CEffect_Particle_Base::DeActivate()
 
 	m_pVIBufferCom->Update_Buffer(nullptr);
 	Safe_Delete_Array(m_pBoneName);
+
+}
+
+void CEffect_Particle_Base::DeActivate_Slowly()
+{
+	m_bDeActiveSlowly = true;
+	m_bActiveSlowly = false;
+	m_pVIBufferCom->Set_Stop();
 }
 
 void CEffect_Particle_Base::Activate_BufferUpdate()
