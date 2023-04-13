@@ -10,6 +10,7 @@
 #include "Kena_Status.h"
 #include "RotHat.h"
 #include "E_P_Rot.h"
+#include "Monster_Manager.h"
 
 _uint CRot::m_iEveryRotCount = 0;
 _uint CRot::m_iKenaFindRotCount = 0;
@@ -18,11 +19,13 @@ _float4 CRot::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 
 CRot::CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	: CRot_Base(pDevice, p_context)	
+	, m_pMonster_Manager(CMonster_Manager::GetInstance())
 {
 }
 
 CRot::CRot(const CRot& rhs)
 	: CRot_Base(rhs)	
+	, m_pMonster_Manager(CMonster_Manager::GetInstance())
 {
 }
 
@@ -335,13 +338,15 @@ HRESULT CRot::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
-				if (m_pRotAcc->Get_Active() == false)
-					m_pRotAcc->Set_Active(true);
+		if (m_pRotAcc->Get_Active() == false)
+			m_pRotAcc->Set_Active(true);
+
 		m_pModelCom->Set_AnimIndex(IDLE);
 	})
-		.Tick([this](_float fTimeDelta)
+		.AddTransition("IDLE to HIDE", "HIDE")
+		.Predicator([this]()
 	{
-		
+		return m_pMonster_Manager->Is_Battle();
 	})
 		.AddTransition("IDLE to FOLLOW_KENA ", "FOLLOW_KENA")
 		.Predicator([this]()
@@ -350,6 +355,7 @@ HRESULT CRot::SetUp_State()
 		return !m_pTransformCom->IsClosed_XZ(m_vKenaPos, m_fKenaToRotDistance);
 	})
 		
+
 		.AddState("FOLLOW_KENA")
 		.OnStart([this]()
 	{
@@ -358,11 +364,7 @@ HRESULT CRot::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{	
 		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 1.f);
-	})
-		.OnExit([this]()
-	{
-
-	})
+	})		
 		.AddTransition("FOLLOW_KENA to IDLE", "IDLE")
 		.Predicator([this]()
 	{	
@@ -374,11 +376,12 @@ HRESULT CRot::SetUp_State()
 		return !m_pTransformCom->IsClosed_XZ(m_vKenaPos, m_fTeleportDistance);
 	})
 
+
 		.AddState("TELEPORT_KENA")
 		.OnStart([this]()
 	{
 		_float4 vKenaLook = m_pKenaTransform->Get_State(CTransform::STATE_LOOK);
-		_float4 vTeleportPos = m_vKenaPos - vKenaLook * 1.f + _float4(CUtile::Get_RandomFloat(-0.5f, 1.f), 0.f, CUtile::Get_RandomFloat(-0.5f, 1.f), 0.f);
+		_float4 vTeleportPos = m_vKenaPos + _float4(CUtile::Get_RandomFloat(-0.8f, 1.5f), 0.f, CUtile::Get_RandomFloat(-0.8f, 1.5f), 0.f);
 
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pTransformCom->Set_Position(vTeleportPos);
@@ -391,6 +394,29 @@ HRESULT CRot::SetUp_State()
 		return m_pModelCom->Get_AnimationFinish();
 	})
 
+
+		.AddState("HIDE")
+		.OnStart([this]()
+	{	
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HIDE1 + rand() % 3], 0.5f);
+		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), HIDE + rand() % 2);
+	})
+		.OnExit([this]()
+	{
+		m_pTransformCom->Set_Position(g_vInvisiblePosition);
+	})
+		.AddTransition("RUN_AWAY to HIDE_WAIT ", "HIDE_WAIT")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+
+		.AddState("HIDE_WAIT")		
+		.AddTransition("HIDE_WAIT to TELEPORT_KENA ", "TELEPORT_KENA")
+		.Predicator([this]()
+	{
+		return m_pMonster_Manager->Is_Battle() == false;
+	})
 
 		.Build();
 
@@ -480,3 +506,14 @@ void CRot::Clear()
 	m_iKenaFindRotCount = 0;
 	m_vecKenaConnectRot.clear();
 }
+
+void CRot::RunAway()
+{
+
+}
+
+void CRot::ComeBack()
+{
+
+}
+

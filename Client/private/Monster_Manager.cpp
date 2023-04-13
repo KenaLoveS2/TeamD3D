@@ -8,7 +8,7 @@ CMonster_Manager::CMonster_Manager()
 {
 }
 
-inline _bool CMonster_Manager::Is_Battle()
+_bool CMonster_Manager::Is_Battle()
 {
 	if (m_pCurActiveGroup == nullptr)
 		return false;
