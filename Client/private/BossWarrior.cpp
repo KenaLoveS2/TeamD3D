@@ -200,7 +200,7 @@ void CBossWarrior::Tick(_float fTimeDelta)
 
 	m_pHat->Tick(fTimeDelta);
 
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
@@ -435,10 +435,9 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_bReadySpawn = true;
 	})
-		.AddTransition("SLEEP to CINEMA", "CINEMA")
+		.AddTransition("SLEEP to CINEMA", "CINEMA") // "READY_SPAWN" 
 		.Predicator([this]()
-	{	
-		// ��� ���� ���� ���� �ʿ�
+	{			
 		m_fSpawnRange = 20.f;
 		return DistanceTrigger(m_fSpawnRange);				
 	})

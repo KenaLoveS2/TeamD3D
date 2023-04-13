@@ -61,11 +61,20 @@ private:
 	class CE_LazerTrail* m_pPathTrail = nullptr;
 	class CShamanTrapHex* m_pShamanTrapHex = nullptr;
 
+	_tchar m_szCopySoundKey_Charge[64] = { 0, };
+	_tchar m_szCopySoundKey_Fire1[64] = { 0, };
+	_tchar m_szCopySoundKey_Fire2[64] = { 0, };
+	
+	_bool m_bLaserCharge = false;
+	_bool m_bLaserFire1 = false;	
+	_bool m_bLaserFire2 = false;
+
 public:
 	static  CE_ShamanLazer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject*	   Clone(void* pArg = nullptr) override;
 	virtual void               Free() override;
 
+	void Play_LaserSound(_bool* pCheckFlag, _tchar* pSoundKey, _float fVolume);
 };
 
 END

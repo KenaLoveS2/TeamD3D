@@ -6,12 +6,14 @@
 #include "FakeShaman.h"
 
 CShamanTrapHex::CShamanTrapHex(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	:CEffect_Mesh(pDevice, pContext)
+	: CEffect_Mesh(pDevice, pContext)
+	, m_pGameInstance(CGameInstance::GetInstance())
 {
 }
 
 CShamanTrapHex::CShamanTrapHex(const CShamanTrapHex& rhs)
 	: CEffect_Mesh(rhs)
+	, m_pGameInstance(CGameInstance::GetInstance())
 {
 }
 
@@ -33,9 +35,8 @@ HRESULT CShamanTrapHex::Initialize(void* pArg)
 	}
 	else
 		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
-
-	/* ���� ������ ������ �ֱ� ������ Desc �Ϻ� ���� ���� */
-	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_END; // Mesh ���� ����
+		
+	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_END;
 	m_iTotalDTextureComCnt = 4;	m_iTotalMTextureComCnt = 0;
 	m_eEFfectDesc.fFrame[0] = 133.f;
 	m_eEFfectDesc.fFrame[1] = 15.f;
@@ -45,6 +46,7 @@ HRESULT CShamanTrapHex::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Effects(), E_FAIL);
+	Create_CopySoundKey();
 
 	_matrix matiden = XMMatrixIdentity();
 	m_pTransformCom->Set_WorldMatrix(matiden);
@@ -89,7 +91,7 @@ HRESULT CShamanTrapHex::Late_Initialize(void* pArg)
 		PxBoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 		PxBoxDesc.fDegree = 0.f;
 		PxBoxDesc.isGravity = false;
-		PxBoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
+		PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_PARTS;
 		PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxBoxDesc.fDensity = 1.f;
 		PxBoxDesc.fAngularDamping = 0.5f;
@@ -220,8 +222,7 @@ void CShamanTrapHex::ImGui_PhysXValueProperty()
 }
 
 _float4 CShamanTrapHex::Get_JointBonePos()
-{
-	// �����̼��� 0,0,0 ���� ������ ��, pos�� y���� ������ �ؾ��Ҽ��� �ֽ��ϴ�.
+{	
 	CBone* pBone = m_pModelCom->Get_BonePtr("joint6_end");
 	_matrix			SocketMatrix =
 		pBone->Get_OffsetMatrix() *
@@ -280,7 +281,7 @@ HRESULT CShamanTrapHex::SetUp_Components()
 		Desc.vPivotRot = _float4(0.f, 2.1f, 0.f, 0.f);
 		Safe_AddRef(Desc.pSocket);
 		Safe_AddRef(m_pTransformCom);
-		m_pPart[SHAMAN_0] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_0"), &Desc);
+		m_pPart[SHAMAN_0] = (CFakeShaman*)p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_0"), &Desc);
 		m_pPart[SHAMAN_0]->Late_Initialize(nullptr);
 	}
 
@@ -293,7 +294,7 @@ HRESULT CShamanTrapHex::SetUp_Components()
 		Desc.vPivotRot = _float4(0.f, -2.1f, 0.f, 0.f);
 		Safe_AddRef(Desc.pSocket);
 		Safe_AddRef(m_pTransformCom);
-		m_pPart[SHAMAN_1] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_1"), &Desc);
+		m_pPart[SHAMAN_1] = (CFakeShaman*)p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_1"), &Desc);
 		m_pPart[SHAMAN_1]->Late_Initialize(nullptr);
 	}
 
@@ -306,7 +307,7 @@ HRESULT CShamanTrapHex::SetUp_Components()
 		Desc.vPivotRot = _float4(0.f, -1.1f, 0.f, 0.f);
 		Safe_AddRef(Desc.pSocket);
 		Safe_AddRef(m_pTransformCom);
-		m_pPart[SHAMAN_2] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_2"), &Desc);
+		m_pPart[SHAMAN_2] = (CFakeShaman*)p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_2"), &Desc);
 		m_pPart[SHAMAN_2]->Late_Initialize(nullptr);
 	}
 
@@ -319,7 +320,7 @@ HRESULT CShamanTrapHex::SetUp_Components()
 		Desc.pTargetTransform = m_pTransformCom;
 		Safe_AddRef(Desc.pSocket);
 		Safe_AddRef(m_pTransformCom);
-		m_pPart[SHAMAN_3] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_3"), &Desc);
+		m_pPart[SHAMAN_3] = (CFakeShaman*)p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_3"), &Desc);
 		m_pPart[SHAMAN_3]->Late_Initialize(nullptr);
 	}
 
@@ -332,7 +333,7 @@ HRESULT CShamanTrapHex::SetUp_Components()
 		Desc.pTargetTransform = m_pTransformCom;
 		Safe_AddRef(Desc.pSocket);
 		Safe_AddRef(m_pTransformCom);
-		m_pPart[SHAMAN_4] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_4"), &Desc);
+		m_pPart[SHAMAN_4] = (CFakeShaman*)p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_4"), &Desc);
 		m_pPart[SHAMAN_4]->Late_Initialize(nullptr);
 	}
 
@@ -424,12 +425,15 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 	case START_TRAP:
 	{
 		if (m_pModelCom->Get_AnimationFinish())
+		{
 			m_eState = TRAP;
+			m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TRAP], 0.5f);
+		}	
 
 		break;
 	}
 	case TRAP:
-	{
+	{	
 		if (m_fTrapTime > fTrapSuccessTime)
 		{
 			m_bTrapSuccess = true;
@@ -443,16 +447,14 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 		break;
 	}
 	case BREAK_TRAP:
-	{
-		// �μ����� ��ƼŬ�� �ʿ��ϴ�
-		if (m_pModelCom->Get_AnimationFinish())
+	{	
+		if (m_pModelCom->Get_AnimationFinish())		
 			m_eState = END_TRAP;
-
+		
 		break;
 	}
 	case END_TRAP:
-	{
-		// ������ ������?
+	{	
 		m_pTransformCom->Set_Position(m_vInvisiblePos);
 		m_eEFfectDesc.bActive = false;
 		m_eState = STATE_END;
@@ -478,6 +480,8 @@ void CShamanTrapHex::Execute_Trap(_float4 vPos)
 	{
 		((CFakeShaman*)m_pPart[i])->Clear();
 	}
+
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IMPACT5], 0.7f);
 }
 
 void CShamanTrapHex::Execute_Break()
@@ -485,10 +489,34 @@ void CShamanTrapHex::Execute_Break()
 	m_pModelCom->ResetAnimIdx_PlayTime(EXPAND);
 	m_pModelCom->Set_AnimIndex(EXPAND);
 	m_eState = BREAK_TRAP;
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TRAP_BREAK], 0.7f);
 }
 
 void CShamanTrapHex::Execute_End()
 {
 	m_eState = END_TRAP;
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TRAP_BREAK], 0.7f);
 }
 
+void CShamanTrapHex::Create_CopySoundKey()
+{
+	_tchar szOriginKeyTable[COPY_SOUND_KEY_END][64] = {
+		TEXT("Mon_Attack_Impact5.ogg"),
+		TEXT("Mon_BossShaman_Trap.ogg"),		
+		TEXT("Mon_BossShaman_TrapBreak.ogg"),		
+	};
+
+	_tchar szTemp[MAX_PATH] = { 0, };
+	for (_uint i = 0; i < (_uint)COPY_SOUND_KEY_END; i++)
+	{
+		m_pGameInstance->Copy_Sound(szOriginKeyTable[i], szTemp);
+		m_pCopySoundKey[i] = CUtile::Create_StringAuto(szTemp);		
+	}
+}
+
+_float4 CShamanTrapHex::Get_FakeShamanPos(_uint iIndex)
+{	
+	if (iIndex >= (_uint)PARTS_END) return _float4(0.f, 0.f, 0.f, 1.f);
+
+	return m_pPart[iIndex]->Get_TrapPosition();
+}
