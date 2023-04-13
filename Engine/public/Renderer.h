@@ -143,7 +143,7 @@ private:
 	ID3D11ShaderResourceView*		m_pLDRTexture = nullptr;
 	_bool											m_bCaptureMode = false;
 	_bool											m_bBlurCapture = false;
-	_float4											m_vLightShaftValue = _float4(0.4f, 0.9f,0.5f,0.3f);
+	_float4											m_vLightShaftValue = _float4(0.3f, 0.95f,0.5f,0.5f);
 
 private:
 	HRESULT CreateTexture(const _tchar* pTextureFilePath, ID3D11ShaderResourceView**& OUT pTexture);

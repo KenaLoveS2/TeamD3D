@@ -308,7 +308,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 #endif
-	CreateTexture(L"../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_93.png", m_pFlareTexture);
+	CreateTexture(L"../Bin/Resources/Textures/Effect/flare.jpg", m_pFlareTexture);
 	CreateTexture(L"../Bin/Resources/Textures/Effect/smoothNormalSphere.png", m_pDistortionTexture);
 	return S_OK;
 }
@@ -1249,6 +1249,12 @@ HRESULT CRenderer::PostProcess_LightShaft()
 		return E_FAIL;
 
 	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_fFar", CGameInstance::GetInstance()->Get_CameraFar(), sizeof(float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_vLightCamPos", &CGameInstance::GetInstance()->Get_LightCamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
 	m_pShader_PostProcess->Begin(6);
