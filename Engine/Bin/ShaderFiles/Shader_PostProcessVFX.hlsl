@@ -6,7 +6,7 @@ matrix			g_LightCamWorldMatrix,	g_CamViewMatrix, g_CamProjMatrix;
 
 float4			g_vLightCamLook , g_vCamLook;
 float4			g_vLightCamPos;
-
+float4			g_vCamPosition;
 matrix			g_ReflectViewMatrix;
 
 Texture2D<float4>		g_LDRTexture;
@@ -252,7 +252,6 @@ PS_OUT PS_FLARE(PS_IN In)
 	return Out;
 }
 
-float4 g_vCamPosition;
 float  g_fFar = 500.f;
 matrix g_ProjMatrixInv;
 matrix g_ViewMatrixInv;
@@ -298,8 +297,6 @@ PS_OUT PS_LIGHTSHAFT(PS_IN In)
 	PS_OUT Out = (PS_OUT)0;
 
 	// 광원의 위치
-		/* 화면에 그려지고 있는 픽셀들의 투영스페이스 상의 위치. */
-	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
 	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	float		fViewZ = vDepthDesc.y * g_fFar;
 	vector		vWorldPos;
@@ -314,21 +311,30 @@ PS_OUT PS_LIGHTSHAFT(PS_IN In)
 	/* 로컬위치 * 월드행렬  */
 	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 
-	float4 lightPos = float4(55.3f, 40.f, 175.f, 1.f);
+	 // calculate light direction
+	float3 lightDir = normalize(float3(1.f,-1.f,1.f) - g_vCamPosition.xyz);
+	// calculate distance to player
+	float fDistance = length(g_vCamPosition.xyz - vWorldPos.xyz);
+	float fAtt = max((50.f - fDistance), 0.f) / 50.f;
 
-	vector		vLightDir = vWorldPos - lightPos;
-	float			fDistance = length(vLightDir);
-	float		fAtt = max((50.f - fDistance), 0.f) / 50.f;
-
+	// calculate position of light source in projection space
+	float4 lightPos = float4(g_vCamPosition.xyz + lightDir * 175.f, 1.f);
 	matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	lightPos = mul(lightPos, matVP);
 
+	// calculate delta texture coordinate
 	float2 dist = abs(In.vTexUV - lightPos.xy);
 	float2 texCoord = In.vTexUV;
 	float2 DeltaTexCoord = (In.vTexUV - lightPos.xy);
+	DeltaTexCoord *= 1.f / NUM_SAMPLES * g_LightShaftValue.x * (1.f - fAtt);
 
-	// Scale DeltaTexCoord based on distance from light source
-	DeltaTexCoord *= 1.f / NUM_SAMPLES * g_LightShaftValue.x * fAtt;
+	//matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	//lightPos = mul(lightPos, matVP);
+	//float2 dist = abs(In.vTexUV - lightPos.xy);
+	//float2 texCoord = In.vTexUV;
+	//float2 DeltaTexCoord = (In.vTexUV - lightPos.xy);
+	//// Scale DeltaTexCoord based on distance from light source
+	//DeltaTexCoord *= 1.f / NUM_SAMPLES * g_LightShaftValue.x * fAtt;
 
 	float4 FinalColor = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
 
@@ -338,8 +344,8 @@ PS_OUT PS_LIGHTSHAFT(PS_IN In)
 	{
 		texCoord -= DeltaTexCoord;
 		float4 vSample = g_LDRTexture.Sample(LinearSampler, texCoord);
-		vSample *= illuminationDecay * g_LightShaftValue.z * fAtt;
-		FinalColor += vSample;
+		vSample *= illuminationDecay * g_LightShaftValue.z * (1.f - fAtt);
+		FinalColor += vSample * 0.3f;
 		illuminationDecay *= g_LightShaftValue.y ;
 	}
 

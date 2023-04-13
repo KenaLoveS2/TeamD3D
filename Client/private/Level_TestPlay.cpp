@@ -122,7 +122,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
 
-	CGameInstance::GetInstance()->Set_MasterVolume(0.f);
+	//CGameInstance::GetInstance()->Set_MasterVolume(0.f);
 
 	RELEASE_INSTANCE(CGameInstance);
 

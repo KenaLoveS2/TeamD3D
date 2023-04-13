@@ -1257,6 +1257,9 @@ HRESULT CRenderer::PostProcess_LightShaft()
 	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_vLightCamPos", &CGameInstance::GetInstance()->Get_LightCamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+
 	m_pShader_PostProcess->Begin(6);
 	m_pVIBuffer->Render();
 	return S_OK;

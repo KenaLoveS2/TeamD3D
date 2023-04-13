@@ -216,9 +216,9 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vSSAODesc		 = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
 
 	if(g_bSSAO)
-		Out.vColor =	CalcHDRColor(vDiffuse * vShade + vSpecular, vDepthDesc.b)  * vSSAODesc.r;
+		Out.vColor =	CalcHDRColor(vDiffuse * vShade /*+ vSpecular*/, vDepthDesc.b)  * vSSAODesc.r;
 	else
-		Out.vColor = CalcHDRColor(vDiffuse * vShade + vSpecular, vDepthDesc.b);
+		Out.vColor = CalcHDRColor(vDiffuse * vShade /*+ vSpecular*/, vDepthDesc.b);
 
 	if (Out.vColor.a == 0.0f)
 		discard;
