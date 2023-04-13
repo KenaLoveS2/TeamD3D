@@ -44,6 +44,10 @@ HRESULT CE_ShamanLazer::Initialize(void * pArg)
 	m_eEFfectDesc.vScale = XMVectorSet(0.8f, 0.8f, 0.8f, 1.f);
 	Reset();
 
+	CGameInstance::GetInstance()->Copy_Sound(TEXT("Mon_BossShaman_LaserCharge.ogg"), m_szCopySoundKey_Charge);
+	CGameInstance::GetInstance()->Copy_Sound(TEXT("Mon_BossShaman_LaserFire1.ogg"), m_szCopySoundKey_Fire1);	
+	CGameInstance::GetInstance()->Copy_Sound(TEXT("Mon_BossShaman_LaserFire2.ogg"), m_szCopySoundKey_Fire2);
+
 	return S_OK;
 }
 
@@ -105,6 +109,10 @@ void CE_ShamanLazer::Reset()
 	m_fDurationTime = 0.0f;
 	m_fTimeDelta = 0.0f;
 	m_bFinalState = false;
+
+	m_bLaserCharge = false;
+	m_bLaserFire1 = false;
+	m_bLaserFire2 = false;
 }
 
 _int CE_ShamanLazer::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -168,9 +176,11 @@ void CE_ShamanLazer::TurnOnLazer( _float fTimeDelta)
 		Calculate_Path(fTimeDelta);
 		m_pPathTrail->Set_Active(true);
 		m_bFinalState = true;
-
+		Play_LaserSound(&m_bLaserFire1, m_szCopySoundKey_Fire1, 0.5f);
+		Play_LaserSound(&m_bLaserFire2, m_szCopySoundKey_Fire2, 0.5f);
+		
 		m_fDurationTime += fTimeDelta;
-		if (m_fDurationTime > 0.3f)
+		if (m_fDurationTime > 1.f)
 		{
 			m_eEFfectDesc.bActive = false;
 			m_fDurationTime = 0.0f;
@@ -217,6 +227,8 @@ void CE_ShamanLazer::Set_SpawnPos(_float4 vPos)
 	m_SpawnPos = vPos += vLook * 2.0f;
 	m_pTransformCom->Set_Position(vPos);
 	m_eEFfectDesc.bActive = true;
+
+	Play_LaserSound(&m_bLaserCharge, m_szCopySoundKey_Charge, 1.f);
 }
 
 void CE_ShamanLazer::Calculate_Path(_float fTimeDelta)
@@ -262,4 +274,13 @@ void CE_ShamanLazer::Free()
 	__super::Free();
 
 	Safe_Release(m_pPathTrail);
+}
+
+void CE_ShamanLazer::Play_LaserSound(_bool *pCheckFlag, _tchar* pSoundKey, _float fVolume)
+{
+	if (*pCheckFlag == false)
+	{
+		CGameInstance::GetInstance()->Play_Sound(pSoundKey, fVolume);
+		*pCheckFlag = true;
+	}
 }

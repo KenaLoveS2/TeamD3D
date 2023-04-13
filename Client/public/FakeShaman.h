@@ -57,7 +57,11 @@ private:
 
 	_bool m_bDisolve = false;
 	_float m_fDissolveTime = false;
+	_float4 m_vTrapPosition = { 0.f,0.f, 0.f, 1.f, };
 
+	_tchar m_szCopySoundKey_Ding[64] = { 0, };
+	_bool m_bSoundFlag = false;
+	
 public:
 	static CFakeShaman* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
@@ -65,5 +69,7 @@ public:
 
 	_int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex);
 	void Clear();
+
+	_float4 Get_TrapPosition() { return m_vTrapPosition; }
 };
 END

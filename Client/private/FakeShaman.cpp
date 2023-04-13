@@ -34,6 +34,8 @@ HRESULT CFakeShaman::Initialize(void* pArg)
 	m_vPivotPos = _float4(0.f, -5.f, 0.f, 0.f);
 	m_vPivotRot = m_Desc.vPivotRot;
 
+	CGameInstance::GetInstance()->Copy_Sound(TEXT("Mon_BossSound_Ding.ogg"), m_szCopySoundKey_Ding);
+	
 	return S_OK;
 }
 
@@ -96,10 +98,19 @@ void CFakeShaman::Tick(_float fTimeDelta)
 	_float4x4 PivotMatrix;
 	XMStoreFloat4x4(&PivotMatrix, XMMatrixTranslation(0.f, 3.f, 0.f) * SocketMatrix);
 
+	XMStoreFloat4(&m_vTrapPosition, XMVector3TransformCoord(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), SocketMatrix));
+
 	m_pTransformCom->Update_AllCollider(PivotMatrix);
 	m_pTransformCom->Tick(fTimeDelta);
 
 	m_fDissolveTime += fTimeDelta * m_bDisolve;
+
+	if (m_bSoundFlag == false && m_bDisolve)
+	{
+		CGameInstance::GetInstance()->Play_Sound(m_szCopySoundKey_Ding, 0.5f);
+		m_bSoundFlag = true;
+	}
+	
 }
 
 void CFakeShaman::Late_Tick(_float fTimeDelta)
@@ -281,11 +292,12 @@ void CFakeShaman::Clear()
 {
 	m_bDisolve = false;
 	m_fDissolveTime = 0.f;
+	m_bSoundFlag = false;
 }
 
 _int CFakeShaman::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	if (pTarget)
+	if (pTarget && m_bDisolve == false)
 	{
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{			
