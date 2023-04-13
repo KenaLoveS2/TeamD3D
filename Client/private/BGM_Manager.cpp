@@ -28,9 +28,11 @@ HRESULT CBGM_Manager::Initialize(const string & strFilePath)
 void CBGM_Manager::Tick(_float fTimeDelta)
 {
 	m_eCurLevel = (LEVEL)CGameInstance::GetInstance()->Get_CurLevelIndex();
-	if (g_LEVEL == (_int)LEVEL_LOADING || g_LEVEL == (_int)LEVEL_END)
+	if (m_eCurLevel == LEVEL_LOADING || m_eCurLevel == LEVEL_END)
 	{
 		m_pSoundManager->Stop_Sound((_uint)BGMChannel);
+		m_eCurState = CBGM_Manager::FIELD_STATE_END;
+		m_ePreState = CBGM_Manager::FIELD_STATE_END;
 		return;
 	}
 
@@ -46,7 +48,8 @@ void CBGM_Manager::Tick(_float fTimeDelta)
 	}
 	else
 	{
-		if (m_pSoundManager->Is_StopSound(BGMChannel) == true)
+		_bool bStateFlag = m_eCurState != CBGM_Manager::FIELD_INTO_BATTLE && m_eCurState != CBGM_Manager::FIELD_FROM_BATTLE;
+		if (m_pSoundManager->Is_StopSound(BGMChannel) == true && bStateFlag == true)
 			Change_BGM(m_eCurState);
 	}
 }

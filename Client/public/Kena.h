@@ -8,7 +8,7 @@
 #define KENA_LINEAR_DAMING		0.7f
 #define KENA_ANGULAR_DAMING		10.f
 #define KENA_MASS				100000.f * 1.1f
-
+#define RUNTIME_STATUS_FILEPATH	L"../Bin/Data/Status/Kena_Runtime_Status.json"
 
 BEGIN(Engine)
 class CRenderer;
@@ -68,6 +68,7 @@ public:
 	void						Set_State(STATERETURN eState, _bool bValue);
 	void						Set_AttackObject(CGameObject* pObject) { m_pAttackObject = pObject; }
 	void						Set_DamagedDir(DAMAGED_FROM eDir) { m_eDamagedDir = eDir; }
+	void						Set_RespawnPoint(class CRespawn_Trigger* pTrigger) { m_pRespawnPoint = pTrigger; }
 
 	void						Set_RotActionPossible(_bool bValue) { m_bRotActionPossible = bValue; }
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
@@ -100,6 +101,7 @@ public:
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 public:
+	HRESULT						Change_Level(LEVEL eNextLevel);
 	void						Respawn();
 	void						Respawn(_fvector vSpawnPos);
 	void						Smooth_Targeting(class CMonster* pMonster);
@@ -140,6 +142,7 @@ private:
 	/* State variables*/
 	_bool						m_bDeath = false;
 	_bool						m_bWater = false;
+	class CRespawn_Trigger*		m_pRespawnPoint = nullptr;
 	_bool						m_bLevelUp = false;
 	_bool						m_bLevelUp_Ready = false;
 	_bool						m_bAttack = false;

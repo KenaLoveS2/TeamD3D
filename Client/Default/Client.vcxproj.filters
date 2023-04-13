@@ -604,6 +604,12 @@
     <Filter Include="02.GameObjects\Monster\Manager">
       <UniqueIdentifier>{39b7d1ad-56a8-480e-95c4-dc24e0d981e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Envrioment\BowTarget">
+      <UniqueIdentifier>{132efc79-f919-4c80-a06f-f5b1cf296530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Respawn Trigger">
+      <UniqueIdentifier>{db25fca5-b5be-4c45-8e95-de74f0c6d942}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1484,9 +1490,6 @@
     <ClInclude Include="..\public\BombPlatform.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BowTarget.h">
-      <Filter>02.GameObjects\Envrioment\Anim</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Effect_Unit.h">
       <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
     </ClInclude>
@@ -1612,6 +1615,18 @@
     </ClInclude>
     <ClInclude Include="..\public\E_P_EnvironmentDust.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BowTarget.h">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BowTarget_Manager.h">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BowTarget_Trigger.h">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Respawn_Trigger.h">
+      <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2473,9 +2488,6 @@
     <ClCompile Include="..\private\BombPlatform.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\BowTarget.cpp">
-      <Filter>02.GameObjects\Envrioment\Anim</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Effect_Unit.cpp">
       <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
     </ClCompile>
@@ -2601,6 +2613,18 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_EnvironmentDust.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BowTarget.cpp">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BowTarget_Manager.cpp">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BowTarget_Trigger.cpp">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Respawn_Trigger.cpp">
+      <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
