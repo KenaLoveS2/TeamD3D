@@ -371,7 +371,6 @@ void CBossShaman::Push_EventFunctions()
 
 	TurnOnDashAttackTrail(true, 0.0f);
 	TurnOffDashAttackTrail(true, 0.0f);
-	TurnOnSwipeChareged(true, 0.0f);
 	TurnOnIceDagger(true, 0.0f);
 	TurnOffIceDagger(true, 0.0f);
 	TurnOnLazer(true, 0.0f);
@@ -1480,7 +1479,7 @@ void CBossShaman::TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta)
 	_float4 vPos = m_pTransformCom->Get_Position();	_float fRange = 3.f;
 	_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 	vPos += vLook * fRange;
-	vPos.y = -1.5f;
+	vPos.y -= 0.5f;
 
 	m_mapEffect["Shaman_Charged"]->Set_Position(vPos);
 	m_mapEffect["Shaman_Charged"]->Set_Active(true);

@@ -1222,6 +1222,13 @@ PS_OUT PS_FRONTVIEWBLINK(PS_IN In)
    if (g_fHDRValue != 0.0f)
 	   Out.vColor = CalcHDRColor(Out.vColor, g_fHDRValue);
 
+   if (g_bTimer)
+   {
+	   float fTime = min(g_Time, 1.f);
+	   if (g_bDissolve)
+		   Out.vColor.a = Out.vColor.a * (1.f - fTime);
+   }
+
    return Out;
 }
 

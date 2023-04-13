@@ -156,8 +156,8 @@ void CE_P_Rot::Reset()
 
 	m_ePointDesc->fConeRange = _float2(3.f, 3.f);
 	Set_ShapePosition();
-	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.05f, 0.2f);
-	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.2f));
+	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.05f, 0.1f);
+	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.05f, 0.1f));
 }
 
 CE_P_Rot * CE_P_Rot::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)

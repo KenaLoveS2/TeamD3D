@@ -1021,7 +1021,6 @@ HRESULT CBossWarrior::SetUp_State()
 		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
 		pCtrlRoom->Boss_WarriorDeadGimmick();
 
-		// �ó�ķ �ϳ� ������
 		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[1]->Get_ObjectCloneName());
 		m_pCineCam[1]->Play();
 	})
