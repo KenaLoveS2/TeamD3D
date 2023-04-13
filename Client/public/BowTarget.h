@@ -62,7 +62,7 @@ private:
 	_bool							m_bDead = false;
 
 	_float4							m_vInitPosition;
-	_float							m_fFlyTime = 8.f;
+	_float							m_fFlyTime = 1000.f;
 
 	ANIMATION						m_eCurState = REST;
 	ANIMATION						m_ePreState = REST;
@@ -72,6 +72,7 @@ private:
 	CBone* m_pTrailBone = nullptr;
 
 private:
+	void							Grouping();
 	ANIMATION						Check_State();
 	void							Update_State(_float fTimeDelta);
 	void							Update_Trail(const char* pBoneTag);

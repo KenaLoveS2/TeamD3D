@@ -14,6 +14,7 @@
 #include "E_KenaPulse.h"
 #include "Kena_Parts.h"
 #include "BossWarrior.h"
+#include "Respawn_Trigger.h"
 
 #define NULLFUNC	(_bool(CKena_State::*)())nullptr
 CKena_State::CKena_State()
@@ -6924,7 +6925,10 @@ void CKena_State::Start_Respawn(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("RESPAWN");
 	
-	m_pKena->Respawn();
+	if (m_pKena->m_pRespawnPoint == nullptr)
+		m_pKena->Respawn();
+	else
+		m_pKena->Respawn(m_pKena->m_pRespawnPoint->Get_TransformCom()->Get_Position());
 
 	m_pKena->m_bGrabWarrior = false;
 	m_pKena->m_pAttackObject = nullptr;

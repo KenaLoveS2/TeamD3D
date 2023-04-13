@@ -1235,7 +1235,7 @@ void CKena::Respawn(_fvector vSpawnPos)
 	m_pKenaStatus->Respawn();
 
 	_float4		vPos = vSpawnPos;
-	m_pTargetMonster->Set_Position(vPos);
+	m_pTransformCom->Set_Position(vPos);
 }
 
 void CKena::Smooth_Targeting(CMonster * pMonster)

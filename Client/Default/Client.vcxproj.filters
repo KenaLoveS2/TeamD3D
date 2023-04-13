@@ -607,6 +607,9 @@
     <Filter Include="02.GameObjects\Envrioment\BowTarget">
       <UniqueIdentifier>{132efc79-f919-4c80-a06f-f5b1cf296530}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Respawn Trigger">
+      <UniqueIdentifier>{db25fca5-b5be-4c45-8e95-de74f0c6d942}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1619,6 +1622,12 @@
     <ClInclude Include="..\public\BowTarget_Manager.h">
       <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BowTarget_Trigger.h">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Respawn_Trigger.h">
+      <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2610,6 +2619,12 @@
     </ClCompile>
     <ClCompile Include="..\private\BowTarget_Manager.cpp">
       <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BowTarget_Trigger.cpp">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Respawn_Trigger.cpp">
+      <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

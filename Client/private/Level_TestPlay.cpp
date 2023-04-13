@@ -185,9 +185,29 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 		pGameInstance->Scene_EnviMgr_Change();
 
 		CMonster_Manager::GetInstance()->Clear_Groups();
-		CBowTarget_Manager::GetInstance()->Clear_Groups();
 
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
+			return;
+
+		FAILED_CHECK_RETURN(pKena->Change_Level(LEVEL_FINAL), );
+	}
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_F3))
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+
+		CControlRoom* pControllRoom = dynamic_cast<CControlRoom*>(pGameInstance->Get_GameObjectPtr(LEVEL_TESTPLAY, L"Layer_ControlRoom", L"ControlRoom"));
+		assert(nullptr != pControllRoom && "Scene_Change");
+		(pControllRoom)->Clear_Static_ShadowList();
+
+		pGameInstance->Clear_ImguiObjects();
+		CPhysX_Manager::GetInstance()->Clear(true);
+		pGameInstance->Clear();
+		pGameInstance->Scene_EnviMgr_Change();
+
+		CMonster_Manager::GetInstance()->Clear_Groups();
+
+		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_GIMMICK)))))
 			return;
 
 		FAILED_CHECK_RETURN(pKena->Change_Level(LEVEL_GIMMICK), );

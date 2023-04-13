@@ -10,7 +10,7 @@ CBowTarget_Manager::CBowTarget_Manager()
 {
 }
 
-HRESULT CBowTarget_Manager::Add_Member(const wstring& wstrGroupName, CBowTarget* pBowTarget)
+HRESULT CBowTarget_Manager::Add_Member(const wstring& wstrGroupName, CBowTarget* pBowTarget, const wstring& wstrNextGroupName)
 {
 	BOWTARGETGROUP* pBowTargetGroup = Find_BowTargetGroup(wstrGroupName);
 
@@ -23,10 +23,24 @@ HRESULT CBowTarget_Manager::Add_Member(const wstring& wstrGroupName, CBowTarget*
 
 	pBowTargetGroup->vecBowTarget.push_back(pBowTarget);
 
+	if (wstrNextGroupName != L"N/A")
+	{
+		BOWTARGETGROUP* pNextGroup = Find_BowTargetGroup(wstrNextGroupName);
+
+		if (pNextGroup == nullptr)
+		{
+			pNextGroup = new BOWTARGETGROUP;
+			pNextGroup->wstrGroupName = wstrNextGroupName;
+			m_vecGroup.push_back(pNextGroup);
+		}
+
+		pBowTargetGroup->pNextGroup = pNextGroup;
+	}
+
 	return S_OK;
 }
 
-HRESULT CBowTarget_Manager::Group_Active(const wstring& wstrGroupName, const wstring& wstrNextGroup)
+HRESULT CBowTarget_Manager::Group_Active(const wstring& wstrGroupName)
 {
 	BOWTARGETGROUP* pBowTargetGroup = Find_BowTargetGroup(wstrGroupName);
 	NULL_CHECK_RETURN(pBowTargetGroup, E_FAIL);
@@ -41,13 +55,10 @@ HRESULT CBowTarget_Manager::Group_Active(const wstring& wstrGroupName, const wst
 
 	m_pCurActiveGroup = pBowTargetGroup;
 
-	if (wstrNextGroup != L"N/A")
-	{
-		BOWTARGETGROUP* pNextGroup = Find_BowTargetGroup(wstrNextGroup);
-		NULL_CHECK_RETURN(pNextGroup, E_FAIL);
-
-		m_pNextGroup = pNextGroup;
-	}
+	if (m_pCurActiveGroup->pNextGroup != nullptr)
+		m_pNextGroup = m_pCurActiveGroup->pNextGroup;
+	else
+		m_pNextGroup = nullptr;
 
 	Launch_CurrentGroup();
 
@@ -115,13 +126,16 @@ _bool CBowTarget_Manager::Check_CurrentGroup_Hit()
 			break;
 	}
 
-	if (bState == true && m_pNextGroup != nullptr)
+	if (bState == true)
 	{
-		Launch_Group(m_pNextGroup);
-		m_pNextGroup = nullptr;
-	}
+		m_pCurActiveGroup = nullptr;
 
-	m_pCurActiveGroup = nullptr;
+		if (m_pNextGroup != nullptr)
+		{
+			Group_Active(m_pNextGroup->wstrGroupName);
+			Launch_Group(m_pCurActiveGroup);
+		}
+	}
 
 	return bState;
 }

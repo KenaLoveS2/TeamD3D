@@ -13,6 +13,7 @@ public:
 	{
 		wstring		wstrGroupName = L"";
 		vector<class CBowTarget*>	vecBowTarget;
+		tagBowTargetGroup*			pNextGroup = nullptr;
 	} BOWTARGETGROUP;
 
 private:
@@ -20,8 +21,8 @@ private:
 	~CBowTarget_Manager() = default;
 
 public:
-	HRESULT			Add_Member(const wstring& wstrGroupName, class CBowTarget* pBowTarget);
-	HRESULT			Group_Active(const wstring& wstrGroupName, const wstring& wstrNextGroup = L"N/A");
+	HRESULT			Add_Member(const wstring& wstrGroupName, class CBowTarget* pBowTarget, const wstring& wstrNextGroupName = L"N/A");
+	HRESULT			Group_Active(const wstring& wstrGroupName);
 	void			Launch_CurrentGroup();
 	void			Launch_Group(const wstring& wstrGroupName);
 	void			Launch_Group(BOWTARGETGROUP* pBowTargetGroup);

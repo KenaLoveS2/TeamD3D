@@ -51,6 +51,7 @@ HRESULT CLevel_Gimmick::Initialize()
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
@@ -105,6 +106,12 @@ HRESULT CLevel_Gimmick::Initialize()
 	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
 	{
 		MSG_BOX("Layer_ControlRoom");
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_Layer_Trigger(L"Layer_Trigger")))
+	{
+		MSG_BOX("Layer_Trigger");
 		return E_FAIL;
 	}
 
@@ -514,6 +521,15 @@ HRESULT CLevel_Gimmick::Ready_Layer_ControlRoom(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_ControlRoom"), L"ControlRoom");
 	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLevel_Gimmick::Ready_Layer_Trigger(const _tchar* pLayerTag)
+{
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, L"Prototype_GameObject_BowTarget_Trigger", L"BowTarget_Trigger"), E_FAIL);
+
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, L"Prototype_GameObject_Respawn_Trigger", L"Respawn_Trigger"), E_FAIL);
+
 	return S_OK;
 }
 
