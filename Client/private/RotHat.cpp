@@ -138,7 +138,7 @@ HRESULT CRotHat::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 10);
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 10);
 	}
 
 	return S_OK;
@@ -150,7 +150,7 @@ HRESULT CRotHat::RenderShadow()
 	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 3);
 
 	return S_OK;
 }

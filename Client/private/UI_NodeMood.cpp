@@ -7,6 +7,7 @@ CUI_NodeMood::CUI_NodeMood(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Node(pDevice, pContext)
 	, m_eState(STATE_END)
 	, m_vColor(_float4{1.f, 1.f, 1.f, 1.f})
+	, m_fAmount(1.0f)
 {
 }
 
@@ -14,6 +15,7 @@ CUI_NodeMood::CUI_NodeMood(const CUI_NodeMood& rhs)
 	: CUI_Node(rhs)
 	, m_eState(STATE_END)
 	, m_vColor(_float4{ 1.f, 1.f, 1.f, 1.f })
+	, m_fAmount(1.0f)
 {
 }
 
@@ -121,22 +123,27 @@ void CUI_NodeMood::MoodOn(STATE eState)
 	case STATE_HIT:
 		m_vColor = _float4{0.388f, 0.024f, 0.024f, 1.0f};
 		m_iTextureIdx = 0;
+		m_fAmount = 0.3f;
 		break;
 	case STATE_PARRY:
 		m_vColor = _float4{ 0.439f, 0.662f, 0.914f, 1.0f };
 		m_iTextureIdx = 0;
+		m_fAmount = 0.3f;
 		break;
 	case STATE_HEAL:
 		m_vColor = _float4{ 0.835f, 0.883f, 0.883f, 1.0f };
 		m_iTextureIdx = 0;
+		m_fAmount = 0.3f;
 		break;
 	case STATE_FADE:
 		m_vColor = _float4{ 0.f, 0.f, 0.f , 1.0f };
 		m_iTextureIdx = 1;
+		m_fAmount = 1.f;
 		break;
 	case STATE_DAZZLE:
 		m_vColor = _float4{ 1.f, 1.f, 1.f , 1.0f };
 		m_iTextureIdx = 1;
+		m_fAmount = 1.f;
 		break;
 
 	}
@@ -180,21 +187,21 @@ HRESULT CUI_NodeMood::SetUp_ShaderResources()
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
-		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture",m_iTextureIdx)))
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
 			return E_FAIL;
 	}
 
 	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
 	{
-		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
+		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_iTextureIdx)))
 			return E_FAIL;
 	}
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
 		return E_FAIL;
 
-	_float fAmount = 0.6f; /* Max Alpha Control */
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fAmount", &fAmount, sizeof(_float))))
+	//_float fAmount = 0.1f; /* Max Alpha Control */
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAmount", &m_fAmount, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;

@@ -133,13 +133,13 @@ void CSaiya::Tick(_float fTimeDelta)
 	m_iNumKeyFrame = (_uint)m_keyframes.size();
 	Update_Collider(fTimeDelta);
 
-	char szName[MAX_PATH] = "";
+	/*char szName[MAX_PATH] = "";
 	CUtile::WideCharToChar(m_szCloneObjectTag, szName);
 	ImGui::Begin(szName);
 	Imgui_RenderProperty();
 	ImGui_AnimationProperty();
 	m_pTransformCom->Imgui_RenderProperty();
-	ImGui::End();
+	ImGui::End();*/
 
 	if (m_pFSM && m_iKeyFrame < m_iNumKeyFrame - 2) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();

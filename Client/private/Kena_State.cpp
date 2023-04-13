@@ -3057,7 +3057,7 @@ HRESULT CKena_State::SetUp_State_Combat()
 		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, &CKena_State::Check_Shield)
 		.Init_Changer(L"COMBAT_IDLE_INTO_RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"LOCK_ON_TO_IDLE", this, &CKena_State::CombatTimeToIdle)
-
+		
 		.Add_State(L"LOCK_ON_TO_IDLE")
 		.Init_Start(this, &CKena_State::Start_Lock_On_To_Idle)
 		.Init_Tick(this, &CKena_State::Tick_Lock_On_To_Idle)
@@ -6263,6 +6263,10 @@ void CKena_State::Start_Dash(_float fTimeDelta)
 
 	m_pKena->m_bDash = true;
 
+	/* Rim Color Value */
+	m_pKena->m_bDashRim = true;
+	m_pKena->m_fDashRimIntensity = 1.f;
+
 	Move(0.f, m_eDir);
 
 	CE_KenaPulse* pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
@@ -6662,6 +6666,10 @@ void CKena_State::Start_Level_Up(_float fTimeDelta)
 	m_pKena->m_bLevelUp = false;
 	m_pKena->m_bLevelUp_Ready = false;
 
+	/* Rim Color Value */
+	m_pKena->m_bLevelUpRim = true;
+	m_pKena->m_fLevelUpRimIntensity = 1.f;
+
 	/* NEED : UI PRINT LEVELUP */
 }
 
@@ -6950,6 +6958,9 @@ void CKena_State::Start_Shield_Impact(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SHIELD_IMPACT");
 
+	if (!m_pKena->m_pAttackObject)
+		return;
+
 	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_TransformCom()->Get_Position());
 
 	m_pKena->m_bCommonHit = false;
@@ -6962,6 +6973,9 @@ void CKena_State::Start_Shield_Impact_Medium(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SHIELD_IMPACT_MEDIUM");
 
+	if (!m_pKena->m_pAttackObject)
+		return;
+
 	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_TransformCom()->Get_Position());
 
 	m_pKena->m_bCommonHit = false;
@@ -6973,6 +6987,9 @@ void CKena_State::Start_Shield_Impact_Medium(_float fTimeDelta)
 void CKena_State::Start_Shield_Impact_Big(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SHIELD_IMPACT_BIG");
+
+	if (!m_pKena->m_pAttackObject)
+		return;
 
 	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_TransformCom()->Get_Position());
 
@@ -9040,7 +9057,7 @@ _bool CKena_State::Dash_Portal()
 
 _bool CKena_State::Falling()
 {
-	return m_pKena->m_bJump && m_pKena->m_fCurJumpSpeed == 0.f;
+	return false;// m_pKena->m_bJump&& m_pKena->m_fCurJumpSpeed == 0.f;
 }
 
 _bool CKena_State::Pulse_Jump()
@@ -9398,11 +9415,25 @@ _bool CKena_State::KeyInput_LShift()
 {
 	if (m_pGameInstance->Key_Pressing(DIK_LSHIFT))
 	{
-		/* Turn Off Canvas Aim */
-		CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
-		CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+		CUI_ClientManager::UI_PRESENT eAim			= CUI_ClientManager::AIM_;
+		CUI_ClientManager::UI_FUNCTION funcSwitch	= CUI_ClientManager::FUNC_SWITCH;
 		_float fTag = 1.f;
 		m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+
+
+		/* If Bow Skill Unlocked */
+		if (m_pKena->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOW, 0))
+		{
+			CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_AIMARROW;
+			m_pKena->m_Delegator.broadcast(tag, fTag);
+		}
+
+		/* If Bomb Skill Unlocked */
+		if (m_pKena->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOMB, 0))
+		{
+			CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_AIMBOMB;
+			m_pKena->m_Delegator.broadcast(tag, fTag);
+		}
 
 		return true;
 	}
@@ -9547,6 +9578,11 @@ _bool CKena_State::KeyUp_LShift()
 		CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
 		_float fTag = 0.f;
 		m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+
+
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OFF;
+		m_pKena->m_Delegator.broadcast(tag, fTag);
+
 
 		return true;
 	}

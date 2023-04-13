@@ -22,7 +22,10 @@
 #include "UI.h"
 #include "Level_Loading.h"
 #include "ControlRoom.h"
+#include "Monster.h"
 #include "Kena.h"
+#include "Monster_Manager.h"
+#include "BGM_Manager.h"
 
 CLevel_TestPlay::CLevel_TestPlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -119,9 +122,12 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
 
-	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 0.3f, true, SOUND_BGM);
+	//CGameInstance::GetInstance()->Set_MasterVolume(0.f);
 
 	RELEASE_INSTANCE(CGameInstance);
+
+	CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_IDLE);
+
 	return S_OK;
 }
 
@@ -150,8 +156,12 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 			CPhysX_Manager::GetInstance()->Clear(true);
 			pGameInstance->Clear();
 			pGameInstance->Scene_EnviMgr_Change();
+
+			CMonster_Manager::GetInstance()->Clear_Groups();
+
 			if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_GIMMICK)))))
 				return;
+
 
 			// 잘 작동 되지만 끝나고 모션블러를 하는듯
 		}
@@ -169,6 +179,8 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 		CPhysX_Manager::GetInstance()->Clear(true);
 		pGameInstance->Clear();
 		pGameInstance->Scene_EnviMgr_Change();
+
+		CMonster_Manager::GetInstance()->Clear_Groups();
 
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
 			return;
@@ -204,17 +216,17 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
 
-	/*LightDesc.eType = LIGHTDESC::TYPE_POINT;
-	LightDesc.isEnable = true;
-	LightDesc.vPosition = _float4(13.f, 0.f, 9.f, 1.f);
-	LightDesc.fRange = 10.0f;
-	LightDesc.vDiffuse = _float4(10.f, 0.f, 10.f, 1.f);
-	LightDesc.vAmbient = _float4(10.f, 0.f, 10.f, 1.f);
-	LightDesc.vSpecular = _float4(10.f, 0.f, 10.f, 0.f);
+	LightDesc.eType = LIGHTDESC::TYPE_POINT;
+	LightDesc.isEnable = false;
+	LightDesc.vPosition = _float4(35.f, 0.f, 500.f, 1.f);
+	LightDesc.fRange = 10.0f; // ~90
+	LightDesc.vDiffuse = _float4(0.f, 0.7f, 0.8f, 1.f);
+	LightDesc.vAmbient = _float4(0.f, 0.7f, 0.8f, 1.f);
+	LightDesc.vSpecular = _float4(0.f, 0.7f, 0.8f, 0.f);
 	LightDesc.szLightName = "PointLight_0";
 
 	if (FAILED(CGameInstance::GetInstance()->Add_Light(m_pDevice, m_pContext, LightDesc)))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

@@ -562,6 +562,40 @@ PS_OUT PS_MAIN_E_CULLOFF(PS_IN In)
 	return Out;
 }
 
+//PS_MAIN_E_SPRITE
+PS_OUT PS_MAIN_E_SPRITE_ALPHA(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector Gradient = g_DTexture_1.Sample(LinearSampler, In.vTexUV );
+
+	/* Sprite */
+	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+	In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+	In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+
+	/* DiffuseTexture */
+	vector vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	float4 finalcolor = vDiffuse + Gradient;
+	finalcolor = saturate(finalcolor) * g_vColor;
+	finalcolor.a = (vDiffuse * Gradient).a;
+
+	Out.vColor = CalcHDRColor(finalcolor, g_fHDRValue);
+
+	if (g_bTimer)
+	{
+		float fTime = min(g_Time, 1.f);
+		if (0.5f < fTime) 
+			Out.vColor.a = Out.vColor.a * (fTime / 1.f);
+		else
+			Out.vColor.a = Out.vColor.a * (1.f - fTime);
+	}
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Effect_Dafalut // 0
@@ -744,6 +778,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_E_CULLOFF();
+	}
+
+	pass Effect_SpriteAlpha // 14
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_E_SPRITE_ALPHA();
 	}
 
 }

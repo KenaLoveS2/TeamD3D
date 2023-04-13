@@ -56,6 +56,7 @@ HRESULT CStone::Late_Initialize(void * pArg)
 void CStone::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
 	if (m_bPulseTest)
 		m_fEmissivePulse += 0.05f;
 
@@ -280,6 +281,12 @@ void CStone::Imgui_RenderProperty()
 {
 	if (ImGui::Button("Emissive"))
 		m_bPulseTest = true;
+
+	if (ImGui::Button("Recompile_Stone"))
+	{
+		m_pShaderCom->ReCompile();
+		m_pRendererCom->ReCompile();
+	}
 }
 
 void CStone::ImGui_ShaderValueProperty()

@@ -1,0 +1,74 @@
+[
+    {
+        "0. State Name" : "IDLE",
+        "1. File Names" : [
+            "BGM_Idle_0.wav",
+            "BGM_Idle_1.wav"
+        ]
+    },
+    {
+        "0. State Name" : "VILLAGE",
+        "1. File Names" : [
+            "BGM_Village_0.wav"
+        ]
+    },
+    {
+        "0. State Name" : "SHOP",
+        "1. File Names" : [
+            "BGM_Shop_0.wav"
+        ]
+    },
+    {
+        "0. State Name" : "PUZZLE",
+        "1. File Names" : [
+            "BGM_Puzzle_0.wav",
+            "BGM_Puzzle_1.wav",
+            "BGM_Puzzle_2.wav"
+        ]
+    },
+    {
+        "0. State Name" : "INTO_BATTLE",
+        "1. File Names" : [
+            "BGM_Into_Battle.wav"
+        ]
+    },
+    {
+        "0. State Name" : "FROM_BATTLE",
+        "1. File Names" : [
+            "BGM_From_Battle.wav"
+        ]
+    },
+    {
+        "0. State Name" : "BATTLE",
+        "1. File Names" : [
+            "BGM_Battle_0.wav",
+            "BGM_Battle_1.wav",
+            "BGM_Battle_2.wav",
+            "BGM_Battle_3.wav",
+            "BGM_Battle_4.wav",
+            "BGM_Battle_5.wav",
+            "BGM_Battle_6.wav",
+            "BGM_Battle_7.wav",
+            "BGM_Battle_8.wav",
+            "BGM_Battle_9.wav"
+        ]
+    },
+    {
+        "0. State Name" : "BOSS_BATTLE_WARRIOR",
+        "1. File Names" : [
+            
+        ]
+    },
+    {
+        "0. State Name" : "BOSS_BATTLE_HUNTER",
+        "1. File Names" : [
+            
+        ]
+    },
+    {
+        "0. State Name" : "BOSS_BATTLE_SHAMAN",
+        "1. File Names" : [
+            
+        ]
+    }
+]

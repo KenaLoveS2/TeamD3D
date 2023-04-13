@@ -26,6 +26,7 @@ float			g_BowDurationTime;
 bool					g_Hit = false;
 bool					g_Parry = false;
 bool					g_Dash = false;
+bool					g_LevelUp = false;
 
 float					g_fHairLength = 1.f;
 float					g_fHairThickness = 1.f;
@@ -36,12 +37,12 @@ float					g_fSSSAmount = 1.f;
 float					g_HitRimIntensity = 0.f;
 float					g_ParryRimIntensity = 0.f;
 float					g_DashRimIntensity = 0.f;
+float					g_LevelUpRimIntensity = 0.f;
 float					g_Time;
 
 float4					g_vAmbientEyeColor = float4(1.f, 1.f, 1.f, 1.f);
 float4					g_vAmbientColor = float4(1.f, 1.f, 1.f, 1.f);
 float4					g_vSSSColor = float4(1.f, 0.f, 0.f, 1.f);
-
 
 Texture2D<float4>      g_GlowTexture;
 Texture2D<float4>      g_OpacityTexture;
@@ -49,14 +50,14 @@ Texture2D<float4>      g_AOTexture;
 Texture2D<float4>      g_RoughnessTexture;
 
 float4					g_EmissiveColor = (float4)1.f;
-float						g_fHDRIntensity = 0.f;
+float					g_fHDRIntensity = 0.f;
 
 /* EnemyWisp Texture */
 Texture2D<float4>     g_ReamTexture;
 Texture2D<float4>     g_LineTexture;
 Texture2D<float4>     g_SmoothTexture;
 Texture2D<float4>     g_ShapeMaskTexture;
-float4			  g_vColor;
+float4			      g_vColor;
 /* ~EnemyWisp Texture */
 
 /* Dissolve */
@@ -217,13 +218,18 @@ PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 	}
 	else if (g_Parry)
 	{
-		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
+		vector		vRimColor = float4(0.1f, 0.33f, 0.6f, 0.f);
 		FinalColor = (vDiffuse)+(vRimColor * g_ParryRimIntensity);
 	}
 	else if (g_Dash)
 	{
-		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		vector		vRimColor = float4(0.2f, 0.54f, 1.f, 1.f);
 		FinalColor = (vDiffuse)+(vRimColor * g_DashRimIntensity);
+	}
+	else if (g_LevelUp)
+	{
+		vector		vRimColor = float4(0.94f, 0.79f, 0.17f, 0.f);
+		FinalColor = (vDiffuse)+(vRimColor * g_LevelUpRimIntensity);
 	}
 	else
 	{
@@ -260,13 +266,18 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 	}
 	else if (g_Parry)
 	{
-		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
+		vector		vRimColor = float4(0.1f, 0.33f, 0.6f, 0.f);
 		FinalColor = (vDiffuse + vEmissive) + vRimColor * g_ParryRimIntensity;
 	}
 	else if (g_Dash)
 	{
-		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		vector		vRimColor = float4(0.2f, 0.54f, 1.f, 1.f);
 		FinalColor = (vDiffuse + vEmissive) + vRimColor * g_DashRimIntensity;
+	}
+	else if (g_LevelUp)
+	{
+		vector		vRimColor = float4(0.94f, 0.79f, 0.17f, 0.f);
+		FinalColor = (vDiffuse + vEmissive) + vRimColor * g_LevelUpRimIntensity;
 	}
 	else
 	{
@@ -311,13 +322,18 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 	}
 	else if (g_Parry)
 	{
-		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
+		vector		vRimColor = float4(0.1f, 0.33f, 0.6f, 0.f);
 		FinalColor = (vDiffuse + vEmissive * vEmissiveMask.r) + vRimColor * g_ParryRimIntensity;
 	}
 	else if (g_Dash)
 	{
-		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		vector		vRimColor = float4(0.2f, 0.54f, 1.f, 1.f);
 		FinalColor = (vDiffuse + vEmissive * vEmissiveMask.r) + vRimColor * g_DashRimIntensity;
+	}
+	else if (g_LevelUp)
+	{
+		vector		vRimColor = float4(0.94f, 0.79f, 0.17f, 0.f);
+		FinalColor = (vDiffuse + vEmissive * vEmissiveMask.r) + vRimColor * g_LevelUpRimIntensity;
 	}
 	else
 	{
@@ -356,13 +372,18 @@ PS_OUT PS_MAIN_FACE(PS_IN In)
 	}
 	else if (g_Parry)
 	{
-		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
+		vector		vRimColor = float4(0.1f, 0.33f, 0.6f, 0.f);
 		FinalColor = (vDiffuse)+vRimColor * g_ParryRimIntensity;
 	}
 	else if (g_Dash)
 	{
-		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		vector		vRimColor = float4(0.2f, 0.54f, 1.f, 1.f);
 		FinalColor = (vDiffuse)+ vRimColor * g_DashRimIntensity;
+	}
+	else if (g_LevelUp)
+	{
+		vector		vRimColor = float4(0.94f, 0.79f, 0.17f, 0.f);
+		FinalColor = (vDiffuse)+(vRimColor * g_LevelUpRimIntensity);
 	}
 	else
 	{
@@ -452,13 +473,18 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	}
 	else if (g_Parry)
 	{
-		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
+		vector		vRimColor = float4(0.1f, 0.33f, 0.6f, 0.f);
 		FinalColor = (vDiffuse)+vRimColor * g_ParryRimIntensity;
 	}
 	else if (g_Dash)
 	{
-		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		vector		vRimColor = float4(0.2f, 0.54f, 1.f, 1.f);
 		FinalColor = (vDiffuse)+vRimColor * g_DashRimIntensity;
+	}
+	else if (g_LevelUp)
+	{
+		vector		vRimColor = float4(0.94f, 0.79f, 0.17f, 0.f);
+		FinalColor = (vDiffuse)+(vRimColor * g_LevelUpRimIntensity);
 	}
 	else
 	{
@@ -499,13 +525,18 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 	}
 	else if (g_Parry)
 	{
-		vector		vRimColor = float4(0.f, 0.1f, 0.4f, 0.f);
+		vector		vRimColor = float4(0.1f, 0.33f, 0.6f, 0.f);
 		FinalColor += vRimColor * g_ParryRimIntensity;
 	}
 	else if (g_Dash)
 	{
-		vector		vRimColor = float4(0.8f, 0.8f, 1.0f, 1.f);
+		vector		vRimColor = float4(0.2f, 0.54f, 1.f, 1.f);
 		FinalColor += vRimColor * g_DashRimIntensity;
+	}
+	else if (g_LevelUp)
+	{
+		vector		vRimColor = float4(0.94f, 0.79f, 0.17f, 0.f);
+		FinalColor += vRimColor * g_LevelUpRimIntensity;
 	}
 
 	Out.vDiffuse = FinalColor;

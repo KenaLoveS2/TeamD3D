@@ -41,6 +41,7 @@ public:  /*For.Gimmick*/
 
 	void				Boss_WarriorDeadGimmick();		// Door Up
 	void				Boss_HunterDeadGimmick();		// Portal On
+
 private:
 	HRESULT SetUp_Components();
 	
@@ -52,8 +53,6 @@ private:
 
 	array<bool, 4>												 m_MapShadowArray;		// ÀüÃ¼¸Ê -1(Ã³À½¸Ê)
 	CTransform*													m_pPlayerTransformPtr = nullptr;
-
-
 
 private:
 	list<_float4x4>		  m_RoomControlPos_List;

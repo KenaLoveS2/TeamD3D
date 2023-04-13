@@ -49,7 +49,7 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	}
 	else
 	{
-		m_Desc.iRoomIndex = 0;
+		m_Desc.pGroupName = L"";
 		m_Desc.WorldMatrix = _smatrix();
 		m_Desc.WorldMatrix._41 = -15.f;
 		m_Desc.WorldMatrix._43 = -15.f;
@@ -191,7 +191,6 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 
 void CBossWarrior::Tick(_float fTimeDelta)
 {		
-	// m_bReadySpawn = true;
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -1273,8 +1272,11 @@ void CBossWarrior::AdditiveAnim(_float fTimeDelta)
 void CBossWarrior::BossFight_Start()
 {
 	g_bDayOrNight = false;
-	CGameInstance::GetInstance()->Work_Camera(m_pCineCam[0]->Get_ObjectCloneName());
-	m_pCineCam[0]->Play();
+	if (m_pCineCam[0] != nullptr)
+	{
+		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[0]->Get_ObjectCloneName());
+		m_pCineCam[0]->Play();
+	}
 	m_bDissolve = true;
 	m_fDissolveTime = 1.f;
 }
@@ -1619,6 +1621,7 @@ void CBossWarrior::Free()
 	CMonster::Free();
 
 	Safe_Release(m_pHat);
+	Safe_Release(m_pBossRockPool);
 
 	for (auto& Pair : m_mapEffect)
 		Safe_Release(Pair.second);

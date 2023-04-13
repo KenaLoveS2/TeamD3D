@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\MainApp.h"
-
 #include "GameInstance.h"
+#include "BGM_Manager.h"
 #include "Level_Loading.h"
 #include "Camera_Dynamic.h"
 #include "LightCamera.h"
@@ -10,7 +10,7 @@
 #include "LoadingIcon.h"
 
 #include "UI_ClientManager.h"
-
+#include "Monster_Manager.h"
 #include "Kena_Status.h"
 #include "Monster_Status.h"
 
@@ -19,8 +19,10 @@
 
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::GetInstance())
+	, m_pBGM_Manager(CBGM_Manager::GetInstance())
 {
 	Safe_AddRef(m_pGameInstance);
+	Safe_AddRef(m_pBGM_Manager);
 }
 
 HRESULT CMainApp::Initialize()
@@ -41,6 +43,8 @@ HRESULT CMainApp::Initialize()
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, GraphicDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;
+
+	FAILED_CHECK_RETURN(m_pBGM_Manager->Initialize("../Bin/Data/Sound Info/BGM.json"), E_FAIL);
 
 	if (FAILED(Ready_Prototype_Component()))
 		return E_FAIL;
@@ -70,6 +74,7 @@ void CMainApp::Tick(_float fTimeDelta)
 #endif 
 
 	m_pGameInstance->Tick_Engine(g_bWinActive, fTimeDelta);
+	m_pBGM_Manager->Tick(fTimeDelta);
 }
 
 HRESULT CMainApp::Render()
@@ -400,11 +405,17 @@ HRESULT CMainApp::Ready_BufferLock_UnLock()
 
 void CMainApp::Free()
 {
-
 	m_pGameInstance->Clear_ImguiObjects();
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
+
+	//CGroup_Manager::GetInstance()->DestroyInstance();
+	
+	Safe_Release(m_pBGM_Manager);
+	CBGM_Manager::GetInstance()->DestroyInstance();
+
+	CMonster_Manager::GetInstance()->DestroyInstance();
 
 	Safe_Release(m_pGameInstance);
 	CGameInstance::Release_Engine();
@@ -412,4 +423,3 @@ void CMainApp::Free()
 	CUI_ClientManager::GetInstance()->Release();
 	
 }
-

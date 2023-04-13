@@ -176,6 +176,11 @@ public:
 	void Reset_AF();
 
 private:
+		void	BossFight_Start();
+		void  BossFight_End();
+		_float m_fEndTime = 0.f;
+
+private:
 	vector<_float3> m_vecPivot;
 	vector<_float3> m_vecPivotScale;
 	vector<_float3> m_vecPivotRot;

@@ -118,7 +118,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 		ImGui::BulletText("EffectLayer Tag : ");
 		pGameObject = LayerEffects_ListBox(pObjectTag, iLayerSize, pSelectObject, "##EffectLayer Tag", iSelectObj, TAGTYPE::TAG_CLONE);
 
-		if (nullptr != pGameObject && -1 != iSelectEffectType)
+		if (nullptr != pGameObject && dynamic_cast<CEffect_Base*>(pGameObject) && -1 != iSelectEffectType)
 			CEffect_Base::tagEffectDesc::EFFECTTYPE eEffectType = dynamic_cast<CEffect_Base*>(pGameObject)->Get_EffectDesc().eEffectType;
 
 		for (size_t i = 0; i < iLayerSize; ++i)

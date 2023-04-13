@@ -167,7 +167,7 @@ HRESULT CTerrain::SetUp_CineShaderResources()
 
 void CTerrain::Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag)
 {
-	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_Filter"), ComTag,
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, ProtoTag, ComTag,
 		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
 		assert(!"Imgui_Tool_Add_Component");	
 }
@@ -176,6 +176,8 @@ void CTerrain::Erase_FilterCom()
 {
 	Delete_Component(TEXT("Com_Filter"));
 	Safe_Release(m_pTextureCom[TYPE_FILTER]);
+
+	
 }
 
 void CTerrain::Change_HeightMap(const _tchar * pHeightMapFilePath)		// 여기서 버퍼를 바꾸기때문에
@@ -238,6 +240,16 @@ HRESULT CTerrain::SetUp_Components()
 		(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
 		return E_FAIL;
 
+	/* For.Com_Brush*/
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_TerrainDiffuse"), TEXT("Com_Terrain_1"),
+		(CComponent**)&m_pTextureCom[TYPE_TEST])))
+		return E_FAIL;
+
+	/* For.Com_Brush*/
+	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_TerrainNormal"), TEXT("Com_Terrain_2"),
+		(CComponent**)&m_pTextureCom[TYPE_NORMAL])))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -268,6 +280,9 @@ HRESULT CTerrain::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture_2", m_TerrainDesc.iFillterThree_TextureNum)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom[TYPE_NORMAL]->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom[TYPE_BRUSH]->Bind_ShaderResource(m_pShaderCom, "g_BrushTexture", 1)))

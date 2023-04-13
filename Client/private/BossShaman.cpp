@@ -54,7 +54,7 @@ HRESULT CBossShaman::Initialize(void* pArg)
 	}
 	else
 	{
-		m_Desc.iRoomIndex = 0;
+		m_Desc.pGroupName = L"";
 		m_Desc.WorldMatrix = _smatrix();
 		m_Desc.WorldMatrix._41 = -10.f;
 		m_Desc.WorldMatrix._43 = -10.f;
@@ -467,6 +467,7 @@ HRESULT CBossShaman::SetUp_State()
 		.OnStart([this]()
 	{
 		// 등장 연출 필요
+		BossFight_Start();
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
@@ -1147,6 +1148,7 @@ HRESULT CBossShaman::SetUp_State()
 		.OnStart([this]()
 	{
 		// 죽은 애니메이션 후 죽음 연출 State
+		BossFight_End();
 	})
 		.AddTransition("DEATH_SCENE to DEATH", "DEATH")
 		.Predicator([this]()
@@ -1445,6 +1447,20 @@ void CBossShaman::Set_AFType()
 
 void CBossShaman::Reset_AF()
 {
+}
+
+void CBossShaman::BossFight_Start()
+{
+	g_bDayOrNight = false;
+	m_pRendererCom->Set_Fog(true);
+	const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+	m_pRendererCom->Set_FogValue(vColor, 60.f);
+}
+
+void CBossShaman::BossFight_End()
+{
+	g_bDayOrNight = true;
+	m_pRendererCom->Set_Fog(false);
 }
 
 void CBossShaman::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
