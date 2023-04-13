@@ -37,6 +37,8 @@ public:
 	virtual void					Activate_Scaling(CGameObject* pTarget, _float2 vScaleSpeed)		override;
 	virtual void					Activate_Scaling(_float4 vPos, _float2 vScaleSpeed)				override;
 	virtual void					Activate_Spread(_float4 vPos, _float2 vSpreadSpeed)				override;
+	virtual	void					Activate_Slowly(CGameObject* pTarget) override;
+
 
 	virtual void					DeActivate()					override;
 

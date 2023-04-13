@@ -57,6 +57,15 @@ HRESULT CEffect_Particle_Base::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	
+	D3D11_VIEWPORT			ViewportDesc;
+	ZeroMemory(&ViewportDesc, sizeof ViewportDesc);
+	_uint			iNumViewports = 1;
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+	XMStoreFloat4x4(&m_matView, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_matProj, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
+
+
 	/* temp */
 	//m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
 
@@ -99,6 +108,21 @@ void CEffect_Particle_Base::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_pTarget != nullptr)
+	{
+		if (m_pBoneName != nullptr)
+		{
+			_float4 vPos = m_pTarget->Get_ComputeBonePosition(m_pBoneName);
+			m_pTransformCom->Set_Position(
+				m_pTarget->Get_ComputeBonePosition(m_pBoneName));
+		}
+		else
+		{
+			_float4 vTargetPos = m_pTarget->Get_TransformCom()->Get_Position() + m_ParentPosition;/* correct */
+			m_pTransformCom->Set_Position(vTargetPos);
+		}
+	}
 
 	if (nullptr != m_pRendererCom)
 	{
@@ -528,6 +552,27 @@ void CEffect_Particle_Base::Activate(CGameObject* pTarget)
 	m_pTarget = pTarget;
 }
 
+void CEffect_Particle_Base::Activate(CGameObject* pTarget, _float4 vCorrectPos)
+{
+	m_bActive = true;
+	m_pTarget = pTarget;
+	m_ParentPosition = vCorrectPos;
+}
+
+void CEffect_Particle_Base::Activate(CGameObject* pTarget, char* pBoneName)
+{
+	if (m_pBoneName == nullptr)
+	{
+		m_bActive = true;
+		m_pTarget = pTarget;
+
+		//m_pVIBufferCom->Update_Buffer();
+		//Safe_Delete_Array(m_pBoneName);
+		m_pBoneName = CUtile::Create_String(pBoneName);
+
+	}
+}
+
 void CEffect_Particle_Base::Activate_Reflecting(_float4 vLook, _float4 vPos, _float fAngle)
 {
 	/* SpreadType Recommended */
@@ -575,6 +620,7 @@ void CEffect_Particle_Base::DeActivate()
 	__super::DeActivate();
 
 	m_pVIBufferCom->Update_Buffer(nullptr);
+	Safe_Delete_Array(m_pBoneName);
 }
 
 void CEffect_Particle_Base::Activate_BufferUpdate()
@@ -620,18 +666,9 @@ HRESULT CEffect_Particle_Base::SetUp_ShaderResources()
 
 	if (m_bUI)
 	{
-		D3D11_VIEWPORT			ViewportDesc;
-		ZeroMemory(&ViewportDesc, sizeof ViewportDesc);
-		_uint			iNumViewports = 1;
-		m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
-		_float4x4	matView, matProj;
-		XMStoreFloat4x4(&matView, XMMatrixIdentity());
-		XMStoreFloat4x4(&matProj, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
-
-
-		if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &matView)))
+		if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_matView)))
 			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &matProj)))
+		if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_matProj)))
 			return E_FAIL;
 	}
 	else
@@ -677,6 +714,11 @@ HRESULT CEffect_Particle_Base::SetUp_ShaderResources()
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Set_RawValue("g_int_3", &m_iFrameNow[1], sizeof(_int))))
 			return E_FAIL;
+	}
+
+	if (m_iRenderPass == 4) /* Trail */
+	{
+		m_pVIBufferCom->Bind_ShaderResouce(m_pShaderCom, "g_InstanceBuffer");
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
