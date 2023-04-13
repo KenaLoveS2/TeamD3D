@@ -2,7 +2,6 @@
 #include "Transform.h"
 
 BEGIN(Engine)
-
 class ENGINE_DLL CGameObject abstract : public CBase
 {
 public:
@@ -109,5 +108,6 @@ public:
 	virtual void* Get_VoidMemberPtr() { return nullptr; }
 	void Sync_ActorMatrix(_float4x4& Matrix);
 	virtual _float4		Get_ComputeBonePosition(const char* pBoneName) { return _float4(0.f, 0.f, 0.f, 1.f); };
+	_vector Get_Position();	
 };
 END

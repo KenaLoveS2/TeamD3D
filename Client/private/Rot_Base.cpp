@@ -244,6 +244,7 @@ HRESULT CRot_Base::Create_CopySound()
 		TEXT("Rot (1).ogg"), TEXT("Rot (2).ogg"), TEXT("Rot (3).ogg"), TEXT("Rot (4).ogg"), TEXT("Rot (5).ogg"), TEXT("Rot (6).ogg"),
 		TEXT("Rot (7).ogg"), TEXT("Rot (8).ogg"), TEXT("Rot (9).ogg"), TEXT("Rot (10).ogg"), TEXT("Rot (11).ogg"), TEXT("Rot (12).ogg"),
 		TEXT("Rot_Bait_Movement.ogg"), TEXT("Rot_Cross.ogg"), TEXT("Rot_Anger.ogg"), TEXT("Rot_Bomb_Spawn.ogg"),
+		TEXT("Rot_Hide1.ogg"), TEXT("Rot_Hide2.ogg"), TEXT("Rot_Hide3.ogg"),
 	};
 
 	_tchar szTemp[MAX_PATH] = { 0, };

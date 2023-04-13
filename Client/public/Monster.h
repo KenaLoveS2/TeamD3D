@@ -66,8 +66,7 @@ protected:
 	virtual ~CMonster() = default;
 
 public:
-	const _double&				Get_AnimationPlayTime();
-	_vector						Get_Position();
+	const _double&				Get_AnimationPlayTime();	
 	DESC						Get_Desc() { return m_Desc; };
 	virtual _vector				Get_FocusPosition();
 	const _bool&				Is_Spawned() const { return m_bSpawn; }
@@ -101,7 +100,7 @@ public:
 	_float							DistanceBetweenPlayer();
 	_float							Calc_PlayerLookAtDirection();
 
-	CModel*						Get_Model() { return m_pModelCom; }
+	virtual CModel* Get_Model() { return m_pModelCom; }
 
 	virtual void					AdditiveAnim(_float fTimeDelta);
 	void								Call_RotIcon();

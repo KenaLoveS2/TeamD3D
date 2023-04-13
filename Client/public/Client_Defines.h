@@ -86,6 +86,7 @@ static const XMFLOAT4X4 g_IdentityFloat4x4 = {
 	0,0,1,0,
 	0,0,0,1,
 };
+static const _float4 g_vInvisiblePosition = { -1000.f, 0.f, -1000.f, 1.f };
 
 static const bool g_bFalse = false;
 static const bool g_bTrue = true;
