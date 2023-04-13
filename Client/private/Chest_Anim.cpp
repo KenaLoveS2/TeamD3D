@@ -36,7 +36,6 @@ HRESULT CChest_Anim::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effect(), E_FAIL);
 
-	//CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 
 	m_bRenderActive = true;
 	m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);
