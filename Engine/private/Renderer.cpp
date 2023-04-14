@@ -1026,6 +1026,7 @@ HRESULT CRenderer::Render_PostProcess()
 	/***3***/
 	if(m_bMotionBlur)
 	{
+		m_vLightShaftValue = _float4(0.35f, 0.35f, 0.4f, 1.f);
 		pLDRSour_SRV = pLDRSour->Get_SRV();
 		pLDRDest_RTV = pLDRDest->Get_RTV();
 		if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour_SRV)))
@@ -1035,6 +1036,10 @@ HRESULT CRenderer::Render_PostProcess()
 		pLDRSour = pLDRDest;
 		pLDRDest = pLDRTmp;
 		PostProcess_MotionBlur();
+	}
+	else
+	{
+		m_vLightShaftValue = _float4(0.35f, 0.7f, 0.4f, 1.f);
 	}
 
 	/***4***/

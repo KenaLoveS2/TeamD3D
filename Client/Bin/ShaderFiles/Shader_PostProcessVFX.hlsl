@@ -190,7 +190,7 @@ PS_OUT PS_MOTIONBLUR(PS_IN In)
 	float4 PrevFrameColor = g_PrevFrameTexture.Sample(LinearSampler, In.vTexUV);
 	float4 blurColor = lerp(CurFrameColor, PrevFrameColor, 0.5);
 
-	Out.vColor = blurColor;
+	Out.vColor = saturate(blurColor);
 
 	return Out;
 }

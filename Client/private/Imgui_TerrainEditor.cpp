@@ -469,9 +469,9 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 
 	m_CurFilterIndexSize =m_OldFilterIndexSize = (_int)m_FilterIndexSet[m_iFilterCaseNum].size();
 
-	_float4 vPos;
-	m_pSelected_Buffer->Picking_Terrain(g_hWnd, m_pSelected_Tranform, &vPos);
-	m_pSelectedTerrain->Set_BrushPosition(vPos);
+	//_float4 vPos;
+	//m_pSelected_Buffer->Picking_Terrain(g_hWnd, m_pSelected_Tranform, &vPos);
+	//m_pSelectedTerrain->Set_BrushPosition(vPos);
 
 	if (ImGui::IsMouseDragging(0))
 	{
@@ -605,9 +605,9 @@ void CImgui_TerrainEditor::UnDraw_FilterTexture()
 
 	m_CurFilterIndexSize = m_OldFilterIndexSize = (_int)m_FilterIndexSet[m_iFilterCaseNum].size();
 
-	_float4 vPos;
-	m_pSelected_Buffer->Picking_Terrain(g_hWnd, m_pSelected_Tranform, &vPos);
-	m_pSelectedTerrain->Set_BrushPosition(vPos);
+	//_float4 vPos;
+	//m_pSelected_Buffer->Picking_Terrain(g_hWnd, m_pSelected_Tranform, &vPos);
+	//m_pSelectedTerrain->Set_BrushPosition(vPos);
 
 	if (ImGui::IsMouseDragging(0))
 	{
