@@ -413,7 +413,7 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	float4		FinalColor = float4(0, 0, 0, 1);
 	if(max(max(vDiffuse.r, vDiffuse.g),vDiffuse.b) == vDiffuse.b && !g_Day)
 	{
-		FinalColor = vDiffuse + vEmissive * 2.f;
+		FinalColor = vDiffuse + vEmissive * 2.f; 
 		Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 3.f, 0.f);
 	}
 	else
@@ -1396,7 +1396,7 @@ PS_OUT PS_MAIN_BOSS_AO_R_M_E(PS_IN In)
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 
-		length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 2.f), 0.f);
+		length(vEmissiveDesc) + (g_fHDRIntensity + vEmissiveDesc.r * 4.f), 0.f);
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;

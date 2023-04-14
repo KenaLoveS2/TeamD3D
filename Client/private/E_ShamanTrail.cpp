@@ -58,7 +58,6 @@ HRESULT CE_ShamanTrail::Late_Initialize(void * pArg)
 void CE_ShamanTrail::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
 	m_pMovementTrail->Set_Active(m_eEFfectDesc.bActive);
 
 	if (m_pMovementTrail) m_pMovementTrail->Tick(fTimeDelta);

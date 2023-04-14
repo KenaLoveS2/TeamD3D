@@ -39,6 +39,7 @@ private:
 	CShader*						m_pShaderCom = nullptr;
 	CRenderer*						m_pRendererCom = nullptr;
 	CModel*							m_pModelCom = nullptr;
+
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
 	class CControlRoom*					m_pControlRoom = nullptr;
@@ -50,6 +51,9 @@ private:
 	_bool							m_bGimmick_Active = false;
 	_bool							m_bColliderOn = false;
 	_bool							m_bTestOnce = false;
+
+	_bool							m_bOnceSoundCheck = false;
+
 public:
 	
 private:

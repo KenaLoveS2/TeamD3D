@@ -174,6 +174,102 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	}
 }
 
+[maxvertexcount(6)]
+void GS_TRAIL(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
+{
+	GS_OUT		Out[4] =
+	{
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } },
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } },
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } },
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } }
+	};
+
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	float		fCurWidth = g_fWidth * (In[0].fLife / g_fLife) * 0.5f;
+	float4x4    WorldMatrix = In[0].Matrix;
+	float3      vUp = matrix_up(WorldMatrix) * fCurWidth;
+	float3		vPosition = matrix_postion(WorldMatrix);
+
+	if (In[0].InstanceID == 0)
+	{
+		float3  vResultPos;
+		vResultPos = vPosition;
+		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[0].vTexUV = float2(0.f, 0.f);
+		Out[0].fLife = In[0].fLife / g_fLife;
+
+		vResultPos = vPosition;
+		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[1].vTexUV = float2(1.0f, 0.f);
+		Out[1].fLife = In[0].fLife / g_fLife;
+
+		vResultPos = vPosition + vUp;
+		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[2].vTexUV = float2(1.0f, 1.f);
+		Out[2].fLife = In[0].fLife / g_fLife;
+
+		vResultPos = vPosition - vUp;
+		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[3].vTexUV = float2(0.f, 1.f);
+		Out[3].fLife = In[0].fLife / g_fLife;
+
+		Vertices.Append(Out[0]);
+		Vertices.Append(Out[1]);
+		Vertices.Append(Out[2]);
+		Vertices.RestartStrip();
+
+		Vertices.Append(Out[0]);
+		Vertices.Append(Out[2]);
+		Vertices.Append(Out[3]);
+		Vertices.RestartStrip();
+	}
+	else
+	{
+		matrix PreWorldMatrix = g_BossTrailInfoMatrix[In[0].InstanceID - 1];
+		matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+
+		float3 vPreRight = matrix_right(PreWorldMatrix) * fCurWidth;
+		float3 vPrelook = matrix_look(PreWorldMatrix);
+		float3 vPreUp = matrix_up(PreWorldMatrix) * fCurWidth;
+
+		float3 vRight = matrix_right(WorldMatrix) * fCurWidth;
+		float3 vlook = matrix_look(WorldMatrix);
+
+		float3 vResultPos;
+		vResultPos = matrix_postion(PreWorldMatrix) + vPreUp;
+		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[0].fLife = (g_BossTrailInfoMatrix[In[0].InstanceID - 1])[3][3] / g_fLife;
+
+		vResultPos = matrix_postion(WorldMatrix) + vUp;
+		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[1].fLife = In[0].fLife / g_fLife;
+
+		vResultPos = matrix_postion(WorldMatrix) - vUp;
+		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[2].fLife = In[0].fLife / g_fLife;
+
+		vResultPos = matrix_postion(PreWorldMatrix) - vPreUp;
+		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[3].fLife = (g_BossTrailInfoMatrix[In[0].InstanceID - 1])[3][3] / g_fLife;
+
+		Out[0].vTexUV = float2(1.f - ((In[0].InstanceID - 1.f) / g_InfoSize), 0.f);
+		Out[1].vTexUV = float2(1.f - In[0].InstanceID / g_InfoSize, 0.f);
+		Out[2].vTexUV = float2(1.f - In[0].InstanceID / g_InfoSize, 1.f);
+		Out[3].vTexUV = float2(1.f - ((In[0].InstanceID - 1.f) / g_InfoSize), 1.f);
+
+		Vertices.Append(Out[0]);
+		Vertices.Append(Out[1]);
+		Vertices.Append(Out[2]);
+		Vertices.RestartStrip();
+
+		Vertices.Append(Out[0]);
+		Vertices.Append(Out[2]);
+		Vertices.Append(Out[3]);
+		Vertices.RestartStrip();
+	}
+}
+
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
@@ -215,4 +311,18 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
+
+	pass Boss_Trail2 // 1
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_TRAIL();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
 }

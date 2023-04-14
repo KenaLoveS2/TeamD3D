@@ -52,14 +52,11 @@ HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
-	//if (!lstrcmp(Get_ObjectCloneName(), L"Explosion"))
-	//if (m_eType == TYPE_DEFAULT)
- 	//	Set_OptionTool();
- 	//else
-	//	m_fLife += fTimeDelta;
-
-	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
-		Tick_Sprite(m_fDurationTime, fTimeDelta);
+// 	if (!lstrcmp(Get_ObjectCloneName(), L"Explosion"))
+ 		if (m_eType == TYPE_DEFAULT)
+ 			Set_OptionTool();
+//  		else
+//  			m_fLife += fTimeDelta;
 
 	__super::Tick(fTimeDelta);
 	if (m_eEFfectDesc.bActive == false)
@@ -67,12 +64,12 @@ void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 		m_fLife = 0.0f;
 		return;
 	}
-	else
-		m_pTransformCom->Set_Position(m_vFixPos);
+// 	else
+// 		m_pTransformCom->Set_Position(m_vFixPos);
 
 	m_fLife += fTimeDelta;
 	/*m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && */
-	if (m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
+	if (m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
 		m_eEFfectDesc.bActive = false;
 }
 
@@ -161,7 +158,7 @@ HRESULT CE_P_ExplosionGravity::Save_Desc(const char* pFileTag)
 	for (_int k = 0; k < 3; k++)
 	{
 		fMax = 0.0f;
-		memcpy(&fMin, (_float*)&ePointDesc->fMax + k, sizeof(_float));
+		memcpy(&fMax, (_float*)&ePointDesc->fMax + k, sizeof(_float));
 		jDesc["G. Max"].push_back(fMax);
 	}
 	jDesc["H. InstanceSpeed"] = eInstanceData->pSpeeds;
@@ -298,10 +295,10 @@ HRESULT CE_P_ExplosionGravity::Load_Desc(const char* pFilePath)
 	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.1f, (_float)eInstanceData->pSpeeds);
 	m_pVIInstancingBufferCom->SetRandomDir();
 	m_pVIInstancingBufferCom->Set_Position(ePointDesc->fMin, ePointDesc->fMax);
-	ePointDesc->fRange = ePointDesc->fRange;
-	ePointDesc->fPowValue = ePointDesc->fPowValue;
-	ePointDesc->fTerm = ePointDesc->fTerm;
-	ePointDesc->fCreateRange = ePointDesc->fCreateRange;
+// 	ePointDesc->fRange = ePointDesc->fRange;
+// 	ePointDesc->fPowValue = ePointDesc->fPowValue;
+// 	ePointDesc->fTerm = ePointDesc->fTerm;
+// 	ePointDesc->fCreateRange = ePointDesc->fCreateRange;
 
 	m_eEFfectDesc.iSeparateWidth = m_eEFfectDesc.iWidthCnt;
 	m_eEFfectDesc.iSeparateHeight = m_eEFfectDesc.iHeightCnt;
@@ -413,7 +410,22 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 			fTerm, _float2(0.05f, 0.2f), false);
 		break;
 
+	case CE_P_ExplosionGravity::TYPE_BOWTARGET:
+		Load_Desc("BowTarget");
+		
+		break;
 	}
+}
+
+void CE_P_ExplosionGravity::Reset()
+{
+// 	CVIBuffer_Point_Instancing::INSTANCEDATA* eInstanceData = m_pVIInstancingBufferCom->Get_InstanceData();
+// 	_float2 fSize = eInstanceData->fPSize;
+// 	_float  fInstanceSpeed = eInstanceData->pSpeeds;
+// 
+// 	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(fSize.x, fSize.y));
+// 	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.1f, (_float)fInstanceSpeed);
+
 }
 
 void CE_P_ExplosionGravity::ParticleOption_Parabola(CVIBuffer_Point_Instancing::POINTDESC* ePointDesc, _float fDiffuseIdx
@@ -626,7 +638,7 @@ void CE_P_ExplosionGravity::Set_OptionTool()
 		fMin = ePointDesc->fMin;
 		fMax = ePointDesc->fMax;
 		fInstanceSpeed = eInstanceData->pSpeeds;
-		
+
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(fSize.x, fSize.y));
 		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.1f, (_float)fInstanceSpeed);
 		m_pVIInstancingBufferCom->SetRandomDir();
