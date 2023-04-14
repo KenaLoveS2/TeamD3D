@@ -92,16 +92,16 @@ void CChest_Anim::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	ImGui::Begin("Chest");
+	//ImGui::Begin("Chest");
 
-	if (ImGui::Button("re"))
-	{
-		m_bOpened = false;
-		m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);
-		m_eCurState = CURSED_ACTIVATE;
-	}
+	//if (ImGui::Button("re"))
+	//{
+	//	m_bOpened = false;
+	//	m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);
+	//	m_eCurState = CURSED_ACTIVATE;
+	//}
 
-	ImGui::End();
+	//ImGui::End();
 
 	/*Culling*/
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);

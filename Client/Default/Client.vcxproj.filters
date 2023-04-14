@@ -604,6 +604,9 @@
     <Filter Include="02.GameObjects\Monster\Manager">
       <UniqueIdentifier>{39b7d1ad-56a8-480e-95c4-dc24e0d981e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Warrior\ETC">
+      <UniqueIdentifier>{d9ee7d9a-24c6-4f08-a054-08839e4b715c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1292,9 +1295,6 @@
     <ClInclude Include="..\public\E_Distortion_Plane.h">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_EnrageInto.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_NodeRotSkill.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClInclude>
@@ -1614,6 +1614,27 @@
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_P_DeadZoneDust.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanHeadTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanWeaponBall.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanElectric.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_EnrageInto.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\Enrage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_WarriorWeaponAcc.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_WarriorBody.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_DeadZone_SmallPlace.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2281,9 +2302,6 @@
     <ClCompile Include="..\private\E_Distortion_Plane.cpp">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_EnrageInto.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_NodeRotSkill.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClCompile>
@@ -2606,6 +2624,27 @@
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_P_DeadZoneDust.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanHeadTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanWeaponBall.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\etc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanElectric.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\etc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_EnrageInto.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\Enrage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_WarriorWeaponAcc.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_WarriorBody.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_DeadZone_SmallPlace.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
   </ItemGroup>

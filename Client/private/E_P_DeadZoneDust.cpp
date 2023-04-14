@@ -43,9 +43,6 @@ HRESULT CE_P_DeadZoneDust::Late_Initialize(void* pArg)
 	m_pShaman = (CBossShaman*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Monster", L"BossShaman_0");
 	NULL_CHECK_RETURN(m_pShaman, E_FAIL);
 
-	if (!lstrcmp(m_szCloneObjectTag, L"Dust2"))
-		Set_Type(CE_P_DeadZoneDust::TYPE_DUST_B);
-
 	return S_OK;
 }
 
@@ -55,9 +52,6 @@ void CE_P_DeadZoneDust::Tick(_float fTimeDelta)
 	{
 		m_pShaman = (CBossShaman*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Monster", L"BossShaman_0");
 		m_pTransformCom->Set_Position(m_pShaman->Get_TransformCom()->Get_Position());
-
-		if (!lstrcmp(m_szCloneObjectTag, L"Dust2"))
-			Set_ShapePosition();
 	}
 	__super::Tick(fTimeDelta);
 
@@ -73,8 +67,12 @@ void CE_P_DeadZoneDust::Late_Tick(_float fTimeDelta)
 {
 	if (m_bTurnOnfirst == false)
 	{
-		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(1.f, 2.f));
-		m_pVIInstancingBufferCom->Set_RandomSpeeds(1.f, 5.f);
+		if (!lstrcmp(m_szCloneObjectTag, L"Dust2"))
+			Set_Type(CE_P_DeadZoneDust::TYPE_DUST_B);
+		else
+			Set_Type(CE_P_DeadZoneDust::TYPE_DUST_A);
+
+		m_pTransformCom->Set_Position(m_pShaman->Get_TransformCom()->Get_Position());
 		m_bTurnOnfirst = true;
 	}
 
@@ -109,7 +107,6 @@ HRESULT CE_P_DeadZoneDust::SetUp_ShaderResources()
 void CE_P_DeadZoneDust::Set_Type(TYPE eType)
 {
 	m_eType = eType;
-
 	switch (eType)
 	{
 	case Client::CE_P_DeadZoneDust::TYPE_DUST_A:
@@ -118,7 +115,9 @@ void CE_P_DeadZoneDust::Set_Type(TYPE eType)
 		m_eEFfectDesc.fFrame[0] = 114.0f;
 
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(1.f, 2.f));
-		m_pVIInstancingBufferCom->Set_RandomSpeeds(1.f, 5.f);
+		m_pVIInstancingBufferCom->Set_RandomSpeeds(1.f, 3.f);
+
+		m_pTransformCom->Set_Position(XMVectorSet(10.f, 15.f, 1170.f, 1.f));
 		break;
 
 	case Client::CE_P_DeadZoneDust::TYPE_DUST_B:
@@ -128,6 +127,7 @@ void CE_P_DeadZoneDust::Set_Type(TYPE eType)
 
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.2f, 1.f));
 		m_pVIInstancingBufferCom->Set_RandomSpeeds(1.f, 5.f);
+		m_pTransformCom->Set_Position(XMVectorSet(7.f, 14.f, 1150.f, 1.f));
 		break;
 	}
 }

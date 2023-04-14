@@ -353,8 +353,8 @@ void CE_ShamanIceDagger::Tick_Chase(_float fTimeDelta)
 	if (m_bFinalposition == false && m_bChase == false || m_bColl)
 		return;
 
-	m_pKenaPosition = XMVectorSetY(m_pKenaPosition, m_pKena->Get_TransformCom()->Get_PositionY() + 1.0f);
-	m_pTransformCom->Chase(m_pKenaPosition, fTimeDelta, 0.1f, true);
+	//m_pKenaPosition = XMVectorSetY(m_pKenaPosition, m_pKena->Get_TransformCom()->Get_PositionY() + 1.0f);
+	m_pTransformCom->Chase(m_pKena->Get_TransformCom()->Get_Position(), fTimeDelta, 0.1f, true);
 
 	Set_IceDaggerMatrix();
 

@@ -14,6 +14,9 @@
 #include "E_ShamanSummons.h"
 #include "E_ShamanIceDagger.h"
 #include "E_ShamanLazer.h"
+#include "E_ShamanHeadTrail.h"
+#include "E_ShamanWeaponBall.h"
+#include "E_ShamanElectric.h"
 
 // #define EFFECTDEBUG
 
@@ -184,6 +187,9 @@ void CBossShaman::Tick(_float fTimeDelta)
 
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
+	for (auto& pChild : m_vecShamanElectric)
+		pChild->Tick(fTimeDelta);
+
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Tick(fTimeDelta);
 
@@ -200,6 +206,11 @@ void CBossShaman::Late_Tick(_float fTimeDelta)
 	
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Late_Tick(fTimeDelta);
+	for (auto& pChild : m_vecShamanElectric)
+		pChild->Late_Tick(fTimeDelta);
+
+	if (m_pShamanLEyeTrail) m_pShamanLEyeTrail->Late_Tick(fTimeDelta);
+	if (m_pShamanREyeTrail) m_pShamanREyeTrail->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom /*&& m_bSpawn*/)
 	{
@@ -223,7 +234,7 @@ HRESULT CBossShaman::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
 			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_OpacityTexture"),E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M), E_FAIL);
 		}
 		else if(i == 3) // °Ë ·»´õ
 		{	
@@ -1283,6 +1294,12 @@ HRESULT CBossShaman::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("S_P_Teleport", pEffectBase);
 
+	// WeaponBall
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanWeaponBall", L"S_WeaponBall"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	dynamic_cast<CE_ShamanWeaponBall*>(pEffectBase)->Set_Boneprt(m_pModelCom->Get_BonePtr("sword_jnt_5"));
+	m_mapEffect.emplace("S_WeaponBall", pEffectBase);
+
 	/* Minion ¼ÒÈ¯µÉ ¶§ ³ª¿È */
 	for (_int i = 0; i < MINION_COUNT; ++i)
 	{
@@ -1292,9 +1309,21 @@ HRESULT CBossShaman::Ready_Effects()
 		m_pShamanThunder[i]->Set_Parent(this);
 	}
 
-	/* IceDagger */
+	/* Prototype_GameObject_ShamanElectric */
+	CE_ShamanElectric* pElectric = nullptr;
 	_tchar* pCloneTag = nullptr;
 	string strMapTag = "";
+	for (_int i = 0; i < 5; ++i)
+	{
+		pCloneTag = CUtile::Create_DummyString(L"S_Electric", i);
+		strMapTag = "S_Electric" + to_string(i);
+		pElectric = dynamic_cast<CE_ShamanElectric*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanElectric", CUtile::Create_DummyString(L"ShamanElectric", i)));
+		NULL_CHECK_RETURN(pElectric, E_FAIL);
+		pElectric->Set_Parent(this);
+		m_vecShamanElectric.push_back(pElectric);
+	}
+
+	/* IceDagger */
 	CBone* pBonePtr = m_pModelCom->Get_BonePtr("char_neck_jnt");
 	for (_int i = 0; i < ICEDAGGER_COUNT; ++i)
 	{
@@ -1320,6 +1349,22 @@ HRESULT CBossShaman::Ready_Effects()
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Set_Parent(this);
 
+	{
+		m_pShamanLEyeTrail = (CE_ShamanHeadTrail*)(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanHeadTrail", L"S_LEye"));
+		NULL_CHECK_RETURN(m_pShamanLEyeTrail, E_FAIL);
+		m_pShamanLEyeTrail->Set_Boneprt(m_pModelCom->Get_BonePtr("MaskPiercing1_Jnt2"));
+		m_pShamanLEyeTrail->Set_Parent(this);
+		m_pShamanLEyeTrail->Late_Initialize(nullptr);
+	}
+
+	{
+		m_pShamanREyeTrail = (CE_ShamanHeadTrail*)(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanHeadTrail", L"S_REye"));
+		NULL_CHECK_RETURN(m_pShamanREyeTrail, E_FAIL);
+		m_pShamanREyeTrail->Set_Boneprt(m_pModelCom->Get_BonePtr("MaskPiercing2_Jnt2"));
+		m_pShamanREyeTrail->Set_Parent(this);
+		m_pShamanREyeTrail->Late_Initialize(nullptr);
+	}
+
 	CGameObject* p_game_object = nullptr;
 	m_pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Monster", TEXT("Prototype_GameObject_ShamanTrapHex"), L"ShamanTrapHex_0", nullptr, &p_game_object);
 	m_pShamanTapHex = (CShamanTrapHex*)p_game_object;
@@ -1341,6 +1386,26 @@ void CBossShaman::Tick_Effects(_float fTimeDelta)
 
 	if (m_bIceDagger == true) 
 		Update_IceDagger();
+
+	if (m_eSwordRenderState == RENDER)
+		m_mapEffect["S_WeaponBall"]->Set_Active(true);
+	else
+		m_mapEffect["S_WeaponBall"]->Set_Active(false);
+
+	if (m_pModelCom->Get_AnimIndex() == (_uint)MELEE_ATTACK || m_pModelCom->Get_AnimIndex() == (_uint)ICE_DAGGER_INTO
+		|| m_pModelCom->Get_AnimIndex() == (_uint)DASH_ATTACK || m_pModelCom->Get_AnimIndex() == (_uint)TRIPLE_ATTACK)
+	{
+		for (auto& pChild : m_vecShamanElectric)
+			pChild->Set_Active(true);
+	}
+	else
+	{
+		for (auto& pChild : m_vecShamanElectric)
+			pChild->Set_Active(false);
+	}
+
+	if (m_pShamanLEyeTrail) m_pShamanLEyeTrail->Tick(fTimeDelta);
+	if (m_pShamanREyeTrail) m_pShamanREyeTrail->Tick(fTimeDelta);
 }
 
 void CBossShaman::Update_Trail(const char* pBoneTag)
@@ -1585,10 +1650,9 @@ void CBossShaman::TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta)
 	_float4 vPos = m_pTransformCom->Get_Position();	_float fRange = 3.f;
 	_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 	vPos += vLook * fRange;
-	vPos.y -= 0.5f;
+	vPos.y -= 0.3f;
 
-	m_mapEffect["Shaman_Charged"]->Set_Position(vPos);
-	m_mapEffect["Shaman_Charged"]->Set_Active(true);
+	m_mapEffect["Shaman_Charged"]->Set_Effect(vPos, true);
 }
 
 void CBossShaman::TurnOnIceDagger(_bool bIsInit, _float fTimeDelta)
@@ -1741,6 +1805,11 @@ void CBossShaman::Free()
 	}
 
 	Safe_Release(m_pShamanTapHex);
+	Safe_Release(m_pShamanLEyeTrail);
+	Safe_Release(m_pShamanREyeTrail);
+	for (auto& pChild : m_vecShamanElectric)
+		Safe_Release(pChild);
+	m_vecShamanElectric.clear();
 
 	for (auto& Pair : m_mapEffect)
 		Safe_Release(Pair.second);

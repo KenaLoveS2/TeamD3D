@@ -48,26 +48,26 @@ HRESULT CE_P_Rot::Late_Initialize(void* pArg)
 
 void CE_P_Rot::Tick(_float fTimeDelta)
 {
-#ifdef _DEBUG
-	if(!lstrcmp(m_szCloneObjectTag, L"RotAcc_1"))
-	{
-		ImGui::Begin("test");
-		ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
-
-		ImGui::InputInt("m_iNumInstance", (_int*)&m_iNumInstance);
-		ImGui::InputInt("iNumInstance", &m_fOverInstanceCnt);
-		ImGui::InputFloat("Diffuse", &m_eEFfectDesc.fFrame[0]);
-		ImGui::InputInt("Pass", &m_eEFfectDesc.iPassCnt);
-		ImGui::InputFloat4("Color", (_float*)&m_eEFfectDesc.vColor);
-
-		if (ImGui::Button("Reshape"))
-			Reset();
-		if (ImGui::Button("Compile"))
-			m_pShaderCom->ReCompile();
-
-		ImGui::End();
-	}
-#endif // _DEBUG
+//#ifdef _DEBUG
+//	if(!lstrcmp(m_szCloneObjectTag, L"RotAcc_1"))
+//	{
+//		ImGui::Begin("test");
+//		ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+//
+//		ImGui::InputInt("m_iNumInstance", (_int*)&m_iNumInstance);
+//		ImGui::InputInt("iNumInstance", &m_fOverInstanceCnt);
+//		ImGui::InputFloat("Diffuse", &m_eEFfectDesc.fFrame[0]);
+//		ImGui::InputInt("Pass", &m_eEFfectDesc.iPassCnt);
+//		ImGui::InputFloat4("Color", (_float*)&m_eEFfectDesc.vColor);
+//
+//		if (ImGui::Button("Reshape"))
+//			Reset();
+//		if (ImGui::Button("Compile"))
+//			m_pShaderCom->ReCompile();
+//
+//		ImGui::End();
+//	}
+//#endif // _DEBUG
 
 	if (m_eEFfectDesc.bActive == false)
 		return;

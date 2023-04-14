@@ -21,6 +21,7 @@ public:
 		TYPE_KENA_ATTACK2,
 		/* Obejct */
 		TYPE_HEALTHFLOWER,
+		TYPE_BOWTARGET,
 
 		TYPE_END
 	};
@@ -50,6 +51,7 @@ public:
 	TYPE	Get_Type() { return m_eType; }
 	void	Set_Option(TYPE eType, _vector vSetDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
 	void	Set_Dir(_vector vSetDir) { m_pVIInstancingBufferCom->Set_Dir(vSetDir); }
+	void	Reset();
 
 public:
 	void	ParticleOption_Parabola(CVIBuffer_Point_Instancing::POINTDESC* ePointDesc, _float fDiffuseIndx, _fvector vColor,
