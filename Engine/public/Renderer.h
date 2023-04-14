@@ -120,7 +120,7 @@ private:
 	HRESULT PostProcess_Flare();
 	_bool		m_bFlare = false;
 	HRESULT PostProcess_LightShaft();
-	_bool		m_bLightShaft = true;
+	_bool		m_bLightShaft = false;
 
 	_bool		m_bFog = false;
 	_float4		m_vFogColor;

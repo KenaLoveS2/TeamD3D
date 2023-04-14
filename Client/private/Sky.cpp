@@ -76,10 +76,16 @@ void CSky::Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Set_LightShaft(false);
 	}
-	else
+	else if(g_LEVEL == LEVEL_TESTPLAY)
 	{
 		m_pRendererCom->Set_LightShaft(true);
 		_float4 vValue = _float4(0.35f, 0.7f, 0.4f, 1.f);
+		m_pRendererCom->Set_LightShaftValue(vValue);
+	}
+	else
+	{
+		m_pRendererCom->Set_LightShaft(true);
+		_float4 vValue = _float4(0.35f, 0.6f, 0.4f, 1.f);
 		m_pRendererCom->Set_LightShaftValue(vValue);
 	}
 }

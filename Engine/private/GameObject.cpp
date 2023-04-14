@@ -102,7 +102,6 @@ void CGameObject::Compute_CamDistance()
 	m_fCamDistance = XMVectorGetX(XMVector3Length(vWorldPos - vCamPos));
 
 	RELEASE_INSTANCE(CPipeLine);
-
 }
 
 CComponent * CGameObject::Find_Component(const _tchar * pComponentTag)
