@@ -145,7 +145,7 @@ private:
 
 	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
 	
-	_float4 m_vTargetOffset = { 0.f, 0.1f, 0.f, 0.f };
+	_float4 m_vTargetOffset = { 0.f, 0.5f, 0.f, 0.f };
 	_float4 m_vSingleShotTargetPosTable[SINGLE_SHOT_FRIEND_COUNT * 2];
 	
 
@@ -327,7 +327,7 @@ private: /* For. String */
 	_float							m_fStringDissolveSpeed;
 	_float							m_fStringHDRIntensity;
 	_float4							m_vStringDiffuseColor;
-	class CRot*						m_pRot = nullptr;
+	class CRot*					m_pRot = nullptr;
 
 	_float							m_fFogRange = 100.f;
 	_float							m_fLightRange = 10.f;

@@ -26,6 +26,7 @@ void CUI_NodeBossHP::Set_Title(wstring wstrName)
 
 	m_szTitle = CUtile::Create_String(wstrName.c_str());
 
+	static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Set_InitState(1.f);
 	m_pEffect->Activate_BufferUpdate();
 }
 
@@ -138,8 +139,6 @@ void CUI_NodeBossHP::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRendererCom && m_bActive)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UIHDR, this);
 #pragma endregion
-
-
 
 	if (m_pEffect != nullptr)
 	{
@@ -255,4 +254,6 @@ void CUI_NodeBossHP::Free()
 	__super::Free();
 	Safe_Delete_Array(m_szTitle);
 	Safe_Release(m_pEffect);
+
+	int a = 0;
 }
