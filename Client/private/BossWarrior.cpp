@@ -438,7 +438,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_bReadySpawn = true;
 	})
-		.AddTransition("SLEEP to CINEMA", "CINEMA") // "IDLE"
+		.AddTransition("SLEEP to CINEMA", "CINEMA") // "IDLE" "CINEMA"
 		.Predicator([this]()
 	{			
 		m_fSpawnRange = 20.f;
