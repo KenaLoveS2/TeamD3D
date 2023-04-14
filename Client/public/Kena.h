@@ -296,6 +296,8 @@ private:	/* Effect Event Func */
 	void	TurnOnLvUp(_bool bIsInit, _float fTimeDelta);
 
 private:	/* Sound Event Func */
+	void	PlaySound_Kena_FootStep(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Kena_FootStep_Sprint(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Jump(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_PulseJump(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Land(_bool bIsInit, _float fTimeDelta);
@@ -314,6 +316,9 @@ private:	/* Sound Event Func */
 	void	PlaySound_HeavyAttack_Charge(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_HeavyAttack_Spark(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_HeavyAttack_Release_Perfect(_bool bIsInit, _float fTimeDelta);
+
+	void	PlaySound_Damage();
+	void	PlaySound_Damage_Pulse();
 
 public:
 	//Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;

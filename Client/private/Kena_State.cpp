@@ -6214,6 +6214,7 @@ void CKena_State::Start_Take_Damage_Front(_float fTimeDelta)
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_FRONT");
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+	m_pKena->PlaySound_Damage();
 }
 
 void CKena_State::Start_Take_Damage_Back(_float fTImeDelta)
@@ -6221,6 +6222,7 @@ void CKena_State::Start_Take_Damage_Back(_float fTImeDelta)
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_BACK");
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+	m_pKena->PlaySound_Damage();
 }
 
 void CKena_State::Start_Take_Damage_Left(_float fTimeDelta)
@@ -6228,6 +6230,7 @@ void CKena_State::Start_Take_Damage_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_LEFT");
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+	m_pKena->PlaySound_Damage();
 }
 
 void CKena_State::Start_Take_Damage_Right(_float fTimeDelta)
@@ -6235,6 +6238,7 @@ void CKena_State::Start_Take_Damage_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_RIGHT");
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+	m_pKena->PlaySound_Damage();
 }
 
 void CKena_State::Start_Take_Damage_Heavy_Front(_float fTimeDelta)
@@ -6998,6 +7002,8 @@ void CKena_State::Start_Shield_Impact(_float fTimeDelta)
 	m_pKena->m_bHeavyHit = false;
 
 	m_pKena->m_bPulse = true;
+
+	m_pKena->PlaySound_Damage_Pulse();
 }
 
 void CKena_State::Start_Shield_Impact_Medium(_float fTimeDelta)
@@ -7013,6 +7019,8 @@ void CKena_State::Start_Shield_Impact_Medium(_float fTimeDelta)
 	m_pKena->m_bHeavyHit = false;
 
 	m_pKena->m_bPulse = true;
+
+	m_pKena->PlaySound_Damage_Pulse();
 }
 
 void CKena_State::Start_Shield_Impact_Big(_float fTimeDelta)
@@ -7028,6 +7036,8 @@ void CKena_State::Start_Shield_Impact_Big(_float fTimeDelta)
 	m_pKena->m_bHeavyHit = false;
 
 	m_pKena->m_bPulse = true;
+
+	m_pKena->PlaySound_Damage_Pulse();
 }
 
 void CKena_State::Start_Shield_Break_Front(_float fTimeDelta)

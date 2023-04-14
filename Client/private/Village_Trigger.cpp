@@ -46,9 +46,9 @@ HRESULT CVillage_Trigger::Late_Initialize(void* pArg)
 	_float3 vSize;
 
 	if (!lstrcmp(m_szCloneObjectTag, L"IntoVillage_Trigger"))
-		vSize = _float3(15.f, 1.f, 3.f);
+		vSize = _float3(5.f, 1.f, 3.f);
 	else if (!lstrcmp(m_szCloneObjectTag, L"FromVillage_Trigger"))
-		vSize = _float3(15.f, 1.f, 3.f);
+		vSize = _float3(4.f, 1.f, 3.f);
 
 	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
