@@ -604,6 +604,12 @@
     <Filter Include="02.GameObjects\Monster\Manager">
       <UniqueIdentifier>{39b7d1ad-56a8-480e-95c4-dc24e0d981e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object\WorldTrigger">
+      <UniqueIdentifier>{08644843-7444-47a4-941c-be47c23afbe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object\MousePointer">
+      <UniqueIdentifier>{190f705d-b8e9-42de-afc1-10ca7690d7a3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Envrioment\BowTarget">
       <UniqueIdentifier>{132efc79-f919-4c80-a06f-f5b1cf296530}</UniqueIdentifier>
     </Filter>
@@ -1616,6 +1622,12 @@
     <ClInclude Include="..\public\E_P_EnvironmentDust.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\WorldTrigger.h">
+      <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_MousePointer.h">
+      <Filter>02.GameObjects\UI\05. Real Object\MousePointer</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\BowTarget.h">
       <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
     </ClInclude>
@@ -2613,6 +2625,12 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_EnvironmentDust.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WorldTrigger.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_MousePointer.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\MousePointer</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BowTarget.cpp">
       <Filter>02.GameObjects\Envrioment\BowTarget</Filter>

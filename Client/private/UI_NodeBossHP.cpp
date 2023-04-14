@@ -25,6 +25,8 @@ void CUI_NodeBossHP::Set_Title(wstring wstrName)
 	Safe_Delete_Array(m_szTitle);
 
 	m_szTitle = CUtile::Create_String(wstrName.c_str());
+
+	m_pEffect->Activate_BufferUpdate();
 }
 
 void CUI_NodeBossHP::Set_Guage(_float fGuage)
@@ -32,7 +34,14 @@ void CUI_NodeBossHP::Set_Guage(_float fGuage)
 	m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
 
 	_float4 vPos = m_pTransformCom->Get_Position();
-	m_pEffect->Activate_BufferUpdate();
+
+	//if(fGuage != 0.0f)
+	//	m_pEffect->Activate_BufferUpdate();
+	//else
+	//	m_pEffect->Stop_Buffer();
+
+	if (fGuage == 0.0f)
+		m_pEffect->Stop_Buffer();
 }
 
 HRESULT CUI_NodeBossHP::Initialize_Prototype()
@@ -106,7 +115,6 @@ void CUI_NodeBossHP::Late_Tick(_float fTimeDelta)
 
 	//__super::Late_Tick(fTimeDelta);
 #pragma region Late_Tick
-	__super::Late_Tick(fTimeDelta);
 
 	/* Calculate with Parent(Canvas) WorldMatrix (Scale, Translation) */
 	if (m_pParent != nullptr)
