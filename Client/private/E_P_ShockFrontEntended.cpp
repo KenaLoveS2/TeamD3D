@@ -87,6 +87,8 @@ HRESULT CE_P_ShockFrontEntended::Late_Initialize(void* pArg)
 
 void CE_P_ShockFrontEntended::Tick(_float fTimeDelta)
 {
+	// ToolOption("CE_P_ShockFrontEntended");
+
 	if (m_eEFfectDesc.bActive == false)
 	{
 		m_fLife = 0.0f;
@@ -99,6 +101,14 @@ void CE_P_ShockFrontEntended::Tick(_float fTimeDelta)
 
 void CE_P_ShockFrontEntended::Late_Tick(_float fTimeDelta)
 {
+	if (m_bTurnOnfirst == false)
+	{
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 2.5f));
+		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 1.0f);
+
+		m_bTurnOnfirst = true;
+	}
+
  	if (m_eEFfectDesc.bActive == false)
  		return;
 

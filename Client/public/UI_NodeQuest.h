@@ -13,6 +13,9 @@ private:
 public:
 	void	Set_QuestString(wstring str);
 	void	Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; }
+	void	Set_Clear();
+	_int	Get_Reward() { return m_iReward;  }
+
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
@@ -32,6 +35,9 @@ private:
 	_float					m_fTimeAcc;
 	_float					m_fSpeed;
 	_float					m_fAlpha;
+
+	_bool					m_bClear;
+	_int					m_iReward;
 
 public:
 	static	CUI_NodeQuest*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

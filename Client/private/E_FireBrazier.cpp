@@ -35,6 +35,7 @@ HRESULT CE_FireBrazier::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = true;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
+	m_eEFfectDesc.fTimeDelta = 0.3f;
 	return S_OK;
 }
 

@@ -412,7 +412,7 @@ void CRot_Base::Play_MoveSound(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE], 0.3f);
+	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_MOVE], 0.2f);
 }
 
 void CRot_Base::TurnOn_TeleportEffect(_float4 vTeleportPos, _uint iAnimindex)

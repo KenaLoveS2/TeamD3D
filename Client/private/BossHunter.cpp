@@ -166,7 +166,7 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 	
 	m_vecEffects[EFFECT_BOWTRAIL1]->Activate(this, "Bow_TopJnt9");
 	m_vecEffects[EFFECT_BOWTRAIL2]->Activate(this, "Bow_BotJoint9");
-	m_vecEffects[EFFECT_AURA_TEXTURE]->Activate(this);
+	m_vecEffects[EFFECT_AURA_PARTICLE]->Activate(this, "char_rt_clavicle_jnt");
 
 
 	return S_OK;
@@ -204,6 +204,7 @@ void CBossHunter::Tick(_float fTimeDelta)
 	for (auto& pEffect : m_vecEffects)
 		pEffect->Tick(fTimeDelta);
 	return;
+
 
 	if (m_bDeath) return;
 
@@ -455,6 +456,7 @@ void CBossHunter::Push_EventFunctions()
 	AuraEffect_Off(true, 0.f);
 	RoarEffect_On(true, 0.f);
 	HitEffect_On(true, 0.f);
+	DeathEffect_On(true, 0.f);
 
 	TurnOnTrail(true, 0.f);
 	TUrnOffTrail(true, 0.f);
@@ -1872,7 +1874,6 @@ void CBossHunter::DustEffect_On(_bool bIsInit, _float fTimeDelta)
 	}
 
 	_float4 vPos;
-
 	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_lf_ball_jnt");
 	if (pStaffBonePtr != nullptr)
 	{
@@ -1957,7 +1958,7 @@ void CBossHunter::MagicCircleEffect_On(_bool bIsInit, _float fTimeDelta)
 	_float4		vCenterPos = m_pTransformCom->Get_Position();
 	vPos.x = vCenterPos.x;
 	vPos.z = vCenterPos.z;
-	vPos.y += 0.1f;
+	vPos.y += 0.2f;
 
 	m_vecEffects[EFFECT_MAGIC_MESH]->Activate(vPos);
 }
@@ -1971,7 +1972,7 @@ void CBossHunter::AuraEffect_On(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_vecEffects[EFFECT_AURA_TEXTURE]->Activate_Slowly(this);
+	m_vecEffects[EFFECT_AURA_PARTICLE]->Activate(this, "char_rt_clavicle_jnt");
 }
 
 void CBossHunter::AuraEffect_Off(_bool bIsInit, _float fTimeDelta)
@@ -1983,7 +1984,7 @@ void CBossHunter::AuraEffect_Off(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	m_vecEffects[EFFECT_AURA_TEXTURE]->DeActivate_Slowly();
+	m_vecEffects[EFFECT_AURA_PARTICLE]->DeActivate_Slowly();
 }
 
 void CBossHunter::RoarEffect_On(_bool bIsInit, _float fTimeDelta)
@@ -2009,7 +2010,7 @@ void CBossHunter::RoarEffect_On(_bool bIsInit, _float fTimeDelta)
 	static _int iIndex = EFFECT_ROAR_TEXTURE1;
 
 
-	m_vecEffects[iIndex]->Activate_Scaling(vPos, { -3.f, -3.f });
+	m_vecEffects[iIndex]->Activate_Scaling(vPos, { 10.f, 10.f });
 	iIndex++;
 	if (iIndex > EFFECT_ROAR_TEXTURE4)
 		iIndex = EFFECT_ROAR_TEXTURE1;
@@ -2026,6 +2027,32 @@ void CBossHunter::HitEffect_On(_bool bIsInit, _float fTimeDelta)
 
 	//m_vecEffects[EFFECT_HIT_PARTICLE]->Activate_Reflecting();
 }
+
+void CBossHunter::DeathEffect_On(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::DeathEffect_On);
+		return;
+	}
+
+
+	//_float4 vPos;
+	//CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("char_rt_clavicle_jnt");
+	//if (pStaffBonePtr != nullptr)
+	//{
+	//	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	//	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+	//	vPos = matWorldSocket.r[3];
+	//}
+	//else
+	//	vPos = m_pTransformCom->Get_Position();
+
+	m_vecEffects[EFFECT_DEATH_PARTICLE1]->Activate(this, "char_rt_clavicle_jnt");
+	m_vecEffects[EFFECT_DEATH_PARTICLE2]->Activate(this, "char_rt_clavicle_jnt");
+}
+
 
 void CBossHunter::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
 {

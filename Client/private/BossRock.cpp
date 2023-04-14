@@ -40,6 +40,7 @@ HRESULT CBossRock::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjDesc), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(Setup_RockSounds(), E_FAIL);
 
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -136,7 +137,7 @@ void CBossRock::Free()
 
 HRESULT CBossRock::SetUp_Components()
 {	
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))) return E_FAIL;	
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))) return E_FAIL;
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom))) return E_FAIL;
 		
 	_tchar szModelTable[ROCK_TPYE_END][64] = {
@@ -171,12 +172,21 @@ void CBossRock::BossRockProc(_float fTimeDelta)
 	{
 		m_pTransformCom->Go_AxisY(fTimeDelta);
 		m_fUpTimeCheck += fTimeDelta;
-		m_eState = m_fUpTimeCheck >= m_Desc.fUpTime ? STATE_END : m_eState;
-
+		if (m_fUpTimeCheck >= m_Desc.fUpTime)
+		{
+			m_eState = DOWN;
+		}
+		
 		break;
 	}	
 	case DOWN:
 	{
+		if (m_bGroundCollision)
+		{
+			m_pGameInstance->Play_Sound(m_pCopySoundkey_Impact, 0.5f);
+			m_bGroundCollision = false;
+			m_eState = STATE_END;
+		}
 		break;
 	}	
 	}
@@ -186,4 +196,38 @@ void CBossRock::Exectue_Up()
 {
 	m_fUpTimeCheck = 0.f;
 	m_eState = UP;
+	m_pGameInstance->Play_Sound(m_pCopySoundkey_Throw, 0.5f);
+}
+
+HRESULT CBossRock::Setup_RockSounds()
+{	
+	const _uint iNumImpactSound = 4;
+	const _uint iNumThrowSound = 2;
+
+	_tchar szRockSoundTable[iNumImpactSound + iNumThrowSound][32] = {
+		TEXT("Rock_Impact1.ogg"), TEXT("Rock_Impact2.ogg"),TEXT("Rock_Impact3.ogg"),TEXT("Rock_Impact4.ogg"),
+		TEXT("Rock_Throw1.ogg"), TEXT("Rock_Throw2.ogg"),
+	};
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	if (FAILED(m_pGameInstance->Copy_Sound(szRockSoundTable[rand() % iNumImpactSound], szTemp))) return E_FAIL;
+	m_pCopySoundkey_Impact = CUtile::Create_StringAuto(szTemp);
+
+	if(FAILED(m_pGameInstance->Copy_Sound(szRockSoundTable[(rand() % iNumThrowSound) + iNumImpactSound], szTemp))) return E_FAIL;
+	m_pCopySoundkey_Throw = CUtile::Create_StringAuto(szTemp);
+
+	return S_OK;
+}
+
+_int CBossRock::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	if (m_eState == DOWN && m_bGroundCollision == false)
+	{
+		if (iColliderIndex == (_int)COL_GROUND || pTarget == nullptr)
+		{
+			m_bGroundCollision = true;
+		}
+	}	
+
+	return 0;
 }

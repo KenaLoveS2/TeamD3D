@@ -76,7 +76,7 @@ private:
 
 		EFFECT_MAGIC_MESH,
 		
-		EFFECT_AURA_TEXTURE,
+		EFFECT_AURA_PARTICLE,
 
 		EFFECT_ROAR_TEXTURE1,
 		EFFECT_ROAR_TEXTURE2,
@@ -84,6 +84,9 @@ private:
 		EFFECT_ROAR_TEXTURE4,
 		
 		EFFECT_HIT_PARTICLE,
+
+		EFFECT_DEATH_PARTICLE1,
+		EFFECT_DEATH_PARTICLE2,
 
 		EFFECT_END
 	};
@@ -231,6 +234,7 @@ public:
 	void AuraEffect_Off(_bool bIsInit, _float fTimeDelta);
 	void RoarEffect_On(_bool bIsInit, _float fTimeDelta);
 	void HitEffect_On(_bool bIsInit, _float fTimeDelta);
+	void DeathEffect_On(_bool bIsInit, _float fTimeDelta);
 	/* ~SY */
 
 

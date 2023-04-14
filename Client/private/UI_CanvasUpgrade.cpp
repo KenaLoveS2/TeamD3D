@@ -71,9 +71,14 @@ HRESULT CUI_CanvasUpgrade::Initialize(void * pArg)
 		MSG_BOX("Failed To Ready Nodes : CanvasUpgrade");
 		return E_FAIL;
 	}
-
 	//m_bActive = true;
 
+	return S_OK;
+}
+
+HRESULT	CUI_CanvasUpgrade::Late_Initialize(void* pArg)
+{
+	// 레벨 이동 시 플레이어 정보 받게 함.
 	return S_OK;
 }
 

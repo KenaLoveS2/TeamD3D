@@ -53,6 +53,7 @@ private:
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
 	class CE_RectTrail*				m_pTrail = nullptr;
+	class CE_P_ExplosionGravity*	m_pExplosionEffect = nullptr;
 	_bool							m_bRenderCheck = false;
 
 private:

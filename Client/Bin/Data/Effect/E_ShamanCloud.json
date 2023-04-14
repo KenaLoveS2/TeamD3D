@@ -7,17 +7,17 @@
             "Object Data": [
                 {
                     "Child Count": 0,
-                    "CloneObject Component InstnaceData PSizeX": 0.20000000298023224,
-                    "CloneObject Component InstnaceData PSizeY": 4.0,
+                    "CloneObject Component InstnaceData PSizeX": 5.0,
+                    "CloneObject Component InstnaceData PSizeY": 10.0,
                     "CloneObject Component InstnaceData Position": [
                         0.8498498201370239,
                         0.0,
                         0.4330202639102936,
                         1.0
                     ],
-                    "CloneObject Component InstnaceData Speed": 0.54339998960495,
-                    "CloneObject Component InstnaceData SpeedMinMax": 0.36792996525764465,
-                    "CloneObject Component InstnaceData SpeedMinMin": 0.36792996525764465,
+                    "CloneObject Component InstnaceData Speed": 4.715999603271484,
+                    "CloneObject Component InstnaceData SpeedMinMax": 6.0,
+                    "CloneObject Component InstnaceData SpeedMinMin": 2.0,
                     "CloneObject Component PointDesc CirclePos": [
                         0.0,
                         0.0,
@@ -28,7 +28,7 @@
                         0.0,
                         0.0
                     ],
-                    "CloneObject Component PointDesc CreateInstance": 100,
+                    "CloneObject Component PointDesc CreateInstance": 50,
                     "CloneObject Component PointDesc CreateRange": 0.5,
                     "CloneObject Component PointDesc Dir": [
                         0.23442378640174866,
@@ -117,7 +117,7 @@
                             "MovingPosition": false,
                             "NormalTexture Index": 0.0,
                             "Particle Type": 0,
-                            "PassCnt": 2,
+                            "PassCnt": 22,
                             "Pixed Dir": [
                                 0.0,
                                 0.0,
@@ -127,10 +127,10 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                0.3176470696926117,
-                                0.3176470696926117,
-                                0.3176470696926117,
-                                0.3176470696926117
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
                             ],
                             "SeparateHeight": 8,
                             "SeparateWidth": 8,
@@ -142,13 +142,13 @@
                             "Use Child": false,
                             "Use Mask": false,
                             "Use Normal": false,
-                            "Width Frame": 7.0,
+                            "Width Frame": 8.0,
                             "WidthCnt": 8
                         }
                     ],
                     "Have DTextureCnt": 1,
                     "Have MTextureCnt": 1,
-                    "Instance DataCnt": 100,
+                    "Instance DataCnt": 50,
                     "Point Data": "PointDesc Data",
                     "WorldMatrix": [
                         3.0,

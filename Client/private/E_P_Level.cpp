@@ -90,6 +90,14 @@ void CE_P_Level::Tick(_float fTimeDelta)
 
 void CE_P_Level::Late_Tick(_float fTimeDelta)
 {
+	if (m_bTurnOnfirst == false)
+	{
+		m_pVIInstancingBufferCom->Set_RandomSpeeds(1.f, 2.f);
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.05f, 0.2f));
+
+		m_bTurnOnfirst = true;
+	}
+
  	if (m_eEFfectDesc.bActive == false)
  		return;
 

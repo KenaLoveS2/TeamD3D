@@ -52,12 +52,6 @@ HRESULT CE_P_Bombplatform::Late_Initialize(void* pArg)
 
 void CE_P_Bombplatform::Tick(_float fTimeDelta)
 {
-	if (m_bTurnOnfirst == false)
-	{
-		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(2.f, 5.f));
-		m_bTurnOnfirst = true;
-	}
-
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
@@ -74,6 +68,12 @@ void CE_P_Bombplatform::Tick(_float fTimeDelta)
 
 void CE_P_Bombplatform::Late_Tick(_float fTimeDelta)
 {
+	if (m_bTurnOnfirst == false)
+	{
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(2.f, 5.f));
+		m_bTurnOnfirst = true;
+	}
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
 

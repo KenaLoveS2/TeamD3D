@@ -899,6 +899,17 @@ void CImgui_MapEditor::Imgui_Instance_Edit_Collider()
 void CImgui_MapEditor::Imgui_DZ_objClear()
 {
 
+	if (ImGui::Button("FIrst_Gimmick On"))
+	{
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->PulsePlate_Down_Active(1,true);
+		
+	}
+	if (ImGui::Button("Third Gimmick On"))
+	{
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->Trigger_Active(4, CEnviromentObj::Gimmick_TYPE_GO_UP,true);
+	}
 	if (ImGui::Button("DZ_Portal On"))
 	{
 		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
@@ -941,6 +952,7 @@ void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, CT
 
 	if (dynamic_cast<CGimmick_EnviObj*>(pSelectEnvioObj) != nullptr)
 	{
+		dynamic_cast<CGimmick_EnviObj*>(pSelectEnvioObj)->SetUp_GimmicKEffect_Pos();
 		pModel->Instaincing_GimmkicInit(eChapterGimmcik);
 	}
 	

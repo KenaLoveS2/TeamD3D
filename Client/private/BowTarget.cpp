@@ -7,6 +7,7 @@
 #include "BowTarget.h"
 #include "AnimationState.h"
 #include "E_RectTrail.h"
+#include "E_P_ExplosionGravity.h"
 #include "BowTarget_Manager.h"
 
 CBowTarget::CBowTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -44,7 +45,7 @@ HRESULT CBowTarget::Initialize(void* pArg)
 	m_pTransformCom->Set_Scaled(_float3(1.5f, 1.5f, 1.5f));
 
 	m_pTrailBone = m_pModelCom->Get_BonePtr("bottom_jnt");
-
+	m_pTransformCom->Set_Scaled(_float3(1.5f, 1.5f, 1.5f));
 	return S_OK;
 }
 
@@ -84,12 +85,15 @@ HRESULT CBowTarget::Late_Initialize(void* pArg)
 
 void CBowTarget::Tick(_float fTimeDelta)
 {
-	/*if (CGameInstance::GetInstance()->Key_Down(DIK_E))
-		m_bLaunch = true;
-	if (CGameInstance::GetInstance()->Key_Down(DIK_R))
-		Reset();
-	if (CGameInstance::GetInstance()->Key_Down(DIK_T))
-		m_bArrowHit = true;*/
+// 	if (CGameInstance::GetInstance()->Key_Down(DIK_E))
+// 		m_bLaunch = true;
+// 	if (CGameInstance::GetInstance()->Key_Down(DIK_R))
+// 		Reset();
+// 	if (CGameInstance::GetInstance()->Key_Down(DIK_T))
+// 		m_bArrowHit = true;
+
+	if (m_pTrail) m_pTrail->Tick(fTimeDelta);
+	if (m_pExplosionEffect) m_pExplosionEffect->Tick(fTimeDelta);
 
 	if (m_bDead == true)
 		return;
@@ -98,15 +102,16 @@ void CBowTarget::Tick(_float fTimeDelta)
 
  	m_eCurState = Check_State();
  	Update_State(fTimeDelta);
- 
- 	m_pAnimation->Play_Animation(fTimeDelta);
 
+ 	m_pAnimation->Play_Animation(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);
-	if (m_pTrail) m_pTrail->Tick(fTimeDelta);
 }
 
 void CBowTarget::Late_Tick(_float fTimeDelta)
 {
+	if (m_pTrail) m_pTrail->Late_Tick(fTimeDelta);
+	if (m_pExplosionEffect) m_pExplosionEffect->Late_Tick(fTimeDelta);
+
 	if (m_bDead == true)
 		return;
 
@@ -114,8 +119,6 @@ void CBowTarget::Late_Tick(_float fTimeDelta)
 
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
-
-	if (m_pTrail) m_pTrail->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom != nullptr && m_bRenderActive == true)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -270,6 +273,8 @@ CBowTarget::ANIMATION CBowTarget::Check_State()
 
 			if (m_bArrowHit == true)
 			{
+				m_pExplosionEffect->UpdateParticle(m_pTransformCom->Get_Position());
+
 				eState = CBowTarget::HIT;
 				m_pAnimation->State_Animation("HIT");
 				CBowTarget_Manager::GetInstance()->Check_CurrentGroup_Hit();
@@ -288,6 +293,8 @@ CBowTarget::ANIMATION CBowTarget::Check_State()
 
 			if (m_bArrowHit == true)
 			{
+				m_pExplosionEffect->UpdateParticle(m_pTransformCom->Get_Position());
+
 				eState = CBowTarget::HIT;
 				m_pAnimation->State_Animation("HIT");
 				CBowTarget_Manager::GetInstance()->Check_CurrentGroup_Hit();
@@ -319,6 +326,8 @@ CBowTarget::ANIMATION CBowTarget::Check_State()
 
 			if (m_bArrowHit == true)
 			{
+				m_pExplosionEffect->UpdateParticle(m_pTransformCom->Get_Position());
+
 				eState = CBowTarget::HIT;
 				m_pAnimation->State_Animation("HIT");
 				CBowTarget_Manager::GetInstance()->Check_CurrentGroup_Hit();
@@ -380,6 +389,8 @@ void CBowTarget::Reset()
 	m_bLaunch = false;
 	m_bArrowHit = false;
 	m_fFlyTime = 4.f;
+	m_bDead = false;
+
 
 	m_eCurState = CBowTarget::REST;
 	m_ePreState = CBowTarget::REST;
@@ -464,6 +475,12 @@ HRESULT CBowTarget::Ready_Effect()
 	NULL_CHECK_RETURN(m_pTrail, E_FAIL);
 	m_pTrail->Set_Parent(this);
 	m_pTrail->SetUp_Option(CE_RectTrail::OBJ_BOWTARGET);
+	
+	m_pExplosionEffect = dynamic_cast<CE_P_ExplosionGravity*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", pDummyString));
+	NULL_CHECK_RETURN(m_pExplosionEffect, E_FAIL);
+	m_pExplosionEffect->Set_Parent(this);
+	m_pExplosionEffect->Set_Option(CE_P_ExplosionGravity::TYPE_BOWTARGET);
+
 #endif
 	return S_OK;
 }
@@ -506,4 +523,5 @@ void CBowTarget::Free()
 	Safe_Release(m_pInteractionCom);
 
 	Safe_Release(m_pTrail);
+	Safe_Release(m_pExplosionEffect);
 }
