@@ -1014,6 +1014,8 @@ HRESULT CBossWarrior::SetUp_State()
 		// ���� �ִϸ��̼� �� ���� ���� State
 		m_bDissolve = true;
 		m_fEndTime = 0.f;
+
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_IDLE);
 	})
 		.Tick([this](_float fTimeDelta)
 	{

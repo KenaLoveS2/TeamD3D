@@ -96,7 +96,7 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 					Update_MannequinRotMatrix();
 					m_pMannequinRot->Start_FashiomShow();
 
-					CBGM_Manager::GetInstance()->Change_BGM(CBGM_Manager::FIELD_SHOP);
+					CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_SHOP);
 				}
 				else /* Cart Close */
 				{
@@ -104,7 +104,7 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 					m_pPlayer->Set_StateLock(false);
 					m_pMannequinRot->End_FashiomShow();
 
-					CBGM_Manager::GetInstance()->Change_BGM(CBGM_Manager::FIELD_IDLE);
+					CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_VILLAGE);
 				}
 			}
 		}

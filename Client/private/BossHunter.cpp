@@ -93,7 +93,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(Create_Trail(), E_FAIL);
 
-	if (g_LEVEL == LEVEL_TESTPLAY)
+	if (g_LEVEL == (_int)LEVEL_TESTPLAY)
 	{
 		CGameObject* p_game_object = nullptr;
 		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", L"Hunter_Rot", nullptr, &p_game_object);
@@ -174,38 +174,6 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 
 void CBossHunter::Tick(_float fTimeDelta)
 {	
-	m_bDissolve = false;
-	m_pModelCom->Play_Animation(fTimeDelta);
-	Update_Collider(fTimeDelta);
-	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
-	if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
-	if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
-
-	 /* For. String */
-	m_fUVSpeeds[0] += 0.245f * fTimeDelta;
-	m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
-	m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
-	if (m_fStringDissolve > 0.5)
-	{
-		m_fStringDissolve = 0.5f;
-		m_fStringDissolveSpeed *= -1;
-		m_fStringDissolveSpeed = -0.9f;
-	}
-	else if (m_fStringDissolve < 0.f)
-	{
-		m_fStringDissolve = 0.f;
-		m_fStringDissolveSpeed *= -1;
-		m_fStringDissolveSpeed = 0.9f;
-	}
-	/* ~ For. String */
-	for (auto& pArrow : m_pArrows)
-		pArrow->Tick(fTimeDelta);
-	for (auto& pEffect : m_vecEffects)
-		pEffect->Tick(fTimeDelta);
-	return;
-
-
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -715,7 +683,7 @@ HRESULT CBossHunter::SetUp_State()
 	.OnStart([this]()
 	{
 	m_iDodgeAnimIndex++;
-	m_iDodgeAnimIndex = m_iDodgeAnimIndex > DODGE_FAR_RIGHT ? DODGE_DOWN : m_iDodgeAnimIndex;
+	m_iDodgeAnimIndex = m_iDodgeAnimIndex > (_uint)DODGE_FAR_RIGHT ? (_uint)DODGE_DOWN : m_iDodgeAnimIndex;
 	ResetAndSet_Animation(m_iDodgeAnimIndex);
 	})
 	.AddTransition("To DYING", "DYING_DOWN")
@@ -1323,6 +1291,8 @@ HRESULT CBossHunter::SetUp_State()
 	{
 		m_bDissolve = true;
 		m_fEndTime = 0.f;
+
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_IDLE);
 	})
 	.Tick([this](_float fTimeDelta)
 	{
@@ -2012,8 +1982,8 @@ void CBossHunter::RoarEffect_On(_bool bIsInit, _float fTimeDelta)
 
 	m_vecEffects[iIndex]->Activate_Scaling(vPos, { 10.f, 10.f });
 	iIndex++;
-	if (iIndex > EFFECT_ROAR_TEXTURE4)
-		iIndex = EFFECT_ROAR_TEXTURE1;
+	if (iIndex > (_int)EFFECT_ROAR_TEXTURE4)
+		iIndex = (_int)EFFECT_ROAR_TEXTURE1;
 }
 
 void CBossHunter::HitEffect_On(_bool bIsInit, _float fTimeDelta)

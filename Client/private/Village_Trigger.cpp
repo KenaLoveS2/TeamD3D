@@ -25,22 +25,22 @@ HRESULT CVillage_Trigger::Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
 
-	if (!lstrcmp(m_szCloneObjectTag, L"IntoVillage_Trigger"))
-	{
-		m_bIntoVillage = true;
-		m_pTransformCom->Set_Position(XMVectorSet(0.f, 0.f, 0.f, 1.f));
-	}
-	else if (!lstrcmp(m_szCloneObjectTag, L"FromVillage_Trigger"))
-	{
-		m_bIntoVillage = false;
-		m_pTransformCom->Set_Position(XMVectorSet(0.f, 0.f, 0.f, 1.f));
-	}
-
 	return S_OK;
 }
 
 HRESULT CVillage_Trigger::Late_Initialize(void* pArg)
 {
+	if (!lstrcmp(m_szCloneObjectTag, L"IntoVillage_Trigger"))
+	{
+		m_bIntoVillage = true;
+		m_pTransformCom->Set_Position(XMVectorSet(33.434f, 15.16f, 790.27f, 1.f));
+	}
+	else if (!lstrcmp(m_szCloneObjectTag, L"FromVillage_Trigger"))
+	{
+		m_bIntoVillage = false;
+		m_pTransformCom->Set_Position(XMVectorSet(32.67f, 15.f, 849.f, 1.f));
+	}
+
 	_float3		vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 
 	_float3 vSize;

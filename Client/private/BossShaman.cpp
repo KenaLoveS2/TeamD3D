@@ -17,6 +17,7 @@
 #include "E_ShamanHeadTrail.h"
 #include "E_ShamanWeaponBall.h"
 #include "E_ShamanElectric.h"
+#include "BGM_Manager.h"
 
 // #define EFFECTDEBUG
 
@@ -1162,6 +1163,8 @@ HRESULT CBossShaman::SetUp_State()
 	{
 		// 죽은 애니메이션 후 죽음 연출 State
 		BossFight_End();
+
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_IDLE);
 	})
 		.AddTransition("DEATH_SCENE to DEATH", "DEATH")
 		.Predicator([this]()
