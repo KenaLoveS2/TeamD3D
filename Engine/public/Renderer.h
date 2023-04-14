@@ -138,13 +138,11 @@ public:
 	void Set_CaptureMode(_bool bCapture)
 	{
 		m_bCaptureMode = bCapture;
-		m_bBlurCapture = false;
 	}
 
 private:
 	ID3D11ShaderResourceView*		m_pLDRTexture = nullptr;
 	_bool											m_bCaptureMode = false;
-	_bool											m_bBlurCapture = false;
 	_float4											m_vLightShaftValue = _float4(0.35f, 0.75f,0.4f,1.f);
 
 private:

@@ -100,6 +100,7 @@
 #include "SceneChangePortal.h"
 #include "MannequinRot.h"
 #include "Meditation_Spot.h"
+#include "WorldTrigger.h"
 
 #include "BossRock.h"
 #include "BossRock_Pool.h"
@@ -1827,6 +1828,9 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 
 	// Prototype_GameObject_PortalPlane
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PortalPlane"), CPortalPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_WorldTrigger
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WorldTrigger"), CWorldTrigger::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance)
 

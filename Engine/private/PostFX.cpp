@@ -860,7 +860,8 @@ void CPostFX::BlurCapture()
 
 void CPostFX::CaptureOff()
 {
-	m_fDOFFarStart = m_fPreDOFFarStart;
+	//m_fDOFFarStart = m_fPreDOFFarStart;
+	m_fDOFFarStart = 10000.f;
 	m_bCapture = false;
 }
 
