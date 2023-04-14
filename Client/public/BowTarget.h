@@ -25,6 +25,8 @@ private:
 
 public:
 	void							TurnOn_Launch() { m_bLaunch = true; }
+	const _bool&					Is_Launched() const { return m_bLaunch; }
+	const _bool&					Is_Hit() const { return m_bArrowHit; }
 	const _bool&					Is_Dead() const { return m_bDead; }
 
 public:
@@ -61,7 +63,7 @@ private:
 	_bool							m_bDead = false;
 
 	_float4							m_vInitPosition;
-	_float							m_fFlyTime = 8.f;
+	_float							m_fFlyTime = 1000.f;
 
 	ANIMATION						m_eCurState = REST;
 	ANIMATION						m_ePreState = REST;
@@ -71,6 +73,7 @@ private:
 	CBone* m_pTrailBone = nullptr;
 
 private:
+	void							Grouping();
 	ANIMATION						Check_State();
 	void							Update_State(_float fTimeDelta);
 	void							Update_Trail(const char* pBoneTag);

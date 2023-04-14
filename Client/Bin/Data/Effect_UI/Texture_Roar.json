@@ -48,7 +48,7 @@
     ],
     "23. SpriteSpeed": 0.0,
     "24. SelfStop": true,
-    "25. SelfStopTime": 1.0,
+    "25. SelfStopTime": 0.8,
     "26. DissolvePass": 0,
     "27. DissolveSpeed": 0.0
 }

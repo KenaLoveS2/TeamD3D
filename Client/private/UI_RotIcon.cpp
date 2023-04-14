@@ -17,7 +17,7 @@ CUI_RotIcon::CUI_RotIcon(const CUI_RotIcon & rhs)
 {
 }
 
-void CUI_RotIcon::Set_Pos(CGameObject* pTarget)
+void CUI_RotIcon::Set_Pos(CGameObject* pTarget, _float4 vCorrect)
 {
 	if (pTarget == nullptr)
 	{
@@ -28,7 +28,10 @@ void CUI_RotIcon::Set_Pos(CGameObject* pTarget)
 
 	m_pTarget = pTarget;
 	m_bActive = true;
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+
+	_float4 vTargetPos = pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vCorrected = XMVectorSetW(vTargetPos + vCorrect, 1.f);
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCorrected);
 }
 
 void CUI_RotIcon::Off_Focus(CGameObject* pTarget)

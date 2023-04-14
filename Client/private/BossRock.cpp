@@ -40,6 +40,7 @@ HRESULT CBossRock::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjDesc), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(Setup_RockSounds(), E_FAIL);
 
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -50,21 +51,25 @@ HRESULT CBossRock::Late_Initialize(void * pArg)
 {	
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 
+	_float fRandScale = CUtile::Get_RandomFloat(0.1f, 0.5f);
+	m_pTransformCom->Set_Scaled(_float3(fRandScale, fRandScale, fRandScale));
+
 	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
 	PxBoxDesc.eType = BOX_DYNAMIC;
 	PxBoxDesc.pActortag = m_szCloneObjectTag;
 	PxBoxDesc.vPos = { 0.f, 0.f, 0.f };
-	PxBoxDesc.vSize = { 0.18f, 0.18f, 0.18f };
+	PxBoxDesc.vSize = { 0.2f * fRandScale, 0.2f * fRandScale, 0.2f * fRandScale };
 	PxBoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
-	PxBoxDesc.fMass = 10000.f;
-	PxBoxDesc.fLinearDamping = 0.7f;
-	PxBoxDesc.fAngularDamping = 5.f;
+	PxBoxDesc.fMass = 30000.f;
+	PxBoxDesc.fLinearDamping = 2.1f;
+	PxBoxDesc.fAngularDamping = 2.1f;
+	PxBoxDesc.fRestitution = 1.f;
 
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, true, COLLISON_DUMMY, true));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.f, 0.f), true);
 
 	m_pTransformCom->Set_Position(m_Desc.vPosition);
-
+	
 	return S_OK;
 }
 
@@ -167,12 +172,21 @@ void CBossRock::BossRockProc(_float fTimeDelta)
 	{
 		m_pTransformCom->Go_AxisY(fTimeDelta);
 		m_fUpTimeCheck += fTimeDelta;
-		m_eState = m_fUpTimeCheck >= m_Desc.fUpTime ? STATE_END : m_eState;
-
+		if (m_fUpTimeCheck >= m_Desc.fUpTime)
+		{
+			m_eState = DOWN;
+		}
+		
 		break;
 	}	
 	case DOWN:
 	{
+		if (m_bGroundCollision)
+		{
+			m_pGameInstance->Play_Sound(m_pCopySoundkey_Impact, 0.5f);
+			m_bGroundCollision = false;
+			m_eState = STATE_END;
+		}
 		break;
 	}	
 	}
@@ -182,4 +196,38 @@ void CBossRock::Exectue_Up()
 {
 	m_fUpTimeCheck = 0.f;
 	m_eState = UP;
+	m_pGameInstance->Play_Sound(m_pCopySoundkey_Throw, 0.5f);
+}
+
+HRESULT CBossRock::Setup_RockSounds()
+{	
+	const _uint iNumImpactSound = 4;
+	const _uint iNumThrowSound = 2;
+
+	_tchar szRockSoundTable[iNumImpactSound + iNumThrowSound][32] = {
+		TEXT("Rock_Impact1.ogg"), TEXT("Rock_Impact2.ogg"),TEXT("Rock_Impact3.ogg"),TEXT("Rock_Impact4.ogg"),
+		TEXT("Rock_Throw1.ogg"), TEXT("Rock_Throw2.ogg"),
+	};
+	_tchar szTemp[MAX_PATH] = { 0, };
+
+	if (FAILED(m_pGameInstance->Copy_Sound(szRockSoundTable[rand() % iNumImpactSound], szTemp))) return E_FAIL;
+	m_pCopySoundkey_Impact = CUtile::Create_StringAuto(szTemp);
+
+	if(FAILED(m_pGameInstance->Copy_Sound(szRockSoundTable[(rand() % iNumThrowSound) + iNumImpactSound], szTemp))) return E_FAIL;
+	m_pCopySoundkey_Throw = CUtile::Create_StringAuto(szTemp);
+
+	return S_OK;
+}
+
+_int CBossRock::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	if (m_eState == DOWN && m_bGroundCollision == false)
+	{
+		if (iColliderIndex == (_int)COL_GROUND || pTarget == nullptr)
+		{
+			m_bGroundCollision = true;
+		}
+	}	
+
+	return 0;
 }

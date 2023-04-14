@@ -9,6 +9,7 @@
 #include "Kena_Status.h"
 #include "Camera_Player.h"
 #include "E_P_ExplosionGravity.h"
+#include "RotForMonster.h"
 
 CHealthFlower_Anim::CHealthFlower_Anim(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -83,6 +84,12 @@ HRESULT CHealthFlower_Anim::Late_Initialize(void* pArg)
 
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_HEALTHFLOWER));
 	pPhysX->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_HEALTHFLOWER, vPos, 15.f));
+
+	CRotForMonster** p = m_pKena->Get_RotForMonstrPtr();
+	for (_uint i = 0; i < 8; i++)
+	{
+		m_pBindRots[i] = p[i];
+	}
 
 	return S_OK;
 }
@@ -264,7 +271,7 @@ CHealthFlower_Anim::ANIMATION CHealthFlower_Anim::Check_State()
 	switch (eState)
 	{
 	case CHealthFlower_Anim::OPEN_LOOP:
-		{
+		{	
 			if (m_bUsed == false && m_bInteractable == true)
 			{
 				if (iKenaState == (_uint)CKena_State::ROT_ACTION || iKenaState == (_uint)CKena_State::ROT_ACTION_AIM_STATE)
@@ -272,14 +279,16 @@ CHealthFlower_Anim::ANIMATION CHealthFlower_Anim::Check_State()
 					m_bUsed = true;
 					eState = CHealthFlower_Anim::BIND;
 					m_pModelCom->Set_AnimIndex((_uint)eState);
+
+					Start_Bind();
 				}
 			}
 
 			break;
 		}
 	case CHealthFlower_Anim::BIND:
-		{
-			if (m_pModelCom->Get_AnimationFinish() == true)
+		{	
+			if (m_pModelCom->Get_AnimationFinish())
 			{
 				eState = CHealthFlower_Anim::OPEN;
 				m_pModelCom->Set_AnimIndex((_uint)eState);
@@ -294,6 +303,8 @@ CHealthFlower_Anim::ANIMATION CHealthFlower_Anim::Check_State()
 				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::TOP_MOOD_HEAL;
 				_float fDefault = 1.f; 
 				m_pKena->m_Delegator.broadcast(tag, fDefault);
+
+				End_Bind();
 			}
 
 			break;
@@ -303,7 +314,7 @@ CHealthFlower_Anim::ANIMATION CHealthFlower_Anim::Check_State()
 			if (m_pModelCom->Get_AnimationFinish() == true)
 			{
 				eState = CHealthFlower_Anim::OPEN_LOOP;
-				m_pModelCom->Set_AnimIndex((_uint)eState);
+				m_pModelCom->Set_AnimIndex((_uint)eState);				
 			}
 
 			break;
@@ -328,7 +339,7 @@ void CHealthFlower_Anim::Update_State(_float fTimeDelta)
 			break;
 		}
 	case CHealthFlower_Anim::BIND:
-		{
+		{			
 			m_fDissolveTime = m_pModelCom->Get_AnimationProgress();
 			CUtile::Saturate<_float>(m_fDissolveTime, 0.f, 1.f);
 			break;
@@ -451,4 +462,23 @@ void CHealthFlower_Anim::Free()
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
 	Safe_Release(m_pExplosionGravity);
+}
+
+
+void CHealthFlower_Anim::Start_Bind()
+{
+	for (_uint i = 0; i < 8; ++i)
+	{
+		m_pBindRots[i] ? m_pBindRots[i]->Start_BindFlower(this) : 0;
+	}
+}
+
+void CHealthFlower_Anim::End_Bind()
+{	
+	for (_uint i = 0; i < 8; ++i)
+	{
+		m_pBindRots[i] ? m_pBindRots[i]->End_BindFlower() : 0;
+	}
+	
+	ZeroMemory(&m_pBindRots, sizeof(m_pBindRots));
 }

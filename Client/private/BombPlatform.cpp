@@ -47,7 +47,7 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	/* CloneTag로 m_vMovingPos 다르게 주면 돼 */
 	if(!lstrcmp(m_szCloneObjectTag,L"MG_BombPlatform_0"))
 	{
-		m_vMovingPos = _float4(4.142f, 0.658f, 30.304f, 1.f);
+		m_vMovingPos = _float4(4.142f, 1.77f, 30.304f, 1.f);
 	}
 	else if (!lstrcmp(m_szCloneObjectTag, L"MG_BombPlatform_1"))
 	{
@@ -71,7 +71,7 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	}
 
 	m_vMovingQuat = XMQuaternionRotationNormal(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(CUtile::Get_RandomFloat(0.f, 359.f)));
-	m_fReturnTime = 5.f;
+	m_fReturnTime = 10.f;
 
 	_float3	vPos = m_vInitPos;
 	_float3	vPivotScale = _float3(3.2f, 1.45f, 3.51f);
@@ -386,11 +386,12 @@ HRESULT CBombPlatform::SetUp_ShaderResources()
 
 HRESULT CBombPlatform::Ready_Effect()
 {
+#ifdef FOR_MAP_GIMMICK
 	m_pBombplatformEffect = (CE_P_Bombplatform*)(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_P_BombPlatform", CUtile::Create_DummyString()));
 	NULL_CHECK_RETURN(m_pBombplatformEffect, E_FAIL);
 	m_pBombplatformEffect->Set_Parent(this);
 	m_pBombplatformEffect->Late_Initialize(nullptr);
-
+#endif
 	return S_OK;
 }
 

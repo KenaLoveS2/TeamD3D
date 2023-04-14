@@ -9,6 +9,7 @@ class CShader;
 class CRenderer;
 class CModel;
 class CTexture;
+class CBone;
 END
 
 BEGIN(Client)
@@ -63,6 +64,8 @@ private:
 
 	_float				m_fDissolveTime = 0.f;
 	CTexture*			m_pDissolveTexture = nullptr;
+			
+	class CRotForMonster* m_pBindRots[8] = { nullptr, };
 
 private:
 	ANIMATION			Check_State();
@@ -78,5 +81,10 @@ public:
 	static  CHealthFlower_Anim* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void		Free() override;
+
+	void Start_Bind();
+	void End_Bind();
+
+	virtual CModel* Get_Model() { return m_pModelCom; }
 };
 END

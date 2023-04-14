@@ -22,6 +22,9 @@
 #include "UI.h"
 #include "Level_Loading.h"
 #include "ControlRoom.h"
+#include "Kena.h"
+#include "BGM_Manager.h"
+#include "BowTarget_Manager.h"
 
 CLevel_Gimmick::CLevel_Gimmick(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CLevel(pDevice, pContext)
@@ -48,6 +51,7 @@ HRESULT CLevel_Gimmick::Initialize()
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
@@ -105,10 +109,17 @@ HRESULT CLevel_Gimmick::Initialize()
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_Layer_Trigger(L"Layer_Trigger")))
+	{
+		MSG_BOX("Layer_Trigger");
+		return E_FAIL;
+	}
+
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_GIMMICK)))
 		return E_FAIL;
 
 	// p_game_instance->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
+	CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_PUZZLE);
 
 	return S_OK;
 }
@@ -135,9 +146,16 @@ void CLevel_Gimmick::Late_Tick(_float fTimeDelta)
 		pGameInstance->Clear();
 		pGameInstance->Scene_EnviMgr_Change();
 
+		CBowTarget_Manager::GetInstance()->Clear_Groups();
+
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVEL)(LEVEL_FINAL)))))
 			return;
 		
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena")));
+		if (pKena != nullptr)
+		{
+			FAILED_CHECK_RETURN(pKena->Change_Level(LEVEL_FINAL), );
+		}
 	}
 }
 
@@ -417,7 +435,7 @@ HRESULT CLevel_Gimmick::Ready_Layer_Player(const _tchar* pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", RUNTIME_STATUS_FILEPATH, &pGameObject)))
 		return E_FAIL;
 
 	CGameInstance::GetInstance()->Set_PlayerPtr(pGameObject);
@@ -470,7 +488,7 @@ HRESULT CLevel_Gimmick::Ready_Layer_UI(const _tchar* pLayerTag)
 	vector<wstring>* pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
 	vector<string>* pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
 
-	for (_uint i = 0; i < CUI_ClientManager::CANVAS_END; ++i)
+	for (_uint i = 0; i < (_uint)CUI_ClientManager::CANVAS_END; ++i)
 	{
 		CUI::tagUIDesc tDesc;
 		tDesc.fileName = (*pCanvasCloneTags)[i].c_str();
@@ -503,6 +521,15 @@ HRESULT CLevel_Gimmick::Ready_Layer_ControlRoom(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_ControlRoom"), L"ControlRoom");
 	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLevel_Gimmick::Ready_Layer_Trigger(const _tchar* pLayerTag)
+{
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, L"Prototype_GameObject_BowTarget_Trigger", L"BowTarget_Trigger"), E_FAIL);
+
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, L"Prototype_GameObject_Respawn_Trigger", L"Respawn_Trigger"), E_FAIL);
+
 	return S_OK;
 }
 

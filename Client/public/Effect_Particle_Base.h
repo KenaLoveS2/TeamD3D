@@ -36,6 +36,8 @@ public:
 	virtual void					Activate(CGameObject* pTarget, char* pBoneName)					override;
 	virtual void					Activate_Reflecting(_float4 vLook, _float4 vPos, _float fAngle) override;
 	virtual void					DeActivate()													override;
+	virtual void					DeActivate_Slowly()												override;
+
 
 public:
 	void	Activate_BufferUpdate();

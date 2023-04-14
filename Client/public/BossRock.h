@@ -8,6 +8,7 @@ BEGIN(Engine)
 class CRenderer;
 class CShader;
 class CModel;
+class CGameInstance;
 END
 
 BEGIN(Client)
@@ -25,7 +26,7 @@ public:
 	} DESC;
 
 private:			
-	class CGameInstance* m_pGameInstance = nullptr;
+	CGameInstance* m_pGameInstance = nullptr;
 	CRenderer* m_pRendererCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
 	CModel* m_pModelCom = nullptr;
@@ -35,6 +36,9 @@ private:
 	STATE m_eState = STATE_END;
 
 	_float m_fUpTimeCheck = 0.f;
+	_tchar* m_pCopySoundkey_Throw = nullptr;
+	_tchar* m_pCopySoundkey_Impact = nullptr;
+	_bool m_bGroundCollision = false;
 
 private:
 	CBossRock(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
@@ -58,6 +62,9 @@ public:
 	
 	void BossRockProc(_float fTimeDelta);
 	void Exectue_Up();
+
+	HRESULT Setup_RockSounds();
+	_int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex);
 };
 
 END

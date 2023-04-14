@@ -67,34 +67,43 @@ void CUI_FocusMonster::Tick(_float fTimeDelta)
 
 	if (m_bStart)
 	{
-		for (_uint i = 0; i < PARTS_END; ++i)
-		{
-			if (!m_pParts[i]->Is_AnimEnd())
-			{
-				m_pParts[i]->Do_Animation();
-				break;
-			}
-			else
-				m_pParts[i]->Set_StartFalse();
-		}
-
-
-		if (m_pParts[2]->Is_AnimEnd())
+		if (!m_pParts[2]->Is_AnimEnd())
+			m_pParts[2]->Do_Animation();
+		else
 		{
 			m_bStart = false;
-
-			for (_uint i = 0; i < PARTS_END; ++i)
-				m_pParts[i]->Reset();
+			m_pParts[2]->Reset();
 		}
+
+		//for (_uint i = 0; i < PARTS_END; ++i)
+		//{
+		//	if (!m_pParts[i]->Is_AnimEnd())
+		//	{
+		//		m_pParts[i]->Do_Animation();
+		//		break;
+		//	}
+			//else
+			//	m_pParts[i]->Set_StartFalse();
+
+		//}
+
+
+		//if (m_pParts[2]->Is_AnimEnd())
+		//{
+		//	m_bStart = false;
+
+		//	for (_uint i = 0; i < PARTS_END; ++i)
+		//		m_pParts[i]->Reset();
+		//}
 	}
 
 
+	m_pParts[2]->Tick(fTimeDelta);
 
-
-	for (_uint i = 0; i < PARTS_END; ++i)
-	{
-		m_pParts[i]->Tick(fTimeDelta);
-	}
+	//for (_uint i = 0; i < PARTS_END; ++i)
+	//{
+	//	m_pParts[i]->Tick(fTimeDelta);
+	//}
 }
 
 void CUI_FocusMonster::Late_Tick(_float fTimeDelta)
@@ -104,8 +113,9 @@ void CUI_FocusMonster::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	for (_uint i = 0; i < PARTS_END; ++i)
-		m_pParts[i]->Late_Tick(fTimeDelta);
+	m_pParts[2]->Late_Tick(fTimeDelta);
+	//for (_uint i = 0; i < PARTS_END; ++i)
+	//	m_pParts[i]->Late_Tick(fTimeDelta);
 
 	//if (nullptr != m_pRendererCom && m_bActive)
 	//	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);

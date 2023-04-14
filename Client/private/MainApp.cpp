@@ -11,6 +11,7 @@
 
 #include "UI_ClientManager.h"
 #include "Monster_Manager.h"
+#include "BowTarget_Manager.h"
 #include "Kena_Status.h"
 #include "Monster_Status.h"
 
@@ -416,6 +417,7 @@ void CMainApp::Free()
 	CBGM_Manager::GetInstance()->DestroyInstance();
 
 	CMonster_Manager::GetInstance()->DestroyInstance();
+	CBowTarget_Manager::GetInstance()->DestroyInstance();
 
 	Safe_Release(m_pGameInstance);
 	CGameInstance::Release_Engine();

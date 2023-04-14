@@ -30,6 +30,7 @@ private:
 	HRESULT Ready_Layer_UI(const _tchar * pLayerTag);
 	HRESULT Ready_Layer_NPC(const _tchar * pLayerTag);
 	HRESULT Ready_Layer_ControlRoom(const _tchar * pLayerTag);
+	HRESULT	Ready_Layer_Trigger(const _tchar* pLayerTag);
 
 public:
 	static CLevel_Final* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

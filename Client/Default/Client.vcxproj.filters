@@ -604,8 +604,17 @@
     <Filter Include="02.GameObjects\Monster\Manager">
       <UniqueIdentifier>{39b7d1ad-56a8-480e-95c4-dc24e0d981e4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Warrior\ETC">
-      <UniqueIdentifier>{d9ee7d9a-24c6-4f08-a054-08839e4b715c}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\UI\05. Real Object\WorldTrigger">
+      <UniqueIdentifier>{08644843-7444-47a4-941c-be47c23afbe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object\MousePointer">
+      <UniqueIdentifier>{190f705d-b8e9-42de-afc1-10ca7690d7a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\BowTarget">
+      <UniqueIdentifier>{132efc79-f919-4c80-a06f-f5b1cf296530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Respawn Trigger">
+      <UniqueIdentifier>{db25fca5-b5be-4c45-8e95-de74f0c6d942}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1295,6 +1304,9 @@
     <ClInclude Include="..\public\E_Distortion_Plane.h">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_EnrageInto.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\UI_NodeRotSkill.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClInclude>
@@ -1484,9 +1496,6 @@
     <ClInclude Include="..\public\BombPlatform.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BowTarget.h">
-      <Filter>02.GameObjects\Envrioment\Anim</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Effect_Unit.h">
       <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
     </ClInclude>
@@ -1613,29 +1622,23 @@
     <ClInclude Include="..\public\E_P_EnvironmentDust.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_P_DeadZoneDust.h">
-      <Filter>02.GameObjects\Effect\Environment</Filter>
+    <ClInclude Include="..\public\WorldTrigger.h">
+      <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_ShamanHeadTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
+    <ClInclude Include="..\public\UI_MousePointer.h">
+      <Filter>02.GameObjects\UI\05. Real Object\MousePointer</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_ShamanWeaponBall.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\etc</Filter>
+    <ClInclude Include="..\Public\BowTarget.h">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_ShamanElectric.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\etc</Filter>
+    <ClInclude Include="..\public\BowTarget_Manager.h">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_EnrageInto.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\Enrage</Filter>
+    <ClInclude Include="..\public\BowTarget_Trigger.h">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_WarriorWeaponAcc.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_P_WarriorBody.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_P_DeadZone_SmallPlace.h">
-      <Filter>02.GameObjects\Effect\Environment</Filter>
+    <ClInclude Include="..\public\Respawn_Trigger.h">
+      <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2302,6 +2305,9 @@
     <ClCompile Include="..\private\E_Distortion_Plane.cpp">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_EnrageInto.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\UI_NodeRotSkill.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClCompile>
@@ -2494,9 +2500,6 @@
     <ClCompile Include="..\private\BombPlatform.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\BowTarget.cpp">
-      <Filter>02.GameObjects\Envrioment\Anim</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Effect_Unit.cpp">
       <Filter>02.GameObjects\UI\06. 3D UI\Effect_Unit</Filter>
     </ClCompile>
@@ -2623,29 +2626,23 @@
     <ClCompile Include="..\private\E_P_EnvironmentDust.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_P_DeadZoneDust.cpp">
-      <Filter>02.GameObjects\Effect\Environment</Filter>
+    <ClCompile Include="..\private\WorldTrigger.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_ShamanHeadTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
+    <ClCompile Include="..\private\UI_MousePointer.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\MousePointer</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_ShamanWeaponBall.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\etc</Filter>
+    <ClCompile Include="..\Private\BowTarget.cpp">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_ShamanElectric.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\etc</Filter>
+    <ClCompile Include="..\private\BowTarget_Manager.cpp">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_EnrageInto.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\Enrage</Filter>
+    <ClCompile Include="..\private\BowTarget_Trigger.cpp">
+      <Filter>02.GameObjects\Envrioment\BowTarget</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_WarriorWeaponAcc.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_P_WarriorBody.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_P_DeadZone_SmallPlace.cpp">
-      <Filter>02.GameObjects\Effect\Environment</Filter>
+    <ClCompile Include="..\private\Respawn_Trigger.cpp">
+      <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -83,7 +83,10 @@ void CUI_CanvasInfo::Tick(_float fTimeDelta)
 	{
 		CGameInstance::GetInstance()->Get_Back();
 		m_pRendererCom->Set_CaptureMode(false);
-		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+		//CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+		CUI_Canvas* pCanvas = CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO);
+		if (pCanvas != nullptr)
+			pCanvas->Set_Active(true);
 		m_bActive = false;
 		m_bReturn = false;
 	}
@@ -174,9 +177,9 @@ HRESULT CUI_CanvasInfo::SetUp_ShaderResources()
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
-		//if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
-		//	return E_FAIL;
-		if(FAILED(m_pShaderCom->Set_ShaderResourceView("g_Texture", m_pRendererCom->Get_LDRTexture())))
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+			return E_FAIL;
+		if(FAILED(m_pShaderCom->Set_ShaderResourceView("g_LDRTexture", m_pRendererCom->Get_LDRTexture())))
 			return E_FAIL;
 	}
 
@@ -191,7 +194,9 @@ void CUI_CanvasInfo::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fV
 			m_bActive = true;
 			CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
 			m_pRendererCom->Set_CaptureMode(true);
-			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(false);
+			CUI_Canvas* pCanvas = CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO);
+			if(pCanvas != nullptr)
+				pCanvas->Set_Active(false);
 
 			m_iTextureIdx = INFO_FIGHTIN;
 			static_cast<CUI_NodeVideo*>(m_vecNode[UI_VIDEO])->Play_Video(L"RotActionSelector", true, 0.05f /* speed */);

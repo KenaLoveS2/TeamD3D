@@ -236,6 +236,8 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
+#include "BowTarget_Trigger.h"
+#include "Respawn_Trigger.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -552,42 +554,14 @@ HRESULT CLoader::Loading_ForMapTool()
 #ifdef FOR_MAPTOOL   
 
 #else
-#pragma region Test_Gimmick_OBJ
-	if (bFlowerCheck == true)
+	if(bFlowerCheck == true)
 	{
-		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_TestGodTree",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.mdat"),
-				PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Trees/Giant/Giant_GodTree.json", false, true))))
+		if (FAILED(Loading_ForHW(LEVEL_MAPTOOL)))
 			return E_FAIL;
-#pragma region  DeadZone
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/Deadzondes_GoopWeb", true, true, true)))
-			assert(!"Issue");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/DeadZoneAndPurifiedTree", true, true, true)))
-			assert(!"Issue");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/DeadzoneClumps", true, true, true)))
-			assert(!"Issue");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/DeadzoneGroudCover", true, true, true)))
-			assert(!"Issue");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/DeadzoneHeart", true, true, true)))
-			assert(!"Issue");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/DeadzoneWall", true, true, true)))
-			assert(!"Issue");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/Gate", true, true, true)))
-			assert(!"Issue");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/Trees", true, true, true)))
-			assert(!"Issue");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/BushDead_02", true, true)))
-			assert(!"Issue");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "GroundCover/Deadzone", true, true, true)))
-			assert(!"Issue");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "GroundCover/Branches", true, true, true)))
-			assert(!"Issue");
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Fallen", true, true, true)))
-			assert(!"Issue");
-#pragma endregion DeadZone
-
 	}
+
+#pragma region Test_Gimmick_OBJ
+
 #pragma endregion
 
 #endif FOR_MAPTOOL
@@ -668,6 +642,8 @@ HRESULT CLoader::Loading_ForMapTool()
 
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "WoodlandHouse_1", true, true, true)))
 			assert(!"WoodlandHouse_1");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "WoodlandHouse_2", true, true, true)))
+			assert(!"WoodlandHouse_2");
 
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/Bell", true, true, true,false,true)))
 			assert(!"Map4/Bell");
@@ -1926,11 +1902,15 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 	/* Prototype_GameObject_HealthFlower */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_HealthFlower_Anim", CHealthFlower_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
-	
+
+	/* Prototype_GameObject_BowTarget_Trigger */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_BowTarget_Trigger", CBowTarget_Trigger::Create(m_pDevice, m_pContext)), E_FAIL);
+
+	/* Prototype_GameObject_Respawn_Trigger */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Respawn_Trigger", CRespawn_Trigger::Create(m_pDevice, m_pContext)), E_FAIL);
 	
 	/* Prototype_GameObject_Player_Camera */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Camera_Player", CCamera_Player::Create(m_pDevice, m_pContext)), E_FAIL);
-
 
 	return S_OK;
 }
@@ -3101,6 +3081,8 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "WoodlandHouse_1", true, true, true)))
 		assert(!"WoodlandHouse_1");
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "WoodlandHouse_2", true, true, true)))
+		assert(!"WoodlandHouse_2");
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Map4/Bell", true, true, true)))
 		assert(!"Map4/Bell");
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Map4/FarmEntranceStructure/Beam", true, true, true)))
@@ -3701,11 +3683,8 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Frog"), CFrog::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
-
-
 #pragma endregion HHW_OBJ
 
-	//RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

@@ -195,6 +195,8 @@
     <ClInclude Include="..\public\BossWarrior.h" />
     <ClInclude Include="..\public\BossWarrior_Hat.h" />
     <ClInclude Include="..\Public\BowTarget.h" />
+    <ClInclude Include="..\public\BowTarget_Manager.h" />
+    <ClInclude Include="..\public\BowTarget_Trigger.h" />
     <ClInclude Include="..\public\BranchTosser.h" />
     <ClInclude Include="..\public\BranchTosser_Tree.h" />
     <ClInclude Include="..\public\BranchTosser_Weapon.h" />
@@ -377,6 +379,7 @@
     <ClInclude Include="..\public\Monster_Manager.h" />
     <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\Pet.h" />
+    <ClInclude Include="..\public\Respawn_Trigger.h" />
     <ClInclude Include="..\public\RotBomb.h" />
     <ClInclude Include="..\public\RotForMonster.h" />
     <ClInclude Include="..\public\RotHat.h" />
@@ -444,6 +447,7 @@
     <ClInclude Include="..\public\UI_Event_Guage.h" />
     <ClInclude Include="..\public\UI_Event_ChangeImg.h" />
     <ClInclude Include="..\public\UI_Event_Transform.h" />
+    <ClInclude Include="..\public\UI_MousePointer.h" />
     <ClInclude Include="..\public\UI_NodeAimArrow.h" />
     <ClInclude Include="..\public\UI_NodeAimBomb.h" />
     <ClInclude Include="..\public\UI_NodeAimLine.h" />
@@ -497,6 +501,7 @@
     <ClInclude Include="..\Public\Wall.h" />
     <ClInclude Include="..\public\WaterPlane.h" />
     <ClInclude Include="..\public\WoodKnight.h" />
+    <ClInclude Include="..\public\WorldTrigger.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -517,6 +522,8 @@
     <ClCompile Include="..\private\BossWarrior.cpp" />
     <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
     <ClCompile Include="..\Private\BowTarget.cpp" />
+    <ClCompile Include="..\private\BowTarget_Manager.cpp" />
+    <ClCompile Include="..\private\BowTarget_Trigger.cpp" />
     <ClCompile Include="..\private\BranchTosser.cpp" />
     <ClCompile Include="..\private\BranchTosser_Tree.cpp" />
     <ClCompile Include="..\private\BranchTosser_Weapon.cpp" />
@@ -697,6 +704,7 @@
     <ClCompile Include="..\private\Monster_Manager.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\Pet.cpp" />
+    <ClCompile Include="..\private\Respawn_Trigger.cpp" />
     <ClCompile Include="..\private\RotBomb.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />
     <ClCompile Include="..\private\RotHat.cpp" />
@@ -765,6 +773,7 @@
     <ClCompile Include="..\private\UI_Event_Guage.cpp" />
     <ClCompile Include="..\private\UI_Event_ChangeImg.cpp" />
     <ClCompile Include="..\private\UI_Event_Transform.cpp" />
+    <ClCompile Include="..\private\UI_MousePointer.cpp" />
     <ClCompile Include="..\private\UI_NodeAimArrow.cpp" />
     <ClCompile Include="..\private\UI_NodeAimBomb.cpp" />
     <ClCompile Include="..\private\UI_NodeAimLine.cpp" />
@@ -818,6 +827,7 @@
     <ClCompile Include="..\Private\Wall.cpp" />
     <ClCompile Include="..\private\WaterPlane.cpp" />
     <ClCompile Include="..\private\WoodKnight.cpp" />
+    <ClCompile Include="..\private\WorldTrigger.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

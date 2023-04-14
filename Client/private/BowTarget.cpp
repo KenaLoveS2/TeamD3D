@@ -8,6 +8,7 @@
 #include "AnimationState.h"
 #include "E_RectTrail.h"
 #include "E_P_ExplosionGravity.h"
+#include "BowTarget_Manager.h"
 
 CBowTarget::CBowTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnviromentObj(pDevice, pContext)
@@ -48,6 +49,8 @@ HRESULT CBowTarget::Initialize(void* pArg)
 
 HRESULT CBowTarget::Late_Initialize(void* pArg)
 {
+	Grouping();
+
 	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float3 vPivotScale = _float3(0.2f, 0.f, 1.f);
@@ -215,6 +218,30 @@ _int CBowTarget::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIn
 	return 0;
 }
 
+void CBowTarget::Grouping()
+{
+	if (g_LEVEL == (_int)LEVEL_GIMMICK)
+	{
+		if (!lstrcmp(m_szCloneObjectTag, L"MG_BowTarget0_0") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget0_1") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget0_2"))
+			CBowTarget_Manager::GetInstance()->Add_Member(L"MINIGAME_GROUP_0", this, L"MINIGAME_GROUP_1");
+		else if (!lstrcmp(m_szCloneObjectTag, L"MG_BowTarget1_0") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget1_1") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget1_2"))
+			CBowTarget_Manager::GetInstance()->Add_Member(L"MINIGAME_GROUP_1", this, L"MINIGAME_GROUP_2");
+		else if (!lstrcmp(m_szCloneObjectTag, L"MG_BowTarget2_0") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget2_1") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget2_2")
+			|| !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget2_3") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget2_4"))
+			CBowTarget_Manager::GetInstance()->Add_Member(L"MINIGAME_GROUP_2", this, L"MINIGAME_GROUP_3");
+		else if (!lstrcmp(m_szCloneObjectTag, L"MG_BowTarget3_0") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget3_1") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget3_2")
+			|| !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget3_3") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget3_4") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget3_5")
+			|| !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget3_6") || !lstrcmp(m_szCloneObjectTag, L"MG_BowTarget3_7"))
+			CBowTarget_Manager::GetInstance()->Add_Member(L"MINIGAME_GROUP_3", this);
+	}
+	else if (g_LEVEL == (_int)LEVEL_FINAL)
+	{
+		if (!lstrcmp(m_szCloneObjectTag, L"4_BowTarget_0") || !lstrcmp(m_szCloneObjectTag, L"4_BowTarget_1")
+			|| !lstrcmp(m_szCloneObjectTag, L"4_BowTarget_2") || !lstrcmp(m_szCloneObjectTag, L"4_BowTarget_3"))
+			CBowTarget_Manager::GetInstance()->Add_Member(L"MAP4_GROUP_0", this);
+	}
+}
+
 CBowTarget::ANIMATION CBowTarget::Check_State()
 {
 	ANIMATION	eState = m_ePreState;
@@ -248,6 +275,7 @@ CBowTarget::ANIMATION CBowTarget::Check_State()
 
 				eState = CBowTarget::HIT;
 				m_pAnimation->State_Animation("HIT");
+				CBowTarget_Manager::GetInstance()->Check_CurrentGroup_Hit();
 			}
 
 			break;
@@ -267,6 +295,7 @@ CBowTarget::ANIMATION CBowTarget::Check_State()
 
 				eState = CBowTarget::HIT;
 				m_pAnimation->State_Animation("HIT");
+				CBowTarget_Manager::GetInstance()->Check_CurrentGroup_Hit();
 			}
 
 			break;
@@ -299,6 +328,7 @@ CBowTarget::ANIMATION CBowTarget::Check_State()
 
 				eState = CBowTarget::HIT;
 				m_pAnimation->State_Animation("HIT");
+				CBowTarget_Manager::GetInstance()->Check_CurrentGroup_Hit();
 			}
 
 			break;
@@ -319,6 +349,7 @@ void CBowTarget::Update_State(_float fTimeDelta)
 
 		case CBowTarget::LAUNCH:
 		{
+			m_pTransformCom->Go_AxisY(fTimeDelta * 2.f);
 			break;
 		}
 
@@ -434,8 +465,8 @@ HRESULT CBowTarget::Bind_Dissolve(CShader* pShader)
 
 HRESULT CBowTarget::Ready_Effect()
 {
+#ifdef FOR_MAP_GIMMICK
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-
 	_tchar* pDummyString = CUtile::Create_DummyString();
 	m_pTrail = dynamic_cast<CE_RectTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", pDummyString));
 	NULL_CHECK_RETURN(m_pTrail, E_FAIL);
@@ -447,6 +478,7 @@ HRESULT CBowTarget::Ready_Effect()
 	m_pExplosionEffect->Set_Parent(this);
 	m_pExplosionEffect->Set_Option(CE_P_ExplosionGravity::TYPE_BOWTARGET);
 
+#endif
 	return S_OK;
 }
 
