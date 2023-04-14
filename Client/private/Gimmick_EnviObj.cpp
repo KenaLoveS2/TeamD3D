@@ -25,9 +25,26 @@ void CGimmick_EnviObj::Set_Gimmick_Active(_int iRoomIndex, _bool bGimmick_Active
 	
 	if (m_EnviromentDesc.iRoomIndex == iRoomIndex)
 		m_bGimmick_Active = bGimmick_Active;
-	
+
+	if(bGimmick_Active == true)
+	{
+		/* 사운드 넣기*/
+		if(iRoomIndex == 1)  // 그냥 땅 올라오기
+		{
+			//CGameInstance::GetInstance()->Play_Sound();
+		}
+		else if(iRoomIndex ==2)  // 물땅올라오기
+		{
+			
+		}
+		else if(iRoomIndex ==4 )  // 문 올라가는 소리
+		{
+			
+		}
+	}
+
 	if (m_pGimmickObjEffect != nullptr)
-		m_pGimmickObjEffect->Set_Active(true);
+		m_pGimmickObjEffect->Set_Active(bGimmick_Active);
 
 }
 
