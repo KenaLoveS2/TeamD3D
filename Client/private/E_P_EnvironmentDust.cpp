@@ -109,7 +109,7 @@ void CE_P_EnvironmentDust::Late_Tick(_float fTimeDelta)
 // 		ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::tagPointDesc::DIR_Y;
 // 		ePointDesc->fMin = _float3(-10.f, 0.f, -10.f);
 // 		ePointDesc->fMax = _float3(10.f, 8.f, 10.f);
-		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(3.f, 5.f));
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(5.f, 15.f));
 		m_bTurnOnfirst = true;
 	}
 
