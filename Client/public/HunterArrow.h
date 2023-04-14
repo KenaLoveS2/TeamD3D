@@ -68,6 +68,9 @@ public:
 	virtual	HRESULT	SetUp_ShadowShaderResources() override;
 
 public:
+	FIRE_TYPE Get_FierType()const { return m_eFireType; }
+
+public:
 	static CHunterArrow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
