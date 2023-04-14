@@ -472,7 +472,7 @@ void CHunterArrow::Play_RingEffect(_float fTimeDelta)
 		{
 			_float4 vDir = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 			_float4 vPos = m_pTransformCom->Get_Position();
-			m_vecEffects[EFFECT_RING][m_iRingIndex]->Activate_Scaling(vDir, vPos, {0.05f, 0.05f});  
+			m_vecEffects[EFFECT_RING][m_iRingIndex]->Activate_Scaling(vDir, vPos, {0.08f, 0.08f});  
 
 			m_iRingIndex++;
 			m_iRingIndex %= MAX_RING_EFFECTS;

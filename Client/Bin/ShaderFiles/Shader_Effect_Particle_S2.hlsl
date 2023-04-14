@@ -304,7 +304,7 @@ PS_OUT PS_MAIN_V2(PS_IN In)
 	}
 
 	float4 vDiffuse = g_tex_0.Sample(PointSampler, In.vTexUV);
-	vDiffuse.rgb *= g_float4_0.rgb;
+	vDiffuse *= g_float4_0;
 	Out.vColor = CalcHDRColor(vDiffuse, g_float_0);
 	Out.vColor.a *= (1 - In.fLife);
 
@@ -312,9 +312,6 @@ PS_OUT PS_MAIN_V2(PS_IN In)
 		discard;
 
 	//Out.vColor.rgb *= g_float_0;
-
-
-
 
 	return Out;
 }
@@ -337,10 +334,10 @@ PS_OUT PS_MAIN_BLACK(PS_IN In)
 	Out.vColor.a = Out.vColor.r;
 
 	Out.vColor *= g_float4_0;
-	Out.vColor.rgb *= g_float_0;
-	//Out.vColor.rgb = CalcHDRColor(Out.vColor, g_float_0);
+	//Out.vColor.rgb *= g_float_0;
+	Out.vColor.rgb = CalcHDRColor(Out.vColor, g_float_0);
 
-	if (Out.vColor.a < 0.01f)
+	if (Out.vColor.a < 0.1f)
 		discard;
 
 	//
@@ -571,7 +568,7 @@ technique11 DefaultTechnique
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = compile gs_5_0 GS_MAIN_HAZE();
@@ -638,7 +635,7 @@ technique11 DefaultTechnique
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = compile gs_5_0 GS_UI();
@@ -647,4 +644,16 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_V2();
 	}
 
+	pass Cloud // 6
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_TEST2, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_MAIN_HAZE();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_V2();
+	}
 }

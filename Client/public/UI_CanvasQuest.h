@@ -3,6 +3,8 @@
 #include "UI_Canvas.h"
 #include "UI_ClientManager.h"
 
+#define MAX_LINE 4
+
 BEGIN(Client)
 class CQuest;
 class CUI_NodeEffect;
