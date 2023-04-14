@@ -90,7 +90,7 @@ void CFrog::Tick(_float fTimeDelta)
 	{
 		if(!m_bAnimActive )
 		{
-
+			CGameInstance::GetInstance()->Play_Sound(L"Frog.ogg", 1.0f, false);
 			m_bAnimActive = true;
 			m_pModelCom->Set_AnimIndex(CHEER);
 		}
