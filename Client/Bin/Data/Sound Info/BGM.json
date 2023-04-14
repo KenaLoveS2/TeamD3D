@@ -54,21 +54,27 @@
         ]
     },
     {
-        "0. State Name" : "BOSS_BATTLE_WARRIOR",
+        "0. State Name" : "BOSS_BATTLE_WARRIOR_PHASE_1",
         "1. File Names" : [
-            
+            "BGM_BossBattle_Warrior_Phase_1.wav"
+        ]
+    },
+    {
+        "0. State Name" : "BOSS_BATTLE_WARRIOR_PHASE_2",
+        "1. File Names" : [
+            "BGM_BossBattle_Warrior_Phase_2.wav"
         ]
     },
     {
         "0. State Name" : "BOSS_BATTLE_HUNTER",
         "1. File Names" : [
-            
+            "BGM_BossBattle_Hunter_1.wav"
         ]
     },
     {
         "0. State Name" : "BOSS_BATTLE_SHAMAN",
         "1. File Names" : [
-            
+            "BGM_BossBattle_Shaman_0.wav"
         ]
     }
 ]

@@ -12,6 +12,7 @@
 #include "SpiritArrow.h"
 #include "CinematicCamera.h"
 #include "BossRock_Pool.h"
+#include "BGM_Manager.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -79,8 +80,8 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 
 	CBossRock_Pool::DESC BossRockPoolDesc;
 	BossRockPoolDesc.iRockCount = 30;
-	// BossRockPoolDesc.vCenterPos = _float4(60.449f, 14.639f, 869.108f, 1.f);
-	BossRockPoolDesc.vCenterPos = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
+	BossRockPoolDesc.vCenterPos = _float4(60.449f, 14.639f, 869.108f, 1.f);
+	//BossRockPoolDesc.vCenterPos = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
 	m_pBossRockPool = (CBossRock_Pool*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossRockPool"), TEXT("Warrior_BossRockPool"), &BossRockPoolDesc);
 	assert(m_pBossRockPool && "CBossWarrior::Initialize()");
 	m_pBossRockPool->Late_Initialize(nullptr);
@@ -449,6 +450,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.OnStart([this]()
 	{
 		BossFight_Start();
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_BOSS_BATTLE_WARRIOR_PHASE_1);
 	})
 		.AddTransition("CINEMA to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
@@ -474,6 +476,12 @@ HRESULT CBossWarrior::SetUp_State()
 				m_fDissolveTime -= fTimeDelta * 0.5f;
 				if (m_fDissolveTime < -0.5f)
 					m_bDissolve = false;
+
+				m_fFogRange -= fTimeDelta * 50.f;
+				if (m_fFogRange < 60.f)
+					m_fFogRange = 60.f;
+				const _float4 vColor = _float4(140.f / 255.f, 70.f / 255.f, 70.f / 255.f, 1.f);
+				m_pRendererCom->Set_FogValue(vColor, m_fFogRange);
 
 				if (AnimIntervalChecker(AWAKE, 0.9f, 1.f))
 					m_pModelCom->FixedAnimIdx_PlayTime(AWAKE, 0.95f);
@@ -755,6 +763,8 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_bRealAttack = false;
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_BOSS_BATTLE_WARRIOR_PHASE_2);
 	})
 		.AddTransition("ENRAGE to BELL_CALL", "BELL_CALL")
 		.Predicator([this]()
@@ -1007,9 +1017,10 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("DEATH_SCENE")
 		.OnStart([this]()
 	{
-		// ���� �ִϸ��̼� �� ���� ���� State
 		m_bDissolve = true;
 		m_fEndTime = 0.f;
+
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_IDLE);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -1017,6 +1028,12 @@ HRESULT CBossWarrior::SetUp_State()
 		m_fDissolveTime = m_fEndTime * 0.3f;
 		if (m_fDissolveTime >= 1.f)
 			m_bDissolve = false;
+
+		m_fFogRange += fTimeDelta * 50.f;
+		if (m_fFogRange >= 100.f)
+			m_pRendererCom->Set_Fog(false);
+		const _float4 vColor = _float4(140.f / 255.f, 70.f / 255.f, 70.f / 255.f, 1.f);
+		m_pRendererCom->Set_FogValue(vColor, m_fFogRange);
 	})
 		.OnExit([this]()
 	{
@@ -1029,7 +1046,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("DEATH_SCENE to DEATH", "DEATH")
 		.Predicator([this]()
 	{
-		return m_fEndTime >= 10.f;
+		return m_fEndTime >= 2.5f && !m_bDissolve;
 	})
 
 		.AddState("DEATH")
@@ -1124,10 +1141,10 @@ HRESULT CBossWarrior::SetUp_Effects()
 	}
 
 	// Prototype_GameObject_WarriorWeaponAcc
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorWeaponAcc", L"W_WeaponAcc"));
-	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	pEffectBase->Set_Parent(this);
-	m_mapEffect.emplace("W_WeaponAcc", pEffectBase);
+	//pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorWeaponAcc", L"W_WeaponAcc"));
+	//NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	//pEffectBase->Set_Parent(this);
+	//m_mapEffect.emplace("W_WeaponAcc", pEffectBase);
 
 	// Prototype_GameObject_WarriorBodyAcc
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorBodyAcc", L"W_Body_P"));
@@ -1146,7 +1163,7 @@ void CBossWarrior::Update_Trail(const char * pBoneTag)
 
 	m_mapEffect["W_Trail"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
 	m_mapEffect["W_MovementParticle"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
-	m_mapEffect["W_WeaponAcc"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+	//m_mapEffect["W_WeaponAcc"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
 
 	if (m_mapEffect["W_Trail"]->Get_Active() == true)
 	{
@@ -1295,6 +1312,10 @@ void CBossWarrior::BossFight_Start()
 	}
 	m_bDissolve = true;
 	m_fDissolveTime = 1.f;
+	m_pRendererCom->Set_Fog(true);
+	const _float4 vColor = _float4(130.f / 255.f, 70.f / 255.f, 70.f / 255.f, 1.f);
+	m_pRendererCom->Set_FogValue(vColor, 100.f);
+
 }
 
 void CBossWarrior::BossFight_End()

@@ -80,6 +80,7 @@ void CEnviromentObj::Late_Tick(_float fTimeDelta)
 HRESULT CEnviromentObj::Render()
 {
 	__super::Render();
+
 	return S_OK;
 }
 

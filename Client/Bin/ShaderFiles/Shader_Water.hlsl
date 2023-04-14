@@ -111,7 +111,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	float		fOldViewZ = vDepthDesc.y * g_fFar; // 카메라의 far
 	float		fViewZ = In.vProjPos.w;
 
-	Out.vDiffuse = float4(vDiffuse.rgb, 0.5f);
+	Out.vDiffuse = float4(vDiffuse.rgb, 0.3f);
 	Out.vDiffuse.a = Out.vDiffuse.a * (saturate(fOldViewZ - fViewZ));
 
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);

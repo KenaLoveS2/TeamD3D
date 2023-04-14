@@ -109,7 +109,7 @@ void CRot::Tick(_float fTimeDelta)
 		m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 		m_pModelCom->Play_Animation(fTimeDelta);
 	}
-	else if (m_bWakeUp && m_pTransformCom->Calc_Distance_XYZ(m_pKena->Get_TransformCom()) < 10.f)
+	else if (m_bWakeUp && m_pTransformCom->Calc_Distance_XYZ(m_pKena->Get_TransformCom()) < 20.f)
 	{
 		m_pRotWisp->Tick(fTimeDelta);
 		m_pKena->Set_RotWispInteractable(true);

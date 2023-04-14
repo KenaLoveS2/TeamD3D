@@ -396,7 +396,6 @@ _bool CVIBuffer_Terrain::PickingFilter_Pixel(HWND hWnd, CTransform * pTransform,
 	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
 	m_pContext->RSGetViewports(&iNumViewports, &ViewPortDesc);
 
-
 	vPoint.x = ptMouse.x / (ViewPortDesc.Width * 0.5f) - 1.f;
 	vPoint.y = ptMouse.y / -(ViewPortDesc.Height * 0.5f) + 1.f;
 	vPoint.z = 1.f;
@@ -412,6 +411,7 @@ _bool CVIBuffer_Terrain::PickingFilter_Pixel(HWND hWnd, CTransform * pTransform,
 
 	_float4		vRayPos;
 	memcpy(&vRayPos, &matView.r[3], sizeof(_float4));
+
 	_float4		vRayDir;
 	XMStoreFloat4(&vRayDir, (XMLoadFloat4(&vPoint) - XMLoadFloat4(&vRayPos)));
 
@@ -474,7 +474,7 @@ _bool CVIBuffer_Terrain::PickingFilter_Pixel(HWND hWnd, CTransform * pTransform,
 	return false;
 }
 
-_bool CVIBuffer_Terrain::Picking_Terrain(HWND hWnd, CTransform * pTransform,_float4* vPickingPos)
+_bool CVIBuffer_Terrain::Picking_Terrain(HWND hWnd, CTransform * pTransform, _float4* vPickingPos)
 {
 	CGameInstance* pGameIntance = GET_INSTANCE(CGameInstance);
 
@@ -489,7 +489,6 @@ _bool CVIBuffer_Terrain::Picking_Terrain(HWND hWnd, CTransform * pTransform,_flo
 	_uint								iNumViewports = 1;
 	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
 	m_pContext->RSGetViewports(&iNumViewports, &ViewPortDesc);
-
 
 	vPoint.x = ptMouse.x / (ViewPortDesc.Width * 0.5f) - 1.f;
 	vPoint.y = ptMouse.y / -(ViewPortDesc.Height * 0.5f) + 1.f;

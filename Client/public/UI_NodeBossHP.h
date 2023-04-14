@@ -30,7 +30,7 @@ private:
 	virtual HRESULT			SetUp_ShaderResources() override;
 
 private:
-	_tchar*							m_szTitle;
+	_tchar*										m_szTitle;
 	CEffect_Particle_Base*			m_pEffect;
 
 public:
