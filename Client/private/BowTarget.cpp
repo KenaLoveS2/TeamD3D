@@ -41,6 +41,8 @@ HRESULT CBowTarget::Initialize(void* pArg)
 	Desc.fRotationPerSec = XMConvertToRadians(90.f);
 	m_pTransformCom->Set_TransformDesc(Desc);
 
+	m_pTransformCom->Set_Scaled(_float3(1.5f, 1.5f, 1.5f));
+
 	m_pTrailBone = m_pModelCom->Get_BonePtr("bottom_jnt");
 
 	return S_OK;
@@ -52,7 +54,7 @@ HRESULT CBowTarget::Late_Initialize(void* pArg)
 
 	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	_float3 vPivotScale = _float3(0.2f, 0.f, 1.f);
+	_float3 vPivotScale = _float3(0.4f, 0.f, 1.f);
 	_float3 vPivotPos = _float3(0.03f, 0.13f, 0.01f);
 
 	// Capsule X == radius , Y == halfHeight
@@ -340,7 +342,8 @@ void CBowTarget::Update_State(_float fTimeDelta)
 
 		case CBowTarget::LAUNCH:
 		{
-			m_pTransformCom->Go_AxisY(fTimeDelta * 2.f);
+			if (g_LEVEL == (_int)LEVEL_GIMMICK)
+				m_pTransformCom->Go_AxisY(fTimeDelta * 2.f);
 			break;
 		}
 

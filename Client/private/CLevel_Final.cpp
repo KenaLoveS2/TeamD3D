@@ -88,11 +88,11 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Layer_NPC");
 		return E_FAIL;
-	}
+	}*/
 
 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 	{
