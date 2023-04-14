@@ -1640,6 +1640,27 @@
     <ClInclude Include="..\public\Respawn_Trigger.h">
       <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_DeadZone_SmallPlace.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_DeadZoneDust.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_WarriorBody.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanElectric.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanHeadTrail.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanWeaponBall.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_WarriorWeaponAcc.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2643,6 +2664,27 @@
     </ClCompile>
     <ClCompile Include="..\private\Respawn_Trigger.cpp">
       <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_DeadZone_SmallPlace.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_DeadZoneDust.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_WarriorBody.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanElectric.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanHeadTrail.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanWeaponBall.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_WarriorWeaponAcc.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

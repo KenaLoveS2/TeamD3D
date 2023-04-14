@@ -19,6 +19,7 @@ private:
 	virtual ~CE_P_DeadZoneDust() = default;
 
 public:
+	
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Late_Initialize(void* pArg = nullptr);

@@ -2879,7 +2879,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_DeadZoneSmallPlace */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneSmallPlace"), CE_P_DeadZone_SmallPlace::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_DeadZone_SmallPlace.json"))))
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneSmallPlace"), CE_P_DeadZone_SmallPlace::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_DeadZone_SmallRange.json"))))
 		return E_FAIL;
 
 #pragma endregion MapObject
