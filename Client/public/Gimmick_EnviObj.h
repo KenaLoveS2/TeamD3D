@@ -52,7 +52,7 @@ private:
 	_bool							m_bColliderOn = false;
 	_bool							m_bTestOnce = false;
 
-	_bool							m_bOnceSoundCheck = false;
+	
 
 public:
 	

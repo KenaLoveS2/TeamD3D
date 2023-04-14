@@ -222,7 +222,7 @@ CBombPlatform::STATE CBombPlatform::Check_State()
 					m_pBombplatformEffect->Set_Active(true);
 					eState = CBombPlatform::STATE_OPEN;
 					m_pDetectedBomb = nullptr;
-					CGameInstance::GetInstance()->Play_Sound(L"ability_bomb_explode_03.ogg", 0.5f, false);
+					CGameInstance::GetInstance()->Play_Sound(L"ability_bomb_explode_03.ogg", 1.0f, false);
 					
 				}
 			}
