@@ -359,7 +359,13 @@ _int CCrystal::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIn
 		if(true == m_bGimmickActive)
 			m_VecCrystal_Effect[0]->Set_Active(true);
 
+		/*ToDo Sound*/
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Interactive_Crystal_Activated.ogg", 0.5f, false);
 		return 0;
+	}
+	else
+	{
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Interactive_Crystal_Activated.ogg", 0.5f, false);
 	}
 	m_VecCrystal_Effect[0]->Set_Active(true);
 

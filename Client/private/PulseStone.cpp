@@ -254,7 +254,7 @@ _int CPulseStone::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTrigger
 	if (true == m_bGimmickActive)
 		m_VecCrystal_Effect[0]->Set_Active(true);
 
-	
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Interactive_Crystal_Activated.ogg", 0.5f, false);
 
 	return 0;
 }

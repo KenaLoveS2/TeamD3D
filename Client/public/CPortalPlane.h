@@ -20,6 +20,10 @@ private:
 public:
 	CPortalPlane* Get_LinkedPortal();
 	void		 Set_GimmickRender(_bool bRenderActive) {
+
+		if (bRenderActive==true  && m_EnviromentDesc.iRoomIndex == 2)
+			HunterBoss_DeadPortalColliderOn();
+
 		m_bRendaerPortal_Gimmick = bRenderActive;
 	}
 public:
@@ -33,9 +37,11 @@ public:
 	virtual void			ImGui_ShaderValueProperty() override;
 	virtual void			ImGui_PhysXValueProperty() override;
 
+	
+
 private:
 	HRESULT			Late_init_For_GimmickLevel();
-	
+	void					HunterBoss_DeadPortalColliderOn();
 private:
 	CModel*					m_pModelCom = nullptr;
 

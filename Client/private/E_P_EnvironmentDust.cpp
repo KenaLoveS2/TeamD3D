@@ -32,7 +32,7 @@ HRESULT CE_P_EnvironmentDust::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
-	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	return S_OK;
 }
@@ -47,6 +47,54 @@ void CE_P_EnvironmentDust::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	// m_fLife += fTimeDelta;
+
+	if(ImGui::Button("True"))
+	{
+		//m_eEFfectDesc.bActive = true;
+		_float4	vPos;
+		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		vPos.y = 13.330f;
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&vPos));
+	}
+
+
+	if(	!lstrcmp(m_pParent->Get_ObjectCloneName() , L"1_GimmickPlatForm"))
+	{
+		if (m_eEFfectDesc.bActive == true)
+		{
+			m_pTransformCom->Go_AxisY(fTimeDelta * 0.23f);
+		}
+
+		_float4	vPos;
+		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+		if(vPos.y >= 1.249f)
+		{
+			m_eEFfectDesc.bActive = false;
+		}
+		
+
+	}
+	else if (!lstrcmp(m_pParent->Get_ObjectCloneName(), L"4_Gimmick_Wall_B"))
+	{
+		if (m_eEFfectDesc.bActive == true)
+		{
+			m_pTransformCom->Go_AxisY(fTimeDelta * 0.6f);
+		}
+
+		_float4	vPos;
+		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+		if (vPos.y >= 17.5f)
+		{
+			m_eEFfectDesc.bActive = false;
+		}
+
+
+	}
+
+
+
 }
 
 void CE_P_EnvironmentDust::Late_Tick(_float fTimeDelta)
