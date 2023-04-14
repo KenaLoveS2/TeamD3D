@@ -27,16 +27,19 @@ private:
 	
 	class CRotHat* m_pRotHat = nullptr;
 	class CE_P_Rot* m_pRotAcc = nullptr;
+	class CMonster_Manager* m_pMonster_Manager = nullptr;
+
+	_uint m_iHideAnimIndex = HIDE;
 
 private:
 	_bool m_bWakeUp = false, m_bManualWakeUp = false;
 	_uint m_iCuteAnimIndex = 0;
-	_float m_fKenaToRotDistance = 1.2f;
+	_float m_fKenaToRotDistance = 1.0f;
 	_float m_fTeleportDistance = 7.5f;
 	DESC m_Desc;
 
 	class CCameraForRot*		m_pMyCam = nullptr;
-
+	
 private:
 	CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CRot(const CRot& rhs);
@@ -78,6 +81,9 @@ public:
 	_int Get_HaveHatRotCount();
 	_int Get_NoHatRotCount();
 	static void Clear();
+
+	void RunAway();
+	void ComeBack();
 };
 
 END

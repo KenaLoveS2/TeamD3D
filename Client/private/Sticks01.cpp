@@ -64,9 +64,9 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
-		_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
+		_float3 vPivotScale = _float3(0.25f, 0.4f, 1.f);
 		//_float3 vPivotScale = _float3(0.5f, 0.5f, 1.f);
-		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
+		_float3 vPivotPos = _float3(0.f, 0.65f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;

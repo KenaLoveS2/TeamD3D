@@ -55,6 +55,9 @@ private:
 	_float4 m_vInvisiblePos = { -100.f, 0.f, - 100.f, 1.f };
 
 	_bool m_bAttackSound = false;
+		
+	class CHealthFlower_Anim* m_pTargetFlower = nullptr;
+	_bool m_bFlowerBind = false;
 
 public:
 	static CRotForMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -62,6 +65,9 @@ public:
 	virtual void Free() override;
 
 	void Set_AttackSound(_bool bFlag) { m_bAttackSound = bFlag; }
+		
+	void Start_BindFlower(CHealthFlower_Anim* pFlower);
+	void End_BindFlower();
 };
 
 END

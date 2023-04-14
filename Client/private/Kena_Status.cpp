@@ -454,6 +454,73 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 	return S_OK;
 }
 
+HRESULT CKena_Status::Save_RunTime(const wstring & wstrFilePath)
+{
+	if (wstrFilePath == L"")
+		return E_FAIL;
+
+	Json	jKenaStatus;
+
+	jKenaStatus["00. Max HP"] = m_iMaxHP;
+	jKenaStatus["01. HP"] = m_iHP;
+	jKenaStatus["02. Attack"] = m_iAttack;
+	jKenaStatus["03. Max Shield"] = m_fMaxShield;
+	jKenaStatus["04. Shield"] = m_fShield;
+	jKenaStatus["05. Shield Break"] = m_bShieldBreak;
+	jKenaStatus["06. Karma"] = m_iKarma;
+	jKenaStatus["07. Crystal"] = m_iCrystal;
+	jKenaStatus["08. Rot Level"] = m_iRotLevel;
+	jKenaStatus["09. Rot Count"] = m_iCurrentRotCount;
+	jKenaStatus["10. Pip Level"] = m_iPipLevel;
+	jKenaStatus["11. Arrow Count"] = m_iCurArrowCount;
+	jKenaStatus["12. Bomb Count"] = m_iCurBombCount;
+
+	for (_uint i = 0; i < (_uint)SKILLTAB_END; ++i)
+		for (_uint j = 0; j < 5; ++j)
+			jKenaStatus["99. Skill States"].push_back(m_bSkills[i][j]);
+
+
+	ofstream file(wstrFilePath.c_str());
+	file << jKenaStatus;
+	file.close();
+
+	return S_OK;
+}
+
+HRESULT CKena_Status::Load_RunTime(const wstring & wstrFilePath)
+{
+	if (wstrFilePath == L"")
+		return E_FAIL;
+
+	Json jKenaStatus;
+
+	ifstream file(wstrFilePath.c_str());
+	file >> jKenaStatus;
+	file.close();
+
+	jKenaStatus["00. Max HP"].get_to<_int>(m_iMaxHP);
+	jKenaStatus["01. HP"].get_to<_int>(m_iHP);
+	jKenaStatus["02. Attack"].get_to<_int>(m_iAttack);
+	jKenaStatus["03. Max Shield"].get_to<_float>(m_fMaxShield);
+	jKenaStatus["04. Shield"].get_to<_float>(m_fShield);
+	jKenaStatus["05. Shield Break"].get_to<_bool>(m_bShieldBreak);
+	jKenaStatus["06. Karma"].get_to<_int>(m_iKarma);
+	jKenaStatus["07. Crystal"].get_to<_int>(m_iCrystal);
+	jKenaStatus["08. Rot Level"].get_to<_int>(m_iRotLevel);
+	jKenaStatus["09. Rot Count"].get_to<_int>(m_iCurrentRotCount);
+	jKenaStatus["10. Pip Level"].get_to<_int>(m_iPipLevel);
+	jKenaStatus["11. Arrow Count"].get_to<_int>(m_iCurArrowCount);
+	jKenaStatus["12. Bomb Count"].get_to<_int>(m_iCurBombCount);
+
+	for (_uint i = 0; i < (_uint)SKILLTAB_END; ++i)
+		for (_uint j = 0; j < 5; ++j)
+			jKenaStatus["99. Skill States"][i * 5 + j].get_to<_bool>(m_bSkills[i][j]);
+
+	/* UNLOCK SKILL은 UI LOAD하면서 처리 */
+
+	return S_OK;
+}
+
 _int CKena_Status::Get_RotMax()
 {
 	/* Get MaxRot related to rotLevel*/
@@ -561,29 +628,6 @@ void CKena_Status::Add_RotCount()
 	//m_iRotCountMax = 2;
 	m_iCurrentRotCount++;
 
-	/* UI Rot Get */
-	CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
-	CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
-	CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
-
-	_float fMin = 0.0f;
-
-	if (m_iRotLevel == 2)
-		fMin = 2.0f;
-	else if (m_iRotLevel == 3)
-		fMin = 5.0f;
-	else if (m_iRotLevel == 4)
-		fMin = 8.0f;
-
-	_float fRotMax = (_float)m_iRotCountMax;
-	_float fRotNow = (_float)m_iCurrentRotCount;
-	_float fGuage = (fRotNow-fMin) / (fRotMax-fMin);
-
-	m_StatusDelegator.broadcast(eNow, fRotNow);
-	m_StatusDelegator.broadcast(eMax, fRotMax);
-	m_StatusDelegator.broadcast(eGet, fGuage);
-	/* ~UI Rot Get */
-
 	if (m_iCurrentRotCount >= m_iRotCountMax && m_iRotLevel != 5)
 	{
 		dynamic_cast<CKena*>(m_pOwner)->Set_State(CKena::STATE_LEVELUP, true);
@@ -596,7 +640,7 @@ void CKena_Status::Add_RotCount()
 
 		if (m_iRotLevel == 2)
 		{
-			m_iRotCountMax = 5;
+			m_iRotCountMax = 3;
 			m_iPipLevel = 2;
 
 			m_iMaxPIPCount = m_iPipLevel;
@@ -609,13 +653,8 @@ void CKena_Status::Add_RotCount()
 
 		else if (m_iRotLevel == 3)
 		{
-			m_iRotCountMax = 8;
-		}
-
-		else if (m_iRotLevel == 4)
-		{
-			m_iRotCountMax = 10;
-			m_iPipLevel = 3;
+			m_iRotCountMax = 4;
+			m_iPipLevel = 2;
 
 			m_iMaxPIPCount = m_iPipLevel;
 			m_fCurPIPGuage = (_float)m_iMaxPIPCount;
@@ -625,14 +664,44 @@ void CKena_Status::Add_RotCount()
 			m_StatusDelegator.broadcast(ePipUpgrade, m_fCurPIPGuage);
 		}
 
-		/* Rot Level Up */
-		CUI_ClientManager::UI_PRESENT eRotLvUp = CUI_ClientManager::TOP_ROT_LVUP;
-		_float fLevel = (_float)m_iRotLevel;
-		m_StatusDelegator.broadcast(eRotLvUp, fLevel);
+		else if (m_iRotLevel == 4)
+		{
+			m_iRotCountMax = 5;
+			m_iPipLevel = 3;
 
+			m_iMaxPIPCount = m_iPipLevel;
+			m_fCurPIPGuage = (_float)m_iMaxPIPCount;
 
+			/* Pip Level Up */
+			CUI_ClientManager::UI_PRESENT ePipUpgrade = CUI_ClientManager::HUD_PIP_UPGRADE;
+			m_StatusDelegator.broadcast(ePipUpgrade, m_fCurPIPGuage);
+		}
 	}
+	else
+	{
+		/* UI Rot Get */
+		CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
+		CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
+		CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
 
+		_float fMin = 0.0f;
+
+		if (m_iRotLevel == 2)
+			fMin = 2.0f;
+		else if (m_iRotLevel == 3)
+			fMin = 5.0f;
+		else if (m_iRotLevel == 4)
+			fMin = 8.0f;
+
+		_float fRotMax = (_float)m_iRotCountMax;
+		_float fRotNow = (_float)m_iCurrentRotCount;
+		_float fGuage = (fRotNow - fMin) / (fRotMax - fMin);
+
+		m_StatusDelegator.broadcast(eNow, fRotNow);
+		m_StatusDelegator.broadcast(eMax, fRotMax);
+		m_StatusDelegator.broadcast(eGet, fGuage);
+		/* ~UI Rot Get */
+	}
 }
 
 void CKena_Status::Unlock_Skill(SKILLTAB eCategory, _uint iSlot)

@@ -79,7 +79,8 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 
 	CBossRock_Pool::DESC BossRockPoolDesc;
 	BossRockPoolDesc.iRockCount = 30;
-	BossRockPoolDesc.vCenterPos = _float4(60.449f, 14.639f, 869.108f, 1.f);
+	// BossRockPoolDesc.vCenterPos = _float4(60.449f, 14.639f, 869.108f, 1.f);
+	BossRockPoolDesc.vCenterPos = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
 	m_pBossRockPool = (CBossRock_Pool*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossRockPool"), TEXT("Warrior_BossRockPool"), &BossRockPoolDesc);
 	assert(m_pBossRockPool && "CBossWarrior::Initialize()");
 	m_pBossRockPool->Late_Initialize(nullptr);
@@ -200,7 +201,7 @@ void CBossWarrior::Tick(_float fTimeDelta)
 
 	m_pHat->Tick(fTimeDelta);
 
-	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
@@ -419,6 +420,8 @@ void CBossWarrior::Push_EventFunctions()
 
 	Start_RealAttack(true, 0.0f);
 	End_RealAttack(true, 0.0f);
+
+	Execute_UpRocksPool(true, 0.0f);
 }
 
 HRESULT CBossWarrior::SetUp_State()
@@ -435,7 +438,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_bReadySpawn = true;
 	})
-		.AddTransition("SLEEP to CINEMA", "CINEMA") // "READY_SPAWN" 
+		.AddTransition("SLEEP to CINEMA", "CINEMA") // "IDLE" "CINEMA"
 		.Predicator([this]()
 	{			
 		m_fSpawnRange = 20.f;
@@ -2228,4 +2231,16 @@ void CBossWarrior::Play_Elemental11Sound(_bool bIsInit, _float fTimeDelta)
 	}
 
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL11], 0.5f);
+}
+
+void CBossWarrior::Execute_UpRocksPool(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::Execute_UpRocksPool);
+		return;
+	}
+
+	m_pBossRockPool->Execute_UpRocks();
 }
