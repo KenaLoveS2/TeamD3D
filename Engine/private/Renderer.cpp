@@ -510,10 +510,14 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
+		if (FAILED(Render_UIHDR()))
+			return E_FAIL;
+
 		// UI
 		// 파티클
 		if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_HDR"))))
 			return E_FAIL;
+
 		if (FAILED(Render_HDR()))
 			return E_FAIL;
 		if (FAILED(Render_Effect()))

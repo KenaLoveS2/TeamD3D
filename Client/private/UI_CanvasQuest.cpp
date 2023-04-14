@@ -155,6 +155,8 @@ HRESULT CUI_CanvasQuest::Render()
 {
 	__super::Render();
 
+	/* Button Click */
+
 	return S_OK;
 }
 
@@ -371,6 +373,18 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 	case CUI_ClientManager::QUEST_LINE:
 		m_vecNode[(_int)fValue]->Set_Active(true);
 		break;
+	case CUI_ClientManager::QUEST_CLEAR:
+	{
+		_int iIndex = (_int)fValue % MAX_LINE;
+		if (iIndex >= (_int)m_vecEffects.size())
+			return;
+		static_cast<CUI_NodeQuest*>(m_vecNode[(_int)fValue])->Set_Clear();
+		m_vecEffects[iIndex]->Start_Effect(
+			m_vecNode[(_int)fValue], 328.f, 5.f);
+		break;
+	}
+	case CUI_ClientManager::QUEST_CLEAR_ALL:
+		break;
 	}
 }
 
@@ -428,7 +442,7 @@ void CUI_CanvasQuest::Check(CUI_ClientManager::UI_PRESENT eType, _float fData)
 	switch (eType)
 	{
 	case CUI_ClientManager::QUEST_LINE:
-		_int iIndex = (_int)fData % 4;
+		_int iIndex = (_int)fData % MAX_LINE;
 		if (iIndex >= (_int)m_vecEffects.size())
 			return;
 

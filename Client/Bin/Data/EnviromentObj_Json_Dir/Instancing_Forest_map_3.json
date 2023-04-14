@@ -1333,7 +1333,7 @@
       "1_ModelTag": "Prototype_Component_Model_WaterPlane",
       "2_ShaderOption": 0,
       "3_CloneTag": "3_BossDeadPortal_1",
-      "4_RoomIndex": 3,
+      "4_RoomIndex": 2,
       "5_ChapterType": 0,
       "7_Transform State": [ -0.9996867775917053, -1.3498207408702001e-05, 0.0, 0.0, 3.052357533395167e-10, -2.2605974663747475e-05, 0.999996542930603, 0.0, -1.3502436559065245e-05, 1.0, 2.2606052880291827e-05, 0.0, 191.13275146484375, 33.92131805419922, 470.59405517578125, 1.0 ]
     },
@@ -1342,7 +1342,7 @@
       "1_ModelTag": "Prototype_Component_Model_WaterPlane",
       "2_ShaderOption": 0,
       "3_CloneTag": "3_BossDeadPortal_0",
-      "4_RoomIndex": 3,
+      "4_RoomIndex": 2,
       "5_ChapterType": 0,
       "7_Transform State": [ 0.9999078512191772, 0.0, 0.0, 0.0, 0.0, -4.371138828673793e-08, -1.0, 0.0, 0.0, 1.0, -4.371138828673793e-08, 0.0, 40.76737976074219, 16.839988708496094, 533.0255126953125, 1.0 ]
     },
