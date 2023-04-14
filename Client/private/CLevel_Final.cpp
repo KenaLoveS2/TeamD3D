@@ -21,6 +21,8 @@
 #include "UI_ClientManager.h"
 #include "UI.h"
 #include "Level_Loading.h"
+#include "Kena.h"
+#include "BGM_Manager.h"
 
 CLevel_Final::CLevel_Final(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -48,6 +50,7 @@ HRESULT CLevel_Final::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImGui_Rot::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
@@ -85,11 +88,11 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Layer_NPC");
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 	{
@@ -97,11 +100,11 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	{
 		MSG_BOX("Layer_Effect");
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas"))))
 	{
@@ -115,12 +118,17 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_Layer_Trigger(L"Layer_Trigger")))
+	{
+		MSG_BOX("Layer_Trigger");
+		return E_FAIL;
+	}
+
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_FINAL)))
 		return E_FAIL;
 
-	// p_game_instance->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
+	CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_IDLE);
 
-	
 	return S_OK;
 }
 
@@ -394,7 +402,7 @@ HRESULT CLevel_Final::Ready_Layer_Player(const _tchar* pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", RUNTIME_STATUS_FILEPATH, &pGameObject)))
 		return E_FAIL;
 
 	CGameInstance::GetInstance()->Set_PlayerPtr(pGameObject);
@@ -478,6 +486,13 @@ HRESULT CLevel_Final::Ready_Layer_ControlRoom(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_ControlRoom"), L"ControlRoom");
 	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLevel_Final::Ready_Layer_Trigger(const _tchar* pLayerTag)
+{
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_FINAL, pLayerTag, L"Prototype_GameObject_BowTarget_Trigger", L"BowTarget_Trigger"), E_FAIL);
+
 	return S_OK;
 }
 
