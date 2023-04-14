@@ -146,8 +146,10 @@ HRESULT CBGM_Manager::Load_FromFile(const string& strFilePath)
 			eState = CBGM_Manager::FIELD_FROM_BATTLE;
 		else if (strStateName == "BATTLE")
 			eState = CBGM_Manager::FIELD_BATTLE;
-		else if (strStateName == "BOSS_BATTLE_WARRIOR")
-			eState = CBGM_Manager::FIELD_BOSS_BATTLE_WARRIOR;
+		else if (strStateName == "BOSS_BATTLE_WARRIOR_PHASE_1")
+			eState = CBGM_Manager::FIELD_BOSS_BATTLE_WARRIOR_PHASE_1;
+		else if (strStateName == "BOSS_BATTLE_WARRIOR_PHASE_2")
+			eState = CBGM_Manager::FIELD_BOSS_BATTLE_WARRIOR_PHASE_2;
 		else if (strStateName == "BOSS_BATTLE_HUNTER")
 			eState = CBGM_Manager::FIELD_BOSS_BATTLE_HUNTER;
 		else if (strStateName == "BOSS_BATTLE_SHAMAN")

@@ -493,6 +493,10 @@ HRESULT CLevel_Final::Ready_Layer_Trigger(const _tchar* pLayerTag)
 {
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_FINAL, pLayerTag, L"Prototype_GameObject_BowTarget_Trigger", L"BowTarget_Trigger"), E_FAIL);
 
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_FINAL, pLayerTag, L"Prototype_GameObject_Village_Trigger", L"IntoVillage_Trigger"), E_FAIL);
+
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_FINAL, pLayerTag, L"Prototype_GameObject_Village_Trigger", L"FromVillage_Trigger"), E_FAIL);
+
 	return S_OK;
 }
 

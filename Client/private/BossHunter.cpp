@@ -12,6 +12,7 @@
 #include "E_Swipes_Charged.h"
 #include "Rot.h"
 #include "Light.h"
+#include "BGM_Manager.h"
 
 CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -177,7 +178,7 @@ void CBossHunter::Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animation(fTimeDelta);
 	Update_Collider(fTimeDelta);
 	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
-	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
 	if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
 
@@ -568,6 +569,8 @@ HRESULT CBossHunter::SetUp_State()
 	.OnStart([this]()
 	{
 		BossFight_Start();
+
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_BOSS_BATTLE_HUNTER);
 	})
 	.AddTransition("CINEMA to READY_SPAWN", "READY_SPAWN")
 	.Predicator([this]()

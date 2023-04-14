@@ -12,6 +12,7 @@
 #include "SpiritArrow.h"
 #include "CinematicCamera.h"
 #include "BossRock_Pool.h"
+#include "BGM_Manager.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -449,6 +450,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.OnStart([this]()
 	{
 		BossFight_Start();
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_BOSS_BATTLE_WARRIOR_PHASE_1);
 	})
 		.AddTransition("CINEMA to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
@@ -755,6 +757,8 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_bRealAttack = false;
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_BOSS_BATTLE_WARRIOR_PHASE_2);
 	})
 		.AddTransition("ENRAGE to BELL_CALL", "BELL_CALL")
 		.Predicator([this]()

@@ -231,6 +231,7 @@ unsigned int	g_LEVEL = 0;
 #include <fstream>
 #include "BowTarget_Trigger.h"
 #include "Respawn_Trigger.h"
+#include "Village_Trigger.h"
 
 
 
@@ -1899,6 +1900,9 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 	/* Prototype_GameObject_Respawn_Trigger */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Respawn_Trigger", CRespawn_Trigger::Create(m_pDevice, m_pContext)), E_FAIL);
+
+	/* Prototype_GameObject_Village_Trigger */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Village_Trigger", CVillage_Trigger::Create(m_pDevice, m_pContext)), E_FAIL);
 	
 	/* Prototype_GameObject_Player_Camera */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Camera_Player", CCamera_Player::Create(m_pDevice, m_pContext)), E_FAIL);
