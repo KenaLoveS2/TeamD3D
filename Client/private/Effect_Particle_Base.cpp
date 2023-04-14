@@ -89,14 +89,26 @@ void CEffect_Particle_Base::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	//if (m_pVIBufferCom != nullptr)
-	//{
-	//	if (m_pVIBufferCom->Is_Finished())
-	//	{
-	//		m_bActive = false;
-	//		return;
-	//	}
-	//}
+	if (m_bActiveSlowly)
+	{
+		m_vColor.w += fTimeDelta;
+		if (m_vColor.w > m_vColorOriginal.w)
+		{
+			m_vColor.w = m_vColorOriginal.w;
+			m_bActiveSlowly = false;
+		}
+	}
+
+	if (m_bDeActiveSlowly)
+	{
+		m_vColor.w -= fTimeDelta;
+		if (m_vColor.w < 0.0f)
+		{
+			m_vColor.w = m_vColorOriginal.w;
+			m_bDeActiveSlowly = false;
+			DeActivate();
+		}
+	}
 	__super::Tick(fTimeDelta);
 
 	m_pVIBufferCom->Tick(fTimeDelta);
@@ -126,8 +138,9 @@ void CEffect_Particle_Base::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRendererCom)
 	{
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 		m_bUI ? m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UIHDR, this)
-			: m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+			: m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 	}
 
 
@@ -180,8 +193,8 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		/* RenderPass */
 		static _int iRenderPass;
 		iRenderPass = m_iRenderPass;
-		const char* renderPass[6] = { "DefaultHaze", "BlackHaze", "BlackGather", "Spread", "Trail", "UI"};
-		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 6, 6))
+		const char* renderPass[7] = { "DefaultHaze", "BlackHaze", "BlackGather", "Spread", "Trail", "UI", "Cloud"};
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 7, 6))
 			m_iRenderPass = iRenderPass;
 
 		/* Color */
@@ -561,8 +574,8 @@ void CEffect_Particle_Base::Activate(CGameObject* pTarget, _float4 vCorrectPos)
 
 void CEffect_Particle_Base::Activate(CGameObject* pTarget, char* pBoneName)
 {
-	if (m_pBoneName == nullptr)
-	{
+	//if (m_pBoneName == nullptr)
+	//{
 		m_bActive = true;
 		m_pTarget = pTarget;
 
@@ -570,7 +583,8 @@ void CEffect_Particle_Base::Activate(CGameObject* pTarget, char* pBoneName)
 		//Safe_Delete_Array(m_pBoneName);
 		m_pBoneName = CUtile::Create_String(pBoneName);
 
-	}
+	//}
+	m_pVIBufferCom->Update_Buffer();
 }
 
 void CEffect_Particle_Base::Activate_Reflecting(_float4 vLook, _float4 vPos, _float fAngle)
@@ -621,6 +635,14 @@ void CEffect_Particle_Base::DeActivate()
 
 	m_pVIBufferCom->Update_Buffer(nullptr);
 	Safe_Delete_Array(m_pBoneName);
+
+}
+
+void CEffect_Particle_Base::DeActivate_Slowly()
+{
+	m_bDeActiveSlowly = true;
+	m_bActiveSlowly = false;
+	m_pVIBufferCom->Set_Stop();
 }
 
 void CEffect_Particle_Base::Activate_BufferUpdate()

@@ -18,14 +18,15 @@ private:
 	virtual ~CUI_RotIcon() = default;
 
 public:
-	void	Set_Pos(CGameObject* pTarget);
+	void	Set_Pos(CGameObject* pTarget, _float4 vCorrect = { 0.f, 0.f, 0.f, 0.f });
 	void	Off_Focus(CGameObject* pTarget);
+
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
-	virtual void					Tick(_float fTimeDelta)			override;
-	virtual void					Late_Tick(_float fTimeDelta)	override;
+	virtual void			Tick(_float fTimeDelta)			override;
+	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
 private:

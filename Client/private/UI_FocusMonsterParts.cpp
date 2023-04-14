@@ -8,6 +8,7 @@ CUI_FocusMonsterParts::CUI_FocusMonsterParts(ID3D11Device * pDevice, ID3D11Devic
 	, m_bStart(false)
 	, m_bEnd(false)
 	, m_fSpeed(0.f)
+	, m_vColor(1.f, 1.f, 1.f, 1.f)
 {
 }
 
@@ -16,6 +17,7 @@ CUI_FocusMonsterParts::CUI_FocusMonsterParts(const CUI_FocusMonsterParts & rhs)
 	, m_bStart(false)
 	, m_bEnd(false)
 	, m_fSpeed(0.f)
+	, m_vColor(1.f, 1.f, 1.f, 1.f)
 {
 }
 
@@ -35,7 +37,7 @@ HRESULT CUI_FocusMonsterParts::Initialize(void * pArg)
 		memcpy(&m_tPartsDesc, pArg, sizeof(PARTSDESC));
 		
 	/* It might be faster.... */
-	m_iRenderPass = 18;
+	m_iRenderPass = 23;
 
 	if (FAILED(SetUp_Components()))
 	{
@@ -48,20 +50,21 @@ HRESULT CUI_FocusMonsterParts::Initialize(void * pArg)
 	case 0: /* left */
 		m_pTransformCom->Set_Scaled(_float3(28.f, 28.f, 1.f));
 		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
-	//	m_vStartScale.x = 2.f * m_vOriginalSettingScale.x;
-		m_vStartScale.y = 0.f * m_vOriginalSettingScale.y;
+		m_vStartScale.x = 0.f * m_vOriginalSettingScale.x;
+		m_vStartScale.y = 1.f * m_vOriginalSettingScale.y;
 		break;
 	case 1: /* right */
 		m_pTransformCom->Set_Scaled(_float3(28.f, 28.f, 1.f));
 		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
-	//	m_vStartScale.x = 2.f * m_vOriginalSettingScale.x;
-		m_vStartScale.y = 0.f * m_vOriginalSettingScale.y;
-		break;
-	case 2: /* Center */
-		m_pTransformCom->Set_Scaled(_float3(16.8f, 35.f, 1.f));
-		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 		m_vStartScale.x = 0.f * m_vOriginalSettingScale.x;
-	//	m_vStartScale.y = 2.f * m_vOriginalSettingScale.y;
+		m_vStartScale.y = 1.f * m_vOriginalSettingScale.y;
+		break;
+	case 2: /* Center */ // x 0.26
+		//m_pTransformCom->Set_Scaled(_float3(16.8f, 35.f, 1.f));
+		m_pTransformCom->Set_Scaled(_float3(40.f, 35.f, 1.f));
+		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
+		m_vStartScale.x = 1.f * m_vOriginalSettingScale.x;
+		m_vStartScale.y = 0.f * m_vOriginalSettingScale.y;
 		break;
 	}
 
@@ -85,65 +88,69 @@ void CUI_FocusMonsterParts::Late_Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	__super::Late_Tick(fTimeDelta);
-
 	_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	_float4 vLook;
 	_float4 vRight;
 	_float3 vScale = m_pTransformCom->Get_Scaled();
 
-	switch (m_tPartsDesc.iType)
-	{
-	case 0: /* left */
-		vRight = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
-		m_pTransformCom->Set_Position(vPos + -0.1f * vRight);// +0.1f * vLook);
+	m_pTransformCom->Set_Position(vPos);
 
-		if (m_bStart)
-		{
-			vScale.y += 0.001f * fTimeDelta;
-			if (vScale.y >= m_vOriginalSettingScale.y)
-			{
-				m_bEnd = true;
-				vScale.y = m_vOriginalSettingScale.y;
-			}
+	//switch (m_tPartsDesc.iType)
+	//{
+	//case 0: /* left */
+	//	vRight = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
+	//	m_pTransformCom->Set_Position(vPos + -0.1f * vRight);// +0.1f * vLook);
 
-			m_pTransformCom->Set_Scaled(vScale);
-		}
+	//	if (m_bStart)
+	//	{
+	//		vScale.x += 0.001f * fTimeDelta;
+	//		if (vScale.x >= m_vOriginalSettingScale.x)
+	//		{
+	//			m_bEnd = true;
+	//			vScale.x = m_vOriginalSettingScale.x;
+	//			m_bStart = false;
+	//		}
 
-		break;
-	case 1: /* right */
-		vRight = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
-		vLook = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
-		m_pTransformCom->Set_Position(vPos + 0.1f * vRight);// +0.001f * vLook);
+	//		m_pTransformCom->Set_Scaled(vScale);
+	//	}
 
-		if (m_bStart)
-		{
-			vScale.y += 0.001f * fTimeDelta;
-			if (vScale.y >= m_vOriginalSettingScale.y)
-			{
-				m_bEnd = true;
-				vScale.y = m_vOriginalSettingScale.y;
-			}
+	//	break;
+	//case 1: /* right */
+	//	vRight = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
+	//	vLook = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	//	m_pTransformCom->Set_Position(vPos + 0.1f * vRight);// +0.001f * vLook);
 
-			m_pTransformCom->Set_Scaled(vScale);
-		}
-		break;
-	case 2: /* center */
-		m_pTransformCom->Set_Position(vPos);
+	//	if (m_bStart)
+	//	{
+	//		vScale.x += 0.001f * fTimeDelta;
+	//		if (vScale.x >= m_vOriginalSettingScale.x)
+	//		{
+	//			m_bEnd = true;
+	//			vScale.x = m_vOriginalSettingScale.x;
+	//			m_bStart = false;
+	//		}
 
-		if (m_bStart)
-		{
-			vScale.x += 0.001f * fTimeDelta;
-			if (vScale.x >= m_vOriginalSettingScale.x)
-			{
-				m_bEnd = true;
-				vScale.x = m_vOriginalSettingScale.x;
-			}
+	//		m_pTransformCom->Set_Scaled(vScale);
+	//	}
+	//	break;
+	//case 2: /* center */
+	//	m_pTransformCom->Set_Position(vPos);
 
-			m_pTransformCom->Set_Scaled(vScale);
-		}
-		break;
-	}
+	//	if (m_bStart)
+	//	{
+	//		vScale.y += 0.001f * fTimeDelta;
+	//		if (vScale.y >= m_vOriginalSettingScale.y)
+	//		{
+	//			m_bEnd = true;
+	//			vScale.y = m_vOriginalSettingScale.y;
+	//			m_bStart = false;
+	//		}
+
+	//		m_pTransformCom->Set_Scaled(vScale);
+	//	}
+	//	break;
+	//}
+	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom && m_bActive)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
@@ -230,6 +237,9 @@ HRESULT CUI_FocusMonsterParts::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
+	m_vColor = { 3.f, 1.f, 1.f, 1.f };
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

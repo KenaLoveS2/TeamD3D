@@ -89,6 +89,11 @@ HRESULT CVIBuffer_Point_Instancing_S2::Initialize(void* pArg, CGameObject* pOwne
 		for (_uint i = 0; i < m_iNumInstance; ++i)
 			m_pVariables[i] = { CUtile::Get_RandomFloat(0.0f, m_tInfo.fTerm),0.0f, 0.0f };
 	}
+	else if (POINTINFO::TYPE_HAZE == m_tInfo.eType)
+	{
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+			m_pVariables[i] = { CUtile::Get_RandomFloat(0.0f, 1.f),0.0f, 0.0f };
+	}
 
 
 #pragma region VERTEX_BUFFER
@@ -260,6 +265,9 @@ HRESULT CVIBuffer_Point_Instancing_S2::Bind_ShaderResouce(CShader* pShaderCom, c
 
 HRESULT CVIBuffer_Point_Instancing_S2::Tick_Haze(_float TimeDelta)
 {
+	if (m_bFinished)
+		return S_OK;
+
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	CONTEXT_LOCK
@@ -267,30 +275,51 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Haze(_float TimeDelta)
 
 	if (SUCCEEDED(hr))
 	{
-		m_tInfo.fTermAcc += m_tInfo.fPlaySpeed * TimeDelta;
-		if (m_tInfo.fTermAcc >= 360.f)
-			m_tInfo.fTermAcc -= 360.f;
-
-		_float fMaxY = m_tInfo.fTerm * m_tInfo.vSpeedMax.y;
+		_bool isAllStop = true;
 		for (_uint i = 0; i < m_iNumInstance; ++i)
 		{
-			if (fMaxY <= ((VTXMATRIX*)SubResource.pData)[i].vPosition.y)
+			//x :  StartTime, y : StartTimeAcc
+			if (m_pVariables[i].y < m_pVariables[i].x)
 			{
-				((VTXMATRIX*)SubResource.pData)[i].vPosition.x = 0.f + m_pPositions[i].x;
-				((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 0.f + m_pPositions[i].y;
-				((VTXMATRIX*)SubResource.pData)[i].vPosition.z = 0.f + m_pPositions[i].z;
+				isAllStop = false;
+				m_pVariables[i].y += TimeDelta;
+				continue;
+			}
+
+			// z : TimeAcc
+			if (((VTXMATRIX*)SubResource.pData)[i].vPosition.w <= 0.f)
+			{
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pPositions[i].x;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_pPositions[i].y;
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_pPositions[i].z;
 				((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+				m_pVariables[i].z = 0.0f;
+				m_pVariables[i].y = 0.0f;
+
+				if (m_bStop)
+					((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 0.0f;
+				else
+					isAllStop = false;
 			}
 			else
 			{
+				m_pVariables[i].z += m_tInfo.fPlaySpeed * TimeDelta;
+				_float fAngle = fmod(m_pVariables[i].z, 360.f);
+
 				((VTXMATRIX*)SubResource.pData)[i].vPosition.y += _float(m_pYSpeeds[i] * TimeDelta);
-				((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pPositions[i].x + m_pXSpeeds[i] * sinf(m_tInfo.fTermAcc);
-				((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_pPositions[i].z + m_pZSpeeds[i] * sinf(m_tInfo.fTermAcc);
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pPositions[i].x + m_pXSpeeds[i] * sinf(fAngle);
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_pPositions[i].z + m_pZSpeeds[i] * sinf(fAngle);
 
 				/* Life */
-				((VTXMATRIX*)SubResource.pData)[i].vPosition.w = (1 - ((VTXMATRIX*)SubResource.pData)[i].vPosition.y / fMaxY);
+				((VTXMATRIX*)SubResource.pData)[i].vPosition.w = (1 - m_pVariables[i].z / m_tInfo.fTerm);
+
 			}
+
+			if (isAllStop == true)
+				m_bFinished = true;
 		}
+
+
 
 		m_pContext->Unmap(m_pInstanceBuffer, 0);
 	}
@@ -456,7 +485,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Trail(_float TimeDelta)
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	CONTEXT_LOCK
+	CONTEXT_LOCK									//D3D11_MAP_WRITE_DISCARD
 		HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
 	if (SUCCEEDED(hr))
@@ -588,4 +617,6 @@ void CVIBuffer_Point_Instancing_S2::Free()
 
 	if (true == m_isCloned)
 		Safe_Delete_Arrays();
+
+	m_vecInstances.clear();
 }
