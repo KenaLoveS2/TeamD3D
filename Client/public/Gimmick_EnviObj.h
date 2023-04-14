@@ -51,6 +51,9 @@ private:
 	_bool							m_bGimmick_Active = false;
 	_bool							m_bColliderOn = false;
 	_bool							m_bTestOnce = false;
+
+	
+
 public:
 	
 private:

@@ -32,6 +32,7 @@ HRESULT CE_ShamanElectric::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
 	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.vScale = XMVectorSetY(m_eEFfectDesc.vScale, 4.0f);
 	return S_OK;
 }
 

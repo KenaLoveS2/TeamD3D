@@ -185,11 +185,15 @@ void CBombPlatform::ImGui_PhysXValueProperty()
 _int CBombPlatform::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	if (iColliderIndex == (_int)COL_PLAYER_BOMB && m_pDetectedBomb == nullptr)
+	{
+
 		m_pDetectedBomb = dynamic_cast<CRotBomb*>(pTarget);
-
+	}
 	if (iColliderIndex == (_int)COL_PLAYER_BOMB_EXPLOSION && m_eCurState == CBombPlatform::STATE_SLEEP)
+	{
+	
 		m_eCurState = CBombPlatform::STATE_OPEN;
-
+	}
 	return 0;
 }
 
@@ -218,6 +222,8 @@ CBombPlatform::STATE CBombPlatform::Check_State()
 					m_pBombplatformEffect->Set_Active(true);
 					eState = CBombPlatform::STATE_OPEN;
 					m_pDetectedBomb = nullptr;
+					CGameInstance::GetInstance()->Play_Sound(L"ability_bomb_explode_03.ogg", 1.0f, false);
+					
 				}
 			}
 
@@ -232,6 +238,7 @@ CBombPlatform::STATE CBombPlatform::Check_State()
 			{
 				eState = CBombPlatform::STATE_ACTIVATE;
 				m_fTimer = 0.f;
+				
 			}
 
 			break;

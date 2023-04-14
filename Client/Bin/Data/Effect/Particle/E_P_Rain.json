@@ -28,7 +28,7 @@
                         0.0,
                         0.0
                     ],
-                    "CloneObject Component PointDesc CreateInstance": 100,
+                    "CloneObject Component PointDesc CreateInstance": 500,
                     "CloneObject Component PointDesc CreateRange": 0.0,
                     "CloneObject Component PointDesc Dir": [
                         0.0,
@@ -46,15 +46,15 @@
                     "CloneObject Component PointDesc InstanceIndex": 0,
                     "CloneObject Component PointDesc IsAlive": false,
                     "CloneObject Component PointDesc Max": [
-                        10.0,
-                        30.0,
-                        10.0
+                        1.0,
+                        1.0,
+                        1.0
                     ],
                     "CloneObject Component PointDesc MaxTime": 0.0,
                     "CloneObject Component PointDesc Min": [
-                        -10.0,
-                        1.0,
-                        -10.0
+                        -1.0,
+                        -1.0,
+                        -1.0
                     ],
                     "CloneObject Component PointDesc MoveY": 0.0,
                     "CloneObject Component PointDesc OriginPos": [

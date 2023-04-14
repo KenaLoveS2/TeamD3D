@@ -50,6 +50,8 @@ void CE_P_DeadZoneDust::Tick(_float fTimeDelta)
 {
 	if (m_pShaman == nullptr)
 		m_pShaman = (CBossShaman*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Monster", L"BossShaman_0");
+	//	m_pTransformCom->Set_Position(m_pShaman->Get_TransformCom()->Get_Position());
+	}
 	__super::Tick(fTimeDelta);
 
 	if (m_pShaman && m_pShaman->Get_MonsterStatusPtr()->Get_HP() < 1.0f)
@@ -69,6 +71,7 @@ void CE_P_DeadZoneDust::Late_Tick(_float fTimeDelta)
 		else
 			Set_Type(CE_P_DeadZoneDust::TYPE_DUST_A);
 
+		// m_pTransformCom->Set_Position(m_pShaman->Get_TransformCom()->Get_Position());
 		m_bTurnOnfirst = true;
 	}
 

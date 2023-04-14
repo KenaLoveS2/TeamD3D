@@ -31,16 +31,19 @@ void CGimmick_EnviObj::Set_Gimmick_Active(_int iRoomIndex, _bool bGimmick_Active
 		/* 사운드 넣기*/
 		if(iRoomIndex == 1)  // 그냥 땅 올라오기
 		{
-			//CGameInstance::GetInstance()->Play_Sound(L"SFX_Bomb_Door_Open_1.ogg", 0.5f, false);
-			// 소리 다시찾기
+			CGameInstance::GetInstance()->Play_Sound(L"SFX_Stone_Gate_Open_End_1.ogg", 0.7f, false);
+			CGameInstance::GetInstance()->Play_Sound(L"SFX_Stone_Gate_Open_LP_1.ogg", 1.f, false);
+			
 		}
 		else if(iRoomIndex ==2)  // 물땅올라오기
 		{
-			CGameInstance::GetInstance()->Play_Sound(L"SFX_Waterfall_Platform_Rise_Water.ogg", 0.5f, false);
+			CGameInstance::GetInstance()->Play_Sound(L"SFX_Stone_Gate_Open_End_1.ogg", 0.8f, false);
+			CGameInstance::GetInstance()->Play_Sound(L"SFX_Waterfall_Platform_Rise_Water.ogg", 0.8f, false);
 		}
 		else if(iRoomIndex ==4 )  // 문 올라가는 소리
 		{
-			CGameInstance::GetInstance()->Play_Sound(L"event_cave_door_base.ogg", 0.5f, false);
+			CGameInstance::GetInstance()->Play_Sound(L"SFX_Stone_Gate_Open_End_1.ogg", 0.8f, false);
+			CGameInstance::GetInstance()->Play_Sound(L"SFX_Stone_Gate_Open_LP_3.ogg", 0.8f, false);
 		}
 	}
 
@@ -76,16 +79,12 @@ HRESULT CGimmick_EnviObj::Initialize(void * pArg)
 HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 {
 
-	//m_pModelCom->InstanceModelPosInit(m_pTransformCom->Get_WorldMatrix());
-	//m_pModelCom->Instaincing_GimmkicInit(m_EnviromentDesc.eChapterType);
-
 	m_pControlRoom = dynamic_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
 	assert(m_pControlRoom != nullptr  && "CPulse_Plate_Anim::Late_Initialize(void * pArg)");
 
 	m_pControlRoom->Add_GimmickObj(m_EnviromentDesc.iRoomIndex,
 		this,m_EnviromentDesc.eChapterType);
 
-	
 	return S_OK;
 }
 
@@ -103,11 +102,9 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 
 	if(ImGui::Button("Gimmick_Init"))
 	{
-
 		m_bColliderOn = false;
 		m_pModelCom->Instaincing_GimmkicInit(m_EnviromentDesc.eChapterType);
 		m_bGimmick_Active = false;
-
 	}
 
 	__super::Tick(fTimeDelta);
@@ -288,6 +285,9 @@ _bool CGimmick_EnviObj::Gimmik_Start(_float fTimeDelta)
 	//	break;
 	//}
 
+	
+
+
 	bResult = Gimmick_Go_up(fTimeDelta);
 
 
@@ -420,6 +420,8 @@ CGameObject * CGimmick_EnviObj::Clone(void * pArg)
 void CGimmick_EnviObj::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pGimmickObjEffect);
 
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
