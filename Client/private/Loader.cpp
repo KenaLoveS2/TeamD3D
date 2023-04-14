@@ -549,7 +549,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = true;
+	_bool bRealObject = false;
 	_bool bFlowerCheck = false;
 
 #ifdef FOR_MAPTOOL   
@@ -557,7 +557,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #else
 	if(bFlowerCheck == true)
 	{
-		if (FAILED(Loading_ForHW(LEVEL_MAPTOOL)))
+		if (FAILED(Loading_ForHO(LEVEL_MAPTOOL)))
 			return E_FAIL;
 	}
 
@@ -3164,7 +3164,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinPlatform", true, true, true,false,true)))
 		assert(!"Issue");
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Rubble", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Rubble", true, true, true,false,true)))
 		return E_FAIL;
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Big", true, true, true)))
@@ -3199,7 +3199,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Sheer", true, true, true,false,true)))
 		assert(!"Issue");
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_Rubble", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_Rubble", true, true, true,false,true)))
 		return E_FAIL;
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinStaris", true, true, true,false,true)))
