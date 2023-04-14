@@ -1955,7 +1955,7 @@ void CBossHunter::MagicCircleEffect_On(_bool bIsInit, _float fTimeDelta)
 	_float4		vCenterPos = m_pTransformCom->Get_Position();
 	vPos.x = vCenterPos.x;
 	vPos.z = vCenterPos.z;
-	vPos.y += 0.2f;
+	vPos.y -= 0.2f;
 
 	m_vecEffects[EFFECT_MAGIC_MESH]->Activate(vPos);
 }
@@ -2004,10 +2004,12 @@ void CBossHunter::RoarEffect_On(_bool bIsInit, _float fTimeDelta)
 	else
 		vPos = m_pTransformCom->Get_Position();
 
+	_float4 vLook = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK));
+	//vPos -= vLook;
+
 	static _int iIndex = EFFECT_ROAR_TEXTURE1;
-
-
-	m_vecEffects[iIndex]->Activate_Scaling(vPos, { 10.f, 10.f });
+	m_vecEffects[iIndex]->Activate_Scaling(vPos , { 10.f, 10.f });
+	
 	iIndex++;
 	if (iIndex > EFFECT_ROAR_TEXTURE4)
 		iIndex = EFFECT_ROAR_TEXTURE1;

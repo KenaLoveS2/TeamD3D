@@ -96,6 +96,11 @@ void CUI_CanvasHUD::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
+	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
+	{
+		Function(CUI_ClientManager::HUD_PIP, 0.f);
+	}
+
 
 	__super::Tick(fTimeDelta);
 
@@ -118,6 +123,11 @@ HRESULT CUI_CanvasHUD::Render()
 	__super::Render();
 
 	return S_OK;
+}
+
+void CUI_CanvasHUD::Call_BindFunction(_uint iTag, _float fData)
+{
+	Function((CUI_ClientManager::UI_PRESENT)iTag, fData);
 }
 
 HRESULT CUI_CanvasHUD::Bind()

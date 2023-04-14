@@ -590,6 +590,15 @@ void CKena_Status::Add_CurPipGuage()
 	m_StatusDelegator.broadcast(ePip, m_fCurPIPGuage);
 }
 
+void CKena_Status::Plus_CurPIPGuage(_float fGuage)
+{
+	//m_fCurPIPGuage = 0.f;
+	m_fCurPIPGuage = min(m_fCurPIPGuage + fGuage, m_iMaxPIPCount);
+
+	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
+	m_StatusDelegator.broadcast(ePip, m_fCurPIPGuage);
+}
+
 void CKena_Status::Set_CurArrowCount(_int iValue)
 {
 	/* Should be used only when arrow shoot */

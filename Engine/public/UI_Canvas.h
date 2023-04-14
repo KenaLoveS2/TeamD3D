@@ -29,6 +29,7 @@ public:
 public:
 	virtual void			Common_Function(_bool bResult) { }
 	virtual void			Set_Caller(CGameObject* pObj) {} /* Set the BindCaller to BindCallee*/
+	virtual void			Call_BindFunction(_uint iTag, _float fData) {};
 
 protected: /* For Clones. */
 	virtual HRESULT			Bind() { return S_OK; }

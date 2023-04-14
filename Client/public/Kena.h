@@ -60,6 +60,7 @@ public:
 	vector<class CRotBomb*>*	Get_Bombs() { return &m_vecBomb; }
 
 	const _bool					Get_State(STATERETURN eState) const;
+	class CCamera_Player*		Get_CameraPlayer() { return m_pCamera; }
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_TrailON() const { return m_bTrailON; }

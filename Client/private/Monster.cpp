@@ -483,7 +483,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(0.2f);
 			//m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 			m_pMonsterStatusCom->UnderAttack(pArrow->Get_Damage());
-
+			 
 			m_pUIHPBar->Set_Active(true);
 			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 

@@ -47,6 +47,9 @@ private:
 	virtual HRESULT			SetUp_Components()				override;
 	virtual HRESULT			SetUp_ShaderResources()			override;
 
+private:
+	HRESULT					SetUp_SkillSettings(_uint iType, _uint iSlot);
+
 	/* Ready_Information(Real Data) */
 private:
 	HRESULT					Ready_SkillInfo();
