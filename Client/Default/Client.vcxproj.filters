@@ -1661,6 +1661,9 @@
     <ClInclude Include="..\public\E_WarriorWeaponAcc.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_WarriorEyeTrail.h">
+      <Filter>02.GameObjects\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2685,6 +2688,9 @@
     </ClCompile>
     <ClCompile Include="..\private\E_WarriorWeaponAcc.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_WarriorEyeTrail.cpp">
+      <Filter>02.GameObjects\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

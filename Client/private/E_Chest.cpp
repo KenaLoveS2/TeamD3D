@@ -39,6 +39,8 @@ HRESULT CE_Chest::Initialize(void * pArg)
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Parent(nullptr);
 
+	m_eEFfectDesc.vScale = XMVectorSetX(m_eEFfectDesc.vScale, 0.8f);
+
 	return S_OK;
 }
 

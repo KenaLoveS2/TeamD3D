@@ -12,6 +12,7 @@
 #include "SpiritArrow.h"
 #include "CinematicCamera.h"
 #include "BossRock_Pool.h"
+#include "E_WarriorEyeTrail.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -1134,6 +1135,18 @@ HRESULT CBossWarrior::SetUp_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	pEffectBase->Set_Parent(this);
 	m_mapEffect.emplace("W_Body_P", pEffectBase);
+
+	// Prototype_GameObject_WarriorEyeTrail
+	for (_uint i = 0; i < 2; ++i)
+	{
+		pCloneTag = CUtile::Create_DummyString(L"W_WarriorEye", i);
+		strMapTag = "W_WarriorEye" + to_string(i);
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorEyeTrail", pCloneTag));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+		pEffectBase->Set_Parent(this);
+		dynamic_cast<CE_WarriorEyeTrail*>(pEffectBase)->Set_Boneprt(i, m_pModelCom->Get_BonePtr("char_mask_jnt"));
+		m_mapEffect.emplace(strMapTag, pEffectBase);
+	}
 
 	return S_OK;
 }

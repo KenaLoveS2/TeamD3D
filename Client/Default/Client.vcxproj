@@ -232,6 +232,7 @@
     <ClInclude Include="..\public\E_ShamanIceDagger.h" />
     <ClInclude Include="..\public\E_ShamanLazer.h" />
     <ClInclude Include="..\public\E_ShamanWeaponBall.h" />
+    <ClInclude Include="..\public\E_WarriorEyeTrail.h" />
     <ClInclude Include="..\public\E_WarriorWeaponAcc.h" />
     <ClInclude Include="..\public\Group_Manager.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -559,6 +560,7 @@
     <ClCompile Include="..\private\E_ShamanIceDagger.cpp" />
     <ClCompile Include="..\private\E_ShamanLazer.cpp" />
     <ClCompile Include="..\private\E_ShamanWeaponBall.cpp" />
+    <ClCompile Include="..\private\E_WarriorEyeTrail.cpp" />
     <ClCompile Include="..\private\E_WarriorWeaponAcc.cpp" />
     <ClCompile Include="..\private\Group_Manager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

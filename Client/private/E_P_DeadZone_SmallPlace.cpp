@@ -34,6 +34,15 @@ HRESULT CE_P_DeadZone_SmallPlace::Initialize(void* pArg)
 
 	m_eEFfectDesc.bActive = true;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
+
+	static _int iIndex = 0;
+	if (iIndex == 0)
+		m_pTransformCom->Set_Position(XMVectorSet(21.8f, 14.f, 1145.f, 1.f));
+	else if(iIndex == 1)
+		m_pTransformCom->Set_Position(XMVectorSet(-1.6f, 14.f, 1151.f, 1.f));
+	else
+		m_pTransformCom->Set_Position(XMVectorSet(9.6f, 14.f, 1184.f, 1.f));
+	iIndex++;
 	return S_OK;
 }
 
@@ -49,12 +58,17 @@ void CE_P_DeadZone_SmallPlace::Tick(_float fTimeDelta)
 
 void CE_P_DeadZone_SmallPlace::Late_Tick(_float fTimeDelta)
 {
-	if (m_bTurnOnfirst == false)
+	if (m_bTurnOnfirst == false  )
 	{
+		Set_ShapePosition();
+
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(1.f, 2.f));
-		m_pVIInstancingBufferCom->Set_RandomSpeeds(1.f, 3.f);
+		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 0.5f);
+		m_eEFfectDesc.vColor = XMVectorSetW(m_eEFfectDesc.vColor, 0.5f);
+		m_pTransformCom->Set_Scaled(_float3(1.f, 2.f, 1.f));
 		m_bTurnOnfirst = true;
 	}
+
 
 	if (m_eEFfectDesc.bActive == false)
 		return;

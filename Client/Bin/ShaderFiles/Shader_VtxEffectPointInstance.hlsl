@@ -308,6 +308,52 @@ void GS_RAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 }
 
 [maxvertexcount(6)]
+void GS_RECTDEFAULT(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
+{
+	GS_OUT		Out[4];
+
+	float3		vLook = g_vCamPosition.xyz - In[0].vPosition;
+	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].fSize * 0.5f;
+	float3		vUp = normalize(cross(vLook, vRight)) * In[0].fSize * 0.5f;
+
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	float3		vPosition;
+
+	float       fCurWidth = In[0].fLife;
+
+	vPosition = In[0].vPosition + vRight + vUp ;
+	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[0].vTexUV = float2(0.f, 0.f);
+	Out[0].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition - vRight + vUp ;
+	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[1].vTexUV = float2(1.f, 0.f);
+	Out[1].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition - vRight - vUp ;
+	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[2].vTexUV = float2(1.f, 1.f);
+	Out[2].fLife = In[0].fLife;
+
+	vPosition = In[0].vPosition + vRight - vUp ;
+	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[3].vTexUV = float2(0.f, 1.f);
+	Out[3].fLife = In[0].fLife;
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[1]);
+	Vertices.Append(Out[2]);
+	Vertices.RestartStrip();
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[2]);
+	Vertices.Append(Out[3]);
+	Vertices.RestartStrip();
+
+}
+
+[maxvertexcount(6)]
 void GS_RECTTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices)
 {
 	GS_TRAILOUT		Out[4];
@@ -941,7 +987,6 @@ PS_OUT PS_PARTICLEMAINPS_PARTICLEMAIN(PS_IN In)
 		else
 			finalcolor.a = finalcolor.a * (fTime / 1.f);
 	}
-
 	Out.vColor = finalcolor * g_vColor;
 
 	if (Out.vColor.a == 0.0f)
@@ -1716,5 +1761,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_ENVIRONMENTOBJECT();
+	}
+
+	pass EnvironmentDust2 // 24
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_TEST2, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_RECTDEFAULT();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_PARTICLEMAINPS_PARTICLEMAIN();
 	}
 }

@@ -1,14 +1,15 @@
 #include "stdafx.h"
 #include "..\public\E_WarriorWeaponAcc.h"
 #include "GameInstance.h"
+#include "BossWarrior.h"
 
 CE_WarriorWeaponAcc::CE_WarriorWeaponAcc(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	: CEffect(pDevice, pContext)
+	: CEffect_Point_Instancing(pDevice, pContext)
 {
 }
 
 CE_WarriorWeaponAcc::CE_WarriorWeaponAcc(const CE_WarriorWeaponAcc & rhs)
-	:CEffect(rhs)
+	: CEffect_Point_Instancing(rhs)
 {
 	
 }
@@ -49,14 +50,20 @@ void CE_WarriorWeaponAcc::Tick(_float fTimeDelta)
  	if (m_eEFfectDesc.bActive == false)
  		return;
 
-	m_eEFfectDesc.vScale = XMVectorSet(2.f, 2.f, 1.f, 1.f);
-
 	__super::Tick(fTimeDelta);
 }
 
 void CE_WarriorWeaponAcc::Late_Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
+	if (m_bTurnOnfirst == false)
+	{
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.3f, 0.5f));
+		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 1.f);
+
+		m_bTurnOnfirst = true;
+	}
+
+	if (dynamic_cast<CBossWarrior*>(m_pParent)->Get_MonsterStatusPtr()->Get_HP() < 1.0f && m_eEFfectDesc.bActive == false)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
