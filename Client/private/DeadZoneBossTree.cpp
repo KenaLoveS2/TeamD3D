@@ -4,7 +4,8 @@
 
 #include "ControlRoom.h"
 #include "HunterArrow.h"
-
+#include "E_Warrior_FireSwipe.h"
+#include "Monster.h"
 CDeadZoneBossTree::CDeadZoneBossTree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
 {
@@ -41,10 +42,23 @@ HRESULT CDeadZoneBossTree::Late_Initialize(void* pArg)
 	_float3 vPos;
 	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
-	_float3 vSize = _float3(1.49f, 14.44f, 1.52f);
+	_float3 vSize = _float3(1.f,1.f,1.f);
 
-	vPos.x += 0.22f;
-	vPos.y += 14.38f;
+	if(m_EnviromentDesc.iRoomIndex ==3 )
+	{
+		vSize = _float3(1.49f, 14.44f, 1.52f);
+		vPos.x += 0.22f;
+		vPos.y += 14.38f;
+	}
+	else if(m_EnviromentDesc.szModelTag  == L"Prototype_Component_Model_BossDissolveGod_Rock02")
+	{
+		vSize = _float3(1.26f, 1.5f, 1.51f);
+	}
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_BossDissolveGod_Rock01")
+	{
+		vSize = _float3(1.f, 1.5f, 1.1f);
+	}
+
 	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
 	// RoomIndex 2번은 현재 사이즈 포스가 맞음
 	// 1번만 조정하면됌
@@ -67,10 +81,14 @@ HRESULT CDeadZoneBossTree::Late_Initialize(void* pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PULSE_PLATE));
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Static(m_szCloneObjectTag);
 
+#ifdef FOR_MAP_GIMMICK
+
+#else
 	m_pRendererCom->Set_PhysXRender(true);
+#endif
 	return S_OK;
 }
 
@@ -216,7 +234,7 @@ void CDeadZoneBossTree::ImGui_PhysXValueProperty()
 	//vTestColor1 = Set_ColorValue();
 	//vTestColor2 = Set_ColorValue_1();
 
-	ImGui::End();
+	//ImGui::End();
 
 
 }
@@ -225,13 +243,31 @@ _int CDeadZoneBossTree::Execute_Collision(CGameObject* pTarget, _float3 vCollisi
 {
 	if (pTarget == nullptr)
 		return 0;
+	if(m_EnviromentDesc.iRoomIndex ==4)
+	{
+		if (iColliderIndex == TRIGGER_DUMMY || pTarget == nullptr) return 0;
+		_bool bRealAttack = false;
 
+		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+		{
+			/*보스 강한 어택시*/
+			if (!m_bCollOnce)
+			{
+				m_bDissolve = true;
+				m_fDissolveTime = 0.f;
+				m_bBossAttackOn = true;
+				m_bCollOnce = true;
+				return 0;
+			}
+		}
+		return 0;
+	}
 	/*To DO*/
 	CHunterArrow* pArrow = dynamic_cast<CHunterArrow*>(pTarget);
 
 	if (pArrow == nullptr)
 		return 0;
-
+	
 	if(pArrow->Get_FierType() == CHunterArrow::SINGLE)
 	{
 		return 0;
@@ -246,6 +282,25 @@ _int CDeadZoneBossTree::Execute_Collision(CGameObject* pTarget, _float3 vCollisi
 		m_bCollOnce = true;
 	}
 
+
+	return 0;
+}
+
+_int CDeadZoneBossTree::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	CE_Warrior_FireSwipe* pWarriorComboAttack = dynamic_cast<CE_Warrior_FireSwipe*>(pTarget);
+
+
+	if (pTarget == nullptr || pWarriorComboAttack == nullptr)
+		return 0;
+
+	if (!m_bCollOnce)
+	{
+		m_bDissolve = true;
+		m_fDissolveTime = 0.f;
+		m_bBossAttackOn = true;
+		m_bCollOnce = true;
+	}
 
 	return 0;
 }

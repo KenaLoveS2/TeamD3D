@@ -31,8 +31,9 @@ public:
 	virtual HRESULT		RenderShadow() override;
 
 	virtual void		ImGui_PhysXValueProperty() override;
-	virtual _int		Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex);
 
+	virtual _int		Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex);
+	virtual _int				Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 	_float4				Set_ColorValue();
 	_float4				Set_ColorValue_1();
 
