@@ -182,7 +182,7 @@ void CBossShaman::Tick(_float fTimeDelta)
 	Update_Collider(fTimeDelta);
 	Tick_Effects(fTimeDelta);
 
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Tick(fTimeDelta);
@@ -211,9 +211,8 @@ void CBossShaman::Late_Tick(_float fTimeDelta)
 HRESULT CBossShaman::Render()
 {
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
-
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
-
+	
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		// Cloth UV2
