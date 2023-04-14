@@ -31,15 +31,16 @@ void CGimmick_EnviObj::Set_Gimmick_Active(_int iRoomIndex, _bool bGimmick_Active
 		/* 사운드 넣기*/
 		if(iRoomIndex == 1)  // 그냥 땅 올라오기
 		{
-			//CGameInstance::GetInstance()->Play_Sound();
+			//CGameInstance::GetInstance()->Play_Sound(L"SFX_Bomb_Door_Open_1.ogg", 0.5f, false);
+			// 소리 다시찾기
 		}
 		else if(iRoomIndex ==2)  // 물땅올라오기
 		{
-			
+			CGameInstance::GetInstance()->Play_Sound(L"SFX_Waterfall_Platform_Rise_Water.ogg", 0.5f, false);
 		}
 		else if(iRoomIndex ==4 )  // 문 올라가는 소리
 		{
-			
+			CGameInstance::GetInstance()->Play_Sound(L"event_cave_door_base.ogg", 0.5f, false);
 		}
 	}
 
