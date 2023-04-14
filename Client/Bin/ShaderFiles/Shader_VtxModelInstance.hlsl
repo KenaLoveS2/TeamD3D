@@ -174,7 +174,7 @@ VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
 
 
 
-   float moveDistance = g_TimeDelta * 1.f ;
+   float moveDistance = g_TimeDelta *5.f* 1.f ;
  
    float3 vDir;
    if(g_iSign == 1)

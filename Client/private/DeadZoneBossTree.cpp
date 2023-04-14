@@ -38,9 +38,39 @@ HRESULT CDeadZoneBossTree::Initialize(void* pArg)
 HRESULT CDeadZoneBossTree::Late_Initialize(void* pArg)
 {
 	/*To.DO 콜라이더 만들기*/
-	
+	_float3 vPos;
+	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
-	
+	_float3 vSize = _float3(1.49f, 14.44f, 1.52f);
+
+	vPos.x += 0.22f;
+	vPos.y += 14.38f;
+	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+	// RoomIndex 2번은 현재 사이즈 포스가 맞음
+	// 1번만 조정하면됌
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	BoxDesc.pActortag = m_szCloneObjectTag;
+	BoxDesc.eType = BOX_STATIC;		// 원래는 박스 스태틱으로 만들어야함
+	BoxDesc.vPos = vPos;
+	BoxDesc.vSize = vSize;
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = false;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDensity = 0.2f;
+	BoxDesc.fMass = 150.f;
+	BoxDesc.fLinearDamping = 10.f;
+	BoxDesc.fAngularDamping = 5.f;
+	BoxDesc.bCCD = false;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
+
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PULSE_PLATE));
+	m_pTransformCom->Connect_PxActor_Static(m_szCloneObjectTag);
+
+	m_pRendererCom->Set_PhysXRender(true);
 	return S_OK;
 }
 
@@ -148,6 +178,30 @@ HRESULT CDeadZoneBossTree::RenderShadow()
 
 	return S_OK;
 }
+
+void CDeadZoneBossTree::ImGui_PhysXValueProperty()
+{
+	CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
+
+	_float4 vCurPos = m_pTransformCom->Get_Position();
+
+
+	static _float fChagePos[3] = { 0.f,0.f,0.f };
+	ImGui::DragFloat3("PX_Pos", fChagePos, 0.01f, 0.1f, 100.0f);
+
+	vCurPos.x += fChagePos[0];
+	vCurPos.y += fChagePos[1];
+	vCurPos.z += fChagePos[2];
+
+	PxRigidActor * pActor = CPhysX_Manager::GetInstance()->Find_Actor(m_szCloneObjectTag);
+
+	CPhysX_Manager::GetInstance()->Set_ActorPosition(pActor, CUtile::Float_4to3(vCurPos));
+
+	
+	
+	
+}
+
 
 HRESULT CDeadZoneBossTree::SetUp_Components()
 {

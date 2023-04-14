@@ -30,7 +30,7 @@ public:
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
 
-
+	virtual void		ImGui_PhysXValueProperty() override;
 
 private:
 	CModel* m_pModelCom = nullptr;

@@ -135,7 +135,7 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	
-	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
@@ -150,7 +150,7 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_GimmickUp.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Boss_Attack_Geo.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "DeadZoneReal.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "MiniGameMap.json");
 
