@@ -384,6 +384,11 @@ _int CE_KenaPulse::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTrigge
         {
             int a = 0;
         }
+
+        if (iColliderIndex == (_int)COL_BOSS_SWIPECHARGE)
+        {
+            int a = 0;
+        }
     }
 
     return 0;

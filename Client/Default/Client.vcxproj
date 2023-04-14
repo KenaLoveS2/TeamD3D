@@ -498,6 +498,7 @@
     <ClInclude Include="..\public\UI_RotIcon.h" />
     <ClInclude Include="..\public\UI_Weakpoint.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
+    <ClInclude Include="..\public\Village_Trigger.h" />
     <ClInclude Include="..\Public\Wall.h" />
     <ClInclude Include="..\public\WaterPlane.h" />
     <ClInclude Include="..\public\WoodKnight.h" />
@@ -824,6 +825,7 @@
     <ClCompile Include="..\private\UI_RotIcon.cpp" />
     <ClCompile Include="..\private\UI_Weakpoint.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />
+    <ClCompile Include="..\private\Village_Trigger.cpp" />
     <ClCompile Include="..\Private\Wall.cpp" />
     <ClCompile Include="..\private\WaterPlane.cpp" />
     <ClCompile Include="..\private\WoodKnight.cpp" />
