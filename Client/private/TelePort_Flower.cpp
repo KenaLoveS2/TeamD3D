@@ -233,11 +233,8 @@ CTelePort_Flower::ANIMATION CTelePort_Flower::Check_State()
 				m_pTransformCom->LookAt(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION));
 				m_fLerpRatio = 0.f;
 
-				_int iRandomSound = rand() % 2;
-				if(iRandomSound == 1)
-					CGameInstance::GetInstance()->Play_Sound(L"SFX_Flower_Shrine_Cleanse_1.ogg", 0.5f, false);
-				else
-					CGameInstance::GetInstance()->Play_Sound(L"SFX_Flower_Shrine_Cleanse.ogg", 0.5f, false);
+			
+				CGameInstance::GetInstance()->Play_Sound(L"SFX_Flower_Shrine_Cleanse.ogg", 1.f, false);
 			}
 
 			break;
@@ -298,6 +295,7 @@ CTelePort_Flower::ANIMATION CTelePort_Flower::Check_State()
 				m_pKenaTransform->LookAt_NoUpDown(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 				m_pTransformCom->LookAt(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION));
 				m_fLerpRatio = 0.f;
+				CGameInstance::GetInstance()->Play_Sound(L"SFX_Flower_Shrine_Cleanse.ogg", 1.f, false);
 			}
 
 			break;

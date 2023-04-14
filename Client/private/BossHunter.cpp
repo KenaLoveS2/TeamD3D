@@ -13,6 +13,7 @@
 #include "E_Swipes_Charged.h"
 #include "Rot.h"
 #include "Light.h"
+#include "BGM_Manager.h"
 
 CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -93,7 +94,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(Create_Trail(), E_FAIL);
 
-	if (g_LEVEL == LEVEL_TESTPLAY)
+	if (g_LEVEL == (_int)LEVEL_TESTPLAY)
 	{
 		CGameObject* p_game_object = nullptr;
 		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", L"Hunter_Rot", nullptr, &p_game_object);
@@ -570,6 +571,8 @@ HRESULT CBossHunter::SetUp_State()
 	.OnStart([this]()
 	{
 		BossFight_Start();
+
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_BOSS_BATTLE_HUNTER);
 	})
 	.AddTransition("CINEMA to READY_SPAWN", "READY_SPAWN")
 	.Predicator([this]()
@@ -712,7 +715,7 @@ HRESULT CBossHunter::SetUp_State()
 	.OnStart([this]()
 	{
 	m_iDodgeAnimIndex++;
-	m_iDodgeAnimIndex = m_iDodgeAnimIndex > DODGE_FAR_RIGHT ? DODGE_DOWN : m_iDodgeAnimIndex;
+	m_iDodgeAnimIndex = m_iDodgeAnimIndex > (_uint)DODGE_FAR_RIGHT ? (_uint)DODGE_DOWN : m_iDodgeAnimIndex;
 	ResetAndSet_Animation(m_iDodgeAnimIndex);
 	})
 	.AddTransition("To DYING", "DYING_DOWN")
@@ -1320,6 +1323,8 @@ HRESULT CBossHunter::SetUp_State()
 	{
 		m_bDissolve = true;
 		m_fEndTime = 0.f;
+
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_IDLE);
 	})
 	.Tick([this](_float fTimeDelta)
 	{
@@ -2015,8 +2020,8 @@ void CBossHunter::RoarEffect_On(_bool bIsInit, _float fTimeDelta)
 
 	m_vecEffects[iIndex]->Activate_Scaling(vPos, { 10.f, 10.f });
 	iIndex++;
-	if (iIndex > EFFECT_ROAR_TEXTURE4)
-		iIndex = EFFECT_ROAR_TEXTURE1;
+	if (iIndex > (_int)EFFECT_ROAR_TEXTURE4)
+		iIndex = (_int)EFFECT_ROAR_TEXTURE1;
 }
 
 void CBossHunter::HitEffect_On(_bool bIsInit, _float fTimeDelta)

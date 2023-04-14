@@ -68,7 +68,7 @@ HRESULT CBowTarget_Trigger::Late_Initialize(void* pArg)
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.isTrigger = true;
 
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_CHEST));
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_TRIGGER));
 
 	return S_OK;
 }
@@ -126,6 +126,7 @@ CBowTarget_Trigger* CBowTarget_Trigger::Create(ID3D11Device* pDevice, ID3D11Devi
 		MSG_BOX("Failed to Created : CBowTarget_Trigger");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
@@ -138,6 +139,7 @@ CGameObject* CBowTarget_Trigger::Clone(void* pArg)
 		MSG_BOX("Failed to Cloned : CBowTarget_Trigger");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 

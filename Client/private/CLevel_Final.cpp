@@ -88,11 +88,11 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 	}
 
-	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
-	//{
-	//	MSG_BOX("Layer_NPC");
-	//	return E_FAIL;
-	//}
+	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	{
+		MSG_BOX("Layer_NPC");
+		return E_FAIL;
+	}*/
 
 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 	{
@@ -485,6 +485,10 @@ HRESULT CLevel_Final::Ready_Layer_ControlRoom(const _tchar* pLayerTag)
 HRESULT CLevel_Final::Ready_Layer_Trigger(const _tchar* pLayerTag)
 {
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_FINAL, pLayerTag, L"Prototype_GameObject_BowTarget_Trigger", L"BowTarget_Trigger"), E_FAIL);
+
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_FINAL, pLayerTag, L"Prototype_GameObject_Village_Trigger", L"IntoVillage_Trigger"), E_FAIL);
+
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_GameObject(LEVEL_FINAL, pLayerTag, L"Prototype_GameObject_Village_Trigger", L"FromVillage_Trigger"), E_FAIL);
 
 	return S_OK;
 }
