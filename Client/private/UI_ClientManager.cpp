@@ -93,6 +93,8 @@
 #include "UI_FocusMonster.h"
 #include "UI_FocusNPC.h"
 #include "UI_FocusMonsterParts.h"
+#include "UI_MousePointer.h"
+#include "UI_Weakpoint.h"
 
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
@@ -606,6 +608,12 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/10. WorldUI/NPCCarrot2.png")))))
 		return E_FAIL;
 
+	// WeakPoint
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_WeakPoint"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/10. WorldUI/cursor.png")))))
+		return E_FAIL;
+
+
 	/********************************************/
 	/*				For. SkillIcons				*/
 	/********************************************/
@@ -1087,6 +1095,12 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_FocusNPC"), CUI_FocusNPC::Create(pDevice, pContext))))
 		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Weakpoint"), CUI_Weakpoint::Create(pDevice, pContext))))
+		return E_FAIL;
+	// MousePointer
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_MousePointer"), CUI_MousePointer::Create(pDevice, pContext))))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

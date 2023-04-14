@@ -70,8 +70,8 @@ HRESULT CLevel_GamePlay::Initialize()
  	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
  		return E_FAIL;
 
-  	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-  	//	return E_FAIL;
+  	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+  		return E_FAIL;
 
 	// Ready_Thread_CloneObject(TEXT(""));
 	
@@ -451,8 +451,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_RotEater"), L"RotEater_0", nullptr, &pGameObject))) return E_FAIL;
 	// if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
 	
-	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sticks01"), L"Sticks01_0", nullptr, &pGameObject))) return E_FAIL;
-	// if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
+	 if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sticks01"), L"Sticks01_0", nullptr, &pGameObject))) return E_FAIL;
+	 if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
 	
 	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_VillageGuard"), L"VillageGuard_0", nullptr, &pGameObject))) return E_FAIL;
 	// if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
@@ -696,10 +696,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _tchar * pLayerTag)
 			CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)i, pCanvas);
 	}
 
-	
+
+	/* Mouse Pinter */
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_MousePointer", TEXT("Prototype_GameObject_UI_MousePointer"),TEXT("Clone_MousePointer"))))
+		return E_FAIL;
+
+
 	/* 3D UI */
 	//if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_3DUI", TEXT("Prototype_GameObject_Effect_Particle_Base"), TEXT("Clone_EffectParticleBase"), "Effect_Haze_For_Test" )))
 	//	return E_FAIL;
+
+
 
 
 	RELEASE_INSTANCE(CGameInstance);

@@ -607,6 +607,9 @@
     <Filter Include="02.GameObjects\UI\05. Real Object\WorldTrigger">
       <UniqueIdentifier>{08644843-7444-47a4-941c-be47c23afbe3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object\MousePointer">
+      <UniqueIdentifier>{190f705d-b8e9-42de-afc1-10ca7690d7a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1619,6 +1622,9 @@
     <ClInclude Include="..\public\WorldTrigger.h">
       <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_MousePointer.h">
+      <Filter>02.GameObjects\UI\05. Real Object\MousePointer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2610,6 +2616,9 @@
     </ClCompile>
     <ClCompile Include="..\private\WorldTrigger.cpp">
       <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_MousePointer.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\MousePointer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

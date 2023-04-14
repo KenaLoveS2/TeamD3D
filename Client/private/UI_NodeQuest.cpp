@@ -15,6 +15,8 @@ CUI_NodeQuest::CUI_NodeQuest(ID3D11Device * pDevice, ID3D11DeviceContext * pCont
 	, m_fSpeed(0.f)
 	, m_fAlpha(0.f)
 	, m_bOpening(false)
+	, m_bClear(false)
+	, m_iReward(10)
 {
 }
 
@@ -26,6 +28,8 @@ CUI_NodeQuest::CUI_NodeQuest(const CUI_NodeQuest & rhs)
 	, m_fSpeed(0.f)
 	, m_fAlpha(0.f)
 	, m_bOpening(false)
+	, m_bClear(false)
+	, m_iReward(10)
 {
 }
 
@@ -42,6 +46,10 @@ void CUI_NodeQuest::Set_QuestString(wstring str)
 	//	i++;
 	//}
 	//m_szQuest[i] = '\0';
+}
+
+void CUI_NodeQuest::Set_Clear()
+{
 }
 
 HRESULT CUI_NodeQuest::Initialize_Prototype()
@@ -83,13 +91,27 @@ void CUI_NodeQuest::Tick(_float fTimeDelta)
 		{
 			m_fAlpha += m_fSpeed * m_fTimeAcc;
 			//m_matLocal._11 += m_fSpeed * m_fTimeAcc;
-			Set_LocalMatrix(m_matLocal);
+			//Set_LocalMatrix(m_matLocal);
 		}
 		else
 		{
 			m_bOpening = true;
 			m_fAlpha = 1.f;
+			m_fTimeAcc = 0.f;
 		}
+	}
+
+	if (m_bOpening && m_bClear)
+	{
+		//m_fSpeed = 0.3f;
+		//m_fTimeAcc += fTimeDelta;
+		//if (m_fAlpha <= 0.f)
+		//	m_bActive = false;
+		//else
+		//{
+		//	m_fAlpha -= m_fSpeed * m_fTimeAcc;
+		//	m_bClear = false;
+		//}
 	}
 
 	__super::Tick(fTimeDelta);
@@ -125,7 +147,7 @@ HRESULT CUI_NodeQuest::Render()
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 25.f, g_iWinSizeY*0.5f - vPos.y -20.f};
 
-	CGameInstance::GetInstance()->Render_Font(TEXT("Font_Basic0"), m_szQuest,
+	CGameInstance::GetInstance()->Render_Font(TEXT("Font_Jangmi0"), m_szQuest,
 		vNewPos /* position */,
 		0.f, _float2(1.f, 1.f)/* size */, 
 		XMVectorSet(1.f, 1.f, 1.f, m_fAlpha)/* color */);

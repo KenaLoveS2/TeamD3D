@@ -46,6 +46,7 @@ private:
 	_bool					m_bStart;
 	_float					m_fSpeed;
 	_float3					m_vStartScale;
+	_float4					m_vColor;
 
 public:
 	static	CUI_FocusMonsterParts*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
