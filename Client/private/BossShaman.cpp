@@ -899,9 +899,9 @@ HRESULT CBossShaman::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{	
 		_float4 vTrapPos = m_pShamanTapHex->Get_JointBonePos();
-		vTrapPos.y = m_fTrapHeightY;
+		vTrapPos.y = m_fTrapHeightY + m_pShamanTapHex->Get_TransformCom()->Get_PositionY();
 		m_pTransformCom->Set_Position(vTrapPos);
-
+		
 		_float4 vLookPos = m_pShamanTapHex->Get_FakeShamanPos(m_iFakeShamanLookIndex);
 		m_pTransformCom->LookAt_NoUpDown(vLookPos);
 	})

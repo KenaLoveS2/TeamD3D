@@ -1041,10 +1041,6 @@ HRESULT CRenderer::Render_PostProcess()
 		pLDRDest = pLDRTmp;
 		PostProcess_MotionBlur();
 	}
-	else
-	{
-		m_vLightShaftValue = _float4(0.35f, 0.7f, 0.4f, 1.f);
-	}
 
 	/***4***/
 	if (m_bFlare)

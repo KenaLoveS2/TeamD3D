@@ -26,6 +26,7 @@ void CUI_NodeBossHP::Set_Title(wstring wstrName)
 
 	m_szTitle = CUtile::Create_String(wstrName.c_str());
 
+	static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Set_InitState(1.f);
 	m_pEffect->Activate_BufferUpdate();
 }
 

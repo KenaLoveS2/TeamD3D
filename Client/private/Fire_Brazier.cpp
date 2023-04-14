@@ -65,11 +65,11 @@ void CFire_Brazier::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	if (m_bPulseTest)
-		m_fEmissivePulse += CUtile::Get_RandomFloat(fTimeDelta * 0.3f, fTimeDelta * 0.5f);
+		m_fEmissivePulse += CUtile::Get_RandomFloat(fTimeDelta * 0.5f, fTimeDelta);
 
 	if (!m_bPulseTest)
 	{
-		m_fEmissivePulse -= CUtile::Get_RandomFloat(fTimeDelta * 0.3f, fTimeDelta * 0.5f);
+		m_fEmissivePulse -= CUtile::Get_RandomFloat(fTimeDelta * 0.5f, fTimeDelta);
 		if (m_fEmissivePulse <= 0.f)
 		{
 			m_fEmissivePulse = 0.f;

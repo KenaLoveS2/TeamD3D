@@ -45,6 +45,8 @@ public:
 	void			Set_MotionBlur(_bool bBlur) { m_bMotionBlur = bBlur; }
 	void			Set_Fog(bool bFog) { m_bFog = bFog; }
 	void			Set_FogValue(_float4 vColor, _float fFogRange) { m_vFogColor = vColor, m_fFogRange = fFogRange; }
+	void			Set_LightShaft(bool bLightShaft) { m_bLightShaft = bLightShaft; }
+	void			Set_LightShaftValue(_float4 vValue) { m_vLightShaftValue = vValue; }
 
 #ifdef _DEBUG
 	HRESULT Add_DebugRenderGroup(class CComponent* pComponent);

@@ -145,7 +145,7 @@ private:
 
 	_tchar* m_pCopySoundKey[COPY_SOUND_KEY_END] = { nullptr, };
 	
-	_float4 m_vTargetOffset = { 0.f, 0.1f, 0.f, 0.f };
+	_float4 m_vTargetOffset = { 0.f, 0.5f, 0.f, 0.f };
 	_float4 m_vSingleShotTargetPosTable[SINGLE_SHOT_FRIEND_COUNT * 2];
 	
 
