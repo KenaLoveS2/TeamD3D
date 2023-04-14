@@ -1,19 +1,19 @@
 #include "stdafx.h"
-#include "..\public\E_ShamanTrail.h"
+#include "..\public\E_ShamanHeadTrail.h"
 #include "GameInstance.h"
-#include "E_RectTrail.h"
+#include "BossShaman.h"
 
-CE_ShamanTrail::CE_ShamanTrail(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CE_ShamanHeadTrail::CE_ShamanHeadTrail(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Trail(pDevice, pContext)
 {
 }
 
-CE_ShamanTrail::CE_ShamanTrail(const CE_ShamanTrail & rhs)
+CE_ShamanHeadTrail::CE_ShamanHeadTrail(const CE_ShamanHeadTrail & rhs)
 	: CEffect_Trail(rhs)
 {
 }
 
-HRESULT CE_ShamanTrail::Initialize_Prototype(const _tchar * pFilePath)
+HRESULT CE_ShamanHeadTrail::Initialize_Prototype(const _tchar * pFilePath)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -21,7 +21,7 @@ HRESULT CE_ShamanTrail::Initialize_Prototype(const _tchar * pFilePath)
 	return S_OK;
 }
 
-HRESULT CE_ShamanTrail::Initialize(void * pArg)
+HRESULT CE_ShamanHeadTrail::Initialize(void * pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
@@ -34,12 +34,11 @@ HRESULT CE_ShamanTrail::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_MovementTrail(), E_FAIL);
 
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
-	m_eEFfectDesc.fWidth = 3.0f; 
-	m_eEFfectDesc.fLife = 0.7f; 
+	m_eEFfectDesc.fWidth = 0.1f; 
+	m_eEFfectDesc.fLife = 1.5f; 
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
 	m_eEFfectDesc.fSegmentSize = 0.001f;
@@ -50,51 +49,50 @@ HRESULT CE_ShamanTrail::Initialize(void * pArg)
 	return S_OK;
 }
 
-HRESULT CE_ShamanTrail::Late_Initialize(void * pArg)
+HRESULT CE_ShamanHeadTrail::Late_Initialize(void * pArg)
 {
+	m_pShamanModel = (CModel*)m_pParent->Find_Component(L"Com_Model");
+
 	return S_OK;
 }
 
-void CE_ShamanTrail::Tick(_float fTimeDelta)
+void CE_ShamanHeadTrail::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	m_pMovementTrail->Set_Active(m_eEFfectDesc.bActive);
-
-	if (m_pMovementTrail) m_pMovementTrail->Tick(fTimeDelta);
-	if (m_eEFfectDesc.bActive == true)
-		Update_Trail(); /* For.MovementTrail Update */
-}
-
-void CE_ShamanTrail::Late_Tick(_float fTimeDelta)
-{
-	__super::Late_Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
-	if (m_pMovementTrail) m_pMovementTrail->Late_Tick(fTimeDelta);
+	m_eEFfectDesc.fLife = 0.6f;
+
+	Update_Trail(); 
 }
 
-HRESULT CE_ShamanTrail::Render()
+void CE_ShamanHeadTrail::Late_Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return E_FAIL;
+	if (m_pParent && dynamic_cast<CBossShaman*>(m_pParent)->Get_MonsterStatusPtr()->Get_HP() < 1.0f)
+		return;
 
+	__super::Late_Tick(fTimeDelta);
+}
+
+HRESULT CE_ShamanHeadTrail::Render()
+{
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
-	m_pShaderCom->Begin(0);
+	m_pShaderCom->Begin(m_eEFfectDesc.iPassCnt);
 	m_pVITrailBufferCom->Render();
 
 	return S_OK;
 }
 
-void CE_ShamanTrail::Reset()
+void CE_ShamanHeadTrail::Reset()
 {
 	m_eEFfectDesc.bActive = false;
 	m_fTimeDelta = 0.0f;
 	ResetInfo();
 }
 
-HRESULT CE_ShamanTrail::SetUp_ShaderResources()
+HRESULT CE_ShamanHeadTrail::SetUp_ShaderResources()
 {
 	if (m_pShaderCom == nullptr)
 		return E_FAIL;
@@ -108,7 +106,7 @@ HRESULT CE_ShamanTrail::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CE_ShamanTrail::SetUp_Components()
+HRESULT CE_ShamanHeadTrail::SetUp_Components()
 {	
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_flowTexture", (CComponent**)&m_pTrailflowTexture, this), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, TEXT("Prototype_Component_Texture_TrailType"), L"Com_typeTexture", (CComponent**)&m_pTrailTypeTexture, this), E_FAIL);
@@ -125,25 +123,18 @@ HRESULT CE_ShamanTrail::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CE_ShamanTrail::SetUp_MovementTrail()
+void CE_ShamanHeadTrail::Update_Trail()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (m_pParent == nullptr)
+		return;
 
-	m_pMovementTrail = dynamic_cast<CE_RectTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", L"S_MovementParticle"));
-	NULL_CHECK_RETURN(m_pMovementTrail, E_FAIL);
-	m_pMovementTrail->Set_Parent(this);
-	m_pMovementTrail->SetUp_Option(CE_RectTrail::OBJ_B_SHAMAN);
-	m_pMovementTrail->Set_TexRandomPrint();
-
-	return S_OK;
+	_matrix Socketmatrix = m_pShamanBone->Get_CombindMatrix() * m_pShamanModel->Get_PivotMatrix() * m_pParent->Get_WorldMatrix();
+	//Socketmatrix.r[3] += m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * m_fRange;
+	m_pTransformCom->Set_WorldMatrix(Socketmatrix);
+	Trail_InputPos(Socketmatrix.r[3]);
 }
 
-void CE_ShamanTrail::Update_Trail()
-{
-	m_pMovementTrail->Trail_InputRandomPos(m_pTransformCom->Get_Position());
-}
-
-void CE_ShamanTrail::ToolTrail(const char* ToolTag)
+void CE_ShamanHeadTrail::ToolTrail(const char* ToolTag)
 {
 	ImGui::Begin(ToolTag);
 
@@ -157,6 +148,7 @@ void CE_ShamanTrail::ToolTrail(const char* ToolTag)
 	ImGui::InputFloat("SegmentSize", &m_eEFfectDesc.fSegmentSize);
 	ImGui::InputInt("Flow", (_int*)&m_iTrailFlowTexture);
 	ImGui::InputInt("Type", (_int*)&m_iTrailTypeTexture);
+	ImGui::InputInt("Pass", &m_eEFfectDesc.iPassCnt);
 
 	static bool alpha_preview = true;
 	static bool alpha_half_preview = false;
@@ -178,36 +170,34 @@ void CE_ShamanTrail::ToolTrail(const char* ToolTag)
 	ImGui::End();
 }
 
-CE_ShamanTrail * CE_ShamanTrail::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)
+CE_ShamanHeadTrail * CE_ShamanHeadTrail::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)
 {
-	CE_ShamanTrail * pInstance = new CE_ShamanTrail(pDevice, pContext);
+	CE_ShamanHeadTrail * pInstance = new CE_ShamanHeadTrail(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pFilePath)))
 	{
-		MSG_BOX("CE_ShamanTrail Create Failed");
+		MSG_BOX("CE_ShamanHeadTrail Create Failed");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CE_ShamanTrail::Clone(void * pArg)
+CGameObject * CE_ShamanHeadTrail::Clone(void * pArg)
 {
-	CE_ShamanTrail * pInstance = new CE_ShamanTrail(*this);
+	CE_ShamanHeadTrail * pInstance = new CE_ShamanHeadTrail(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("CE_ShamanTrail Clone Failed");
+		MSG_BOX("CE_ShamanHeadTrail Clone Failed");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CE_ShamanTrail::Free()
+void CE_ShamanHeadTrail::Free()
 {
 	__super::Free();
 
 	Safe_Release(m_pTrailflowTexture);
 	Safe_Release(m_pTrailTypeTexture);
-
-	Safe_Release(m_pMovementTrail);
 }

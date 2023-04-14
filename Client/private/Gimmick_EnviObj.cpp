@@ -433,4 +433,6 @@ void CGimmick_EnviObj::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
+
+	Safe_Release(m_pGimmickObjEffect);
 }

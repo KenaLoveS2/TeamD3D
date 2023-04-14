@@ -209,6 +209,13 @@
 #include "E_FireBrazier.h"
 #include "E_P_EnvironmentDust.h"
 #include "E_P_Rain.h"
+#include "E_P_DeadZoneDust.h"
+#include "E_ShamanHeadTrail.h"
+#include "E_ShamanWeaponBall.h"
+#include "E_ShamanElectric.h"
+#include "E_WarriorWeaponAcc.h"
+#include "E_P_WarriorBody.h"
+#include "E_P_DeadZone_SmallPlace.h"
 /* ~Effects */
 
 /* Components*/
@@ -231,10 +238,6 @@ unsigned int	g_LEVEL = 0;
 #include <fstream>
 #include "BowTarget_Trigger.h"
 #include "Respawn_Trigger.h"
-
-
-
-
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -2806,6 +2809,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
  	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot_P"), CE_P_Rot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_Rot.json"))))
 		return E_FAIL;
 
+
 #pragma endregion Effect_Object
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Effects MapObject..."));
@@ -2848,6 +2852,34 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_P_Rain */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_P_Rain"), CE_P_Rain::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_Rain.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_P_DeadZoneDust */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_P_DeadZoneDust"), CE_P_DeadZoneDust::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_BossStage.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanHeadTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanHeadTrail"), CE_ShamanHeadTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanWeaponBall */ 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanWeaponBall"), CE_ShamanWeaponBall::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_ShamanBall.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanElectric */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanElectric"), CE_ShamanElectric::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Electric.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_WarriorWeaponAcc */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WarriorWeaponAcc"), CE_WarriorWeaponAcc::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_WarriorWeapon.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_WarriorBodyAcc */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WarriorBodyAcc"), CE_P_WarriorBody::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_WarriorAura.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_DeadZoneSmallPlace */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneSmallPlace"), CE_P_DeadZone_SmallPlace::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_DeadZone_SmallRange.json"))))
 		return E_FAIL;
 
 #pragma endregion MapObject

@@ -282,7 +282,7 @@ PS_OUT PS_MAIN_SHAMANTRAP(PS_IN In)
 
 	Out.vDiffuse = finalcolor + vEdgeLineTexture;
 	// Out.vDiffuse.a = finalcolor * g_vColor;
-	Out.vDiffuse.a = (finalcolor * g_vColor).a;
+	Out.vDiffuse.a = (finalcolor * g_vColor).r;
 	return Out;
 }//4
 

@@ -33,17 +33,11 @@ HRESULT CE_Chest::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
-	m_eEFfectDesc.bActive = false;
+	m_eEFfectDesc.bActive = true;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 
-	m_pTransformCom->RotationFromNow(m_pTransformCom->Get_State(CTransform::STATE_UP), XMConvertToRadians(180.0f));
-	m_pTransformCom->Set_Scaled(_float3(0.8f, 1.f, 1.f));
-
-	for(auto& pChild : m_vecChild)
-	{
-		pChild->Get_TransformCom()->RotationFromNow(m_pTransformCom->Get_State(CTransform::STATE_UP), XMConvertToRadians(180.0f));
-		pChild->Get_TransformCom()->Set_Scaled(_float3(0.8f, 1.f, 1.f));
-	}
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Parent(nullptr);
 
 	return S_OK;
 }
@@ -61,8 +55,6 @@ void CE_Chest::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	Update_childPosition();
-
 	if (m_fShaderBindTime > 1.f)
 		Reset();
 }
@@ -71,6 +63,26 @@ void CE_Chest::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 		return;
+
+	if (m_pParent)
+	{
+		_matrix  matParent = m_pParent->Get_TransformCom()->Get_WorldMatrix();
+		_matrix  matScaleSet = XMMatrixIdentity();
+		_float4  vScale = m_pTransformCom->Get_Scaled();
+
+		memcpy(&matScaleSet.r[0], &(XMVector3Normalize(matParent.r[0]) * vScale.x), sizeof(_vector));
+		memcpy(&matScaleSet.r[1], &(XMVector3Normalize(matParent.r[1]) * vScale.y), sizeof(_vector));
+		memcpy(&matScaleSet.r[2], &(XMVector3Normalize(matParent.r[2]) * vScale.z), sizeof(_vector));
+		memcpy(&matScaleSet.r[3], &matParent.r[3], sizeof(_vector));
+		matScaleSet.r[3] = XMVectorSetY(matScaleSet.r[3], XMVectorGetY(matScaleSet.r[3]) + 0.6f);
+
+		m_WorldWithParentMatrix = m_InitWorldMatrix * matScaleSet;
+		m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldWithParentMatrix));
+
+		m_pTransformCom->RotationFromNow(m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_UP), XMConvertToRadians(180.0f));
+	}
+
+	Update_childPosition();
 
 	__super::Late_Tick(fTimeDelta);
 }
@@ -113,14 +125,23 @@ void CE_Chest::Update_childPosition()
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(true);
 
-	_vector vPos = m_pParent->Get_TransformCom()->Get_Position();
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + 0.6f);
-	m_pTransformCom->Set_Position(vPos);
+	if (m_pParent) 
+	{
+		_vector vPos = m_pTransformCom->Get_Position();
 
-	_float4 vChildPos0 = vPos + vParentDir * 0.2f;
-	_float4 vChildPos1 = vPos - vParentDir * 0.2f;
-	m_vecChild[CHILD_0]->Set_Position(vChildPos0);
-	m_vecChild[CHILD_1]->Set_Position(vChildPos1);
+		_vector vLook = XMVector3Normalize(m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_LOOK));
+		_float4 vChildPos0 = vPos + vLook * 0.2f;
+		_float4 vChildPos1 = vPos - vLook * 0.2f;
+
+		_float4x4 matWorld;
+		XMStoreFloat4x4(&matWorld, m_pTransformCom->Get_WorldMatrix());
+
+		m_vecChild[CHILD_0]->Set_WorldMatrix(matWorld);
+		m_vecChild[CHILD_1]->Set_WorldMatrix(matWorld);
+
+		m_vecChild[CHILD_0]->Set_Position(vChildPos0);
+		m_vecChild[CHILD_1]->Set_Position(vChildPos1);
+	}
 }
 
 CE_Chest * CE_Chest::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

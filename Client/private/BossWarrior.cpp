@@ -247,7 +247,7 @@ HRESULT CBossWarrior::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_E);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E);
 		}
 		else if(i == 1)
 		{
@@ -255,7 +255,7 @@ HRESULT CBossWarrior::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			//m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_OpacityTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M);
 		}
 	}
 	return S_OK;
@@ -1023,7 +1023,6 @@ HRESULT CBossWarrior::SetUp_State()
 		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
 		pCtrlRoom->Boss_WarriorDeadGimmick();
 
-		// �ó�ķ �ϳ� ������
 		CGameInstance::GetInstance()->Work_Camera(m_pCineCam[1]->Get_ObjectCloneName());
 		m_pCineCam[1]->Play();
 	})
@@ -1124,6 +1123,18 @@ HRESULT CBossWarrior::SetUp_Effects()
 		m_mapEffect.emplace("W_Enrageinto", pEffectBase);
 	}
 
+	// Prototype_GameObject_WarriorWeaponAcc
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorWeaponAcc", L"W_WeaponAcc"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("W_WeaponAcc", pEffectBase);
+
+	// Prototype_GameObject_WarriorBodyAcc
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorBodyAcc", L"W_Body_P"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("W_Body_P", pEffectBase);
+
 	return S_OK;
 }
 
@@ -1135,6 +1146,8 @@ void CBossWarrior::Update_Trail(const char * pBoneTag)
 
 	m_mapEffect["W_Trail"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
 	m_mapEffect["W_MovementParticle"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+	m_mapEffect["W_WeaponAcc"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+
 	if (m_mapEffect["W_Trail"]->Get_Active() == true)
 	{
 		dynamic_cast<CEffect_Trail*>(m_mapEffect["W_Trail"])->Trail_InputPos(matWorldSocket.r[3]);
