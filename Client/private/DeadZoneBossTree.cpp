@@ -43,7 +43,7 @@ HRESULT CDeadZoneBossTree::Initialize(void* pArg)
 
 HRESULT CDeadZoneBossTree::Late_Initialize(void* pArg)
 {
-	/*To.DO ÄÝ¶óÀÌ´õ ¸¸µé±â*/
+	/*To.DO ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	_float3 vPos;
 	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
@@ -65,11 +65,11 @@ HRESULT CDeadZoneBossTree::Late_Initialize(void* pArg)
 	}
 
 	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
-	// RoomIndex 2¹øÀº ÇöÀç »çÀÌÁî Æ÷½º°¡ ¸ÂÀ½
-	// 1¹ø¸¸ Á¶Á¤ÇÏ¸é‰Î
+	// RoomIndex 2ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	BoxDesc.pActortag = m_szCloneObjectTag;
-	BoxDesc.eType = BOX_STATIC;		// ¿ø·¡´Â ¹Ú½º ½ºÅÂÆ½À¸·Î ¸¸µé¾î¾ßÇÔ
+	BoxDesc.eType = BOX_STATIC;		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	BoxDesc.vPos = vPos;
 	BoxDesc.vSize = vSize;
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
@@ -219,33 +219,33 @@ HRESULT CDeadZoneBossTree::RenderShadow()
 
 void CDeadZoneBossTree::ImGui_PhysXValueProperty()
 {
-	CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
+	//CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
 
-	_float4 vCurPos = m_pTransformCom->Get_Position();
-
-
-	static _float fChagePos[3] = { 0.f,0.f,0.f };
-	ImGui::DragFloat3("PX_Pos", fChagePos, 0.01f, 0.1f, 100.0f);
-
-	vCurPos.x += fChagePos[0];
-	vCurPos.y += fChagePos[1];
-	vCurPos.z += fChagePos[2];
-
-	PxRigidActor * pActor = CPhysX_Manager::GetInstance()->Find_Actor(m_szCloneObjectTag);
-
-	CPhysX_Manager::GetInstance()->Set_ActorPosition(pActor, CUtile::Float_4to3(vCurPos));
-
-	if(ImGui::Button("toggle"))
-	{
-		m_bDissolve = !m_bDissolve;
-		m_fDissolveTime = 0.f;
-	}
+	//_float4 vCurPos = m_pTransformCom->Get_Position();
 
 
-	//ImGui::Begin("Dissolve Test");
+	//static _float fChagePos[3] = { 0.f,0.f,0.f };
+	//ImGui::DragFloat3("PX_Pos", fChagePos, 0.01f, 0.1f, 100.0f);
 
-	//ImGui::InputFloat("FirstRatio", &fFirstRatio);
-	//ImGui::InputFloat("SecondRatio", &fSecondRatio);
+	//vCurPos.x += fChagePos[0];
+	//vCurPos.y += fChagePos[1];
+	//vCurPos.z += fChagePos[2];
+
+	//PxRigidActor * pActor = CPhysX_Manager::GetInstance()->Find_Actor(m_szCloneObjectTag);
+
+	//CPhysX_Manager::GetInstance()->Set_ActorPosition(pActor, CUtile::Float_4to3(vCurPos));
+
+	//if(ImGui::Button("toggle"))
+	//{
+	//	m_bDissolve = !m_bDissolve;
+	//	m_fDissolveTime = 0.f;
+	//}
+
+
+	////ImGui::Begin("Dissolve Test");
+
+	////ImGui::InputFloat("FirstRatio", &fFirstRatio);
+	////ImGui::InputFloat("SecondRatio", &fSecondRatio);
 
 	//m_vBaseColor1 = Set_ColorValue();
 	//m_vBaseColor2 = Set_ColorValue_1();
@@ -266,7 +266,7 @@ _int CDeadZoneBossTree::Execute_Collision(CGameObject* pTarget, _float3 vCollisi
 
 		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
 		{
-			/*º¸½º °­ÇÑ ¾îÅÃ½Ã*/
+			/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã½ï¿½*/
 			if (!m_bCollOnce)
 			{
 				m_bDissolve = true;
@@ -291,7 +291,7 @@ _int CDeadZoneBossTree::Execute_Collision(CGameObject* pTarget, _float3 vCollisi
 		return 0;
 	}
 
-	/*º¸½º °­ÇÑ ¾îÅÃ½Ã*/
+	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã½ï¿½*/
 	if (!m_bCollOnce)
 	{
 		m_bDissolve = true;
@@ -374,11 +374,11 @@ HRESULT CDeadZoneBossTree::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	/*³ªÁß¿¡  ·¹º§ ÀÎµ¦½º ¼öÁ¤ÇØ¾ß‰Î*/
+	/*ï¿½ï¿½ï¿½ß¿ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
-	/* For.Com_Model */ 	/*³ªÁß¿¡  ·¹º§ ÀÎµ¦½º ¼öÁ¤ÇØ¾ß‰Î*/
+	/* For.Com_Model */ 	/*ï¿½ï¿½ï¿½ß¿ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½*/
 	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;

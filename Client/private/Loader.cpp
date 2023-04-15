@@ -108,6 +108,7 @@
 #include "Fire_Brazier.h"
 #include "BossShaman_Mask.h"
 #include "Camera_Shaman.h"
+#include "Camera_Photo.h"
 
 /* UI */
 #include "BackGround.h"
@@ -2320,6 +2321,9 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_GameObject_CameraShaman
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraShaman"), CCamera_Shaman::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_CameraPhoto
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraPhoto"), CCamera_Photo::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	return S_OK;
 }

@@ -28,6 +28,7 @@ public:
 	void			Launch_Group(BOWTARGETGROUP* pBowTargetGroup);
 	_bool			Check_CurrentGroup_Launched();
 	_bool			Check_CurrentGroup_Hit();
+	_bool			Check_Group_Hit(const wstring& wstrGroupName);
 	void			Clear_Groups();
 	_bool			Check_Group_Hit(const wstring& wstrGroupName);
 private:
