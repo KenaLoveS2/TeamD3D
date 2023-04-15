@@ -60,7 +60,7 @@ public:
 private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
-	HRESULT					SetUp_ShadowShaderResources();
+	HRESULT					SetUp_ShadowShaderResources()override;
 	HRESULT					Ready_Effect();
 
 public:

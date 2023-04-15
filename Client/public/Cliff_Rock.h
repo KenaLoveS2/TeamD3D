@@ -26,7 +26,6 @@ public:
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
 	virtual void				ImGui_ShaderValueProperty() override;
-
 	virtual HRESULT		RenderCine() override;
 
 private:
@@ -40,7 +39,6 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
 
 public:
 	static  CCliff_Rock*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -90,6 +90,12 @@ HRESULT CEnviromentObj::RenderCine()
 	return S_OK;
 }
 
+HRESULT CEnviromentObj::RenderShadow()
+{
+	__super::RenderShadow();
+	return S_OK;
+}
+
 void CEnviromentObj::Imgui_RenderProperty()
 {
 	ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
@@ -184,6 +190,18 @@ HRESULT CEnviromentObj::SetUp_CineShaderResources()
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_CINEVIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	return S_OK;
+}
+
+HRESULT CEnviromentObj::SetUp_ShadowShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

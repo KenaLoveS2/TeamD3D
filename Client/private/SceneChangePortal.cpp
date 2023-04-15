@@ -44,7 +44,6 @@ HRESULT CSceneChangePortal::Initialize(void* pArg)
 
 HRESULT CSceneChangePortal::Late_Initialize(void* pArg)
 {
-
 	_float3 vPos;
 	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 

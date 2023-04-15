@@ -43,7 +43,7 @@ public:
 
 		HATCART_, 
 
-		INFO_,
+		INFO_, 
 
 		/*Must Be Last ... ! */
 		UI_CONFIRM,

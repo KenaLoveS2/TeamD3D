@@ -101,9 +101,7 @@ void CFrog::Tick(_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(CRY_BIG);
 	}
-
-
-
+	
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
@@ -112,7 +110,10 @@ void CFrog::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CFrog::Render()
@@ -132,12 +133,24 @@ HRESULT CFrog::Render()
 	return S_OK;
 }
 
+HRESULT CFrog::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow())) return E_FAIL;
+	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
+
+	return S_OK;
+}
+
 void CFrog::ImGui_AnimationProperty()
 {
 	//m_pTransformCom->Imgui_RenderProperty_ForJH();
 	//m_pModelCom->Imgui_RenderProperty();
 }
-
 
 HRESULT CFrog::SetUp_Components()
 {
@@ -159,8 +172,6 @@ HRESULT CFrog::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
 		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-
-
 	return S_OK;
 }
 
@@ -181,6 +192,16 @@ HRESULT CFrog::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CFrog::SetUp_ShadowShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
 }
 

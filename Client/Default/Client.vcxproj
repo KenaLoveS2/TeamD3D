@@ -192,6 +192,7 @@
     <ClInclude Include="..\public\BossRock.h" />
     <ClInclude Include="..\public\BossRock_Pool.h" />
     <ClInclude Include="..\public\BossShaman.h" />
+    <ClInclude Include="..\public\BossShaman_Mask.h" />
     <ClInclude Include="..\public\BossWarrior.h" />
     <ClInclude Include="..\public\BossWarrior_Hat.h" />
     <ClInclude Include="..\Public\BowTarget.h" />
@@ -205,6 +206,7 @@
     <ClInclude Include="..\public\CameraForRot.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
+    <ClInclude Include="..\public\Camera_Shaman.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\public\CLevel_Final.h" />
@@ -522,6 +524,7 @@
     <ClCompile Include="..\private\BossRock.cpp" />
     <ClCompile Include="..\private\BossRock_Pool.cpp" />
     <ClCompile Include="..\private\BossShaman.cpp" />
+    <ClCompile Include="..\private\BossShaman_Mask.cpp" />
     <ClCompile Include="..\private\BossWarrior.cpp" />
     <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
     <ClCompile Include="..\Private\BowTarget.cpp" />
@@ -535,6 +538,7 @@
     <ClCompile Include="..\private\CameraForRot.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
+    <ClCompile Include="..\private\Camera_Shaman.cpp" />
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\CLevel_Final.cpp" />

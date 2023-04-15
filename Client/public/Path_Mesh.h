@@ -36,7 +36,7 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
+	HRESULT SetUp_ShadowShaderResources()override;
 
 public:
 	static  CPath_Mesh*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -74,9 +74,9 @@ HRESULT CFakeShaman::Late_Initialize(void* pArg)
 }
 
 void CFakeShaman::Tick(_float fTimeDelta)
-{
-	if (m_fDissolveTime > 1.f) return;
-		
+{		
+	if (m_bInvisivleFlag) return;
+
 	__super::Tick(fTimeDelta);
 
 	_matrix SocketMatrix =
@@ -104,6 +104,7 @@ void CFakeShaman::Tick(_float fTimeDelta)
 	m_pTransformCom->Tick(fTimeDelta);
 
 	m_fDissolveTime += fTimeDelta * m_bDisolve;
+	m_fDissolveTime = m_fDissolveTime >= 1.f ? 1.f : m_fDissolveTime;
 
 	if (m_bSoundFlag == false && m_bDisolve)
 	{
@@ -293,6 +294,9 @@ void CFakeShaman::Clear()
 	m_bDisolve = false;
 	m_fDissolveTime = 0.f;
 	m_bSoundFlag = false;
+	m_bInvisivleFlag = false;
+
+	m_pTransformCom->Set_Position(_float4(0.f, 0.f, 0.f, 1.f));
 }
 
 _int CFakeShaman::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -308,3 +312,10 @@ _int CFakeShaman::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos
 	return 0;
 }
 
+void CFakeShaman::Go_InvisiblePos()
+{
+	m_bInvisivleFlag = true;
+	m_pTransformCom->Set_Position(_float4(-100.f, 0.f, -100.f, 1.f));
+	m_pTransformCom->Update_AllCollider(g_IdentityFloat4x4);
+	m_pTransformCom->Tick(0.f);
+}

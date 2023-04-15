@@ -146,7 +146,8 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 	CGameObject* p_game_object = nullptr;
 	CKena* pKena = nullptr;
 	p_game_object = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-	if (pKena = dynamic_cast<CKena*>(p_game_object))
+	pKena = dynamic_cast<CKena*>(p_game_object);
+	if(pKena != nullptr)
 	{
 		if (pKena->Get_SceneChange())
 		{
@@ -590,6 +591,9 @@ HRESULT CLevel_TestPlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_P_Rain"), L"Rain", nullptr, &pGameObject), E_FAIL);
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_EffectFlower"), L"flower")))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_WorldTrigger"), L"UIWorldTrigger", nullptr)))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

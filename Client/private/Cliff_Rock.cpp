@@ -169,7 +169,7 @@ HRESULT CCliff_Rock::RenderShadow()
 	if (FAILED(__super::RenderShadow()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(__super::SetUp_ShadowShaderResources()))
 		return E_FAIL;
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -287,18 +287,6 @@ HRESULT CCliff_Rock::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
-	RELEASE_INSTANCE(CGameInstance);
-	return S_OK;
-}
-
-HRESULT CCliff_Rock::SetUp_ShadowShaderResources()
-{
-	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);
