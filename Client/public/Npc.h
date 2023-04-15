@@ -53,6 +53,7 @@ public:
 	_bool							DistanceTrigger(_float4 v1, _float4 v2, _float distance);
 	virtual void					AdditiveAnim(_float fTimeDelta);
 	CFSMComponent*		Get_FSM() { return m_pFSM; }
+	_bool							Get_Disappear() { return m_bDeath; }
 
 protected:
 	CRenderer*						m_pRendererCom = nullptr;
@@ -61,6 +62,7 @@ protected:
 	CFSMComponent*			m_pFSM = nullptr;
 	class CKena*					m_pKena = nullptr;
 	_bool								m_bStraight = false;
+	_bool								m_bDeath = false;
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;

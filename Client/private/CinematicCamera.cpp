@@ -116,7 +116,7 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
 	CameraDesc.fNear = 0.2f;
 	CameraDesc.fFar = 500.f;
-	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
+	CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(CCamera::Initialize(&CameraDesc)))
@@ -142,6 +142,8 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 
 void CCinematicCamera::Tick(_float fTimeDelta)
 {
+	if (CGameInstance::GetInstance()->Get_WorkCameraPtr() != this)
+	{
 #ifdef _DEBUG
 		char szName[MAX_PATH] = "";
 		CUtile::WideCharToChar(m_szCloneObjectTag, szName);
@@ -150,6 +152,10 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 		m_pTransformCom->Imgui_RenderProperty();
 		ImGui::End();
 #endif
+	}
+
+	if (m_bPilotMode)
+		PilotMode(fTimeDelta);
 
 	if(!m_pPlayer)
 		m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena")));
@@ -161,12 +167,12 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 
-		if (pGameInstance->Key_Down(DIK_L))
-		{
-			m_pPlayerCam = pGameInstance->Find_Camera(L"PLAYER_CAM");
-			if (m_pPlayerCam)
-				m_pTransformCom->Set_WorldMatrix_float4x4(m_pPlayerCam->Get_TransformCom()->Get_WorldMatrixFloat4x4());
-		}
+	if (pGameInstance->Key_Down(DIK_L))
+	{
+		m_pPlayerCam = pGameInstance->Find_Camera(L"PLAYER_CAM");
+		if (m_pPlayerCam)
+			m_pTransformCom->Set_WorldMatrix_float4x4(m_pPlayerCam->Get_TransformCom()->Get_WorldMatrixFloat4x4());
+	}
 
 	if (m_bPlay &&m_iNumKeyFrames >= 4)
 	{
@@ -312,18 +318,70 @@ void CCinematicCamera::Imgui_RenderProperty()
 {
 	CCamera::Imgui_RenderProperty();
 
-	ImGui::InputFloat("InputTime", &m_fInputTime);
+	static int iType = 0;
 
-	if (ImGui::Button("Add KeyFrame"))
+	ImGui::DragFloat("Speed", &m_fSpeed, 0.01f, 0.1f, 5.f);
+
+	ImGui::RadioButton("Unreal", &iType, 0); ImGui::SameLine(); ImGui::RadioButton("Pilot", &iType, 1);
+	if (iType == 0)
 	{
-		CAMERAKEYFRAME keyFrame;
-		ZeroMemory(&keyFrame, sizeof(CAMERAKEYFRAME));
-		if (m_fInputTime != 0.f)
+		ImGui::InputFloat("InputTime", &m_fInputTime);
+
+		if (ImGui::Button("Add KeyFrame"))
 		{
-			keyFrame.fTime = m_fInputTime + m_keyframes.size() *  0.5f;
-			keyFrame.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			keyFrame.vLookAt = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
-			m_keyframes.push_back(keyFrame);
+			CAMERAKEYFRAME keyFrame;
+			ZeroMemory(&keyFrame, sizeof(CAMERAKEYFRAME));
+			if (m_fInputTime != 0.f)
+			{
+				keyFrame.fTime = m_fInputTime + m_keyframes.size() * 0.5f;
+				keyFrame.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+				keyFrame.vLookAt = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+				m_keyframes.push_back(keyFrame);
+			}
+		}
+	}
+	else if (iType == 1)
+	{
+		ImGui::InputFloat("InputTime", &m_fInputTime);
+
+		if(!m_keyframes.empty())
+			ImGui::Checkbox("PilotMode", &m_bPilotMode);
+
+		if (m_bPilotMode)
+		{
+			CGameInstance::GetInstance()->Work_Camera(m_szCloneObjectTag);
+			if (!m_keyframes.empty())
+			{
+				_float fPosDistance = _float3::Distance(m_keyframes.back().vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+				_float fLookDistance = _float3::Distance(m_keyframes.back().vLookAt, m_pTransformCom->Get_State(CTransform::STATE_LOOK));
+				if (fPosDistance >= 0.3f || fLookDistance >= 0.2f)
+				{
+					CAMERAKEYFRAME keyFrame;
+					ZeroMemory(&keyFrame, sizeof(CAMERAKEYFRAME));
+					keyFrame.fTime = m_fInputTime + m_keyframes.size() * m_fInputTime;
+					keyFrame.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+					keyFrame.vLookAt = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+					m_keyframes.push_back(keyFrame);
+				}
+			}
+		}
+		else
+		{
+			if (m_keyframes.empty())
+			{
+				if (ImGui::Button("Add KeyFrame"))
+				{
+					CAMERAKEYFRAME keyFrame;
+					ZeroMemory(&keyFrame, sizeof(CAMERAKEYFRAME));
+					if (m_fInputTime != 0.f)
+					{
+						keyFrame.fTime = m_fInputTime + m_keyframes.size() * 0.5f;
+						keyFrame.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+						keyFrame.vLookAt = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+						m_keyframes.push_back(keyFrame);
+					}
+				}
+			}
 		}
 	}
 
@@ -359,7 +417,7 @@ void CCinematicCamera::Imgui_RenderProperty()
 			m_bPlay = true;
 			m_bPausePlay = false;
 			CGameInstance::GetInstance()->Work_Camera(m_szCloneObjectTag);
-
+			m_bPilotMode = false;
 			{
 				/* Call CinemaUI */
 				CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
@@ -406,12 +464,24 @@ void CCinematicCamera::Imgui_RenderProperty()
 			float fPos[3] = { m_keyframes[iSelectKeyFrame].vPos.x , m_keyframes[iSelectKeyFrame].vPos.y,m_keyframes[iSelectKeyFrame].vPos.z };
 			ImGui::DragFloat3("KFPos", fPos, 0.01f, -1000.f, 1500.f);
 			m_keyframes[iSelectKeyFrame].vPos = _float3(fPos[0], fPos[1], fPos[2]);
+
 			float fLookAT[3] = { m_keyframes[iSelectKeyFrame].vLookAt.x , m_keyframes[iSelectKeyFrame].vLookAt.y,m_keyframes[iSelectKeyFrame].vLookAt.z };
 			ImGui::DragFloat3("KFLookAT", fLookAT, 0.01f, -1000.f, 1500.f);
 			m_keyframes[iSelectKeyFrame].vLookAt = _float3(fLookAT[0], fLookAT[1], fLookAT[2]);
+
 			ImGui::DragFloat("KFTime", &m_keyframes[iSelectKeyFrame].fTime);
 
 			m_pTransformCom->Set_Position(CUtile::Float3toFloat4Position(m_keyframes[iSelectKeyFrame].vPos));
+
+			if (m_keyframes[iSelectKeyFrame].vPos != m_keyframes.back().vPos)
+			{
+				if (ImGui::Button("LookNextFrame"))
+				{
+					_float3 vLookAt = m_keyframes[iSelectKeyFrame + 1].vPos - m_keyframes[iSelectKeyFrame].vPos;
+					m_keyframes[iSelectKeyFrame].vLookAt = vLookAt;
+				}
+			}
+
 			m_pTransformCom->Set_Look(CUtile::Float3toFloat4Look(m_keyframes[iSelectKeyFrame].vLookAt));
 
 			if (ImGui::Button("Erase"))
@@ -765,6 +835,43 @@ _bool CCinematicCamera::CameraFinishedChecker(_float fRatio)
 		return true;
 	else
 		return false;
+}
+
+void CCinematicCamera::PilotMode(_float fTimeDelta)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	m_pTransformCom->Set_Speed(m_fSpeed);
+
+	if (pGameInstance->Key_Pressing(DIK_W))
+		m_pTransformCom->Go_Straight(fTimeDelta);
+
+	if (pGameInstance->Key_Pressing(DIK_S))
+		m_pTransformCom->Go_Backward(fTimeDelta);
+
+	if (pGameInstance->Key_Pressing(DIK_A))
+		m_pTransformCom->Go_Left(fTimeDelta);
+
+	if (pGameInstance->Key_Pressing(DIK_D))
+		m_pTransformCom->Go_Right(fTimeDelta);
+
+	if (pGameInstance->Key_Pressing(DIK_SPACE))
+		m_pTransformCom->Go_AxisY(fTimeDelta);
+
+	if (pGameInstance->Key_Pressing(DIK_C))
+		m_pTransformCom->Go_AxisNegY(fTimeDelta);
+
+	if (pGameInstance->Get_DIMouseState(DIM_RB) & 0x80)
+	{
+		long	MouseMove = 0;
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensitivity);
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * m_fMouseSensitivity);
+	}
+
+	CCamera::Tick(fTimeDelta);
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 CCinematicCamera* CCinematicCamera::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
