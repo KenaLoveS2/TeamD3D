@@ -23,12 +23,18 @@ CUI_CanvasAim::CUI_CanvasAim(const CUI_CanvasAim & rhs)
 
 void CUI_CanvasAim::Set_Arrow(_int iArrowIndex, _int iState)
 {
+	if (iArrowIndex >= ARROW_END)
+		return;
+
 	static_cast<CUI_NodeAimArrow*>(m_vecNode[m_Arrows[iArrowIndex]])
 		->Set_State((CUI_NodeAimArrow::STATE)iState);
 }
 
 void CUI_CanvasAim::Set_Bomb(_int iBombIndex, _int iState)
 {
+	if (iBombIndex >= BOMB_END)
+		return;
+
 	static_cast<CUI_NodeAimBomb*>(m_vecNode[m_Bombs[iBombIndex]])
 		->Set_State((CUI_NodeAimBomb::STATE)iState);
 }

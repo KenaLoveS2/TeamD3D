@@ -30,7 +30,7 @@ public:
 	_bool			Check_CurrentGroup_Hit();
 	_bool			Check_Group_Hit(const wstring& wstrGroupName);
 	void			Clear_Groups();
-	_bool			Check_Group_Hit(const wstring& wstrGroupName);
+	
 private:
 	vector<BOWTARGETGROUP*>	m_vecGroup;
 	BOWTARGETGROUP*			m_pCurActiveGroup = nullptr;

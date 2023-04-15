@@ -525,10 +525,6 @@ void CChest_Anim::Free()
 	Safe_Release(m_pChestEffect_P);
 }
 
-void CChest_Anim::Push_EventFunctions()
-{
-	Wait_BoxOpened(true, 0.f);	
-}
 
 void CChest_Anim::Wait_BoxOpened(_bool bIsInit, _float fTimeDelta)
 {

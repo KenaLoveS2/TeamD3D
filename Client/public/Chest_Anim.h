@@ -89,7 +89,7 @@ public:
 
 	inline void Set_AnimationPlayFlag(_bool bFlag) { m_bAnimPlayFlag = bFlag; }
 
-	virtual void Push_EventFunctions() override;
+	
 	void Wait_BoxOpened(_bool bIsInit, _float fTimeDelta);
 	HRESULT Create_Rot();
 	HRESULT Setup_RotPosition();

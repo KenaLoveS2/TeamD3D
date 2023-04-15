@@ -85,8 +85,6 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	m_EnviromentDesc.iRoomIndex = 5;
 
 
-
-
 	return S_OK;
 }
 
@@ -97,11 +95,12 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 
 	_bool bBowTargetClear = CBowTarget_Manager::GetInstance()->Check_Group_Hit(L"MAP4_GROUP_0");
 
-	if(bBowTargetClear == true)
+	if(bBowTargetClear == true && m_bOnceBowTargetCheck==false)
 	{
 		m_bDissolve = true;
 		m_fDissolveTime = 1.f;
 		m_bBowTargetClear = true;
+		m_bOnceBowTargetCheck = true;
 
 	}
 

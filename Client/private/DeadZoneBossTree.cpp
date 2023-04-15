@@ -43,7 +43,6 @@ HRESULT CDeadZoneBossTree::Initialize(void* pArg)
 
 HRESULT CDeadZoneBossTree::Late_Initialize(void* pArg)
 {
-	/*To.DO �ݶ��̴� �����*/
 	_float3 vPos;
 	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
@@ -65,11 +64,10 @@ HRESULT CDeadZoneBossTree::Late_Initialize(void* pArg)
 	}
 
 	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
-	// RoomIndex 2���� ���� ������ ������ ����
-	// 1���� �����ϸ��
+	
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	BoxDesc.pActortag = m_szCloneObjectTag;
-	BoxDesc.eType = BOX_STATIC;		// ������ �ڽ� ����ƽ���� ��������
+	BoxDesc.eType = BOX_STATIC;		
 	BoxDesc.vPos = vPos;
 	BoxDesc.vSize = vSize;
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
@@ -110,6 +108,8 @@ void CDeadZoneBossTree::Change_Model(_int iDissolveTimer)
 
 void CDeadZoneBossTree::Tick(_float fTimeDelta)
 {
+
+	__super::Tick(fTimeDelta);
 #ifdef FOR_MAP_GIMMICK
 
 #else
@@ -148,7 +148,7 @@ void CDeadZoneBossTree::Tick(_float fTimeDelta)
 	
 
 	
-	__super::Tick(fTimeDelta);
+	
 }
 
 void CDeadZoneBossTree::Late_Tick(_float fTimeDelta)
