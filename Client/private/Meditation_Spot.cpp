@@ -553,4 +553,6 @@ void CMeditation_Spot::Free()
 	Safe_Release(m_pInteractionCom);
 
 	Safe_Release(m_pMeditationSpotEffect);
+
+	int a = 0;
 }

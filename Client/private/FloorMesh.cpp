@@ -213,18 +213,6 @@ HRESULT CFloorMesh::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CFloorMesh::SetUp_ShadowShaderResources()
-{
-	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
-	RELEASE_INSTANCE(CGameInstance);
-	return S_OK;
-}
-
 CFloorMesh * CFloorMesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CFloorMesh*		pInstance = new CFloorMesh(pDevice, pContext);

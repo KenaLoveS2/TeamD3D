@@ -307,7 +307,16 @@ HRESULT CKena_Staff::RenderShadow()
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
+	{
+		if (i <= 1)
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
+
+		if (m_pPlayer->Is_Bow() == true && i > 1)
+		{
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
+		}
+	}
+		
 
 	return S_OK;
 }

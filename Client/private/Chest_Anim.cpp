@@ -143,8 +143,17 @@ void CChest_Anim::Late_Tick(_float fTimeDelta)
 	if (m_pChestEffect) m_pChestEffect->Late_Tick(fTimeDelta);
 	if (m_pChestEffect_P) m_pChestEffect_P->Late_Tick(fTimeDelta);
 
+	_float4 vKenaPos = m_pKena->Get_TransformCom()->Get_Position();
+	_float4 vPos = m_pTransformCom->Get_Position();
+	_float fDistance = _float4::Distance(vKenaPos, vPos);
+
 	if (m_pRendererCom && m_bRenderActive && false == m_bRenderCheck)
+	{
+		if (fDistance <= 100.f)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CChest_Anim::Render()
@@ -163,6 +172,19 @@ HRESULT CChest_Anim::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 	}
+
+	return S_OK;
+}
+
+HRESULT CChest_Anim::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow())) return E_FAIL;
+	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 
 	return S_OK;
 }
@@ -235,7 +257,6 @@ _int CChest_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTrigge
 		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OPENCHEST;
 		_float fValue = 1.f;
 		m_pKena->m_Delegator.broadcast(tag, fValue);
-
 	}
 
 	return 0;
@@ -392,6 +413,16 @@ HRESULT CChest_Anim::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CChest_Anim::SetUp_ShadowShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
 }
 

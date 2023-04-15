@@ -44,6 +44,11 @@ HRESULT CDZ_FallenTree_Anim::Late_Initialize(void * pArg)
 
 	pCtrlRoom->Add_Gimmick_TrggerObj(m_szCloneObjectTag, this);
 
+	m_pKena = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+
+	if (m_pKena == nullptr)
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -105,9 +110,10 @@ void CDZ_FallenTree_Anim::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-
 	if (m_pRendererCom && m_bRenderActive && false == m_bRenderCheck)
+	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CDZ_FallenTree_Anim::Render()
@@ -126,6 +132,19 @@ HRESULT CDZ_FallenTree_Anim::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 	}
+
+	return S_OK;
+}
+
+HRESULT CDZ_FallenTree_Anim::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow())) return E_FAIL;
+	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 
 	return S_OK;
 }
@@ -257,7 +276,6 @@ void CDZ_FallenTree_Anim::Create_Colider()
 		PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_Actor(BoxDesc.pActortag);
 		CPhysX_Manager::GetInstance()->Set_ActorRotation(pActor, 68.f, _float3(0.f, 0.f, 1.f));
 	}
-
 }
 
 void CDZ_FallenTree_Anim::ImGui_AnimationProperty()
@@ -288,8 +306,6 @@ void CDZ_FallenTree_Anim::ImGui_PhysXValueProperty()
 	CPhysX_Manager::GetInstance()->Set_ActorPosition(
 		m_szCloneObjectTag, Temp);
 
-
-
 	static _float Degree = 0.f;
 
 	ImGui::DragFloat("Rotation ", &Degree, 1.f, -90.f, 90.f);
@@ -302,9 +318,6 @@ void CDZ_FallenTree_Anim::ImGui_PhysXValueProperty()
 
 		CPhysX_Manager::GetInstance()->Set_ActorRotation(pActor, Degree, _float3(0.f, 0.f, 1.f));
 	}
-
-
-
 }
 
 HRESULT CDZ_FallenTree_Anim::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
@@ -353,6 +366,16 @@ HRESULT CDZ_FallenTree_Anim::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CDZ_FallenTree_Anim::SetUp_ShadowShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
 }
 

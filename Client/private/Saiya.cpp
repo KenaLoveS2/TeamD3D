@@ -122,7 +122,7 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 			m_pTransformCom->Set_Look(vLook);
 		}
 	}
-
+	
 	Setting_Sound();
 
 	m_pCamera_Photo = (CCamera_Photo*)CGameInstance::GetInstance()->Find_Camera(CAMERA_PHOTO_TAG);
@@ -1027,11 +1027,23 @@ HRESULT CSaiya::SetUp_State()
 	return S_OK;
 }
 
+HRESULT CSaiya::SetUp_StateFinal()
+{
+		m_pFSM = CFSMComponentBuilder().
+		InitState("IDLE")
+		.AddState("IDLE")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+	})
+			.Build();
+
+	return S_OK;
+}
+
 HRESULT CSaiya::SetUp_Components()
 {
 	__super::SetUp_Components();
-	// 첫씬 레벨
-	// 프로토타입 -
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_Saiya", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_NORMALS, TEXT("../Bin/Resources/Anim/NPC/Eyes_NORMAL.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Saiya/jizokids_mask_AO_R_M.png")), E_FAIL);

@@ -55,6 +55,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT RenderCine() override;
+	virtual HRESULT RenderShadow() override;
 	virtual void Imgui_RenderProperty() override;
 	virtual void ImGui_ShaderValueProperty() override;
 	virtual void ImGui_PhysXValueProperty()override;
@@ -66,7 +67,8 @@ public:
 protected:
 	HRESULT					Set_UpTexture_FilePathToMaterial(class CModel* pMode, const _tchar * TexturePath, aiTextureType Type);
 
-	virtual HRESULT					SetUp_CineShaderResources();
+	virtual HRESULT		SetUp_CineShaderResources();
+	virtual HRESULT		SetUp_ShadowShaderResources();
 
 protected:
 	class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
