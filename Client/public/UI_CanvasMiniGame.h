@@ -7,7 +7,8 @@ BEGIN(Client)
 class CUI_CanvasMiniGame final : public CUI_Canvas
 {
 public:
-	enum UI_ORDER { UI_END };
+	enum UI_ORDER { UI_TIMEATK, UI_HITCOUNT, UI_VICTORY, UI_END };
+	enum STATE { STATE_VICTORY, STATE_TIME, STATE_HIT, STATE_RESULT, STATE_REWARD , STATE_END };
 
 private:
 	CUI_CanvasMiniGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -32,6 +33,11 @@ private: /* Bind Functions */
 	
 private:
 	_bool	m_bResultShow;
+	_float	m_fTime;
+	_float	m_fTimeAcc;
+	STATE	m_eCurState;
+
+
 	_tchar* m_szHit;
 	_tchar* m_szTime;
 	_tchar* m_szResult;
