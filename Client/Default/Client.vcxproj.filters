@@ -616,23 +616,8 @@
     <Filter Include="02.GameObjects\Player\Respawn Trigger">
       <UniqueIdentifier>{db25fca5-b5be-4c45-8e95-de74f0c6d942}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\Currency">
-      <UniqueIdentifier>{a8050bfc-5763-4623-9017-c83e49fa374f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\Alarm">
-      <UniqueIdentifier>{76a14590-7e98-4299-848d-a9c35cc1979c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame">
-      <UniqueIdentifier>{56c24f71-c3a8-4dad-ae59-ecf594d40a8d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame\HitTarget">
-      <UniqueIdentifier>{d318539b-53c9-4aec-bef9-3371c7899d65}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Time">
-      <UniqueIdentifier>{5aa7abfc-8df6-4103-95c8-38c8c489b8f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Victory">
-      <UniqueIdentifier>{c7f94187-0cde-4ff5-b28e-024e34f86caa}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Trigger">
+      <UniqueIdentifier>{d6f92db8-c997-4a7a-a6d1-c57811cc44ac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1673,6 +1658,30 @@
     <ClInclude Include="..\public\UI_NodeTimeAtk.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Time</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Village_Trigger.h">
+      <Filter>02.GameObjects\Trigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_DeadZone_SmallPlace.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_DeadZoneDust.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_WarriorBody.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanElectric.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanHeadTrail.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanWeaponBall.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_WarriorWeaponAcc.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2691,6 +2700,30 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeTimeAtk.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Village_Trigger.cpp">
+      <Filter>02.GameObjects\Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_DeadZone_SmallPlace.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_DeadZoneDust.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_WarriorBody.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanElectric.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanHeadTrail.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanWeaponBall.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_WarriorWeaponAcc.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

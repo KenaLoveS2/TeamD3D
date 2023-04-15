@@ -1949,9 +1949,11 @@ void CKena::Check_Smooth_Targeting()
 {
 	if (m_pTargetMonster != nullptr)
 	{
+		CTransform* pCameraTransform = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom();
+
 		if (m_pTargetMonster->Is_Dead() == true ||
 			m_pTransformCom->Calc_Distance_XZ(m_pTargetMonster->Get_TransformCom()) > 5.f ||
-			m_pTransformCom->Calc_InRange(XMConvertToRadians(60.f), m_pTargetMonster->Get_TransformCom()) == false)
+			pCameraTransform->Calc_InRange(XMConvertToRadians(120.f), m_pTargetMonster->Get_TransformCom()) == false)
 			m_pTargetMonster = nullptr;
 	}
 
@@ -2854,7 +2856,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		CGameObject* pGameObject = nullptr;
 
 		_bool bRealAttack = false;
-		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false && m_bDodge == false && m_bDeath == false)
+		if ((iColliderIndex == (_int)COL_MONSTER_WEAPON || iColliderIndex == (_int)COL_BOSS_SWIPECHARGE) && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false && m_bDodge == false && m_bDeath == false)
 		{
 			for (auto& Effect : m_mapEffect)
 			{

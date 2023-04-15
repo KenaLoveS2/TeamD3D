@@ -107,10 +107,7 @@ public:
 	_uint Get_ObjectProperty() { return m_iObjectProperty; }
 	virtual void* Get_VoidMemberPtr() { return nullptr; }
 	void Sync_ActorMatrix(_float4x4& Matrix);
-
+	virtual _float4		Get_ComputeBonePosition(const char* pBoneName) { return _float4(0.f, 0.f, 0.f, 1.f); };
 	_vector Get_Position();	
-
-	virtual _float4		Get_ComputeBonePosition(const char* pBoneName) { return _float4{ 0.f, 0.f, 0.f, 1.f }; };
-
 };
 END

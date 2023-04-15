@@ -57,6 +57,9 @@ public:
 	virtual HRESULT		RenderCine() override;
 	HRESULT					SetUp_CineShaderResources();
 
+	const _float4 Get_BrushPos() { return m_vBrushPos; }
+	const _float Get_BrushRange() { return m_vBrushRange; }
+
 private:
 	CShader*						m_pShaderCom = nullptr;
 	CRenderer*					m_pRendererCom = nullptr;

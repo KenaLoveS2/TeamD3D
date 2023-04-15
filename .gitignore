@@ -94,3 +94,4 @@ Engine/Bin/Engine.dll.recipe
 .vs/Framework/v16/Browse.VC.db-shm
 .vs/Framework/v16/Solution.VC.db-wal
 .vs/Framework/v16/Browse.VC.db-wal
+Client/Bin/Data/Status/Kena_Runtime_Status.json

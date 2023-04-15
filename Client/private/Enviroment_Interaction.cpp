@@ -53,42 +53,17 @@ void CEnviroment_Interaction::Tick(_float fTimeDelta)
 void CEnviroment_Interaction::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-	
-	if (m_pRendererCom)
-	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	}
 }
 
 HRESULT CEnviroment_Interaction::Render()
 {
 	if (FAILED(__super::Render())) return E_FAIL;
-	if (FAILED(SetUp_ShaderResources())) return E_FAIL;
-
-	for (_uint i = 0; i < m_iNumMeshes; ++i)
-	{
-		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
-		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"),E_FAIL);
-		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 17), E_FAIL);
-	}
-
 	return S_OK;
 }
 
 HRESULT CEnviroment_Interaction::RenderShadow()
 {
 	if (FAILED(__super::RenderShadow())) return E_FAIL;
-	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
-
-	for (_uint i = 0; i < m_iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
-
 	return S_OK;
 }
 

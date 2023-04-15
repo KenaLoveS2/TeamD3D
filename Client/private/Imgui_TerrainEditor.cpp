@@ -114,7 +114,7 @@ HRESULT CImgui_TerrainEditor::Initialize(void * pArg)
 	Ready_FilterBuffer();
 
 	m_pHeightTexture = static_cast<CTexture*>(m_pGameInstance->
-		Clone_Component(LEVEL_MAPTOOL, L"Prototype_Component_Terrain_HeightMaps"));
+		Clone_Component(g_LEVEL, L"Prototype_Component_Terrain_HeightMaps"));
 
 	assert(m_pHeightTexture != nullptr  &&" CImgui_TerrainEditor::Initialize");
 
@@ -133,12 +133,8 @@ void CImgui_TerrainEditor::Imgui_FreeRender()
 		
 		Imgui_Change_HeightBmp();
 		Imgui_Save_Load();
-		
-	
-	
 	}
 	ImGui::End();
-
 }
 
 void CImgui_TerrainEditor::Terrain_Selecte()
@@ -153,7 +149,7 @@ void CImgui_TerrainEditor::Terrain_Selecte()
 
 	m_pPickingTerrain = m_pSelectedTerrain;
 
-	m_pSelected_Buffer = nullptr;  m_pSelected_Tranform = nullptr; // ÃÊ±âÈ­
+	m_pSelected_Buffer = nullptr;  m_pSelected_Tranform = nullptr; // ï¿½Ê±ï¿½È­
 
 	m_pSelected_Buffer = dynamic_cast<CVIBuffer_Terrain*>(m_pSelectedTerrain->Find_Component(L"Com_VIBuffer"));
 	m_pSelected_Tranform = dynamic_cast<CTransform*>(m_pSelectedTerrain->Find_Component(L"Com_Transform"));
@@ -164,13 +160,11 @@ void CImgui_TerrainEditor::Terrain_Selecte()
 
 	ImGui::InputInt("Selecte Filter Case", &m_iFilterCaseNum);
 
-	if (m_iFilterCaseNum >= _int(FLTER_END))		// ¿¹¿ÜÃ³¸®
+	if (m_iFilterCaseNum >= _int(FLTER_END))		// ï¿½ï¿½ï¿½ï¿½Ã³ï¿½ï¿½
 		m_iFilterCaseNum = _int(FLTER_END) - 1;
 	
-	if (m_iFilterCaseNum < _int(FILTER_FIRST))	// ¿¹¿ÜÃ³¸®
+	if (m_iFilterCaseNum < _int(FILTER_FIRST))	// ï¿½ï¿½ï¿½ï¿½Ã³ï¿½ï¿½
 		m_iFilterCaseNum = _int(FILTER_FIRST);
-
-
 }
 
 void CImgui_TerrainEditor::Imgui_Save_Load()
@@ -185,12 +179,12 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 
 	if (ImGuiFileDialog::Instance()->Display("Select Save_Terrain Folder"))
 	{
-		if (ImGuiFileDialog::Instance()->IsOk())        // OK ´­·¶À» ¶§
+		if (ImGuiFileDialog::Instance()->IsOk())        // OK ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 		{
 			Save_Terrain();
 			ImGuiFileDialog::Instance()->Close();
 		}
-		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ´­·¶À» ¶§
+		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 			ImGuiFileDialog::Instance()->Close();
 	}
 	ImGui::SameLine();
@@ -200,12 +194,12 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 
 	if (ImGuiFileDialog::Instance()->Display("Select Load_Terrain Folder"))
 	{
-		if (ImGuiFileDialog::Instance()->IsOk())        // OK ´­·¶À» ¶§
+		if (ImGuiFileDialog::Instance()->IsOk())        // OK ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 		{
 			Load_Terrain();
 			ImGuiFileDialog::Instance()->Close();
 		}
-		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ´­·¶À» ¶§
+		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 			ImGuiFileDialog::Instance()->Close();
 	}
 	ImGui::NewLine();
@@ -214,15 +208,14 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 
 	if (ImGuiFileDialog::Instance()->Display("Select Pixel_Save Folder"))
 	{
-		if (ImGuiFileDialog::Instance()->IsOk())        // OK ´­·¶À» ¶§
+		if (ImGuiFileDialog::Instance()->IsOk())        // OK ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 		{
 			Imgui_FilterPixel_Save();
 			ImGuiFileDialog::Instance()->Close();
 		}
-		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ´­·¶À» ¶§
+		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 			ImGuiFileDialog::Instance()->Close();
 	}
-
 
 	ImGui::SameLine();
 
@@ -231,16 +224,14 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 
 	if (ImGuiFileDialog::Instance()->Display("Select Pixel Load Folder"))
 	{
-		if (ImGuiFileDialog::Instance()->IsOk())        // OK ´­·¶À» ¶§
+		if (ImGuiFileDialog::Instance()->IsOk())        // OK ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 		{
 			Imgui_FilterPixel_Load();
 			ImGuiFileDialog::Instance()->Close();
 		}
-		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ´­·¶À» ¶§
+		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 			ImGuiFileDialog::Instance()->Close();
 	}
-	
-
 }
 
 void CImgui_TerrainEditor::Imgui_FilterPixel_Save()
@@ -283,7 +274,6 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Save()
 	}
 	CloseHandle(hFile);
 	MSG_BOX("Save_Complete");
-
 }
 
 void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
@@ -357,9 +347,9 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 		TextureDesc.SampleDesc.Quality = 0;
 		TextureDesc.SampleDesc.Count = 1;
 
-		TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// µ¿ÀûÀ¸·Î ¸¸µé¾î¾ßÁö ¶ô ¾ð¶ô°¡´É
+		TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU´Â µ¿ÀûÇÒ¶§ ¹«Á¶°Ç
+		TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPUï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		TextureDesc.MiscFlags = 0;
 
 		if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
@@ -453,7 +443,6 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 		CTexture::Create(m_pDevice, m_pContext, ComponentPathTag.c_str(), 3));
 
 	m_pSelectedTerrain->Imgui_Tool_Add_Component(g_LEVEL, ComponentProtoTag.c_str(), TEXT("Com_Filter"));
-
 }
 
 void CImgui_TerrainEditor::Imgui_FilterControl()
@@ -479,7 +468,10 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 	_float3 iIndex = _float3(1.f, 1.f, 1.f);
 
 	m_CurFilterIndexSize =m_OldFilterIndexSize = (_int)m_FilterIndexSet[m_iFilterCaseNum].size();
- 
+
+	//_float4 vPos;
+	//m_pSelected_Buffer->Picking_Terrain(g_hWnd, m_pSelected_Tranform, &vPos);
+	//m_pSelectedTerrain->Set_BrushPosition(vPos);
 
 	if (ImGui::IsMouseDragging(0))
 	{
@@ -505,10 +497,9 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
-
-	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// µ¿ÀûÀ¸·Î ¸¸µé¾î¾ßÁö ¶ô ¾ð¶ô°¡´É
+	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU´Â µ¿ÀûÇÒ¶§ ¹«Á¶°Ç
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPUï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	TextureDesc.MiscFlags = 0;
 
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
@@ -591,10 +582,7 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 		else if (m_iFilterCaseNum == 2)
 			wstr += TEXT("Terrain5_Filter_2.dds");
 	}
-
-
 	
-
 	 DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, wstr.c_str());
 	Safe_Release(pTexture2D);
 
@@ -604,7 +592,6 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 	m_pGameInstance->Add_Prototype(g_LEVEL, ComponentProtoTag.c_str(),
 	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3));
 		CTexture::Create(m_pDevice, m_pContext, ComponentPathTag.c_str(), 3));
-
 
 	m_pSelectedTerrain->Imgui_Tool_Add_Component(g_LEVEL, ComponentProtoTag.c_str(), TEXT("Com_Filter"));
 }
@@ -617,6 +604,10 @@ void CImgui_TerrainEditor::UnDraw_FilterTexture()
 	_float3 iIndex = _float3(1.f, 1.f, 1.f);
 
 	m_CurFilterIndexSize = m_OldFilterIndexSize = (_int)m_FilterIndexSet[m_iFilterCaseNum].size();
+
+	//_float4 vPos;
+	//m_pSelected_Buffer->Picking_Terrain(g_hWnd, m_pSelected_Tranform, &vPos);
+	//m_pSelectedTerrain->Set_BrushPosition(vPos);
 
 	if (ImGui::IsMouseDragging(0))
 	{
@@ -668,9 +659,9 @@ void CImgui_TerrainEditor::UnDraw_FilterTexture()
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
 
-	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// µ¿ÀûÀ¸·Î ¸¸µé¾î¾ßÁö ¶ô ¾ð¶ô°¡´É
+	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU´Â µ¿ÀûÇÒ¶§ ¹«Á¶°Ç
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPUï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	TextureDesc.MiscFlags = 0;
 
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
@@ -806,7 +797,6 @@ void CImgui_TerrainEditor::Create_Terrain()
 			TEXT("Prototype_GameObject_Terrain"),
 			pCloneName, nullptr, &pCreateObject)))
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
-
 	}
 }
 
@@ -824,8 +814,6 @@ void CImgui_TerrainEditor::Clear_Filter_Pixel()
 		}
 		m_FilterIndexSet[Filter_index].clear();
 	}
-
-
 }
 
 void CImgui_TerrainEditor::Save_Terrain()
@@ -911,7 +899,7 @@ void CImgui_TerrainEditor::Save_Terrain()
 		{
 			fElement = 0.f;
 			memcpy(&fElement, (float*)&fWroldMatrix + i, sizeof(float));
-			jChild["10_Transform State"].push_back(fElement);		// ¹è¿­ ÀúÀå. ÄÁÅ×ÀÌ³ÊÀÇ ±¸Á¶¶û ºñ½ÁÇÕ´Ï´Ù. ÀÌ·¸°Ô ÇÏ¸é Transform State¿¡´Â 16°³ÀÇ float °ªÀÌ ÀúÀåµË´Ï´Ù.
+			jChild["10_Transform State"].push_back(fElement);		// ï¿½è¿­ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½. ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½Ï¸ï¿½ Transform Stateï¿½ï¿½ï¿½ï¿½ 16ï¿½ï¿½ï¿½ï¿½ float ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ë´Ï´ï¿½.
 		}
 
 		jTerrainSave["Terrain_Data"].push_back(jChild);
@@ -924,7 +912,7 @@ void CImgui_TerrainEditor::Save_Terrain()
 
 void CImgui_TerrainEditor::Load_Terrain()
 {
-	string      strLoadDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();   // GetCurrentPath F12·Î µé°¡¸é ºñ½ÁÇÑ ´Ù¸¥ ÇÔ¼ö ´õ ÀÖÀ½.
+	string      strLoadDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();   // GetCurrentPath F12ï¿½ï¿½ ï¿½é°¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	string	   strLoadFileName = ImGuiFileDialog::Instance()->GetCurrentFileName();
 	char   szDash[128] = "\\";
 	strcat_s(szDash, strLoadFileName.c_str());

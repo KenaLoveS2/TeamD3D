@@ -119,7 +119,6 @@ void CCamera_Player::Tick(_float fTimeDelta)
 		Initialize_Position();
 
 		__super::Tick(fTimeDelta);
-
 		return;
 	}
 

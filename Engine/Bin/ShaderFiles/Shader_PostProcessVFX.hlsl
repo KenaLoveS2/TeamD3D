@@ -6,9 +6,8 @@ matrix			g_LightCamWorldMatrix,	g_CamViewMatrix, g_CamProjMatrix;
 
 float4			g_vLightCamLook , g_vCamLook;
 float4			g_vLightCamPos;
-
+float4			g_vCamPosition;
 matrix			g_ReflectViewMatrix;
-
 
 Texture2D<float4>		g_LDRTexture;
 Texture2D<float4>		g_NormalTexture;
@@ -191,7 +190,7 @@ PS_OUT PS_MOTIONBLUR(PS_IN In)
 	float4 PrevFrameColor = g_PrevFrameTexture.Sample(LinearSampler, In.vTexUV);
 	float4 blurColor = lerp(CurFrameColor, PrevFrameColor, 0.5);
 
-	Out.vColor = blurColor;
+	Out.vColor = saturate(blurColor);
 
 	return Out;
 }
@@ -218,7 +217,7 @@ PS_OUT PS_FLARE(PS_IN In)
 	float falloffIntensity = pow(falloff, 3.0f);
 	/* Dot */
 
-	float4 lightpos = g_vLightCamPos;
+	float4 lightpos = /*g_vLightCamPos;*/ float4(-10.f ,10.f, -10.f,1.f);
 	matrix matVP;
 	matVP = mul(g_CamViewMatrix, g_CamProjMatrix);
 	lightpos = mul(vector(lightpos.xyz, 1.f), matVP);
@@ -253,15 +252,11 @@ PS_OUT PS_FLARE(PS_IN In)
 	return Out;
 }
 
-//float4 g_FogColor = float4(1.f,1.f,1.f,0.f);
-//float4 g_vCamPosition;
-//float  g_FogStart = 0.f;
-//float  g_FogRange = 50.f;
-//float  g_fFar = 500.f;
-//matrix g_ProjMatrixInv;
-//matrix g_ViewMatrixInv;
-//
-//PS_OUT PS_FOG(PS_IN In)
+float  g_fFar = 500.f;
+matrix g_ProjMatrixInv;
+matrix g_ViewMatrixInv;
+
+//PS_OUT PS_LIGHTSHAFT(PS_IN In)
 //{
 //	PS_OUT Out = (PS_OUT)0;
 //
@@ -288,6 +283,76 @@ PS_OUT PS_FLARE(PS_IN In)
 //
 //	return Out;
 //}
+
+float4 g_LightShaftValue = float4(0.5f, 0.9f, 0.5f, 1.f);
+// x= Density
+// y = Decay
+// z = Weight
+// w = Exposure
+
+#define NUM_SAMPLES 64
+
+PS_OUT PS_LIGHTSHAFT(PS_IN In)
+{
+	PS_OUT Out = (PS_OUT)0;
+
+	// 광원의 위치
+	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
+	float		fViewZ = vDepthDesc.y * g_fFar;
+	vector		vWorldPos;
+	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
+	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
+	vWorldPos.z = vDepthDesc.x; /* 0 ~ 1 */
+	vWorldPos.w = 1.0f;
+	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
+	vWorldPos *= fViewZ;
+	/* 로컬위치 * 월드행렬 * 뷰행렬 */
+	vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
+	/* 로컬위치 * 월드행렬  */
+	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
+
+	 // calculate light direction
+	float3 lightDir = normalize(float3(1.f,-1.f,1.f) - g_vCamPosition.xyz);
+	// calculate distance to player
+	float fDistance = length(g_vCamPosition.xyz - vWorldPos.xyz);
+	float fAtt = max((50.f - fDistance), 0.f) / 50.f;
+
+	// calculate position of light source in projection space
+	float4 lightPos = float4(g_vCamPosition.xyz + lightDir * 175.f, 1.f);
+	matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	lightPos = mul(lightPos, matVP);
+
+	// calculate delta texture coordinate
+	float2 dist = abs(In.vTexUV - lightPos.xy);
+	float2 texCoord = In.vTexUV;
+	float2 DeltaTexCoord = (In.vTexUV - lightPos.xy);
+	DeltaTexCoord *= 1.f / NUM_SAMPLES * g_LightShaftValue.x * (1.f - fAtt);
+
+	//matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	//lightPos = mul(lightPos, matVP);
+	//float2 dist = abs(In.vTexUV - lightPos.xy);
+	//float2 texCoord = In.vTexUV;
+	//float2 DeltaTexCoord = (In.vTexUV - lightPos.xy);
+	//// Scale DeltaTexCoord based on distance from light source
+	//DeltaTexCoord *= 1.f / NUM_SAMPLES * g_LightShaftValue.x * fAtt;
+
+	float4 FinalColor = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
+
+	float illuminationDecay =1.f;
+
+	for (int i = 0; i < NUM_SAMPLES; ++i)
+	{
+		texCoord -= DeltaTexCoord;
+		float4 vSample = g_LDRTexture.Sample(LinearSampler, texCoord);
+		vSample *= illuminationDecay * g_LightShaftValue.z * (1.f - fAtt);
+		FinalColor += vSample * 0.3f;
+		illuminationDecay *= g_LightShaftValue.y ;
+	}
+
+	Out.vColor = saturate(FinalColor * g_LightShaftValue.w);
+
+	return Out;
+}
 
 technique11 DefaultTechnique
 {
@@ -369,16 +434,16 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_FLARE();
 	} //5
 
-	//pass Fog
-	//{
-	//	SetRasterizerState(RS_Default);
-	//	SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
-	//	SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+	pass LightShaft
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
-	//	VertexShader = compile vs_5_0 VS_MAIN();
-	//	GeometryShader = NULL;
-	//	HullShader = NULL;
-	//	DomainShader = NULL;
-	//	PixelShader = compile ps_5_0 PS_FOG();
-	//} //5
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_LIGHTSHAFT();
+	} //6
 }

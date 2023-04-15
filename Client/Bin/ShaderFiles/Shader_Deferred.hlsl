@@ -173,13 +173,10 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
 	vWorldPos.z = vDepthDesc.x; /* 0 ~ 1 */
 	vWorldPos.w = 1.0f;
-
 	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
 	vWorldPos *= fViewZ;
-
 	/* 로컬위치 * 월드행렬 * 뷰행렬 */
 	vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-
 	/* 로컬위치 * 월드행렬  */
 	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 
@@ -219,9 +216,9 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vSSAODesc		 = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
 
 	if(g_bSSAO)
-		Out.vColor =	CalcHDRColor(vDiffuse * vShade + vSpecular, vDepthDesc.b)  * vSSAODesc.r;
+		Out.vColor =	CalcHDRColor(vDiffuse * vShade /*+ vSpecular*/, vDepthDesc.b)  * vSSAODesc.r;
 	else
-		Out.vColor = CalcHDRColor(vDiffuse * vShade + vSpecular, vDepthDesc.b);
+		Out.vColor = CalcHDRColor(vDiffuse * vShade /*+ vSpecular*/, vDepthDesc.b);
 
 	if (Out.vColor.a == 0.0f)
 		discard;

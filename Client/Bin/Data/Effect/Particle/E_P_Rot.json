@@ -8,7 +8,7 @@
                 {
                     "Child Count": 0,
                     "CloneObject Component InstnaceData PSizeX": 0.05000000074505806,
-                    "CloneObject Component InstnaceData PSizeY": 0.10000000149011612,
+                    "CloneObject Component InstnaceData PSizeY": 0.05000000074505806,
                     "CloneObject Component InstnaceData Position": [
                         -0.028436917811632156,
                         0.526608943939209,
@@ -28,7 +28,7 @@
                         0.0,
                         0.0
                     ],
-                    "CloneObject Component PointDesc CreateInstance": 20,
+                    "CloneObject Component PointDesc CreateInstance": 10,
                     "CloneObject Component PointDesc CreateRange": 2.0,
                     "CloneObject Component PointDesc Dir": [
                         -0.16200017929077148,
@@ -148,7 +148,7 @@
                     ],
                     "Have DTextureCnt": 1,
                     "Have MTextureCnt": 1,
-                    "Instance DataCnt": 20,
+                    "Instance DataCnt": 10,
                     "Point Data": "PointDesc Data",
                     "WorldMatrix": [
                         0.9999893307685852,

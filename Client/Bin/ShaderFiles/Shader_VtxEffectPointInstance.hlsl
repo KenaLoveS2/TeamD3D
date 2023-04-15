@@ -229,22 +229,24 @@ void GS_DEFAULT(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float3		vPosition;
 
-	vPosition = In[0].vPosition + vRight + vUp;
+	float       fCurWidth = In[0].fLife;
+
+	vPosition = In[0].vPosition + vRight + vUp * fCurWidth;
 	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[0].vTexUV = float2(0.f, 0.f);
 	Out[0].fLife = In[0].fLife;
 
-	vPosition = In[0].vPosition - vRight + vUp;
+	vPosition = In[0].vPosition - vRight + vUp * fCurWidth;
 	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[1].vTexUV = float2(1.f, 0.f);
 	Out[1].fLife = In[0].fLife;
 
-	vPosition = In[0].vPosition - vRight - vUp;
+	vPosition = In[0].vPosition - vRight - vUp * fCurWidth;
 	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[2].vTexUV = float2(1.f, 1.f);
 	Out[2].fLife = In[0].fLife;
 
-	vPosition = In[0].vPosition + vRight - vUp;
+	vPosition = In[0].vPosition + vRight - vUp * fCurWidth;
 	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[3].vTexUV = float2(0.f, 1.f);
 	Out[3].fLife = In[0].fLife;
@@ -267,8 +269,8 @@ void GS_RAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	GS_OUT		Out[4];
 
 	float3		vLook = g_vCamPosition.xyz - In[0].vPosition;
-	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].fSize * 0.1f;
-	float3		vUp = normalize(cross(vLook, vRight)) * In[0].fSize * 0.8f;
+	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].fSize * 0.005f;
+	float3		vUp = normalize(cross(vLook, vRight)) * In[0].fSize * 0.03f;
 
 	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float3		vPosition;
@@ -945,6 +947,9 @@ PS_OUT PS_PARTICLEMAINPS_PARTICLEMAIN(PS_IN In)
 	if (Out.vColor.a == 0.0f)
 		Out.vColor.rgb = 0.25f;
 
+	if (g_fHDRValue != 0.0f)
+		Out.vColor = CalcHDRColor(Out.vColor, g_fHDRValue);
+
 	return Out;
 }
 
@@ -1222,6 +1227,13 @@ PS_OUT PS_FRONTVIEWBLINK(PS_IN In)
    if (g_fHDRValue != 0.0f)
 	   Out.vColor = CalcHDRColor(Out.vColor, g_fHDRValue);
 
+   if (g_bTimer)
+   {
+	   float fTime = min(g_Time, 1.f);
+	   if (g_bDissolve)
+		   Out.vColor.a = Out.vColor.a * (1.f - fTime);
+   }
+
    return Out;
 }
 
@@ -1361,7 +1373,7 @@ PS_OUT PS_RANDOMCOLOR_PARTICLE(PS_IN In)
 
 	float4 finalcolor = Diffuse + vColor;
 	// finalcolor.a = Diffuse * vColor;
-	finalcolor.a = (Diffuse * vColor).a;
+	finalcolor.a = (Diffuse * vColor).r;
 	if (finalcolor.a < 0.1f)
 		discard;
 

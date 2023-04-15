@@ -67,7 +67,11 @@ void CE_P_Chest::Late_Tick(_float fTimeDelta)
 		return;
 
 	if (m_pParent)
-		m_pTransformCom->Set_Position(m_pParent->Get_TransformCom()->Get_Position());
+	{
+		_float4 vPos = m_pParent->Get_TransformCom()->Get_Position();
+		vPos.y += 0.2f;
+		m_pTransformCom->Set_Position(vPos);
+	}
 
 	__super::Late_Tick(fTimeDelta);
 }
