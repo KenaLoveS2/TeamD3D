@@ -162,10 +162,14 @@ void CControlRoom::DeadZoneObject_Change(_bool bChnage)
 {
 	/*Test .*/
 
-	if (bChnage != true)
-		return;
-
 	_int iDissovleTimer = 0;
+	if (!bChnage)
+	{
+		iDissovleTimer = -1;
+		m_DeadZoneChangeDelegator.broadcast(iDissovleTimer);
+		return;
+	}
+	
 	m_DeadZoneChangeDelegator.broadcast(iDissovleTimer);
 
 	CGameObject* pObj = Get_Find_TriggerObj(L"3_DeadzoneAnim_Tree");

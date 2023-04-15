@@ -84,27 +84,11 @@ HRESULT CDeadZoneBossTree::Late_Initialize(void* pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Static(m_szCloneObjectTag);
 
-#ifdef FOR_MAP_GIMMICK
-
-#else
-	m_pRendererCom->Set_PhysXRender(true);
-#endif
 	return S_OK;
 }
 
 void CDeadZoneBossTree::Tick(_float fTimeDelta)
 {
-
-#ifdef FOR_MAP_GIMMICK
-
-#else
-	if (!m_bOnlyTest) /*Test*/
-	{
-		Late_Initialize();
-		m_bOnlyTest = true;
-	}
-#endif
-
 
 	if (m_bBossAttackOn)
 	{

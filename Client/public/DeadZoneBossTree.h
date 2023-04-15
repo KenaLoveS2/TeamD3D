@@ -41,7 +41,7 @@ public:
 private:
 	CModel* m_pModelCom = nullptr;
 	CTexture* m_pDissolveTextureCom = nullptr;
-	_bool				m_bOnlyTest = false;
+	
 
 	_float				m_fTimeDeltaTest = 0.f;
 	_float4 m_vColor = _float4(1.0f, 0.05f, 0.46f, 1.f);

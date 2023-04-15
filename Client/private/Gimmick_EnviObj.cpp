@@ -40,6 +40,11 @@ void CGimmick_EnviObj::Set_Gimmick_Active(_int iRoomIndex, _bool bGimmick_Active
 			CGameInstance::GetInstance()->Play_Sound(L"SFX_Stone_Gate_Open_End_1.ogg", 0.8f, false);
 			CGameInstance::GetInstance()->Play_Sound(L"SFX_Waterfall_Platform_Rise_Water.ogg", 0.8f, false);
 		}
+		else if (iRoomIndex == 3)  // 물땅올라오기
+		{
+			CGameInstance::GetInstance()->Play_Sound(L"SFX_Stone_Gate_Open_End_1.ogg", 0.7f, false);
+			CGameInstance::GetInstance()->Play_Sound(L"SFX_Stone_Gate_Open_LP_1.ogg", 1.f, false);
+		}
 		else if(iRoomIndex ==4 )  // 문 올라가는 소리
 		{
 			CGameInstance::GetInstance()->Play_Sound(L"SFX_Stone_Gate_Open_End_1.ogg", 0.8f, false);
@@ -90,22 +95,22 @@ HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 
 void CGimmick_EnviObj::Tick(_float fTimeDelta)
 {
-#ifdef FOR_MAP_GIMMICK
+//#ifdef FOR_MAP_GIMMICK
+//
+//#else
+//	if(!m_bTestOnce)
+//	{
+//		Late_Initialize();
+//		m_bTestOnce = true;
+//	}
+//#endif
 
-#else
-	if(!m_bTestOnce)
-	{
-		Late_Initialize();
-		m_bTestOnce = true;
-	}
-#endif
-
-	if(ImGui::Button("Gimmick_Init"))
-	{
-		m_bColliderOn = false;
-		m_pModelCom->Instaincing_GimmkicInit(m_EnviromentDesc.eChapterType);
-		m_bGimmick_Active = false;
-	}
+	//if(ImGui::Button("Gimmick_Init"))
+	//{
+	//	m_bColliderOn = false;
+	//	m_pModelCom->Instaincing_GimmkicInit(m_EnviromentDesc.eChapterType);
+	//	m_bGimmick_Active = false;
+	//}
 
 	__super::Tick(fTimeDelta);
 
