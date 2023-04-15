@@ -1667,6 +1667,11 @@
     <ClInclude Include="..\public\E_WarriorWeaponAcc.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BossShaman_Mask.h" />
+    <ClInclude Include="..\public\Camera_Shaman.h" />
+    <ClInclude Include="..\public\Camera_Photo.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2694,6 +2699,11 @@
     </ClCompile>
     <ClCompile Include="..\private\E_WarriorWeaponAcc.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossShaman_Mask.cpp" />
+    <ClCompile Include="..\private\Camera_Shaman.cpp" />
+    <ClCompile Include="..\private\Camera_Photo.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
