@@ -33,7 +33,7 @@ HRESULT CE_P_DeadZone_SmallPlace::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
-	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 
 	static _int iIndex = 0;

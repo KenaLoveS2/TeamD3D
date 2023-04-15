@@ -54,19 +54,20 @@ void CE_P_WarriorBody::Late_Tick(_float fTimeDelta)
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(8.f, 10.f));
 		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 1.f);
 		m_pTransformCom->RotationFromNow(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), XMConvertToRadians(90.0f));
-		m_eEFfectDesc.vColor = XMVectorSetW(m_eEFfectDesc.vColor, 0.05f);
+
+		_float fColorW = 18 / 255.f;
+		m_eEFfectDesc.vColor = XMVectorSetW(m_eEFfectDesc.vColor, fColorW);
 		m_bTurnOnfirst = true;
 	}
-
-	if (dynamic_cast<CBossWarrior*>(m_pParent)->Get_MonsterStatusPtr()->Get_HP() < 1.0f || m_eEFfectDesc.bActive == false)
-		return;
-
 	if (m_pParent != nullptr)
 	{
 		_float4 vPos = m_pParent->Get_TransformCom()->Get_Position();
 		vPos.y += 1.5f;
 		m_pTransformCom->Set_Position(vPos);
 	}
+
+	if (dynamic_cast<CBossWarrior*>(m_pParent)->Get_MonsterStatusPtr()->Get_HP() < 1.0f || m_eEFfectDesc.bActive == false)
+		return;
 
 	__super::Late_Tick(fTimeDelta);
 }

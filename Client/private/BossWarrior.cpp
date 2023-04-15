@@ -371,6 +371,8 @@ void CBossWarrior::Push_EventFunctions()
 	TurnOnEnrage_Attck(true, 0.0f);
 
 	TurnOnCamShake(true, 0.0f);
+	TurnOnMotionBlur(true, 0.0f);
+	TurnOffMotionBlur(true, 0.0f);
 
 	Grab_Turn(true, 0.f);
 
@@ -1635,6 +1637,28 @@ void CBossWarrior::TurnOnCamShake(_bool bIsInit, _float fTimeDelta)
 	CCamera_Player* pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
 	if (pCamera != nullptr)
 		pCamera->Camera_Shake(0.005f, 30);
+}
+
+void CBossWarrior::TurnOnMotionBlur(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnMotionBlur);
+		return;
+	}
+	m_pRendererCom->Set_MotionBlur(true);
+}
+
+void CBossWarrior::TurnOffMotionBlur(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOffMotionBlur);
+		return;
+	}
+	m_pRendererCom->Set_MotionBlur(false);
 }
 
 CBossWarrior* CBossWarrior::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

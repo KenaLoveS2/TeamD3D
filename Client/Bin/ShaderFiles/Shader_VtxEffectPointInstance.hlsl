@@ -1013,7 +1013,7 @@ PS_OUT PS_PARTICLEMAINPS_PARTICLEMAIN(PS_IN In)
 	float		fViewZ = In.vProjPos.w;
 
 	Out.vColor = finalcolor;
-	Out.vColor.a = vDiffuse.a * (saturate(fOldViewZ - fViewZ));
+	Out.vColor.a = finalcolor.a * (saturate(fOldViewZ - fViewZ));
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	// g_DepthTexture
 

@@ -33,7 +33,7 @@ HRESULT CE_P_ShamanDust::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
-	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
 
@@ -47,12 +47,7 @@ HRESULT CE_P_ShamanDust::Late_Initialize(void* pArg)
 
 void CE_P_ShamanDust::Tick(_float fTimeDelta)
 {
-	ImGui::Begin("CE_P_ShamanDust");
-	if (ImGui::Button("re"))
-		m_pShaderCom->ReCompile();
-	ImGui::End();
-	
-	if (m_pShaman && m_pShaman->Get_MonsterStatusPtr()->Get_HP() < 1.0f && m_eEFfectDesc.bActive == false)
+	if (m_pShaman && m_pShaman->Get_MonsterStatusPtr()->Get_HP() > 1.0f && m_eEFfectDesc.bActive == false)
 		return;
 
 	__super::Tick(fTimeDelta);
@@ -94,7 +89,7 @@ void CE_P_ShamanDust::Late_Tick(_float fTimeDelta)
 		m_bTurnOnfirst = true;
 	}
 
-	if (m_pShaman && m_pShaman->Get_MonsterStatusPtr()->Get_HP() < 1.0f && m_eEFfectDesc.bActive == false)
+	if (m_pShaman && m_pShaman->Get_MonsterStatusPtr()->Get_HP() > 1.0f && m_eEFfectDesc.bActive == false)
 		return;
 
 	__super::Late_Tick(fTimeDelta);

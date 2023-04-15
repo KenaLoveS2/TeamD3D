@@ -54,48 +54,45 @@ void CE_P_EnvironmentDust::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&vPos));
 	}
 
-
-	if(	!lstrcmp(m_pParent->Get_ObjectCloneName() , L"1_GimmickPlatForm"))
+	if(m_pParent)
 	{
-		if (m_eEFfectDesc.bActive == true)
+		if (!lstrcmp(m_pParent->Get_ObjectCloneName(), L"1_GimmickPlatForm"))
 		{
-			m_pTransformCom->Go_AxisY(fTimeDelta * 0.23f);
-		}
-
-		_float4	vPos;
-		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-
-		if(vPos.y >= 1.249f)
-		{
-			m_fLife += fTimeDelta;
-			m_bTimer = true;
-			m_bDissolve = true;
-			_bool bResult = TurnOffSystem(m_fLife, 2.f, fTimeDelta);
-			if (bResult) {
-				Reset();
-				m_pTransformCom->Set_PositionY(0.0f);
+			if (m_eEFfectDesc.bActive == true)
+			{
+				m_pTransformCom->Go_AxisY(fTimeDelta * 0.23f);
 			}
-		}
-		
 
+			_float4	vPos;
+			XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+			if (vPos.y >= 1.249f)
+				m_bTurn = true;
+		}
+		else if (!lstrcmp(m_pParent->Get_ObjectCloneName(), L"4_Gimmick_Wall_B"))
+		{
+			if (m_eEFfectDesc.bActive == true)
+			{
+				m_pTransformCom->Go_AxisY(fTimeDelta * 0.6f);
+			}
+
+			_float4	vPos;
+			XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+			if (vPos.y >= 17.5f)
+				m_bTurn = true;
+		}
 	}
-	else if (!lstrcmp(m_pParent->Get_ObjectCloneName(), L"4_Gimmick_Wall_B"))
+
+	if (m_bTurn)
 	{
-		if (m_eEFfectDesc.bActive == true)
-		{
-			m_pTransformCom->Go_AxisY(fTimeDelta * 0.6f);
-		}
-
-		_float4	vPos;
-		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-
-		if (vPos.y >= 17.5f)
-		{
-			m_fLife += fTimeDelta;
-			m_bTimer = true;
-			m_bDissolve = true;
-			_bool bResult = TurnOffSystem(m_fLife, 1.f, fTimeDelta);
-			if (bResult) Reset();
+		m_fLife += fTimeDelta;
+		m_bTimer = true;
+		m_bDissolve = true;
+		_bool bResult = TurnOffSystem(m_fLife, 1.f, fTimeDelta);
+		if (bResult) {
+			Reset();
+			m_pTransformCom->Set_PositionY(0.0f);
 		}
 	}
 }
@@ -104,11 +101,6 @@ void CE_P_EnvironmentDust::Late_Tick(_float fTimeDelta)
 {
 	if (m_bTurnOnfirst == false)
 	{
-// 		CVIBuffer_Point_Instancing::POINTDESC* ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
-// 		ePointDesc->eShapeType = CVIBuffer_Point_Instancing::tagPointDesc::VIBUFFER_BOX;
-// 		ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::tagPointDesc::DIR_Y;
-// 		ePointDesc->fMin = _float3(-10````.f, 0.f, -10.f);
-// 		ePointDesc->fMax = _float3(10.f, 8.f, 10.f);
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(5.f, 15.f));
 		m_bTurnOnfirst = true;
 	}

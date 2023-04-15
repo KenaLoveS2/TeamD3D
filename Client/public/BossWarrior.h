@@ -135,6 +135,8 @@ private:	/* Animation Event Func */
 	void TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta);
 
 	void TurnOnCamShake(_bool bIsInit, _float fTimeDelta);
+	void TurnOnMotionBlur(_bool bIsInit, _float fTimeDelta);
+	void TurnOffMotionBlur(_bool bIsInit, _float fTimeDelta);
 
 private:
 	_float3 m_vWeaPonPivotTrans = {-1.36f, 0.0f, -1.73f};

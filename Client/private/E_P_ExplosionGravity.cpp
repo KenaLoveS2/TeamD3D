@@ -60,8 +60,6 @@ void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	if (m_pParent && m_eType == TYPE_BOSS_HAND)
 	{
-		m_eEFfectDesc.bActive = true;
-
 		/* for.BossHand Update */
 		_matrix Socketmatrix = m_pParentBone->Get_CombindMatrix() * m_pParentModel->Get_PivotMatrix() * m_pParent->Get_TransformCom()->Get_WorldMatrix();
 		m_pTransformCom->Set_WorldMatrix(Socketmatrix);
@@ -377,8 +375,6 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 
 	case CE_P_ExplosionGravity::TYPE_BOSS_HAND:
 		Load_Desc("ShamanHand");
-
-		m_eEFfectDesc.bActive = true;
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_DAMAGE_PULSE:
