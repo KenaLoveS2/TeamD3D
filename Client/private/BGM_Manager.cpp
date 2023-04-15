@@ -36,7 +36,7 @@ void CBGM_Manager::Tick(_float fTimeDelta)
 		return;
 	}
 
-	if (m_eCurState == CBGM_Manager::FIELD_FROM_BATTLE)
+	if (m_eCurState == CBGM_Manager::FIELD_FROM_BATTLE || m_eCurState == CBGM_Manager::FIELD_LEVELUP)
 	{
 		if (m_pSoundManager->Is_StopSound(BGMChannel))
 			Change_FieldState(CBGM_Manager::FIELD_IDLE);
@@ -140,6 +140,8 @@ HRESULT CBGM_Manager::Load_FromFile(const string& strFilePath)
 			eState = CBGM_Manager::FIELD_SHOP;
 		else if (strStateName == "PUZZLE")
 			eState = CBGM_Manager::FIELD_PUZZLE;
+		else if (strStateName == "LEVEL_UP")
+			eState = CBGM_Manager::FIELD_LEVELUP;
 		else if (strStateName == "INTO_BATTLE")
 			eState = CBGM_Manager::FIELD_INTO_BATTLE;
 		else if (strStateName == "FROM_BATTLE")

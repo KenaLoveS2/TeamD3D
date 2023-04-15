@@ -298,11 +298,14 @@ private:	/* Effect Event Func */
 	void	TurnOnLvUp(_bool bIsInit, _float fTimeDelta);
 
 private:	/* Sound Event Func */
+	void	PlaySound_Kena_FootStep(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Kena_FootStep_Sprint(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Jump(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_PulseJump(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Land(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Dodge(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Dodge_End(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Interact_Staff(_bool bIsInit, _float fTimeDelta);
 
 	void	PlaySound_Pulse_Intro(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Pulse_Outro(_bool bIsInit, _float fTimeDelta);
@@ -314,8 +317,18 @@ private:	/* Sound Event Func */
 	void	PlaySound_Attack_3(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Attack_4(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_HeavyAttack_Charge(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_HeavyAttack_Charge_Voice(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_HeavyAttack_Spark(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_HeavyAttack_Release_Perfect(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_HeavyAttack_Staff_Sweep(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_HeavyAttack_Combo_Charge(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_HeavyAttack_Combo_Staff_Sweep(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_AirAttack_Slam_Release(_bool bIsInit, _float fTimeDelta);
+
+public:
+	void	PlaySound_Hit();
+	void	PlaySound_Damage();
+	void	PlaySound_Damage_Pulse();
 
 public:
 	//Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;

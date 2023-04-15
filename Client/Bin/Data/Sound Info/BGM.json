@@ -27,6 +27,12 @@
         ]
     },
     {
+        "0. State Name" : "LEVEL_UP",
+        "1. File Names" : [
+            "BGM_LevelUp.wav"
+        ]
+    },
+    {
         "0. State Name" : "INTO_BATTLE",
         "1. File Names" : [
             "BGM_Into_Battle.wav"

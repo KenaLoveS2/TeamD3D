@@ -187,38 +187,38 @@ HRESULT CDeadZoneBossTree::RenderShadow()
 
 void CDeadZoneBossTree::ImGui_PhysXValueProperty()
 {
-	CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
+	//CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
 
-	_float4 vCurPos = m_pTransformCom->Get_Position();
-
-
-	static _float fChagePos[3] = { 0.f,0.f,0.f };
-	ImGui::DragFloat3("PX_Pos", fChagePos, 0.01f, 0.1f, 100.0f);
-
-	vCurPos.x += fChagePos[0];
-	vCurPos.y += fChagePos[1];
-	vCurPos.z += fChagePos[2];
-
-	PxRigidActor * pActor = CPhysX_Manager::GetInstance()->Find_Actor(m_szCloneObjectTag);
-
-	CPhysX_Manager::GetInstance()->Set_ActorPosition(pActor, CUtile::Float_4to3(vCurPos));
-
-	if(ImGui::Button("toggle"))
-	{
-		m_bDissolve = !m_bDissolve;
-		m_fDissolveTime = 0.f;
-	}
+	//_float4 vCurPos = m_pTransformCom->Get_Position();
 
 
-	//ImGui::Begin("Dissolve Test");
+	//static _float fChagePos[3] = { 0.f,0.f,0.f };
+	//ImGui::DragFloat3("PX_Pos", fChagePos, 0.01f, 0.1f, 100.0f);
 
-	//ImGui::InputFloat("FirstRatio", &fFirstRatio);
-	//ImGui::InputFloat("SecondRatio", &fSecondRatio);
+	//vCurPos.x += fChagePos[0];
+	//vCurPos.y += fChagePos[1];
+	//vCurPos.z += fChagePos[2];
 
-	//vTestColor1 = Set_ColorValue();
-	//vTestColor2 = Set_ColorValue_1();
+	//PxRigidActor * pActor = CPhysX_Manager::GetInstance()->Find_Actor(m_szCloneObjectTag);
 
-	ImGui::End();
+	//CPhysX_Manager::GetInstance()->Set_ActorPosition(pActor, CUtile::Float_4to3(vCurPos));
+
+	//if(ImGui::Button("toggle"))
+	//{
+	//	m_bDissolve = !m_bDissolve;
+	//	m_fDissolveTime = 0.f;
+	//}
+
+
+	////ImGui::Begin("Dissolve Test");
+
+	////ImGui::InputFloat("FirstRatio", &fFirstRatio);
+	////ImGui::InputFloat("SecondRatio", &fSecondRatio);
+
+	////vTestColor1 = Set_ColorValue();
+	////vTestColor2 = Set_ColorValue_1();
+
+	//ImGui::End();
 
 
 }
