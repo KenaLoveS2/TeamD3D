@@ -1184,6 +1184,8 @@ void CKena::Push_EventFunctions()
 	TurnOnDashEd(true, 0.f);
 
 	TurnOnLvUp(true, 0.0f);
+	TurnOnLvUp_Part1_Floor(true, 0.f);
+	TurnOnLvUp_Part2_RiseY(true, 0.f);
 
 	PlaySound_Kena_FootStep(true, 0.f);
 	PlaySound_Kena_FootStep_Sprint(true, 0.f);
@@ -1193,6 +1195,9 @@ void CKena::Push_EventFunctions()
 	PlaySound_Dodge(true, 0.f);
 	PlaySound_Dodge_End(true, 0.f);
 	PlaySound_Interact_Staff(true, 0.f);
+	PlaySound_Sit(true, 0.f);
+	PlaySound_Rot_Action_Command(true, 0.f);
+	PlaySound_Rot_Action_Voice(true, 0.f);
 
 	PlaySound_Pulse_Intro(true, 0.f);
 	PlaySound_Pulse_Outro(true, 0.f);
@@ -1304,6 +1309,8 @@ void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 			static_cast<CMonster*>(pTarget)->Bind(m_pRotForMonster, 8);
 			//static_cast<CMonster*>(pTarget)->Setting_Rot();
 			m_pRotForMonster[0]->Set_Target(static_cast<CMonster*>(pTarget));
+
+			PlaySound_Rot_Action_Combat_Voice();
 		}
 
 		RELEASE_INSTANCE(CGameInstance);
@@ -1570,6 +1577,16 @@ HRESULT CKena::Ready_Effects()
 		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 		m_mapEffect.emplace(strLevelUp, pEffectBase);
 	}
+
+	/* KenaLvUp_RiseY  */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaLevel_RiseY", L"KenaLvUp_RiseY"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaLvUp_RiseY", pEffectBase);
+
+	/* KenaLvUp_Floor  */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaLevel_Floor", L"KenaLvUp_Floor"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaLvUp_Floor", pEffectBase);
 
 	for (auto& pEffects : m_mapEffect)
 		pEffects.second->Set_Parent(this);
@@ -2475,6 +2492,32 @@ void CKena::TurnOnLvUp(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["K_LevelUp1"]->Set_Effect(vPos, true);
 }
 
+void CKena::TurnOnLvUp_Part1_Floor(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnLvUp_Part1_Floor);
+		return;
+	}
+
+	_float4 vPos = m_pTransformCom->Get_Position();
+	m_mapEffect["KenaLvUp_Floor"]->Set_Effect(vPos, true);
+}
+
+void CKena::TurnOnLvUp_Part2_RiseY(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnLvUp_Part2_RiseY);
+		return;
+	}
+
+	_float4 vPos = m_pTransformCom->Get_Position();
+	m_mapEffect["KenaLvUp_RiseY"]->Set_Effect(vPos, true);
+}
+
 void CKena::PlaySound_Kena_FootStep(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
@@ -2639,6 +2682,107 @@ void CKena::PlaySound_Interact_Staff(_bool bIsInit, _float fTimeDelta)
 
 	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Interact_Staff.ogg", 1.f, false);
 	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Interect_Staff_Ring.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_Sit(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Sit);
+		return;
+	}
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 3.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Sit_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Sit_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Sit_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Sit_3.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_Rot_Action_Command(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Rot_Action_Command);
+		return;
+	}
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 10.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Action_Command_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Action_Command_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Action_Command_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Action_Command_3.ogg", 1.f, false);
+	else if (iRand == 4)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Action_Command_4.ogg", 1.f, false);
+	else if (iRand == 5)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Action_Command_5.ogg", 1.f, false);
+	else if (iRand == 6)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Action_Command_6.ogg", 1.f, false);
+	else if (iRand == 7)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Action_Command_7.ogg", 1.f, false);
+	else if (iRand == 8)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Action_Command_8.ogg", 1.f, false);
+	else if (iRand == 9)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Action_Command_9.ogg", 1.f, false);
+	else if (iRand == 10)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Action_Command_10.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_Rot_Action_Voice(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Rot_Action_Voice);
+		return;
+	}
+
+	if (m_pRotForMonster[0]->Get_Target() != nullptr)
+		return;
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 15.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_3.ogg", 1.f, false);
+	else if (iRand == 4)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_4.ogg", 1.f, false);
+	else if (iRand == 5)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_5.ogg", 1.f, false);
+	else if (iRand == 6)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_6.ogg", 1.f, false);
+	else if (iRand == 7)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_7.ogg", 1.f, false);
+	else if (iRand == 8)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_8.ogg", 1.f, false);
+	else if (iRand == 9)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_9.ogg", 1.f, false);
+	else if (iRand == 10)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_10.ogg", 1.f, false);
+	else if (iRand == 11)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_11.ogg", 1.f, false);
+	else if (iRand == 12)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_12.ogg", 1.f, false);
+	else if (iRand == 13)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_13.ogg", 1.f, false);
+	else if (iRand == 14)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_14.ogg", 1.f, false);
+	else if (iRand == 15)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_15.ogg", 1.f, false);
 }
 
 void CKena::PlaySound_Pulse_Intro(_bool bIsInit, _float fTimeDelta)
@@ -3144,6 +3288,33 @@ void CKena::PlaySound_SpinAttack(_bool bIsInit, _float fTimeDelta)
 
 	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_ParryAttack_Sweep.ogg", 1.f, false);
 	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_ParryAttack_Woong.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_Rot_Action_Combat_Voice()
+{
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 10.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_Combat_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_Combat_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_Combat_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_Combat_3.ogg", 1.f, false);
+	else if (iRand == 4)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_Combat_4.ogg", 1.f, false);
+	else if (iRand == 5)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_Combat_5.ogg", 1.f, false);
+	else if (iRand == 6)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_Combat_6.ogg", 1.f, false);
+	else if (iRand == 7)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_Combat_7.ogg", 1.f, false);
+	else if (iRand == 8)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_Combat_8.ogg", 1.f, false);
+	else if (iRand == 9)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_Combat_9.ogg", 1.f, false);
+	else if (iRand == 10)
+		CGameInstance::GetInstance()->Play_Sound(L"VOX_Kena_Rot_Action_Combat_10.ogg", 1.f, false);
 }
 
 void CKena::PlaySound_Hit()

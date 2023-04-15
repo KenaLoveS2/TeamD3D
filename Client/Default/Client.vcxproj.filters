@@ -1702,6 +1702,12 @@
     <ClInclude Include="..\public\Camera_Photo.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_Level_Floor.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Level_RiseY.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2749,6 +2755,12 @@
     <ClCompile Include="..\private\Camera_Shaman.cpp" />
     <ClCompile Include="..\private\Camera_Photo.cpp">
       <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Level_Floor.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Level_RiseY.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

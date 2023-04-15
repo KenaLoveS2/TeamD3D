@@ -668,8 +668,8 @@ void CKena_Status::Add_RotCount()
 			m_fCurPIPGuage = (_float)m_iMaxPIPCount;
 
 			/* Pip Level Up */
-// 			CUI_ClientManager::UI_PRESENT ePipUpgrade = CUI_ClientManager::HUD_PIP_UPGRADE;
-// 			m_StatusDelegator.broadcast(ePipUpgrade, m_fCurPIPGuage);
+ 			CUI_ClientManager::UI_PRESENT ePipUpgrade = CUI_ClientManager::HUD_PIP_UPGRADE;
+ 			m_StatusDelegator.broadcast(ePipUpgrade, m_fCurPIPGuage);
 		}
 
 		else if (m_iRotLevel == 3)

@@ -5003,6 +5003,8 @@ void CKena_State::Start_Bomb_Cancel(_float fTimeDelta)
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBomb = false;
 	m_pKena->m_bJump = false;
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Cancel.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Bomb_Cancel_Run_Forward(_float fTimeDelta)
