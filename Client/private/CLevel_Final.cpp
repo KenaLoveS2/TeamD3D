@@ -400,6 +400,13 @@ HRESULT CLevel_Final::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(CAMERA_SHAMAN_TAG, pCamera), E_FAIL);
 	}
 
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		CCamera* pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraPhoto", L"Camera_Photo"));
+		NULL_CHECK_RETURN(pCamera, E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(CAMERA_PHOTO_TAG, pCamera), E_FAIL);
+	}
+
 	return S_OK;
 }
 

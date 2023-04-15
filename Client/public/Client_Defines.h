@@ -24,6 +24,7 @@ extern bool g_bFrameLimit;
 #define MONSTER_MASS				25000.f
 
 #define CAMERA_SHAMAN_TAG			TEXT("CAMERA_SHAMAN")
+#define CAMERA_PHOTO_TAG			TEXT("CAMERA_PHOTO")
 
 namespace Client
 {

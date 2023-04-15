@@ -206,6 +206,7 @@
     <ClInclude Include="..\public\CameraForRot.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
+    <ClInclude Include="..\public\Camera_Photo.h" />
     <ClInclude Include="..\public\Camera_Shaman.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\CinematicCamera.h" />
@@ -535,6 +536,7 @@
     <ClCompile Include="..\private\CameraForNpc.cpp" />
     <ClCompile Include="..\private\CameraForRot.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
+    <ClCompile Include="..\private\Camera_Photo.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\private\Camera_Shaman.cpp" />
     <ClCompile Include="..\Private\Chest_Anim.cpp" />

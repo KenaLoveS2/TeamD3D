@@ -47,6 +47,10 @@ private:
 	class CKena*				m_pKena = nullptr;
 	CTransform*					m_pKenaTransform = nullptr;
 	_bool						m_bRenderCheck = false;
+	class CRot* m_pRot = nullptr;
+
+	_bool m_bAnimPlayFlag = true;
+
 private:
 	_bool						m_bKenaDetected = false;
 	_bool						m_bOpened = false;
@@ -74,6 +78,13 @@ public:
 	static  CChest_Anim*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr) override;
 	virtual void				Free() override;
+
+	inline void Set_AnimationPlayFlag(_bool bFlag) { m_bAnimPlayFlag = bFlag; }
+
+	virtual void Push_EventFunctions() override;
+	void Wait_BoxOpened(_bool bIsInit, _float fTimeDelta);
+	HRESULT Create_Rot();
+	HRESULT Setup_RotPosition();
 };
 
 END

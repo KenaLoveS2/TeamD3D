@@ -35,6 +35,7 @@
 
 #include "ControlRoom.h"
 #include "Level_Loading.h"
+#include "Camera_Photo.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -512,6 +513,9 @@ HRESULT CKena::Late_Initialize(void * pArg)
 			pEffect.second->Late_Initialize();
 	}
 	pStaff->Late_Initialize(pArg);
+
+	m_pCamera_Photo = (CCamera_Photo*)CGameInstance::GetInstance()->Find_Camera(CAMERA_PHOTO_TAG);
+	if (m_pCamera_Photo) m_pCamera_Photo->Set_KenaPtr(this);
 
 	return S_OK;
 }
@@ -1651,7 +1655,9 @@ HRESULT CKena::Ready_Rots()
 		if (i == FIRST_ROT)
 		{
 			Set_FirstRotPtr((CRot*)p_game_object);
-			CRot::Set_RotUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));			
+			CRot::Set_RotUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+			if (m_pCamera_Photo)
+				m_pCamera_Photo->Set_KenaPtr(this);
 		}
 	}
 

@@ -11,6 +11,7 @@
 #include "UI_FocusNPC.h"
 #include "CinematicCamera.h"
 #include "Rot.h"
+#include "Camera_Photo.h"
 
 /* For. Delegator Default Value (meaningless) */
 _float		fDefaultVal = 345.f; /* Default Chat Value */
@@ -123,6 +124,9 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 	}
 
 	Setting_Sound();
+
+	m_pCamera_Photo = (CCamera_Photo*)CGameInstance::GetInstance()->Find_Camera(CAMERA_PHOTO_TAG);
+	if (m_pCamera_Photo) m_pCamera_Photo->Set_NpcSaiyaPtr(this);
 
 	return S_OK;
 }
