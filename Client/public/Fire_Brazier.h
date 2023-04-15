@@ -57,6 +57,8 @@ private:
 	HRESULT SetUp_ShadowShaderResources();
 	HRESULT Ready_Effect();
 
+	char* m_szLightName = nullptr;
+
 public:
 	static  CFire_Brazier* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

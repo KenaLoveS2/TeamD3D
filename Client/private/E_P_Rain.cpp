@@ -32,21 +32,24 @@ HRESULT CE_P_Rain::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
-	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	return S_OK;
 }
 
 HRESULT CE_P_Rain::Late_Initialize(void* pArg)
 {
+	m_ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
+	
 	return S_OK;
 }
 
 void CE_P_Rain::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
 	// m_fLife += fTimeDelta;
+
+	m_pTransformCom->Set_Position(CGameInstance::GetInstance()->Get_CamPosition());
 }
 
 void CE_P_Rain::Late_Tick(_float fTimeDelta)
@@ -54,7 +57,7 @@ void CE_P_Rain::Late_Tick(_float fTimeDelta)
 	if (m_bTurnOnfirst == false)
 	{
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(1.f, 3.f));
-		m_pVIInstancingBufferCom->Set_RandomSpeeds(5.f, 25.f);
+		m_pVIInstancingBufferCom->Set_RandomSpeeds(1.f, 10.f);
 		m_bTurnOnfirst = true;
 	}
 

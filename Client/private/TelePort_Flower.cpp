@@ -106,7 +106,6 @@ void CTelePort_Flower::Tick(_float fTimeDelta)
 		m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 100.f);
 	
 /*~Culling*/
-
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
 	

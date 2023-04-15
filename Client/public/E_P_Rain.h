@@ -25,6 +25,9 @@ public:
 public:
 	void			Reset();
 
+private:
+	CVIBuffer_Point_Instancing::POINTDESC*		m_ePointDesc;
+
 public:
 	static  CE_P_Rain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

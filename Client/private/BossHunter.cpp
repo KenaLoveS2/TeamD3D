@@ -8,6 +8,7 @@
 #include "SpiritArrow.h"
 #include "E_RectTrail.h"
 #include "ControlRoom.h"
+#include "Effect_Point_Instancing.h"
 #include "E_HunterTrail.h"
 #include "E_Swipes_Charged.h"
 #include "Rot.h"
@@ -174,6 +175,38 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 
 void CBossHunter::Tick(_float fTimeDelta)
 {	
+	//m_bDissolve = false;
+	//m_pModelCom->Play_Animation(fTimeDelta);
+	//Update_Collider(fTimeDelta);
+	//m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
+	////if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	//if (m_pHunterTrail) m_pHunterTrail->Tick(fTimeDelta);
+	//if (m_pHunterTrail->Get_Active() == true) Update_Trail(nullptr);
+
+	// /* For. String */
+	//m_fUVSpeeds[0] += 0.245f * fTimeDelta;
+	//m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
+	//m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
+	//if (m_fStringDissolve > 0.5)
+	//{
+	//	m_fStringDissolve = 0.5f;
+	//	m_fStringDissolveSpeed *= -1;
+	//	m_fStringDissolveSpeed = -0.9f;
+	//}
+	//else if (m_fStringDissolve < 0.f)
+	//{
+	//	m_fStringDissolve = 0.f;
+	//	m_fStringDissolveSpeed *= -1;
+	//	m_fStringDissolveSpeed = 0.9f;
+	//}
+	///* ~ For. String */
+	//for (auto& pArrow : m_pArrows)
+	//	pArrow->Tick(fTimeDelta);
+	//for (auto& pEffect : m_vecEffects)
+	//	pEffect->Tick(fTimeDelta);
+	//return;
+
+
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -215,7 +248,6 @@ void CBossHunter::Tick(_float fTimeDelta)
 
 	if (ImGui::Button("DamageHunter"))
 		m_pMonsterStatusCom->UnderAttack(50);
-		
 }
 
 void CBossHunter::Late_Tick(_float fTimeDelta)
@@ -1446,6 +1478,8 @@ void CBossHunter::BossFight_Start()
 	const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
 	m_pRendererCom->Set_FogValue(vColor, 100.f);
 	CGameInstance::GetInstance()->Get_Light(1)->Set_Enable(true);
+	dynamic_cast<CEffect_Point_Instancing*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Effect"), TEXT("Rain")))->Set_Active(true);
+	dynamic_cast<CEffect_Point_Instancing*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Effect"), TEXT("flower")))->Set_Active(false);
 }
 
 void CBossHunter::BossFight_End()
@@ -1464,6 +1498,8 @@ void CBossHunter::BossFight_End()
 		m_pRot->Set_WakeUpPos(vRotPos);
 		m_pRot->Get_TransformCom()->Set_Look(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * -1.f);
 	}
+	dynamic_cast<CEffect_Point_Instancing*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Effect"), TEXT("Rain")))->Set_Active(false);
+	dynamic_cast<CEffect_Point_Instancing*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Effect"), TEXT("flower")))->Set_Active(true);
 }
 
 CBossHunter* CBossHunter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1503,6 +1539,8 @@ void CBossHunter::Free()
 
 	for (auto& pArrow : m_pArrows)
 		Safe_Release(pArrow);
+
+	int a = 0;
 }
 
 

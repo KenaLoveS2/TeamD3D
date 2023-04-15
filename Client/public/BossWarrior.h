@@ -176,6 +176,8 @@ private:
 	_float m_fIdleTimeCheck = 0.f;
 	const _float m_fIdleTime = 1.f;
 
+	_float	m_fFogRange = 100.f;
+
 	enum COPY_SOUND_KEY {
 		CSK_ATTACK1, CSK_ATTACK2, CSK_ATTACK3, CSK_ATTACK4, CSK_ATTACK5, CSK_ATTACK6, CSK_ATTACK7, CSK_ATTACK8, CSK_ATTACK9,
 		CSK_HIT1, CSK_HIT2, CSK_HIT3, CSK_HIT4, 

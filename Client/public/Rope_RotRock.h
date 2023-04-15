@@ -62,6 +62,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT RenderShadow() override;
 
 	virtual HRESULT SetUp_Components() override;
 	virtual HRESULT SetUp_ShaderResources() override;
