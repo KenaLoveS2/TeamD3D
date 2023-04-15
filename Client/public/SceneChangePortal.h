@@ -34,9 +34,6 @@ public:
 	virtual void			ImGui_PhysXValueProperty() override;
 
 private:
-	
-
-private:
 	CModel* m_pModelCom = nullptr;
 
 private:

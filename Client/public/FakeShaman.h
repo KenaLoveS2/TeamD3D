@@ -62,6 +62,8 @@ private:
 	_tchar m_szCopySoundKey_Ding[64] = { 0, };
 	_bool m_bSoundFlag = false;
 	
+	_bool m_bInvisivleFlag = false;
+
 public:
 	static CFakeShaman* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
@@ -71,5 +73,6 @@ public:
 	void Clear();
 
 	_float4 Get_TrapPosition() { return m_vTrapPosition; }
+	void Go_InvisiblePos();
 };
 END

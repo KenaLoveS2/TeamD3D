@@ -520,7 +520,7 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(50);
+	m_pKenaStatus->Set_Attack(100);
 	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
 	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
@@ -1304,7 +1304,23 @@ void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 		RELEASE_INSTANCE(CGameInstance);
 	}
 
-	m_pUI_FocusRot->Set_Pos(pTarget);
+	m_pUI_FocusRot->Set_Pos(pTarget, static_cast<CMonster*>(pTarget)->Get_RotIconPosOffset());
+}
+
+
+void CKena::Call_FocusRotIconFlower(CGameObject* pTarget)
+{
+	if (m_pUI_FocusRot == nullptr)
+		return;
+
+	/* This Action needs Pip */
+	if (0 == m_pKenaStatus->Get_CurPIPCount())
+	{
+		m_pUI_FocusRot->Set_Pos(nullptr);
+		return;
+	}	
+
+	m_pUI_FocusRot->Set_Pos(pTarget, _float4(0.f, 0.5f, 0.f, 0.f));
 }
 
 void CKena::Call_FocusMonsterIcon(CGameObject * pTarget)

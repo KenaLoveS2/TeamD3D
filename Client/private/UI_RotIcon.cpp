@@ -202,7 +202,8 @@ HRESULT CUI_RotIcon::SetUp_ShaderResources()
 
 	if (nullptr != m_pTarget)
 	{
-		_float4 vPos = m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		// _float4 vPos = m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		vPos = XMVector3TransformCoord(vPos, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
 		vPos = XMVector3TransformCoord(vPos, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
 		_matrix matWorld = XMMatrixScaling(m_vOriginalSettingScale.x, m_vOriginalSettingScale.y, m_vOriginalSettingScale.z);

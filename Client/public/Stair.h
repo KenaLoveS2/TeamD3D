@@ -37,7 +37,6 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
 
 	bool		m_bBool = false;
 	_float3 m_vPos;

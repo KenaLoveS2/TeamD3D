@@ -100,11 +100,15 @@
 #include "SceneChangePortal.h"
 #include "MannequinRot.h"
 #include "Meditation_Spot.h"
+#include "WorldTrigger.h"
 
 #include "BossRock.h"
 #include "BossRock_Pool.h"
 #include "DeadZoneBossTree.h"
 #include "Fire_Brazier.h"
+#include "BossShaman_Mask.h"
+#include "Camera_Shaman.h"
+
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
@@ -335,7 +339,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyunwook
-	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	// FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyaewon
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
@@ -549,7 +553,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = true;
+	_bool bRealObject = false;
 	_bool bFlowerCheck = false;
 
 #ifdef FOR_MAPTOOL   
@@ -557,7 +561,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #else
 	if(bFlowerCheck == true)
 	{
-		if (FAILED(Loading_ForHW(LEVEL_MAPTOOL)))
+		if (FAILED(Loading_ForHO(LEVEL_MAPTOOL)))
 			return E_FAIL;
 	}
 
@@ -1815,6 +1819,9 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 	// Prototype_GameObject_PortalPlane
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PortalPlane"), CPortalPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
+	// Prototype_GameObject_WorldTrigger
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WorldTrigger"), CWorldTrigger::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
@@ -2151,7 +2158,10 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrap_DecalGeo_Rescale.mdat"), PivotMatrix)))) return E_FAIL;
-	/*********************************************************************************************************************************************/
+	
+	// Prototype_Component_Model_ShamanMask
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanMask",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Boss_ShamanMask/ShamanMask.mdat"), PivotMatrix)))) return E_FAIL;
 
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	// Prototype_Component_Model_Rope_Rock
@@ -2275,6 +2285,9 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_GameObject_ShamanTrapPlane
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrapPlane"), CShamanTrapPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
+	// Prototype_GameObject_ShamanMask
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanMask"), CBossShaman_Mask::Create(m_pDevice, m_pContext)))) return E_FAIL;	
+
 	// Prototype_GameObject_BossHunter
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossHunter"), CBossHunter::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
@@ -2289,6 +2302,9 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_GameObject_BossRockPool
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossRockPool"), CBossRock_Pool::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_CameraShaman
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraShaman"), CCamera_Shaman::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	return S_OK;
 }
@@ -3164,7 +3180,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinPlatform", true, true, true,false,true)))
 		assert(!"Issue");
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Rubble", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Rubble", true, true, true,false,true)))
 		return E_FAIL;
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Big", true, true, true)))
@@ -3199,7 +3215,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Sheer", true, true, true,false,true)))
 		assert(!"Issue");
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_Rubble", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_Rubble", true, true, true,false,true)))
 		return E_FAIL;
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinStaris", true, true, true,false,true)))

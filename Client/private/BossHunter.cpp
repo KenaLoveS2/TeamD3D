@@ -163,13 +163,11 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 	m_pHunterTrail->Late_Initialize(nullptr);
-
-	
+		
 	m_vecEffects[EFFECT_BOWTRAIL1]->Activate(this, "Bow_TopJnt9");
 	m_vecEffects[EFFECT_BOWTRAIL2]->Activate(this, "Bow_BotJoint9");
 	m_vecEffects[EFFECT_AURA_PARTICLE]->Activate(this, "char_rt_clavicle_jnt");
-
-
+	
 	return S_OK;
 }
 
@@ -559,6 +557,8 @@ HRESULT CBossHunter::SetUp_State()
 	{	
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_bReadySpawn = true;
+		CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_2"));
+		m_pRendererCom->ShootStaticShadow();
 	})
 	.AddTransition("SLEEP to CINEMA", "CINEMA")
 	.Predicator([this]()
@@ -1531,16 +1531,11 @@ CGameObject* CBossHunter::Clone(void* pArg)
 void CBossHunter::Free()
 {
 	CMonster::Free();
-
 	Safe_Release(m_pHunterTrail);
-
 	for (auto& pEffect : m_vecEffects)
 		Safe_Release(pEffect);
-
 	for (auto& pArrow : m_pArrows)
 		Safe_Release(pArrow);
-
-	int a = 0;
 }
 
 

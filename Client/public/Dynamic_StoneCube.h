@@ -57,9 +57,7 @@ private:
 private:
 	Dynamic_StoneCube_DESC		m_StoneCubeDesc;
 	_bool				m_bTestOnce = false;
-
-				
-
+	
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

@@ -541,6 +541,20 @@ HRESULT CBeni::SetUp_State()
 	return S_OK;
 }
 
+HRESULT CBeni::SetUp_StateFinal()
+{
+	m_pFSM = CFSMComponentBuilder()
+		.InitState("IDLE")
+		.AddState("IDLE")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(BENI_IDLE);
+	})
+		.Build();
+
+	return S_OK;
+}
+
 HRESULT CBeni::SetUp_Components()
 {
 	__super::SetUp_Components();

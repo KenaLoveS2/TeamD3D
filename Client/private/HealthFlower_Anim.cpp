@@ -358,7 +358,7 @@ _bool CHealthFlower_Anim::Check_CameraRay()
 
 	if (CPhysX_Manager::GetInstance()->Raycast_CollisionTarget(vCamPos, vCamLook, 15.f, nullptr, this))
 	{
-		m_pKena->Call_FocusRotIcon(this);
+		m_pKena->Call_FocusRotIconFlower(this);
 		return true;
 	}
 
