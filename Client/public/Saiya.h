@@ -118,6 +118,8 @@ public:
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>		m_SaiyaDelegator;
+	void								Set_Disappear(_bool bDisappear) { m_bDeath = bDisappear; }
+	_bool  Get_PhotoAnimeEnd() { return m_bPhotoAnimEnd; }
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) override;
@@ -154,7 +156,11 @@ private:
 	class CCinematicCamera*			m_pCinecam[NPC_CINE_END] = { nullptr, };
 	class CCameraForNpc*				m_pMainCam = nullptr;
 	class CRot*									m_pRot = nullptr;
-	class CCamera_Photo*			m_pCamera_Photo = nullptr;
+	class CCamera_Photo*					m_pCamera_Photo = nullptr;
+	_bool											 m_bPhoto = false;
+	_bool											 m_bPhotoAnimEnd = false;
+	void												Execute_Photo();
+	_bool											Is_PhotoAnimEnd();
 
 public:
 	static CSaiya*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
