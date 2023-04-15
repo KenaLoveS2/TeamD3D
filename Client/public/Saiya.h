@@ -131,7 +131,6 @@ protected:
 private:
 	virtual void					AdditiveAnim(_float fTimeDelta) override;
 	void								Set_PlayerLock(_bool bLock);
-
 	_bool							IsChatEnd();
 	HRESULT						Save_KeyFrame();
 	HRESULT						Load_KeyFrame();
@@ -150,9 +149,7 @@ private:
 	_uint												m_iKeyFrame = 0;
 	_float3											m_vCamOffset;
 	_bool											m_bPulse = false;
-
 	_bool											m_bSoundCheck[7] = { false, };
-
 	_bool											m_bCinecam[NPC_CINE_END] = { false, };
 	class CCinematicCamera*			m_pCinecam[NPC_CINE_END] = { nullptr, };
 	class CCameraForNpc*				m_pMainCam = nullptr;

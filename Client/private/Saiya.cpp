@@ -129,6 +129,8 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 
 void CSaiya::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 	m_iNumKeyFrame = (_uint)m_keyframes.size();
 	Update_Collider(fTimeDelta);
@@ -151,6 +153,8 @@ void CSaiya::Tick(_float fTimeDelta)
 
 void CSaiya::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)

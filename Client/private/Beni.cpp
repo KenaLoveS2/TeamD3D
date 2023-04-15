@@ -91,6 +91,8 @@ HRESULT CBeni::Late_Initialize(void* pArg)
 
 void CBeni::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 	Update_Collider(fTimeDelta);
 	SaiyaFunc(fTimeDelta);
@@ -112,6 +114,8 @@ void CBeni::Tick(_float fTimeDelta)
 
 void CBeni::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)

@@ -61,6 +61,7 @@ protected:
 	CFSMComponent*			m_pFSM = nullptr;
 	class CKena*					m_pKena = nullptr;
 	_bool								m_bStraight = false;
+	_bool								m_bDeath = false;
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;

@@ -383,7 +383,7 @@ HRESULT CLevel_Final::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 		CCinematicCamera::Clone_Load_Data("BossWarrior_End.json", v, chatFileName);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-			CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"BOSSWARRIOR_END", &v));
+		CCamera * pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"BOSSWARRIOR_END", &v));
 		//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"BOSSWARRIOR_END", &v, &p_game_object))) return E_FAIL;
 		//CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
 		NULL_CHECK_RETURN(pCamera, E_FAIL);
@@ -421,8 +421,8 @@ HRESULT CLevel_Final::Ready_Layer_Player(const _tchar* pLayerTag)
 
 HRESULT CLevel_Final::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Chap0_Monster.json");
-	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Test.json");
+	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Chap0_Monster.json");
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Test.json");
 	return S_OK;
 }
 
