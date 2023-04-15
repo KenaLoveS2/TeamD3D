@@ -3,6 +3,7 @@
 /**********Constant Buffer*********/
 float4			g_WorldCamPosition;
 float			g_fHDRValue;
+float			g_fFar = 500.f;
 /**********************************/
 
 /**********Common Texture*********/
@@ -74,6 +75,7 @@ struct PS_IN
 struct PS_OUT
 {
 	float4		vColor : SV_TARGET0;
+	float4		vDepth : SV_TARGET1;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -401,9 +403,22 @@ PS_OUT PS_MAIN_E_JUMP(PS_IN In)
 
 	/* DiffuseTexture */
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-//	float3 vColor = g_vColor.rgb;
-//	albedo.rgb = vColor * 1.2f;
 	Out.vColor = albedo * g_vColor * 1.5f;
+
+	// g_DepthTexture
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+	float		fOldViewZ = vDepthDesc.y * g_fFar; // 카메라의 far
+	float		fViewZ = In.vProjPos.w;
+
+	Out.vColor = Out.vColor;
+	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ)) * 0.4f;
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	// g_DepthTexture
+
 	return Out;
 }
 

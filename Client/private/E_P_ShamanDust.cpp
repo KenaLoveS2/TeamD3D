@@ -47,6 +47,11 @@ HRESULT CE_P_ShamanDust::Late_Initialize(void* pArg)
 
 void CE_P_ShamanDust::Tick(_float fTimeDelta)
 {
+	ImGui::Begin("CE_P_ShamanDust");
+	if (ImGui::Button("re"))
+		m_pShaderCom->ReCompile();
+	ImGui::End();
+	
 	if (m_pShaman && m_pShaman->Get_MonsterStatusPtr()->Get_HP() < 1.0f && m_eEFfectDesc.bActive == false)
 		return;
 
@@ -109,6 +114,7 @@ HRESULT CE_P_ShamanDust::SetUp_ShaderResources()
 		return E_FAIL;
 
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bTurn", &m_bTurn, sizeof(_bool)), E_FAIL);
+ 	FAILED_CHECK_RETURN(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", CGameInstance::GetInstance()->Get_DepthTargetSRV()), E_FAIL);
 
 	return S_OK;
 }

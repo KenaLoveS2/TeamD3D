@@ -5,6 +5,7 @@ texture2D		g_DepthTexture;
 texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
 texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
 float			g_fHDRValue;
+float			g_fFar = 500.f;
 
 // Type
 int		g_TextureRenderType, g_BlendType;
@@ -68,6 +69,7 @@ struct VS_OUT
 	float2		vPSize : PSIZE;
 	float		fSize : TEXCOORD2;
 	float		fLife : TEXCOORD3;
+	float4		vProjPos : TEXCOORD4;
 };
 
 /* Trail */
@@ -109,6 +111,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vCenterPosition = mul(float4(0.f, 0.f, 0.f, 1.f), g_WorldMatrix).xyz;
 	Out.vRightScale = matrix_right(In.Matrix);
 	Out.vPSize = In.vPSize;
+	Out.vProjPos = float4(Out.vPosition, 1.f);
 
 	return Out;
 }
@@ -143,6 +146,7 @@ struct GS_IN
 	float2		vPSize : PSIZE;
 	float		fSize : TEXCOORD2;
 	float		fLife : TEXCOORD3;
+	float4		vProjPos : TEXCOORD4;
 };
 
 struct GS_OUT
@@ -150,6 +154,7 @@ struct GS_OUT
 	float4		vPosition : SV_POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float		fLife : TEXCOORD1;
+	float4		vProjPos : TEXCOORD2;
 };
 
 /* Trail */
@@ -189,21 +194,25 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[0].vTexUV = float2(0.f, 0.f);
 	Out[0].fLife = In[0].fLife;
+	Out[0].vProjPos = Out[0].vPosition;
 
 	vPosition = In[0].vPosition - vRight + vUp * fCurWidth;
 	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[1].vTexUV = float2(1.f, 0.f);
 	Out[1].fLife = In[0].fLife;
+	Out[1].vProjPos = Out[1].vPosition;
 
 	vPosition = In[0].vPosition - vRight - vUp * fCurWidth;
 	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[2].vTexUV = float2(1.f, 1.f);
 	Out[2].fLife = In[0].fLife;
+	Out[2].vProjPos = Out[2].vPosition;
 
 	vPosition = In[0].vPosition + vRight - vUp * fCurWidth;
 	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[3].vTexUV = float2(0.f, 1.f);
 	Out[3].fLife = In[0].fLife;
+	Out[3].vProjPos = Out[3].vPosition;
 
 	Vertices.Append(Out[0]);
 	Vertices.Append(Out[1]);
@@ -235,21 +244,25 @@ void GS_DEFAULT(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[0].vTexUV = float2(0.f, 0.f);
 	Out[0].fLife = In[0].fLife;
+	Out[0].vProjPos = Out[0].vPosition;
 
 	vPosition = In[0].vPosition - vRight + vUp * fCurWidth;
 	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[1].vTexUV = float2(1.f, 0.f);
 	Out[1].fLife = In[0].fLife;
+	Out[1].vProjPos = Out[1].vPosition;
 
 	vPosition = In[0].vPosition - vRight - vUp * fCurWidth;
 	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[2].vTexUV = float2(1.f, 1.f);
 	Out[2].fLife = In[0].fLife;
+	Out[2].vProjPos = Out[2].vPosition;
 
 	vPosition = In[0].vPosition + vRight - vUp * fCurWidth;
 	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[3].vTexUV = float2(0.f, 1.f);
 	Out[3].fLife = In[0].fLife;
+	Out[3].vProjPos = Out[3].vPosition;
 
 	Vertices.Append(Out[0]);
 	Vertices.Append(Out[1]);
@@ -824,6 +837,7 @@ struct PS_IN
 	float4		vPosition : SV_POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float       fLife : TEXCOORD1;
+	float4		vProjPos : TEXCOORD2;
 };
 
 struct PS_TRAILIN
@@ -836,6 +850,7 @@ struct PS_TRAILIN
 struct PS_OUT
 {
 	float4		vColor : SV_TARGET0;
+	float4		vDepth : SV_TARGET1;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -976,24 +991,37 @@ PS_OUT PS_PARTICLEMAINPS_PARTICLEMAIN(PS_IN In)
 		In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
 	}
 
-	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	float4 finalcolor = albedo;
+	vector vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 
 	if (g_bTimer)
 	{
 		float fTime = min(g_Time, 1.f);
 		if (g_bDissolve)
-			finalcolor.a = finalcolor.a * (1.f - fTime);
+			vDiffuse.a = vDiffuse.a * (1.f - fTime);
 		else
-			finalcolor.a = finalcolor.a * (fTime / 1.f);
+			vDiffuse.a = vDiffuse.a * (fTime / 1.f);
 	}
-	Out.vColor = finalcolor * g_vColor;
+	float4 finalcolor = vDiffuse * g_vColor;
 
-	if (Out.vColor.a == 0.0f)
-		Out.vColor.rgb = 0.25f;
+	// g_DepthTexture
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+	float		fOldViewZ = vDepthDesc.y * g_fFar; // 카메라의 far
+	float		fViewZ = In.vProjPos.w;
+
+	Out.vColor = finalcolor;
+	Out.vColor.a = vDiffuse.a * (saturate(fOldViewZ - fViewZ));
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	// g_DepthTexture
 
 	if (g_fHDRValue != 0.0f)
-		Out.vColor = CalcHDRColor(Out.vColor, g_fHDRValue);
+		finalcolor = CalcHDRColor(Out.vColor, g_fHDRValue);
+
+	//if (Out.vColor.a < 0.1f)
+	//	discard;
 
 	return Out;
 }
@@ -1740,16 +1768,16 @@ technique11 DefaultTechnique
 	pass EnvironmentDust // 22
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_TEST2, 0);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = compile gs_5_0 GS_DEFAULT();
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_PARTICLEMAINPS_PARTICLEMAIN();
+		PixelShader = compile ps_5_0 PS_MAIN();
 	}
-
+	//  PS_PARTICLEMAINPS_PARTICLEMAIN
 	pass EnvironmentObject // 23
 	{
 		SetRasterizerState(RS_Default);
