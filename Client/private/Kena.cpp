@@ -577,7 +577,7 @@ void CKena::Tick(_float fTimeDelta)
 
 void CKena::Late_Tick(_float fTimeDelta)
 {
-	/* ¹®Á¦ »ý±â¸é º¸°í ¹Ù¶÷. */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶ï¿½. */
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
@@ -1737,6 +1737,8 @@ HRESULT CKena::SetUp_UI()
 		MSG_BOX("Failed To make UI : Kena");
 		return E_FAIL;
 	}
+	else
+		m_pUI_FocusRot->Set_Player(this);
 
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
 		TEXT("Prototype_GameObject_UI_FocusMonster"),
@@ -1827,7 +1829,7 @@ void CKena::Check_Damaged()
 				if (m_bDeath = m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr()))
 					m_eDamagedDir = Calc_DirToMonster_2Way(m_pAttackObject);
 
-				/* JH : HP°ÔÀÌÁö´Â ±×³É ¸ÅÇÁ·¹ÀÓ °»½ÅÇØÁÖ·Á°í TickÀ¸·Î »°À½. */
+				/* JH : HPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ Tickï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. */
 // 				CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 // 				_float fGuage = m_pKenaStatus->Get_PercentHP();
 // 				m_Delegator.broadcast(eHP, fGuage);
@@ -3380,6 +3382,8 @@ void CKena::LiftRotRockProc()
 	if (pCurTerrain == nullptr)
 		return;
 
+
+
 	if (m_bRotRockChoiceFlag == false && GetKeyState('R') & 0x8000)
 	{
 		if (m_pRopeRotRock)
@@ -3420,6 +3424,23 @@ void CKena::LiftRotRockProc()
 			pCurTerrain->Set_BrushPosition(_float3(-1000.f, 0.f, 0.f));
 		}	
 	}
+}
+
+void CKena::Set_RopeRotRockPtr(CRope_RotRock* pObject)
+{
+	_float fNoMeaning = 1.f;
+	if (m_pRopeRotRock == nullptr && pObject != nullptr)
+	{
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_MOVEROT;
+		m_Delegator.broadcast(tag, fNoMeaning);
+	}
+	else if (m_pRopeRotRock != nullptr && pObject == nullptr)
+	{
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OFF;
+		m_Delegator.broadcast(tag, fNoMeaning);
+	}
+
+	m_pRopeRotRock = pObject;
 }
 
 void CKena::Setup_TerrainPtr()

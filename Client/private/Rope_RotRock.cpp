@@ -307,6 +307,8 @@ HRESULT CRope_RotRock::SetUp_State()
 
 		if (m_pTransformCom->IsClosed_XZ(vPlayerPos, 5.f))
 			m_pKena->Set_RopeRotRockPtr(this);
+		else
+			m_pKena->Set_RopeRotRockPtr(nullptr);
 	})
 	.OnExit([this]()
 	{
@@ -332,6 +334,8 @@ HRESULT CRope_RotRock::SetUp_State()
 
 		if (m_pTransformCom->IsClosed_XZ(vPlayerPos, 5.f))
 			m_pKena->Set_RopeRotRockPtr(this);
+		else
+			m_pKena->Set_RopeRotRockPtr(nullptr);
 	})
 		.OnExit([this]()
 	{

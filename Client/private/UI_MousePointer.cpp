@@ -28,7 +28,13 @@ HRESULT CUI_MousePointer::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		MSG_BOX("Failed To Initialize Clone : CUI");
+		MSG_BOX("Failed To Initialize Clone : MousePointer");
+		return E_FAIL;
+	}
+
+	if (FAILED(SetUp_Components()))
+	{
+		MSG_BOX("Faioled To Setup Comp : MousePointer");
 		return E_FAIL;
 	}
 
@@ -39,7 +45,9 @@ HRESULT CUI_MousePointer::Initialize(void* pArg)
 	XMStoreFloat4x4(&m_matView, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_matProj, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
 
-	m_pTransformCom->Set_Scaled({10.f, 10.f, 1.f});
+	m_pTransformCom->Set_Scaled({ 40.f, 40.f, 1.f });
+
+	m_iRenderPass = 1;
 
 	return S_OK;
 
@@ -53,7 +61,8 @@ void CUI_MousePointer::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	POINT pt = CUtile::GetClientCursorPos(g_hWnd);
-	m_pTransformCom->Set_Position({ (_float)pt.x, (_float)pt.y, 0.f, 1.f });
+	m_pTransformCom->Set_Position({ (_float)pt.x - 0.5f * g_iWinSizeX, 
+				0.5f * g_iWinSizeY  -(_float)pt.y, 0.f, 1.f });
 }
 
 void CUI_MousePointer::Late_Tick(_float fTimeDelta)
@@ -76,6 +85,7 @@ HRESULT CUI_MousePointer::Render()
 		MSG_BOX("Failed To Setup ShaderResources : CUI_MousePointer");
 		return E_FAIL;
 	}
+
 
 	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();

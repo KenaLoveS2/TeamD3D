@@ -4,21 +4,31 @@
 #include "Camera.h"
 #include "Monster.h"
 #include "RotForMonster.h"
+#include "Kena.h"
 
 CUI_RotIcon::CUI_RotIcon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Billboard(pDevice, pContext)
 	,m_pTarget(nullptr)
+	, m_pKena(nullptr)
 {
 }
 
 CUI_RotIcon::CUI_RotIcon(const CUI_RotIcon & rhs)
 	: CUI_Billboard(rhs)
 	,m_pTarget(nullptr)
+	, m_pKena(nullptr)
 {
 }
 
 void CUI_RotIcon::Set_Pos(CGameObject* pTarget, _float4 vCorrect)
 {
+	if (m_pTarget == nullptr && pTarget != nullptr)
+	{
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_USEROT;
+		_float fNoMeaning = 1.f;
+		m_pKena->m_Delegator.broadcast(tag, fNoMeaning);
+	}
+
 	if (pTarget == nullptr)
 	{
 		m_pTarget = nullptr;
@@ -40,6 +50,11 @@ void CUI_RotIcon::Off_Focus(CGameObject* pTarget)
 	{
 		m_pTarget = nullptr;
 		m_bActive = false;		
+
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OFF;
+		_float fNoMeaning = 1.f;
+		m_pKena->m_Delegator.broadcast(tag, fNoMeaning);
+
 	}
 }
 

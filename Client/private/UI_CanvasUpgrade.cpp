@@ -78,7 +78,37 @@ HRESULT CUI_CanvasUpgrade::Initialize(void * pArg)
 
 HRESULT	CUI_CanvasUpgrade::Late_Initialize(void* pArg)
 {
-	// 레벨 이동 시 플레이어 정보 받게 함.
+	/* Level Change -> Player Info Change */
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	if (pKena == nullptr)
+		return E_FAIL;
+
+	for (_uint iType = 0; iType < CKena_Status::SKILLTAB_END; ++iType)
+	{
+		for (_uint iSlot = 0; iSlot < 5; ++iSlot)
+		{
+			_bool isOpen = pKena->Get_Status()->Get_SkillState((CKena_Status::SKILLTAB)iType, iSlot);
+
+			if (isOpen == true)
+			{
+				_uint iIndex = 5 * iType + iSlot;
+				m_pSkills[iType]->UnLock(iSlot);
+				static_cast<CUI_NodeSkill*>(m_vecNode[iIndex])->State_Change(2);
+				pKena->Get_Status()->Unlock_Skill((CKena_Status::SKILLTAB)iType, iSlot);
+
+				/* Bind Not Finished, so, Broadcast not Work. */
+				if (FAILED(SetUp_SkillSettings(iType, iSlot)))
+				{
+					MSG_BOX("Skill Setting Not Complete");
+					return E_FAIL;
+				}
+			}
+		}
+	}
+
+
+	
+
 	return S_OK;
 }
 
@@ -98,12 +128,12 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 		return;
 
 	/* Return To Play */
-	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
-	{
-		CGameInstance::GetInstance()->Get_Back();
-		m_bActive = false;
-		return;
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_M))
+	//{
+	//	CGameInstance::GetInstance()->Get_Back();
+	//	m_bActive = false;
+	//	return;
+	//}
 
 
 	/* Test */
@@ -198,7 +228,6 @@ void CUI_CanvasUpgrade::Set_Caller(CGameObject * pObj)
 
 HRESULT CUI_CanvasUpgrade::Bind()
 {
-
 	m_bBindFinished = true;
 	return S_OK;
 }
@@ -444,6 +473,64 @@ HRESULT CUI_CanvasUpgrade::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CUI_CanvasUpgrade::SetUp_SkillSettings(_uint iType, _uint iSlot)
+{
+	/* Level Change -> Player Info Change */
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	if (pKena == nullptr)
+		return E_FAIL;
+
+	/* Update Skill by Player's Info before Binding is All Done. */
+	switch (iType) {
+	case CKena_Status::SKILL_SHIELD:
+	{
+		if (iSlot == 2)
+		{
+			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->
+				Call_BindFunction(CUI_ClientManager::HUD_SHIELD_UPGRADE, 1.f);
+		}
+		else if (iSlot == 4)
+		{
+			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->
+				Call_BindFunction(CUI_ClientManager::HUD_SHIELD_UPGRADE, 1.f);
+		}
+		break;
+	}
+	case CKena_Status::SKILL_BOW:
+	{
+		CUI_ClientManager::UI_PRESENT eArrowUpgrade = CUI_ClientManager::AMMO_ARROWUPRADE;
+		if (iSlot == 0)
+		{
+			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->
+				Call_BindFunction(CUI_ClientManager::AMMO_ARROWUPRADE, (_float)pKena->Get_Status()->Get_MaxArrowCount());
+		}
+		else if (iSlot == 2)
+		{
+			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->
+				Call_BindFunction(CUI_ClientManager::AMMO_ARROWUPRADE, (_float)pKena->Get_Status()->Get_MaxArrowCount());
+
+		}
+	}
+	case CKena_Status::SKILL_BOMB:
+	{
+		CUI_ClientManager::UI_PRESENT eBombUpgrade = CUI_ClientManager::AMMO_BOMBUPGRADE;
+
+		if (iSlot == 0)
+		{
+			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->
+				Call_BindFunction(CUI_ClientManager::AMMO_BOMBUPGRADE, (_float)pKena->Get_Status()->Get_MaxBombCount());
+		}
+		else if (iSlot == 3)
+		{
+			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->
+				Call_BindFunction(CUI_ClientManager::AMMO_BOMBUPGRADE, (_float)pKena->Get_Status()->Get_MaxBombCount());
+
+		}
+	}}
 
 	return S_OK;
 }

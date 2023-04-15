@@ -4,6 +4,7 @@
 #include "UI_Event_Animation.h"
 #include "Json/json.hpp"
 #include <fstream>
+#include "Effect_Particle_Base.h"
 
 CUI_NodeEffect::CUI_NodeEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -12,6 +13,8 @@ CUI_NodeEffect::CUI_NodeEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pCo
 	, m_fTime(0.f)
 	, m_fAlpha(1.f)
 	, m_vColor(1.f, 1.f, 1.f, 1.f)
+	, m_iParticleIndex(0)
+	, m_fParticleTimeAcc(0.f)
 {
 }
 
@@ -22,6 +25,8 @@ CUI_NodeEffect::CUI_NodeEffect(const CUI_NodeEffect & rhs)
 	, m_fTime(0.f)
 	, m_fAlpha(1.f)
 	, m_vColor(1.f, 1.f, 1.f, 1.f)
+	, m_iParticleIndex(0)
+	, m_fParticleTimeAcc(0.f)
 {
 }
 
@@ -52,6 +57,29 @@ void CUI_NodeEffect::Start_Effect(CUI * pTarget, _float fX, _float fY)
 	{
 	case TYPE_SEPERATOR:
 		m_fTime = 0.f;
+
+		//m_iParticleIndex = 0;
+		m_fParticleTimeAcc = 0.f;
+		for (auto& p : m_vecParticles)
+			p->DeActivate();
+		m_iParticleIndex = 0;
+
+		if (m_pParent != nullptr)
+		{
+			_float4x4 matWorldParent;
+			XMStoreFloat4x4(&matWorldParent, m_pParent->Get_WorldMatrix());
+
+			_matrix matParentTrans = XMMatrixTranslation(matWorldParent._41, matWorldParent._42, matWorldParent._43);
+
+			float fRatioX = matWorldParent._11 / m_matParentInit._11;
+			float fRatioY = matWorldParent._22 / m_matParentInit._22;
+			_matrix matParentScale = XMMatrixScaling(fRatioX, fRatioY, 1.f);
+
+			_smatrix matWorld = m_matLocal * matParentScale * matParentTrans;
+			
+			m_vOriginalSettingScale = { matWorld.Right().Length(), matWorld.Up().Length(), matWorld.Forward().Length() };
+		}
+
 		break;
 	case TYPE_RING:
 		m_fTime = 0.f;
@@ -100,14 +128,38 @@ HRESULT CUI_NodeEffect::Initialize(void * pArg)
 
 	//m_bActive = true;
 
-	if (TYPE_ANIM == m_eType)
+	switch (m_eType)
+	{
+	case TYPE_ANIM:
 	{
 		/* Events */
 		/* 이미지가 변경되도록 하는 이벤트 */
 		UIDESC* tDesc = (UIDESC*)pArg;
 		m_vecEvents.push_back(CUI_Event_Animation::Create(tDesc->fileName, this));
-
+		break;
 	}
+	case TYPE_SEPERATOR:
+	{
+		/* Ready Particle */
+		for (_uint i = 0; i < MAX_PARTICLES; ++i)
+		{
+			_tchar* fileName = CUtile::Create_StringAuto(L"Particle_UISeparator");
+			wstring tag = L"Particle_UISeparator" + to_wstring(i);
+			_tchar* cloneTag = CUtile::Create_StringAuto(tag.c_str());
+
+			CEffect_Particle_Base* pEffect =
+				static_cast<CEffect_Particle_Base*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base", cloneTag, fileName));
+			if (pEffect == nullptr)
+			{
+				MSG_BOX("failed to create effect : bossHP");
+				return E_FAIL;
+			}
+			m_vecParticles.push_back(pEffect);
+		}
+	}
+	break;
+	}
+
 
 	return S_OK;
 }
@@ -120,9 +172,11 @@ void CUI_NodeEffect::Tick(_float fTimeDelta)
 	switch (m_eType)
 	{
 	case TYPE_SEPERATOR:
-		m_fTime += fTimeDelta;
+	{
+		m_fTime += 2.f * fTimeDelta;
 		if (m_fTime > 1.f)
-			m_fTime = 1.f;
+			m_fTime = 1.000001f;
+	}
 		break;
 	case TYPE_ANIM:
 		if (static_cast<CUI_Event_Animation*>(m_vecEvents[0])->Is_Finished())
@@ -136,10 +190,11 @@ void CUI_NodeEffect::Tick(_float fTimeDelta)
 		break;
 	}
 
-
-
-
 	__super::Tick(fTimeDelta);
+
+	for (auto& p : m_vecParticles)
+		p->Tick(fTimeDelta);
+
 }
 
 void CUI_NodeEffect::Late_Tick(_float fTimeDelta)
@@ -155,8 +210,31 @@ void CUI_NodeEffect::Late_Tick(_float fTimeDelta)
 		m_fTime += 10.f* fTimeDelta;
 		m_pTransformCom->Rotation(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(-m_fTime));
 	}
+	else if (m_eType == TYPE_SEPERATOR)
+	{
+		m_fParticleTimeAcc += fTimeDelta;
+		if (m_fParticleTimeAcc > 0.01f && m_fTime <= 1.f)
+		{
+			//_float	fXPos = (m_matLocal._41 - m_matLocal._11 * 0.5f) /* Start position */
+			//	+ m_matLocal._11 * m_fTime; /* Last Position */
+			//_float4	vPos = { fXPos, m_matLocal._42, 0.f, 1.f };
+
+			_float4 vPos = m_pTransformCom->Get_Position();
+			_float3 vScale = m_pTransformCom->Get_Scaled();
+			_float	fXPos = (vPos.x - m_vOriginalSettingScale.x * 0.5f /* Start position */
+				+ m_vOriginalSettingScale.x * m_fTime); /* Last Position */
+			_float4	vResult = { fXPos, vPos.y, 0.f, 1.f };
+
+			m_vecParticles[m_iParticleIndex]->Activate(vResult);
+
+			m_iParticleIndex = (m_iParticleIndex + 1) % MAX_PARTICLES;
+			m_fParticleTimeAcc = 0.f;
+		}
+	}
 
 
+	for (auto& p : m_vecParticles)
+		p->Late_Tick(fTimeDelta);
 
 	/* think it's old one but keep it */
 	/*if (m_pParent != nullptr)
@@ -216,6 +294,31 @@ void CUI_NodeEffect::Imgui_RenderProperty()
 		m_vColor.y = vColor[1];
 		m_vColor.z = vColor[2];
 	}
+
+	if (m_eType == TYPE_SEPERATOR)
+	{
+		if (ImGui::Button("Particle Refresh"))
+		{
+			for (auto& pEffect : m_vecParticles)
+				Safe_Release(pEffect);
+			m_vecParticles.clear();
+
+			/* Ready Particle */
+			for (_uint i = 0; i < MAX_PARTICLES; ++i)
+			{
+				_tchar* fileName = CUtile::Create_StringAuto(L"Particle_UISeparator");
+				wstring tag = L"Particle_UISeparator" + to_wstring(i);
+				_tchar* cloneTag = CUtile::Create_StringAuto(tag.c_str());
+
+				CEffect_Particle_Base* pEffect =
+					static_cast<CEffect_Particle_Base*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base", cloneTag, fileName));
+				if (pEffect == nullptr)
+					MSG_BOX("failed to create effect : bossHP");
+				m_vecParticles.push_back(pEffect);
+			}
+		}
+	}
+
 
 	__super::Imgui_RenderProperty();
 }
@@ -465,4 +568,8 @@ CGameObject * CUI_NodeEffect::Clone(void * pArg)
 void CUI_NodeEffect::Free()
 {
 	__super::Free();
+
+	for (auto& p : m_vecParticles)
+		Safe_Release(p);
+	m_vecParticles.clear();
 }

@@ -39,6 +39,7 @@ public:
 	const _float&			Get_VerticalAngle() const { return m_fVerticalAngle; }
 	void					Set_Player(class CKena* pKena, CTransform* pTransform) { m_pKena = pKena; m_pKenaTransform = pTransform; Initialize_Position(); }
 	void					Set_CamOffset(CAMOFFSET eOffset);
+	void					Set_MouseFix(_bool bFix);
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;

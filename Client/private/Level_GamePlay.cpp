@@ -16,6 +16,7 @@
 #include "Imgui_Effect.h"
 #include "CinematicCamera.h"
 #include "Imgui_TerrainEditor.h"
+#include "Kena.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -435,7 +436,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", RUNTIME_STATUS_FILEPATH, &pGameObject)))
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject)))
@@ -713,7 +714,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _tchar * pLayerTag)
 			CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)i, pCanvas);
 	}
 
-	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Mouse", 
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas", 
 		TEXT("Prototype_GameObject_UI_MousePointer"), L"Clone_MousePointer")))
 		return E_FAIL;
 	/* 3D UI */

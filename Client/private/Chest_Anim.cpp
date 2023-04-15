@@ -256,6 +256,8 @@ _int CChest_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTrigger
 	{
 		m_bKenaDetected = false;
 		m_pKena->Set_ChestInteractable(false);
+
+
 	}
 
 	return 0;
@@ -333,6 +335,10 @@ CChest_Anim::ANIMATION CChest_Anim::Check_State()
 			{
 				eState = CChest_Anim::OPEN;
 				m_pModelCom->Set_AnimIndex((_uint)CChest_Anim::OPEN);
+
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OFF;
+				_float fNoMeaning = 1.f;
+				m_pKena->m_Delegator.broadcast(tag, fNoMeaning);
 			}
 
 			break;

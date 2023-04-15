@@ -41,6 +41,8 @@ public: /* For. Events */
 
 public: 
 	void	ConnectToAimUI(AIM_UI eUIType, _int iParam, CUI* pUI = nullptr);
+public:
+	virtual void			Call_BindFunction(_uint iTag, _float fData) override;
 
 
 public:
