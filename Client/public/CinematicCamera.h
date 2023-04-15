@@ -76,6 +76,11 @@ private:
 	_int								m_iChatIndex;
 	_bool							m_bDebugRender = false;
 
+private:
+	void								PilotMode(_float fTimeDelta);
+	_bool							m_bPilotMode = false;
+	_float							m_fMouseSensitivity = 0.01f;
+	_float							m_fSpeed = 1.f;
 #ifdef _DEBUG
 private:
 	PrimitiveBatch<VertexPositionColor>*		m_pBatch		= nullptr;

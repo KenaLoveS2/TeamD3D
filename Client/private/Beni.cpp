@@ -4,6 +4,7 @@
 #include "CameraForNpc.h"
 #include "Saiya.h"
 #include "CinematicCamera.h"
+#include "Camera_Photo.h"
 
 CBeni::CBeni(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CNpc(pDevice, pContext)
@@ -86,11 +87,15 @@ HRESULT CBeni::Late_Initialize(void* pArg)
 	m_pTransformCom->Set_Position(vChangePos);
 	m_pTransformCom->Set_Look(vLook);
 
+	m_pCamera_Photo = (CCamera_Photo*)CGameInstance::GetInstance()->Find_Camera(CAMERA_PHOTO_TAG);
+
 	return S_OK;
 }
 
 void CBeni::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 	Update_Collider(fTimeDelta);
 	SaiyaFunc(fTimeDelta);
@@ -112,6 +117,8 @@ void CBeni::Tick(_float fTimeDelta)
 
 void CBeni::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)
@@ -549,7 +556,45 @@ HRESULT CBeni::SetUp_StateFinal()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(BENI_IDLE);
+		// 위치 정해줘야함
 	})
+		.AddTransition("IDLE to READY_PHOTO", "READY_PHOTO")
+		.Predicator([this]()
+	{
+		return m_strState == "READY_PHOTO";
+	})
+
+		.AddState("READY_PHOTO")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt_NoUpDown(m_pCamera_Photo->Get_Position());
+	})
+		.AddTransition("READY_PHOTO to PHOTO", "PHOTO")
+		.Predicator([this]()
+	{
+		return m_strState == "PHOTO";
+	})
+
+		.AddState("PHOTO")
+		.OnStart([this]()
+	{
+		_uint iPhotoAnimIndex = rand() % (BENI_PHOTOPOSE_SMILING - BENI_PHOTOPOSE_CHEER) + BENI_PHOTOPOSE_CHEER;
+		m_pModelCom->ResetAnimIdx_PlayTime(iPhotoAnimIndex);
+		m_pModelCom->Set_AnimIndex(iPhotoAnimIndex);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt_NoUpDown(m_pCamera_Photo->Get_Position());
+
+		if (m_pModelCom->Get_AnimationFinish())
+			m_bPhotoAnimEnd = true;
+	})
+		.AddTransition("PHOTO to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return m_strState == "IDLE";
+	})
+
 		.Build();
 
 	return S_OK;
@@ -607,7 +652,13 @@ void CBeni::AdditiveAnim(_float fTimeDelta)
 void CBeni::SaiyaFunc(_float fTimeDelta)
 {
 	if (m_pSaiya)
+	{
 		m_strState = m_pSaiya->Get_FSM()->GetCurStateName();
+		if (m_pSaiya->Get_Disappear())
+			m_bDeath = true;
+
+		m_bPhotoAnimEnd = m_pSaiya->Get_PhotoAnimeEnd();
+	}
 }
 
 void CBeni::SaiyaPos(_float3 vOffSetPos)

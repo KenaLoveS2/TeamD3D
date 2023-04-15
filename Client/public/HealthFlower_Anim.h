@@ -29,6 +29,7 @@ public:
 	virtual void		Tick(_float fTimeDelta) override;
 	virtual void		Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
+	virtual HRESULT       RenderShadow() override;
 	virtual void		ImGui_AnimationProperty() override;
 	virtual void		ImGui_PhysXValueProperty() override;
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption) override;
@@ -75,6 +76,7 @@ private:
 private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_ShaderResources();
+	HRESULT				SetUp_ShadowShaderResources() override;
 	HRESULT				Bind_Dissolve(class CShader* pShader);
 
 public:
