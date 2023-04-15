@@ -165,6 +165,7 @@ void CBowTarget_Manager::Clear_Groups()
 	m_vecGroup.clear();
 }
 
+
 CBowTarget_Manager::BOWTARGETGROUP* CBowTarget_Manager::Find_BowTargetGroup(const wstring& wstrGroupName)
 {
 	const auto	iter = find_if(m_vecGroup.begin(), m_vecGroup.end(), [wstrGroupName](BOWTARGETGROUP*& pBowTargetGroup) {
