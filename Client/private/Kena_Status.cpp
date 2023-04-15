@@ -89,9 +89,8 @@ void CKena_Status::Update_ArrowCoolTime(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eReCharge = CUI_ClientManager::AMMO_ARROWRECHARGE;
 
 	//_float fCount = (_float)m_iCurArrowCount;
-	_float fGuage;
+	_float fGuage = 0.f;
 	//m_StatusDelegator.broadcast(eArrow, fCount);
-
 
 	if (m_iCurArrowCount == m_iMaxArrowCount) /* Full */
 	{
@@ -585,6 +584,15 @@ void CKena_Status::Add_CurPipGuage()
 
 	/* modifydate 230410 : HSY */
 	m_fCurPIPGuage = min(m_fCurPIPGuage, (_float)m_iMaxPIPCount);
+
+	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
+	m_StatusDelegator.broadcast(ePip, m_fCurPIPGuage);
+}
+
+void CKena_Status::Plus_CurPIPGuage(_float fGuage)
+{
+	//m_fCurPIPGuage = 0.f;
+	m_fCurPIPGuage = min(m_fCurPIPGuage + fGuage, m_iMaxPIPCount);
 
 	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
 	m_StatusDelegator.broadcast(ePip, m_fCurPIPGuage);

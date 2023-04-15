@@ -636,6 +636,9 @@ void CEffect_Particle_Base::DeActivate()
 	m_pVIBufferCom->Update_Buffer(nullptr);
 	Safe_Delete_Array(m_pBoneName);
 
+	m_vColor.w = m_vColorOriginal.w;
+	m_bDeActiveSlowly = false;
+	m_bActiveSlowly = false;
 }
 
 void CEffect_Particle_Base::DeActivate_Slowly()

@@ -60,6 +60,7 @@ public:
 	vector<class CRotBomb*>*	Get_Bombs() { return &m_vecBomb; }
 
 	const _bool					Get_State(STATERETURN eState) const;
+	class CCamera_Player*		Get_CameraPlayer() { return m_pCamera; }
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_TrailON() const { return m_bTrailON; }
@@ -355,7 +356,8 @@ public:
 	virtual _int				Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 	void						LiftRotRockProc();
-	void						Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
+	/* 230415 : HSY */
+	void						Set_RopeRotRockPtr(class CRope_RotRock* pObject);// { m_pRopeRotRock = pObject; }
 	void						Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
 	
 	class CKena_Status*			Get_KenaStatusPtr() { return m_pKenaStatus; }
