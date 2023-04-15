@@ -15,6 +15,7 @@
 #include "Kena_Parts.h"
 #include "BossWarrior.h"
 #include "Respawn_Trigger.h"
+#include "BGM_Manager.h"
 
 #define NULLFUNC	(_bool(CKena_State::*)())nullptr
 CKena_State::CKena_State()
@@ -6703,6 +6704,9 @@ void CKena_State::Start_Level_Up(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eRotLvUp = CUI_ClientManager::TOP_ROT_LVUP;
 	_float fLevel = (_float)m_pStatus->Get_RotLevel();
 	m_pStatus->m_StatusDelegator.broadcast(eRotLvUp, fLevel);
+
+	CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_LEVELUP);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_LevelUp", 1.f, false);
 }
 
 void CKena_State::Start_Mask_On(_float fTimeDelta)
@@ -6852,6 +6856,8 @@ void CKena_State::Start_Pulse_Parry(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::TOP_MOOD_PARRY;
 	_float fDefault = 1.f;
 	m_pKena->m_Delegator.broadcast(tag, fDefault);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Parry.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Pulse_Walk(_float fTimeDelta)

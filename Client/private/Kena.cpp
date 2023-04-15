@@ -1188,6 +1188,7 @@ void CKena::Push_EventFunctions()
 	PlaySound_Land(true, 0.f);
 	PlaySound_Dodge(true, 0.f);
 	PlaySound_Dodge_End(true, 0.f);
+	PlaySound_Interact_Staff(true, 0.f);
 
 	PlaySound_Pulse_Intro(true, 0.f);
 	PlaySound_Pulse_Outro(true, 0.f);
@@ -1199,8 +1200,13 @@ void CKena::Push_EventFunctions()
 	PlaySound_Attack_3(true, 0.f);
 	PlaySound_Attack_4(true, 0.f);
 	PlaySound_HeavyAttack_Charge(true, 0.f);
+	PlaySound_HeavyAttack_Charge_Voice(true, 0.f);
 	PlaySound_HeavyAttack_Release_Perfect(true, 0.f);
 	PlaySound_HeavyAttack_Spark(true, 0.f);
+	PlaySound_HeavyAttack_Staff_Sweep(true, 0.f);
+	PlaySound_HeavyAttack_Combo_Charge(true, 0.f);
+	PlaySound_HeavyAttack_Combo_Staff_Sweep(true, 0.f);
+	PlaySound_AirAttack_Slam_Release(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -1916,7 +1922,8 @@ void CKena::Push_WeaponPosition()
 
 void CKena::Run_Smooth_Targeting(_float fTimeDelta)
 {
-	if (m_pTargetMonster && m_bAttack && m_pKenaState->Get_CurrentDirection() == CTransform::DIR_END)
+	if (m_pTargetMonster && m_bAttack && m_pKenaState->Get_CurrentDirection() == CTransform::DIR_END &&
+		m_pTransformCom->Calc_InRange(XMConvertToRadians(120.f), m_pTargetMonster->Get_TransformCom()) == true)
 	{
 		_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		_vector	vTargetPos = m_pTargetMonster->Get_Position();
@@ -2596,6 +2603,19 @@ void CKena::PlaySound_Dodge_End(_bool bIsInit, _float fTimeDelta)
 	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Roll_End.ogg", 1.f, false, SOUND_PLAYER_VOICE);
 }
 
+void CKena::PlaySound_Interact_Staff(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_Interact_Staff);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Interact_Staff.ogg", 1.f, false);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Interect_Staff_Ring.ogg", 1.f, false);
+}
+
 void CKena::PlaySound_Pulse_Intro(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
@@ -2803,23 +2823,63 @@ void CKena::PlaySound_HeavyAttack_Charge(_bool bIsInit, _float fTimeDelta)
 
 	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 3.9f));
 	if (iRand == 0)
-		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_0.ogg", 1.f, false, SOUND_PLAYER_SFX);
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_0.ogg", 1.f, false);
 	else if (iRand == 1)
-		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_1.ogg", 1.f, false, SOUND_PLAYER_SFX);
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_1.ogg", 1.f, false);
 	else if (iRand == 2)
-		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_2.ogg", 1.f, false, SOUND_PLAYER_SFX);
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_2.ogg", 1.f, false);
 	else if (iRand == 3)
-		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_3.ogg", 1.f, false, SOUND_PLAYER_SFX);
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_3.ogg", 1.f, false);
 
 	iRand = _int(CUtile::Get_RandomFloat(0.f, 2.9f));
 	if (iRand == 0)
-		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_0.ogg", 1.f, false, SOUND_PLAYER_SFX);
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_0.ogg", 1.f, false);
 	else if (iRand == 1)
-		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_1.ogg", 1.f, false, SOUND_PLAYER_SFX);
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_1.ogg", 1.f, false);
 	else if (iRand == 2)
-		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_2.ogg", 1.f, false, SOUND_PLAYER_SFX);
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_2.ogg", 1.f, false);
 
-	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Weapon.ogg", 0.5f, false, SOUND_PLAYER_SFX);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Weapon.ogg", 0.5f, false);
+}
+
+void CKena::PlaySound_HeavyAttack_Charge_Voice(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_HeavyAttack_Charge_Voice);
+		return;
+	}
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 3.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_HeavyAttack_Charge_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_HeavyAttack_Charge_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_HeavyAttack_Charge_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_HeavyAttack_Charge_3.ogg", 1.f, false);
+	
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 3.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_0.ogg", 0.5f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_1.ogg", 0.5f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_2.ogg", 0.5f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_3.ogg", 0.5f, false);
+
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 2.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_0.ogg", 0.5f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_1.ogg", 0.5f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Crickets_2.ogg", 0.5f, false);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Charge_Weapon.ogg", 0.5f, false);
 }
 
 void CKena::PlaySound_HeavyAttack_Spark(_bool bIsInit, _float fTimeDelta)
@@ -2850,6 +2910,202 @@ void CKena::PlaySound_HeavyAttack_Release_Perfect(_bool bIsInit, _float fTimeDel
 	}
 
 	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Release_Perfect.ogg", 1.f, false, SOUND_PLAYER_SFX);
+}
+
+void CKena::PlaySound_HeavyAttack_Staff_Sweep(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_HeavyAttack_Staff_Sweep);
+		return;
+	}
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 24.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_3.ogg", 1.f, false);
+	else if (iRand == 4)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_4.ogg", 1.f, false);
+	else if (iRand == 5)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_5.ogg", 1.f, false);
+	else if (iRand == 6)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_6.ogg", 1.f, false);
+	else if (iRand == 7)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_7.ogg", 1.f, false);
+	else if (iRand == 8)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_8.ogg", 1.f, false);
+	else if (iRand == 9)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_9.ogg", 1.f, false);
+	else if (iRand == 10)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_10.ogg", 1.f, false);
+	else if (iRand == 11)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_11.ogg", 1.f, false);
+	else if (iRand == 12)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_12.ogg", 1.f, false);
+	else if (iRand == 13)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_13.ogg", 1.f, false);
+	else if (iRand == 14)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_14.ogg", 1.f, false);
+	else if (iRand == 15)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_15.ogg", 1.f, false);
+	else if (iRand == 16)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_16.ogg", 1.f, false);
+	else if (iRand == 17)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_17.ogg", 1.f, false);
+	else if (iRand == 18)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_18.ogg", 1.f, false);
+	else if (iRand == 19)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_19.ogg", 1.f, false);
+	else if (iRand == 20)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_20.ogg", 1.f, false);
+	else if (iRand == 21)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_21.ogg", 1.f, false);
+	else if (iRand == 22)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_22.ogg", 1.f, false);
+	else if (iRand == 23)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_23.ogg", 1.f, false);
+	else if (iRand == 24)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_24.ogg", 1.f, false);
+
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 1.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Staff_Sweep_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Staff_Sweep_1.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_HeavyAttack_Combo_Charge(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_HeavyAttack_Combo_Charge);
+		return;
+	}
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 3.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_HeavyAttack_Charge_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_HeavyAttack_Charge_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_HeavyAttack_Charge_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_HeavyAttack_Charge_3.ogg", 1.f, false);
+
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 3.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Combo_Charge_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Combo_Charge_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Combo_Charge_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Combo_Charge_3.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_HeavyAttack_Combo_Staff_Sweep(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_HeavyAttack_Combo_Staff_Sweep);
+		return;
+	}
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 24.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_3.ogg", 1.f, false);
+	else if (iRand == 4)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_4.ogg", 1.f, false);
+	else if (iRand == 5)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_5.ogg", 1.f, false);
+	else if (iRand == 6)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_6.ogg", 1.f, false);
+	else if (iRand == 7)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_7.ogg", 1.f, false);
+	else if (iRand == 8)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_8.ogg", 1.f, false);
+	else if (iRand == 9)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_9.ogg", 1.f, false);
+	else if (iRand == 10)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_10.ogg", 1.f, false);
+	else if (iRand == 11)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_11.ogg", 1.f, false);
+	else if (iRand == 12)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_12.ogg", 1.f, false);
+	else if (iRand == 13)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_13.ogg", 1.f, false);
+	else if (iRand == 14)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_14.ogg", 1.f, false);
+	else if (iRand == 15)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_15.ogg", 1.f, false);
+	else if (iRand == 16)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_16.ogg", 1.f, false);
+	else if (iRand == 17)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_17.ogg", 1.f, false);
+	else if (iRand == 18)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_18.ogg", 1.f, false);
+	else if (iRand == 19)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_19.ogg", 1.f, false);
+	else if (iRand == 20)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_20.ogg", 1.f, false);
+	else if (iRand == 21)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_21.ogg", 1.f, false);
+	else if (iRand == 22)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_22.ogg", 1.f, false);
+	else if (iRand == 23)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_23.ogg", 1.f, false);
+	else if (iRand == 24)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_24.ogg", 1.f, false);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_HeavyAttack_Combo_Sweep.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_AirAttack_Slam_Release(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_AirAttack_Slam_Release);
+		return;
+	}
+
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 1.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_HeavyAttack_Release_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_HeavyAttack_Release_1.ogg", 1.f, false);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Slam_Impact_Base.ogg", 1.f, false);
+
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 1.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Slam_Impact_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Slam_Impact_1.ogg", 1.f, false);
+
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 3.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Slam_Impact_Debris_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Slam_Impact_Debris_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Slam_Impact_Debris_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Slam_Impact_Debris_3.ogg", 1.f, false);
 }
 
 void CKena::PlaySound_Damage()
