@@ -109,7 +109,8 @@ public:
 	//void						Call_FocusIcon(CGameObject* pTarget);
 	void						Call_FocusRotIcon(CGameObject* pTarget);
 	void						Call_FocusMonsterIcon(CGameObject* pTarget);
-	
+	void						Call_FocusRotIconFlower(CGameObject* pTarget);
+
 	void						Dead_FocusRotIcon(CGameObject* pTarget);
 
 private:

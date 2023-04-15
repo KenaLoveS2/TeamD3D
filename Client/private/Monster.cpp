@@ -152,6 +152,10 @@ void CMonster::Imgui_RenderProperty()
 	//if (ImGui::Button("WEALKYDMG"))
 	//	m_bWeaklyHit = true;
 	//ImGui::InputText("RoomIndex", &m_Desc.iRoomIndex);
+
+	float fTemp[3] = { m_vRotIconPosOffset.x, m_vRotIconPosOffset.y, m_vRotIconPosOffset.z };
+	ImGui::DragFloat3("m_vRotIconPosOffset", fTemp, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vRotIconPosOffset, fTemp, sizeof(_float3));
 }
 
 void CMonster::ImGui_AnimationProperty()
