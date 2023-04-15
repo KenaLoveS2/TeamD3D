@@ -1807,7 +1807,6 @@ void CBossShaman::Free()
 		Safe_Release(m_pShamanThunder[i]);
 	}
 
-	Safe_Release(m_pShamanTapHex);
 	Safe_Release(m_pShamanLEyeTrail);
 	Safe_Release(m_pShamanREyeTrail);
 	for (auto& pChild : m_vecShamanElectric)

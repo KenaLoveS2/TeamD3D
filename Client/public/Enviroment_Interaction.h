@@ -34,7 +34,7 @@ protected:
 protected:
 	virtual HRESULT SetUp_Components();
 	virtual HRESULT SetUp_ShaderResources();
-	virtual HRESULT SetUp_ShadowShaderResources();
+	virtual HRESULT SetUp_ShadowShaderResources() override;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

@@ -60,6 +60,7 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
+	virtual HRESULT      RenderShadow() override;
 
 public:
 	virtual void ImGui_AnimationProperty()override;
@@ -70,12 +71,12 @@ private:
 	CModel* m_pModelCom = nullptr;
 	class CInteraction_Com* m_pInteractionCom = nullptr;
 	class CControlMove* m_pControlMoveCom = nullptr;
-
-	
 	_bool		m_bAnimActive = false;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources() override;
 
 public:
 	static  CFrog* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

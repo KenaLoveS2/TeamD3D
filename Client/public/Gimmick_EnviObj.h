@@ -52,15 +52,11 @@ private:
 	_bool							m_bColliderOn = false;
 	_bool							m_bTestOnce = false;
 
-	
-
-public:
-	
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
-	HRESULT SetUp_CineShaderResources();
+	HRESULT SetUp_ShadowShaderResources()override;
+	HRESULT SetUp_CineShaderResources()override;
 
 public:
 	static  CGimmick_EnviObj*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

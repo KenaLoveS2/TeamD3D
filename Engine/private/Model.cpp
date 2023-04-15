@@ -795,17 +795,13 @@ const _float4 CModel::GetMeshCenter() const
 	/*if (m_bIsInstancing == false)
 		return;
 		*/
-
-
 	_float4 vPos;
 	{
 		for (auto& pInstMesh : m_InstancingMeshes)
 			vPos += pInstMesh->Get_MeshCenter();
 
 		return   (vPos/ m_InstancingMeshes.size());
-
 	}
-
 }
 
 
