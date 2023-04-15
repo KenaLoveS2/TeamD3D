@@ -458,7 +458,7 @@ HRESULT CRot::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_pCamera_Photo->Get_Position());
 	})
-		.AddTransition("SELFIE to IDLE", "IDLE")
+		.AddTransition("SELFIE to IDLE", "PHOTO")
 		.Predicator([this]()
 	{
 		return m_bPhoto;

@@ -91,7 +91,12 @@ void CCamera_Photo::Tick(_float TimeDelta)
 		}
 
 		if (m_bEyeComplete && m_bAtComplete)
+		{
 			m_eState = WAIT;
+
+			m_pFirstRot->Execute_Photo();
+		}
+			
 		
 		break;
 	}
