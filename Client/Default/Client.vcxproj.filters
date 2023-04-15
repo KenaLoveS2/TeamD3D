@@ -1697,6 +1697,11 @@
     <ClInclude Include="..\public\UI_NodeAlarm.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\Alarm</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BossShaman_Mask.h" />
+    <ClInclude Include="..\public\Camera_Shaman.h" />
+    <ClInclude Include="..\public\Camera_Photo.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2739,6 +2744,11 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeAlarm.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\Alarm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossShaman_Mask.cpp" />
+    <ClCompile Include="..\private\Camera_Shaman.cpp" />
+    <ClCompile Include="..\private\Camera_Photo.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -152,6 +152,10 @@ void CMonster::Imgui_RenderProperty()
 	//if (ImGui::Button("WEALKYDMG"))
 	//	m_bWeaklyHit = true;
 	//ImGui::InputText("RoomIndex", &m_Desc.iRoomIndex);
+
+	float fTemp[3] = { m_vRotIconPosOffset.x, m_vRotIconPosOffset.y, m_vRotIconPosOffset.z };
+	ImGui::DragFloat3("m_vRotIconPosOffset", fTemp, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vRotIconPosOffset, fTemp, sizeof(_float3));
 }
 
 void CMonster::ImGui_AnimationProperty()
@@ -435,6 +439,8 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 			
+			m_pKena->PlaySound_Hit();
+
 			m_pUIHPBar->Set_Active(true);
 			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 			

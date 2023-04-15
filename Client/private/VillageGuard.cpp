@@ -46,7 +46,8 @@ HRESULT CVillageGuard::Initialize(void* pArg)
 	m_pModelCom->Set_AnimIndex(IDLE);
 
 	m_bRotable = true;
-	
+	m_vRotIconPosOffset = { 0.f, 1.f, 0.f, 0.f };
+
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("Weapon_Root_Jnt");
 
 	return S_OK;
@@ -123,15 +124,14 @@ HRESULT CVillageGuard::Late_Initialize(void * pArg)
 }
 
 void CVillageGuard::Tick(_float fTimeDelta)
-{
-	// m_bReadySpawn = true;
-	
+{	
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
 	
 	Update_Collider(fTimeDelta);
 
+	// m_bReadySpawn = true;
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();

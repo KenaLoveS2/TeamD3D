@@ -30,6 +30,8 @@ private:
 	class CMonster_Manager* m_pMonster_Manager = nullptr;
 
 	_uint m_iHideAnimIndex = HIDE;
+	_bool m_bOrdinaryRotFlag = true;
+	_bool m_bIsKenaFriend = false;
 
 private:
 	_bool m_bWakeUp = false, m_bManualWakeUp = false;
@@ -39,7 +41,11 @@ private:
 	DESC m_Desc;
 
 	class CCameraForRot*		m_pMyCam = nullptr;
-	
+	class CCamera_Photo* m_pCamera_Photo = nullptr;
+
+	_bool m_bPhoto = false;
+	_bool m_bPhotoAnimEnd = false;
+	_bool m_bTemp = false;
 private:
 	CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CRot(const CRot& rhs);
@@ -82,8 +88,16 @@ public:
 	_int Get_NoHatRotCount();
 	static void Clear();
 
-	void RunAway();
-	void ComeBack();
+	inline void Set_OrdinaryRotFlag(_bool bFlag) { m_bOrdinaryRotFlag = bFlag; }
+	inline void Set_WakeUp(_bool bFlag) { m_bWakeUp = bFlag; }
+	inline _bool Get_WakeUp() { return m_bWakeUp; }
+	inline _bool Is_KenaFriend() { return m_bIsKenaFriend; }
+		
+	void Set_NewWorldMatrix(_float4x4 NewWroldMatrix);
+	void Execute_WakeUp();
+
+	void Execute_Photo();
+	_bool Is_PhotoAnimEnd();
 };
 
 END

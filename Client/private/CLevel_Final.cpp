@@ -47,10 +47,10 @@ HRESULT CLevel_Final::Initialize()
 	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImGui_Rot::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImGui_Rot::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
@@ -88,11 +88,11 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Layer_NPC");
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 	{
@@ -393,6 +393,20 @@ HRESULT CLevel_Final::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 			v.clear();
 	}
 
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		CCamera* pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraShaman", L"Camera_Shaman"));
+		NULL_CHECK_RETURN(pCamera, E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(CAMERA_SHAMAN_TAG, pCamera), E_FAIL);
+	}
+
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		CCamera* pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraPhoto", L"Camera_Photo"));
+		NULL_CHECK_RETURN(pCamera, E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(CAMERA_PHOTO_TAG, pCamera), E_FAIL);
+	}
+
 	return S_OK;
 }
 
@@ -430,10 +444,8 @@ HRESULT CLevel_Final::Ready_Layer_Rot(const _tchar* pLayerTag)
 HRESULT CLevel_Final::Ready_Layer_Effect(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_P_DeadZoneDust"), L"Dust", nullptr), E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_P_DeadZoneDust"), L"Dust2", nullptr), E_FAIL);
-
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

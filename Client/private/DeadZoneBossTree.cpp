@@ -126,9 +126,11 @@ void CDeadZoneBossTree::Late_Tick(_float fTimeDelta)
 
 	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
 
-
 	if (m_pRendererCom  && m_bOriginRender && m_bRenderActive)//&& false /*== m_pModelCom->Culling_InstancingMeshs(100.f, WolrdMat)*/)
+	{
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CDeadZoneBossTree::Render()
@@ -185,38 +187,38 @@ HRESULT CDeadZoneBossTree::RenderShadow()
 
 void CDeadZoneBossTree::ImGui_PhysXValueProperty()
 {
-	CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
+	//CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
 
-	_float4 vCurPos = m_pTransformCom->Get_Position();
-
-
-	static _float fChagePos[3] = { 0.f,0.f,0.f };
-	ImGui::DragFloat3("PX_Pos", fChagePos, 0.01f, 0.1f, 100.0f);
-
-	vCurPos.x += fChagePos[0];
-	vCurPos.y += fChagePos[1];
-	vCurPos.z += fChagePos[2];
-
-	PxRigidActor * pActor = CPhysX_Manager::GetInstance()->Find_Actor(m_szCloneObjectTag);
-
-	CPhysX_Manager::GetInstance()->Set_ActorPosition(pActor, CUtile::Float_4to3(vCurPos));
-
-	if(ImGui::Button("toggle"))
-	{
-		m_bDissolve = !m_bDissolve;
-		m_fDissolveTime = 0.f;
-	}
+	//_float4 vCurPos = m_pTransformCom->Get_Position();
 
 
-	//ImGui::Begin("Dissolve Test");
+	//static _float fChagePos[3] = { 0.f,0.f,0.f };
+	//ImGui::DragFloat3("PX_Pos", fChagePos, 0.01f, 0.1f, 100.0f);
 
-	//ImGui::InputFloat("FirstRatio", &fFirstRatio);
-	//ImGui::InputFloat("SecondRatio", &fSecondRatio);
+	//vCurPos.x += fChagePos[0];
+	//vCurPos.y += fChagePos[1];
+	//vCurPos.z += fChagePos[2];
 
-	//vTestColor1 = Set_ColorValue();
-	//vTestColor2 = Set_ColorValue_1();
+	//PxRigidActor * pActor = CPhysX_Manager::GetInstance()->Find_Actor(m_szCloneObjectTag);
 
-	ImGui::End();
+	//CPhysX_Manager::GetInstance()->Set_ActorPosition(pActor, CUtile::Float_4to3(vCurPos));
+
+	//if(ImGui::Button("toggle"))
+	//{
+	//	m_bDissolve = !m_bDissolve;
+	//	m_fDissolveTime = 0.f;
+	//}
+
+
+	////ImGui::Begin("Dissolve Test");
+
+	////ImGui::InputFloat("FirstRatio", &fFirstRatio);
+	////ImGui::InputFloat("SecondRatio", &fSecondRatio);
+
+	////vTestColor1 = Set_ColorValue();
+	////vTestColor2 = Set_ColorValue_1();
+
+	//ImGui::End();
 
 
 }
@@ -363,7 +365,7 @@ HRESULT CDeadZoneBossTree::SetUp_ShadowShaderResources()
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);

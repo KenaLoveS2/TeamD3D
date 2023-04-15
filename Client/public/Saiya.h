@@ -122,11 +122,11 @@ public:
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) override;
 	virtual	HRESULT			SetUp_State()override;
+	virtual HRESULT			SetUp_StateFinal() override;
 	virtual	HRESULT			SetUp_Components()override;
 	virtual	HRESULT			SetUp_ShaderResources()override;
 	virtual HRESULT			SetUp_ShadowShaderResources()override;
 	virtual HRESULT			SetUp_UI()override;
-
 
 private:
 	virtual void					AdditiveAnim(_float fTimeDelta) override;
@@ -136,7 +136,6 @@ private:
 	HRESULT						Save_KeyFrame();
 	HRESULT						Load_KeyFrame();
 	void								Rot_WispSetPosition();
-
 	void								Setting_Sound();
 	void								Play_LaughSound(float fVolume = 1.f);
 
@@ -158,6 +157,7 @@ private:
 	class CCinematicCamera*			m_pCinecam[NPC_CINE_END] = { nullptr, };
 	class CCameraForNpc*				m_pMainCam = nullptr;
 	class CRot*									m_pRot = nullptr;
+	class CCamera_Photo*			m_pCamera_Photo = nullptr;
 
 public:
 	static CSaiya*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

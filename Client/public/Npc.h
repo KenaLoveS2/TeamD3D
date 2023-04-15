@@ -65,6 +65,7 @@ protected:
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;
 	virtual	HRESULT			SetUp_State() PURE;
+	virtual HRESULT			SetUp_StateFinal() PURE;
 	virtual	HRESULT			SetUp_Components();
 	virtual	HRESULT			SetUp_ShaderResources() PURE;
 	virtual HRESULT			SetUp_ShadowShaderResources() PURE;

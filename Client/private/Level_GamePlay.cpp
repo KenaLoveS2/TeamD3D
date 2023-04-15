@@ -62,11 +62,11 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
-		return E_FAIL;*/
-
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
+
+	// if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	// 	return E_FAIL;
 
  	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
  		return E_FAIL;
@@ -149,8 +149,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	//if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 	//	return E_FAIL;
-
-
+	
 	//RELEASE_INSTANCE(CGameInstance);
 
 	//return S_OK;
@@ -193,7 +192,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		
-	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	// CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
@@ -390,18 +389,35 @@ HRESULT CLevel_GamePlay::Ready_Layer_CineCamera(const _tchar* pLayerTag)
 			v.clear();
 	}
 
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		CCamera* pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraShaman", L"Camera_Shaman"));
+		NULL_CHECK_RETURN(pCamera, E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(CAMERA_SHAMAN_TAG, pCamera), E_FAIL);
+	}
+
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		CCamera* pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraPhoto", L"Camera_Photo"));
+		NULL_CHECK_RETURN(pCamera, E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(CAMERA_PHOTO_TAG, pCamera), E_FAIL);
+	}
+
 	return S_OK;
 }
 
 HRESULT CLevel_GamePlay::Ready_Layer_Environment(const _tchar * pLayerTag)
 {
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "D.json");
+	// CImgui_MapEditor::Load_MapObjects(g_LEVEL, "D.json");
 	
 	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Test_TelePortFlower.json");
 
-	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Chest.json");
+	// CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Chest.json");
+	// FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_Chest", L"Chest", nullptr, nullptr), E_FAIL);
 
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_HealthFlower_Anim", L"HealthFlower", nullptr, nullptr), E_FAIL);
+	// FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_HealthFlower_Anim", L"HealthFlower", nullptr, nullptr), E_FAIL);
+
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_Chest", L"Chest", nullptr, nullptr), E_FAIL);
 
 	// CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Portal_Test.json");
 
@@ -487,15 +503,13 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	CGameObject* pGameObject = nullptr;
 	
-	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Explosion", nullptr, &pGameObject), E_FAIL);
- //	FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Fire_Brazier"), L"Fire_Brazier", nullptr, &pGameObject), E_FAIL);
-// 	FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_MapleLeaf"), L"Maple", nullptr, &pGameObject), E_FAIL);
-// 	FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BeechLeaf"), L"Beech", nullptr, &pGameObject), E_FAIL);
-	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_P_Rain"), L"Rain", nullptr, &pGameObject), E_FAIL);
-	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_EnvironmentDust"), L"Dust", nullptr, &pGameObject), E_FAIL);
-	FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BowTarget"), L"BowTarget", nullptr, &pGameObject), E_FAIL);
-
-//	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_RuinsKit_BombPlatForm"), L"BombPlatform", nullptr, &pGameObject), E_FAIL);
+	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Explosion", nullptr, &pGameObject), E_FAIL);
+	//	FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Fire_Brazier"), L"Fire_Brazier", nullptr, &pGameObject), E_FAIL);
+	// 	FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_MapleLeaf"), L"Maple", nullptr, &pGameObject), E_FAIL);
+	// 	FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BeechLeaf"), L"Beech", nullptr, &pGameObject), E_FAIL);
+	// 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_P_Rain"), L"Rain", nullptr, &pGameObject), E_FAIL);
+ 	//FAILED_CHECK_RETURN(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BowTarget"), L"BowTarget", nullptr, &pGameObject), E_FAIL);
+	//	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_RuinsKit_BombPlatForm"), L"BombPlatform", nullptr, &pGameObject), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -667,11 +681,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Rot(const _tchar* pLayerTag)
 	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), TEXT("Rot_JH")))) return E_FAIL;
 	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_LiftRot_Master"), TEXT("LiftRot_Master")))) return E_FAIL;
 
-	//for (_uint i = 0; i < 3; i++)
-	//{
-	//	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), CUtile::Create_DummyString(TEXT("TEST_Rot"), i))))
-	//		return E_FAIL;
-	//}
+	for (_uint i = 0; i < 1; i++)
+	{
+		if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), CUtile::Create_DummyString(TEXT("TEST_Rot"), i))))
+			return E_FAIL;
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

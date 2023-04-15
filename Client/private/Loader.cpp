@@ -106,6 +106,10 @@
 #include "BossRock_Pool.h"
 #include "DeadZoneBossTree.h"
 #include "Fire_Brazier.h"
+#include "BossShaman_Mask.h"
+#include "Camera_Shaman.h"
+#include "Camera_Photo.h"
+
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
@@ -336,7 +340,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyunwook
-	//FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	// FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// hyaewon
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
@@ -2155,7 +2159,10 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrap_DecalGeo_Rescale.mdat"), PivotMatrix)))) return E_FAIL;
-	/*********************************************************************************************************************************************/
+	
+	// Prototype_Component_Model_ShamanMask
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanMask",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Boss_ShamanMask/ShamanMask.mdat"), PivotMatrix)))) return E_FAIL;
 
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	// Prototype_Component_Model_Rope_Rock
@@ -2279,6 +2286,9 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_GameObject_ShamanTrapPlane
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrapPlane"), CShamanTrapPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
+	// Prototype_GameObject_ShamanMask
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanMask"), CBossShaman_Mask::Create(m_pDevice, m_pContext)))) return E_FAIL;	
+
 	// Prototype_GameObject_BossHunter
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossHunter"), CBossHunter::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
@@ -2293,6 +2303,12 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_GameObject_BossRockPool
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossRockPool"), CBossRock_Pool::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_CameraShaman
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraShaman"), CCamera_Shaman::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_CameraPhoto
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraPhoto"), CCamera_Photo::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	return S_OK;
 }
