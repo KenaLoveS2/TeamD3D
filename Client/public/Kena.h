@@ -129,6 +129,7 @@ private:
 	class CRotForMonster*		m_pRotForMonster[8] = { nullptr, };
 	class CMonster*				m_pTargetMonster = nullptr;
 	class CHatCart*				m_pHatCart = nullptr;
+	class CCamera_Photo*		m_pCamera_Photo = nullptr;
 
 private:
 	map<const string, class CEffect_Base*>		m_mapEffect;

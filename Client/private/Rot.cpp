@@ -11,6 +11,7 @@
 #include "RotHat.h"
 #include "E_P_Rot.h"
 #include "Monster_Manager.h"
+#include "Camera_Photo.h"
 
 _uint CRot::m_iEveryRotCount = 0;
 _uint CRot::m_iKenaFindRotCount = 0;
@@ -64,6 +65,7 @@ HRESULT CRot::Initialize(void* pArg)
 	m_iEveryRotCount++;
 	m_iObjectProperty = OP_ROT;
 
+
 	return S_OK;
 }
 
@@ -75,6 +77,7 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	m_vWakeUpPosition = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
 	
 	m_pMyCam = static_cast<CCameraForRot*>(m_pGameInstance->Find_Camera(L"ROT_CAM"));	
+	m_pCamera_Photo = (CCamera_Photo*)m_pGameInstance->Find_Camera(CAMERA_PHOTO_TAG);
 
 	if(!wcscmp(m_szCloneObjectTag, TEXT("Saiya_Rot")) || !wcscmp(m_szCloneObjectTag, TEXT("Hunter_Rot")))
 		m_bWakeUp = true;
@@ -155,6 +158,25 @@ void CRot::Late_Tick(_float fTimeDelta)
 void CRot::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
+
+	if (ImGui::Button("Camera Photo"))
+	{
+		if (m_pCamera_Photo)
+		{
+			if (m_bTemp == false)
+			{
+				_float4 vPos = m_pTransformCom->Get_Position();
+				m_pCamera_Photo->Execute_Move(vPos + _float4(2.f, 1.f, 2.f, 0.f), vPos);
+				m_pGameInstance->Work_Camera(CAMERA_PHOTO_TAG);
+				m_bTemp = true;
+			}
+			else
+			{
+				m_pGameInstance->Work_Camera(TEXT("PLAYER_CAM"));
+				m_bTemp = false;
+			}
+		}			
+	}
 }
 
 void CRot::ImGui_AnimationProperty()
@@ -267,6 +289,8 @@ HRESULT CRot::SetUp_State()
 			{
 				m_pKena->Set_FirstRotPtr(this);
 				m_vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+				if (m_pCamera_Photo)
+					m_pCamera_Photo->Set_FirstRotPtr(this);
 			}
 
 			m_pTransformCom->Set_Position(m_vWakeUpPosition);
@@ -326,7 +350,9 @@ HRESULT CRot::SetUp_State()
 			m_pKena->Set_State(CKena::STATE_LEVELUP_READY, true);
 
 		m_pMyCam->Set_Target(nullptr);
-		m_pGameInstance->Work_Camera(L"PLAYER_CAM");		
+		m_pGameInstance->Work_Camera(L"PLAYER_CAM");
+
+		m_bIsKenaFriend = true;
 	})
 		.AddTransition("COLLECT to IDLE ", "IDLE")
 		.Predicator([this]()
@@ -343,14 +369,21 @@ HRESULT CRot::SetUp_State()
 
 		m_pModelCom->Set_AnimIndex(IDLE);
 	})
+		.AddTransition("IDLE to PHOTO", "READY_PHOTO")
+		.Predicator([this]()
+	{			
+		return m_pCamera_Photo && m_pCamera_Photo->Is_Work();
+	})
 		.AddTransition("IDLE to HIDE", "HIDE")
 		.Predicator([this]()
 	{
+		// return false; // 임시
 		return m_pMonster_Manager->Is_Battle();
 	})
 		.AddTransition("IDLE to FOLLOW_KENA ", "FOLLOW_KENA")
 		.Predicator([this]()
 	{
+		// return false; // 임시
 		m_pTeleportRot->Set_Active(false);
 		return !m_pTransformCom->IsClosed_XZ(m_vKenaPos, m_fKenaToRotDistance);
 	})
@@ -411,11 +444,46 @@ HRESULT CRot::SetUp_State()
 		return m_pModelCom->Get_AnimationFinish();
 	})
 
+
 		.AddState("HIDE_WAIT")		
 		.AddTransition("HIDE_WAIT to TELEPORT_KENA ", "TELEPORT_KENA")
 		.Predicator([this]()
 	{
 		return m_pMonster_Manager->Is_Battle() == false;
+	})
+
+
+		.AddState("READY_PHOTO")		
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt_NoUpDown(m_pCamera_Photo->Get_Position());
+	})
+		.AddTransition("SELFIE to IDLE", "PHOTO")
+		.Predicator([this]()
+	{
+		return m_bPhoto;
+	})		
+
+		.AddState("PHOTO")
+		.OnStart([this]()
+	{
+		// PHOTOPOSE1, PHOTOPOSE2, PHOTOPOSE3, PHOTOPOSE4, PHOTOPOSE5, PHOTOPOSE6, PHOTOPOSE7, PHOTOPOSE8,
+		_uint iPhotoAnimIndex = rand() % (PHOTOPOSE8 - PHOTOPOSE1) + PHOTOPOSE1;
+
+		m_pModelCom->ResetAnimIdx_PlayTime(iPhotoAnimIndex);
+		m_pModelCom->Set_AnimIndex(iPhotoAnimIndex);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt_NoUpDown(m_pCamera_Photo->Get_Position());
+
+		if (m_pModelCom->Get_AnimationFinish())
+			m_bPhotoAnimEnd = true;
+	})
+		.AddTransition("SELFIE to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return m_bPhoto == false;
 	})
 
 		.Build();
@@ -437,7 +505,7 @@ void CRot::Set_WakeUpPos(_float4 vPos)
 
 _int CRot::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {	
-	if (pTarget && iColliderIndex == (_int)COL_PLAYER)
+	if (pTarget && iColliderIndex == (_int)COL_PLAYER && m_bOrdinaryRotFlag)
 	{
 		m_bWakeUp = true;
 	}
@@ -447,7 +515,7 @@ _int CRot::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int i
 
 _int CRot::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	if (pTarget && iTriggerIndex == (_uint)ON_TRIGGER_PARAM_ACTOR && iColliderIndex == (_int)TRIGGER_PULSE)
+	if (pTarget && iTriggerIndex == (_uint)ON_TRIGGER_PARAM_ACTOR && iColliderIndex == (_int)TRIGGER_PULSE && m_bOrdinaryRotFlag)
 	{
 		m_bWakeUp = true;
 	}
@@ -507,13 +575,39 @@ void CRot::Clear()
 	m_vecKenaConnectRot.clear();
 }
 
-void CRot::RunAway()
+void CRot::Set_NewWorldMatrix(_float4x4 NewWroldMatrix)
 {
-
+	m_Desc.WorldMatrix = NewWroldMatrix;
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+	m_vWakeUpPosition = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
+	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
 }
 
-void CRot::ComeBack()
+void CRot::Execute_WakeUp()
 {
-
+	m_bWakeUp = true;
+	m_pRotWisp->Set_Pulse(true);
 }
 
+void CRot::Execute_Photo()
+{
+	if (m_iThisRotIndex != FIRST_ROT) return;
+
+	for (auto& pRot : m_vecKenaConnectRot)
+	{
+		pRot->m_bPhoto = true;
+	}	
+}
+
+_bool CRot::Is_PhotoAnimEnd()
+{
+	if (m_iThisRotIndex != FIRST_ROT) return false;
+
+	for (auto& pRot : m_vecKenaConnectRot)
+	{
+		if (pRot->m_bPhotoAnimEnd == false)
+			return false;
+	}
+
+	return true;
+}
