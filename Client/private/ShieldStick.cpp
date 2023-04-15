@@ -267,11 +267,7 @@ HRESULT CShieldStick::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{	
 		m_pModelCom->Set_AnimIndex(IDLE);
-	})
-		.OnExit([this]()
-	{
-
-	})
+	})		
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{

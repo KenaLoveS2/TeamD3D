@@ -91,8 +91,11 @@ void CControlRoom::Tick(_float fTimeDelta)
 		//To.do 
 		// 3번째 터레인 쉐도우 온
 		m_MapShadowArray[1] = true;
-		CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_2"));
-		m_pRendererCom->ShootStaticShadow();
+		if(g_LEVEL == LEVEL_FINAL)
+		{
+			CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_2"));
+			m_pRendererCom->ShootStaticShadow();
+		}
 	}
 	else if (false == m_MapShadowArray[2] && vPlayerPos.z > 710.f)
 	{

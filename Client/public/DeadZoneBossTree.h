@@ -9,7 +9,7 @@ class CModel;
 class CTexture;
 END
 
-/*³ª¹« »Ñ¸® ¿Í °ü·ÃµÈ Å¬·¡½ºÀÔ´Ï´Ù. */
+/*ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¸ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. */
 BEGIN(Client)
 class CControlRoom;
 class CDeadZoneBossTree  final : public CEnviromentObj
@@ -37,14 +37,13 @@ public:
 	_float4				Set_ColorValue();
 	_float4				Set_ColorValue_1();
 
-
 private:
 	CModel* m_pModelCom = nullptr;
 	CTexture* m_pDissolveTextureCom = nullptr;
 	
 
 	_float				m_fTimeDeltaTest = 0.f;
-	_float4 m_vColor = _float4(1.0f, 0.05f, 0.46f, 1.f);
+	_float4				m_vColor = _float4(1.0f, 0.05f, 0.46f, 1.f);
 	
 	_float				m_fDissolveTime = 0.f;
 	_bool				m_bDissolve = false;
@@ -61,7 +60,7 @@ private:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
+	HRESULT SetUp_ShadowShaderResources() override;
 
 public:
 	static  CDeadZoneBossTree* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

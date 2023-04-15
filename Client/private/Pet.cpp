@@ -86,7 +86,10 @@ void CPet::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CPet::Render()
@@ -115,7 +118,18 @@ HRESULT CPet::Render()
 	return S_OK;
 }
 
+HRESULT CPet::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow())) return E_FAIL;
+	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
 
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
+
+	return S_OK;
+}
 
 void CPet::ImGui_AnimationProperty()
 {
@@ -125,7 +139,6 @@ void CPet::ImGui_AnimationProperty()
 	m_pTransformCom->Imgui_RenderProperty_ForJH();
 	m_pModelCom->Imgui_RenderProperty();
 }
-
 
 HRESULT CPet::SetUp_Components()
 {
@@ -171,7 +184,24 @@ HRESULT CPet::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
 
+HRESULT CPet::SetUp_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

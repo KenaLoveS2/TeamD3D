@@ -17,7 +17,6 @@ private:
 	CDynamic_Stone(const CDynamic_Stone& rhs);
 	virtual ~CDynamic_Stone() = default;
 
-
 public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;

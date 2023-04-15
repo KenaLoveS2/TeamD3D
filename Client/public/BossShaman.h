@@ -129,6 +129,12 @@ private:
 	_bool m_bMeleeAttackTeleport = false;
 	_bool m_bMeleeAttackDissolve = false;
 
+	class CBossShaman_Mask* m_pShamanMask = nullptr;
+	class CCamera_Shaman* m_pCamera_Shaman = nullptr;
+
+	_bool m_bStartRender = false;		
+	_float m_fCamDistRate = 0.73f;
+
 private:
 	CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBossShaman(const CBossShaman& rhs);
@@ -323,6 +329,8 @@ public:
 	void Play_WalkSound(_bool bIsInit, _float fTimeDelta);
 
 	void Teleport_MeleeAttack(_bool bIsInit, _float fTimeDelta);
+
+	void Create_ShamanMask();
 };
 
 END

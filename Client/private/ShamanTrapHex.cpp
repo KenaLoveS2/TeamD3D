@@ -91,7 +91,7 @@ HRESULT CShamanTrapHex::Late_Initialize(void* pArg)
 		PxBoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 		PxBoxDesc.fDegree = 0.f;
 		PxBoxDesc.isGravity = false;
-		PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_PARTS;
+		PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 		PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxBoxDesc.fDensity = 1.f;
 		PxBoxDesc.fAngularDamping = 0.5f;
@@ -103,7 +103,7 @@ HRESULT CShamanTrapHex::Late_Initialize(void* pArg)
 		PxBoxDesc.fRestitution = 0.f;
 		PxBoxDesc.isTrigger = false;
 
-		CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
+		CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COL_SHAMAN_HEX));
 		m_pTransformCom->Add_Collider_Static(pCloneActorTag, matPivot);
 		m_pTransformCom->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());
 	}
@@ -427,7 +427,7 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 		if (m_pModelCom->Get_AnimationFinish())
 		{
 			m_eState = TRAP;
-			m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TRAP], 0.5f);
+			m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TRAP], 0.5f, false, SOUND_MONSTER);
 		}	
 
 		break;
@@ -448,7 +448,7 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 	}
 	case BREAK_TRAP:
 	{	
-		if (m_pModelCom->Get_AnimationFinish())		
+		if (m_pModelCom->Get_AnimationFinish())
 			m_eState = END_TRAP;
 		
 		break;
@@ -490,12 +490,25 @@ void CShamanTrapHex::Execute_Break()
 	m_pModelCom->Set_AnimIndex(EXPAND);
 	m_eState = BREAK_TRAP;
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TRAP_BREAK], 0.7f);
+	m_pGameInstance->Stop_Sound(SOUND_MONSTER);
+
+	for (_uint i = SHAMAN_0; i < (_uint)PARTS_END; i++)
+	{
+		((CFakeShaman*)m_pPart[i])->Go_InvisiblePos();
+	}
 }
 
 void CShamanTrapHex::Execute_End()
 {
 	m_eState = END_TRAP;
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TRAP_BREAK], 0.7f);
+	m_pGameInstance->Stop_Sound(SOUND_MONSTER);
+
+
+	for (_uint i = SHAMAN_0; i < (_uint)PARTS_END; i++)
+	{
+		((CFakeShaman*)m_pPart[i])->Go_InvisiblePos();
+	}
 }
 
 void CShamanTrapHex::Create_CopySoundKey()

@@ -1,7 +1,7 @@
 #pragma once
-
 #include "MonsterWeapon.h"
 
+BEGIN(Client)
 class CBossWarrior_Hat final : public CMonsterWeapon
 {
 private:
@@ -45,4 +45,4 @@ public:
 
 	_int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex);
 };
-
+END

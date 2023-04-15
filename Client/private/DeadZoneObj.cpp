@@ -59,6 +59,7 @@ HRESULT CDeadZoneObj::Initialize(void * pArg)
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_DeadBranch3")
 		m_iDeadZoneModelID = 12;
 	m_bRenderActive = true;
+	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
 	return S_OK;
 }
 
@@ -289,7 +290,7 @@ HRESULT CDeadZoneObj::RenderShadow()
 	if (FAILED(__super::RenderShadow()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(__super::SetUp_ShadowShaderResources()))
 		return E_FAIL;
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -463,18 +464,6 @@ HRESULT CDeadZoneObj::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_SecondRatio", &fSecondRatio, sizeof(_float)))) return E_FAIL;
 
 
-	RELEASE_INSTANCE(CGameInstance);
-	return S_OK;
-}
-
-HRESULT CDeadZoneObj::SetUp_ShadowShaderResources()
-{
-	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

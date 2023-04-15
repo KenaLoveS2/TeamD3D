@@ -25,9 +25,10 @@ public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
 	virtual HRESULT		Late_Initialize(void* pArg = nullptr)override;
-	virtual void		Tick(_float fTimeDelta) override;
-	virtual void		Late_Tick(_float fTimeDelta) override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderShadow() override;
 
 	void	Create_Colider();
 
@@ -44,6 +45,7 @@ private:
 	_bool							m_bColiderOn = false;
 
 	_bool							m_bOnlyTest = false; // Test
+	class CGameObject* m_pKena = nullptr;
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
@@ -51,6 +53,7 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources() override;
 
 public:
 	static  CDZ_FallenTree_Anim*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
