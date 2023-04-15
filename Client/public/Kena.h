@@ -324,6 +324,8 @@ private:	/* Sound Event Func */
 	void	PlaySound_HeavyAttack_Combo_Staff_Sweep(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_AirAttack_Slam_Release(_bool bIsInit, _float fTimeDelta);
 
+public:
+	void	PlaySound_Hit();
 	void	PlaySound_Damage();
 	void	PlaySound_Damage_Pulse();
 

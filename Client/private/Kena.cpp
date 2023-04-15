@@ -3124,6 +3124,21 @@ void CKena::PlaySound_AirAttack_Slam_Release(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Slam_Impact_Debris_3.ogg", 1.f, false);
 }
 
+void CKena::PlaySound_Hit()
+{
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 3.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Hit_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Hit_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Hit_2.ogg", 1.f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Hit_3.ogg", 1.f, false);
+	else if (iRand == 4)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Hit_4.ogg", 1.f, false);
+}
+
 void CKena::PlaySound_Damage()
 {
 	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Damage.ogg", 1.f, false);
