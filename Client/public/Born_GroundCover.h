@@ -33,8 +33,9 @@ private:
 
 	_bool										m_bRenderCheck = false;
 
-	_bool					m_bOnceTest = false;
+	_bool					m_bOnceSound = false;
 	_bool					m_bUprise = false;
+
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;

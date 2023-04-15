@@ -161,6 +161,41 @@ PS_OUT PS_MAIN_MASK(PS_IN In)
 
 	return Out;
 }
+PS_OUT PS_MAIN_AlphaTest(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4	vDiffuse = g_tex_0.Sample(LinearSampler, In.vTexUV);
+
+	if (g_bool_0)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_int_2;
+		In.vTexUV.y = In.vTexUV.y + g_int_3;
+
+		In.vTexUV.x = In.vTexUV.x / g_int_0;
+		In.vTexUV.y = In.vTexUV.y / g_int_1;
+	}
+
+	if (g_bool_1)
+	{
+		In.vTexUV.x += g_float2_0.x;
+		In.vTexUV.y += g_float2_0.y;
+	}
+
+	float4	vMask = g_tex_1.Sample(LinearSampler, In.vTexUV);
+	vMask *= g_float4_1;
+
+	Out.vColor = vDiffuse;
+	Out.vColor.a = vMask.r;
+
+	Out.vColor *= g_float4_0;
+	Out.vColor.rgb *= g_float_0;
+
+	if (vMask.r < 0.01)
+		discard;
+
+	return Out;
+}
 
 technique11 DefaultTechnique
 {
@@ -180,7 +215,7 @@ technique11 DefaultTechnique
 	pass DefaultMask // 1
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
+		SetDepthStencilState(DS_TEST2, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -188,6 +223,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_MASK();
+	}
+
+	pass DefaultMask_AlphaTest // 2
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_TEST2, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AlphaTest();
 	}
 
 }

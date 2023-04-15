@@ -70,6 +70,7 @@ private:
 	CBossWarrior(const CBossWarrior& rhs);
 	virtual ~CBossWarrior() = default;
 
+
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;

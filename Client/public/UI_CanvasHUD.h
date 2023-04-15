@@ -32,6 +32,9 @@ public: /* For. Events */
 	}
 	void	PlusPipCount() { m_iNumPipsNow += 1; }
 
+public:
+	virtual void			Call_BindFunction(_uint iTag, _float fData) override;
+
 private:
 	virtual HRESULT			Bind()							override;
 	virtual HRESULT			Ready_Nodes()					override;

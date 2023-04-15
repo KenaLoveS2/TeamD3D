@@ -150,7 +150,11 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Boss_Attack_Geo.json");
+
+	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, 
+		pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr), E_FAIL);
+
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Boss_Attack_Geo.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "DeadZoneReal.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "MiniGameMap.json");
 

@@ -2,7 +2,10 @@
 #include "Client_Defines.h"
 #include "UI_Node.h"
 
+#define MAX_PARTICLES 50
+
 BEGIN(Client)
+class CEffect_Particle_Base;
 class CUI_NodeEffect final : public CUI_Node
 {
 public:
@@ -44,7 +47,10 @@ private:
 	_float					m_fAlpha;
 	_float4					m_vColor;
 
-
+	/* For. Particle */
+	vector<CEffect_Particle_Base*>	m_vecParticles;
+	_uint							m_iParticleIndex;
+	_float							m_fParticleTimeAcc;
 
 public:
 	static	CUI_NodeEffect*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

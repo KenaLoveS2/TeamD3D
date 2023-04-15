@@ -3,7 +3,7 @@
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "ControlRoom.h"
-#include "Interaction_Com.h"
+
 #include "Delegator.h"
 
 CDeadZoneObj::CDeadZoneObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -89,23 +89,33 @@ void CDeadZoneObj::Tick(_float fTimeDelta)
 
 	m_fTimeDeltaTest += fTimeDelta;
 
-	 if(m_bChangeModelRender == true &&  m_fTimeDeltaTest >= 4.f)
-	{
-		//m_fTimeDeltaTest = 0.f;
-		m_bChangeModelRender = false;
-		m_iSign = -1;
 
-		m_bDeadZoneRender = false;
+
+
+	 if(m_bChangeModelRender == true)
+	{
+
+		 if( m_fTimeDeltaTest >= 2.0f)
+		 {
+			 m_bChangeModelRender = false;
+			 m_iSign = -1;
+
+			 m_bDeadZoneRender = false;
+			 //	m_bDissolve = true;
+		 }
+	
 	}
 
-	/*if(m_bDeadZoneRender==true && m_bChangeModelRender == false && m_iSign== -1)
+	//if(m_bDeadZoneRender== false && m_bDissolve == true)
+	 if (m_bDissolve == true)
 	{
-		if (m_fTimeDeltaTest >= 6.5f)
+		m_fDissolveTime -= fTimeDelta * 0.49f;
+
+		if (m_fDissolveTime <= 0.f)
 		{
-			m_bDeadZoneRender = false;
+			m_bDissolve = false;
 		}
-		
-	}*/
+	}
 
 	__super::Tick(fTimeDelta);
 }
@@ -130,143 +140,147 @@ HRESULT CDeadZoneObj::Render()
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	
-
-	if (m_pModelCom->Get_IStancingModel() )
-	{
-		if(m_bDeadZoneRender ==true && m_iSign ==1 )
-		{
-			for (_uint i = 0; i < iNumMeshes; ++i)
-			{
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-				if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
-				{
-					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-
-					if (m_bChangeModelRender)
-					{
-						FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
-					}
-					else
-					{
-						FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
-					}
-				}
-				else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
-				{
-					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
-
-					if (m_bChangeModelRender)
-					{
-						FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
-						
-					}
-					else
-					{
-						FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
-					}
-
-				}
-				else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
-				{
-					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
-
-					if (m_bChangeModelRender)
-					{
-						FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
-
-					}
-					else
-					{
-						FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
-					}
-				}
-				else
-				{
-					if (m_bChangeModelRender)
-					{
-						FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
-					}
-					else
-					{
-						FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
-					}
-				}
-			}
-		}
-
-		if (m_pModelChangeCom != nullptr && m_bChaning_ModelRender)
-		{
-			_uint iNumChangeMeshes = m_pModelChangeCom->Get_NumMeshes();
-			for (_uint i = 0; i < iNumChangeMeshes; ++i)
-			{
-				FAILED_CHECK_RETURN(m_pModelChangeCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelChangeCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-				if ((*m_pModelChangeCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
-				{
-
-					FAILED_CHECK_RETURN(m_pModelChangeCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
-					if (m_bDeadZoneRender)
-					{
-						FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
-					}
-					else
-					{
-						FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
-					}
-				}
-				else if ((*m_pModelChangeCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
-				{
-					FAILED_CHECK_RETURN(m_pModelChangeCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
-
-					if (m_bDeadZoneRender)
-					{
-						FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
-					}
-					else
-					{
-						FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
-					}
-				}
-				else if ((*m_pModelChangeCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
-				{
-					FAILED_CHECK_RETURN(m_pModelChangeCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
-
-					if (m_bDeadZoneRender)
-					{
-						FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
-					}
-					else
-					{
-						FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
-					}
-
-				}
-				else
-				{
-					if (m_bDeadZoneRender)
-					{
-						FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
-					}
-					else
-					{
-						FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
-					}
-				}
-			}
-		}
-
-	}
-	else
+	if (m_bDeadZoneRender == true && m_iSign == 1)
 	{
 		for (_uint i = 0; i < iNumMeshes; ++i)
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
+			if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
+			{
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
+
+				if (m_bChangeModelRender)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
+				}
+				else
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+				}
+			}
+			else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
+			{
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
+
+				if (m_bChangeModelRender)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
+
+				}
+				else
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
+				}
+
+			}
+			else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
+			{
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
+
+				if (m_bChangeModelRender)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
+
+				}
+				else
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
+				}
+			}
+			else
+			{
+				if (m_bChangeModelRender)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
+				}
+				else
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
+				}
+			}
 		}
 	}
+
+	if (m_pModelChangeCom != nullptr && m_bChaning_ModelRender)
+	{
+		_uint iNumChangeMeshes = m_pModelChangeCom->Get_NumMeshes();
+		for (_uint i = 0; i < iNumChangeMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelChangeCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelChangeCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+			if ((*m_pModelChangeCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
+			{
+
+				FAILED_CHECK_RETURN(m_pModelChangeCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
+			/*	if (m_bDeadZoneRender && !m_bDissolve)
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
+				}
+				else*/ if(m_bDissolve )
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 26), E_FAIL);
+				}
+				else
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+				}
+			}
+			else if ((*m_pModelChangeCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
+			{
+				FAILED_CHECK_RETURN(m_pModelChangeCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
+
+				/*if (m_bDeadZoneRender && !m_bDissolve)
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
+				}
+				else*/ if (m_bDissolve)
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 26), E_FAIL);
+				}
+				else
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
+				}
+			}
+			else if ((*m_pModelChangeCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
+			{
+				FAILED_CHECK_RETURN(m_pModelChangeCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
+/*
+				if (m_bDeadZoneRender && !m_bDissolve)
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
+				}
+				else */if (m_bDissolve)
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 26), E_FAIL);
+				}
+				else
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
+				}
+
+			}
+			else
+			{
+				/*if (m_bDeadZoneRender && !m_bDissolve)
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 23), E_FAIL);
+				}
+				else*/ if (m_bDissolve)
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 26), E_FAIL);
+				}
+				else
+				{
+					FAILED_CHECK_RETURN(m_pModelChangeCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
+				}
+			}
+		}
+	}
+
+
+	
 
 	return S_OK;
 }
@@ -300,7 +314,7 @@ HRESULT CDeadZoneObj::RenderShadow()
 
 	return S_OK;
 }
-
+#ifdef _DEBUG
 _float4 CDeadZoneObj::Set_ColorValue()
 {
 	
@@ -323,51 +337,34 @@ _float4 CDeadZoneObj::Set_ColorValue()
 	return vSelectColor;
 	
 }
-
+#endif
 void CDeadZoneObj::Change_Model(_int iDissolveTimer)
 {
 	if (m_iDeadZoneModelID == -1)
 		return;
 
+	if(iDissolveTimer == -1)
+	{
+		m_bChangeModelRender = false;
+		m_bChaning_ModelRender = false;
+		m_bDeadZoneRender = true;
+		m_bDissolve = false;
+		m_iSign = 1;
+		m_fTimeDeltaTest = 0.f;
+		m_fDissolveTime = 1.f;
+		return;
+	}
+	
+
 	m_bChangeModelRender = true;
 	m_bChaning_ModelRender = true;
+	m_bDissolve = true;
+
 	m_fTimeDeltaTest = 0;
-	// _tchar pModelName[13][64] =
-	//{
-	//	{ L"Prototype_Component_Model_Flower4"},//0
-	//	{ L"Prototype_Component_Model_Giant_GodTreeSmall_03"},//1
-	//	{ L"Prototype_Component_Model_Giant_GodTreeSmall_02"},//2
-	//	{ L"Prototype_Component_Model_Giant_GodTreeSmall_01"},//3
-	//	{ L"Prototype_Component_Model_CadarTree_03"},//4
-	//	{ L"Prototype_Component_Model_BigTreeLog"},//5
-	//	{ L"Prototype_Component_Model_BigBushes_06"},//6
-	//	{ L"Prototype_Component_Model_BigBushes_03"},//7
-	//	{ L"Prototype_Component_Model_BigBushes_04"},//8
-	//	{ L"Prototype_Component_Model_BigBushes_03"},//9
-	//	{ L"Prototype_Component_Model_BigBushes_06"},//10
-	//	{ L"Prototype_Component_Model_Flower2"},//11
-	//	{ L"Prototype_Component_Model_Flower3"}, //12
-	//};
+
+	
 
 
-	// vector<_float4x4> New_Matrix;
-
-	// for(auto pMatrix :  *m_pModelCom->Get_InstancePos())
-	// {
-	//	 New_Matrix.push_back(*pMatrix);
-	// }
-
-	// /* 인스턴싱된 애들 매트릭스 가져온다음에 다시 대입해야되네 */
-
-	//CGameObject::Delete_Component(TEXT("Com_Model"));
-	//Safe_Release(m_pModelCom);
-
-	// if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, pModelName[m_iDeadZoneModelID], TEXT("Com_Model"),
-	//	 (CComponent**)&m_pModelCom)))
-	//	 assert(!"CDeadZoneObj::Change_Model(_int iDissolveTimer)");
-
-
-	//  m_pModelCom->Set_InstancePos(New_Matrix);
 }
 
 HRESULT CDeadZoneObj::SetUp_Components()
@@ -390,6 +387,9 @@ HRESULT CDeadZoneObj::SetUp_Components()
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
+
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Texture_Dissolve", L"Com_Dissolve_Texture",
+		(CComponent**)&m_pDissolveTextureCom), E_FAIL);
 
 	return S_OK;
 }
@@ -447,6 +447,23 @@ HRESULT CDeadZoneObj::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_CenterPos", &vMeshCenterPos, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("vColorData", &m_vColor, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_iSign", &m_iSign, sizeof(_int)), E_FAIL);
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
+	_float4 vTestColor1 = _float4((30.f / 255.f), (53.f / 255.f), (13.f / 255.f), (255.f / 255.f));
+	if (FAILED(m_pShaderCom->Set_RawValue("g_FirstColor", &vTestColor1, sizeof(_float4)))) return E_FAIL;
+
+	_float4 vTestColor2 = _float4((255.f / 255.f), (19.f / 255.f), (19.f / 255.f), (242.f / 255.f));
+	if (FAILED(m_pShaderCom->Set_RawValue("g_SecondColor", &vTestColor2, sizeof(_float4)))) return E_FAIL;
+
+	_float fFirstRatio = 1.f;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_FirstRatio", &fFirstRatio, sizeof(_float)))) return E_FAIL;
+
+	_float fSecondRatio = 0.1f;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_SecondRatio", &fSecondRatio, sizeof(_float)))) return E_FAIL;
+
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -483,5 +500,6 @@ void CDeadZoneObj::Free()
 	Safe_Release(m_pModelChangeCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pDissolveTextureCom);
 
 }
