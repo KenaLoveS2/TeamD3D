@@ -63,6 +63,7 @@ private:
 private:
 	CKena*		m_pPlayer;
 	_bool*		m_pUIShown;
+	_bool		m_bApproached;
 
 public:
 	static  CHatCart* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

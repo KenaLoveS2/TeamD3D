@@ -341,7 +341,8 @@ public:
 	virtual _int				Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 	void						LiftRotRockProc();
-	void						Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
+	/* 230415 : HSY */
+	void						Set_RopeRotRockPtr(class CRope_RotRock* pObject);// { m_pRopeRotRock = pObject; }
 	void						Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
 	
 	class CKena_Status*			Get_KenaStatusPtr() { return m_pKenaStatus; }

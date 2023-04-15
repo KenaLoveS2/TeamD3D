@@ -32,6 +32,10 @@ private: /* Bind Functions */
 	
 private:
 	_bool	m_bResultShow;
+	_tchar* m_szHit;
+	_tchar* m_szTime;
+	_tchar* m_szResult;
+	_tchar* m_szReward;
 
 public:
 	static	CUI_CanvasMiniGame* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

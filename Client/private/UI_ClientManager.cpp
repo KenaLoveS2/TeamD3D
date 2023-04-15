@@ -72,6 +72,7 @@
 #include "UI_NodeLvUp.h"
 #include "UI_NodeBossHP.h"
 #include "UI_NodeMood.h"
+#include "UI_NodeAlarm.h"
 
 /* HatCart */
 #include "UI_CanvasHatCart.h"
@@ -86,6 +87,12 @@
 
 /* InfoWindow */
 #include "UI_CanvasInfo.h"
+
+/* MiniGame */
+#include "UI_CanvasMiniGame.h"
+#include "UI_NodeTimeAtk.h"
+#include "UI_NodeVictory.h"
+#include "UI_NodeHitCount.h"
 
 /* World UI */
 #include "UI_MonsterHP.h"
@@ -578,10 +585,28 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_InfoWindow"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/04. Menu/Information_0.png")))))
 		return E_FAIL;
-	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_InfoWindow"); // 67
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_InfoWindow"); // 68
 
+	/********************************************/
+	/*				For. Alarm					*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Alarm"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/08. Title/Alarm/Alarm_%d.png"), 2))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_Alarm"); // 69
 
+	/********************************************/
+	/*				For. MiniGame				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ArcheryIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/11. MiniGame/SS_TrialLevelIcons.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ArcheryIcon"); 
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Victory"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/11. MiniGame/Victory_SpriteSheet.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_Victory");
 
 
 	/* Not Include in the Texture List */
@@ -1003,6 +1028,10 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Mood");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Alarm"), CUI_NodeAlarm::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Alarm");
+
 	/********************************************/
 	/*				For. HatCart				*/
 	/********************************************/
@@ -1048,6 +1077,25 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_InfoWindow"), CUI_CanvasInfo::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_InfoWindow");
+
+	/********************************************/
+	/*				For. MiniGame				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_MiniGame"), CUI_CanvasMiniGame::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_MiniGame");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_TimeAtk"), CUI_NodeTimeAtk::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_TimeAtk");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_HitCount"), CUI_NodeHitCount::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_HitCount");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Victory"), CUI_NodeVictory::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Victory");
 
 
 	/* Commons */

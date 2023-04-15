@@ -71,11 +71,12 @@ HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 	m_Pips[PIP_2] = UI_PIPGAUGE2;
 	m_Pips[PIP_3] = UI_PIPGAUGE3;
 
-	m_iNumPips = 1;
+	/* 230415 */
+	m_iNumPips = 0;
 	m_iNumPipsNow = m_iNumPips;
 
-	m_vecNode[UI_PIPBAR1]->Set_Active(true);
-	m_vecNode[UI_PIPGAUGE1]->Set_Active(true);
+	//m_vecNode[UI_PIPBAR1]->Set_Active(true);
+	//m_vecNode[UI_PIPGAUGE1]->Set_Active(true);
 	
 	static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(0);
 
@@ -390,7 +391,12 @@ void CUI_CanvasHUD::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 	case CUI_ClientManager::HUD_PIP_UPGRADE:
 		m_iNumPips = (_uint)fValue;
 		m_iNumPipsNow = m_iNumPips;
-		if (2 == m_iNumPips)
+		if (1 == m_iNumPips)
+		{
+			m_vecNode[UI_PIPBAR1]->Set_Active(true);
+			m_vecNode[UI_PIPGAUGE1]->Set_Active(true);
+		}
+		else if (2 == m_iNumPips)
 		{
 			m_vecNode[UI_PIPBAR2]->Set_Active(true);
 			m_vecNode[UI_PIPGAUGE2]->Set_Active(true);

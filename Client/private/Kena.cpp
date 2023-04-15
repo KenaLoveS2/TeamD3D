@@ -1707,6 +1707,8 @@ HRESULT CKena::SetUp_UI()
 		MSG_BOX("Failed To make UI : Kena");
 		return E_FAIL;
 	}
+	else
+		m_pUI_FocusRot->Set_Player(this);
 
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
 		TEXT("Prototype_GameObject_UI_FocusMonster"),
@@ -2959,6 +2961,8 @@ void CKena::LiftRotRockProc()
 	if (pCurTerrain == nullptr)
 		return;
 
+
+
 	if (m_bRotRockChoiceFlag == false && GetKeyState('R') & 0x8000)
 	{
 		if (m_pRopeRotRock)
@@ -2999,6 +3003,23 @@ void CKena::LiftRotRockProc()
 			pCurTerrain->Set_BrushPosition(_float3(-1000.f, 0.f, 0.f));
 		}	
 	}
+}
+
+void CKena::Set_RopeRotRockPtr(CRope_RotRock* pObject)
+{
+	_float fNoMeaning = 1.f;
+	if (m_pRopeRotRock == nullptr && pObject != nullptr)
+	{
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_MOVEROT;
+		m_Delegator.broadcast(tag, fNoMeaning);
+	}
+	else if (m_pRopeRotRock != nullptr && pObject == nullptr)
+	{
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OFF;
+		m_Delegator.broadcast(tag, fNoMeaning);
+	}
+
+	m_pRopeRotRock = pObject;
 }
 
 void CKena::Setup_TerrainPtr()

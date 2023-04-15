@@ -88,31 +88,31 @@ HRESULT CUI_CanvasQuest::Initialize(void * pArg)
 
 void CUI_CanvasQuest::Tick(_float fTimeDelta)
 {
-	//if (!m_bBindFinished)
+	if (!m_bBindFinished)
+	{
+		if (FAILED(Bind()))
+		{
+			//	MSG_BOX("Bind Failed");
+			return;
+		}
+	}
+
+	//m_bActive = true;
+	//m_bOpen = false;
+	//m_bClose = false;
+
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	//{
-	//	if (FAILED(Bind()))
-	//	{
-	//		//	MSG_BOX("Bind Failed");
-	//		return;
-	//	}
+	//	static _float fLine = 0;
+	//	BindFunction(CUI_ClientManager::QUEST_LINE, false, fLine, L"");
+	//	fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
 	//}
-
-	m_bActive = true;
-	m_bOpen = false;
-	m_bClose = false;
-
-	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
-	{
-		static _float fLine = 0;
-		BindFunction(CUI_ClientManager::QUEST_LINE, false, fLine, L"");
-		fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
-	}
-	if (CGameInstance::GetInstance()->Key_Down(DIK_U))
-	{
-		static _float fLine = 0;
-		BindFunction(CUI_ClientManager::QUEST_CLEAR, false, fLine, L"");
-		fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_U))
+	//{
+	//	static _float fLine = 0;
+	//	BindFunction(CUI_ClientManager::QUEST_CLEAR, false, fLine, L"");
+	//	fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
+	//}
 
 
 	if (!m_bActive)

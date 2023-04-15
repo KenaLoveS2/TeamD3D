@@ -5,12 +5,20 @@
 CUI_CanvasMiniGame::CUI_CanvasMiniGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Canvas(pDevice, pContext)
 	, m_bResultShow(false)
+	, m_szHit(nullptr)
+	, m_szTime(nullptr)
+	, m_szResult(nullptr)
+	, m_szReward(nullptr)
 {
 }
 
 CUI_CanvasMiniGame::CUI_CanvasMiniGame(const CUI_CanvasMiniGame& rhs)
 	:CUI_Canvas(rhs)
 	,m_bResultShow(false)
+	, m_szHit(nullptr)
+	, m_szTime(nullptr)
+	, m_szResult(nullptr)
+	, m_szReward(nullptr)
 {
 }
 
@@ -45,7 +53,7 @@ HRESULT CUI_CanvasMiniGame::Initialize(void* pArg)
 	}
 
 	/*temp*/
-	m_bActive = true;
+	//m_bActive = true;
 
 	return S_OK;
 }
@@ -64,6 +72,9 @@ void CUI_CanvasMiniGame::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
+
+
+
 	__super::Tick(fTimeDelta);
 
 
@@ -81,6 +92,66 @@ HRESULT CUI_CanvasMiniGame::Render()
 {
 	__super::Render();
 
+	{
+		m_szTime = CUtile::Create_String(L"소요 시간 : 10 분 20초");
+		_float4 vPos;
+		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 210.0f, g_iWinSizeY * 0.5f - vPos.y -150.f };
+		if (m_szTime != nullptr)
+		{
+			//Font_Jangmi0 //Font_JungE0 // Font_SR0
+			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szTime,
+				vNewPos /* position */,
+				0.f, _float2(1.0f, 1.0f)/* size */,
+				XMVectorSet(1.f, 1.f, 1.f, 1.f));
+		}
+	}
+	{
+		m_szHit = CUtile::Create_String(L"적중 타겟 : 10 / 10");
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 210.0f, g_iWinSizeY * 0.5f - vPos.y - 60.f };
+		if (m_szHit != nullptr)
+		{
+			//Font_Jangmi0 //Font_JungE0 // Font_SR0
+			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szHit,
+				vNewPos /* position */,
+				0.f, _float2(1.0f, 1.0f)/* size */,
+				XMVectorSet(1.f, 1.f, 1.f, 1.f));
+		}
+
+	}
+
+	{
+		m_szResult = CUtile::Create_String(L"최종 결과 : 10305034");
+		_float4 vPos;
+		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 210.0f, g_iWinSizeY * 0.5f - vPos.y + 30.f };
+		if (m_szResult != nullptr)
+		{
+			//Font_Jangmi0 //Font_JungE0 // Font_SR0
+			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szResult,
+				vNewPos /* position */,
+				0.f, _float2(1.0f, 1.0f)/* size */,
+				XMVectorSet(1.f, 1.f, 1.f, 1.f));
+		}
+	}
+	//{
+	//	m_szReward = CUtile::Create_String(L"보상");
+	//	_float4 vPos;
+	//	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	//	_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 180.0f, g_iWinSizeY * 0.5f - vPos.y + 40.f };
+	//	if (m_szReward != nullptr)
+	//	{
+	//		//Font_Jangmi0 //Font_JungE0 // Font_SR0
+	//		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szReward,
+	//			vNewPos /* position */,
+	//			0.f, _float2(1.0f, 1.0f)/* size */,
+	//			XMVectorSet(1.f, 1.f, 1.f, 1.f));
+	//	}
+	//}
+
 	return S_OK;
 }
 
@@ -93,6 +164,48 @@ HRESULT CUI_CanvasMiniGame::Bind()
 
 HRESULT CUI_CanvasMiniGame::Ready_Nodes()
 {
+	/* TimeAtk */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		string strCloneTag = "Node_TimeAtk";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_UI_Node_TimeAtk", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		CGameInstance::GetInstance()->Add_String(wstrCloneTag);
+	}
+
+	/* HitCount */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		string strCloneTag = "Node_HitCount";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_UI_Node_HitCount", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		CGameInstance::GetInstance()->Add_String(wstrCloneTag);
+	}
+
+	/* Victory */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		string strCloneTag = "Node_Victory";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_UI_Node_Victory", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		CGameInstance::GetInstance()->Add_String(wstrCloneTag);
+	}
+
 	return S_OK;
 }
 

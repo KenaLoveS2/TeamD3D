@@ -11,9 +11,11 @@
 #include "UI_NodeRotArrow.h"
 #include "UI_NodeBossHP.h"
 #include "UI_NodeMood.h"
+#include "UI_NodeAlarm.h"
 #include "BossWarrior.h"
 #include "BossShaman.h"
 #include "BossHunter.h"
+
 
 CUI_CanvasTop::CUI_CanvasTop(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice,pContext)
@@ -126,6 +128,11 @@ void CUI_CanvasTop::Tick(_float fTimeDelta)
 
 		m_vecNode[UI_MOOD]->Set_Active(true);
 		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn((CUI_NodeMood::STATE)iState);
+	}
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
+	{
+		static_cast<CUI_NodeAlarm*>(m_vecNode[UI_ALARM])->Set_Alarm(CUI_NodeAlarm::TYPE_CHEST, 5.f);
 	}
 
 	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
@@ -343,6 +350,19 @@ HRESULT CUI_CanvasTop::Ready_Nodes()
 		pGameInstance->Add_String(cloneTag);
 	}
 
+	{ /* Alarm */
+		string strTag = "Node_Alarm";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Alarm", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -452,6 +472,12 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 		break;
 	case CUI_ClientManager::TOP_MOOD_DAZZLE:
 		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn(CUI_NodeMood::STATE_DAZZLE);
+		break;
+	case CUI_ClientManager::TOP_ALARM_CHEST:
+		static_cast<CUI_NodeAlarm*>(m_vecNode[UI_ALARM])->Set_Alarm(CUI_NodeAlarm::TYPE_CHEST, 5.f);
+		break;
+	case CUI_ClientManager::TOP_ALARM_HAT:
+		static_cast<CUI_NodeAlarm*>(m_vecNode[UI_ALARM])->Set_Alarm(CUI_NodeAlarm::TYPE_HAT, 5.f);
 		break;
 	}
 }
