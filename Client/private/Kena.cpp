@@ -1211,6 +1211,7 @@ void CKena::Push_EventFunctions()
 	PlaySound_HeavyAttack_Combo_Charge(true, 0.f);
 	PlaySound_HeavyAttack_Combo_Staff_Sweep(true, 0.f);
 	PlaySound_AirAttack_Slam_Release(true, 0.f);
+	PlaySound_SpinAttack(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -3128,6 +3129,19 @@ void CKena::PlaySound_AirAttack_Slam_Release(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Slam_Impact_Debris_2.ogg", 1.f, false);
 	else if (iRand == 3)
 		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Slam_Impact_Debris_3.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_SpinAttack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_SpinAttack);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_ParryAttack_Sweep.ogg", 1.f, false);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_ParryAttack_Woong.ogg", 1.f, false);
 }
 
 void CKena::PlaySound_Hit()

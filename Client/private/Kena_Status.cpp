@@ -638,10 +638,10 @@ void CKena_Status::Add_RotCount()
 		//m_iMaxPIPCount = m_iRotLevel;
 		//m_fCurPIPGuage = (_float)m_iMaxPIPCount;
 
-		if (m_iRotLevel == 2)
+		if (m_iRotLevel == 1)
 		{
 			m_iRotCountMax = 5;
-			m_iPipLevel = 2;
+			m_iPipLevel = 1;
 
 			m_iMaxPIPCount = m_iPipLevel;
 			m_fCurPIPGuage = (_float)m_iMaxPIPCount;
@@ -651,9 +651,9 @@ void CKena_Status::Add_RotCount()
 			m_StatusDelegator.broadcast(ePipUpgrade, m_fCurPIPGuage);
 		}
 
-		else if (m_iRotLevel == 3)
+		else if (m_iRotLevel == 2)
 		{
-			m_iRotCountMax = 8;
+			m_iRotCountMax = 10;
 			m_iPipLevel = 2;
 
 			m_iMaxPIPCount = m_iPipLevel;
@@ -664,7 +664,7 @@ void CKena_Status::Add_RotCount()
 // 			m_StatusDelegator.broadcast(ePipUpgrade, m_fCurPIPGuage);
 		}
 
-		else if (m_iRotLevel == 4)
+		else if (m_iRotLevel == 3)
 		{
 			m_iRotCountMax = 10;
 			m_iPipLevel = 3;
@@ -686,12 +686,12 @@ void CKena_Status::Add_RotCount()
 
 		_float fMin = 0.0f;
 
-		if (m_iRotLevel == 2)
-			fMin = 2.0f;
-		else if (m_iRotLevel == 3)
+		if (m_iRotLevel == 1)
+			fMin = 1.0f;
+		else if (m_iRotLevel == 2)
 			fMin = 5.0f;
-		else if (m_iRotLevel == 4)
-			fMin = 8.0f;
+		else if (m_iRotLevel == 3)
+			fMin = 10.0f;
 
 		_float fRotMax = (_float)m_iRotCountMax;
 		_float fRotNow = (_float)m_iCurrentRotCount;
