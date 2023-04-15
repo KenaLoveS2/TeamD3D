@@ -89,9 +89,8 @@ void CKena_Status::Update_ArrowCoolTime(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eReCharge = CUI_ClientManager::AMMO_ARROWRECHARGE;
 
 	//_float fCount = (_float)m_iCurArrowCount;
-	_float fGuage;
+	_float fGuage = 0.f;
 	//m_StatusDelegator.broadcast(eArrow, fCount);
-
 
 	if (m_iCurArrowCount == m_iMaxArrowCount) /* Full */
 	{
@@ -590,6 +589,15 @@ void CKena_Status::Add_CurPipGuage()
 	m_StatusDelegator.broadcast(ePip, m_fCurPIPGuage);
 }
 
+void CKena_Status::Plus_CurPIPGuage(_float fGuage)
+{
+	//m_fCurPIPGuage = 0.f;
+	m_fCurPIPGuage = min(m_fCurPIPGuage + fGuage, m_iMaxPIPCount);
+
+	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
+	m_StatusDelegator.broadcast(ePip, m_fCurPIPGuage);
+}
+
 void CKena_Status::Set_CurArrowCount(_int iValue)
 {
 	/* Should be used only when arrow shoot */
@@ -640,7 +648,7 @@ void CKena_Status::Add_RotCount()
 
 		if (m_iRotLevel == 2)
 		{
-			m_iRotCountMax = 3;
+			m_iRotCountMax = 5;
 			m_iPipLevel = 2;
 
 			m_iMaxPIPCount = m_iPipLevel;
@@ -653,20 +661,20 @@ void CKena_Status::Add_RotCount()
 
 		else if (m_iRotLevel == 3)
 		{
-			m_iRotCountMax = 4;
+			m_iRotCountMax = 8;
 			m_iPipLevel = 2;
 
 			m_iMaxPIPCount = m_iPipLevel;
 			m_fCurPIPGuage = (_float)m_iMaxPIPCount;
 
 			/* Pip Level Up */
-			CUI_ClientManager::UI_PRESENT ePipUpgrade = CUI_ClientManager::HUD_PIP_UPGRADE;
-			m_StatusDelegator.broadcast(ePipUpgrade, m_fCurPIPGuage);
+// 			CUI_ClientManager::UI_PRESENT ePipUpgrade = CUI_ClientManager::HUD_PIP_UPGRADE;
+// 			m_StatusDelegator.broadcast(ePipUpgrade, m_fCurPIPGuage);
 		}
 
 		else if (m_iRotLevel == 4)
 		{
-			m_iRotCountMax = 5;
+			m_iRotCountMax = 10;
 			m_iPipLevel = 3;
 
 			m_iMaxPIPCount = m_iPipLevel;

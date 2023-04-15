@@ -137,7 +137,7 @@ public:
 	inline void Set_MaxPIPCount(_int iValue) { m_iMaxPIPCount = iValue; }
 	inline void Set_CurPIPGuage(_float fGuage) { m_fCurPIPGuage = fGuage; }
 	void		Add_CurPipGuage();
-	inline void Plus_CurPIPGuage(_float fGuage) { m_fCurPIPGuage = min(m_fCurPIPGuage+fGuage, m_iMaxPIPCount); }
+	void		Plus_CurPIPGuage(_float fGuage);// { m_fCurPIPGuage = min(m_fCurPIPGuage + fGuage, m_iMaxPIPCount); }
 
 	inline void Set_MaxArrowCount(_int iValue) { m_iMaxArrowCount = iValue; }
 	void Set_CurArrowCount(_int iValue);

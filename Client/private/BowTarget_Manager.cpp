@@ -140,12 +140,31 @@ _bool CBowTarget_Manager::Check_CurrentGroup_Hit()
 	return bState;
 }
 
+_bool CBowTarget_Manager::Check_Group_Hit(const wstring& wstrGroupName)
+{
+	BOWTARGETGROUP* pBowTargetGroup = Find_BowTargetGroup(wstrGroupName);
+	NULL_CHECK_RETURN(pBowTargetGroup, false);
+
+	_bool	bState = true;
+
+	for (auto pBowTarget : pBowTargetGroup->vecBowTarget)
+	{
+		bState = pBowTarget->Is_Hit();
+
+		if (bState == false)
+			break;
+	}
+
+	return bState;
+}
+
 void CBowTarget_Manager::Clear_Groups()
 {
 	for (auto pBowTargetGroup : m_vecGroup)
 		Safe_Delete(pBowTargetGroup);
 	m_vecGroup.clear();
 }
+
 
 CBowTarget_Manager::BOWTARGETGROUP* CBowTarget_Manager::Find_BowTargetGroup(const wstring& wstrGroupName)
 {

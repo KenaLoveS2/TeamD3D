@@ -60,6 +60,7 @@ public:
 	vector<class CRotBomb*>*	Get_Bombs() { return &m_vecBomb; }
 
 	const _bool					Get_State(STATERETURN eState) const;
+	class CCamera_Player*		Get_CameraPlayer() { return m_pCamera; }
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_TrailON() const { return m_bTrailON; }
@@ -129,6 +130,7 @@ private:
 	class CRotForMonster*		m_pRotForMonster[8] = { nullptr, };
 	class CMonster*				m_pTargetMonster = nullptr;
 	class CHatCart*				m_pHatCart = nullptr;
+	class CCamera_Photo*		m_pCamera_Photo = nullptr;
 
 private:
 	map<const string, class CEffect_Base*>		m_mapEffect;
@@ -297,11 +299,14 @@ private:	/* Effect Event Func */
 	void	TurnOnLvUp(_bool bIsInit, _float fTimeDelta);
 
 private:	/* Sound Event Func */
+	void	PlaySound_Kena_FootStep(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Kena_FootStep_Sprint(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Jump(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_PulseJump(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Land(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Dodge(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Dodge_End(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Interact_Staff(_bool bIsInit, _float fTimeDelta);
 
 	void	PlaySound_Pulse_Intro(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Pulse_Outro(_bool bIsInit, _float fTimeDelta);
@@ -313,8 +318,18 @@ private:	/* Sound Event Func */
 	void	PlaySound_Attack_3(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Attack_4(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_HeavyAttack_Charge(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_HeavyAttack_Charge_Voice(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_HeavyAttack_Spark(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_HeavyAttack_Release_Perfect(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_HeavyAttack_Staff_Sweep(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_HeavyAttack_Combo_Charge(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_HeavyAttack_Combo_Staff_Sweep(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_AirAttack_Slam_Release(_bool bIsInit, _float fTimeDelta);
+
+public:
+	void	PlaySound_Hit();
+	void	PlaySound_Damage();
+	void	PlaySound_Damage_Pulse();
 
 public:
 	//Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
@@ -341,7 +356,8 @@ public:
 	virtual _int				Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 	void						LiftRotRockProc();
-	void						Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
+	/* 230415 : HSY */
+	void						Set_RopeRotRockPtr(class CRope_RotRock* pObject);// { m_pRopeRotRock = pObject; }
 	void						Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
 	
 	class CKena_Status*			Get_KenaStatusPtr() { return m_pKenaStatus; }

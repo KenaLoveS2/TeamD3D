@@ -154,6 +154,7 @@ private:
 	class CCinematicCamera*			m_pCinecam[NPC_CINE_END] = { nullptr, };
 	class CCameraForNpc*				m_pMainCam = nullptr;
 	class CRot*									m_pRot = nullptr;
+	class CCamera_Photo*			m_pCamera_Photo = nullptr;
 
 public:
 	static CSaiya*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

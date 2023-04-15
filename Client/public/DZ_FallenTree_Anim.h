@@ -31,21 +31,22 @@ public:
 	virtual HRESULT		RenderShadow() override;
 
 	void	Create_Colider();
+	virtual void			Push_EventFunctions() override;
 
+	void			TreeSound(_bool bIsInit, _float fTimeDelta);
 
 public:
 	virtual void					ImGui_AnimationProperty()override;
 	virtual void					ImGui_PhysXValueProperty() override;
 private:
 	CModel*							m_pModelCom = nullptr;
-	class CInteraction_Com*			m_pInteractionCom = nullptr;
-	class CControlMove*				m_pControlMoveCom = nullptr;
+
 	_bool							m_bRenderCheck = false;
 	_bool							m_bBossClear = false;
 	_bool							m_bColiderOn = false;
 
 	_bool							m_bOnlyTest = false; // Test
-	class CGameObject* m_pKena = nullptr;
+
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;

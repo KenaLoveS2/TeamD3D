@@ -3,9 +3,11 @@
 #include "GameInstance.h"
 #include "Kena.h"
 #include "Kena_Status.h"
+#include "Camera_Player.h"
 #include "UI_NodeCrystal.h"
 #include "UI_NodeKarma.h"
 #include "UI_NodeNumRots.h"
+
 
 CUI_CanvasInvHeader::CUI_CanvasInvHeader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -75,6 +77,9 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(false);
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(true);
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+
+		if (nullptr != m_pPlayer->Get_CameraPlayer())
+			m_pPlayer->Get_CameraPlayer()->Set_MouseFix(true);
 
 		return;
 	}
@@ -230,6 +235,8 @@ void CUI_CanvasInvHeader::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_
 
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Caller(m_pPlayer);
 
+		if (nullptr != m_pPlayer->Get_CameraPlayer())
+			m_pPlayer->Get_CameraPlayer()->Set_MouseFix(false);
 	}
 
 

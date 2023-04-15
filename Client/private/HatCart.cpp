@@ -11,6 +11,7 @@ CHatCart::CHatCart(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
 	, m_pPlayer(nullptr)
 	, m_pUIShown(nullptr)
+	, m_bApproached(false)
 {
 }
 
@@ -18,6 +19,7 @@ CHatCart::CHatCart(const CHatCart& rhs)
 	: CEnviromentObj(rhs)
 	, m_pPlayer(nullptr)
 	, m_pUIShown(nullptr)
+	, m_bApproached(false)
 {
 }
 
@@ -80,9 +82,15 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 		//_float4 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_Position();
 		//_float4 vPos = m_pTransformCom->Get_Position();
 		//_float	fDist = (vPlayerPos - vPos).Length();
-
 		if (fDist <= 10.f)
 		{
+			if (!m_bApproached)
+			{
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OPENSHOP;
+				m_pPlayer->m_Delegator.broadcast(tag, fDist);
+				m_bApproached = true;
+			}
+
 			if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
 			{	
 				CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
@@ -106,6 +114,15 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 
 					CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_VILLAGE);
 				}
+			}
+		}
+		else
+		{
+			if (m_bApproached)
+			{
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OFF;
+				m_pPlayer->m_Delegator.broadcast(tag, fDist);
+				m_bApproached = false;
 			}
 		}
 	}

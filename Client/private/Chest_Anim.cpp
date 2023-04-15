@@ -2,14 +2,14 @@
 #include "Chest_Anim.h"
 #include "GameInstance.h"
 #include "Utile.h"
-#include "ControlMove.h"
-#include "Interaction_Com.h"
+
 #include "Kena.h"
 #include "Kena_State.h"
 #include "PhysX_Manager.h"
 #include "E_Chest.h"
 #include "E_P_Chest.h"
 #include "UI_ClientManager.h"
+#include "Rot.h"
 
 CChest_Anim::CChest_Anim(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -35,11 +35,12 @@ HRESULT CChest_Anim::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effect(), E_FAIL);
-
+	FAILED_CHECK_RETURN(Create_Rot(), E_FAIL);
 
 	m_bRenderActive = true;
 	m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);
 
+	Push_EventFunctions();
 	return S_OK;
 }
 
@@ -83,6 +84,8 @@ HRESULT CChest_Anim::Late_Initialize(void * pArg)
 
 	if (m_pChestEffect) m_pChestEffect->Late_Initialize(nullptr);
 	if (m_pChestEffect_P) m_pChestEffect_P->Late_Initialize(nullptr);
+	
+	FAILED_CHECK_RETURN(Setup_RotPosition(), E_FAIL);	
 
 	return S_OK;
 }
@@ -91,16 +94,23 @@ void CChest_Anim::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//ImGui::Begin("Chest");
+	// if(!m_bTestOnce)
+	// {
+	// 	m_bTestOnce = true;
+	// 	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
+	// }
 
-	//if (ImGui::Button("re"))
-	//{
-	//	m_bOpened = false;
-	//	m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);
-	//	m_eCurState = CURSED_ACTIVATE;
-	//}
 
-	//ImGui::End();
+	// ImGui::Begin("Chest");
+
+	// if (ImGui::Button("re"))
+	// {
+	// 	m_bOpened = false;
+	// 	m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);		
+	// 	m_ePreState = m_eCurState = CURSED_ACTIVATE;
+	// }
+
+	// ImGui::End();
 
 	/*Culling*/
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -125,7 +135,7 @@ void CChest_Anim::Tick(_float fTimeDelta)
 	Update_State(fTimeDelta);
 #endif
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	m_pModelCom->Play_Animation(fTimeDelta * m_bAnimPlayFlag);
 }
 
 void CChest_Anim::Late_Tick(_float fTimeDelta)
@@ -138,13 +148,19 @@ void CChest_Anim::Late_Tick(_float fTimeDelta)
 	if (m_pChestEffect) m_pChestEffect->Late_Tick(fTimeDelta);
 	if (m_pChestEffect_P) m_pChestEffect_P->Late_Tick(fTimeDelta);
 
-	_float4 vKenaPos = m_pKena->Get_TransformCom()->Get_Position();
-	_float4 vPos = m_pTransformCom->Get_Position();
-	_float fDistance = _float4::Distance(vKenaPos, vPos);
+
+	_float fDistance = 0.f;
+	if (m_pKena != nullptr)
+	{
+		_float4 vKenaPos = m_pKena->Get_TransformCom()->Get_Position();
+		_float4 vPos = m_pTransformCom->Get_Position();
+		fDistance = _float4::Distance(vKenaPos, vPos);
+	}
 
 	if (m_pRendererCom && m_bRenderActive && false == m_bRenderCheck)
 	{
-		if (fDistance <= 100.f)
+	
+		if (m_pKena != nullptr && fDistance <= 100.f)
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -212,29 +228,6 @@ void CChest_Anim::ImGui_PhysXValueProperty()
 	pShape->setGeometry(Geometry);
 }
 
-HRESULT CChest_Anim::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
-{
-	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
-
-	/* For.Com_CtrlMove */
-	if (eComponentOption == COMPONENTS_CONTROL_MOVE)
-	{
-		if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_ControlMove"), pComTag,
-			(CComponent**)&m_pControlMoveCom)))
-			return E_FAIL;
-	}
-	/* For.Com_Interaction */
-	else if (eComponentOption == COMPONENTS_INTERACTION)
-	{
-		if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_Interaction_Com"), pComTag,
-			(CComponent**)&m_pInteractionCom)))
-			return E_FAIL;
-	}
-	else
-		return S_OK;
-
-	return S_OK;
-}
 
 _int CChest_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
@@ -263,9 +256,67 @@ _int CChest_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTrigger
 	{
 		m_bKenaDetected = false;
 		m_pKena->Set_ChestInteractable(false);
+
+
 	}
 
 	return 0;
+}
+
+void CChest_Anim::Push_EventFunctions()
+{
+	Chest_FirstMeetSound(true, 0.f);
+	Chest_OpenSound(true, 0.f);
+	Chest_CloseSound(true, 0.f);
+	Chest_Clear(true, 0.f);
+}
+
+void CChest_Anim::Chest_FirstMeetSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CChest_Anim::Chest_FirstMeetSound);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Chest_FirstMeet.wav", 1.0f, false);
+}
+
+void CChest_Anim::Chest_OpenSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CChest_Anim::Chest_OpenSound);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Chest_Open.ogg", 1.0f, false);
+}
+
+void CChest_Anim::Chest_CloseSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CChest_Anim::Chest_CloseSound);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Chest_Close.ogg", 1.0f, false);
+}
+
+void CChest_Anim::Chest_Clear(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CChest_Anim::Chest_Clear);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Chest_Cleared.ogg", 1.0f, false);
 }
 
 CChest_Anim::ANIMATION CChest_Anim::Check_State()
@@ -284,6 +335,10 @@ CChest_Anim::ANIMATION CChest_Anim::Check_State()
 			{
 				eState = CChest_Anim::OPEN;
 				m_pModelCom->Set_AnimIndex((_uint)CChest_Anim::OPEN);
+
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OFF;
+				_float fNoMeaning = 1.f;
+				m_pKena->m_Delegator.broadcast(tag, fNoMeaning);
 			}
 
 			break;
@@ -310,8 +365,10 @@ CChest_Anim::ANIMATION CChest_Anim::Check_State()
 			m_pChestEffect->Set_ChestLight(vPos, m_pTransformCom->Get_State(CTransform::STATE_LOOK), true);
 
 			if (m_pModelCom->Get_AnimationFinish() == true)
+			{
 				m_bOpened = true;
-
+			}				
+			
 			break;
 		}
 
@@ -347,6 +404,19 @@ void CChest_Anim::Update_State(_float fTimeDelta)
 
 		case CChest_Anim::OPEN:
 		{
+			if (m_bAnimPlayFlag == false)
+			{
+				if (m_pRot->Get_WakeUp() == false)
+				{
+					m_pRot->Execute_WakeUp();
+				}
+				else
+				{
+					if (m_pRot->Is_KenaFriend())
+						m_bAnimPlayFlag = true;					
+				}
+			}
+
 			break;
 		}
 
@@ -455,10 +525,49 @@ void CChest_Anim::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
-	Safe_Release(m_pControlMoveCom);
-	Safe_Release(m_pInteractionCom);
 
 	/* Effect */
 	Safe_Release(m_pChestEffect);
 	Safe_Release(m_pChestEffect_P);
 }
+
+
+void CChest_Anim::Wait_BoxOpened(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CChest_Anim::Wait_BoxOpened);
+		return;
+	}
+
+	Set_AnimationPlayFlag(false);
+}
+
+HRESULT CChest_Anim::Create_Rot()
+{
+	CGameObject* p = nullptr;
+	CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_Rot"), CUtile::Create_DummyString(), nullptr, &p);
+	assert(p && "CChest_Anim::Late_Initialize() -> m_pRot is NULL");
+	m_pRot = (CRot*)p;
+	m_pRot->Set_OrdinaryRotFlag(false);
+
+	return S_OK;
+}
+
+HRESULT CChest_Anim::Setup_RotPosition()
+{
+	_float4 vRotPos = m_pTransformCom->Get_Position();
+	// vRotPos.y += 1.f;
+	XMStoreFloat4(&vRotPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) + m_pTransformCom->Get_State(CTransform::STATE_LOOK) * 0.5f);
+	
+	_float4x4 Matrix = g_IdentityFloat4x4;
+	Matrix._41 = vRotPos.x;
+	Matrix._42 = vRotPos.y;
+	Matrix._43 = vRotPos.z;
+
+	m_pRot->Set_NewWorldMatrix(Matrix);
+
+	return S_OK;
+}
+
