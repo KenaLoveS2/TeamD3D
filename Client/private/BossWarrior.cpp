@@ -779,7 +779,6 @@ HRESULT CBossWarrior::SetUp_State()
 		m_bBellCall = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(BELL_CALL);
 		m_pModelCom->Set_AnimIndex(BELL_CALL);
-		// ���� ��ȯ
 	})
 		.OnExit([this]()
 	{
@@ -968,7 +967,6 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
-				/* �̻��¿��� �´°� �ʿ��ҰŰ��� */
 		Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_PARRY, m_pTransformCom->Get_Position(),false);
 
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRIED);
@@ -1141,11 +1139,11 @@ HRESULT CBossWarrior::SetUp_Effects()
 		m_mapEffect.emplace("W_Enrageinto", pEffectBase);
 	}
 
-	// Prototype_GameObject_WarriorWeaponAcc
-	//pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorWeaponAcc", L"W_WeaponAcc"));
-	//NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	//pEffectBase->Set_Parent(this);
-	//m_mapEffect.emplace("W_WeaponAcc", pEffectBase);
+	//Prototype_GameObject_WarriorWeaponAcc
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorWeaponAcc", L"W_WeaponAcc"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("W_WeaponAcc", pEffectBase);
 
 	// Prototype_GameObject_WarriorBodyAcc
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorBodyAcc", L"W_Body_P"));
@@ -1176,7 +1174,7 @@ void CBossWarrior::Update_Trail(const char * pBoneTag)
 
 	m_mapEffect["W_Trail"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
 	m_mapEffect["W_MovementParticle"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
-	//m_mapEffect["W_WeaponAcc"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+	m_mapEffect["W_WeaponAcc"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
 
 	if (m_mapEffect["W_Trail"]->Get_Active() == true)
 	{
@@ -1622,7 +1620,6 @@ void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["W_DistortionPlane"]->Set_Position(vPosition);
 	m_mapEffect["W_DistortionPlane"]->Set_Active(true);
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL2], 0.5f);
-	// ����̶� ������ ���������� ���;� �� 
 
 	m_pBossRockPool->Execute_UpRocks();
 }
@@ -1770,7 +1767,6 @@ _int CBossWarrior::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTrigge
 {
 	if (m_bKenaGrab && pTarget && iTriggerIndex == (_uint)ON_TRIGGER_PARAM_TRIGGER && iColliderIndex == (_int)COL_PLAYER)
 	{
-		// Grab �ִϸ��̼� �߿� ĳ���� �ٵ�� �������� �׷��ڵ� Ʈ���Ű� �浹
 	}
 
 	return 0; 

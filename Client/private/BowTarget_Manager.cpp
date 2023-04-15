@@ -114,7 +114,8 @@ _bool CBowTarget_Manager::Check_CurrentGroup_Launched()
 
 _bool CBowTarget_Manager::Check_CurrentGroup_Hit()
 {
-	NULL_CHECK_RETURN(m_pCurActiveGroup, false);
+	if (m_pCurActiveGroup == nullptr)
+		return false;
 
 	_bool	bState = true;
 

@@ -240,6 +240,7 @@ unsigned int	g_LEVEL = 0;
 #include "Respawn_Trigger.h"
 #include "E_WarriorEyeTrail.h"
 #include "Village_Trigger.h"
+#include "E_P_ShamanDust.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -2814,6 +2815,9 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
  	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot_P"), CE_P_Rot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_Rot.json"))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_ShamanDust */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanDust"), CE_P_ShamanDust::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_ShamanDust.json"))))
+		return E_FAIL;
 
 #pragma endregion Effect_Object
 

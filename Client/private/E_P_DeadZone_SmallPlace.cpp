@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\E_P_DeadZone_SmallPlace.h"
 #include "GameInstance.h"
+#include "BossShaman.h"
 
 CE_P_DeadZone_SmallPlace::CE_P_DeadZone_SmallPlace(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEffect_Point_Instancing(pDevice, pContext)
@@ -53,7 +54,24 @@ HRESULT CE_P_DeadZone_SmallPlace::Late_Initialize(void* pArg)
 
 void CE_P_DeadZone_SmallPlace::Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
+	if (m_pShaman == nullptr) {
+		m_pShaman = (CBossShaman*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Monster", L"BossShaman_0");
+		//	m_pTransformCom->Set_Position(m_pShaman->Get_TransformCom()->Get_Position());
+	}
+
 	__super::Tick(fTimeDelta);
+
+	if (m_pShaman && m_pShaman->Get_MonsterStatusPtr()->Get_HP() < 1.0f)
+	{
+		m_bTimer = true;
+		m_bDissolve = true;
+		m_fLife += fTimeDelta;
+
+		TurnOffSystem(m_fLife, 1.f, fTimeDelta);
+	}
 }
 
 void CE_P_DeadZone_SmallPlace::Late_Tick(_float fTimeDelta)
@@ -79,6 +97,7 @@ void CE_P_DeadZone_SmallPlace::Late_Tick(_float fTimeDelta)
 HRESULT CE_P_DeadZone_SmallPlace::Render()
 {
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
 	return S_OK;
 }
@@ -93,6 +112,8 @@ HRESULT CE_P_DeadZone_SmallPlace::SetUp_ShaderResources()
 	if (m_pShaderCom == nullptr)
 		return E_FAIL;
 
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+
 	return S_OK;
 }
 
@@ -100,6 +121,7 @@ void CE_P_DeadZone_SmallPlace::Reset()
 {
 	m_fLife = 0.0f;
 	m_eEFfectDesc.bActive = false;
+	m_bDissolve = false;
 }
 
 CE_P_DeadZone_SmallPlace* CE_P_DeadZone_SmallPlace::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath)

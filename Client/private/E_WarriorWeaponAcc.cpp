@@ -63,7 +63,7 @@ void CE_WarriorWeaponAcc::Late_Tick(_float fTimeDelta)
 		m_bTurnOnfirst = true;
 	}
 
-	if (dynamic_cast<CBossWarrior*>(m_pParent)->Get_MonsterStatusPtr()->Get_HP() < 1.0f && m_eEFfectDesc.bActive == false)
+	if (dynamic_cast<CBossWarrior*>(m_pParent)->Get_MonsterStatusPtr()->Get_HP() < 1.0f || m_eEFfectDesc.bActive == false)
 		return;
 
 	__super::Late_Tick(fTimeDelta);

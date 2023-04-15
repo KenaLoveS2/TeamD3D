@@ -225,6 +225,7 @@
     <ClInclude Include="..\public\E_P_Meditation_Spot.h" />
     <ClInclude Include="..\public\E_P_Rain.h" />
     <ClInclude Include="..\public\E_P_Rot.h" />
+    <ClInclude Include="..\public\E_P_ShamanDust.h" />
     <ClInclude Include="..\public\E_P_ShamanTeleport.h" />
     <ClInclude Include="..\public\E_P_WarriorBody.h" />
     <ClInclude Include="..\public\E_ShamanElectric.h" />
@@ -554,6 +555,7 @@
     <ClCompile Include="..\private\E_P_Meditation_Spot.cpp" />
     <ClCompile Include="..\private\E_P_Rain.cpp" />
     <ClCompile Include="..\private\E_P_Rot.cpp" />
+    <ClCompile Include="..\private\E_P_ShamanDust.cpp" />
     <ClCompile Include="..\private\E_P_ShamanTeleport.cpp" />
     <ClCompile Include="..\private\E_P_WarriorBody.cpp" />
     <ClCompile Include="..\private\E_ShamanElectric.cpp" />

@@ -48,7 +48,10 @@ HRESULT CE_P_DeadZoneDust::Late_Initialize(void* pArg)
 
 void CE_P_DeadZoneDust::Tick(_float fTimeDelta)
 {
-	if (m_pShaman == nullptr)
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
+	if (m_pShaman == nullptr){
 		m_pShaman = (CBossShaman*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Monster", L"BossShaman_0");
 	//	m_pTransformCom->Set_Position(m_pShaman->Get_TransformCom()->Get_Position());
 	}
@@ -59,6 +62,8 @@ void CE_P_DeadZoneDust::Tick(_float fTimeDelta)
 		m_bTimer = true;
 		m_bDissolve = true;
 		m_fLife += fTimeDelta;
+
+		TurnOffSystem(m_fLife, 1.f, fTimeDelta);
 	}
 }
 

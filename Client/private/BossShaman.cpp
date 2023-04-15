@@ -18,6 +18,7 @@
 #include "E_ShamanWeaponBall.h"
 #include "E_ShamanElectric.h"
 #include "BGM_Manager.h"
+#include "E_P_ExplosionGravity.h"
 
 // #define EFFECTDEBUG
 
@@ -846,11 +847,14 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("TRAP")
 		.OnStart([this]()
 	{	
+				m_mapEffect["S_ShamanDust"]->Set_Active(false);
+
 		m_pModelCom->ResetAnimIdx_PlayTime(TRAP);
 		m_pModelCom->Set_AnimIndex(TRAP);
 	})
 		.OnExit([this]()
-	{	
+	{
+		m_mapEffect["S_ShamanDust"]->Set_Active(true);
 		m_pModelCom->ResetAnimIdx_PlayTime(TRAP_LOOP);
 		m_pModelCom->Set_AnimIndex(TRAP_LOOP);
 	})
@@ -1349,29 +1353,51 @@ HRESULT CBossShaman::Ready_Effects()
 		m_mapEffect.emplace(strMapTag, pEffectBase);
 	}
 
-	for (auto& Pair : m_mapEffect)
-		Pair.second->Set_Parent(this);
-
 	{
 		m_pShamanLEyeTrail = (CE_ShamanHeadTrail*)(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanHeadTrail", L"S_LEye"));
 		NULL_CHECK_RETURN(m_pShamanLEyeTrail, E_FAIL);
-		m_pShamanLEyeTrail->Set_Boneprt(m_pModelCom->Get_BonePtr("MaskPiercing1_Jnt2"));
+		m_pShamanLEyeTrail->Set_Boneprt(m_pModelCom->Get_BonePtr("char_lf_thumb_d_jnt"));
 		m_pShamanLEyeTrail->Set_Parent(this);
-		m_pShamanLEyeTrail->Late_Initialize(nullptr);
 	}
 
+	// 오른손
 	{
 		m_pShamanREyeTrail = (CE_ShamanHeadTrail*)(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanHeadTrail", L"S_REye"));
 		NULL_CHECK_RETURN(m_pShamanREyeTrail, E_FAIL);
-		m_pShamanREyeTrail->Set_Boneprt(m_pModelCom->Get_BonePtr("MaskPiercing2_Jnt2"));
+		m_pShamanREyeTrail->Set_Boneprt(m_pModelCom->Get_BonePtr("char_rt_thumb_d_jnt"));
 		m_pShamanREyeTrail->Set_Parent(this);
-		m_pShamanREyeTrail->Late_Initialize(nullptr);
 	}
+	m_pShamanLEyeTrail->Late_Initialize(nullptr);
+	m_pShamanREyeTrail->Late_Initialize(nullptr);
+
+	// Prototype_GameObject_ExplosionGravity
+	for (_int i = 0; i < 2; ++i)
+	{
+		pCloneTag = CUtile::Create_DummyString(L"S_HandSmoke", i);
+		strMapTag = "S_HandSmoke" + to_string(i);
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", pCloneTag));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+
+		if (i == 0) // 오른손
+			dynamic_cast<CE_P_ExplosionGravity*>(pEffectBase)->Set_ParentBone(m_pModelCom->Get_BonePtr("char_rt_thumb_d_jnt"));
+		else // 왼손
+			dynamic_cast<CE_P_ExplosionGravity*>(pEffectBase)->Set_ParentBone(m_pModelCom->Get_BonePtr("char_lf_thumb_d_jnt"));
+
+		m_mapEffect.emplace(strMapTag, pEffectBase);
+	}
+
+	// Prototype_GameObject_ShamanDust
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanDust", L"S_ShamanDust"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("S_ShamanDust", pEffectBase);
 
 	CGameObject* p_game_object = nullptr;
 	m_pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Monster", TEXT("Prototype_GameObject_ShamanTrapHex"), L"ShamanTrapHex_0", nullptr, &p_game_object);
 	m_pShamanTapHex = (CShamanTrapHex*)p_game_object;
 	assert(m_pShamanTapHex && "FAILED!! -> CBossShaman::Late_Initialize()");
+
+	for (auto& Pair : m_mapEffect)
+		Pair.second->Set_Parent(this);
 
 	return S_OK;
 }
@@ -1650,7 +1676,8 @@ void CBossShaman::TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnSwipeChareged);
 		return;
 	}
-	_float4 vPos = m_pTransformCom->Get_Position();	_float fRange = 3.f;
+	_float4 vPos = m_pTransformCom->Get_Position();
+	_float fRange = 3.f;
 	_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 	vPos += vLook * fRange;
 	vPos.y -= 0.3f;
@@ -1746,17 +1773,15 @@ void CBossShaman::TurnOnSummons(_bool bIsInit, _float fTimeDelta)
 	}
 
 	_float4 vPos = m_pTransformCom->Get_Position();
-	vPos.y = vPos.y + 0.1f;
+	vPos.y += 0.1f;
 
 	CE_ShamanBossPlate* pPlate = dynamic_cast<CE_ShamanBossPlate*>(m_mapEffect["S_Plate"]);
 	pPlate->Set_Dissolve(true);
-	pPlate->Set_Position(vPos);
-	pPlate->Set_Active(true);
+	pPlate->Set_Effect(vPos, true);
 
 	CE_ShamanSummons* pSummons = dynamic_cast<CE_ShamanSummons*>(m_mapEffect["S_Summons"]);
 	pSummons->Set_Dissolve(true);
-	pSummons->Set_Position(vPos);
-	pSummons->Set_Active(true);
+	pSummons->Set_Effect(vPos, true);
 }
 
 void CBossShaman::TurnOffSummons(_bool bIsInit, _float fTimeDelta)
