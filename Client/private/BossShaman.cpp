@@ -87,7 +87,7 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 
-	// ¸öÅë
+	// ï¿½ï¿½ï¿½ï¿½
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
 		//_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
@@ -114,7 +114,7 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
-		// ¿©±â µÚ¿¡ ¼¼ÆÃÇÑ vPivotPos¸¦ ³Ö¾îÁÖ¸éµÈ´Ù.
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ vPivotPosï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö¸ï¿½È´ï¿½.
 		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, m_vPivotPos);
 	}
 	
@@ -247,7 +247,7 @@ HRESULT CBossShaman::Render()
 			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_OpacityTexture"),E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M), E_FAIL);
 		}
-		else if(i == 3) // °Ë ·»´õ
+		else if(i == 3) // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		{	
 #ifdef EFFECTDEBUG
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
@@ -581,14 +581,14 @@ HRESULT CBossShaman::SetUp_State()
 		m_pGameInstance->Get_WorkCameraPtr()->LookAt_NoUpDown(m_pTransformCom->Get_Position());
 		
 		m_pCamera_Shaman->Clear();
-		// ÀÓ½Ã
+		// ï¿½Ó½ï¿½
 		// m_pShamanMask->Clear(); 
 		// m_bStartRender = false;
 	})
 		.AddTransition("READY_SPAWN to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		// return m_fAwakeLoopTimeCheck >= 2.f; // ÀÓ½Ã
+		// return m_fAwakeLoopTimeCheck >= 2.f; // ï¿½Ó½ï¿½
 		return AnimFinishChecker(AWAKE);
 	})
 
@@ -706,7 +706,7 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("FOG_SNAP")
 		.OnStart([this]()
 	{
-		// ¾Ö´Ï¸ÞÀÌ¼Ç ³¡³¯ ¶§Âë ¸Ê ÀüÃ¼ ¾È°³ »ý¼º
+		// ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½È°ï¿½ ï¿½ï¿½ï¿½ï¿½
 		Attack_Start(false, FOG_SNAP);
 	})
 		.OnExit([this]()
@@ -1043,7 +1043,7 @@ HRESULT CBossShaman::SetUp_State()
 		m_bLaserFire = false;
 		Attack_End(false, IDLE_LOOP);
 	})		
-		.AddTransition("LASER_FIRE to TRAP_END", "TRAP_END") // ·¹ÀÌÀú ¹ß»ç°¡ ³¡³ª¸é ¾ÆÀÌµé·Î
+		.AddTransition("LASER_FIRE to TRAP_END", "TRAP_END") // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ç°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ï¿½
 		.Predicator([this]()
 	{
 		if (m_bTrap == false)
@@ -1167,7 +1167,7 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("DASH_ATTACK")
 		.OnStart([this]()
 	{		
-		// ¾Ö´Ï¸ÞÀÌ¼Ç ³¡³¯ ¶§Âë ÆÞ½º °°Àº ±¤¿ª ÀÌÆåÆ®
+		// ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
 		Attack_Start(false, DASH_ATTACK);
 	})
 		.OnExit([this]()
@@ -1194,7 +1194,7 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("FREEZE_BLAST")
 		.OnStart([this]()
 	{
-		// ¾Ö´Ï¸ÞÀÌ¼Ç ³¡³¯ ¶§Âë ¾óÀ½ ºö ¹ß»ç
+		// ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ß»ï¿½
 		Attack_Start(false, FREEZE_BLAST);
 	})
 		.OnExit([this]()
@@ -1410,13 +1410,13 @@ HRESULT CBossShaman::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("S_Trail", pEffectBase);
 	
-	///* Ä®¿¡ ´Þ¸° ¿¬±â Æ®·¹ÀÏÀÓ */  
+	///* Ä®ï¿½ï¿½ ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */  
 	//pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", L"S_KnifeTrail"));
 	//NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	//dynamic_cast<CE_RectTrail*>(pEffectBase)->SetUp_Option(CE_RectTrail::OBJ_W_SHAMAN); // ShamanWeapon
 	//m_mapEffect.emplace("S_KnifeTrail", pEffectBase);
 
-	/* ¸ö¿¡ ´Þ¸° Æ®·¹ÀÏÀÓ => ÅÚ·¹Æ÷Æ® ÇÒ¶§ */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ => ï¿½Ú·ï¿½ï¿½ï¿½Æ® ï¿½Ò¶ï¿½ */
 	_tchar* pDummyString = CUtile::Create_DummyString();
 	m_pMovementTrail = dynamic_cast<CE_RectTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", pDummyString));
 	NULL_CHECK_RETURN(m_pMovementTrail, E_FAIL);
@@ -1464,7 +1464,7 @@ HRESULT CBossShaman::Ready_Effects()
 	dynamic_cast<CE_ShamanWeaponBall*>(pEffectBase)->Set_Boneprt(m_pModelCom->Get_BonePtr("sword_jnt_5"));
 	m_mapEffect.emplace("S_WeaponBall", pEffectBase);
 
-	/* Minion ¼ÒÈ¯µÉ ¶§ ³ª¿È */
+	/* Minion ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	for (_int i = 0; i < MINION_COUNT; ++i)
 	{
 		m_pShamanThunder[i] = dynamic_cast<CE_ShamanThunderCylinder*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanThunderCylinder",
@@ -1860,7 +1860,7 @@ void CBossShaman::TurnOnTeleport(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnTeleport);
 		return;
 	}
-	/* ¿¬±â Ãâ·Â */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ */
 	_float4 vPos = m_pTransformCom->Get_Position();
 
 	m_mapEffect["S_P_Teleport"]->Set_Position(vPos);
@@ -1969,7 +1969,6 @@ void CBossShaman::Free()
 	}
 
 	Safe_Release(m_pShamanMask);
-
 	Safe_Release(m_pShamanLEyeTrail);
 	Safe_Release(m_pShamanREyeTrail);
 	

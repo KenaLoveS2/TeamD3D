@@ -144,7 +144,8 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 	CGameObject* p_game_object = nullptr;
 	CKena* pKena = nullptr;
 	p_game_object = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-	if (pKena = dynamic_cast<CKena*>(p_game_object))
+	pKena = dynamic_cast<CKena*>(p_game_object);
+	if(pKena != nullptr)
 	{
 		if (pKena->Get_SceneChange())
 		{

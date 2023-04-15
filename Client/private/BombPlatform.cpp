@@ -33,7 +33,6 @@ HRESULT CBombPlatform::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(Ready_Effect(), E_FAIL);
 
 	m_bRenderActive = true;
-
 	return S_OK;
 }
 
@@ -127,7 +126,10 @@ void CBombPlatform::Late_Tick(_float fTimeDelta)
 	if (m_pBombplatformEffect) m_pBombplatformEffect->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom != nullptr && m_bRenderActive == true)
+	{
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CBombPlatform::Render()
@@ -144,6 +146,34 @@ HRESULT CBombPlatform::Render()
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
+	}
+
+	return S_OK;
+}
+
+HRESULT CBombPlatform::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(__super::SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	if (m_pModelCom->Get_IStancingModel())
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 0), E_FAIL);
+		}
+	}
+	else
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 21), E_FAIL);
+		}
 	}
 
 	return S_OK;
@@ -388,6 +418,16 @@ HRESULT CBombPlatform::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CBombPlatform::SetUp_ShadowShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
 }
 

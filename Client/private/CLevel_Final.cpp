@@ -88,11 +88,11 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Layer_NPC");
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 	{
@@ -437,10 +437,8 @@ HRESULT CLevel_Final::Ready_Layer_Rot(const _tchar* pLayerTag)
 HRESULT CLevel_Final::Ready_Layer_Effect(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_P_DeadZoneDust"), L"Dust", nullptr), E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_P_DeadZoneDust"), L"Dust2", nullptr), E_FAIL);
-
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

@@ -25,34 +25,35 @@ public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
 	virtual HRESULT				Late_Initialize(void* pArg) override;
-	virtual void				Tick(_float fTimeDelta) override;
-	virtual void				Late_Tick(_float fTimeDelta) override;
+	virtual void						Tick(_float fTimeDelta) override;
+	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
+	virtual HRESULT				RenderShadow() override;
 
 public:
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_AnimationProperty() override;
 	virtual void				ImGui_PhysXValueProperty() override;
-	virtual HRESULT				Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption) override;
+	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption) override;
 	virtual _int				Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 	virtual _int				Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 	virtual _int				Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 private:
-	CModel*						m_pModelCom = nullptr;
+	CModel*								m_pModelCom = nullptr;
 	class CInteraction_Com*		m_pInteractionCom = nullptr;
 	class CControlMove*			m_pControlMoveCom = nullptr;
 
 private:
-	class CKena*				m_pKena = nullptr;
-	CTransform*					m_pKenaTransform = nullptr;
+	class CKena*			m_pKena = nullptr;
+	CTransform*				m_pKenaTransform = nullptr;
 	_bool						m_bRenderCheck = false;
 private:
 	_bool						m_bKenaDetected = false;
 	_bool						m_bOpened = false;
 
-	ANIMATION					m_eCurState = CURSED_CLEARED;
-	ANIMATION					m_ePreState = CURSED_CLEARED;
+	ANIMATION				m_eCurState = CURSED_CLEARED;
+	ANIMATION				m_ePreState = CURSED_CLEARED;
 
 private:
 	ANIMATION					Check_State();
@@ -61,6 +62,7 @@ private:
 private:
 	HRESULT						SetUp_Components();
 	HRESULT						SetUp_ShaderResources();
+	HRESULT						SetUp_ShadowShaderResources() override;
 
 private:
 	/* Effects */

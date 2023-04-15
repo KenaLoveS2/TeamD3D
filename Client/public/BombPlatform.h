@@ -28,9 +28,10 @@ public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
 	virtual HRESULT				Late_Initialize(void* pArg) override;
-	virtual void				Tick(_float fTimeDelta) override;
-	virtual void				Late_Tick(_float fTimeDelta) override;
+	virtual void						Tick(_float fTimeDelta) override;
+	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
+	virtual HRESULT				RenderShadow() override;
 
 public:
 	virtual void				Imgui_RenderProperty() override;
@@ -65,6 +66,7 @@ private:
 private:
 	HRESULT						SetUp_Components();
 	HRESULT						SetUp_ShaderResources();
+	HRESULT						SetUp_ShadowShaderResources() override;
 
 	HRESULT						Ready_Effect();
 

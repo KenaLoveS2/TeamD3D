@@ -34,6 +34,7 @@ HRESULT CPulseStone::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
+	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
 	return S_OK;
 }
 
@@ -70,7 +71,6 @@ HRESULT CPulseStone::Late_Initialize(void* pArg)
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	CEffect_Base* pEffectObj = nullptr;
-
 
 	/*Recived_PulseE*/
 	CE_PulseObject::E_PulseObject_DESC PulseObj_Desc;
@@ -109,16 +109,12 @@ HRESULT CPulseStone::Late_Initialize(void* pArg)
 		pEffectObj->Set_Active(false);
 	}
 
-
 	if (m_EnviromentDesc.iRoomIndex == 6)
 	{
 		m_pRenderFalsePortal = dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
 			L"Layer_Enviroment", L"MG_CrystalGimmick_Portal"));
 
 		assert(m_pRenderFalsePortal != nullptr && "CPulseStone::Late_Initialize(void* pArg)");
-
-		
-
 	}
 
 	return S_OK;
@@ -220,7 +216,7 @@ HRESULT CPulseStone::RenderShadow()
 	if (FAILED(__super::RenderShadow()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(__super::SetUp_ShadowShaderResources()))
 		return E_FAIL;
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -296,18 +292,6 @@ HRESULT CPulseStone::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
-	RELEASE_INSTANCE(CGameInstance);
-	return S_OK;
-}
-
-HRESULT CPulseStone::SetUp_ShadowShaderResources()
-{
-	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);

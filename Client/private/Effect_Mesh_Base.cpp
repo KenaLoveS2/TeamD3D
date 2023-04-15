@@ -44,7 +44,6 @@ CEffect_Mesh_Base::CEffect_Mesh_Base(const CEffect_Mesh_Base& rhs)
 
 	for (_uint i = 0; i < 2; ++i)
 		m_fUVScale[i] = 1.f;
-
 }
 
 HRESULT CEffect_Mesh_Base::Initialize_Prototype()
