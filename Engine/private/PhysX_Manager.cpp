@@ -1373,13 +1373,17 @@ void CPhysX_Manager::Imgui_Render(const _tchar* pActorName)
 	if (pRigidActor == nullptr)
 		return;
 
+	
+	 _float3 vScale = _float3(1.f, 1.f, 1.f);
 
-	_float3 vScale = _float3(0.f, 0.f, 0.f);
-	static float fScale[3] = { 1.f,1.f,1.f };
+	 static	_float fScale[3] = { 1.f,1.f,1.f };
 
 	ImGui::DragFloat3("Px_Scale", fScale, 0.01f, 0.1f, 100.0f);
 
+
 	vScale.x = fScale[0];  vScale.y = fScale[1];  vScale.z = fScale[2];
+
+	
 
 	Set_ScalingBox(pRigidActor, vScale);
 

@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "UI_NodeVideo.h"
 #include "PostFX.h"
+#include "WorldTrigger.h"
 
 CUI_CanvasInfo::CUI_CanvasInfo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -62,52 +63,40 @@ void CUI_CanvasInfo::Tick(_float fTimeDelta)
 	}
 	//m_bActive = true;
 
-	// 한 프레임 늦게 Bind 되기 위하여 이렇게 처리해두었습니다. 블러가 먹힌 다음에 한프레임은 그려야해서
 	if(CPostFX::GetInstance()->Get_Capture() && !m_bCapture)
 	{
 		BindFunction(CUI_ClientManager::INFO_, 1.f);
 		m_bCapture = true;
 	}
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_X))
-	{
-		m_bCapture = false;
-		CPostFX::GetInstance()->BlurCapture();
-	}
-
 	if (!m_bActive)		
 		return;
-
-	// 마찬가지로 블러가 풀려져야해서 이렇게 처리해두었습니다
-	if (CPostFX::GetInstance()->Get_Capture() == false && m_bReturn)
-	{
-		CGameInstance::GetInstance()->Get_Back();
-		m_pRendererCom->Set_CaptureMode(false);
-		//CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
-		CUI_Canvas* pCanvas = CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO);
-		if (pCanvas != nullptr)
-			pCanvas->Set_Active(true);
-		m_bActive = false;
-		m_bReturn = false;
-	}
-
-	/* Return To Play */
-	if (CGameInstance::GetInstance()->Key_Down(DIK_SPACE))
-	{
-		CPostFX::GetInstance()->CaptureOff();
-		m_bReturn = true;
-		return;
-	}
 
 	__super::Tick(fTimeDelta);
 }
 
 void CUI_CanvasInfo::Late_Tick(_float fTimeDelta)
 {
+	if (!CPostFX::GetInstance()->Get_Capture())
+		m_pRendererCom->Set_CaptureMode(false);
+
 	if (!m_bActive)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
+
+	/* Return To Play */
+	if (CGameInstance::GetInstance()->Key_Down(DIK_SPACE))
+	{
+		CGameInstance::GetInstance()->Get_Back();
+		CPostFX::GetInstance()->CaptureOff();
+		CUI_Canvas* pCanvas = CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO);
+		if (pCanvas != nullptr)
+			pCanvas->Set_Active(true);
+		m_bActive = false;
+		m_bCapture = false;
+		return;
+	}
 }
 
 HRESULT CUI_CanvasInfo::Render()
@@ -119,6 +108,11 @@ HRESULT CUI_CanvasInfo::Render()
 
 HRESULT CUI_CanvasInfo::Bind()
 {
+	CWorldTrigger* p_world_trigger = dynamic_cast<CWorldTrigger*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+		L"Layer_Effect", L"UIWorldTrigger"));
+	if (p_world_trigger == nullptr)
+		return E_FAIL;
+	p_world_trigger->m_WorldTriggerDelegator.bind(this, &CUI_CanvasInfo::BindFunction);
 	m_bBindFinished = true;
 	return S_OK;
 }
@@ -129,7 +123,6 @@ HRESULT CUI_CanvasInfo::Ready_Nodes()
 	{
 		CUI* pUI = nullptr;
 		CUI::UIDESC tDesc;
-
 		string strCloneTag = "Node_InfoVideo";
 		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
 		tDesc.fileName = wstrCloneTag;
@@ -192,8 +185,7 @@ void CUI_CanvasInfo::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fV
 	{
 		case CUI_ClientManager::INFO_ :
 			m_bActive = true;
-			CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
-			m_pRendererCom->Set_CaptureMode(true);
+			//CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
 			CUI_Canvas* pCanvas = CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO);
 			if(pCanvas != nullptr)
 				pCanvas->Set_Active(false);

@@ -616,6 +616,9 @@
     <Filter Include="02.GameObjects\Player\Respawn Trigger">
       <UniqueIdentifier>{db25fca5-b5be-4c45-8e95-de74f0c6d942}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Trigger">
+      <UniqueIdentifier>{d6f92db8-c997-4a7a-a6d1-c57811cc44ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1640,11 +1643,29 @@
     <ClInclude Include="..\public\Respawn_Trigger.h">
       <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BossShaman_Mask.h">
-      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    <ClInclude Include="..\public\Village_Trigger.h">
+      <Filter>02.GameObjects\Trigger</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Camera_Shaman.h">
-      <Filter>02.GameObjects\Camera</Filter>
+    <ClInclude Include="..\public\E_P_DeadZone_SmallPlace.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_DeadZoneDust.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_WarriorBody.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanElectric.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanHeadTrail.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanWeaponBall.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_WarriorWeaponAcc.h">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2650,11 +2671,29 @@
     <ClCompile Include="..\private\Respawn_Trigger.cpp">
       <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BossShaman_Mask.cpp">
-      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    <ClCompile Include="..\private\Village_Trigger.cpp">
+      <Filter>02.GameObjects\Trigger</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Camera_Shaman.cpp">
-      <Filter>02.GameObjects\Camera</Filter>
+    <ClCompile Include="..\private\E_P_DeadZone_SmallPlace.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_DeadZoneDust.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_WarriorBody.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanElectric.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanHeadTrail.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanWeaponBall.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_WarriorWeaponAcc.cpp">
+      <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

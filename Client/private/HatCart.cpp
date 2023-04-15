@@ -5,6 +5,7 @@
 #include "Interaction_Com.h"
 #include "Kena.h"
 #include "MannequinRot.h"
+#include "BGM_Manager.h"
 
 CHatCart::CHatCart(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -47,6 +48,7 @@ HRESULT CHatCart::Initialize(void* pArg)
 
 HRESULT CHatCart::Late_Initialize(void* pArg)
 {
+	
 
 	/*Player_Need*/
 	m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
@@ -93,12 +95,16 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 
 					Update_MannequinRotMatrix();
 					m_pMannequinRot->Start_FashiomShow();
+
+					CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_SHOP);
 				}
 				else /* Cart Close */
 				{
 					CGameInstance::GetInstance()->Play_Sound(TEXT("Rot (9).ogg"), 0.8f);
 					m_pPlayer->Set_StateLock(false);
 					m_pMannequinRot->End_FashiomShow();
+
+					CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_VILLAGE);
 				}
 			}
 		}

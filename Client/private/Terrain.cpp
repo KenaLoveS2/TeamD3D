@@ -113,6 +113,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 	CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 #endif
+
 	if (m_pGroundMark)
 		m_pGroundMark->Late_Tick(fTimeDelta);
 }
@@ -139,6 +140,10 @@ void CTerrain::Imgui_RenderProperty()
 	ImGui::Begin("Terrain Translation");
 	m_pTransformCom->Imgui_RenderProperty();
 	ImGui::End();*/
+	ImGui::DragFloat("BrushRange", &m_vBrushRange,0.1f, 0.f, 100.f);
+
+	if (ImGui::Button("Recompile_Terrain"))
+		m_pShaderCom->ReCompile();
 }
 
 HRESULT CTerrain::RenderCine()
@@ -176,8 +181,6 @@ void CTerrain::Erase_FilterCom()
 {
 	Delete_Component(TEXT("Com_Filter"));
 	Safe_Release(m_pTextureCom[TYPE_FILTER]);
-
-	
 }
 
 void CTerrain::Change_HeightMap(const _tchar * pHeightMapFilePath)		// 여기서 버퍼를 바꾸기때문에
@@ -192,12 +195,11 @@ _bool CTerrain::CreateEnvrObj_PickingPos(_float4 & vPos)
 {
 	if (ImGui::IsMouseClicked(0))
 	{
-		if (m_pVIBufferCom->Picking_Terrain(g_hWnd, m_pTransformCom, &vPos))
+		if (m_pVIBufferCom->Picking_Terrain(g_hWnd, m_pTransformCom,&vPos))
 		{
 			return true;
 		}
 	}
-
 	return false;
 }
 

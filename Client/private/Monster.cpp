@@ -325,8 +325,9 @@ void CMonster::Call_MonsterFocusIcon()
 // 		m_pKena->Smooth_Targeting(this);
 
 	CTransform* pKenaTransform = m_pKena->Get_TransformCom();
+	CTransform* pCameraTransform = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom();
 	if (pKenaTransform->Calc_Distance_XZ(m_pTransformCom) < 5.f &&
-		pKenaTransform->Calc_InRange(XMConvertToRadians(60.f), m_pTransformCom) == true)
+		pCameraTransform->Calc_InRange(XMConvertToRadians(60.f), m_pTransformCom) == true)
 		m_pKena->Smooth_Targeting(this);
 }
 

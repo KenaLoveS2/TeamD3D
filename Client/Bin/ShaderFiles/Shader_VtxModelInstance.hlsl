@@ -19,11 +19,34 @@ Texture2D<float4>      g_DetailNormalTexture;
 Texture2D<float4>      g_MaskTexture;
 Texture2D<float4>       g_RoughnessTexture;
 
+/* Dissolve */
+Texture2D<float4>	g_DissolveTexture;
+bool				g_bDissolve;
+float				g_fDissolveTime;
+float				_DissolveSpeed = 0.2f;
+float				_FadeSpeed = 1.5f;
+
+
 float                   g_TimeDelta;
 
 float4                  g_CenterPos;
 float4                  vColorData;
 int                     g_iSign = 1;
+
+
+
+float4                  g_FirstColor;
+float                   g_FirstRatio =1.f;
+float4                  g_SecondColor;
+float                   g_SecondRatio =1.f;
+
+
+
+
+
+
+
+
 struct VS_IN
 {
     float3      vPosition : POSITION;
@@ -174,27 +197,27 @@ VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
 
 
 
-   float moveDistance = g_TimeDelta * 1.f ;
+   float moveDistance = g_TimeDelta *5.f* 1.f ;
  
    float3 vDir;
    if(g_iSign == 1)
    {
-       vDir = normalize(In.vPosition.xyz - g_CenterPos);
+       vDir = normalize(In.vPosition.xyz - g_CenterPos.xyz);
    }
    else
    {
-       vDir = normalize(g_CenterPos - In.vPosition.xyz);
+       vDir = normalize(g_CenterPos.xyz - In.vPosition.xyz);
    }
    // float3 vDir = normalize(g_CenterPos -In.vPosition.xyz);
    float distance = length(In.vPosition.xyz - g_CenterPos.xyz);
-	float3 CenterPos = mul(g_CenterPos.xyz, Transform);
+	float3 CenterPos = mul(g_CenterPos.xyz, (float3x3)Transform);
     float3 vPosition = In.vPosition.xyz + (vDir * moveDistance );
 
 
    // float3 vPosition = In.vPosition.xyz + (  0.5f *  moveDistance);   //
    
 
-    vPosition = mul(float4(vPosition.xyz, 1.f), Transform);
+    vPosition = mul(vPosition.xyz, (float3x3)Transform);
    
     //vRealPosition = mul(vRealPosition, g_WorldMatrix);
 	vPosition.y = vRealPosition.y;
@@ -204,6 +227,36 @@ VS_OUT_INSTANCE_GEOMETRY VS_MAIN_INSTANCE_GEOMETRY(VS_IN_INSTANCE In)
     Out.vTexUV = In.vTexUV;
     Out.vProjPos =vector(Out.vPosition,1.f);
     Out.vTangent = normalize(mul(vTangent, g_WorldMatrix));
+    Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
+
+    return Out;
+}
+
+
+VS_OUT_INSTANCE_GEOMETRY VS_GEOMETRY_NON_INST(VS_IN In)
+{
+    VS_OUT_INSTANCE_GEOMETRY      Out = (VS_OUT_INSTANCE_GEOMETRY)0;
+
+    float fOriginYPos = In.vPosition.y;
+    float distance = length(In.vPosition.xyz - g_CenterPos.xyz);
+
+
+    float3 vDirPos = In.vPosition.xyz;
+    vDirPos.y += 1;
+    vDirPos.z += 1;
+
+    float3 vDir = normalize(vDirPos - In.vPosition.xyz);
+    float moveDistance = g_TimeDelta * 3.f * 1.f;
+    float3 vPosition = In.vPosition.xyz + (vDir * moveDistance);
+
+    
+
+
+    Out.vPosition = vPosition;
+    Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
+    Out.vTexUV = In.vTexUV;
+    Out.vProjPos = float4(Out.vPosition, 1.f);
+    Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 
     return Out;
@@ -301,6 +354,124 @@ void GS_MAIN(point GS_IN In[1], inout PointStream<GS_OUT> Stream)
 
  
     // �����? �����մϴ�.
+    Stream.RestartStrip();
+}
+
+
+[maxvertexcount(20)]
+void GS_BossAttack(point GS_IN In[1], inout PointStream<GS_OUT> Stream)
+{
+    GS_OUT Out = (GS_OUT)0;
+
+    matrix      matWV, matWVP;
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+
+    //matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+
+    // 1
+    Out.vPosition = mul(float4(In[0].vPosition, 1.0f), matWVP);
+    Out.vNormal = In[0].vNormal;
+    Out.vTexUV = In[0].vTexUV;
+    Out.vProjPos = Out.vPosition;
+    Out.vTangent = In[0].vTangent;
+    Out.vBinormal = In[0].vBinormal;
+    Stream.Append(Out);
+
+    // 2
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.0f, 0.0f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 3
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.2f, 0.0f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 4
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.0f, 0.2f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 5
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.0f, 0.2f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 6
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.2f, 0.f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 7
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.2f, 0.2f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 8
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.2f, 0.2f, 0.2f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 9
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.3f, 0.f, 0.f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 10
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.f, 0.3f, 0.f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+
+    // 11
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.f, 0.f, 0.3f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 12
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.3f, 0.3f, 0.f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 13
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.3f, 0.f, 0.3f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 14
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.3f, 0.3f, 0.3f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 15
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.4f, 0.0f, 0.0f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 16
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.4f, 0.0f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 17
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.0f, 0.4f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 18
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.4f, 0.4f, 0.0f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 19
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.4f, 0.0f, 0.4f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
+    // 20
+    Out.vPosition = mul(float4(In[0].vPosition + float3(0.0f, 0.4f, 0.4f), 1.0f), matWVP);
+    Out.vProjPos = Out.vPosition;
+    Stream.Append(Out);
+
     Stream.RestartStrip();
 }
 
@@ -730,7 +901,36 @@ PS_OUT PS_MAIN_PointSampler(PS_IN In)
     vDiffuse.a = vColorData.w;
 
     vector      vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexUV);
-    
+
+    //if (g_bDissolve)
+    //{
+    //    float fDissolveAmount = g_fDissolveTime * 5.f;
+
+    //    // sample noise texture
+    //    float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+    //    float  _ColorThreshold1 = 1.0f;
+    //    float4 _DissolveColor1 = float4(1.0f, 0.05f, 0.46f, 1.f) ;  //red
+
+    //    //float  _ColorThreshold2 = 0.4f;
+    //    //float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+    //                                                                       // add edge colors0
+    //    float thresh1 = fDissolveAmount * _ColorThreshold1;
+    //    float useDissolve1 = noiseSample - thresh1 < 0;
+    //    vDiffuse = (1 - useDissolve1) * vDiffuse + useDissolve1 * _DissolveColor1;
+
+    //    // add edge colors1
+    ///*    float thresh2 = fDissolveAmount * _ColorThreshold2;
+    //    float useDissolve2 = noiseSample - thresh2 < 0;
+    //    vDiffuse = (1 - useDissolve2) * vDiffuse + useDissolve2 * _DissolveColor2;*/
+
+    //    // determine deletion threshold
+    //    float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+    //    clip(noiseSample - threshold);
+    //}
+
+
  
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
@@ -742,6 +942,64 @@ PS_OUT PS_MAIN_PointSampler(PS_IN In)
     Out.vAmbient = (vector)1.f;
     return Out;
 }//1
+
+PS_OUT PS_MAIN_Dissolve(PS_IN In)
+{
+    PS_OUT      Out = (PS_OUT)0;
+
+    vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+    if (0.1f > vDiffuse.a)
+        discard;
+
+    vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+
+    /* ź��Ʈ�����̽� */
+    float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+    float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+    vNormal = normalize(mul(vNormal, WorldMatrix));
+
+    float DissolveHdr = 1.f;
+
+    if (g_bDissolve)
+    {
+        float fDissolveAmount = g_fDissolveTime * 5.f;
+
+        // sample noise texture
+        float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+      
+		float  _ColorThreshold1 = g_FirstRatio;
+        float4 _DissolveColor1 = g_FirstColor;//float4(255.f, 0.f, 50.f, 1.0f) / 255.f;  //red
+
+        float  _ColorThreshold2 = g_SecondRatio;
+        float4 _DissolveColor2 = g_SecondColor;//float4(255.f, 127.f, 255.f, 1.0f) / 255.f; //orange
+
+                                                                           // add edge colors0
+        float thresh1 = fDissolveAmount * _ColorThreshold1;
+        float useDissolve1 = noiseSample - thresh1 < 0;
+        vDiffuse = (1 - useDissolve1) * vDiffuse + useDissolve1 * _DissolveColor1;
+
+        // add edge colors1
+        float thresh2 = fDissolveAmount * _ColorThreshold2;
+        float useDissolve2 = noiseSample - thresh2 < 0;
+        vDiffuse = (1 - useDissolve2) * vDiffuse + useDissolve2 * _DissolveColor2;
+
+        // determine deletion threshold
+        float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
+        clip(noiseSample - threshold);
+
+        DissolveHdr = 3.f;
+    }
+
+    Out.vDiffuse = vDiffuse;
+    Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, DissolveHdr, 0.f);
+    Out.vAmbient = (vector)1.f;
+    return Out;
+}//1
+
+
 
 technique11 DefaultTechnique
 {
@@ -1045,7 +1303,7 @@ technique11 DefaultTechnique
     }//22
 
 
-    pass GS_Default //
+    pass GS_Default // Instancing Model
     {
         SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
         SetDepthStencilState(DS_Default, 0);
@@ -1057,6 +1315,33 @@ technique11 DefaultTechnique
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_PointSampler();
     }//23
+
+    pass GS_Non_instDefault // Instancing Model
+    {
+        SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+        SetDepthStencilState(DS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_GEOMETRY_NON_INST();
+        GeometryShader = compile gs_5_0 GS_BossAttack();
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_PointSampler();
+    }//24
+
+
+    pass NonInsDissolve_Default
+    {
+        SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+        SetDepthStencilState(DS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_Dissolve();
+    } //25
 
 
 

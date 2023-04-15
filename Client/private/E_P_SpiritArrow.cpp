@@ -46,6 +46,14 @@ void CE_P_SpiritArrow::Tick(_float fTimeDelta)
 
 void CE_P_SpiritArrow::Late_Tick(_float fTimeDelta)
 {
+	if (m_bTurnOnfirst == false)
+	{
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.1f));
+		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.7f, 1.0f);
+
+		m_bTurnOnfirst = true;
+	}
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
 

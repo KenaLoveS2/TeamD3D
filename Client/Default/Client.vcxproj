@@ -219,6 +219,8 @@
     <ClInclude Include="..\public\E_P_Bombplatform.h" />
     <ClInclude Include="..\public\E_P_Chest.h" />
     <ClInclude Include="..\public\E_P_CommonBox.h" />
+    <ClInclude Include="..\public\E_P_DeadZoneDust.h" />
+    <ClInclude Include="..\public\E_P_DeadZone_SmallPlace.h" />
     <ClInclude Include="..\public\E_P_EnvironmentDust.h" />
     <ClInclude Include="..\public\E_P_Level.h" />
     <ClInclude Include="..\public\E_P_Maple.h" />
@@ -226,8 +228,13 @@
     <ClInclude Include="..\public\E_P_Rain.h" />
     <ClInclude Include="..\public\E_P_Rot.h" />
     <ClInclude Include="..\public\E_P_ShamanTeleport.h" />
+    <ClInclude Include="..\public\E_P_WarriorBody.h" />
+    <ClInclude Include="..\public\E_ShamanElectric.h" />
+    <ClInclude Include="..\public\E_ShamanHeadTrail.h" />
     <ClInclude Include="..\public\E_ShamanIceDagger.h" />
     <ClInclude Include="..\public\E_ShamanLazer.h" />
+    <ClInclude Include="..\public\E_ShamanWeaponBall.h" />
+    <ClInclude Include="..\public\E_WarriorWeaponAcc.h" />
     <ClInclude Include="..\public\Group_Manager.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
@@ -493,6 +500,7 @@
     <ClInclude Include="..\public\UI_RotIcon.h" />
     <ClInclude Include="..\public\UI_Weakpoint.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
+    <ClInclude Include="..\public\Village_Trigger.h" />
     <ClInclude Include="..\Public\Wall.h" />
     <ClInclude Include="..\public\WaterPlane.h" />
     <ClInclude Include="..\public\WoodKnight.h" />
@@ -541,6 +549,8 @@
     <ClCompile Include="..\private\E_P_Bombplatform.cpp" />
     <ClCompile Include="..\private\E_P_Chest.cpp" />
     <ClCompile Include="..\private\E_P_CommonBox.cpp" />
+    <ClCompile Include="..\private\E_P_DeadZoneDust.cpp" />
+    <ClCompile Include="..\private\E_P_DeadZone_SmallPlace.cpp" />
     <ClCompile Include="..\private\E_P_EnvironmentDust.cpp" />
     <ClCompile Include="..\private\E_P_Level.cpp" />
     <ClCompile Include="..\private\E_P_Maple.cpp" />
@@ -548,8 +558,13 @@
     <ClCompile Include="..\private\E_P_Rain.cpp" />
     <ClCompile Include="..\private\E_P_Rot.cpp" />
     <ClCompile Include="..\private\E_P_ShamanTeleport.cpp" />
+    <ClCompile Include="..\private\E_P_WarriorBody.cpp" />
+    <ClCompile Include="..\private\E_ShamanElectric.cpp" />
+    <ClCompile Include="..\private\E_ShamanHeadTrail.cpp" />
     <ClCompile Include="..\private\E_ShamanIceDagger.cpp" />
     <ClCompile Include="..\private\E_ShamanLazer.cpp" />
+    <ClCompile Include="..\private\E_ShamanWeaponBall.cpp" />
+    <ClCompile Include="..\private\E_WarriorWeaponAcc.cpp" />
     <ClCompile Include="..\private\Group_Manager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -814,6 +829,7 @@
     <ClCompile Include="..\private\UI_RotIcon.cpp" />
     <ClCompile Include="..\private\UI_Weakpoint.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />
+    <ClCompile Include="..\private\Village_Trigger.cpp" />
     <ClCompile Include="..\Private\Wall.cpp" />
     <ClCompile Include="..\private\WaterPlane.cpp" />
     <ClCompile Include="..\private\WoodKnight.cpp" />

@@ -107,6 +107,10 @@ private:
 	class CE_ShamanThunderCylinder* m_pShamanThunder[MINION_COUNT] = { nullptr }; // For.CSticks01 Summons Effect
 	class CShamanTrapHex* m_pShamanTapHex = nullptr;
 
+	class CE_ShamanHeadTrail* m_pShamanLEyeTrail = nullptr;
+	class CE_ShamanHeadTrail* m_pShamanREyeTrail = nullptr;
+	vector<class CE_ShamanElectric*> m_vecShamanElectric;
+
 	/* For.DashAttackTrail */
 	CBone* m_pLeftHandBone = nullptr;
 	CBone* m_pHeadBone = nullptr;

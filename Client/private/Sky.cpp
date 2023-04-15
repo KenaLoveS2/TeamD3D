@@ -46,7 +46,7 @@ void CSky::Tick(_float fTimeDelta)
 	{
 		CPostFX::GetInstance()->Day();
 		
-		m_pRendererCom->Set_Flare(true);
+		//m_pRendererCom->Set_Flare(true);
 		if (g_fSkyColorIntensity <= 1.f)
 		{
 			g_fSkyColorIntensity += fTimeDelta * 0.5f;
@@ -60,7 +60,7 @@ void CSky::Tick(_float fTimeDelta)
 	else if(g_bDayOrNight == false)
 	{
 		CPostFX::GetInstance()->Night();
-		m_pRendererCom->Set_Flare(false);
+		//m_pRendererCom->Set_Flare(false);
 		if(g_fSkyColorIntensity >= 0.5f)
 		{
 			g_fSkyColorIntensity -= fTimeDelta * 0.5f;
@@ -70,6 +70,23 @@ void CSky::Tick(_float fTimeDelta)
 
 		_float4 vDiffuse = _float4(g_fSkyColorIntensity, g_fSkyColorIntensity, g_fSkyColorIntensity, 1.f);
 		CGameInstance::GetInstance()->Get_Light(0)->Set_Diffuse(vDiffuse);
+	}
+
+	if(g_LEVEL == LEVEL_GIMMICK)
+	{
+		m_pRendererCom->Set_LightShaft(false);
+	}
+	else if(g_LEVEL == LEVEL_TESTPLAY)
+	{
+		m_pRendererCom->Set_LightShaft(true);
+		_float4 vValue = _float4(0.35f, 0.7f, 0.4f, 1.f);
+		m_pRendererCom->Set_LightShaftValue(vValue);
+	}
+	else
+	{
+		m_pRendererCom->Set_LightShaft(true);
+		_float4 vValue = _float4(0.35f, 0.6f, 0.4f, 1.f);
+		m_pRendererCom->Set_LightShaftValue(vValue);
 	}
 }
 

@@ -560,7 +560,7 @@ _int CHunterArrow::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
 		if (m_pHunter && m_pHunter->Get_AnimationIndex() == 29 /*SHOCK_ARROW_ATTACK */)
 		{
 			_float4 vArroaHeadPos = Get_ArrowHeadPos();
-			vArroaHeadPos.y += 1.f;
+			vArroaHeadPos.y += 2.f;
 			m_pSwipesCharged->Set_Effect(vArroaHeadPos, true);
 		}
 

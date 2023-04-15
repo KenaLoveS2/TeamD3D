@@ -137,7 +137,7 @@ void CBossRock::Free()
 
 HRESULT CBossRock::SetUp_Components()
 {	
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))) return E_FAIL;	
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))) return E_FAIL;
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom))) return E_FAIL;
 		
 	_tchar szModelTable[ROCK_TPYE_END][64] = {
