@@ -241,9 +241,9 @@ void CDeadZoneBossTree::ImGui_PhysXValueProperty()
 
 _int CDeadZoneBossTree::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	if (pTarget == nullptr)
-		return 0;
-	if(m_EnviromentDesc.iRoomIndex ==4)
+	
+
+	if (m_EnviromentDesc.iRoomIndex == 4)
 	{
 		if (iColliderIndex == TRIGGER_DUMMY || pTarget == nullptr) return 0;
 		_bool bRealAttack = false;
@@ -262,6 +262,8 @@ _int CDeadZoneBossTree::Execute_Collision(CGameObject* pTarget, _float3 vCollisi
 		}
 		return 0;
 	}
+
+	if (pTarget == nullptr) return 0;
 	/*To DO*/
 	CHunterArrow* pArrow = dynamic_cast<CHunterArrow*>(pTarget);
 
@@ -288,8 +290,8 @@ _int CDeadZoneBossTree::Execute_Collision(CGameObject* pTarget, _float3 vCollisi
 
 _int CDeadZoneBossTree::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
+	
 	CE_Warrior_FireSwipe* pWarriorComboAttack = dynamic_cast<CE_Warrior_FireSwipe*>(pTarget);
-
 
 	if (pTarget == nullptr || pWarriorComboAttack == nullptr)
 		return 0;
