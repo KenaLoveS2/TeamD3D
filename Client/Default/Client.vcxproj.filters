@@ -616,6 +616,24 @@
     <Filter Include="02.GameObjects\Player\Respawn Trigger">
       <UniqueIdentifier>{db25fca5-b5be-4c45-8e95-de74f0c6d942}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\Currency">
+      <UniqueIdentifier>{a8050bfc-5763-4623-9017-c83e49fa374f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\Alarm">
+      <UniqueIdentifier>{76a14590-7e98-4299-848d-a9c35cc1979c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame">
+      <UniqueIdentifier>{56c24f71-c3a8-4dad-ae59-ecf594d40a8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame\HitTarget">
+      <UniqueIdentifier>{d318539b-53c9-4aec-bef9-3371c7899d65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Time">
+      <UniqueIdentifier>{5aa7abfc-8df6-4103-95c8-38c8c489b8f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Victory">
+      <UniqueIdentifier>{c7f94187-0cde-4ff5-b28e-024e34f86caa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1640,6 +1658,21 @@
     <ClInclude Include="..\public\Respawn_Trigger.h">
       <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAlarm.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\Alarm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasMiniGame.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeVictory.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Victory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHitCount.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\HitTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeTimeAtk.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2643,6 +2676,21 @@
     </ClCompile>
     <ClCompile Include="..\private\Respawn_Trigger.cpp">
       <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAlarm.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\Alarm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasMiniGame.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeVictory.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Victory</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_NodeHitCount.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\HitTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeTimeAtk.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Time</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

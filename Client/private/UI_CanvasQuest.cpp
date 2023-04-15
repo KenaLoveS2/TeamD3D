@@ -18,7 +18,10 @@ CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	, m_fTmpAcc(0.f)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
+	{
 		m_Quests[i] = nullptr;
+		m_iNumsQuestLine[i] = 0;
+	}
 }
 
 CUI_CanvasQuest::CUI_CanvasQuest(const CUI_CanvasQuest & rhs)
@@ -32,7 +35,10 @@ CUI_CanvasQuest::CUI_CanvasQuest(const CUI_CanvasQuest & rhs)
 	, m_fTmpAcc(0.f)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
+	{
 		m_Quests[i] = nullptr;
+		m_iNumsQuestLine[i] = 0;
+	}
 }
 
 HRESULT CUI_CanvasQuest::Initialize_Prototype()
@@ -82,13 +88,30 @@ HRESULT CUI_CanvasQuest::Initialize(void * pArg)
 
 void CUI_CanvasQuest::Tick(_float fTimeDelta)
 {
-	if (!m_bBindFinished)
+	//if (!m_bBindFinished)
+	//{
+	//	if (FAILED(Bind()))
+	//	{
+	//		//	MSG_BOX("Bind Failed");
+	//		return;
+	//	}
+	//}
+
+	m_bActive = true;
+	m_bOpen = false;
+	m_bClose = false;
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
-		if (FAILED(Bind()))
-		{
-			//	MSG_BOX("Bind Failed");
-			return;
-		}
+		static _float fLine = 0;
+		BindFunction(CUI_ClientManager::QUEST_LINE, false, fLine, L"");
+		fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
+	}
+	if (CGameInstance::GetInstance()->Key_Down(DIK_U))
+	{
+		static _float fLine = 0;
+		BindFunction(CUI_ClientManager::QUEST_CLEAR, false, fLine, L"");
+		fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
 	}
 
 
@@ -148,7 +171,25 @@ void CUI_CanvasQuest::Late_Tick(_float fTimeDelta)
 		}
 	}
 
-	__super::Late_Tick(fTimeDelta);
+	//__super::Late_Tick(fTimeDelta);
+
+	//__super::Late_Tick(fTimeDelta);
+	CUI::Late_Tick(fTimeDelta);
+
+	for (auto e : m_vecEvents)
+		e->Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRendererCom && m_bActive)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UIHDR, this);
+
+		/* Nodes added to RenderList After the canvas. */
+		/* So It can be guaranteed that Canvas Draw first */
+		for (auto node : m_vecNode)
+			node->Late_Tick(fTimeDelta);
+	}
+
+
 }
 
 HRESULT CUI_CanvasQuest::Render()
@@ -208,6 +249,7 @@ HRESULT CUI_CanvasQuest::Ready_Nodes()
 		/* test */
 		//pMain->Set_Active(true);
 		_int iNumSubs = m_Quests[i]->Get_NumSubs();
+		m_iNumsQuestLine[i] = iNumSubs + 1;
 		for (_int j = 0; j < iNumSubs; ++j)
 		{
 			CUI* pSub = nullptr;
@@ -293,7 +335,10 @@ HRESULT CUI_CanvasQuest::SetUp_ShaderResources()
 
 	CUI::SetUp_ShaderResources();
 
-	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
+	_float4 vPos = m_pTransformCom->Get_Position();
+	vPos.z = 0.1f;
+	m_pTransformCom->Set_Position(vPos);
+	//_uint renderpass = m_iRenderPass;
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -371,19 +416,33 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 		break;
 
 	case CUI_ClientManager::QUEST_LINE:
-		m_vecNode[(_int)fValue]->Set_Active(true);
+		if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
+		{
+			MSG_BOX("Try to Contact Wrong Line");
+			return;
+		}
+		m_vecNode[m_iCurQuestIndex * m_iNumsQuestLine[m_iCurQuestIndex] + (_int)fValue]->Set_Active(true);
 		break;
 	case CUI_ClientManager::QUEST_CLEAR:
 	{
-		_int iIndex = (_int)fValue % MAX_LINE;
-		if (iIndex >= (_int)m_vecEffects.size())
+		if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
+		{
+			MSG_BOX("Try to Contact Wrong Line");
 			return;
-		static_cast<CUI_NodeQuest*>(m_vecNode[(_int)fValue])->Set_Clear();
-		m_vecEffects[iIndex]->Start_Effect(
+		}
+		m_vecEffects[(_int)fValue]->Start_Effect(
 			m_vecNode[(_int)fValue], 328.f, 5.f);
+
+		//if ((_int)fValue == m_iNumsQuestLine[m_iCurQuestIndex] - 1)
+		//	m_iCurQuestIndex++;
+		///* Quest All Clear */
+		//if (m_iCurQuestIndex >= QUEST_END)
+		//	MSG_BOX("Quest End");
 		break;
 	}
 	case CUI_ClientManager::QUEST_CLEAR_ALL:
+
+		//static_cast<CUI_NodeQuest*>(m_vecNode[(_int)fValue])->Set_Clear();
 		break;
 	}
 }
@@ -442,7 +501,7 @@ void CUI_CanvasQuest::Check(CUI_ClientManager::UI_PRESENT eType, _float fData)
 	switch (eType)
 	{
 	case CUI_ClientManager::QUEST_LINE:
-		_int iIndex = (_int)fData % MAX_LINE;
+		_int iIndex = (_int)fData % m_iNumsQuestLine[m_iCurQuestIndex];
 		if (iIndex >= (_int)m_vecEffects.size())
 			return;
 
