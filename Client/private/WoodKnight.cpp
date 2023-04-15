@@ -44,8 +44,10 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
-	m_bRotable = true;
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	m_bRotable = true;
+	m_vRotIconPosOffset = { 0.f, 1.5f, 0.f, 0.f };
 
 	return S_OK;
 }
@@ -194,15 +196,14 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 }
 
 void CWoodKnight::Tick(_float fTimeDelta)
-{
-	// m_bReadySpawn = true;
-		
+{		
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 
+	// m_bReadySpawn = true;
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();

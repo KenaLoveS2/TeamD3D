@@ -164,6 +164,8 @@ protected:
 	_float	m_fHitStopTime = 0.f;
 	_float  m_fDissolveTime = 0.0f;
 	_float  m_fSpawnRange   = 8.f;
+	
+	_float4 m_vRotIconPosOffset = { 0.f, 0.f, 0.f, 0.f };
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;
@@ -216,6 +218,8 @@ public:
 	void Stop_BindRotAttackSound(_bool bIsInit, _float fTimeDelta);
 	void Start_RealAttack(_bool bIsInit, _float fTimeDelta);
 	void End_RealAttack(_bool bIsInit, _float fTimeDelta);
+		
+	inline _float4 Get_RotIconPosOffset() { return m_vRotIconPosOffset; }
 };
 
 END

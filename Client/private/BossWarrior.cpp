@@ -473,18 +473,18 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-				m_fDissolveTime -= fTimeDelta * 0.5f;
-				if (m_fDissolveTime < -0.5f)
-					m_bDissolve = false;
+		m_fDissolveTime -= fTimeDelta * 0.5f;
+		if (m_fDissolveTime < -0.5f)
+			m_bDissolve = false;
 
-				m_fFogRange -= fTimeDelta * 50.f;
-				if (m_fFogRange < 60.f)
-					m_fFogRange = 60.f;
-				const _float4 vColor = _float4(140.f / 255.f, 70.f / 255.f, 70.f / 255.f, 1.f);
-				m_pRendererCom->Set_FogValue(vColor, m_fFogRange);
+		m_fFogRange -= fTimeDelta * 50.f;
+		if (m_fFogRange < 60.f)
+			m_fFogRange = 60.f;
+		const _float4 vColor = _float4(140.f / 255.f, 70.f / 255.f, 70.f / 255.f, 1.f);
+		m_pRendererCom->Set_FogValue(vColor, m_fFogRange);
 
-				if (AnimIntervalChecker(AWAKE, 0.9f, 1.f))
-					m_pModelCom->FixedAnimIdx_PlayTime(AWAKE, 0.95f);
+		if (AnimIntervalChecker(AWAKE, 0.9f, 1.f))
+			m_pModelCom->FixedAnimIdx_PlayTime(AWAKE, 0.95f);
 	})
 		.OnExit([this]()
 	{
@@ -967,7 +967,6 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
-				/* �̻��¿��� �´°� �ʿ��ҰŰ��� */
 		Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_PARRY, m_pTransformCom->Get_Position(),false);
 
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRIED);

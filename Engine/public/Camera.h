@@ -39,6 +39,8 @@ protected:
 public:		
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
+
+	void LookAt_NoUpDown(_float4 vLookPos);
 };
 
 END
