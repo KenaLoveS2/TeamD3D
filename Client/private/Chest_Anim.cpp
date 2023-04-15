@@ -2,8 +2,7 @@
 #include "Chest_Anim.h"
 #include "GameInstance.h"
 #include "Utile.h"
-#include "ControlMove.h"
-#include "Interaction_Com.h"
+
 #include "Kena.h"
 #include "Kena_State.h"
 #include "PhysX_Manager.h"
@@ -40,6 +39,7 @@ HRESULT CChest_Anim::Initialize(void * pArg)
 	m_bRenderActive = true;
 	m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);
 
+	Push_EventFunctions();
 	return S_OK;
 }
 
@@ -91,16 +91,13 @@ void CChest_Anim::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//ImGui::Begin("Chest");
+	if(!m_bTestOnce)
+	{
+		m_bTestOnce = true;
+		CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
+	}
 
-	//if (ImGui::Button("re"))
-	//{
-	//	m_bOpened = false;
-	//	m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);
-	//	m_eCurState = CURSED_ACTIVATE;
-	//}
 
-	//ImGui::End();
 
 	/*Culling*/
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -138,13 +135,19 @@ void CChest_Anim::Late_Tick(_float fTimeDelta)
 	if (m_pChestEffect) m_pChestEffect->Late_Tick(fTimeDelta);
 	if (m_pChestEffect_P) m_pChestEffect_P->Late_Tick(fTimeDelta);
 
-	_float4 vKenaPos = m_pKena->Get_TransformCom()->Get_Position();
-	_float4 vPos = m_pTransformCom->Get_Position();
-	_float fDistance = _float4::Distance(vKenaPos, vPos);
+
+	_float fDistance = 0.f;
+	if (m_pKena != nullptr)
+	{
+		_float4 vKenaPos = m_pKena->Get_TransformCom()->Get_Position();
+		_float4 vPos = m_pTransformCom->Get_Position();
+		fDistance = _float4::Distance(vKenaPos, vPos);
+	}
 
 	if (m_pRendererCom && m_bRenderActive && false == m_bRenderCheck)
 	{
-		if (fDistance <= 100.f)
+	
+		if (m_pKena != nullptr && fDistance <= 100.f)
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -212,29 +215,6 @@ void CChest_Anim::ImGui_PhysXValueProperty()
 	pShape->setGeometry(Geometry);
 }
 
-HRESULT CChest_Anim::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
-{
-	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
-
-	/* For.Com_CtrlMove */
-	if (eComponentOption == COMPONENTS_CONTROL_MOVE)
-	{
-		if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_ControlMove"), pComTag,
-			(CComponent**)&m_pControlMoveCom)))
-			return E_FAIL;
-	}
-	/* For.Com_Interaction */
-	else if (eComponentOption == COMPONENTS_INTERACTION)
-	{
-		if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_Interaction_Com"), pComTag,
-			(CComponent**)&m_pInteractionCom)))
-			return E_FAIL;
-	}
-	else
-		return S_OK;
-
-	return S_OK;
-}
 
 _int CChest_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
@@ -266,6 +246,62 @@ _int CChest_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTrigger
 	}
 
 	return 0;
+}
+
+void CChest_Anim::Push_EventFunctions()
+{
+	Chest_FirstMeetSound(true, 0.f);
+	Chest_OpenSound(true, 0.f);
+	Chest_CloseSound(true, 0.f);
+	Chest_Clear(true, 0.f);
+}
+
+void CChest_Anim::Chest_FirstMeetSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CChest_Anim::Chest_FirstMeetSound);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Chest_FirstMeet.wav", 1.0f, false);
+}
+
+void CChest_Anim::Chest_OpenSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CChest_Anim::Chest_OpenSound);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Chest_Open.ogg", 1.0f, false);
+}
+
+void CChest_Anim::Chest_CloseSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CChest_Anim::Chest_CloseSound);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Chest_Close.ogg", 1.0f, false);
+}
+
+void CChest_Anim::Chest_Clear(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CChest_Anim::Chest_Clear);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Chest_Cleared.ogg", 1.0f, false);
 }
 
 CChest_Anim::ANIMATION CChest_Anim::Check_State()
@@ -455,8 +491,6 @@ void CChest_Anim::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
-	Safe_Release(m_pControlMoveCom);
-	Safe_Release(m_pInteractionCom);
 
 	/* Effect */
 	Safe_Release(m_pChestEffect);

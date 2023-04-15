@@ -147,6 +147,24 @@ void CBowTarget_Manager::Clear_Groups()
 	m_vecGroup.clear();
 }
 
+_bool CBowTarget_Manager::Check_Group_Hit(const wstring& wstrGroupName)
+{
+	BOWTARGETGROUP* pBowTargetGroup = Find_BowTargetGroup(wstrGroupName);
+	NULL_CHECK_RETURN(pBowTargetGroup, false);
+
+	_bool   bState = true;
+
+	for (auto pBowTarget : pBowTargetGroup->vecBowTarget)
+	{
+		bState = pBowTarget->Is_Hit();
+
+		if (bState == false)
+			break;
+	}
+
+	return bState;
+}
+
 CBowTarget_Manager::BOWTARGETGROUP* CBowTarget_Manager::Find_BowTargetGroup(const wstring& wstrGroupName)
 {
 	const auto	iter = find_if(m_vecGroup.begin(), m_vecGroup.end(), [wstrGroupName](BOWTARGETGROUP*& pBowTargetGroup) {

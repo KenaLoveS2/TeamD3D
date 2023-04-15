@@ -9,7 +9,7 @@ class CModel;
 class CTexture;
 END
 
-/*���� �Ѹ� �� ���õ� Ŭ�����Դϴ�. */
+
 BEGIN(Client)
 class CControlRoom;
 class CDeadZoneBossTree  final : public CEnviromentObj
@@ -32,6 +32,8 @@ public:
 
 	virtual void		ImGui_PhysXValueProperty() override;
 
+	void	Change_Model(_int iDissolveTimer);
+
 	virtual _int		Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex);
 	virtual _int				Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 	_float4				Set_ColorValue();
@@ -41,20 +43,20 @@ private:
 	CModel* m_pModelCom = nullptr;
 	CTexture* m_pDissolveTextureCom = nullptr;
 	
+private:
+	_bool			m_bTestOnce = false;
+
 
 	_float				m_fTimeDeltaTest = 0.f;
 	_float4				m_vColor = _float4(1.0f, 0.05f, 0.46f, 1.f);
-	
 	_float				m_fDissolveTime = 0.f;
 	_bool				m_bDissolve = false;
-
 	_bool				m_bBossAttackOn = false;
 	_bool				m_bCollOnce = false;
-
 	_bool				m_bOriginRender = true;
 
-	_float4 vTestColor1 = _float4(1.0f, 0.05f, 0.46f, 1.f);
-	_float4 vTestColor2 = _float4(1.0f, 0.05f, 0.46f, 1.f);
+	_float4 m_vBaseColor1 = _float4(1.0f, 0.05f, 0.46f, 1.f);
+	_float4 m_vBaseColor2 = _float4(1.0f, 0.05f, 0.46f, 1.f);
 	_float	fFirstRatio = 1.f;
 	_float	fSecondRatio = 1.f;
 private:

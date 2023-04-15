@@ -6,6 +6,11 @@
 #include "HunterArrow.h"
 #include "E_Warrior_FireSwipe.h"
 #include "Monster.h"
+
+#include "ControlRoom.h"
+
+#include "Delegator.h"
+
 CDeadZoneBossTree::CDeadZoneBossTree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
 {
@@ -84,11 +89,36 @@ HRESULT CDeadZoneBossTree::Late_Initialize(void* pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Static(m_szCloneObjectTag);
 
+
+	CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+
+	pCtrlRoom->m_DeadZoneChangeDelegator.bind(this, &CDeadZoneBossTree::Change_Model);
+
 	return S_OK;
+}
+
+void CDeadZoneBossTree::Change_Model(_int iDissolveTimer)
+{
+	if (!m_bCollOnce)
+	{
+		m_bDissolve = true;
+		m_fDissolveTime = 0.f;
+		m_bBossAttackOn = true;
+		m_bCollOnce = true;
+	}
 }
 
 void CDeadZoneBossTree::Tick(_float fTimeDelta)
 {
+#ifdef FOR_MAP_GIMMICK
+
+#else
+	if(!m_bTestOnce)
+	{
+		Late_Initialize();
+		m_bTestOnce = true;
+	}
+#endif
 
 	if (m_bBossAttackOn)
 	{
@@ -217,8 +247,8 @@ void CDeadZoneBossTree::ImGui_PhysXValueProperty()
 	//ImGui::InputFloat("FirstRatio", &fFirstRatio);
 	//ImGui::InputFloat("SecondRatio", &fSecondRatio);
 
-	//vTestColor1 = Set_ColorValue();
-	//vTestColor2 = Set_ColorValue_1();
+	//m_vBaseColor1 = Set_ColorValue();
+	//m_vBaseColor2 = Set_ColorValue_1();
 
 	//ImGui::End();
 
@@ -381,10 +411,10 @@ HRESULT CDeadZoneBossTree::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
 	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
 
-	vTestColor1 = _float4( (255.f/ 255.f), (19.f/ 255.f), (19.f/255.f), (242.f/255.f));
-	if (FAILED(m_pShaderCom->Set_RawValue("g_FirstColor", &vTestColor1, sizeof(_float4)))) return E_FAIL;
+	m_vBaseColor1 = _float4( (255.f/ 255.f), (19.f/ 255.f), (19.f/255.f), (242.f/255.f));
+	if (FAILED(m_pShaderCom->Set_RawValue("g_FirstColor", &m_vBaseColor1, sizeof(_float4)))) return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_SecondColor", &vTestColor2, sizeof(_float4)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_SecondColor", &m_vBaseColor2, sizeof(_float4)))) return E_FAIL;
 
 	fFirstRatio = 1.f;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_FirstRatio", &fFirstRatio, sizeof(_float)))) return E_FAIL;

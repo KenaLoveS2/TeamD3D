@@ -31,16 +31,16 @@ HRESULT CFrog::Initialize(void* pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	_int iRandNum = rand() % 2;
+	//_int iRandNum = rand() % 2;
 
-	if(iRandNum ==0)
-	{
+	//if(iRandNum ==0)
+	//{
 		m_pModelCom->Set_AnimIndex(CRY_BIG);
-	}
-	else
-	{
-		m_pModelCom->Set_AnimIndex(LOOK_AROUND);
-	}
+	//}
+	//else
+	//{
+	//	m_pModelCom->Set_AnimIndex(LOOK_AROUND);
+	//}
 
 	//CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 

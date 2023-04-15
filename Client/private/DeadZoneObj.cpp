@@ -3,7 +3,7 @@
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "ControlRoom.h"
-#include "Interaction_Com.h"
+
 #include "Delegator.h"
 
 CDeadZoneObj::CDeadZoneObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

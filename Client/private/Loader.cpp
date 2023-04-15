@@ -566,7 +566,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = true;
+	_bool bRealObject = false;
 	_bool bFlowerCheck = false;
 
 #ifdef FOR_MAPTOOL   
@@ -574,8 +574,10 @@ HRESULT CLoader::Loading_ForMapTool()
 #else
 	if(bFlowerCheck == true)
 	{
-		if (FAILED(Loading_ForHO(LEVEL_MAPTOOL)))
-			return E_FAIL;
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		// Prototype_Component_Model_Rope_Rock
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rope_RotRock", true, false, true))) return E_FAIL;
+
 	}
 
 #pragma region Test_Gimmick_OBJ

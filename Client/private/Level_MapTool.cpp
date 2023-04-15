@@ -135,9 +135,9 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	
-	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 
@@ -150,6 +150,10 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
+
+	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, 
+		pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr), E_FAIL);
+
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Boss_Attack_Geo.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "DeadZoneReal.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "MiniGameMap.json");
@@ -157,7 +161,7 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
 
