@@ -183,8 +183,16 @@ void CBorn_GroundCover::Culling(_float fTimeDelta)
 	}
 
 #ifdef FOR_MAP_GIMMICK
-	if ( true  == m_bUprise)
+	if (true == m_bUprise)
+	{
 		m_pModelCom->Instaincing_MoveControl(Gimmick_TYPE_FLOWER, fTimeDelta);
+
+		if(!m_bOnceSound)
+		{
+			CGameInstance::GetInstance()->Play_Sound(L"Flower_Up.mp3", 1.f, false);
+			m_bOnceSound = true;
+		}
+	}
 #endif
 }
 

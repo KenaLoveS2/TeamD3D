@@ -32,7 +32,7 @@ void CGimmick_EnviObj::Set_Gimmick_Active(_int iRoomIndex, _bool bGimmick_Active
 		if(iRoomIndex == 1)  // 그냥 땅 올라오기
 		{
 			CGameInstance::GetInstance()->Play_Sound(L"SFX_Stone_Gate_Open_End_1.ogg", 0.7f, false);
-			CGameInstance::GetInstance()->Play_Sound(L"SFX_Stone_Gate_Open_LP_1.ogg", 1.f, false);
+			CGameInstance::GetInstance()->Play_Sound(L"Gimmick_1_UP.mp3", 1.f, false);
 			
 		}
 		else if(iRoomIndex ==2)  // 물땅올라오기
