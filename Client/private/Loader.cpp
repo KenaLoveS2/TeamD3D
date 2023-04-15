@@ -105,6 +105,9 @@
 #include "BossRock_Pool.h"
 #include "DeadZoneBossTree.h"
 #include "Fire_Brazier.h"
+#include "BossShaman_Mask.h"
+#include "Camera_Shaman.h"
+
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
@@ -2265,6 +2268,9 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_GameObject_ShamanTrapPlane
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrapPlane"), CShamanTrapPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
+	// Prototype_GameObject_ShamanMask
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanMask"), CBossShaman_Mask::Create(m_pDevice, m_pContext)))) return E_FAIL;	
+
 	// Prototype_GameObject_BossHunter
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossHunter"), CBossHunter::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
@@ -2279,6 +2285,9 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_GameObject_BossRockPool
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossRockPool"), CBossRock_Pool::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_CameraShaman
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraShaman"), CCamera_Shaman::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	return S_OK;
 }

@@ -471,12 +471,12 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-				m_fDissolveTime -= fTimeDelta * 0.5f;
-				if (m_fDissolveTime < -0.5f)
-					m_bDissolve = false;
+		m_fDissolveTime -= fTimeDelta * 0.5f;
+		if (m_fDissolveTime < -0.5f)
+			m_bDissolve = false;
 
-				if (AnimIntervalChecker(AWAKE, 0.9f, 1.f))
-					m_pModelCom->FixedAnimIdx_PlayTime(AWAKE, 0.95f);
+		if (AnimIntervalChecker(AWAKE, 0.9f, 1.f))
+			m_pModelCom->FixedAnimIdx_PlayTime(AWAKE, 0.95f);
 	})
 		.OnExit([this]()
 	{
@@ -957,7 +957,6 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
-				/* �̻��¿��� �´°� �ʿ��ҰŰ��� */
 		Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_PARRY, m_pTransformCom->Get_Position(),false);
 
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRIED);

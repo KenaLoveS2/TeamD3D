@@ -14,6 +14,8 @@
 #include "E_ShamanSummons.h"
 #include "E_ShamanIceDagger.h"
 #include "E_ShamanLazer.h"
+#include "BossShaman_Mask.h"
+#include "Camera_Shaman.h"
 
 // #define EFFECTDEBUG
 
@@ -70,8 +72,9 @@ HRESULT CBossShaman::Initialize(void* pArg)
 	m_pLeftHandBone = m_pModelCom->Get_BonePtr("char_lf_middle_a_jnt");
 	m_pHeadBone = m_pModelCom->Get_BonePtr("char_mask_jnt");
 
-	Create_Minions();
-	
+	Create_Minions();	
+	Create_ShamanMask();
+
 	return S_OK;
 }
 
@@ -159,7 +162,10 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Late_Initialize(nullptr);
-		
+	
+	m_pCamera_Shaman = (CCamera_Shaman*)m_pGameInstance->Find_Camera(CAMERA_SHAMAN_TAG);
+	assert(m_pCamera_Shaman && "CCamera_Shaman is NULL!!");
+
 	return S_OK;
 }
 
@@ -182,7 +188,7 @@ void CBossShaman::Tick(_float fTimeDelta)
 	Update_Collider(fTimeDelta);
 	Tick_Effects(fTimeDelta);
 
-	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Tick(fTimeDelta);
@@ -190,6 +196,8 @@ void CBossShaman::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	// AdditiveAnim(fTimeDelta);
+
+	m_pShamanMask->Tick(fTimeDelta);
 }
 
 void CBossShaman::Late_Tick(_float fTimeDelta)
@@ -201,11 +209,13 @@ void CBossShaman::Late_Tick(_float fTimeDelta)
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom /*&& m_bSpawn*/)
+	if (m_pRendererCom && m_bStartRender)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
+
+	m_pShamanMask->Late_Tick(fTimeDelta);
 }
 
 HRESULT CBossShaman::Render()
@@ -303,6 +313,19 @@ void CBossShaman::Imgui_RenderProperty()
 	memcpy(&m_vPivotPos, fTemp, sizeof(_float3));	
 
 	ImGui::DragFloat("m_fMeleeAttackTeleportDist", &m_fMeleeAttackTeleportDist, 0.01f, -100.f, 100.0f);
+			
+	_float4 vCamOffset = m_pCamera_Shaman->Get_TargetPositionOffset();
+	ImGui::DragFloat("vCamOffset.y", &vCamOffset.y, 0.01f, -100.f, 100.0f);
+	m_pCamera_Shaman->Set_TargetPositionOffset(vCamOffset);
+	
+	_float fCamDist = m_pCamera_Shaman->Get_TargetDistance();		
+	ImGui::DragFloat("fCamDist", &fCamDist, 0.01f, -100.f, 100.0f);
+	m_pCamera_Shaman->Set_TargetDistance(fCamDist);
+
+	ImGui::DragFloat("m_fCamDistRate", &m_fCamDistRate, 0.01f, -100.f, 100.0f);
+
+	if (ImGui::Button("Start Render"))
+		m_bStartRender = !m_bStartRender;
 }
 
 void CBossShaman::ImGui_AnimationProperty()
@@ -451,22 +474,80 @@ HRESULT CBossShaman::SetUp_State()
 		.OnExit([this]()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-		m_bReadySpawn = true;
+		m_bReadySpawn = true;		
 	})
-		.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
+		.AddTransition("SLEEP to CAMERA_SCENE", "CAMERA_SCENE_START")
+		.Predicator([this]()
+	{	
+		m_fSpawnRange = 20.f;
+		return DistanceTrigger(m_fSpawnRange);
+	})
+
+		.AddState("CAMERA_SCENE_START")
+		.OnStart([this]()
+	{	
+		m_pKena->Set_StateLock(true);
+		BossFight_Start();
+				
+		_float4 vPosition;
+		XMStoreFloat4(&vPosition, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) + m_pTransformCom->Get_State(CTransform::STATE_LOOK) * 18.f);
+		vPosition.y += 2.f;
+
+		m_pCamera_Shaman->Start_Action(this, vPosition);
+		m_pGameInstance->Work_Camera(CAMERA_SHAMAN_TAG);
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DING], 0.5f);
+	})			
+		.AddTransition("CAMERA_SCENE_START to CAMERA_SCENE_ACTION", "CAMERA_SCENE_ACTION")
 		.Predicator([this]()
 	{
-		// 대기 종결 조건 수정 필요
-		m_fSpawnRange = 5.f;
-		return DistanceTrigger(m_fSpawnRange);
+		return m_pCamera_Shaman->Is_WaitShamanAction();
+	})
+
+
+		.AddState("CAMERA_SCENE_ACTION")
+		.OnStart([this]()
+	{
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DING], 0.5f);
+		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE_LOOP);
+		m_pModelCom->Set_AnimIndex(AWAKE_LOOP);
+		
+		m_pShamanMask->Start_Dissolve();
+		
+		m_bStartRender = true;
+		m_bTeleportDissolve = true;
+		m_fTeleportDissolveTime = 1.f;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		if (m_pShamanMask->Is_DissolveEnd())
+		{
+			if(m_fTeleportDissolveTime == 1.f)
+				m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_DING], 0.5f);
+
+			m_fTeleportDissolveTime -= fTimeDelta * 0.3f;
+			if (m_fTeleportDissolveTime <= 0.f)
+				m_fTeleportDissolveTime = 0.f;
+					
+			_float fNewDist = m_pCamera_Shaman->Get_TargetDistance() + m_fCamDistRate * fTimeDelta;
+			m_pCamera_Shaman->Set_TargetDistance(fNewDist);
+		}		
+	})
+		.OnExit([this]()
+	{
+		m_bTeleportDissolve = false;
+		m_fTeleportDissolveTime = 0.f;
+	})
+		.AddTransition("CAMERA_SCENE_ACTION to READY_SPAWN", "READY_SPAWN")
+		.Predicator([this]()
+	{
+		return m_fTeleportDissolveTime == 0.f;
 	})
 
 
 		.AddState("READY_SPAWN")
 		.OnStart([this]()
 	{
-		// 등장 연출 필요
-		BossFight_Start();
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENT], 0.5f);
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
@@ -481,13 +562,21 @@ HRESULT CBossShaman::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		m_pKena->Set_StateLock(false);
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_bSpawn = true;
+		m_pGameInstance->Work_Camera(TEXT("PLAYER_CAM"));
+		m_pGameInstance->Get_WorkCameraPtr()->LookAt_NoUpDown(m_pTransformCom->Get_Position());
+		
+		m_pCamera_Shaman->Clear();
+		// 임시
+		// m_pShamanMask->Clear(); 
+		// m_bStartRender = false;
 	})
 		.AddTransition("READY_SPAWN to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		// return m_fAwakeLoopTimeCheck >= 2.f;
+		// return m_fAwakeLoopTimeCheck >= 2.f; // 임시
 		return AnimFinishChecker(AWAKE);
 	})
 
@@ -508,6 +597,11 @@ HRESULT CBossShaman::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("IDLE To BACK_FLIP", "BACK_FLIP")
 		.Predicator([this]()
@@ -531,6 +625,11 @@ HRESULT CBossShaman::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("BACK_FLIP to IDLE", "IDLE")
 		.Predicator([this]()
@@ -779,7 +878,7 @@ HRESULT CBossShaman::SetUp_State()
 			}
 			else
 			{
-				m_fTeleportDissolveTime -= fTimeDelta;
+				m_fTeleportDissolveTime -= fTimeDelta * 1.1f;
 				if (m_fTeleportDissolveTime <= 0.f)
 				{
 					m_fTeleportDissolveTime = 0.f;
@@ -803,6 +902,11 @@ HRESULT CBossShaman::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
 		.AddTransition("MELEE_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
@@ -823,6 +927,11 @@ HRESULT CBossShaman::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("TRIPLE_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
@@ -888,7 +997,7 @@ HRESULT CBossShaman::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{	
 		_float4 vTrapPos = m_pShamanTapHex->Get_JointBonePos();
-		vTrapPos.y = m_fTrapHeightY;
+		vTrapPos.y = m_pShamanTapHex->Get_TransformCom()->Get_PositionY() + m_fTrapHeightY;
 		m_pTransformCom->Set_Position(vTrapPos);
 
 		_float4 vLookPos = m_pShamanTapHex->Get_FakeShamanPos(m_iFakeShamanLookIndex);
@@ -993,7 +1102,11 @@ HRESULT CBossShaman::SetUp_State()
 	{	
 		m_fTeleportDissolveTime = 1.f;
 
-		_float4 vPos = m_vKenaPos + _float4(2.f, 0.f, 2.f, 0.f);
+		_float4 vPos;
+		
+		CTransform* pKenaTransform = m_pKena->Get_TransformCom();		
+		XMStoreFloat4(&vPos, pKenaTransform->Get_State(CTransform::STATE_TRANSLATION) + pKenaTransform->Get_State(CTransform::STATE_LOOK) * 2.5f);
+
 		m_pTransformCom->Set_Position(vPos);
 
 		Attack_End(false, STUN_TAKE_DAMAGE);
@@ -1031,7 +1144,7 @@ HRESULT CBossShaman::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
-	})
+	})		
 		.AddTransition("STUN to IDLE", "IDLE")
 		.Predicator([this]()
 	{
@@ -1053,6 +1166,11 @@ HRESULT CBossShaman::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("DASH_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
@@ -1076,6 +1194,11 @@ HRESULT CBossShaman::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
 		.AddTransition("FREEZE_BLAST to IDLE", "IDLE")
 		.Predicator([this]()
 	{
@@ -1093,6 +1216,11 @@ HRESULT CBossShaman::SetUp_State()
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("ICE_DAGGER to ICE_DAGGER_EXIT", "ICE_DAGGER_EXIT")
 		.Predicator([this]()
@@ -1115,10 +1243,36 @@ HRESULT CBossShaman::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
 		.AddTransition("ICE_DAGGER to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(ICE_DAGGER_EXIT);
+	})
+		
+		.AddState("PARRIED")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(STAGGER);
+		m_pModelCom->Set_AnimIndex(STAGGER);
+	})
+		.OnExit([this]()
+	{
+		m_bWeaklyHit = m_bStronglyHit = false;
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("PARRIED to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(STAGGER);
 	})
 
 
@@ -1149,13 +1303,21 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("DEATH_SCENE")
 		.OnStart([this]()
 	{
-		// 죽은 애니메이션 후 죽음 연출 State
+		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENT], 0.5f);
+		m_bTeleportDissolve = true;
+		m_fTeleportDissolveTime = 0.f;
 		BossFight_End();
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fTeleportDissolveTime += fTimeDelta * 0.2f;
+		if (m_fTeleportDissolveTime >= 1.f)
+			m_fTeleportDissolveTime = 1.f;
 	})
 		.AddTransition("DEATH_SCENE to DEATH", "DEATH")
 		.Predicator([this]()
 	{
-		return true;
+		return m_fTeleportDissolveTime == 1.f;
 	})
 		
 
@@ -1205,7 +1367,6 @@ HRESULT CBossShaman::SetUp_ShaderResources()
 	float fHDRIntensity = 0.f;
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &fHDRIntensity, sizeof(_float)), E_FAIL);
 	
-
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bTeleportDissolve, sizeof(_bool)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fTeleportDissolveTime, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"), E_FAIL);
@@ -1741,6 +1902,7 @@ void CBossShaman::Free()
 	}
 
 	Safe_Release(m_pShamanTapHex);
+	Safe_Release(m_pShamanMask);
 
 	for (auto& Pair : m_mapEffect)
 		Safe_Release(Pair.second);
@@ -2523,4 +2685,19 @@ void CBossShaman::Teleport_MeleeAttack(_bool bIsInit, _float fTimeDelta)
 	}
 
 	m_bMeleeAttackTeleport = true;
+}
+
+void CBossShaman::Create_ShamanMask()
+{
+	CMonsterWeapon::MONSTERWEAPONDESC WeaponDesc;
+	ZeroMemory(&WeaponDesc, sizeof(CMonsterWeapon::MONSTERWEAPONDESC));
+
+	XMStoreFloat4x4(&WeaponDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
+	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("char_mask_jnt");
+	WeaponDesc.pTargetTransform = m_pTransformCom;
+	WeaponDesc.pOwnerMonster = this;
+
+	m_pShamanMask = (CBossShaman_Mask*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ShamanMask"), TEXT("BossShamanMask"), &WeaponDesc);
+	assert(m_pShamanMask && "Boss Shaman Mask is nullptr");
+	m_pShamanMask->Late_Initialize(nullptr);
 }

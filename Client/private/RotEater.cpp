@@ -38,7 +38,7 @@ HRESULT CRotEater::Initialize(void* pArg)
 	{
 		m_Desc.pGroupName = L"";
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = -13.f;
+		m_Desc.WorldMatrix._41 = 13.f;
 		m_Desc.WorldMatrix._43 = -13.f;
 	}
 		

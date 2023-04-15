@@ -2447,3 +2447,4 @@ void CModel::Init_AnimIndex(_uint iAnimIndex)
 
 	m_iCurrentAnimIndex = iAnimIndex;
 }
+

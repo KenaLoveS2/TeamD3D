@@ -64,3 +64,8 @@ void CCamera::Free()
 
 	Safe_Release(m_pPipeLine);
 }
+
+void CCamera::LookAt_NoUpDown(_float4 vLookPos)
+{
+	m_pTransformCom->LookAt_NoUpDown(vLookPos);
+}

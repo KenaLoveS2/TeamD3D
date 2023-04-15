@@ -1640,6 +1640,12 @@
     <ClInclude Include="..\public\Respawn_Trigger.h">
       <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BossShaman_Mask.h">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Shaman.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2643,6 +2649,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Respawn_Trigger.cpp">
       <Filter>02.GameObjects\Player\Respawn Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossShaman_Mask.cpp">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Shaman.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

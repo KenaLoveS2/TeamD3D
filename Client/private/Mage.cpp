@@ -48,9 +48,11 @@ HRESULT CMage::Initialize(void* pArg)
 	m_pModelCom->Set_AllAnimCommonType();
 	m_pMageHaneBonePtr = m_pModelCom->Get_BonePtr("char_lf_index_a_jnt");
 
+	m_bRotable = true;
+	m_vRotIconPosOffset = { 0.f, 1.f, 0.f, 0.f };
+
 	Create_Sticks();
 
-	m_bRotable = true;
 	return S_OK;
 }
 
@@ -153,15 +155,14 @@ HRESULT CMage::Late_Initialize(void * pArg)
 }
 
 void CMage::Tick(_float fTimeDelta)
-{
-	// m_bReadySpawn = true;
-	
+{	
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 
+	// m_bReadySpawn = true;
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
