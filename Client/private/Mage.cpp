@@ -450,22 +450,22 @@ HRESULT CMage::SetUp_State()
 		.AddTransition("IDLE to SUMMON", "SUMMON")
 		.Predicator([this]()
 	{
-		return	TimeTrigger(m_fIdletoAttackTime, 3.f) &&  m_bRealAttack && m_bSummonAttack;
+		return	TimeTrigger(m_fIdletoAttackTime, 1.f) &&  m_bRealAttack && m_bSummonAttack;
 	})
 		.AddTransition("IDLE to RANGEDATTACK", "RANGEDATTACK")
 		.Predicator([this]()
 	{
-		return	TimeTrigger(m_fIdletoAttackTime, 3.f) && m_bRealAttack && m_bRangedAttack && m_pFireBullet->IsActiveState() == false;
+		return	TimeTrigger(m_fIdletoAttackTime, 1.f) && m_bRealAttack && m_bRangedAttack && m_pFireBullet->IsActiveState() == false;
 	})
 		.AddTransition("IDLE to CLOSEATTACK", "CLOSEATTACK")
 		.Predicator([this]()
 	{
-		return	TimeTrigger(m_fIdletoAttackTime, 3.f) && m_bRealAttack && m_bCloseAttack;
+		return	TimeTrigger(m_fIdletoAttackTime, 1.f) && m_bRealAttack && m_bCloseAttack;
 	})
 		.AddTransition("IDLE to CLOSEATTACK", "CLOSEATTACK")
 		.Predicator([this]()
 	{
-		return	TimeTrigger(m_fIdletoAttackTime, 3.f) && m_bRealAttack && m_bCloseAttack;
+		return	TimeTrigger(m_fIdletoAttackTime, 1.f) && m_bRealAttack && m_bCloseAttack;
 	})
 		
 		.AddState("SUMMON")

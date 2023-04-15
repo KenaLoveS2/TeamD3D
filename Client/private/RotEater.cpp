@@ -388,7 +388,7 @@ HRESULT CRotEater::SetUp_State()
 		.AddTransition("IDLE to RUN", "RUN")		
 		.Predicator([this]()
 	{
-		return TimeTrigger(m_fIdletoAttackTime, 1.f);
+		return TimeTrigger(m_fIdletoAttackTime, 0.5f);
 	})
 		
 
