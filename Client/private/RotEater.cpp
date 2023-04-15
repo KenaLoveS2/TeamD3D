@@ -58,7 +58,7 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 		PxBoxDesc.eType = BOX_DYNAMIC;
 		PxBoxDesc.pActortag = m_szCloneObjectTag;
 		PxBoxDesc.vPos = _float3(0.f, 0.f, 0.f);
-		PxBoxDesc.vSize = _float3(0.6f, 0.5f, 1.2f);
+		PxBoxDesc.vSize = _float3(0.6f, 1.f, 1.2f);
 		PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxBoxDesc.fDensity = 1.f;
 		PxBoxDesc.fLinearDamping = MONSTER_LINEAR_DAMING;
@@ -70,7 +70,7 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 		PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
 		CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, true, COL_MONSTER));
-		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.5f, 0.f));
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 1.f, 0.f));
 	}
 
 	// ¹«±â

@@ -209,7 +209,6 @@ void CRot_Base::Free()
 
 HRESULT CRot_Base::SetUp_Effects()
 {
-	CEffect_Base* pEffectBase = nullptr;
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	m_pTeleportRot = dynamic_cast<CE_TeleportRot*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_TeleportRot", CUtile::Create_DummyString()));

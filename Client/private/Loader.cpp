@@ -244,6 +244,8 @@ unsigned int	g_LEVEL = 0;
 #include "BowTarget_Trigger.h"
 #include "Respawn_Trigger.h"
 #include "Village_Trigger.h"
+#include "E_P_Level_RiseY.h"
+#include "E_P_Level_Floor.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -2919,6 +2921,14 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_DeadZoneSmallPlace */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneSmallPlace"), CE_P_DeadZone_SmallPlace::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_DeadZone_SmallRange.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaLevel_RiseY */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaLevel_RiseY"), CE_P_Level_RiseY::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_KenaLevelUp2.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaLevel_Floor */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaLevel_Floor"), CE_P_Level_Floor::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_KenaLevelUp3.json"))))
 		return E_FAIL;
 
 #pragma endregion MapObject

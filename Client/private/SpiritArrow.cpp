@@ -258,6 +258,7 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			eState = CSpiritArrow::ARROW_CHARGE;
 			m_vecChild[EFFECT_POSITION]->Set_Active(true);
 			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
+			PlaySound_Charge();
 		}
 // 		else if (iKenaState == (_uint)CKena_State::BOW_INJECT_ADD)
 // 		{
@@ -272,12 +273,16 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 		if (iKenaState == (_uint)CKena_State::BOW_CHARGE_FULL_ADD ||
 			iKenaState == (_uint)CKena_State::BOW_CHARGE_LOOP_ADD ||
 			iKenaState == (_uint)CKena_State::BOW_AIR_CHARGE_LOOP_ADD)
+		{
 			eState = CSpiritArrow::ARROW_READY;
+			PlaySound_Charge_Full();
+		}
 
 		else if (iKenaState == (_uint)CKena_State::BOW_INJECT_ADD)
 		{
 			eState = CSpiritArrow::ARROW_INJECT_CHARGE;
 			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
+			PlaySound_Inject_Charge();
 		}
 
 		else if (iKenaState == (_uint)CKena_State::BOW_RELEASE_ADD ||
@@ -296,10 +301,16 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 
 			m_vecChild[EFFECT_POSITION]->Set_Active(false);
 			//	m_vecChild[EFFECT_TRAIL]->Set_Active(true);
+
+			PlaySound_Fire();
+			PlaySound_Fly();
 		}
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_INJECT_CHARGE)
 	{
+		if (m_fScale == m_fMaxScale)
+			PlaySound_Inject_Charge_Full();
+
 		if (iKenaState == (_uint)CKena_State::BOW_INJECT_RELEASE_ADD)
 		{
 			eState = CSpiritArrow::ARROW_INJECT_FIRE;
@@ -320,6 +331,9 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 
 			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
 			m_vecChild[EFFECT_TRAIL]->Set_Active(true);
+
+			PlaySound_Inject_Fire();
+			PlaySound_Fly();
 		}
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_READY)
@@ -328,6 +342,7 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 		{
 			eState = CSpiritArrow::ARROW_INJECT_CHARGE;
 			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
+			PlaySound_Inject_Charge();
 		}
 		else if (iKenaState == (_uint)CKena_State::BOW_RELEASE_ADD ||
 			iKenaState == (_uint)CKena_State::BOW_AIR_RELEASE_ADD)
@@ -345,6 +360,9 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 
 			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
 			m_vecChild[EFFECT_TRAIL]->Set_Active(true);
+
+			PlaySound_Fire();
+			PlaySound_Fly();
 		}
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_FIRE)
@@ -356,6 +374,8 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			m_vecChild[EFFECT_TRAIL]->Set_Active(false);
 			m_vecChild[EFFECT_POSITION]->Set_Active(false);
 			m_vecChild[EFFECT_HIT]->Set_Active(true);
+
+			PlaySound_Hit();
 		}
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_INJECT_FIRE)
@@ -366,6 +386,8 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			m_vecChild[EFFECT_TRAIL]->Set_Active(false);
 			m_vecChild[EFFECT_POSITION]->Set_Active(false);
 			m_vecChild[EFFECT_HIT]->Set_Active(true);
+
+			PlaySound_Hit();
 		}
 		if (m_fInjectFireTime > 10.f)
 		{
@@ -545,6 +567,114 @@ _int CSpiritArrow::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 	}
 
 	return 0;
+}
+
+void CSpiritArrow::PlaySound_Charge()
+{
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 1.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_0.ogg", 0.3f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_1.ogg", 0.3f, false);
+}
+
+void CSpiritArrow::PlaySound_Charge_Full()
+{
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 11.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_0.ogg", 0.3f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_1.ogg", 0.3f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_2.ogg", 0.3f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_3.ogg", 0.3f, false);
+	else if (iRand == 4)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_4.ogg", 0.3f, false);
+	else if (iRand == 5)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_5.ogg", 0.3f, false);
+	else if (iRand == 6)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_6.ogg", 0.3f, false);
+	else if (iRand == 7)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_7.ogg", 0.3f, false);
+	else if (iRand == 8)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_8.ogg", 0.3f, false);
+	else if (iRand == 9)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_9.ogg", 0.3f, false);
+	else if (iRand == 10)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_10.ogg", 0.3f, false);
+	else if (iRand == 11)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_A_11.ogg", 0.3f, false);
+
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 2.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_B_0.ogg", 0.3f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_B_1.ogg", 0.3f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Charge_Full_B_2.ogg", 0.3f, false);
+}
+
+void CSpiritArrow::PlaySound_Fire()
+{
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 2.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Shoot_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Shoot_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Shoot_2.ogg", 1.f, false);
+}
+
+void CSpiritArrow::PlaySound_Inject_Charge()
+{
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 1.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Arrow_Charge_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Arrow_Charge_0.ogg", 1.f, false);
+}
+
+void CSpiritArrow::PlaySound_Inject_Charge_Full()
+{
+	PlaySound_Charge_Full();
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Arrow_Charge_Full.ogg", 1.f, false);
+}
+
+void CSpiritArrow::PlaySound_Inject_Fire()
+{
+	PlaySound_Fire();
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Arrow_Shoot.ogg", 1.f, false);
+}
+
+void CSpiritArrow::PlaySound_Fly()
+{
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 2.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Aroow_Shot_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Aroow_Shot_1.ogg", 1.f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Aroow_Shot_2.ogg", 1.f, false);
+}
+
+void CSpiritArrow::PlaySound_Hit()
+{
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 2.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Hit_0.ogg", 0.6f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Hit_1.ogg", 0.6f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Hit_2.ogg", 0.6f, false);
+	else if (iRand == 3)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Hit_3.ogg", 0.6f, false);
+	else if (iRand == 4)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Hit_4.ogg", 0.6f, false);
+	else if (iRand == 5)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Arrow_Hit_5.ogg", 0.6f, false);
 }
 
 void CSpiritArrow::Reset()
