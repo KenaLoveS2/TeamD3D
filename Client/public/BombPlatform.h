@@ -56,6 +56,15 @@ private:
 	_float4						m_vMovingQuat;
 	_float						m_fReturnTime = 0.f;
 	_float						m_fTimer = 0.f;
+
+	//
+	_float						m_fTimeDelta = 0.0f;
+	_float4						m_fShineColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float						m_fCycle_Interval = 1.0f;
+	_float						m_fShine_Speed = 3.0f;
+	_float						m_fShine_Width = 3.0f;
+	//
+
 	STATE						m_eCurState = STATE_SLEEP;
 	STATE						m_ePreState = STATE_SLEEP;
 

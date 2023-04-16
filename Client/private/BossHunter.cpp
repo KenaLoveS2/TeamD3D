@@ -463,6 +463,7 @@ void CBossHunter::Push_EventFunctions()
 
 	TurnOnTrail(true, 0.f);
 	TUrnOffTrail(true, 0.f);
+	TurnOnCameraShake(true, 0.0f);
 
 	// Sound CallBack
 	Play_Attack1Sound(true, 0.f);
@@ -2090,6 +2091,19 @@ void CBossHunter::TUrnOffTrail(_bool bIsInit, _float fTimeDelta)
 	}
 	m_pHunterTrail->Set_Active(false);
 	m_pHunterTrail->ResetInfo();
+}
+
+void CBossHunter::TurnOnCameraShake(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::TurnOnCameraShake);
+		return;
+	}
+	CCamera_Player* pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
+	if (pCamera != nullptr)
+		pCamera->Camera_Shake(0.005f, 30);
 }
 
 void CBossHunter::StunEffect_On(_bool bIsInit, _float fTimeDelta)

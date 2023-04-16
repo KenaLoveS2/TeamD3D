@@ -241,6 +241,7 @@ public:
 
 	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
 	void TUrnOffTrail(_bool bIsInit, _float fTimeDelta);
+	void TurnOnCameraShake(_bool bIsInit, _float fTimeDelta);
 
 	virtual void Create_CopySoundKey() override;
 

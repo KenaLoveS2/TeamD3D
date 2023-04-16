@@ -25,6 +25,10 @@ public:
 public:
 	void			Reset();
 
+private:
+	class CBossShaman* m_pShaman = nullptr;
+	_bool	m_bDissolve = false;
+
 public:
 	static  CE_P_DeadZone_SmallPlace* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

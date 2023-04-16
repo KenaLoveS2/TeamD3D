@@ -2507,8 +2507,7 @@ void CKena::TurnOnLvUp_Part1_Floor(_bool bIsInit, _float fTimeDelta)
 		const _tchar* pFuncName = __FUNCTIONW__;
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnLvUp_Part1_Floor);
 		return;
-	}
-
+	}	
 	_float4 vPos = m_pTransformCom->Get_Position();
 	m_mapEffect["KenaLvUp_Floor"]->Set_Effect(vPos, true);
 }
@@ -2521,7 +2520,6 @@ void CKena::TurnOnLvUp_Part2_RiseY(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnLvUp_Part2_RiseY);
 		return;
 	}
-
 	_float4 vPos = m_pTransformCom->Get_Position();
 	m_mapEffect["KenaLvUp_RiseY"]->Set_Effect(vPos, true);
 }

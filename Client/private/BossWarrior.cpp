@@ -12,6 +12,7 @@
 #include "SpiritArrow.h"
 #include "CinematicCamera.h"
 #include "BossRock_Pool.h"
+#include "E_WarriorEyeTrail.h"
 #include "BGM_Manager.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -372,6 +373,8 @@ void CBossWarrior::Push_EventFunctions()
 	TurnOnEnrage_Attck(true, 0.0f);
 
 	TurnOnCamShake(true, 0.0f);
+	TurnOnMotionBlur(true, 0.0f);
+	TurnOffMotionBlur(true, 0.0f);
 
 	Grab_Turn(true, 0.f);
 
@@ -780,7 +783,6 @@ HRESULT CBossWarrior::SetUp_State()
 		m_bBellCall = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(BELL_CALL);
 		m_pModelCom->Set_AnimIndex(BELL_CALL);
-		// ���� ��ȯ
 	})
 		.OnExit([this]()
 	{
@@ -1141,17 +1143,29 @@ HRESULT CBossWarrior::SetUp_Effects()
 		m_mapEffect.emplace("W_Enrageinto", pEffectBase);
 	}
 
-	// Prototype_GameObject_WarriorWeaponAcc
-	//pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorWeaponAcc", L"W_WeaponAcc"));
-	//NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	//pEffectBase->Set_Parent(this);
-	//m_mapEffect.emplace("W_WeaponAcc", pEffectBase);
+	//Prototype_GameObject_WarriorWeaponAcc
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorWeaponAcc", L"W_WeaponAcc"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("W_WeaponAcc", pEffectBase);
 
 	// Prototype_GameObject_WarriorBodyAcc
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorBodyAcc", L"W_Body_P"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	pEffectBase->Set_Parent(this);
 	m_mapEffect.emplace("W_Body_P", pEffectBase);
+
+	// Prototype_GameObject_WarriorEyeTrail
+	for (_uint i = 0; i < 2; ++i)
+	{
+		pCloneTag = CUtile::Create_DummyString(L"W_WarriorEye", i);
+		strMapTag = "W_WarriorEye" + to_string(i);
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorEyeTrail", pCloneTag));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+		pEffectBase->Set_Parent(this);
+		dynamic_cast<CE_WarriorEyeTrail*>(pEffectBase)->Set_Boneprt(i, m_pModelCom->Get_BonePtr("char_mask_jnt"));
+		m_mapEffect.emplace(strMapTag, pEffectBase);
+	}
 
 	return S_OK;
 }
@@ -1164,7 +1178,7 @@ void CBossWarrior::Update_Trail(const char * pBoneTag)
 
 	m_mapEffect["W_Trail"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
 	m_mapEffect["W_MovementParticle"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
-	//m_mapEffect["W_WeaponAcc"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+	m_mapEffect["W_WeaponAcc"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
 
 	if (m_mapEffect["W_Trail"]->Get_Active() == true)
 	{
@@ -1406,22 +1420,22 @@ void CBossWarrior::TurnOnHieroglyph(_bool bIsInit, _float fTimeDelta)
 				_float4 WarriorPos = m_pTransformCom->Get_WorldMatrix().r[3];
 				_float4 vPos;
 				_float	fRange = 1.0f;
-				if (Pair.first == "W_Hieroglyph0") // ���ʾƷ�
+				if (Pair.first == "W_Hieroglyph0") 
 				{
 					vPos = _float4(WarriorPos.x + 0.7f, WarriorPos.y + fRange, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(0);
 				}
-				if (Pair.first == "W_Hieroglyph1") // ���� ��
+				if (Pair.first == "W_Hieroglyph1") 
 				{
 					vPos = _float4(WarriorPos.x + fRange, WarriorPos.y + fRange * 2.f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(1);
 				}
-				if (Pair.first == "W_Hieroglyph2") // ������ �Ʒ�
+				if (Pair.first == "W_Hieroglyph2") 
 				{
 					vPos = _float4(WarriorPos.x - 0.4f, WarriorPos.y + fRange + 0.2f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(2);
 				}
-				if (Pair.first == "W_Hieroglyph3") // ������ ��
+				if (Pair.first == "W_Hieroglyph3") 
 				{
 					vPos = _float4(WarriorPos.x - 0.7f, WarriorPos.y + fRange * 2.5f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(3);
@@ -1610,7 +1624,6 @@ void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["W_DistortionPlane"]->Set_Position(vPosition);
 	m_mapEffect["W_DistortionPlane"]->Set_Active(true);
 	m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_ELEMENTAL2], 0.5f);
-	// ����̶� ������ ���������� ���;� �� 
 
 	m_pBossRockPool->Execute_UpRocks();
 }
@@ -1626,6 +1639,28 @@ void CBossWarrior::TurnOnCamShake(_bool bIsInit, _float fTimeDelta)
 	CCamera_Player* pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
 	if (pCamera != nullptr)
 		pCamera->Camera_Shake(0.005f, 30);
+}
+
+void CBossWarrior::TurnOnMotionBlur(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnMotionBlur);
+		return;
+	}
+	m_pRendererCom->Set_MotionBlur(true);
+}
+
+void CBossWarrior::TurnOffMotionBlur(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOffMotionBlur);
+		return;
+	}
+	m_pRendererCom->Set_MotionBlur(false);
 }
 
 CBossWarrior* CBossWarrior::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1758,7 +1793,6 @@ _int CBossWarrior::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTrigge
 {
 	if (m_bKenaGrab && pTarget && iTriggerIndex == (_uint)ON_TRIGGER_PARAM_TRIGGER && iColliderIndex == (_int)COL_PLAYER)
 	{
-		// Grab �ִϸ��̼� �߿� ĳ���� �ٵ�� �������� �׷��ڵ� Ʈ���Ű� �浹
 	}
 
 	return 0; 

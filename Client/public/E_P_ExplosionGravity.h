@@ -1,6 +1,11 @@
 #pragma once
 #include "Effect_Point_Instancing.h"
 
+BEGIN(Engine)
+class CBone;
+class CModel;
+END
+
 BEGIN(Client)
 
 class CE_P_ExplosionGravity final : public CEffect_Point_Instancing
@@ -15,6 +20,7 @@ public:
 		TYPE_BOSS_ATTACK,
 		TYPE_BOSS_PARRY,
 		TYPE_BOSS_GATHER,
+		TYPE_BOSS_HAND,
 		/* Kena */
 		TYPE_DAMAGE_PULSE,
 		TYPE_KENA_ATTACK,
@@ -60,6 +66,11 @@ public:
 public:
 	void	UpdateParticle(_float4 vPos, _vector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
 	void	UpdateColor(_fvector vColor); /* => Kena State Color Change */
+	void	Set_ParentBone(class CBone* pBone) { 
+		Set_Option(CE_P_ExplosionGravity::TYPE_BOSS_HAND);
+		m_pParentBone = pBone; 
+	}
+
 	HRESULT Reset_Type();
 
 	/* Option Test Tool */
@@ -72,6 +83,9 @@ private:
 	_float4	m_fRandomColor = { 1.f,1.f,1.f,1.f };
 
 	_vector m_vFixPos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+
+	class CBone* m_pParentBone = nullptr;
+	class CModel* m_pParentModel = nullptr;
 
 public:
 	static  CE_P_ExplosionGravity* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

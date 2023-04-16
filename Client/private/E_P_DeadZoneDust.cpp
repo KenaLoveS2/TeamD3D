@@ -33,7 +33,7 @@ HRESULT CE_P_DeadZoneDust::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
-	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	return S_OK;
 }
@@ -48,8 +48,10 @@ HRESULT CE_P_DeadZoneDust::Late_Initialize(void* pArg)
 
 void CE_P_DeadZoneDust::Tick(_float fTimeDelta)
 {
-	if (m_pShaman == nullptr)
-	{
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
+	if (m_pShaman == nullptr){
 		m_pShaman = (CBossShaman*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Monster", L"BossShaman_0");
 	//	m_pTransformCom->Set_Position(m_pShaman->Get_TransformCom()->Get_Position());
 	}
@@ -60,6 +62,8 @@ void CE_P_DeadZoneDust::Tick(_float fTimeDelta)
 		m_bTimer = true;
 		m_bDissolve = true;
 		m_fLife += fTimeDelta;
+
+		TurnOffSystem(m_fLife, 1.f, fTimeDelta);
 	}
 }
 
@@ -121,8 +125,9 @@ void CE_P_DeadZoneDust::Set_Type(TYPE eType)
 		break;
 
 	case Client::CE_P_DeadZoneDust::TYPE_DUST_B:
-		m_eEFfectDesc.iPassCnt = 22;
-		m_eEFfectDesc.vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+		//m_eEFfectDesc.iPassCnt = 22;
+		m_eEFfectDesc.iPassCnt = 20;
+		m_eEFfectDesc.vColor = XMVectorSet(0.25f, 0.25f, 0.25f, 0.7f);
 		m_eEFfectDesc.fFrame[0] = 90.0f;
 
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.2f, 1.f));

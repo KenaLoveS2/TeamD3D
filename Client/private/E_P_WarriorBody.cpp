@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\E_P_WarriorBody.h"
 #include "GameInstance.h"
+#include "BossWarrior.h"
 
 CE_P_WarriorBody::CE_P_WarriorBody(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Point_Instancing(pDevice, pContext)
@@ -48,20 +49,25 @@ void CE_P_WarriorBody::Tick(_float fTimeDelta)
 
 void CE_P_WarriorBody::Late_Tick(_float fTimeDelta)
 {
-	if (m_bTurnOnfirst == false )
+	if (m_bTurnOnfirst == false  )
 	{
-		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.5f, 1.f));
-		m_pVIInstancingBufferCom->Set_RandomSpeeds(1.f, 5.f);
-		
-		m_fHDRValue = 1.5f;
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(8.f, 10.f));
+		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 1.f);
+		m_pTransformCom->RotationFromNow(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), XMConvertToRadians(90.0f));
+
+		_float fColorW = 18 / 255.f;
+		m_eEFfectDesc.vColor = XMVectorSetW(m_eEFfectDesc.vColor, fColorW);
 		m_bTurnOnfirst = true;
 	}
-
- 	if (m_eEFfectDesc.bActive == false)
- 		return;
-
 	if (m_pParent != nullptr)
-		m_pTransformCom->Set_Position(m_pParent->Get_TransformCom()->Get_Position());
+	{
+		_float4 vPos = m_pParent->Get_TransformCom()->Get_Position();
+		vPos.y += 1.5f;
+		m_pTransformCom->Set_Position(vPos);
+	}
+
+	if (dynamic_cast<CBossWarrior*>(m_pParent)->Get_MonsterStatusPtr()->Get_HP() < 1.0f || m_eEFfectDesc.bActive == false)
+		return;
 
 	__super::Late_Tick(fTimeDelta);
 }

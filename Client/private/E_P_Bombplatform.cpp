@@ -52,6 +52,9 @@ HRESULT CE_P_Bombplatform::Late_Initialize(void* pArg)
 
 void CE_P_Bombplatform::Tick(_float fTimeDelta)
 {
+	if (m_pCommonBox)
+		m_pCommonBox->Tick(fTimeDelta);
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
@@ -61,13 +64,12 @@ void CE_P_Bombplatform::Tick(_float fTimeDelta)
 
 	if (m_bDissolve)
 		Update_Particle(fTimeDelta);
-	if (m_pCommonBox)
-		m_pCommonBox->Tick(fTimeDelta);
-
 }
 
 void CE_P_Bombplatform::Late_Tick(_float fTimeDelta)
 {
+	if (m_pCommonBox)m_pCommonBox->Late_Tick(fTimeDelta);
+
 	if (m_bTurnOnfirst == false)
 	{
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(2.f, 5.f));
@@ -86,7 +88,6 @@ void CE_P_Bombplatform::Late_Tick(_float fTimeDelta)
 		m_pCommonBox->Set_Effect(vPos, true);
 	}
 
-	if (m_pCommonBox)m_pCommonBox->Late_Tick(fTimeDelta);
 
 	__super::Late_Tick(fTimeDelta);
 }
@@ -129,6 +130,8 @@ void CE_P_Bombplatform::Reset()
 	m_bDissolve = false;
 
 	m_eEFfectDesc.bActive = false;
+	m_pCommonBox->Set_Active(false);
+	m_pCommonBox->Reset();
 }
 
 CE_P_Bombplatform * CE_P_Bombplatform::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)
