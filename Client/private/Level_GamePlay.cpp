@@ -520,7 +520,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 	//	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_DeadZoneSmallPlace"),
 	//		CUtile::Create_DummyString(L"DeadZoneSmallPlace", i), nullptr), E_FAIL);
 	//}
-	//	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_RuinsKit_BombPlatForm"), L"BombPlatform", nullptr, &pGameObject), E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_RuinsKit_BombPlatForm"), L"BombPlatform", nullptr, &pGameObject), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

@@ -109,6 +109,31 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 void CBombPlatform::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_fTimeDelta += fTimeDelta;
+
+#ifdef _DEBUG
+	ImGui::Begin("CBombPlatform HighLight");
+	static _float4 vColor = m_fShineColor;
+	static _float  fCycle_Interval = m_fCycle_Interval;
+	static _float  fSpeed = m_fShine_Speed;
+	static _float  fWidth = m_fShine_Width;
+
+	if (ImGui::Button("re"))
+		m_pShaderCom->ReCompile();
+
+	ImGui::InputFloat4("m_fShineColor", (_float*)&vColor);
+	ImGui::InputFloat("m_fCycle_Interval", &fCycle_Interval);
+	ImGui::InputFloat("m_fShine_Speed", &fSpeed);
+	ImGui::InputFloat("m_fShine_Width", &fWidth);
+	ImGui::InputFloat("m_fTimeDelta", &m_fTimeDelta);
+
+	m_fShineColor = vColor;
+	m_fCycle_Interval = fCycle_Interval;
+	m_fShine_Speed = fSpeed;
+	m_fShine_Width = fWidth;
+
+	ImGui::End();
+#endif // _DEBUG
 
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
@@ -145,7 +170,13 @@ HRESULT CBombPlatform::Render()
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
+
+		if (m_eCurState == STATE_SLEEP)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 27), E_FAIL);
+		}
+		else
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
 	}
 
 	return S_OK;
@@ -288,6 +319,7 @@ CBombPlatform::STATE CBombPlatform::Check_State()
 		case CBombPlatform::STATE_CLOSE:
 		{
 			_float4		vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			m_pBombplatformEffect->Reset();
 
 			if (vPos == m_vInitPos)
 			{
@@ -416,6 +448,13 @@ HRESULT CBombPlatform::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fShineColor", &m_fShineColor, sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fCycle_Interval", &m_fCycle_Interval, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fShine_Speed", &m_fShine_Speed, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fShine_Width", &m_fShine_Width, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_TimeDelta", &m_fTimeDelta, sizeof(_float)), E_FAIL);
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

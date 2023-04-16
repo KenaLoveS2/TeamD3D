@@ -41,7 +41,10 @@ float4                  g_SecondColor;
 float                   g_SecondRatio =1.f;
 
 
-
+float4                  g_fShineColor;
+float                   g_fCycle_Interval;
+float                   g_fShine_Speed;
+float                   g_fShine_Width;
 
 
 
@@ -996,7 +999,41 @@ PS_OUT PS_MAIN_Dissolve(PS_IN In)
     return Out;
 }//1
 
+PS_OUT PS_MAIN_BOMBPLATFORM(PS_IN In)
+{
+    PS_OUT      Out = (PS_OUT)0;
 
+    vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+    if (0.1f > vDiffuse.a)
+        discard;
+
+    vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+
+    float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+    float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+    vNormal = normalize(mul(vNormal, WorldMatrix));
+
+    //float width = g_fShine_Width * 0.001f * g_fCycle_Interval;
+	//float frequency = floor(sin(In.vProjPos.z * g_fCycle_Interval + g_TimeDelta * g_fShine_Speed * g_fCycle_Interval) + width);
+
+	//Out.vDiffuse = vDiffuse + abs(frequency) * 0.4f;
+
+    // primeira linha
+   float4 frag = lerp(vDiffuse, g_fShineColor,
+        step(.999, (sin(In.vTexUV.x - In.vTexUV.y - g_TimeDelta * g_fShine_Speed))));
+
+    // segunda linha
+    frag = lerp(frag, g_fShineColor,
+        step(.97, (sin(In.vTexUV.x - In.vTexUV.y - (2, 4. + g_TimeDelta) * g_fShine_Speed))));
+
+    Out.vDiffuse = frag;
+
+    Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+    Out.vAmbient = (vector)1.f;
+    return Out;
+}//27
 
 technique11 DefaultTechnique
 {
@@ -1353,4 +1390,16 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_Dissolve();
     } //26
 
+    pass BombPlatform
+    {
+        SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+        SetDepthStencilState(DS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_BOMBPLATFORM();
+    } //27
 }

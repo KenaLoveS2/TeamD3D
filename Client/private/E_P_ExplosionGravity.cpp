@@ -54,8 +54,8 @@ HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
- 	if (m_eType == TYPE_DEFAULT)
- 		Set_OptionTool();
+//  	if (m_eType == TYPE_DEFAULT)
+//  		Set_OptionTool();
 #endif // _DEBUG
 
 	__super::Tick(fTimeDelta);

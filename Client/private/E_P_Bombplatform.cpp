@@ -130,6 +130,8 @@ void CE_P_Bombplatform::Reset()
 	m_bDissolve = false;
 
 	m_eEFfectDesc.bActive = false;
+	m_pCommonBox->Set_Active(false);
+	m_pCommonBox->Reset();
 }
 
 CE_P_Bombplatform * CE_P_Bombplatform::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)
