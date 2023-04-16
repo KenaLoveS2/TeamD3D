@@ -50,6 +50,7 @@ HRESULT CMage::Initialize(void* pArg)
 
 	m_bRotable = true;
 	m_vRotIconPosOffset = { 0.f, 1.f, 0.f, 0.f };
+	m_vFocusIconPosOffset = { 0.f, 3.2f, 0.f, 0.f };
 
 	Create_Sticks();
 

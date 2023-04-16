@@ -14,6 +14,7 @@
 #include "Rot.h"
 #include "Light.h"
 #include "BGM_Manager.h"
+#include "Saiya.h"
 
 CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -101,6 +102,8 @@ HRESULT CBossHunter::Initialize(void* pArg)
 		m_pRot = dynamic_cast<CRot*>(p_game_object);
 	}
 
+	m_bNoUseFocusIcon = true;
+
 	return S_OK;
 }
 
@@ -167,7 +170,9 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 	m_vecEffects[EFFECT_BOWTRAIL1]->Activate(this, "Bow_TopJnt9");
 	m_vecEffects[EFFECT_BOWTRAIL2]->Activate(this, "Bow_BotJoint9");
 	m_vecEffects[EFFECT_AURA_PARTICLE]->Activate(this, "char_rt_clavicle_jnt");
-	
+
+	m_pSaiya = dynamic_cast<CSaiya*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_NPC"), TEXT("Saiya")));
+
 	return S_OK;
 }
 
@@ -559,6 +564,7 @@ HRESULT CBossHunter::SetUp_State()
 		m_bReadySpawn = true;
 		CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_2"));
 		m_pRendererCom->ShootStaticShadow();
+		m_pSaiya->Set_Disappear(true);
 	})
 	.AddTransition("SLEEP to CINEMA", "CINEMA")
 	.Predicator([this]()
@@ -1248,8 +1254,8 @@ HRESULT CBossHunter::SetUp_State()
 	})
 	.Tick([this](_float fTimeDelta)
 	{
-	m_pTransformCom->Chase(m_vFlyTargetPos[m_vFlyTargetIndex], fTimeDelta);
-	if (m_pTransformCom->IsClosed_XZ(m_vFlyTargetPos[m_vFlyTargetIndex], 1.f))
+	m_pTransformCom->Chase(m_vFlyTargetPos[m_vFlyTargetIndex], fTimeDelta, 0.1f, true);
+	if (m_pTransformCom->IsClosed_XYZ(m_vFlyTargetPos[m_vFlyTargetIndex], 1.f))
 	{
 	m_vFlyTargetIndex++;
 	m_bFlyEnd = (m_vFlyTargetIndex == FLY_POS_COUNT);

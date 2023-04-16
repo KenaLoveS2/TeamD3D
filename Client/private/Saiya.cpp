@@ -122,17 +122,25 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 			m_pTransformCom->Set_Look(vLook);
 		}
 	}
+	else if(g_LEVEL == LEVEL_FINAL)
+	{
+		m_pMainCam = dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")));
+		m_iChatIndex = 3;
+	}
 	
 	Setting_Sound();
 
 	m_pCamera_Photo = (CCamera_Photo*)CGameInstance::GetInstance()->Find_Camera(CAMERA_PHOTO_TAG);
 	if (m_pCamera_Photo) m_pCamera_Photo->Set_NpcSaiyaPtr(this);
 
+
 	return S_OK;
 }
 
 void CSaiya::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 	m_iNumKeyFrame = (_uint)m_keyframes.size();
 	Update_Collider(fTimeDelta);
@@ -155,6 +163,8 @@ void CSaiya::Tick(_float fTimeDelta)
 
 void CSaiya::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)
@@ -1029,14 +1039,104 @@ HRESULT CSaiya::SetUp_State()
 
 HRESULT CSaiya::SetUp_StateFinal()
 {
-		m_pFSM = CFSMComponentBuilder().
-		InitState("IDLE")
+		m_pFSM = CFSMComponentBuilder()
+		.InitState("IDLE")
 		.AddState("IDLE")
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+		// 위치 정해줘야함
 	})
-			.Build();
+		.AddTransition("IDLE to READY_PHOTO", "READY_PHOTO")
+		.Predicator([this]()
+	{
+		return m_pCamera_Photo && m_pCamera_Photo->Is_Work();
+	})
+		.AddTransition("IDLE to CHAT", "CHAT")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(5.f) && !m_bChatEnd;
+	})
+
+		.AddState("CHAT")
+		.OnStart([this]()
+	{
+		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+		_bool bVal = true;
+		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][0]);
+		m_iLineIndex++;
+		CGameInstance::GetInstance()->Work_Camera(m_pMainCam->Get_ObjectCloneName());
+		const _float3 vOffset = _float3(0.f, 0.7f, 0.f);
+		const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
+		m_pMainCam->Set_Target(this, CCameraForNpc::OFFSET_FRONT_LERP, vOffset, vLookOffset);
+		Set_PlayerLock(true);
+    })
+	.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+		if (CGameInstance::GetInstance()->Key_Down(DIK_E))
+		{
+			Play_LaughSound();
+			if (m_iLineIndex == (int)m_vecChat[m_iChatIndex].size())
+			{
+				m_iLineIndex++;
+				return;
+			}
+			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+			_bool bVal = true;
+			m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][m_iLineIndex]);
+			m_iLineIndex++;
+		}
+	})
+		.OnExit([this]()
+	{
+		/* Chat End */
+		Set_PlayerLock(false);
+		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+		_bool bVal = false;
+		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
+		m_iLineIndex = 0;
+		//	CAMERA_PHOTO_TAG
+		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
+	})
+		.AddTransition("CHAT to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return IsChatEnd();
+	})
+
+		.AddState("READY_PHOTO")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt_NoUpDown(m_pCamera_Photo->Get_Position());
+	})
+		.AddTransition("READY_PHOTO to PHOTO", "PHOTO")
+		.Predicator([this]()
+	{
+		return m_bPhoto;
+	})
+
+		.AddState("PHOTO")
+		.OnStart([this]()
+	{
+		_uint iPhotoAnimIndex = rand() % (SAIYA_PHOTOPOSE_SITTING - SAIYA_PHOTOPOSE_CHEER) + SAIYA_PHOTOPOSE_CHEER;
+		m_pModelCom->ResetAnimIdx_PlayTime(iPhotoAnimIndex);
+		m_pModelCom->Set_AnimIndex(iPhotoAnimIndex);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt_NoUpDown(m_pCamera_Photo->Get_Position());
+
+		if (m_pModelCom->Get_AnimationFinish())
+			m_bPhotoAnimEnd = true;
+	})
+		.AddTransition("PHOTO to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return !m_bPhoto;
+	})
+
+		.Build();
 
 	return S_OK;
 }
@@ -1324,6 +1424,19 @@ void CSaiya::Play_LaughSound(float fVolume)
 		CGameInstance::GetInstance()->Play_ManualSound(SND_LAUGHTER_7, fVolume, false, SOUND_NPC);
 		m_bSoundCheck[6] = true;
 	}
+}
+
+void CSaiya::Execute_Photo()
+{
+	m_bPhoto = true;
+}
+
+_bool CSaiya::Is_PhotoAnimEnd()
+{
+	if (m_bPhotoAnimEnd == false)
+		return false;
+
+	return true;
 }
 
 CSaiya* CSaiya::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

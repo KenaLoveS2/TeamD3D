@@ -40,7 +40,7 @@ private:
 	_int				m_iRotLevel = 1;
 	_int				m_iCurrentRotCount = 0;
 	_int				m_iRotCountMin = 0;
-	_int				m_iRotCountMax = 2;
+	_int				m_iRotCountMax = 1;
 	ROTSTATE			m_eRotState = RS_END;
 	_int				m_iCrystal = 0;
 

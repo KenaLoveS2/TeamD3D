@@ -297,6 +297,8 @@ private:	/* Effect Event Func */
 	void	TurnOnDashEd(_bool bIsInit, _float fTimeDelta);
 
 	void	TurnOnLvUp(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnLvUp_Part1_Floor(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnLvUp_Part2_RiseY(_bool bIsInit, _float fTimeDelta);
 
 private:	/* Sound Event Func */
 	void	PlaySound_Kena_FootStep(_bool bIsInit, _float fTimeDelta);
@@ -307,6 +309,9 @@ private:	/* Sound Event Func */
 	void	PlaySound_Dodge(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Dodge_End(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Interact_Staff(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Sit(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Rot_Action_Command(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_Rot_Action_Voice(_bool bIsInit, _float fTimeDelta);
 
 	void	PlaySound_Pulse_Intro(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_Pulse_Outro(_bool bIsInit, _float fTimeDelta);
@@ -325,8 +330,10 @@ private:	/* Sound Event Func */
 	void	PlaySound_HeavyAttack_Combo_Charge(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_HeavyAttack_Combo_Staff_Sweep(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_AirAttack_Slam_Release(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_SpinAttack(_bool bIsInit, _float fTimeDelta);
 
 public:
+	void	PlaySound_Rot_Action_Combat_Voice();
 	void	PlaySound_Hit();
 	void	PlaySound_Damage();
 	void	PlaySound_Damage_Pulse();

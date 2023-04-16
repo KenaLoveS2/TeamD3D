@@ -33,9 +33,8 @@ const _double & CMonster::Get_AnimationPlayTime()
 }
 
 _vector CMonster::Get_FocusPosition()
-{
-	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)
-		+ XMVectorSet(0.f, 6.f * m_pTransformCom->Get_vPxPivotScale().y, 0.f, 0.f);
+{	
+	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) + XMLoadFloat4(&m_vFocusIconPosOffset);
 }
 
 HRESULT CMonster::Initialize_Prototype()
@@ -119,6 +118,9 @@ void CMonster::Late_Tick(_float fTimeDelta)
 
 	Call_RotIcon();
 	Call_MonsterFocusIcon();		
+
+	// m_pUIHPBar->Set_Active(true);
+	// m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 }
 
 HRESULT CMonster::Render()
@@ -153,9 +155,13 @@ void CMonster::Imgui_RenderProperty()
 	//	m_bWeaklyHit = true;
 	//ImGui::InputText("RoomIndex", &m_Desc.iRoomIndex);
 
-	float fTemp[3] = { m_vRotIconPosOffset.x, m_vRotIconPosOffset.y, m_vRotIconPosOffset.z };
-	ImGui::DragFloat3("m_vRotIconPosOffset", fTemp, 0.01f, -100.f, 100.0f);
-	memcpy(&m_vRotIconPosOffset, fTemp, sizeof(_float3));
+	float fRotIcon[3] = { m_vRotIconPosOffset.x, m_vRotIconPosOffset.y, m_vRotIconPosOffset.z };
+	ImGui::DragFloat3("Rot Icon Pos Offset", fRotIcon, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vRotIconPosOffset, fRotIcon, sizeof(_float3));
+
+	float fFocusIcon[3] = { m_vFocusIconPosOffset.x, m_vFocusIconPosOffset.y, m_vFocusIconPosOffset.z };
+	ImGui::DragFloat3("Focus Icon Pos Offset", fFocusIcon, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vFocusIconPosOffset, fFocusIcon, sizeof(_float3));	
 }
 
 void CMonster::ImGui_AnimationProperty()
@@ -314,7 +320,7 @@ void CMonster::Call_RotIcon()
 	
 void CMonster::Call_MonsterFocusIcon()
 {
-	if (nullptr == m_pKena || !m_bSpawn || m_bDying || m_bDeath)
+	if (nullptr == m_pKena || !m_bSpawn || m_bDying || m_bNoUseFocusIcon)
 		return;
 
 	if (m_pTransformCom->Calc_Distance_XZ(CGameInstance::GetInstance()->Get_CamPosition()) > 5.f)

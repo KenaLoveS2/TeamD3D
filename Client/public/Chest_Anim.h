@@ -34,15 +34,19 @@ public:
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_AnimationProperty() override;
 	virtual void				ImGui_PhysXValueProperty() override;
-	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption) override;
+	
 	virtual _int				Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 	virtual _int				Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 	virtual _int				Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
+	virtual void			Push_EventFunctions() override;
+	void					Chest_FirstMeetSound(_bool bIsInit, _float fTimeDelta);
+	void					Chest_OpenSound(_bool bIsInit, _float fTimeDelta);
+	void					Chest_CloseSound(_bool bIsInit, _float fTimeDelta);
+	void					Chest_Clear(_bool bIsInit, _float fTimeDelta);
 private:
 	CModel*								m_pModelCom = nullptr;
-	class CInteraction_Com*		m_pInteractionCom = nullptr;
-	class CControlMove*			m_pControlMoveCom = nullptr;
+
 
 private:
 	class CKena*			m_pKena = nullptr;
@@ -58,6 +62,8 @@ private:
 
 	ANIMATION				m_eCurState = CURSED_CLEARED;
 	ANIMATION				m_ePreState = CURSED_CLEARED;
+
+	_bool					m_bTestOnce = false;
 
 private:
 	ANIMATION					Check_State();
@@ -83,7 +89,7 @@ public:
 
 	inline void Set_AnimationPlayFlag(_bool bFlag) { m_bAnimPlayFlag = bFlag; }
 
-	virtual void Push_EventFunctions() override;
+	
 	void Wait_BoxOpened(_bool bIsInit, _float fTimeDelta);
 	HRESULT Create_Rot();
 	HRESULT Setup_RotPosition();

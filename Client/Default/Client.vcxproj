@@ -224,6 +224,8 @@
     <ClInclude Include="..\public\E_P_DeadZone_SmallPlace.h" />
     <ClInclude Include="..\public\E_P_EnvironmentDust.h" />
     <ClInclude Include="..\public\E_P_Level.h" />
+    <ClInclude Include="..\public\E_P_Level_Floor.h" />
+    <ClInclude Include="..\public\E_P_Level_RiseY.h" />
     <ClInclude Include="..\public\E_P_Maple.h" />
     <ClInclude Include="..\public\E_P_Meditation_Spot.h" />
     <ClInclude Include="..\public\E_P_Rain.h" />
@@ -562,6 +564,8 @@
     <ClCompile Include="..\private\E_P_DeadZone_SmallPlace.cpp" />
     <ClCompile Include="..\private\E_P_EnvironmentDust.cpp" />
     <ClCompile Include="..\private\E_P_Level.cpp" />
+    <ClCompile Include="..\private\E_P_Level_Floor.cpp" />
+    <ClCompile Include="..\private\E_P_Level_RiseY.cpp" />
     <ClCompile Include="..\private\E_P_Maple.cpp" />
     <ClCompile Include="..\private\E_P_Meditation_Spot.cpp" />
     <ClCompile Include="..\private\E_P_Rain.cpp" />

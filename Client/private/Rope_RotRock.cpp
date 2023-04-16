@@ -2,7 +2,7 @@
 #include "..\public\Rope_RotRock.h"
 #include "Kena.h"
 #include "LiftRot_Master.h"
-
+#include "BowTarget_Manager.h"
 CRope_RotRock::CRope_RotRock(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CEnviroment_Interaction(pDevice, p_context)
 {
@@ -25,12 +25,13 @@ HRESULT CRope_RotRock::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
 		
 	Push_EventFunctions();
-	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL); 
 
 	m_pModelCom->Set_AllAnimCommonType();
 
 	m_pTransformCom->Set_Speed(1.f);
 	m_pTransformCom->Set_RotatePerSecond(0.5f);
+
 
 	return S_OK;
 }
@@ -64,6 +65,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	m_pTransformCom->Set_PxPivot(m_vInitPivot);
 	const _float4 vPos = _float4(52.287f, 14.616f, 1051.813f, 1.f);
+
 	m_pTransformCom->Set_Position(vPos);
 	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	
@@ -82,6 +84,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 
 	m_EnviromentDesc.iRoomIndex = 5;
 
+
 	return S_OK;
 }
 
@@ -89,7 +92,48 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if(m_pFSM) 
+
+	_bool bBowTargetClear = CBowTarget_Manager::GetInstance()->Check_Group_Hit(L"MAP4_GROUP_0");
+
+	if(bBowTargetClear == true && m_bOnceBowTargetCheck==false)
+	{
+		m_bDissolve = true;
+		m_fDissolveTime = 1.f;
+		m_bBowTargetClear = true;
+		m_bOnceBowTargetCheck = true;
+
+	}
+
+
+	//if(ImGui::Button("m_bDissolve Test"))
+	//{
+	//	m_bDissolve = true;
+
+	//	m_fDissolveTime = 1.f;
+	//	m_bBowTargetClear = true;
+	//	
+
+	//}
+
+	//if(ImGui::Button("TestOnly"))
+	//{
+	//	m_bBowTargetClear = false;		// 삭제하기 
+	//}
+
+
+	if (m_bDissolve == true)
+	{
+		m_fDissolveTime -= fTimeDelta * 0.49f;
+
+		if (m_fDissolveTime <= 0.f)
+		{
+			m_bDissolve = false;
+			
+		}
+	}
+
+
+	if(m_pFSM)		
 		m_pFSM->Tick(fTimeDelta);
 
 	m_pCuteLiftRot->Tick(fTimeDelta);
@@ -101,12 +145,12 @@ void CRope_RotRock::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 	
-	if (m_pRendererCom)
+	if (m_pRendererCom && m_bRenderActive && m_bBowTargetClear)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
-	m_pCuteLiftRot->Late_Tick(fTimeDelta);
+	m_pCuteLiftRot->Late_Tick(fTimeDelta); 
 }
 
 HRESULT CRope_RotRock::Render()
@@ -116,11 +160,9 @@ HRESULT CRope_RotRock::Render()
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		/* �� ���� �׸������� ���̴��� ���׸��� �ؽ��ĸ� �����ϳ�. */
-		//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 15), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 25), E_FAIL);		
 	}
 
 	return S_OK;
@@ -157,6 +199,9 @@ HRESULT CRope_RotRock::SetUp_Components()
 
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Texture_Dissolve", L"Com_Dissolve_Texture",
+		(CComponent**)&m_pDissolveTextureCom), E_FAIL);
+
 	return S_OK;
 }
 
@@ -168,6 +213,26 @@ HRESULT CRope_RotRock::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
+
+	if (m_bDissolve)
+	{
+		_float4 vBaseColor = _float4((66.f / 255.f), (65.f / 255.f), (57.f / 255.f), (255.f / 255.f));
+		if (FAILED(m_pShaderCom->Set_RawValue("g_FirstColor", &vBaseColor, sizeof(_float4)))) return E_FAIL;
+
+		_float4 vBaseColor2 = _float4((255.f / 255.f), (19.f / 255.f), (19.f / 255.f), (242.f / 255.f));
+		if (FAILED(m_pShaderCom->Set_RawValue("g_SecondColor", &vBaseColor2, sizeof(_float4)))) return E_FAIL;
+
+		_float fFirstRatio = 1.f;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_FirstRatio", &fFirstRatio, sizeof(_float)))) return E_FAIL;
+
+		_float fSecondRatio = 0.1f;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_SecondRatio", &fSecondRatio, sizeof(_float)))) return E_FAIL;
+	}
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -227,6 +292,7 @@ void CRope_RotRock::Free()
 
 	__super::Free();
 
+	Safe_Release(m_pDissolveTextureCom);
 	Safe_Release(m_pCuteLiftRot);
 }
 

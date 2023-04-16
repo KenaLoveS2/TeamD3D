@@ -5003,6 +5003,8 @@ void CKena_State::Start_Bomb_Cancel(_float fTimeDelta)
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBomb = false;
 	m_pKena->m_bJump = false;
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Cancel.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Bomb_Cancel_Run_Forward(_float fTimeDelta)
@@ -6684,12 +6686,12 @@ void CKena_State::Start_Level_Up(_float fTimeDelta)
 	_float fMin = 0.0f;
 
 	_int	iRotLevel = m_pStatus->Get_RotLevel();
-	if (iRotLevel == 2)
-		fMin = 2.0f;
-	else if (iRotLevel == 3)
+	if (iRotLevel == 1)
+		fMin = 1.0f;
+	else if (iRotLevel == 2)
 		fMin = 5.0f;
-	else if (iRotLevel == 4)
-		fMin = 8.0f;
+	else if (iRotLevel == 3)
+		fMin = 10.0f;
 
 	_float fRotMax = (_float)m_pStatus->Get_RotMax();
 	_float fRotNow = (_float)m_pStatus->Get_RotCount();

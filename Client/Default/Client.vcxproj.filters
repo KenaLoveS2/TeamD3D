@@ -1711,6 +1711,12 @@
     <ClInclude Include="..\public\UI_NodeQuestReward.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_Level_Floor.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Level_RiseY.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2764,6 +2770,12 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeQuestReward.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Level_Floor.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Level_RiseY.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
