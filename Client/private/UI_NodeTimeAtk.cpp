@@ -40,6 +40,7 @@ HRESULT CUI_NodeTimeAtk::Initialize(void* pArg)
 	}
 
 	//m_bActive = true;
+	m_fTime = 10 * 60.f;
 	return S_OK;
 }
 
@@ -58,7 +59,8 @@ void CUI_NodeTimeAtk::Tick(_float fTimeDelta)
 		m_fTimeAcc += fTimeDelta;
 		if (m_fTimeAcc > 1.f)
 		{
-			m_fTime += 1.f;
+			//m_fTime += 1.f;
+			m_fTime -= 1.f;
 			_int iMin = (_int)m_fTime / 60;
 			_int iSec = (_int)m_fTime - iMin * 60;
 

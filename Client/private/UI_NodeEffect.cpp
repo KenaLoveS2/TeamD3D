@@ -221,8 +221,8 @@ void CUI_NodeEffect::Late_Tick(_float fTimeDelta)
 
 			_float4 vPos = m_pTransformCom->Get_Position();
 			_float3 vScale = m_pTransformCom->Get_Scaled();
-			_float	fXPos = (vPos.x - m_vOriginalSettingScale.x * 0.5f /* Start position */
-				+ m_vOriginalSettingScale.x * m_fTime); /* Last Position */
+			_float	fXPos = (vPos.x - vScale.x * 0.5f /* Start position */
+				+ vScale.x * m_fTime); /* Last Position */
 			_float4	vResult = { fXPos, vPos.y, 0.f, 1.f };
 
 			m_vecParticles[m_iParticleIndex]->Activate(vResult);

@@ -59,11 +59,11 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
+	//	return E_FAIL;
 
 	// if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	// 	return E_FAIL;
@@ -71,8 +71,8 @@ HRESULT CLevel_GamePlay::Initialize()
  	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
  		return E_FAIL;
 
-  	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-  		return E_FAIL;
+  	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+  	//	return E_FAIL;
 
 	// Ready_Thread_CloneObject(TEXT(""));
 	

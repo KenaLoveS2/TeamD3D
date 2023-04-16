@@ -88,31 +88,31 @@ HRESULT CUI_CanvasQuest::Initialize(void * pArg)
 
 void CUI_CanvasQuest::Tick(_float fTimeDelta)
 {
-	if (!m_bBindFinished)
+	//if (!m_bBindFinished)
+	//{
+	//	if (FAILED(Bind()))
+	//	{
+	//		//	MSG_BOX("Bind Failed");
+	//		return;
+	//	}
+	//}
+	 
+	m_bActive = true;
+	m_bOpen = false;
+	m_bClose = false;
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
-		if (FAILED(Bind()))
-		{
-			//	MSG_BOX("Bind Failed");
-			return;
-		}
+		static _float fLine = 0;
+		BindFunction(CUI_ClientManager::QUEST_LINE, false, fLine, L"");
+		fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
 	}
-
-	//m_bActive = true;
-	//m_bOpen = false;
-	//m_bClose = false;
-
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_I))
-	//{
-	//	static _float fLine = 0;
-	//	BindFunction(CUI_ClientManager::QUEST_LINE, false, fLine, L"");
-	//	fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
-	//}
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_U))
-	//{
-	//	static _float fLine = 0;
-	//	BindFunction(CUI_ClientManager::QUEST_CLEAR, false, fLine, L"");
-	//	fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
-	//}
+	if (CGameInstance::GetInstance()->Key_Down(DIK_U))
+	{
+		static _float fLine = 0;
+		BindFunction(CUI_ClientManager::QUEST_CLEAR, false, fLine, L"");
+		fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
+	}
 
 
 	if (!m_bActive)
@@ -430,19 +430,27 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 			MSG_BOX("Try to Contact Wrong Line");
 			return;
 		}
+		//_int iLen = m_Quests[m_iCurQuestIndex]->Get_QuestStringLength((_int)fValue);
+		///* 아이들을 따라가세요 : 1 */
+		//if (iLen > 10)
+		//	static_cast<CUI_NodeEffect*>(m_vecNode[(_int)fValue])->Change_Scale({ iLen - 10, });
 		m_vecEffects[(_int)fValue]->Start_Effect(
-			m_vecNode[(_int)fValue], 328.f, 5.f);
+			m_vecNode[(_int)fValue], 328.f, -2.f);
 
-		//if ((_int)fValue == m_iNumsQuestLine[m_iCurQuestIndex] - 1)
-		//	m_iCurQuestIndex++;
-		///* Quest All Clear */
-		//if (m_iCurQuestIndex >= QUEST_END)
-		//	MSG_BOX("Quest End");
+		if ((_int)fValue == m_iNumsQuestLine[m_iCurQuestIndex] - 1)
+		{
+			m_iCurQuestIndex++;
+			if (m_iCurQuestIndex >= QUEST_END)
+				m_iCurQuestIndex = m_iCurQuestIndex;
+			BindFunction(CUI_ClientManager::QUEST_CLEAR_ALL, false, m_iCurQuestIndex - 1, L"");
+		}
 		break;
 	}
 	case CUI_ClientManager::QUEST_CLEAR_ALL:
-
-		//static_cast<CUI_NodeQuest*>(m_vecNode[(_int)fValue])->Set_Clear();
+		for (_uint i = 0; i < m_iNumsQuestLine[(_int)fValue]; ++i)
+		{
+			static_cast<CUI_NodeQuest*>(m_vecNode[(_int)fValue])->Set_Clear();
+		}
 		break;
 	}
 }

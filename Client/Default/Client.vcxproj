@@ -484,6 +484,8 @@
     <ClInclude Include="..\public\UI_NodeMapFrame.h" />
     <ClInclude Include="..\public\UI_NodeMood.h" />
     <ClInclude Include="..\public\UI_NodeNumRots.h" />
+    <ClInclude Include="..\public\UI_NodeQuestReward.h" />
+    <ClInclude Include="..\public\UI_NodeReward.h" />
     <ClInclude Include="..\public\UI_NodeRotArrow.h" />
     <ClInclude Include="..\public\UI_NodeRotCnt.h" />
     <ClInclude Include="..\public\UI_NodeRotFrontGuage.h" />
@@ -818,6 +820,8 @@
     <ClCompile Include="..\private\UI_NodeMapFrame.cpp" />
     <ClCompile Include="..\private\UI_NodeMood.cpp" />
     <ClCompile Include="..\private\UI_NodeNumRots.cpp" />
+    <ClCompile Include="..\private\UI_NodeQuestReward.cpp" />
+    <ClCompile Include="..\private\UI_NodeReward.cpp" />
     <ClCompile Include="..\private\UI_NodeRotArrow.cpp" />
     <ClCompile Include="..\private\UI_NodeRotCnt.cpp" />
     <ClCompile Include="..\private\UI_NodeRotFrontGuage.cpp" />
