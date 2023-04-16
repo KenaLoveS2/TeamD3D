@@ -95,29 +95,6 @@ void CChest_Anim::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
-//#ifdef _DEBUG
-//	ImGui::Begin("CChest_Anim HighLight");
-//	static _float4 vColor = m_fShineColor;
-//	static _float  fCycle_Interval = m_fCycle_Interval;
-//	static _float  fSpeed = m_fShine_Speed;
-//	static _float  fWidth = m_fShine_Width;
-//
-//	if (ImGui::Button("re"))
-//		m_pShaderCom->ReCompile();
-//
-//	ImGui::InputFloat4("m_fShineColor", (_float*)&vColor);
-//	ImGui::InputFloat("m_fCycle_Interval", &fCycle_Interval);
-//	ImGui::InputFloat("m_fShine_Speed", &fSpeed);
-//	ImGui::InputFloat("m_fShine_Width", &fWidth);
-//	ImGui::InputFloat("m_fTimeDelta", &m_fTimeDelta);
-//
-//	m_fShineColor = vColor;
-//	m_fCycle_Interval = fCycle_Interval;
-//	m_fShine_Speed = fSpeed;
-//	m_fShine_Width = fWidth;
-//
-//	ImGui::End();
-//#endif // _DEBUG
 
 	/*Culling*/
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -562,12 +539,13 @@ void CChest_Anim::Wait_BoxOpened(_bool bIsInit, _float fTimeDelta)
 
 HRESULT CChest_Anim::Create_Rot()
 {
+#ifdef FOR_MAP_GIMMICK
 	CGameObject* p = nullptr;
 	CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_Rot"), CUtile::Create_DummyString(), nullptr, &p);
 	assert(p && "CChest_Anim::Late_Initialize() -> m_pRot is NULL");
 	m_pRot = (CRot*)p;
 	m_pRot->Set_OrdinaryRotFlag(false);
-
+#endif
 	return S_OK;
 }
 

@@ -45,7 +45,6 @@ private:
 	CTexture*			m_pDissolveTextureCom = nullptr;
 
 private:
-	_bool				m_bOnlyTest = false;	// Test
 
 	_int				m_iDeadZoneModelID = -1;	// Model Change
 	_bool				m_bDeadZoneRender = true;

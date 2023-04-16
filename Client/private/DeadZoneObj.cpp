@@ -78,19 +78,8 @@ HRESULT CDeadZoneObj::Late_Initialize(void* pArg)
 
 void CDeadZoneObj::Tick(_float fTimeDelta)
 {
-#ifdef FOR_MAP_GIMMICK
-#else
-	if (!m_bOnlyTest) /*Test*/
-	{
-		Late_Initialize();
-		m_bOnlyTest = true;
-	}
-#endif
 
 	m_fTimeDeltaTest += fTimeDelta;
-
-
-
 
 	 if(m_bChangeModelRender == true)
 	{
