@@ -66,7 +66,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	m_pTransformCom->Set_PxPivot(m_vInitPivot);
-	const _float4 vPos = _float4(52.287f, 14.616f, 1051.813f, 1.f);
+	const _float4 vPos = _float4(30.295f, 14.616f, 1011.667f, 1.f);
 
 	m_pTransformCom->Set_Position(vPos);
 	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);

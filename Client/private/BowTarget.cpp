@@ -120,7 +120,7 @@ void CBowTarget::Late_Tick(_float fTimeDelta)
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
 
-	if (m_pRendererCom != nullptr && m_bRenderActive == true)
+	if (m_pRendererCom != nullptr && m_bRenderActive == true && m_bRender == true)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
@@ -240,7 +240,10 @@ void CBowTarget::Grouping()
 	{
 		if (!lstrcmp(m_szCloneObjectTag, L"4_BowTarget_0") || !lstrcmp(m_szCloneObjectTag, L"4_BowTarget_1")
 			|| !lstrcmp(m_szCloneObjectTag, L"4_BowTarget_2") || !lstrcmp(m_szCloneObjectTag, L"4_BowTarget_3"))
+		{
 			CBowTarget_Manager::GetInstance()->Add_Member(L"MAP4_GROUP_0", this);
+			m_bRender = false;
+		}
 	}
 }
 
