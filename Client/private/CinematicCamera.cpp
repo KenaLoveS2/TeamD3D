@@ -436,7 +436,6 @@ void CCinematicCamera::Imgui_RenderProperty()
 				m_iChatIndex++;			
 			}
 			/* ~Call Chat */
-
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("CinemaUIOff"))
@@ -581,6 +580,9 @@ void CCinematicCamera::Interpolate(float time, _float3& position, _float3& lookA
 			t = (time - m_keyframes[i - 1].fTime) / (m_keyframes[i].fTime - m_keyframes[i - 1].fTime);
 		else
 			t = time - m_keyframes[i - 1].fTime;
+
+		if (t <= 0.f)
+			t = 0.f;
 
 		// Calculate the interpolated position and look-at direction
 		position = CatmullRomInterpolation(m_keyframes[i - 1].vPos, m_keyframes[i].vPos,

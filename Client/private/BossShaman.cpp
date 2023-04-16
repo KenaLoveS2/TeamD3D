@@ -231,7 +231,9 @@ void CBossShaman::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom && m_bStartRender)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if(m_fTeleportDissolveTime <= 0.2f)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 
