@@ -266,7 +266,7 @@ HRESULT CSapling::SetUp_State()
 		.Predicator([this]()
 	{
 		m_fSpawnRange = 10.f;
-		return DistanceTrigger(m_fSpawnRange);
+		return DistanceTrigger(m_fSpawnRange) || m_bGroupAwaken;
 	})
 
 

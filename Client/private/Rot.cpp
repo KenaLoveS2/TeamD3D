@@ -65,6 +65,7 @@ HRESULT CRot::Initialize(void* pArg)
 	m_iEveryRotCount++;
 	m_iObjectProperty = OP_ROT;
 
+	Push_EventFunctions();
 
 	return S_OK;
 }
@@ -108,9 +109,10 @@ void CRot::Tick(_float fTimeDelta)
 	if (m_pRotWisp->Get_Collect())
 	{
 		if (m_pFSM) m_pFSM->Tick(fTimeDelta);
-
+		
 		m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-		m_pModelCom->Play_Animation(fTimeDelta);
+
+		m_pModelCom->Play_Animation(fTimeDelta * m_bPlayAnimation);
 	}
 	else if (m_bWakeUp && m_pTransformCom->Calc_Distance_XYZ(m_pKena->Get_TransformCom()) < 20.f)
 	{
@@ -478,8 +480,7 @@ HRESULT CRot::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_pCamera_Photo->Get_Position());
 
-		if (m_pModelCom->Get_AnimationFinish())
-			m_bPhotoAnimEnd = true;
+		m_bPhotoAnimEnd = !m_bPlayAnimation;
 	})
 		.AddTransition("SELFIE to IDLE", "IDLE")
 		.Predicator([this]()
@@ -611,4 +612,43 @@ _bool CRot::Is_PhotoAnimEnd()
 	}
 
 	return true;
+}
+
+void CRot::Execute_PhotoTeleport()
+{
+	static _bool bTeleportFlag = false;
+
+	if (m_iThisRotIndex != FIRST_ROT || bTeleportFlag) return;
+	
+	_float4 vKenaRight = m_pKenaTransform->Get_State(CTransform::STATE_RIGHT);
+
+	_uint i = 0;
+	for (auto& pRot : m_vecKenaConnectRot)
+	{
+		if(i % 2 == 0)
+			pRot->Set_Position(m_vKenaPos + vKenaRight * (pRot->m_iThisRotIndex + 0.5f));
+		else
+			pRot->Set_Position(m_vKenaPos + vKenaRight * (pRot->m_iThisRotIndex + 0.5f) * -1.f);
+
+		i++;
+	}
+
+	bTeleportFlag = true;
+}
+
+void CRot::Push_EventFunctions()
+{
+	Stop_Animation(true, 0.f);
+}
+
+void CRot::Stop_Animation(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CRot::Stop_Animation);
+		return;
+	}
+
+	m_bPlayAnimation = false;
 }

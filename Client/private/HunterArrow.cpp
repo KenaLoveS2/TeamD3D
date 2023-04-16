@@ -218,7 +218,7 @@ void CHunterArrow::Imgui_RenderProperty()
 		"Bow PivotPos - SINGLE",
 	};
 
-	for (_uint i = 0; i < FIRE_TYPE_END; i++)
+	for (_uint i = 0; i < (_uint)FIRE_TYPE_END; i++)
 	{
 		_float3 vPivot = m_vBowPivotPos[i];
 		float fPos[3] = { vPivot.x, vPivot.y, vPivot.z };
@@ -540,7 +540,7 @@ HRESULT CHunterArrow::SetUp_Effects()
 
 void CHunterArrow::Reset_Effects()
 {
-	for(_uint i=0;i < EFFECT_END;++i)
+	for(_uint i=0;i < (_uint)EFFECT_END;++i)
 	{
 		for (auto& eff : m_vecEffects[i])
 		{
@@ -560,10 +560,13 @@ _int CHunterArrow::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
 		if (m_pHunter && m_pHunter->Get_AnimationIndex() == 29 /*SHOCK_ARROW_ATTACK */)
 		{
 			_float4 vArroaHeadPos = Get_ArrowHeadPos();
-			vArroaHeadPos.y += 2.f;
+			vArroaHeadPos.y = 10.f;
 			m_pSwipesCharged->Set_Effect(vArroaHeadPos, true);
-		}
 
+			CCamera_Player* pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
+			if (pCamera != nullptr)
+				pCamera->Camera_Shake(0.005f, 30);
+		}
 		m_eArrowState = FINISH;
 
 		Play_HitEffect(0.0f);

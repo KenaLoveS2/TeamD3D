@@ -257,6 +257,7 @@ void CChest_Anim::Push_EventFunctions()
 	Chest_OpenSound(true, 0.f);
 	Chest_CloseSound(true, 0.f);
 	Chest_Clear(true, 0.f);
+	Wait_BoxOpened(true, 0.f);
 }
 
 void CChest_Anim::Chest_FirstMeetSound(_bool bIsInit, _float fTimeDelta)

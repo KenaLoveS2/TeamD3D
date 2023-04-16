@@ -55,6 +55,8 @@ HRESULT CMonster_Manager::Group_Active(const wstring& wstrGroupName)
 
 	m_pCurActiveGroup = pMonsterGroup;
 
+	Group_WakeUp();
+
 	return S_OK;
 }
 
@@ -148,6 +150,14 @@ CMonster_Manager::MONSTERGROUP* CMonster_Manager::Find_MonsterGroup(const wstrin
 		return nullptr;
 
 	return (*iter);
+}
+
+void CMonster_Manager::Group_WakeUp()
+{
+	NULL_CHECK_RETURN(m_pCurActiveGroup, );
+
+	for (auto pMonster : m_pCurActiveGroup->vecMember)
+		pMonster->Set_GroupAwaken();
 }
 
 void CMonster_Manager::Free()

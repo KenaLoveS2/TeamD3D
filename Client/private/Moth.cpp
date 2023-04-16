@@ -224,7 +224,7 @@ HRESULT CMoth::SetUp_State()
 		.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fSpawnRange);
+		return DistanceTrigger(m_fSpawnRange) || m_bGroupAwaken;
 	})
 
 
