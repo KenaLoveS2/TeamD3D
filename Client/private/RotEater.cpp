@@ -45,6 +45,8 @@ HRESULT CRotEater::Initialize(void* pArg)
 	m_pModelCom->Set_AllAnimCommonType();
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
+	m_vFocusIconPosOffset = { 0.f, 1.6f, 0.f, 0.f };
+
 	return S_OK;
 }
 
@@ -125,18 +127,13 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 
 void CRotEater::Tick(_float fTimeDelta)
 {
-	//m_bReadySpawn = true;
-	//Update_Collider(fTimeDelta);
-	//m_pModelCom->Play_Animation(fTimeDelta);
-	//return;
-
-
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 
+	// m_bReadySpawn = true;
 	if (m_pFSM)	m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();

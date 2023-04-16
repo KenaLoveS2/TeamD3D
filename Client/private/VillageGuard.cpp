@@ -47,6 +47,7 @@ HRESULT CVillageGuard::Initialize(void* pArg)
 
 	m_bRotable = true;
 	m_vRotIconPosOffset = { 0.f, 1.f, 0.f, 0.f };
+	m_vFocusIconPosOffset = { 0.f, 2.4f, 0.f, 0.f };
 
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("Weapon_Root_Jnt");
 
