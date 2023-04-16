@@ -25,7 +25,7 @@ public:
 	virtual HRESULT			Render()						override;
 
 public:
-	void			Set_Active(_bool bActive) { m_bActive = false; }
+	void			Set_Active(_bool bActive) { m_bActive = bActive; }
 
 private:
 	HRESULT			SetUp_Components();

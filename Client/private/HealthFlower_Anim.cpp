@@ -170,6 +170,19 @@ HRESULT CHealthFlower_Anim::Render()
 	return S_OK;
 }
 
+HRESULT CHealthFlower_Anim::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow())) return E_FAIL;
+	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
+
+	return S_OK;
+}
+
 void CHealthFlower_Anim::ImGui_AnimationProperty()
 {
 	if (ImGui::Button("Reset Anim"))
@@ -415,6 +428,16 @@ HRESULT CHealthFlower_Anim::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CHealthFlower_Anim::SetUp_ShadowShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
 }
 

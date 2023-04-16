@@ -51,7 +51,7 @@ public:
 
 	/* For Animation */
 	virtual void				Update_Child() {}
-	virtual HRESULT			Call_EventFunction(const string& strFuncName) { return S_OK; }
+	virtual HRESULT				Call_EventFunction(const string& strFuncName) { return S_OK; }
 	virtual void				Push_EventFunctions() {};
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) {}
 

@@ -2,6 +2,7 @@
 #include "..\public\Camera_Player.h"
 #include "GameInstance.h"
 #include "Kena.h"
+#include "UI_MousePointer.h"
 
 CCamera_Player::CCamera_Player(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CCamera(pDevice, pContext)
@@ -49,6 +50,16 @@ void CCamera_Player::Set_CamOffset(CAMOFFSET eOffset)
 		m_pKenaTransform->Set_State(CTransform::STATE_UP, vUp);
 		m_pKenaTransform->Set_State(CTransform::STATE_LOOK, vLook);
 	}
+}
+
+void CCamera_Player::Set_MouseFix(_bool bFix)
+{
+	m_bMouseFix = bFix;
+
+	CUI_MousePointer* pMouse = static_cast<CUI_MousePointer*>(CGameInstance::GetInstance()->Get_GameObjectPtr(
+		g_LEVEL, L"Layer_Canvas", L"Clone_MousePointer"));
+	if (pMouse != nullptr)
+		pMouse->Set_Active(!m_bMouseFix);
 }
 
 HRESULT CCamera_Player::Initialize_Prototype()
@@ -478,11 +489,22 @@ void CCamera_Player::Late_Tick(_float fTimeDelta)
 	if (m_bMouseFix)
 	{
 		CUtile::SetClientCursorPos(g_hWnd, g_iWinSizeX >> 1, g_iWinSizeY >> 1);
-
 		::SetCursor(NULL);
+
+		//CUI_MousePointer* pMouse = static_cast<CUI_MousePointer*>(CGameInstance::GetInstance()->Get_GameObjectPtr(
+		//	g_LEVEL, L"Layer_Canvas", L"Clone_MousePointer"));
+		//if (pMouse != nullptr)
+		//	pMouse->Set_Active(false);
 	}
 	else
 		::SetCursor(::LoadCursor(nullptr, IDC_ARROW));
+	{
+		//::SetCursor(NULL);
+		//CUI_MousePointer* pMouse = static_cast<CUI_MousePointer*>(CGameInstance::GetInstance()->Get_GameObjectPtr(
+		//	g_LEVEL, L"Layer_Canvas", L"Clone_MousePointer"));
+		//if (pMouse != nullptr)
+		//	pMouse->Set_Active(true);
+	}
 
 	__super::Late_Tick(fTimeDelta);
 }

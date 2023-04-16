@@ -4,6 +4,12 @@
 
 #include "ControlRoom.h"
 #include "HunterArrow.h"
+#include "E_Warrior_FireSwipe.h"
+#include "Monster.h"
+
+#include "ControlRoom.h"
+
+#include "Delegator.h"
 
 CDeadZoneBossTree::CDeadZoneBossTree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -37,20 +43,31 @@ HRESULT CDeadZoneBossTree::Initialize(void* pArg)
 
 HRESULT CDeadZoneBossTree::Late_Initialize(void* pArg)
 {
-	/*To.DO ÄÝ¶óÀÌ´õ ¸¸µé±â*/
 	_float3 vPos;
 	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
-	_float3 vSize = _float3(1.49f, 14.44f, 1.52f);
+	_float3 vSize = _float3(1.f,1.f,1.f);
 
-	vPos.x += 0.22f;
-	vPos.y += 14.38f;
+	if(m_EnviromentDesc.iRoomIndex ==3 )
+	{
+		vSize = _float3(1.49f, 14.44f, 1.52f);
+		vPos.x += 0.22f;
+		vPos.y += 14.38f;
+	}
+	else if(m_EnviromentDesc.szModelTag  == L"Prototype_Component_Model_BossDissolveGod_Rock02")
+	{
+		vSize = _float3(1.26f, 1.5f, 1.51f);
+	}
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_BossDissolveGod_Rock01")
+	{
+		vSize = _float3(1.f, 1.5f, 1.1f);
+	}
+
 	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
-	// RoomIndex 2¹øÀº ÇöÀç »çÀÌÁî Æ÷½º°¡ ¸ÂÀ½
-	// 1¹ø¸¸ Á¶Á¤ÇÏ¸é‰Î
+	
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	BoxDesc.pActortag = m_szCloneObjectTag;
-	BoxDesc.eType = BOX_STATIC;		// ¿ø·¡´Â ¹Ú½º ½ºÅÂÆ½À¸·Î ¸¸µé¾î¾ßÇÔ
+	BoxDesc.eType = BOX_STATIC;		
 	BoxDesc.vPos = vPos;
 	BoxDesc.vSize = vSize;
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
@@ -67,26 +84,41 @@ HRESULT CDeadZoneBossTree::Late_Initialize(void* pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PULSE_PLATE));
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Static(m_szCloneObjectTag);
 
-	m_pRendererCom->Set_PhysXRender(true);
+
+	CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+
+	pCtrlRoom->m_DeadZoneChangeDelegator.bind(this, &CDeadZoneBossTree::Change_Model);
+
 	return S_OK;
+}
+
+void CDeadZoneBossTree::Change_Model(_int iDissolveTimer)
+{
+	if (!m_bCollOnce)
+	{
+		m_bDissolve = true;
+		m_fDissolveTime = 0.f;
+		m_bBossAttackOn = true;
+		m_bCollOnce = true;
+	}
 }
 
 void CDeadZoneBossTree::Tick(_float fTimeDelta)
 {
 
+	__super::Tick(fTimeDelta);
 #ifdef FOR_MAP_GIMMICK
 
 #else
-	if (!m_bOnlyTest) /*Test*/
+	if(!m_bTestOnce)
 	{
 		Late_Initialize();
-		m_bOnlyTest = true;
+		m_bTestOnce = true;
 	}
 #endif
-
 
 	if (m_bBossAttackOn)
 	{
@@ -116,7 +148,7 @@ void CDeadZoneBossTree::Tick(_float fTimeDelta)
 	
 
 	
-	__super::Tick(fTimeDelta);
+	
 }
 
 void CDeadZoneBossTree::Late_Tick(_float fTimeDelta)
@@ -187,59 +219,79 @@ HRESULT CDeadZoneBossTree::RenderShadow()
 
 void CDeadZoneBossTree::ImGui_PhysXValueProperty()
 {
-	CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
+	//CPhysX_Manager::GetInstance()->Imgui_Render(m_szCloneObjectTag);
 
-	_float4 vCurPos = m_pTransformCom->Get_Position();
-
-
-	static _float fChagePos[3] = { 0.f,0.f,0.f };
-	ImGui::DragFloat3("PX_Pos", fChagePos, 0.01f, 0.1f, 100.0f);
-
-	vCurPos.x += fChagePos[0];
-	vCurPos.y += fChagePos[1];
-	vCurPos.z += fChagePos[2];
-
-	PxRigidActor * pActor = CPhysX_Manager::GetInstance()->Find_Actor(m_szCloneObjectTag);
-
-	CPhysX_Manager::GetInstance()->Set_ActorPosition(pActor, CUtile::Float_4to3(vCurPos));
-
-	if(ImGui::Button("toggle"))
-	{
-		m_bDissolve = !m_bDissolve;
-		m_fDissolveTime = 0.f;
-	}
+	//_float4 vCurPos = m_pTransformCom->Get_Position();
 
 
-	//ImGui::Begin("Dissolve Test");
+	//static _float fChagePos[3] = { 0.f,0.f,0.f };
+	//ImGui::DragFloat3("PX_Pos", fChagePos, 0.01f, 0.1f, 100.0f);
 
-	//ImGui::InputFloat("FirstRatio", &fFirstRatio);
-	//ImGui::InputFloat("SecondRatio", &fSecondRatio);
+	//vCurPos.x += fChagePos[0];
+	//vCurPos.y += fChagePos[1];
+	//vCurPos.z += fChagePos[2];
 
-	//vTestColor1 = Set_ColorValue();
-	//vTestColor2 = Set_ColorValue_1();
+	//PxRigidActor * pActor = CPhysX_Manager::GetInstance()->Find_Actor(m_szCloneObjectTag);
 
-	ImGui::End();
+	//CPhysX_Manager::GetInstance()->Set_ActorPosition(pActor, CUtile::Float_4to3(vCurPos));
+
+	//if(ImGui::Button("toggle"))
+	//{
+	//	m_bDissolve = !m_bDissolve;
+	//	m_fDissolveTime = 0.f;
+	//}
+
+
+	////ImGui::Begin("Dissolve Test");
+
+	////ImGui::InputFloat("FirstRatio", &fFirstRatio);
+	////ImGui::InputFloat("SecondRatio", &fSecondRatio);
+
+	//m_vBaseColor1 = Set_ColorValue();
+	//m_vBaseColor2 = Set_ColorValue_1();
+
+	//ImGui::End();
 
 
 }
 
 _int CDeadZoneBossTree::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	if (pTarget == nullptr)
-		return 0;
+	
 
+	if (m_EnviromentDesc.iRoomIndex == 4)
+	{
+		if (iColliderIndex == TRIGGER_DUMMY || pTarget == nullptr) return 0;
+		_bool bRealAttack = false;
+
+		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+		{
+			/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã½ï¿½*/
+			if (!m_bCollOnce)
+			{
+				m_bDissolve = true;
+				m_fDissolveTime = 0.f;
+				m_bBossAttackOn = true;
+				m_bCollOnce = true;
+				return 0;
+			}
+		}
+		return 0;
+	}
+
+	if (pTarget == nullptr) return 0;
 	/*To DO*/
 	CHunterArrow* pArrow = dynamic_cast<CHunterArrow*>(pTarget);
 
 	if (pArrow == nullptr)
 		return 0;
-
+	
 	if(pArrow->Get_FierType() == CHunterArrow::SINGLE)
 	{
 		return 0;
 	}
 
-	/*º¸½º °­ÇÑ ¾îÅÃ½Ã*/
+	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã½ï¿½*/
 	if (!m_bCollOnce)
 	{
 		m_bDissolve = true;
@@ -248,6 +300,25 @@ _int CDeadZoneBossTree::Execute_Collision(CGameObject* pTarget, _float3 vCollisi
 		m_bCollOnce = true;
 	}
 
+
+	return 0;
+}
+
+_int CDeadZoneBossTree::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	
+	CE_Warrior_FireSwipe* pWarriorComboAttack = dynamic_cast<CE_Warrior_FireSwipe*>(pTarget);
+
+	if (pTarget == nullptr || pWarriorComboAttack == nullptr)
+		return 0;
+
+	if (!m_bCollOnce)
+	{
+		m_bDissolve = true;
+		m_fDissolveTime = 0.f;
+		m_bBossAttackOn = true;
+		m_bCollOnce = true;
+	}
 
 	return 0;
 }
@@ -303,11 +374,11 @@ HRESULT CDeadZoneBossTree::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	/*³ªÁß¿¡  ·¹º§ ÀÎµ¦½º ¼öÁ¤ÇØ¾ß‰Î*/
+	/*ï¿½ï¿½ï¿½ß¿ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 
-	/* For.Com_Model */ 	/*³ªÁß¿¡  ·¹º§ ÀÎµ¦½º ¼öÁ¤ÇØ¾ß‰Î*/
+	/* For.Com_Model */ 	/*ï¿½ï¿½ï¿½ß¿ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½*/
 	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
@@ -340,10 +411,10 @@ HRESULT CDeadZoneBossTree::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
 	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
 
-	vTestColor1 = _float4( (255.f/ 255.f), (19.f/ 255.f), (19.f/255.f), (242.f/255.f));
-	if (FAILED(m_pShaderCom->Set_RawValue("g_FirstColor", &vTestColor1, sizeof(_float4)))) return E_FAIL;
+	m_vBaseColor1 = _float4( (255.f/ 255.f), (19.f/ 255.f), (19.f/255.f), (242.f/255.f));
+	if (FAILED(m_pShaderCom->Set_RawValue("g_FirstColor", &m_vBaseColor1, sizeof(_float4)))) return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_SecondColor", &vTestColor2, sizeof(_float4)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_SecondColor", &m_vBaseColor2, sizeof(_float4)))) return E_FAIL;
 
 	fFirstRatio = 1.f;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_FirstRatio", &fFirstRatio, sizeof(_float)))) return E_FAIL;

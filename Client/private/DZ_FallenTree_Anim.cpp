@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "DZ_FallenTree_Anim.h"
 #include "GameInstance.h"
-#include "ControlMove.h"
+
 #include "ControlRoom.h"
-#include "Interaction_Com.h"
+
 
 CDZ_FallenTree_Anim::CDZ_FallenTree_Anim(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -35,6 +35,8 @@ HRESULT CDZ_FallenTree_Anim::Initialize(void * pArg)
 	
 
 	m_pModelCom->Set_AnimIndex(1);
+
+	Push_EventFunctions();
 	return S_OK;
 }
 
@@ -44,10 +46,7 @@ HRESULT CDZ_FallenTree_Anim::Late_Initialize(void * pArg)
 
 	pCtrlRoom->Add_Gimmick_TrggerObj(m_szCloneObjectTag, this);
 
-	m_pKena = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-
-	if (m_pKena == nullptr)
-		return E_FAIL;
+	
 
 	return S_OK;
 }
@@ -71,15 +70,20 @@ void CDZ_FallenTree_Anim::Tick(_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(0);
 		m_bBossClear = false;
-		
 	}
 
+	
+
+	//
 	if((false==m_bColiderOn && m_pModelCom->Get_AnimIndex() == 0 && m_pModelCom->Get_AnimationFinish()))
 	{
 		m_pModelCom->Set_AnimIndex(2);
-		
+	
+
+#ifdef FOR_MAP_GIMMICK	
 		Create_Colider();
-		
+#endif
+
 		m_bColiderOn = true;
 	}
 
@@ -278,6 +282,23 @@ void CDZ_FallenTree_Anim::Create_Colider()
 	}
 }
 
+void CDZ_FallenTree_Anim::Push_EventFunctions()
+{
+	TreeSound(true, 0.f);
+}
+
+void CDZ_FallenTree_Anim::TreeSound(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CDZ_FallenTree_Anim::TreeSound);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Tree.ogg", 0.3f, false);
+}
+
 void CDZ_FallenTree_Anim::ImGui_AnimationProperty()
 {
 	m_pModelCom->Imgui_RenderProperty();
@@ -411,6 +432,4 @@ void CDZ_FallenTree_Anim::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
-	Safe_Release(m_pControlMoveCom);
-	Safe_Release(m_pInteractionCom);
 }

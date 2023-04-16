@@ -264,9 +264,15 @@ void CEffect_Texture_Base::Imgui_RenderProperty()
 	/* RenderPass */
 	static _int iRenderPass;
 	iRenderPass = m_iRenderPass;
-	const char* renderPass[2] = { "Default", "MaskDefault" };
-	if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
+	const char* renderPass[3] = { "Default", "MaskDefault", "DefaultAlphaTest"};
+	if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 3, 5))
 		m_iRenderPass = iRenderPass;
+
+	if (ImGui::Button("Recompile..."))
+	{
+		m_pRendererCom->ReCompile();
+		m_pShaderCom->ReCompile();
+	}
 
 	/* HDR Intensity (Diffuse) */
 	static _float fAlpha = 1.f;

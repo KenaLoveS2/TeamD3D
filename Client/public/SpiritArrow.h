@@ -77,14 +77,24 @@ private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
-	ARROWSTATE			Check_State();
-	void						Update_State(_float fTimeDelta);
-	virtual _int				Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	ARROWSTATE				Check_State();
+	void					Update_State(_float fTimeDelta);
+	virtual _int			Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+
+private:
+	void					PlaySound_Charge();
+	void					PlaySound_Charge_Full();
+	void					PlaySound_Fire();
+	void					PlaySound_Inject_Charge();
+	void					PlaySound_Inject_Charge_Full();
+	void					PlaySound_Inject_Fire();
+	void					PlaySound_Fly();
+	void					PlaySound_Hit();
 
 public:
 	static CSpiritArrow*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
-	virtual void				Free() override;
+	virtual void			Free() override;
 };
 
 END

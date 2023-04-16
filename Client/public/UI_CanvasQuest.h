@@ -3,7 +3,7 @@
 #include "UI_Canvas.h"
 #include "UI_ClientManager.h"
 
-#define MAX_LINE 4
+//#define MAX_LINE 4
 
 BEGIN(Client)
 class CQuest;
@@ -48,6 +48,7 @@ private:
 private:/* Test */
 	CQuest*		m_Quests[QUEST_END];
 	_int		m_iCurQuestIndex;
+	_int		m_iNumsQuestLine[QUEST_END];
 
 private:/* For Shader */
 	_float		m_fTimeAcc;

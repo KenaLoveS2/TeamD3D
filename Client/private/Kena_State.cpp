@@ -15,6 +15,7 @@
 #include "Kena_Parts.h"
 #include "BossWarrior.h"
 #include "Respawn_Trigger.h"
+#include "BGM_Manager.h"
 
 #define NULLFUNC	(_bool(CKena_State::*)())nullptr
 CKena_State::CKena_State()
@@ -5002,6 +5003,8 @@ void CKena_State::Start_Bomb_Cancel(_float fTimeDelta)
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBomb = false;
 	m_pKena->m_bJump = false;
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Cancel.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Bomb_Cancel_Run_Forward(_float fTimeDelta)
@@ -6214,6 +6217,7 @@ void CKena_State::Start_Take_Damage_Front(_float fTimeDelta)
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_FRONT");
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+	m_pKena->PlaySound_Damage();
 }
 
 void CKena_State::Start_Take_Damage_Back(_float fTImeDelta)
@@ -6221,6 +6225,7 @@ void CKena_State::Start_Take_Damage_Back(_float fTImeDelta)
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_BACK");
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+	m_pKena->PlaySound_Damage();
 }
 
 void CKena_State::Start_Take_Damage_Left(_float fTimeDelta)
@@ -6228,6 +6233,7 @@ void CKena_State::Start_Take_Damage_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_LEFT");
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+	m_pKena->PlaySound_Damage();
 }
 
 void CKena_State::Start_Take_Damage_Right(_float fTimeDelta)
@@ -6235,6 +6241,7 @@ void CKena_State::Start_Take_Damage_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_RIGHT");
 
 	m_pKena->m_pRendererCom->Set_MotionBlur(true);
+	m_pKena->PlaySound_Damage();
 }
 
 void CKena_State::Start_Take_Damage_Heavy_Front(_float fTimeDelta)
@@ -6679,12 +6686,12 @@ void CKena_State::Start_Level_Up(_float fTimeDelta)
 	_float fMin = 0.0f;
 
 	_int	iRotLevel = m_pStatus->Get_RotLevel();
-	if (iRotLevel == 2)
-		fMin = 2.0f;
-	else if (iRotLevel == 3)
+	if (iRotLevel == 1)
+		fMin = 1.0f;
+	else if (iRotLevel == 2)
 		fMin = 5.0f;
-	else if (iRotLevel == 4)
-		fMin = 8.0f;
+	else if (iRotLevel == 3)
+		fMin = 10.0f;
 
 	_float fRotMax = (_float)m_pStatus->Get_RotMax();
 	_float fRotNow = (_float)m_pStatus->Get_RotCount();
@@ -6699,6 +6706,9 @@ void CKena_State::Start_Level_Up(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eRotLvUp = CUI_ClientManager::TOP_ROT_LVUP;
 	_float fLevel = (_float)m_pStatus->Get_RotLevel();
 	m_pStatus->m_StatusDelegator.broadcast(eRotLvUp, fLevel);
+
+	CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_LEVELUP);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_LevelUp", 1.f, false);
 }
 
 void CKena_State::Start_Mask_On(_float fTimeDelta)
@@ -6848,6 +6858,8 @@ void CKena_State::Start_Pulse_Parry(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::TOP_MOOD_PARRY;
 	_float fDefault = 1.f;
 	m_pKena->m_Delegator.broadcast(tag, fDefault);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Parry.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Pulse_Walk(_float fTimeDelta)
@@ -6998,6 +7010,8 @@ void CKena_State::Start_Shield_Impact(_float fTimeDelta)
 	m_pKena->m_bHeavyHit = false;
 
 	m_pKena->m_bPulse = true;
+
+	m_pKena->PlaySound_Damage_Pulse();
 }
 
 void CKena_State::Start_Shield_Impact_Medium(_float fTimeDelta)
@@ -7013,6 +7027,8 @@ void CKena_State::Start_Shield_Impact_Medium(_float fTimeDelta)
 	m_pKena->m_bHeavyHit = false;
 
 	m_pKena->m_bPulse = true;
+
+	m_pKena->PlaySound_Damage_Pulse();
 }
 
 void CKena_State::Start_Shield_Impact_Big(_float fTimeDelta)
@@ -7028,6 +7044,8 @@ void CKena_State::Start_Shield_Impact_Big(_float fTimeDelta)
 	m_pKena->m_bHeavyHit = false;
 
 	m_pKena->m_bPulse = true;
+
+	m_pKena->PlaySound_Damage_Pulse();
 }
 
 void CKena_State::Start_Shield_Break_Front(_float fTimeDelta)

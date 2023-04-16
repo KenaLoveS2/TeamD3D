@@ -22,9 +22,7 @@ HRESULT CNpc::Initialize_Prototype()
 
 HRESULT CNpc::Initialize(void* pArg)
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-
-		CGameObject::GAMEOBJECTDESC		GameObjectDesc;
+	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 
 	if (pArg == nullptr)
@@ -47,14 +45,18 @@ HRESULT CNpc::Initialize(void* pArg)
 		FAILED_CHECK_RETURN(SetUp_StateFinal(), E_FAIL);
 	}
 
-	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-
-	RELEASE_INSTANCE(CGameInstance)
 	return S_OK;
 }
 
 HRESULT CNpc::Late_Initialize(void* pArg)
 {
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+	RELEASE_INSTANCE(CGameInstance)
+
+	if (m_pKena == nullptr)
+		return E_FAIL;
+
 	return S_OK;
 }
 

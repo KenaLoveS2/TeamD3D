@@ -2,6 +2,7 @@
 #include "..\public\UI_FocusNPC.h"
 #include "GameInstance.h"
 #include "Camera.h"
+#include "Saiya.h"
 #include "UI_Event_LoopAct.h"
 
 CUI_FocusNPC::CUI_FocusNPC(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -72,12 +73,12 @@ void CUI_FocusNPC::Late_Tick(_float fTimeDelta)
 		m_bActive = true;
 	else
 		m_bActive = false;
-	
+
+	if (dynamic_cast<CSaiya*>(m_tBBDesc.pOwner)->Get_Disappear())
+		m_bActive = false;
 
 	if (!m_bActive)
 		return;
-
-
 
 	__super::Late_Tick(fTimeDelta);
 

@@ -1,0 +1,64 @@
+{
+    "00. Position": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "01. TextureIndex": 126,
+    "02. RenderPass": 1,
+    "03. Color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "04. HDR Intensity": 2.0,
+    "05. TYPE_UI": true,
+    "10. Type": 2,
+    "11. NumInstance": 70,
+    "12. Term": 0.5,
+    "13. PSize": [
+        100.0,
+        100.0
+    ],
+    "14. SpeedMin": [
+        -100.0,
+        -100.0,
+        0.0
+    ],
+    "15. SpeedMax": [
+        30.0,
+        100.0,
+        0.0
+    ],
+    "16. minPos": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "17. maxPos": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "18. fPlaySpeed": 0.0,
+    "20. Options": [
+        false,
+        false,
+        false
+    ],
+    "21. UVSpeed": [
+        0.0,
+        0.0
+    ],
+    "22. SpriteFrames": [
+        1,
+        1
+    ],
+    "23. SpriteSpeed": 0.0,
+    "24. SelfStop": true,
+    "25. SelfStopTime": 0.5,
+    "26. DissolvePass": 0,
+    "27. DissolveSpeed": 0.0
+}

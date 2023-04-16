@@ -349,6 +349,8 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 			eState = CRotBomb::BOMB_CHARGE;
 			m_pAnimation->State_Animation("CHARGE");
 			m_pPathTrail->Set_Active(true);
+
+			PlaySound_Charge();
 		}
 	}
 	else if (m_eCurState == CRotBomb::BOMB_CHARGE)
@@ -365,6 +367,8 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 			m_pAnimation->State_Animation("INJECT");
 			m_bInject = true;
 			m_pPathTrail->Set_Active(true);
+
+			PlaySound_Inject_Charge();
 		}
 		else if (iKenaState == (_uint)CKena_State::BOMB_RELEASE_ADD)
 		{
@@ -373,6 +377,8 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 			m_fScale = m_fMaxScale;
 			m_pPathTrail->Set_Active(false);
 			m_pPathTrail->Copy_Path(m_PathList);
+
+			PlaySound_Throw();
 		}
 	}
 	else if (m_eCurState == CRotBomb::BOMB_INJECT_CHARGE)
@@ -391,6 +397,8 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 			m_fScale = m_fInjectScale;
 			m_pPathTrail->Set_Active(false);
 			m_pPathTrail->Copy_Path(m_PathList);
+
+			PlaySound_Inject_Throw();
 		}
 	}
 	else if (m_eCurState == CRotBomb::BOMB_READY)
@@ -403,6 +411,8 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 				m_pAnimation->State_Animation("INJECT");
 				m_bInject = true;
 				m_pPathTrail->Set_Active(true);
+
+				PlaySound_Inject_Charge();
 			}
 		}
 		else if (iKenaState == (_uint)CKena_State::BOMB_RELEASE_ADD)
@@ -411,6 +421,11 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 			m_pAnimation->State_Animation("CHARGE_LOOP");
 			m_pPathTrail->Set_Active(false);
 			m_pPathTrail->Copy_Path(m_PathList);
+
+			if (m_pKena->Get_State(CKena::STATE_INJECTBOMB) == false)
+				PlaySound_Throw();
+			else
+				PlaySound_Inject_Throw();
 		}
 	}
 	else if (m_eCurState == CRotBomb::BOMB_RELEASE)
@@ -420,6 +435,8 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 			eState = CRotBomb::BOMB_LAND;
 			m_pAnimation->State_Animation("LAND");
 			m_fBoomTimer = 0.f;
+
+			PlaySound_Land();
 		}
 	}
 	else if (m_eCurState == CRotBomb::BOMB_LAND)
@@ -433,6 +450,8 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 
 			if (m_pKena->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOMB, 2) == true)
 				m_pAnimation->Set_AnimationSpeed(50.f);
+
+			PlaySound_Into_Rumble();
 		}
 
 		if (m_bBoom == true)
@@ -445,6 +464,11 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 				pChild->Set_Active(true);
 				pChild->Set_Position(vPos);
 			}
+
+			if (m_pKena->Get_State(CKena::STATE_INJECTBOMB) == false)
+				PlaySound_Explode();
+			else
+				PlaySound_Inject_Explode();
 		}
 	}
 	else if (m_eCurState == CRotBomb::BOMB_BOOM)
@@ -642,6 +666,78 @@ _int CRotBomb::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIn
 	}
 
 	return 0;
+}
+
+void CRotBomb::PlaySound_Charge()
+{
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 1.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Charge_Main_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Charge_Main_1.ogg", 1.f, false);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Charge_Frog.ogg", 0.5f, false);
+}
+
+void CRotBomb::PlaySound_Cancel()
+{
+}
+
+void CRotBomb::PlaySound_Throw()
+{
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 2.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Throw_0.ogg", 0.8f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Throw_1.ogg", 0.8f, false);
+	else if (iRand == 2)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Throw_2.ogg", 0.8f, false);
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Throw_A.ogg", 0.5f, false);
+
+	iRand = _int(CUtile::Get_RandomFloat(0.f, 1.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Throw_B_0.ogg", 0.2f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Throw_B_0.ogg", 0.2f, false);
+}
+
+void CRotBomb::PlaySound_Land()
+{
+	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 1.9f));
+	if (iRand == 0)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Land_0.ogg", 1.f, false);
+	else if (iRand == 1)
+		CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Land_0.ogg", 1.f, false);
+}
+
+void CRotBomb::PlaySound_Into_Rumble()
+{
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_IntoRumble.ogg", 1.f, false);
+}
+
+void CRotBomb::PlaySound_Explode()
+{
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Bomb_Explode.ogg", 1.f, false);
+}
+
+void CRotBomb::PlaySound_Inject_Charge()
+{
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Bomb_Spawn.ogg", 1.f, false);
+}
+
+void CRotBomb::PlaySound_Inject_Throw()
+{
+	PlaySound_Throw();
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Bomb_Throw.ogg", 1.f, false);
+}
+
+void CRotBomb::PlaySound_Inject_Explode()
+{
+	PlaySound_Explode();
+
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Rot_Bomb_Explode.ogg", 1.f, false);
 }
 
 CRotBomb * CRotBomb::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

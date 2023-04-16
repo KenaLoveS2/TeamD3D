@@ -33,25 +33,33 @@ public:
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
 
+#ifdef _DEBUG
 	_float4				Set_ColorValue();
+#endif
 public:
 	void	Change_Model(_int iDissolveTimer);
 
 private:
 	CModel*				m_pModelCom = nullptr;
-
 	CModel*				m_pModelChangeCom = nullptr;
+	CTexture*			m_pDissolveTextureCom = nullptr;
 
-	_bool				m_bOnlyTest = false;
-	_int				m_iDeadZoneModelID = -1;
-	_float				m_fTimeDeltaTest = 0.f;
+private:
+	_bool				m_bOnlyTest = false;	// Test
 
+	_int				m_iDeadZoneModelID = -1;	// Model Change
 	_bool				m_bDeadZoneRender = true;
-
 	_bool				m_bChangeModelRender = false;
-
 	_bool				m_bChaning_ModelRender = false;
+
+
+	_float				m_fTimeDeltaTest = 0.f;
 	_int				m_iSign = 1;
+
+
+	_float				m_fDissolveTime = 1.f;
+	_bool				m_bDissolve = false;
+
 
 	_float4 m_vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
 	
