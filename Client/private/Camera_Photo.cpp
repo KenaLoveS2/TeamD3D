@@ -102,7 +102,7 @@ void CCamera_Photo::Tick(_float TimeDelta)
 	}
 	case WAIT:
 	{
-		_bool bWaitKena = true;
+		_bool bWaitKena = m_pKena->Is_PhotoAnimEnd();
 		_bool bWaitRot = m_pFirstRot && m_pFirstRot->Is_PhotoAnimEnd();
 		_bool bWaitSaiya = true;
 
@@ -113,9 +113,9 @@ void CCamera_Photo::Tick(_float TimeDelta)
 	}
 	case PHOTO_TIME:
 	{
-		// UI ÆäÀÌµå ¾Æ¿ô ³¡³­´ÙÀ½¿¡
+		// UI ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Æ¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		m_pRendererCom->Set_GrayScale(true);
-		// UI ÆäÀÌµå ÀÎ
+		// UI ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½
 		break;
 	}
 	case PHOTO_END:
