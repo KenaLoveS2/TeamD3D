@@ -151,9 +151,9 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 	{
 		if (m_pSelected != nullptr)
 		{
-			//if(CSkillInfo::CHECK_UNLOCKED_AVAILABLE == 
-			//	m_pSkills[m_iPickedIndex / 5]
-			//	->Check(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level(), m_pPlayer))
+			if(CSkillInfo::CHECK_UNLOCKED_AVAILABLE == 
+				m_pSkills[m_iPickedIndex / 5]
+				->Check(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level(), m_pPlayer))
 			{
 				m_bPick = false;
 				CUI_ClientManager::GetInstance()->Call_ConfirmWindow(L"이 업그레이드를 잠금 해제하시겠습니까?", true, this);	

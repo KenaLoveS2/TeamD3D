@@ -58,6 +58,10 @@ private:/* For Shader */
 	STATE		m_eState;
 
 	_float		m_fTmpAcc;
+
+private:
+	_bool		m_bFollowAlpha;
+
 private:
 	vector<CUI_NodeEffect*>	m_vecEffects;
 

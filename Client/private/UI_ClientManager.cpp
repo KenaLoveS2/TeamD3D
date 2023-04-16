@@ -29,6 +29,7 @@
 //#include "UI_NodeQuestMain.h"
 //#include "UI_NodeQuestSub.h"
 #include "UI_NodeQuest.h"
+#include "UI_NodeQuestReward.h"
 #include "Quest.h"
 
 /* CanvasUpgrade */
@@ -584,7 +585,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	/*				For. InfoWindow				*/
 	/********************************************/
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_InfoWindow"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/04. Menu/Information_0.png")))))
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/04. Menu/Information/Information_%d.png"), 5))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_InfoWindow"); // 68
 
@@ -930,6 +931,11 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Quest"), CUI_NodeQuest::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Quest");
+
+	/* QuestREward */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_QuestReward"), CUI_NodeQuestReward::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_QuestReward");
 
 	/* Real Quest Object (test)*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Quest"), CQuest::Create(pDevice, pContext))))

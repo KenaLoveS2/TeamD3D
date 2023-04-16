@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "UI_NodeVictory.h"
 #include "UI_NodeReward.h"
+#include "Kena.h"
+#include "Kena_Status.h"
 
 CUI_CanvasMiniGame::CUI_CanvasMiniGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -109,6 +111,11 @@ void CUI_CanvasMiniGame::Tick(_float fTimeDelta)
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_SPACE))
 	{
+		/* Temp code  */
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+		if (pKena != nullptr)
+			pKena->Get_Status()->Set_Crystal(pKena->Get_Status()->Get_Crystal() + m_iResult);
+
 		m_bActive = false;
 	}
 
@@ -137,7 +144,7 @@ void CUI_CanvasMiniGame::Tick(_float fTimeDelta)
 		if (m_bCountTime)
 		{
 			m_iTimeLeft -= 5;
-			m_iResult += 5 * 50;
+			m_iResult += 5 * 5;
 			if (m_iTimeLeft <= 0)
 			{
 				m_iTimeLeft = 0;
@@ -149,7 +156,7 @@ void CUI_CanvasMiniGame::Tick(_float fTimeDelta)
 		if (m_bCountHit)
 		{
 			m_iHitCount -= 1;
-			m_iResult += 1 * 100;
+			m_iResult += 1 * 10;
 			if (m_iHitCount <= 0)
 			{
 				m_iHitCount = 0;
@@ -442,6 +449,12 @@ HRESULT CUI_CanvasMiniGame::SetUp_ShaderResources()
 
 void CUI_CanvasMiniGame::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 {
+	switch (eType)
+	{
+	case CUI_ClientManager::MINIGAME_:
+		break;
+	}
+
 }
 
 void CUI_CanvasMiniGame::CalculateFunction(_int iState)

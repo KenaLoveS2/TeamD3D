@@ -5,7 +5,9 @@
 #include "UI_NodeQuest.h"
 #include "Kena.h"
 #include "UI_NodeEffect.h"
+#include "UI_NodeQuestReward.h"
 #include "Saiya.h"
+#include "Kena_Status.h"
 
 CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -16,6 +18,7 @@ CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	, m_fAlpha(0.f)
 	, m_eState(STATE_NORMAL)
 	, m_fTmpAcc(0.f)
+	, m_bFollowAlpha(false)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
 	{
@@ -33,6 +36,7 @@ CUI_CanvasQuest::CUI_CanvasQuest(const CUI_CanvasQuest & rhs)
 	, m_fAlpha(0.f)
 	, m_eState(STATE_NORMAL)
 	, m_fTmpAcc(0.f)
+	, m_bFollowAlpha(false)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
 	{
@@ -101,17 +105,24 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 	m_bOpen = false;
 	m_bClose = false;
 
+	if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+	{
+		m_iCurQuestIndex = 0;
+		m_bFollowAlpha = false;
+		for (_uint i = 0; i < (_uint)m_vecNode.size() - 1; ++i)
+			m_vecNode[i]->Set_Active(false);
+	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
 		static _float fLine = 0;
 		BindFunction(CUI_ClientManager::QUEST_LINE, false, fLine, L"");
-		fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
+		fLine = fmod(fLine + 1.f, (_float)m_iNumsQuestLine[m_iCurQuestIndex]);
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_U))
 	{
 		static _float fLine = 0;
 		BindFunction(CUI_ClientManager::QUEST_CLEAR, false, fLine, L"");
-		fLine = fmod(fLine + 1.f, m_iNumsQuestLine[m_iCurQuestIndex]);
+		fLine = fmod(fLine + 1.f, (_float)m_iNumsQuestLine[m_iCurQuestIndex]);
 	}
 
 
@@ -145,6 +156,22 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 	}
 	else
 		m_eState = STATE_NORMAL;
+
+	if (static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->Get_Alpha() > 0.8f)
+	{
+		for (_uint i = 0; i < (_uint)m_vecNode.size() - 1; ++i)
+			m_vecNode[i]->Set_Active(false);
+
+		if (m_iCurQuestIndex == QUEST_END)
+			m_bFollowAlpha = true;
+	}
+
+	if (m_bFollowAlpha == true)
+	{
+		m_fAlpha = static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->Get_Alpha();
+		if (m_fAlpha <= 0.f)
+			m_bActive = false;
+	}
 
 	/*test */
 	//for (_uint i = 0; i < QUEST_END; ++i)
@@ -305,6 +332,21 @@ HRESULT CUI_CanvasQuest::Ready_Nodes()
 		}
 	}
 
+	/* Reward */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		string strCloneTag = "Node_QuestReward";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_UI_Node_QuestReward", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		CGameInstance::GetInstance()->Add_String(wstrCloneTag);
+	}
+
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -416,6 +458,9 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 		break;
 
 	case CUI_ClientManager::QUEST_LINE:
+		if (m_iCurQuestIndex >= QUEST_END)
+			return;
+
 		if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
 		{
 			MSG_BOX("Try to Contact Wrong Line");
@@ -424,10 +469,11 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 		m_vecNode[m_iCurQuestIndex * m_iNumsQuestLine[m_iCurQuestIndex] + (_int)fValue]->Set_Active(true);
 		break;
 	case CUI_ClientManager::QUEST_CLEAR:
-	{
+	{		
+		if (m_iCurQuestIndex >= QUEST_END)
+			return;
 		if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
 		{
-			MSG_BOX("Try to Contact Wrong Line");
 			return;
 		}
 		//_int iLen = m_Quests[m_iCurQuestIndex]->Get_QuestStringLength((_int)fValue);
@@ -441,16 +487,20 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 		{
 			m_iCurQuestIndex++;
 			if (m_iCurQuestIndex >= QUEST_END)
-				m_iCurQuestIndex = m_iCurQuestIndex;
-			BindFunction(CUI_ClientManager::QUEST_CLEAR_ALL, false, m_iCurQuestIndex - 1, L"");
+				m_iCurQuestIndex = QUEST_END;
+			BindFunction(CUI_ClientManager::QUEST_CLEAR_ALL, false, 1.f, L"");
 		}
 		break;
 	}
 	case CUI_ClientManager::QUEST_CLEAR_ALL:
-		for (_uint i = 0; i < m_iNumsQuestLine[(_int)fValue]; ++i)
-		{
-			static_cast<CUI_NodeQuest*>(m_vecNode[(_int)fValue])->Set_Clear();
-		}
+
+		static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->RewardOn();
+		
+		/* Temp code  */
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+		if (pKena != nullptr)
+			pKena->Get_Status()->Set_Karma(pKena->Get_Status()->Get_Karma() + 500);
+			
 		break;
 	}
 }

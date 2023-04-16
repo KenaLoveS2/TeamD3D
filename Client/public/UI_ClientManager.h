@@ -46,7 +46,7 @@ public:
 
 		INFO_, 
 
-		MINIGAME_,
+		MINIGAME_, 
 
 		/*Must Be Last ... ! */
 		UI_CONFIRM,
