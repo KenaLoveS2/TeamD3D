@@ -70,7 +70,6 @@ HRESULT CWorldTrigger::Late_Initialize(void* pArg)
 
 void CWorldTrigger::Tick(_float fTimeDelta)
 {
-	
 	CGameObject::Tick(fTimeDelta);
 
 	m_pRendererCom->Set_PhysXRender(true);
@@ -181,6 +180,7 @@ _int CWorldTrigger::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPo
 
 void CWorldTrigger::BroadCast_WorldTrigger(_uint iValue)
 {
+	CPostFX::GetInstance()->BlurCapture();
 	CUI_ClientManager::UI_PRESENT present = CUI_ClientManager::INFO_;
 	m_nMatNum = iValue;
 	_float fValue = static_cast<_float>(m_nMatNum);
