@@ -126,7 +126,9 @@ void CSapling::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom && m_bReadySpawn)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if (m_fDissolveTime <= 0.2f)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 
@@ -266,7 +268,7 @@ HRESULT CSapling::SetUp_State()
 		.Predicator([this]()
 	{
 		m_fSpawnRange = 10.f;
-		return DistanceTrigger(m_fSpawnRange);
+		return DistanceTrigger(m_fSpawnRange) || m_bGroupAwaken;
 	})
 
 
@@ -329,7 +331,7 @@ HRESULT CSapling::SetUp_State()
 		.AddTransition("IDLE to ALERTED", "ALERTED")
 		.Predicator([this]()
 	{
-		return TimeTrigger(m_fIdletoAttack, 3.f);
+		return TimeTrigger(m_fIdletoAttack, 1.5f);
 	})
 		
 		.AddState("TAKEDAMAGE_OR_PARRIED")

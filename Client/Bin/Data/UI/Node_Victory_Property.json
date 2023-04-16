@@ -1,1 +1,31 @@
-{"DiffuseTextureIndex":71,"Duration":0.0,"FramesX":[4],"FramesY":[8],"Loop":false,"MaskTextureIndex":-1,"localMatrix":[400.0,0.0,0.0,0.0,0.0,200.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,233.76600646972656,0.0,1.0],"renderPass":4}
+{
+    "DiffuseTextureIndex": 71,
+    "Duration": 0.0,
+    "FramesX": [
+        4
+    ],
+    "FramesY": [
+        8
+    ],
+    "Loop": false,
+    "MaskTextureIndex": -1,
+    "localMatrix": [
+        400.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        200.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        300.0,
+        0.0,
+        1.0
+    ],
+    "renderPass": 4
+}

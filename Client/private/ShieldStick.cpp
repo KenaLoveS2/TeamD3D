@@ -125,7 +125,9 @@ void CShieldStick::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom && m_bReadySpawn)
 	{	
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if(m_fDissolveTime <= 0.2f)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 
 		m_pWeapon->Late_Tick(fTimeDelta);
@@ -237,7 +239,7 @@ HRESULT CShieldStick::SetUp_State()
 		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fSpawnRange);
+		return DistanceTrigger(m_fSpawnRange) || m_bGroupAwaken;
 	})
 		
 		.AddState("READY_SPAWN")

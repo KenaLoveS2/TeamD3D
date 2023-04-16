@@ -44,6 +44,8 @@ CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	, m_bStateLock(false)
 	, m_pUI_FocusMonster(nullptr)
 	, m_pTargetMonster(nullptr)
+	, m_bQuestOn(false)
+	, m_iHitTarget(0)
 {
 }
 
@@ -53,6 +55,8 @@ CKena::CKena(const CKena & rhs)
 	, m_bStateLock(false)
 	, m_pUI_FocusMonster(nullptr)
 	, m_pTargetMonster(nullptr)
+	, m_bQuestOn(false)
+	, m_iHitTarget(0)
 {
 }
 
@@ -506,6 +510,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	{
 		const _float4 vPosFloat4 = _float4(151.7f, 22.2f, 609.5f, 1.f);
 		m_pTransformCom->Set_Position(vPosFloat4);
+		m_bQuestOn = true;
 	}
 	else
 	{
@@ -521,8 +526,11 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	pStaff->Late_Initialize(pArg);
 
 	m_pCamera_Photo = (CCamera_Photo*)CGameInstance::GetInstance()->Find_Camera(CAMERA_PHOTO_TAG);
-	if (m_pCamera_Photo) m_pCamera_Photo->Set_KenaPtr(this);
-
+	if (m_pCamera_Photo)
+	{
+		m_pCamera_Photo->Set_KenaPtr(this);
+		m_pCamera_Photo->Set_FirstRotPtr(m_pFirstRot);
+	}
 	return S_OK;
 }
 
@@ -530,23 +538,22 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(50);
+	m_pKenaStatus->Set_Attack(1000);
 	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
 	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
 	_float	fTimeRate = Update_TimeRate();
-	
+
 	__super::Tick(fTimeDelta);
 
-	LiftRotRockProc();
-
-	ImGui::Checkbox("StateFalse",&m_bStateLock);
-
-	if(ImGui::Button("HunterPos"))
+	if (m_bQuestOn)
 	{
-		const _float4 vPos = _float4(89.f, 6.f, 441.f, 1.f);
-		m_pTransformCom->Set_Position(vPos);
+		/* Quest 2 Open */
+		m_bQuestOn = false;
 	}
+
+
+	LiftRotRockProc();
 
 	Check_Damaged();
 
@@ -561,6 +568,15 @@ void CKena::Tick(_float fTimeDelta)
 	Update_Collider(fTimeDelta);
 
 	Check_TimeRate_Changed(fTimeDelta, fTimeRate);
+
+	if(m_bPhotoReady)
+	{
+		_float4 vPos = _float4(-34.7f, 20.4f, 1231.1f, 1.f);
+		m_pTransformCom->Set_Position(vPos);
+		CRot::Set_RotUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		m_pFirstRot->Execute_PhotoTeleport();
+
+	}
 
 	Play_Animation(fTimeDelta, fTimeRate);
 
@@ -2363,12 +2379,13 @@ void CKena::TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin2_jnt");
+	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin2_jnt");
 	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
 
 	_matrix matIntoAttack = m_mapEffect["InteractStaff"]->Get_TransformCom()->Get_WorldMatrix();
 	matIntoAttack.r[3] = matWorldSocket.r[3];
+	matIntoAttack.r[3] = XMVectorSetY(matIntoAttack.r[3], XMVectorGetY(matIntoAttack.r[3]) + 0.2f);
 	m_mapEffect["InteractStaff"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
 	m_mapEffect["InteractStaff"]->Set_Active(true);
 }
@@ -3562,6 +3579,14 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 				_float4		vPos = matOutPortal.Translation() + vOutLook * 0.5f;
 				vPos.y -= 4.f;
 				m_pTransformCom->Set_Position(vPos);
+
+				/* Quest 1 - 3 Clear */
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+				_bool bStart = true;
+				_float fIdx = 3;
+				wstring wstr = L"";
+				m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
+				CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 			}
 		}
 

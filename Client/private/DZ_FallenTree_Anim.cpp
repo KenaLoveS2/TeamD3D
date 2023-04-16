@@ -87,12 +87,6 @@ void CDZ_FallenTree_Anim::Tick(_float fTimeDelta)
 		m_bColiderOn = true;
 	}
 
-	if(ImGui::Button("Fallen Tree Test"))
-	{
-		m_bBossClear = true;
-		m_bColiderOn = false;
-	}
-
 	/*Culling*/
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();

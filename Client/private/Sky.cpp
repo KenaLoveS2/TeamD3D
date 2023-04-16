@@ -71,7 +71,6 @@ void CSky::Tick(_float fTimeDelta)
 		_float4 vDiffuse = _float4(g_fSkyColorIntensity, g_fSkyColorIntensity, g_fSkyColorIntensity, 1.f);
 		CGameInstance::GetInstance()->Get_Light(0)->Set_Diffuse(vDiffuse);
 	}
-
 	if(g_LEVEL == LEVEL_GIMMICK)
 	{
 		m_pRendererCom->Set_LightShaft(false);

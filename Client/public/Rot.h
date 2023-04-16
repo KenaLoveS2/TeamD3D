@@ -46,6 +46,9 @@ private:
 	_bool m_bPhoto = false;
 	_bool m_bPhotoAnimEnd = false;
 	_bool m_bTemp = false;
+
+	_bool m_bPlayAnimation = true;
+
 private:
 	CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CRot(const CRot& rhs);
@@ -98,6 +101,10 @@ public:
 
 	void Execute_Photo();
 	_bool Is_PhotoAnimEnd();
+	void Execute_PhotoTeleport();
+	
+	virtual void Push_EventFunctions();
+	void Stop_Animation(_bool bIsInit, _float fTimeDelta);
 };
 
 END

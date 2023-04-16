@@ -3,6 +3,8 @@
 #include "Kena.h"
 #include "LiftRot_Master.h"
 #include "BowTarget_Manager.h"
+#include "WorldTrigger.h"
+
 CRope_RotRock::CRope_RotRock(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CEnviroment_Interaction(pDevice, p_context)
 {
@@ -64,7 +66,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	m_pTransformCom->Set_PxPivot(m_vInitPivot);
-	const _float4 vPos = _float4(52.287f, 14.616f, 1051.813f, 1.f);
+	const _float4 vPos = _float4(30.295f, 14.616f, 1011.667f, 1.f);
 
 	m_pTransformCom->Set_Position(vPos);
 	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -104,17 +106,13 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 
 	}
 
-
 	//if(ImGui::Button("m_bDissolve Test"))
 	//{
 	//	m_bDissolve = true;
-
 	//	m_fDissolveTime = 1.f;
 	//	m_bBowTargetClear = true;
 	//	
-
 	//}
-
 	//if(ImGui::Button("TestOnly"))
 	//{
 	//	m_bBowTargetClear = false;		// 삭제하기 
@@ -128,10 +126,13 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 		if (m_fDissolveTime <= 0.f)
 		{
 			m_bDissolve = false;
-			
+
+			CWorldTrigger* pWorldTrigger = dynamic_cast<CWorldTrigger*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Effect", L"UIWorldTrigger"));
+			assert(pWorldTrigger != nullptr && "CGimmick_EnviObj::Tick(_float fTimeDelta)");
+
+			pWorldTrigger->BroadCast_WorldTrigger(5);
 		}
 	}
-
 
 	if(m_pFSM)		
 		m_pFSM->Tick(fTimeDelta);

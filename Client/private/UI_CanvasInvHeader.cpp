@@ -12,12 +12,14 @@
 CUI_CanvasInvHeader::CUI_CanvasInvHeader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
 	, m_pPlayer(nullptr)
+	, m_bFirstOpen(false)
 {
 }
 
 CUI_CanvasInvHeader::CUI_CanvasInvHeader(const CUI_CanvasInvHeader & rhs)
 	: CUI_Canvas(rhs)
 	, m_pPlayer(nullptr)
+	, m_bFirstOpen(false)
 {
 }
 
@@ -80,6 +82,24 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 
 		if (nullptr != m_pPlayer->Get_CameraPlayer())
 			m_pPlayer->Get_CameraPlayer()->Set_MouseFix(true);
+
+
+		if (!m_bFirstOpen && g_LEVEL == LEVEL_TESTPLAY)
+		{
+			if (false == m_pPlayer->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOMB, 0))
+			{
+				/* Quest 0 - 3 Clear */
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+				_bool bStart = true;
+				_float fIdx3 = 3;
+				wstring wstr = L"";
+				m_pPlayer->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx3, wstr);
+				CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+
+			}
+			m_bFirstOpen = true;
+		}
+
 
 		return;
 	}

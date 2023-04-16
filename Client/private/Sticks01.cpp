@@ -180,7 +180,9 @@ void CSticks01::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom && m_bReadySpawn)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if (m_fDissolveTime <= 0.2f)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -350,7 +352,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("RESURRECT to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fSpawnRange) || m_bSpawnByMaster;
+		return DistanceTrigger(m_fSpawnRange) || m_bSpawnByMaster || m_bGroupAwaken;
 		// return AnimFinishChecker(RESURRECT) && m_bSpawn;
 	})
 

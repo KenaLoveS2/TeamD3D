@@ -9,6 +9,7 @@
 #include "E_RectTrail.h"
 #include "E_P_ExplosionGravity.h"
 #include "BowTarget_Manager.h"
+#include "Kena.h"
 
 CBowTarget::CBowTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnviromentObj(pDevice, pContext)
@@ -120,7 +121,7 @@ void CBowTarget::Late_Tick(_float fTimeDelta)
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
 
-	if (m_pRendererCom != nullptr && m_bRenderActive == true)
+	if (m_pRendererCom != nullptr && m_bRenderActive == true && m_bRender == true)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
@@ -204,7 +205,14 @@ _int CBowTarget::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, 
 	{
 		_bool	bWork = (m_eCurState == CBowTarget::LAUNCH || m_eCurState == CBowTarget::LOOP || m_eCurState == CBowTarget::FAIL_LOOP);
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW && bWork == true)
+		{
 			m_bArrowHit = true;
+
+			CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+
+			if (pKena != nullptr)
+				pKena->Plus_TargetHit();
+		}
 	}
 
 	return 0;
@@ -240,7 +248,10 @@ void CBowTarget::Grouping()
 	{
 		if (!lstrcmp(m_szCloneObjectTag, L"4_BowTarget_0") || !lstrcmp(m_szCloneObjectTag, L"4_BowTarget_1")
 			|| !lstrcmp(m_szCloneObjectTag, L"4_BowTarget_2") || !lstrcmp(m_szCloneObjectTag, L"4_BowTarget_3"))
+		{
 			CBowTarget_Manager::GetInstance()->Add_Member(L"MAP4_GROUP_0", this);
+			m_bRender = false;
+		}
 	}
 }
 

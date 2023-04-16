@@ -65,15 +65,11 @@ HRESULT CWorldTrigger::Late_Initialize(void* pArg)
 	Load();
 	_smatrix mat;
 	m_vecWorldMatrix.push_back(mat);
-
-
-
 	return S_OK;
 }
 
 void CWorldTrigger::Tick(_float fTimeDelta)
 {
-	
 	CGameObject::Tick(fTimeDelta);
 
 	m_pRendererCom->Set_PhysXRender(true);
@@ -89,8 +85,6 @@ void CWorldTrigger::Tick(_float fTimeDelta)
 		CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
 		m_pRendererCom->Set_CaptureMode(true);
 	}
-
-
 }
 
 void CWorldTrigger::Late_Tick(_float fTimeDelta)
@@ -167,9 +161,18 @@ _int CWorldTrigger::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPo
 	{
  		CPostFX::GetInstance()->BlurCapture();
 		CUI_ClientManager::UI_PRESENT present = CUI_ClientManager::INFO_;
-		_float fValue = static_cast<_float>(m_nMatNum);
-		m_WorldTriggerDelegator.broadcast(present, fValue);
-		m_nMatNum++;
+		if(g_LEVEL == LEVEL_GIMMICK)
+		{
+			_float f = 4.f;
+			m_WorldTriggerDelegator.broadcast(present, f);
+			m_nMatNum++;
+		}
+		else
+		{
+			_float fValue = static_cast<_float>(m_nMatNum);
+			m_WorldTriggerDelegator.broadcast(present, fValue);
+			m_nMatNum++;
+		}
 	}
 
 	return 0;
@@ -177,6 +180,7 @@ _int CWorldTrigger::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPo
 
 void CWorldTrigger::BroadCast_WorldTrigger(_uint iValue)
 {
+	CPostFX::GetInstance()->BlurCapture();
 	CUI_ClientManager::UI_PRESENT present = CUI_ClientManager::INFO_;
 	m_nMatNum = iValue;
 	_float fValue = static_cast<_float>(m_nMatNum);

@@ -141,7 +141,9 @@ void CRockGolem::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if (m_fDissolveTime <= 0.2f)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -283,7 +285,7 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			m_fSpawnRange = 10.f;
 			m_bSpawn = DistanceTrigger(m_fSpawnRange);
-			return m_bSpawn;
+			return m_bSpawn || m_bGroupAwaken;
 		})
 
 			.AddState("WISPIN")

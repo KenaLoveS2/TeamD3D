@@ -46,12 +46,12 @@ HRESULT CLevel_Gimmick::Initialize()
 
 
 	p_game_instance->Clear_ImguiObjects();
-	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
-	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
+	//p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
@@ -88,14 +88,14 @@ HRESULT CLevel_Gimmick::Initialize()
 	{
 		MSG_BOX("Layer_Rot");
 		return E_FAIL;
-	}
+	}	*/
 
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	{
 		MSG_BOX("Layer_Effect");
 		return E_FAIL;
 	}
-	*/
+
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas"))))
 	{
@@ -466,13 +466,16 @@ HRESULT CLevel_Gimmick::Ready_Layer_Effect(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Test", nullptr)))
+	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Test", nullptr)))
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Swipes_Charged"), L"Swipes_Charged", nullptr)))
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_Warrior_FireSwipe"), L"Swipe", nullptr)))
+		return E_FAIL;*/
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GIMMICK, pLayerTag, TEXT("Prototype_GameObject_WorldTrigger"), L"UIWorldTrigger", nullptr)))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

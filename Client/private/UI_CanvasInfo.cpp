@@ -4,6 +4,7 @@
 #include "UI_NodeVideo.h"
 #include "PostFX.h"
 #include "WorldTrigger.h"
+#include "Kena.h"
 
 CUI_CanvasInfo::CUI_CanvasInfo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -63,10 +64,14 @@ void CUI_CanvasInfo::Tick(_float fTimeDelta)
 	}
 	//m_bActive = true;
 
+	static _float fIndex = 0.f;
 	if(CPostFX::GetInstance()->Get_Capture() && !m_bCapture)
 	{
-		BindFunction(CUI_ClientManager::INFO_, 1.f);
+		BindFunction(CUI_ClientManager::INFO_, fIndex);
 		m_bCapture = true;
+		fIndex += 1.f;
+		if (fIndex > (_float)INFO_END)
+			fIndex = 0.f;
 	}
 
 	if (!m_bActive)		
@@ -96,6 +101,21 @@ void CUI_CanvasInfo::Late_Tick(_float fTimeDelta)
 		m_bActive = false;
 		m_bCapture = false;
 		return;
+
+		if (m_iTextureIdx == INFO_PORTAL)
+		{
+			/* Quest 1 - 2 Clear */
+			CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+			if (pKena != nullptr)
+			{
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+				_bool bStart = true;
+				_float fIdx = 2;
+				wstring wstr = L"";
+				pKena->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
+				CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+			}
+		}
 	}
 }
 
@@ -181,18 +201,38 @@ HRESULT CUI_CanvasInfo::SetUp_ShaderResources()
 
 void CUI_CanvasInfo::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 {
-	switch (eType)
+	if(eType == CUI_ClientManager::INFO_)
 	{
-		case CUI_ClientManager::INFO_ :
-			m_bActive = true;
-			//CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
-			CUI_Canvas* pCanvas = CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO);
-			if(pCanvas != nullptr)
-				pCanvas->Set_Active(false);
+		m_bActive = true;
+		//CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
+		CUI_Canvas* pCanvas = CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO);
+		if(pCanvas != nullptr)
+			pCanvas->Set_Active(false);
 
-			m_iTextureIdx = INFO_FIGHTIN;
+		_int iIndex = (_int)fValue;
+		m_iTextureIdx = iIndex;
+		switch (_int(fValue))
+		{
+		case INFO_FIGHTIN:
+			static_cast<CUI_NodeVideo*>(m_vecNode[UI_VIDEO])->Play_Video(L"IntoTheFray", true, 0.05f /* speed */);
+			break;
+		case INFO_FLOWER:
+			static_cast<CUI_NodeVideo*>(m_vecNode[UI_VIDEO])->Play_Video(L"HealthFlower", true, 0.05f /* speed */);
+			break;
+		case INFO_BIND:
 			static_cast<CUI_NodeVideo*>(m_vecNode[UI_VIDEO])->Play_Video(L"RotActionSelector", true, 0.05f /* speed */);
-		break;
+			break;
+		case INFO_PORTAL:
+			static_cast<CUI_NodeVideo*>(m_vecNode[UI_VIDEO])->Play_Video(L"DashAbility", true, 0.05f /* speed */);
+			break;
+		case INFO_MINIGAME:
+			static_cast<CUI_NodeVideo*>(m_vecNode[UI_VIDEO])->Play_Video(L"RusuFalls", true, 0.05f /* speed */);
+			break;
+		case INFO_ROTCARRY:
+			static_cast<CUI_NodeVideo*>(m_vecNode[UI_VIDEO])->Play_Video(L"RotCarry", true, 0.05f /* speed */);
+			break;
+		}
+
 	}
 }
 

@@ -26,7 +26,7 @@ private:
 	_float4 m_vTurnDir, m_vOldAt;
 	_float4 m_vTargetEye, m_vTargetAt;
 
-	_float m_fSpeedPerSec = 3.f;
+	_float m_fSpeedPerSec = 0.1f;
 
 	_bool m_bEyeComplete = false, m_bAtComplete = false;
 

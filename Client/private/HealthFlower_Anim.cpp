@@ -293,6 +293,12 @@ CHealthFlower_Anim::ANIMATION CHealthFlower_Anim::Check_State()
 					eState = CHealthFlower_Anim::BIND;
 					m_pModelCom->Set_AnimIndex((_uint)eState);
 
+					CRotForMonster** p = m_pKena->Get_RotForMonstrPtr();
+					for (_uint i = 0; i < 8; i++)
+					{
+						m_pBindRots[i] = p[i];
+					}
+
 					Start_Bind();
 				}
 			}

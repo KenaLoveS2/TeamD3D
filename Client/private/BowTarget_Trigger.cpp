@@ -101,6 +101,13 @@ _int CBowTarget_Trigger::Execute_TriggerTouchFound(CGameObject* pTarget, _uint i
 			if (CGameInstance::GetInstance()->Get_CurLevelIndex() == (_uint)LEVEL_GIMMICK)
 			{
 				FAILED_CHECK_RETURN(CBowTarget_Manager::GetInstance()->Group_Active(m_wstrTargetGroup), E_FAIL);
+			
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::MINIGAME_START;
+				_float ff = 0.f;
+				CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+				if (pKena != nullptr)
+					pKena->m_Delegator.broadcast(tag, ff);
+
 			}
 			else if (CGameInstance::GetInstance()->Get_CurLevelIndex() == (_uint)LEVEL_FINAL && pKenaPulse != nullptr)
 			{

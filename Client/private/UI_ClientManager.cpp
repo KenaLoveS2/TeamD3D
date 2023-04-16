@@ -29,6 +29,7 @@
 //#include "UI_NodeQuestMain.h"
 //#include "UI_NodeQuestSub.h"
 #include "UI_NodeQuest.h"
+#include "UI_NodeQuestReward.h"
 #include "Quest.h"
 
 /* CanvasUpgrade */
@@ -93,6 +94,7 @@
 #include "UI_NodeTimeAtk.h"
 #include "UI_NodeVictory.h"
 #include "UI_NodeHitCount.h"
+#include "UI_NodeReward.h"
 
 /* World UI */
 #include "UI_MonsterHP.h"
@@ -583,7 +585,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	/*				For. InfoWindow				*/
 	/********************************************/
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_InfoWindow"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/04. Menu/Information_0.png")))))
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/04. Menu/Information/Information_%d.png"), 6))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_InfoWindow"); // 68
 
@@ -607,6 +609,19 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/11. MiniGame/Victory_SpriteSheet.png")))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_Victory");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_MinigameReward"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/11. MiniGame/Reward_%d.png"),2))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_MinigameReward");
+
+	/********************************************/
+	/*				For. Quest					*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_QuestReward"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/05. Quest/QuestReward.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_QuestReward");
 
 
 	/* Not Include in the Texture List */
@@ -739,6 +754,26 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	// RotActionSelector
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotActionSelector"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/RotActionSelector/RotActionSelector_Tutorial_PC%03d.png"), 226))))
+		return E_FAIL;
+
+	// HealthFlower
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HealthFlower"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/HealthFlower/HealthFlower_Tutorial_PC%03d.png"), 128))))
+		return E_FAIL;
+
+	// DashAbility
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_DashAbility"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/DashAbility/DashAbility_Tutorial_PC%03d.png"), 143))))
+		return E_FAIL;
+
+	// RusuFalls
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RusuFalls"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/RusuFalls/RusuFalls_PC%03d.png"), 245))))
+		return E_FAIL;
+
+	// RotCarry
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotCarry"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/RotCarry/RotCarry_Tutorial_PC%03d.png"), 168))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -917,10 +952,14 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Quest");
 
+	/* QuestREward */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_QuestReward"), CUI_NodeQuestReward::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_QuestReward");
+
 	/* Real Quest Object (test)*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Quest"), CQuest::Create(pDevice, pContext))))
 		return E_FAIL;
-
 
 	/********************************************/
 	/*				For. InvHeader				*/
@@ -940,7 +979,6 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Crystal"), CUI_NodeCrystal::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Crystal");
-
 
 	/********************************************/
 	/*				For. Upgrades				*/
@@ -976,6 +1014,7 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_SkillVideo"), CUI_NodeSkillVideo::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_SkillVideo");
+
 
 	/********************************************/
 	/*				For. Bottom					*/
@@ -1097,6 +1136,9 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Victory");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Reward"), CUI_NodeReward::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Reward");
 
 	/* Commons */
 	/********************************************/

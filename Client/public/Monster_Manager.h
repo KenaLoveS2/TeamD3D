@@ -38,6 +38,7 @@ private:
 
 private:
 	MONSTERGROUP*			Find_MonsterGroup(const wstring& wstrGroupName);
+	void					Group_WakeUp();
 
 public:
 	virtual void Free() override;
