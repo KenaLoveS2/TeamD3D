@@ -178,18 +178,18 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 					{
 						static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->QuestOn();
 						_float fAlpha = static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->Get_Alpha();
-						if (line <= m_iLastClearLine && line != 0)
-						{
+						//if (line <= m_iLastClearLine && line != 0)
+						//{
 
-							if(line == m_iLastClearLine && m_bQuestClear == true)
-							{
-								static_cast<CUI_NodeEffect*>(m_vecEffects[(_int)m_iLastClearLine])->Set_Effect(m_vecNode[iCount + line], 328.f, -2.f);
-								static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
-							}
-							else
-								static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
+						//	if(line == m_iLastClearLine && m_bQuestClear == true)
+						//	{
+						//		static_cast<CUI_NodeEffect*>(m_vecEffects[(_int)m_iLastClearLine])->Set_Effect(m_vecNode[iCount + line], 328.f, -2.f);
+						//		static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
+						//	}
+						//	else
+						//		static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
 
-						}
+						//}
 					}
 					break;
 				}
@@ -223,8 +223,8 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 				{
 					static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->QuestOff();
 					_float fAlpha = static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->Get_Alpha();
-					if (line <= m_iLastClearLine && line != 0)
-						static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
+					//if (line <= m_iLastClearLine && line != 0)
+					//	static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
 				}
 				break;
 			}
@@ -249,15 +249,16 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 		for (_uint i = 0; i < (_uint)m_vecNode.size() - 1; ++i)
 			m_vecNode[i]->Set_Active(false);
 
-		if (m_iCurQuestIndex == QUEST_1 /*|| m_iCurQuestIndex == QUEST_2 */)
-		{
-			m_bQuestClear = false;
+		m_iCurQuestIndex++;
+		//if (m_iCurQuestIndex == QUEST_1 /*|| m_iCurQuestIndex == QUEST_2 */)
+		//{
+			//m_bQuestClear = false;
 			//BindFunction(CUI_ClientManager::QUEST_, true, 0, L"");
 			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 0, L"");
 			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 1, L"");
 			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 2, L"");
 			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 3, L"");
-		}
+	//	}
 		if (m_iCurQuestIndex == QUEST_END)
 			m_bFollowAlpha = true;
 	}
@@ -287,7 +288,7 @@ void CUI_CanvasQuest::Late_Tick(_float fTimeDelta)
 	if (m_eState == STATE_NORMAL)
 {
 	m_fTmpAcc += fTimeDelta;
-	if (m_fTmpAcc > 5.f)
+	if (m_fTmpAcc > 2.f)
 	{
 		m_eState = STATE_CLOSE;
 		m_fTimeAcc = 0.f;
@@ -614,7 +615,7 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 		break;
 	}
 	case CUI_ClientManager::QUEST_CLEAR_ALL:
-
+		BindFunction(CUI_ClientManager::QUEST_, true, m_iCurQuestIndex , L"");
 		static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->RewardOn();
 
 		/* Temp code  */

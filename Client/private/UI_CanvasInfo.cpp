@@ -107,12 +107,12 @@ void CUI_CanvasInfo::Late_Tick(_float fTimeDelta)
 			CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 			if (pKena != nullptr)
 			{
-				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-				_bool bStart = true;
-				_float fIdx = 2;
-				wstring wstr = L"";
-				pKena->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
-				CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+				//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+				//_bool bStart = true;
+				//_float fIdx = 2;
+				//wstring wstr = L"";
+				//pKena->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
+				//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 			}
 		}
 	}

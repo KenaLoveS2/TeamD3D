@@ -19,7 +19,8 @@ public:
 		RENDER_UIHDR,
 		RENDER_EFFECT,
 		RENDER_UI,
-		RENDER_UILAST,		
+		RENDER_UILAST,
+		RENDER_UIMOUSE,
 		RENDER_VIEWER,
 		RENDER_END };
 
@@ -110,6 +111,7 @@ private:
 	HRESULT Render_Effect();
 	HRESULT Render_UI();
 	HRESULT Render_UILast();
+	HRESULT Render_UIMouse();
 	HRESULT Render_Viewer();		// Model Viewer
 	HRESULT Render_PrevFrame();
 	

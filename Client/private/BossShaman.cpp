@@ -960,7 +960,6 @@ HRESULT CBossShaman::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-				TurnOnOffEffect_InTrap(true);
 
 		m_pModelCom->ResetAnimIdx_PlayTime(TRAP_LOOP);
 		m_pModelCom->Set_AnimIndex(TRAP_LOOP);
@@ -994,7 +993,9 @@ HRESULT CBossShaman::SetUp_State()
 
 		.AddState("TRAP_LOOP")
 		.OnStart([this]()
-	{	
+	{
+				TurnOnOffEffect_InTrap(false);
+
 		m_bTraptBreak = false;
 		m_bTraptLoop = true;
 		m_bTrapOffset = true;
@@ -1018,7 +1019,9 @@ HRESULT CBossShaman::SetUp_State()
 		m_pTransformCom->LookAt_NoUpDown(vLookPos);
 	})
 		.OnExit([this]()
-	{	
+	{
+				TurnOnOffEffect_InTrap(true);
+
 		m_bTrapOffset = false;
 		m_bTraptLoop = false;		
 		m_pModelCom->Set_AnimIndex(TRAP_LOOP);
