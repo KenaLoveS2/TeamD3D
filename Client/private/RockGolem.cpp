@@ -277,6 +277,7 @@ HRESULT CRockGolem::SetUp_State()
 		})
 		.OnExit([this]()
 		{
+			m_bSpawn = true;
 			m_bReadySpawn = true;
 			m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		})
@@ -303,6 +304,7 @@ HRESULT CRockGolem::SetUp_State()
 			.AddState("IDLE")
 			.OnStart([this]()
 		{
+			m_bSpawn = true;
 			m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_TENSE], 0.7f);
 			m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 			m_fIdletoAttackTime = 0.f;
@@ -727,7 +729,9 @@ _int CRockGolem::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos,
 		if (iColliderIndex == COL_PLAYER_WEAPON || iColliderIndex == COL_PLAYER_ARROW)
 		{			
 			WeakleyHit();
-			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			// m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			m_pMonsterStatusCom->UnderAttack(150);
+
 			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 
 			m_bStronglyHit = true;

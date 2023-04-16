@@ -475,7 +475,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.OnStart([this]()
 	{
 		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_IDLE], 0.7f);
-		
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_fIdletoAttackTime = m_fIdletoAttackTime * m_bBlock;
 		m_bBlock = false;			
 	})
@@ -526,6 +526,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("to BIND", "BIND")
+		.Predicator([this]()
+			{
+				return m_bBind;
+			})
 		.AddTransition("BLOCK_INTO to BLOCK_LOOP", "BLOCK_LOOP")
 		.Predicator([this]()
 	{
@@ -543,16 +548,22 @@ HRESULT CWoodKnight::SetUp_State()
 		m_fBlocktoAttackTime += fTimeDelta;
 		m_pModelCom->Set_AnimIndex(BLOCK_LOOP);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+			{
+				return m_pMonsterStatusCom->IsDead();
+			})
+		.AddTransition("to BIND", "BIND")
+				.Predicator([this]()
+					{
+						return m_bBind;
+					})
 		.AddTransition("BLOCK_LOOP to BLOCK_EXIT", "BLOCK_EXIT")
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fBlocktoAttackTime, 5.f);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+
 
 		.AddState("BLOCK_EXIT")
 		.OnStart([this]()
@@ -565,6 +576,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("to BIND", "BIND")
+		.Predicator([this]()
+			{
+				return m_bBind;
+			})
 		.AddTransition("BLOCK_LOOP to BLOCK_EXIT", "BLOCK_AFTER")
 		.Predicator([this]()
 	{
@@ -590,6 +606,16 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		Reset_BlockAfterType();
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+			{
+				return m_pMonsterStatusCom->IsDead();
+			})
+		.AddTransition("to BIND", "BIND")
+				.Predicator([this]()
+					{
+						return m_bBind;
+					})
 		.AddTransition("BLOCK_AFTER to IDLE", "IDLE")
 		.Predicator([this]()
 	{
@@ -605,11 +631,7 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return m_bBlockAfterBack;
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+
 
 		.AddState("BLOCK_COUNTERATTACK")
 		.OnStart([this]()
@@ -623,6 +645,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("to BIND", "BIND")
+		.Predicator([this]()
+			{
+				return m_bBind;
+			})
 		.AddTransition("BLOCK_COUNTERATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
@@ -637,17 +664,22 @@ HRESULT CWoodKnight::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(BLOCKATTACK_180);
 		m_pModelCom->Set_AnimIndex(BLOCKATTACK_180);
 	})
+			.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+			{
+				return m_pMonsterStatusCom->IsDead();
+			})
+		.AddTransition("to BIND", "BIND")
+				.Predicator([this]()
+					{
+						return m_bBind;
+					})
 		.AddTransition("BLOCKATTACK_180 to IDLE", "IDLE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(BLOCKATTACK_180);
-	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+	.Predicator([this]()
+		{
+			return AnimFinishChecker(BLOCKATTACK_180);
 
+		})
 		.AddState("WALK")
 		.OnStart([this]()
 	{
@@ -721,6 +753,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("to BIND", "BIND")
+		.Predicator([this]()
+			{
+				return m_bBind;
+			})
 		.AddTransition("INTOCHARGE to CHARGEATTACK", "CHARGEATTACK")
 		.Predicator([this]()
 	{
@@ -739,6 +776,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("to BIND", "BIND")
+		.Predicator([this]()
+			{
+				return m_bBind;
+			})
 		.AddTransition("INTOCHARGE_BACKUP to CHARGEATTACK", "CHARGEATTACK")
 		.Predicator([this]()
 	{

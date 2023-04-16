@@ -21,6 +21,7 @@
 #include "E_ShamanElectric.h"
 #include "BGM_Manager.h"
 #include "E_P_ExplosionGravity.h"
+#include "CameraForNpc.h"
 
 
 // #define EFFECTDEBUG
@@ -571,6 +572,12 @@ HRESULT CBossShaman::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_fAwakeLoopTimeCheck += fTimeDelta;
+
+		m_fFogRange -= fTimeDelta * 50.f;
+		if (m_fFogRange < 60.f)
+			m_fFogRange = 60.f;
+		const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+		m_pRendererCom->Set_FogValue(vColor, m_fFogRange);
 	})
 		.OnExit([this]()
 	{
@@ -706,6 +713,9 @@ HRESULT CBossShaman::SetUp_State()
 		.OnStart([this]()
 	{
 		Attack_Start(false, FOG_SNAP);
+
+		const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+		m_pRendererCom->Set_FogValue(vColor, 20.f);
 	})
 		.OnExit([this]()
 	{
@@ -813,6 +823,7 @@ HRESULT CBossShaman::SetUp_State()
 		.AddTransition("IDLE To FOG_SNAP", "FOG_SNAP")
 		.Predicator([this]()
 	{
+		return false;
 		return m_bFogSnapEnd == false && m_pMonsterStatusCom->Get_PercentHP() < 0.3f;
 	})
 		.AddTransition("TELEPORT_EXIT To MELEE_ATTACK", "MELEE_ATTACK")
@@ -1334,10 +1345,21 @@ HRESULT CBossShaman::SetUp_State()
 		m_fTeleportDissolveTime += fTimeDelta * 0.2f;
 		if (m_fTeleportDissolveTime >= 1.f)
 			m_fTeleportDissolveTime = 1.f;
+
+		m_fEndTime += fTimeDelta;
+		m_fDissolveTime = m_fEndTime * 0.3f;
+		if (m_fDissolveTime >= 1.f)
+			m_bDissolve = false;
+
+		m_fFogRange += fTimeDelta * 50.f;
+		if (m_fFogRange >= 100.f)
+			m_pRendererCom->Set_Fog(false);
+		const _float4 vColor = _float4(130.f / 255.f, 144.f / 255.f, 196.f / 255.f, 1.f);
+		m_pRendererCom->Set_FogValue(vColor, m_fFogRange);
 	})
 		.OnExit([this]() {
 		m_isBossClear = true;
-
+		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
 
 			})
 		.AddTransition("DEATH_SCENE to DEATH", "DEATH")
@@ -1350,6 +1372,7 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
+		g_bDayOrNight = true;
 		m_pTransformCom->Clear_Actor();
 		Clear_Death();
 	})
@@ -1747,8 +1770,12 @@ void CBossShaman::BossFight_Start()
 
 void CBossShaman::BossFight_End()
 {
-	g_bDayOrNight = true;
-	m_pRendererCom->Set_Fog(false);
+	CGameInstance::GetInstance()->Work_Camera(TEXT("NPC_CAM"));
+
+	const _float3 vOffset = _float3(0.f, 1.5f, 0.f);
+	const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
+
+	dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")))->Set_Target(this, CCameraForNpc::OFFSET_FRONT_LERP, vOffset, vLookOffset, 0.9f, 3.f);
 
 	/* Effect Turn on off */
 	m_mapEffect["S_ShamanDust"]->Set_Active(false);

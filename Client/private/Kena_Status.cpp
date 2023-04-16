@@ -581,7 +581,6 @@ const _bool CKena_Status::Get_SkillState(SKILLTAB eCategory, _uint iSlot) const
 
 void CKena_Status::Set_RotCount(_int iValue)
 {
-
 	//m_iCurrentRotCount = iValue;
 
 	//CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
@@ -595,7 +594,6 @@ void CKena_Status::Set_RotCount(_int iValue)
 	//m_StatusDelegator.broadcast(eNow, fRotNow);
 	//m_StatusDelegator.broadcast(eMax, fRotMax);
 	//m_StatusDelegator.broadcast(eGet, fGuage);
-
 
 	///* think later */
 	//if (Get_RotMax() == m_iCurrentRotCount)
