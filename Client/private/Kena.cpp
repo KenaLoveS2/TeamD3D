@@ -3493,21 +3493,39 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 		CGameObject* pGameObject = nullptr;
 
-		_bool bRealAttack = false;
-		if ((iColliderIndex == (_int)COL_MONSTER_WEAPON || iColliderIndex == (_int)COL_BOSS_SWIPECHARGE) && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false && m_bDodge == false && m_bDeath == false)
+		if (m_bPulse == false && m_bDodge == false && m_bDeath == false)
 		{
-			for (auto& Effect : m_mapEffect)
+			_bool bRealAttack = false;
+			if ((iColliderIndex == (_int)COL_MONSTER_WEAPON || iColliderIndex == (_int)COL_BOSS_SWIPECHARGE) && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
 			{
-				if (Effect.first == "KenaDamage")
+				for (auto& Effect : m_mapEffect)
 				{
-					Effect.second->Set_Active(true);
-					Effect.second->Set_Position(vCollisionPos);
+					if (Effect.first == "KenaDamage")
+					{
+						Effect.second->Set_Active(true);
+						Effect.second->Set_Position(vCollisionPos);
+					}
 				}
-			}
 
-			m_bParry = true;
-			m_iCurParryFrame = 0;
-			m_pAttackObject = pTarget;
+				m_bParry = true;
+				m_iCurParryFrame = 0;
+				m_pAttackObject = pTarget;
+			}
+			if (iColliderIndex == (_int)COL_MONSTER_ARROW)
+			{
+				for (auto& Effect : m_mapEffect)
+				{
+					if (Effect.first == "KenaDamage")
+					{
+						Effect.second->Set_Active(true);
+						Effect.second->Set_Position(vCollisionPos);
+					}
+				}
+
+				m_bParry = true;
+				m_iCurParryFrame = 0;
+				m_pAttackObject = pTarget;
+			}
 		}
 
 		if (iColliderIndex == (_int)COL_MONSTER && m_bDash == true)
