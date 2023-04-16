@@ -569,7 +569,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = false;
+	_bool bRealObject = true;
 	_bool bFlowerCheck = false;
 
 #ifdef FOR_MAPTOOL   
