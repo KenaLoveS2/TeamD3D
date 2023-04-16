@@ -173,7 +173,7 @@ void CUI_NodeEffect::Tick(_float fTimeDelta)
 	{
 	case TYPE_SEPERATOR:
 	{
-		m_fTime += 2.f * fTimeDelta;
+		m_fTime += 4.f * fTimeDelta;
 		if (m_fTime > 1.f)
 			m_fTime = 1.000001f;
 	}
@@ -221,8 +221,8 @@ void CUI_NodeEffect::Late_Tick(_float fTimeDelta)
 
 			_float4 vPos = m_pTransformCom->Get_Position();
 			_float3 vScale = m_pTransformCom->Get_Scaled();
-			_float	fXPos = (vPos.x - m_vOriginalSettingScale.x * 0.5f /* Start position */
-				+ m_vOriginalSettingScale.x * m_fTime); /* Last Position */
+			_float	fXPos = (vPos.x - vScale.x * 0.5f /* Start position */
+				+ vScale.x * m_fTime); /* Last Position */
 			_float4	vResult = { fXPos, vPos.y, 0.f, 1.f };
 
 			m_vecParticles[m_iParticleIndex]->Activate(vResult);
@@ -523,6 +523,8 @@ HRESULT CUI_NodeEffect::SetUp_ShaderResources()
 	{
 	case TYPE_SEPERATOR:
 		if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTime, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
 			return E_FAIL;
 		break;
 	case TYPE_ALPHA:

@@ -2,17 +2,29 @@
 #include "UI_CanvasMiniGame.h"
 #include "GameInstance.h"
 #include "UI_NodeVictory.h"
+#include "UI_NodeReward.h"
+#include "Kena.h"
+#include "Kena_Status.h"
+#include "UI_NodeTimeAtk.h"
 
 CUI_CanvasMiniGame::CUI_CanvasMiniGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Canvas(pDevice, pContext)
 	, m_bResultShow(false)
 	, m_fTime(0.0f)
 	, m_fTimeAcc(0.0f)
-	, m_szHit(nullptr)
-	, m_szTime(nullptr)
-	, m_szResult(nullptr)
-	, m_szReward(nullptr)
-	, m_eCurState(STATE_END)
+	//, m_szHit(nullptr)
+	//, m_szTime(nullptr)
+	//, m_szResult(nullptr)
+	//, m_szReward(nullptr)
+	, m_iCurState(STATE_END)
+	, m_iTimeLeft(0)
+	, m_iHitCount(0)
+	, m_iResult(0)
+	, m_bCountTime(false)
+	, m_bCountHit(false)
+	, m_bReward(false)
+	, m_bGameFinish(false)
+
 {
 }
 
@@ -21,11 +33,18 @@ CUI_CanvasMiniGame::CUI_CanvasMiniGame(const CUI_CanvasMiniGame& rhs)
 	, m_bResultShow(false)
 	, m_fTime(0.0f)
 	, m_fTimeAcc(0.0f)
-	, m_szHit(nullptr)
-	, m_szTime(nullptr)
-	, m_szResult(nullptr)
-	, m_szReward(nullptr)
-	, m_eCurState(STATE_END)
+	//, m_szHit(nullptr)
+	//, m_szTime(nullptr)
+	//, m_szResult(nullptr)
+	//, m_szReward(nullptr)
+	, m_iCurState(STATE_END)
+	, m_iTimeLeft(0)
+	, m_iHitCount(0)
+	, m_iResult(0)
+	, m_bCountTime(false)
+	, m_bCountHit(false)
+	, m_bReward(false)
+	, m_bGameFinish(false)
 {
 }
 
@@ -63,6 +82,8 @@ HRESULT CUI_CanvasMiniGame::Initialize(void* pArg)
 	//m_bActive = true;
 	m_fTime = 1.f;
 
+
+
 	return S_OK;
 }
 
@@ -77,25 +98,103 @@ void CUI_CanvasMiniGame::Tick(_float fTimeDelta)
 		}
 	}
 
+	//if (ImGui::Button("minigame test"))
+	//{
+	//	m_bActive = true;
+	//	m_bResultShow = false;
+	//	m_iCurState = -1;
+	//	m_bReward = false;
+
+	//	m_iTimeLeft = 300;
+	//	m_iHitCount = 30;
+	//	m_iResult = 0;
+
+	//}
+
 	if (!m_bActive)
 		return;
+
+	if (!m_bGameFinish)
+	{
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+
+		if (pKena != nullptr)
+		{
+			if (pKena->Get_Hits())
+			{
+				m_bGameFinish = true;
+				BindFunction(CUI_ClientManager::MINIGAME_, true);
+			}
+		}
+
+	}
+
+
+
+
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_SPACE))
+	{
+		/* Temp code  */
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+		if (pKena != nullptr)
+			pKena->Get_Status()->Set_Crystal(pKena->Get_Status()->Get_Crystal() + m_iResult);
+
+		m_bActive = false;
+	}
 
 	if (!m_bResultShow)
 	{
 		m_fTimeAcc += fTimeDelta;
-		m_fTime = 1.f;
+		m_fTime = 1.5f;
 		if (m_fTimeAcc > m_fTime)
 		{
-			static_cast<CUI_NodeVictory*>(m_vecNode[UI_VICTORY])->Sign_On();
+			m_iCurState = STATE_VICTORY;
+			m_fTimeAcc = 0.0f;
 			m_bResultShow = true;
+			static_cast<CUI_NodeVictory*>(m_vecNode[UI_VICTORY])->Sign_On();
 		}
 	}
 	else
 	{
+		m_fTimeAcc += fTimeDelta;
+		if (m_fTimeAcc > m_fTime && m_iCurState <= STATE_END)
+		{
+			m_fTimeAcc = 0.f;
+			m_iCurState = min(m_iCurState + 1, (_uint)STATE_END);
+			CalculateFunction(m_iCurState);
+		}
 
+		if (m_bCountTime)
+		{
+			m_iTimeLeft -= 5;
+			m_iResult += 5 * 5;
+			if (m_iTimeLeft <= 0)
+			{
+				m_iTimeLeft = 0;
+				m_bCountTime = false;
+				m_bCountHit = true;
+			}
+		}
+
+		if (m_bCountHit)
+		{
+			m_iHitCount -= 1;
+			m_iResult += 1 * 10;
+			if (m_iHitCount <= 0)
+			{
+				m_iHitCount = 0;
+				m_bCountHit = false;
+				m_bReward = true;
+			}
+		}
+
+		if (m_bReward == true)
+		{
+			static_cast<CUI_NodeReward*>(m_vecNode[UI_REWARD])->Open();
+			m_bReward = false;
+		}
 	}
-
-
 
 	__super::Tick(fTimeDelta);
 
@@ -107,58 +206,138 @@ void CUI_CanvasMiniGame::Late_Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	__super::Late_Tick(fTimeDelta);
+	//__super::Late_Tick(fTimeDelta);
+	CUI::Late_Tick(fTimeDelta);
+	for (auto e : m_vecEvents)
+		e->Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRendererCom && m_bActive)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UIHDR, this);
+
+		for (auto node : m_vecNode)
+			node->Late_Tick(fTimeDelta);
+
+		/* Nodes added to RenderList After the canvas. */
+		/* So It can be guaranteed that Canvas Draw first */
+
+	}
+
 }
 
 HRESULT CUI_CanvasMiniGame::Render()
 {
 	__super::Render();
 
+	if (m_iCurState == STATE_TIME_TITLE)
 	{
-		//m_szTime = CUtile::Create_String(L"소요 시간 : 10 분 20초");
+		wstring wstr = L"남은 시간 : ";
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 210.0f, g_iWinSizeY * 0.5f - vPos.y - 150.f };
+		//if (m_szTime != nullptr)
+		//{
+			//Font_Jangmi0 //Font_JungE0 // Font_SR0
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
+			vNewPos /* position */,
+			0.f, _float2(1.0f, 1.0f)/* size */,
+			XMVectorSet(1.f, 1.f, 1.f, 1.f));
+	}
+
+	if(m_iCurState >= STATE_TIME)
+	{
+		_int iMin = (_int)m_iTimeLeft / 60;
+		_int iSec = (_int)m_iTimeLeft - iMin * 60;
+
+		wstring minute = to_wstring(iMin);
+		if (minute.length() < 2)
+			minute = L"0" + minute;
+		wstring second = to_wstring(iSec);
+		if (second.length() < 2)
+			second = L"0" + second;
+		wstring wstr = L"남은 시간 : " + minute + L"분 " + second + L"초";
+
 		_float4 vPos;
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 210.0f, g_iWinSizeY * 0.5f - vPos.y -150.f };
-		if (m_szTime != nullptr)
-		{
+		//if (m_szTime != nullptr)
+		//{
 			//Font_Jangmi0 //Font_JungE0 // Font_SR0
-			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szTime,
+			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
 				vNewPos /* position */,
 				0.f, _float2(1.0f, 1.0f)/* size */,
 				XMVectorSet(1.f, 1.f, 1.f, 1.f));
-		}
+		//}
 	}
+
+	if (m_iCurState == STATE_HIT_TITLE)
 	{
-		//m_szHit = CUtile::Create_String(L"적중 타겟 : 10 / 10");
+		wstring wstr = L"적중 타겟 : ";
 
 		_float4 vPos;
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 210.0f, g_iWinSizeY * 0.5f - vPos.y - 60.f };
-		if (m_szHit != nullptr)
-		{
+		//if (m_szHit != nullptr)
+		//{
 			//Font_Jangmi0 //Font_JungE0 // Font_SR0
-			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szHit,
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
+			vNewPos /* position */,
+			0.f, _float2(1.0f, 1.0f)/* size */,
+			XMVectorSet(1.f, 1.f, 1.f, 1.f));
+	}
+
+	if(m_iCurState >= STATE_HIT)
+	{
+		wstring wstr = L"적중 타겟 : " + to_wstring(m_iHitCount);
+		_float4 vPos;
+		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 210.0f, g_iWinSizeY * 0.5f - vPos.y - 60.f };
+		//if (m_szHit != nullptr)
+		//{
+			//Font_Jangmi0 //Font_JungE0 // Font_SR0
+			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
 				vNewPos /* position */,
 				0.f, _float2(1.0f, 1.0f)/* size */,
 				XMVectorSet(1.f, 1.f, 1.f, 1.f));
-		}
+		//}
 
 	}
 
+	if(m_iCurState == STATE_RESULT_TITLE)
 	{
-		//m_szResult = CUtile::Create_String(L"최종 결과 : 10305034");
+		wstring wstr = L"최종 결과 : ";
+
 		_float4 vPos;
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 210.0f, g_iWinSizeY * 0.5f - vPos.y + 30.f };
-		if (m_szResult != nullptr)
-		{
+		//if (m_szResult != nullptr)
+		//{
 			//Font_Jangmi0 //Font_JungE0 // Font_SR0
-			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szResult,
+			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
 				vNewPos /* position */,
 				0.f, _float2(1.0f, 1.0f)/* size */,
 				XMVectorSet(1.f, 1.f, 1.f, 1.f));
-		}
+		//}
 	}
+
+	if (m_iCurState > STATE_RESULT_TITLE)
+	{
+		wstring wstr = L"최종 결과 : " + to_wstring(m_iResult);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 210.0f, g_iWinSizeY * 0.5f - vPos.y + 30.f };
+		//if (m_szResult != nullptr)
+		//{
+			//Font_Jangmi0 //Font_JungE0 // Font_SR0
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
+			vNewPos /* position */,
+			0.f, _float2(1.0f, 1.0f)/* size */,
+			XMVectorSet(1.f, 1.f, 1.f, 1.f));
+		//}
+	}
+
 	//{
 	//	m_szReward = CUtile::Create_String(L"보상");
 	//	_float4 vPos;
@@ -179,6 +358,11 @@ HRESULT CUI_CanvasMiniGame::Render()
 
 HRESULT CUI_CanvasMiniGame::Bind()
 {
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	if (pKena == nullptr)
+		return E_FAIL;
+	pKena->m_Delegator.bind(this, &CUI_CanvasMiniGame::BindFunction);
+
 	m_bBindFinished = true;
 
 	return S_OK;
@@ -222,6 +406,20 @@ HRESULT CUI_CanvasMiniGame::Ready_Nodes()
 		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
 		tDesc.fileName = wstrCloneTag;
 		pUI = static_cast<CUI*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_UI_Node_Victory", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		CGameInstance::GetInstance()->Add_String(wstrCloneTag);
+	}
+
+	/* Reward */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		string strCloneTag = "Node_Reward";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_UI_Node_Reward", wstrCloneTag, &tDesc));
 		if (FAILED(Add_Node(pUI)))
 			return E_FAIL;
 		m_vecNodeCloneTag.push_back(strCloneTag);
@@ -280,6 +478,53 @@ HRESULT CUI_CanvasMiniGame::SetUp_ShaderResources()
 
 void CUI_CanvasMiniGame::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 {
+	switch (eType)
+	{
+	//case CUI_ClientManager::MINIGAME_TOTAL_TARGET:
+	//	break;
+	//case CUI_ClientManager::MINIGAME_HIT:
+
+	//	break;
+	case CUI_ClientManager::MINIGAME_START:
+		m_bActive = true;
+		m_vecNode[UI_TIMEATK]->Set_Active(true);
+		m_vecNode[UI_HITCOUNT]->Set_Active(true);
+		static_cast<CUI_NodeTimeAtk*>(m_vecNode[UI_TIMEATK])->Timer_On();
+		break;
+	case CUI_ClientManager::MINIGAME_: /* result */
+		m_bActive = true;
+		m_bResultShow = false;
+		m_iCurState = -1;
+		m_bReward = false;
+
+		m_iTimeLeft = 300;
+		m_iHitCount = 30;
+		m_iResult = 0;
+
+		break;
+	}
+
+}
+
+void CUI_CanvasMiniGame::CalculateFunction(_int iState)
+{
+	switch (iState)
+	{
+	case STATE_RESULT_TITLE:
+	{
+		break;
+	}
+	case STATE_CAL_TIME:
+	{
+		m_bCountTime = true;
+		break;
+	}
+	case STATE_CAL_TARGETS:
+	{
+		//m_bCountHit = true;
+		break;
+	}
+	}
 }
 
 CUI_CanvasMiniGame* CUI_CanvasMiniGame::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -308,9 +553,9 @@ void CUI_CanvasMiniGame::Free()
 {
 	__super::Free();
 
-	Safe_Delete_Array(m_szHit);
-	Safe_Delete_Array(m_szTime);
-	Safe_Delete_Array(m_szResult);
-	Safe_Delete_Array(m_szReward);
+	//Safe_Delete_Array(m_szHit);
+	//Safe_Delete_Array(m_szTime);
+	//Safe_Delete_Array(m_szResult);
+	//Safe_Delete_Array(m_szReward);
 
 }

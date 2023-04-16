@@ -242,6 +242,8 @@ private:
 	_float4						m_vStaffLightPos;
 	CLight*						m_pStaffLight = nullptr;
 
+	_bool						m_bQuestOn;
+
 private:
 	HRESULT						Ready_Parts();
 	HRESULT						Ready_Arrows();
@@ -347,6 +349,7 @@ public:
 	//Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
 	Delegator<CUI_ClientManager::UI_PRESENT, _float>										m_Delegator;
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, CKena*>		m_PlayerPtrDelegator;
+	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>						m_PlayerQuestDelegator;
 	//Delegator<CUI_ClientManager::UI_PRESENT, _float, _float, _float, _float>				m_PlayerAmmoDelegator;
 
 	_float m_fTest = 0.f;
@@ -354,9 +357,12 @@ public:
 	_float m_fLinearDamping = KENA_LINEAR_DAMING, m_fAngularDamping = KENA_ANGULAR_DAMING, m_fMass = KENA_MASS;
 	const	_bool& Get_SceneChange() { return m_bSceneChange; }
 
+	public:
+		void Plus_TargetHit() { m_iHitTarget++; }
+		_int	Get_Hits() { return m_iHitTarget; }
 private:
 	_bool m_bSceneChange = false;
-
+	_int	m_iHitTarget = 0;
 public:
 	static CKena*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr) override;

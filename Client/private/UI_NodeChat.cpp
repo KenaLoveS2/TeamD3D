@@ -24,7 +24,7 @@ void CUI_NodeChat::Set_String(wstring wstr, _float fCorrectY)
 	m_szChat = CUtile::Create_String(wstr.c_str());
 	
 	size_t length = wstr.length();
-	m_fCorrectX = 10.f * _float(length-1);
+	m_fCorrectX = 14.f * _float(length-1); // 10.f
 
 	m_fCorrectY = fCorrectY;
 }

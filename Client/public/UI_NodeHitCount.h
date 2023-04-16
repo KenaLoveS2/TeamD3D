@@ -15,6 +15,7 @@ public:
 	void	Counting();
 	_int	Get_NumTarget() { return m_iNumTargets; }
 	_int	Get_NumHit() { return m_iNumHits; }
+	
 
 public:
 	virtual HRESULT			Initialize_Prototype()					override;
@@ -35,6 +36,8 @@ private:
 
 	_float					m_fTime;
 	_float					m_fTimeAcc;
+
+	_bool					m_bFinished;
 
 public:
 	static	CUI_NodeHitCount*	Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

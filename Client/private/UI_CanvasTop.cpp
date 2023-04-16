@@ -112,7 +112,7 @@ void CUI_CanvasTop::Tick(_float fTimeDelta)
 		else if (false == m_vecNode[UI_ROTGUAGE]->Is_Active() && false == m_vecNode[UI_ROTLVUP]->Is_Active())
 		{
 			m_bRotLvUp = false;
-			static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_GuageZero();
+			//static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_GuageZero();
 
 			m_vecNode[UI_EFFECT_BACKFLARE]->Set_Active(false);
 			m_vecNode[UI_EFFECT_FRONTFLAREROUND]->Set_Active(false);
@@ -120,20 +120,20 @@ void CUI_CanvasTop::Tick(_float fTimeDelta)
 		}
 	}
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_K))
-	{
-		static _uint iState = CUI_NodeMood::STATE_HIT;
-		iState++;
-		iState %= CUI_NodeMood::STATE_END;
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
+	//{
+	//	static _uint iState = CUI_NodeMood::STATE_HIT;
+	//	iState++;
+	//	iState %= CUI_NodeMood::STATE_END;
 
-		m_vecNode[UI_MOOD]->Set_Active(true);
-		static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn((CUI_NodeMood::STATE)iState);
-	}
+	//	m_vecNode[UI_MOOD]->Set_Active(true);
+	//	static_cast<CUI_NodeMood*>(m_vecNode[UI_MOOD])->MoodOn((CUI_NodeMood::STATE)iState);
+	//}
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
-	{
-		static_cast<CUI_NodeAlarm*>(m_vecNode[UI_ALARM])->Set_Alarm(CUI_NodeAlarm::TYPE_CHEST, 5.f);
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_O))
+	//{
+	//	static_cast<CUI_NodeAlarm*>(m_vecNode[UI_ALARM])->Set_Alarm(CUI_NodeAlarm::TYPE_CHEST, 5.f);
+	//}
 
 	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
 	//{
@@ -435,6 +435,7 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 	case CUI_ClientManager::TOP_ROT_LVUP:
 		m_bRotLvUp = true;
 		m_iRotLv = (_uint)fValue;
+		static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_GuageZero();
 		break;
 	case CUI_ClientManager::TOP_BOSS:
 		if (fValue >= 10.f)

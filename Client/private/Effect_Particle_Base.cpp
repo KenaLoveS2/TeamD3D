@@ -340,7 +340,7 @@ HRESULT CEffect_Particle_Base::Save_Data()
 		strcpy_s(szSaveFileName, MAX_PATH, m_strEffectTag.c_str());
 	ImGui::SameLine();
 
-	if (ImGui::Button("Save"))
+	if (ImGui::Button("Particle Save"))
 		ImGuiFileDialog::Instance()->OpenDialog("Select File", "Select", ".json", "../Bin/Data/Effect_UI/", szSaveFileName, 0, nullptr, ImGuiFileDialogFlags_Modal);
 
 	if (ImGuiFileDialog::Instance()->Display("Select File"))

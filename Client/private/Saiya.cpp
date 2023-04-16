@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "..\public\Saiya.h"
 #include "GameInstance.h"
 #include "CameraForNpc.h"
@@ -11,6 +11,7 @@
 #include "UI_FocusNPC.h"
 #include "CinematicCamera.h"
 #include "Rot.h"
+#include "BossShaman.h"
 #include "Camera_Photo.h"
 
 /* For. Delegator Default Value (meaningless) */
@@ -31,6 +32,7 @@ CSaiya::CSaiya(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_iChatIndex(0)
 	, m_iLineIndex(0)
 	, m_pFocus(nullptr)
+	, m_bCall(false)
 {
 }
 
@@ -39,6 +41,7 @@ CSaiya::CSaiya(const CNpc& rhs)
 	, m_iChatIndex(0)
 	, m_iLineIndex(0)
 	, m_pFocus(nullptr)
+	, m_bCall(false)
 {
 }
 
@@ -126,6 +129,9 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 	{
 		m_pMainCam = dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")));
 		m_iChatIndex = 3;
+
+		m_pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Monster", L"BossShaman_0"));
+
 		m_vFinalPosition = _float4(-34.3f, 20.4f, 1230.8f, 1.f);
 		m_pTransformCom->Set_Position(m_vFinalPosition);
 		m_pTransformCom->Rotation(_float4(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
@@ -135,6 +141,8 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 
 	m_pCamera_Photo = (CCamera_Photo*)CGameInstance::GetInstance()->Find_Camera(CAMERA_PHOTO_TAG);
 	if (m_pCamera_Photo) m_pCamera_Photo->Set_NpcSaiyaPtr(this);
+
+
 
 	return S_OK;
 }
@@ -147,6 +155,19 @@ void CSaiya::Tick(_float fTimeDelta)
 	m_iNumKeyFrame = (_uint)m_keyframes.size();
 	Update_Collider(fTimeDelta);
 
+	if (g_LEVEL == LEVEL_FINAL )
+	{
+		if (m_pShaman->Get_BossClear() == true && false == m_bCall)
+		{
+			CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+			_bool bStart = true;
+			_float fIdx2 = 2;
+			m_SaiyaDelegator.broadcast(tag, bStart, fIdx2, wstrDefault);
+			CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+
+			m_bCall = true;
+		}
+	}
 	/*char szName[MAX_PATH] = "";
 	CUtile::WideCharToChar(m_szCloneObjectTag, szName);
 	ImGui::Begin(szName);
@@ -164,6 +185,8 @@ void CSaiya::Tick(_float fTimeDelta)
 
 	if (m_bStraight)
 		m_pTransformCom->Go_Straight(fTimeDelta);
+
+	
 }
 
 void CSaiya::Late_Tick(_float fTimeDelta)
@@ -436,6 +459,18 @@ HRESULT CSaiya::SetUp_State()
 		.OnExit([this]()
 	{
 		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
+		/* Quest 0 Start */
+		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+		CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
+		_bool bStart = true;
+		m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
+		_float fIndex0, fIndex1, fIndex2, fIndex3;
+		m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fIndex0, wstrDefault); // 수상한 아이들
+		m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fIndex1, wstrDefault); // 아이들을 따라가라
+		m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fIndex2, wstrDefault); // 펄스사용해라
+		m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fIndex3, wstrDefault); // 스킬 열어라
+
+		CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
 	})
 		.AddTransition("ACTION_1 to ACTION_2", "ACTION_2")
 		.Predicator([this]()
@@ -582,6 +617,16 @@ HRESULT CSaiya::SetUp_State()
 	})
 
 		.AddState("IDLE")
+		.OnStart([this]() {
+		/* Quest 0 - 1,2 Clear */
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+		_bool bStart = true;
+		_float fIdx1 = 1, fIdx2 = 2;
+		m_SaiyaDelegator.broadcast(tag, bStart, fIdx1, wstrDefault);
+		m_SaiyaDelegator.broadcast(tag, bStart, fIdx2, wstrDefault);
+		CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+			
+	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
@@ -659,15 +704,8 @@ HRESULT CSaiya::SetUp_State()
 		m_iLineIndex = 0;
 		m_iChatIndex++;
 
-		/* Quest Start */
-		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
-		CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
-		_bool bStart = true;
-		m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
-		_float fQuestIdx = 0.f;
-		m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fQuestIdx, wstrDefault);
 		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
-		CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+
 	})
 		.AddTransition("ACTION_9 to ACTION_10", "ACTION_10")
 		.Predicator([this]()
@@ -829,16 +867,15 @@ HRESULT CSaiya::SetUp_State()
 
 			m_iLineIndex = 0;
 			m_iChatIndex++;
-
-			/* Quest Start */
-			CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
-			CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
-			_bool bStart = true;
-			m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
-			_float fQuestIdx = 0.f;
-			m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fQuestIdx, wstrDefault);
 			CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
-			CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+
+			/* Quest 1 - 1 Clear */
+			CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+			_bool bStart = true;
+			_float fIdx1 = 1;
+			m_SaiyaDelegator.broadcast(tag, bStart, fIdx1, wstrDefault);
+			CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+
 	})
 		.AddTransition("ACTION_17 to ACTION_18", "ACTION_18")
 		.Predicator([this]()
@@ -1015,16 +1052,8 @@ HRESULT CSaiya::SetUp_State()
 
 		m_iLineIndex = 0;
 		m_iChatIndex++;
-
-		/* Quest Start */
-		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
-		CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
-		_bool bStart = true;
-		m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
-		_float fQuestIdx = 0.f;
-		m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fQuestIdx, wstrDefault);
 		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
-		CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+
 	})
 		.AddTransition("ACTION_26 to ACTION_27", "ACTION_27")
 		.Predicator([this]()
@@ -1066,6 +1095,14 @@ HRESULT CSaiya::SetUp_StateFinal()
 		.AddState("CHAT")
 		.OnStart([this]()
 	{
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+		_bool bStart = true;
+		_float fIdx3 = 3;
+		m_SaiyaDelegator.broadcast(tag, bStart, fIdx3, wstrDefault);
+		CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+
+
+
 		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 		_bool bVal = true;
 		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][0]);

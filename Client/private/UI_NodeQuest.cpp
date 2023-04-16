@@ -50,6 +50,8 @@ void CUI_NodeQuest::Set_QuestString(wstring str)
 
 void CUI_NodeQuest::Set_Clear()
 {
+	m_bClear = true;
+	m_fTimeAcc = 0.0f;
 }
 
 HRESULT CUI_NodeQuest::Initialize_Prototype()
@@ -103,15 +105,15 @@ void CUI_NodeQuest::Tick(_float fTimeDelta)
 
 	if (m_bOpening && m_bClear)
 	{
-		//m_fSpeed = 0.3f;
-		//m_fTimeAcc += fTimeDelta;
-		//if (m_fAlpha <= 0.f)
-		//	m_bActive = false;
-		//else
-		//{
-		//	m_fAlpha -= m_fSpeed * m_fTimeAcc;
-		//	m_bClear = false;
-		//}
+		m_fSpeed = 5.f;
+		m_fTimeAcc += fTimeDelta;
+		if (m_fAlpha <= 0.f)
+			m_bActive = false;
+		else
+		{
+			m_fAlpha -= m_fSpeed * m_fTimeAcc;
+			m_bClear = false;
+		}
 	}
 
 	__super::Tick(fTimeDelta);
