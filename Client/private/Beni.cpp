@@ -102,7 +102,8 @@ void CBeni::Tick(_float fTimeDelta)
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
-	AdditiveAnim(fTimeDelta);
+	if (!m_pSaiya->Get_Photo())
+		AdditiveAnim(fTimeDelta);
 
 	_float3 vLook = m_pSaiya->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
 	_float3 vRight = _float3(1.f, 0.f, 0.f);

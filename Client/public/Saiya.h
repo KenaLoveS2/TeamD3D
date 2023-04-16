@@ -119,8 +119,11 @@ public:
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>		m_SaiyaDelegator;
 	void								Set_Disappear(_bool bDisappear) { m_bDeath = bDisappear; }
-	_bool  Get_PhotoAnimeEnd() { return m_bPhotoAnimEnd; }
-
+	_bool											 Get_PhotoAnimeEnd() { return m_bPhotoAnimEnd; }
+	void												Execute_Photo();
+	_bool											Is_PhotoAnimEnd();
+	_bool											UIOFF() { return m_bUIOff; }
+	_bool											Get_Photo() { return m_bPhoto; }
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) override;
 	virtual	HRESULT			SetUp_State()override;
@@ -159,9 +162,9 @@ private:
 	class CCamera_Photo*					m_pCamera_Photo = nullptr;
 	_bool											 m_bPhoto = false;
 	_bool											 m_bPhotoAnimEnd = false;
-	void												Execute_Photo();
-	_bool											Is_PhotoAnimEnd();
+	_bool												m_bUIOff = false;
 	_bool											m_bChatEnd = false;
+	_float4											m_vFinalPosition;
 
 public:
 	static CSaiya*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

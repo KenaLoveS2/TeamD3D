@@ -255,35 +255,6 @@ PS_OUT PS_FLARE(PS_IN In)
 float  g_fFar = 500.f;
 matrix g_ProjMatrixInv;
 matrix g_ViewMatrixInv;
-
-//PS_OUT PS_LIGHTSHAFT(PS_IN In)
-//{
-//	PS_OUT Out = (PS_OUT)0;
-//
-//	float4 FinalColor = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
-//	float4 vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
-//
-//	float fViewZ = vDepthDesc.y * g_fFar;
-//	vector vWorldPos;
-//
-//	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
-//	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
-//	vWorldPos.z = vDepthDesc.x;
-//	vWorldPos.w = 1.f;
-//	vWorldPos *= fViewZ;
-//
-//	vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-//	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
-//	// 투영좌표까지 올라와 있는거 월드 좌표까지 내려야함
-//	float fDist = length(vWorldPos.xyz - g_vCamPosition.xyz);
-//	float fogFactor = saturate((fDist - g_FogStart) / g_FogRange);
-//
-//	Out.vColor.rgb = lerp(FinalColor.rgb, g_FogColor.rgb, fogFactor);
-//	Out.vColor.a = FinalColor.a;
-//
-//	return Out;
-//}
-
 float4 g_LightShaftValue = float4(0.5f, 0.9f, 0.5f, 1.f);
 // x= Density
 // y = Decay
@@ -328,14 +299,6 @@ PS_OUT PS_LIGHTSHAFT(PS_IN In)
 	float2 DeltaTexCoord = (In.vTexUV - lightPos.xy);
 	DeltaTexCoord *= 1.f / NUM_SAMPLES * g_LightShaftValue.x * (1.f - fAtt);
 
-	//matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
-	//lightPos = mul(lightPos, matVP);
-	//float2 dist = abs(In.vTexUV - lightPos.xy);
-	//float2 texCoord = In.vTexUV;
-	//float2 DeltaTexCoord = (In.vTexUV - lightPos.xy);
-	//// Scale DeltaTexCoord based on distance from light source
-	//DeltaTexCoord *= 1.f / NUM_SAMPLES * g_LightShaftValue.x * fAtt;
-
 	float4 FinalColor = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
 
 	float illuminationDecay =1.f;
@@ -350,6 +313,56 @@ PS_OUT PS_LIGHTSHAFT(PS_IN In)
 	}
 
 	Out.vColor = saturate(FinalColor * g_LightShaftValue.w);
+
+	return Out;
+}
+
+float g_TotalTime = 10.f;
+
+PS_OUT FadeINOUT(PS_IN In)
+{
+	PS_OUT Out = (PS_OUT)0;
+
+	float4 FinalColor = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
+
+	// 페이드 인/아웃 부분
+	float fade = 0;
+	float fadeTime = 10; // 페이드 인/아웃 시간 (초)
+	float currentTime = g_Time; // 쉐이더에서 전역 시간값을 사용해야 합니다.
+
+	// 카메라 조리개가 닫히는 효과를 만들기 위해 dotSize를 서서히 줄여줍니다.
+	float dotSize = lerp(1.f, 0.001f, saturate(currentTime / fadeTime));
+	float2 Screen = float2(1600.f, 1600.f);
+	float2 uv = In.vPosition.xy / Screen;
+
+	// 쉐이더에서 점을 그리는 부분
+	float dist = length(uv - float2(0.5, 0.3));
+	float alpha = saturate((dist - dotSize) / dotSize);
+	FinalColor *= alpha;
+
+	if (currentTime < fadeTime) {
+		fade = currentTime / fadeTime; // 0에서 1로 점진적으로 증가
+	}
+	else if (currentTime > g_TotalTime - fadeTime) {
+		fade = (g_TotalTime - currentTime) / fadeTime; // 1에서 0으로 점진적으로 감소
+	}
+	else {
+		fade = 1; // 페이드 인/아웃 시간에 해당하지 않으면 alpha값을 1로 설정
+	}
+
+	// 페이드 인/아웃에 따른 alpha값 적용
+	FinalColor.a *= fade;
+
+	if (currentTime >= g_TotalTime)
+		currentTime = g_TotalTime;
+
+	if (FinalColor.a >= 0.1f)
+		FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	if(currentTime == g_TotalTime)
+		Out.vColor = float4(0.f, 0.f, 0.f, 1.f);
+	else
+		Out.vColor = FinalColor;
 
 	return Out;
 }
@@ -446,4 +459,17 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_LIGHTSHAFT();
 	} //6
+
+	pass Fade
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 FadeINOUT();
+	} //7
 }

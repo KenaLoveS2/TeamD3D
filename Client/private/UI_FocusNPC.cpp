@@ -74,7 +74,7 @@ void CUI_FocusNPC::Late_Tick(_float fTimeDelta)
 	else
 		m_bActive = false;
 
-	if (dynamic_cast<CSaiya*>(m_tBBDesc.pOwner)->Get_Disappear())
+	if (dynamic_cast<CSaiya*>(m_tBBDesc.pOwner)->Get_Disappear() || dynamic_cast<CSaiya*>(m_tBBDesc.pOwner)->UIOFF())
 		m_bActive = false;
 
 	if (!m_bActive)

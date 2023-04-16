@@ -3,6 +3,8 @@
 #include "Kena.h"
 #include "LiftRot_Master.h"
 #include "BowTarget_Manager.h"
+#include "WorldTrigger.h"
+
 CRope_RotRock::CRope_RotRock(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CEnviroment_Interaction(pDevice, p_context)
 {
@@ -104,17 +106,13 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 
 	}
 
-
 	//if(ImGui::Button("m_bDissolve Test"))
 	//{
 	//	m_bDissolve = true;
-
 	//	m_fDissolveTime = 1.f;
 	//	m_bBowTargetClear = true;
 	//	
-
 	//}
-
 	//if(ImGui::Button("TestOnly"))
 	//{
 	//	m_bBowTargetClear = false;		// 삭제하기 
@@ -128,10 +126,13 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 		if (m_fDissolveTime <= 0.f)
 		{
 			m_bDissolve = false;
-			
+
+			CWorldTrigger* pWorldTrigger = dynamic_cast<CWorldTrigger*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Effect", L"UIWorldTrigger"));
+			assert(pWorldTrigger != nullptr && "CGimmick_EnviObj::Tick(_float fTimeDelta)");
+
+			pWorldTrigger->BroadCast_WorldTrigger(5);
 		}
 	}
-
 
 	if(m_pFSM)		
 		m_pFSM->Tick(fTimeDelta);

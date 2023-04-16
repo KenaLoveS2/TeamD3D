@@ -53,7 +53,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_TerrainEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
-	//p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_Rot::Create(m_pDevice, m_pContext));
 
 	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
@@ -561,7 +561,6 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
 	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level0_Chap0_Monster.json");
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level0_Chap1_Monster.json");
 	return S_OK;
 }
 
