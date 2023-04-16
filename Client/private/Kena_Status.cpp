@@ -453,12 +453,12 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 	return S_OK;
 }
 
-HRESULT CKena_Status::Save_RunTime(const wstring & wstrFilePath)
+HRESULT CKena_Status::Save_RunTime(const wstring& wstrFilePath)
 {
 	if (wstrFilePath == L"")
 		return E_FAIL;
 
-	Json	jKenaStatus;
+	Json   jKenaStatus;
 
 	jKenaStatus["00. Max HP"] = m_iMaxHP;
 	jKenaStatus["01. HP"] = m_iHP;
@@ -470,9 +470,11 @@ HRESULT CKena_Status::Save_RunTime(const wstring & wstrFilePath)
 	jKenaStatus["07. Crystal"] = m_iCrystal;
 	jKenaStatus["08. Rot Level"] = m_iRotLevel;
 	jKenaStatus["09. Rot Count"] = m_iCurrentRotCount;
-	jKenaStatus["10. Pip Level"] = m_iPipLevel;
-	jKenaStatus["11. Arrow Count"] = m_iCurArrowCount;
-	jKenaStatus["12. Bomb Count"] = m_iCurBombCount;
+	jKenaStatus["10. Max Rot Count"] = m_iRotCountMax;
+	jKenaStatus["11. Min Rot Count"] = m_iRotCountMin;
+	jKenaStatus["12. Pip Level"] = m_iPipLevel;
+	jKenaStatus["13. Arrow Count"] = m_iCurArrowCount;
+	jKenaStatus["14. Bomb Count"] = m_iCurBombCount;
 
 	for (_uint i = 0; i < (_uint)SKILLTAB_END; ++i)
 	{
@@ -496,7 +498,8 @@ HRESULT CKena_Status::Save_RunTime(const wstring & wstrFilePath)
 	return S_OK;
 }
 
-HRESULT CKena_Status::Load_RunTime(const wstring & wstrFilePath)
+
+HRESULT CKena_Status::Load_RunTime(const wstring& wstrFilePath)
 {
 	if (wstrFilePath == L"")
 		return E_FAIL;
@@ -517,15 +520,29 @@ HRESULT CKena_Status::Load_RunTime(const wstring & wstrFilePath)
 	jKenaStatus["07. Crystal"].get_to<_int>(m_iCrystal);
 	jKenaStatus["08. Rot Level"].get_to<_int>(m_iRotLevel);
 	jKenaStatus["09. Rot Count"].get_to<_int>(m_iCurrentRotCount);
-	jKenaStatus["10. Pip Level"].get_to<_int>(m_iPipLevel);
-	jKenaStatus["11. Arrow Count"].get_to<_int>(m_iCurArrowCount);
-	jKenaStatus["12. Bomb Count"].get_to<_int>(m_iCurBombCount);
+	jKenaStatus["10. Max Rot Count"].get_to<_int>(m_iRotCountMax);
+	jKenaStatus["11. Min Rot Count"].get_to<_int>(m_iRotCountMin);
+	jKenaStatus["12. Pip Level"].get_to<_int>(m_iPipLevel);
+	jKenaStatus["13. Arrow Count"].get_to<_int>(m_iCurArrowCount);
+	jKenaStatus["14. Bomb Count"].get_to<_int>(m_iCurBombCount);
 
 	for (_uint i = 0; i < (_uint)SKILLTAB_END; ++i)
-		for (_uint j = 0; j < 5; ++j)
-			jKenaStatus["99. Skill States"][i * 5 + j].get_to<_bool>(m_bSkills[i][j]);
+	{
+		if (i < 4)
+		{
+			for (_uint j = 0; j < 5; ++j)
+				jKenaStatus["99. Skill States"][i * 5 + j].get_to<_bool>(m_bSkills[i][j]);
+		}
+		else
+		{
+			for (_uint j = 0; j < 4; ++j)
+				jKenaStatus["99. Skill States"][i * 5 + j].get_to<_bool>(m_bSkills[i][j]);
+		}
+	}
 
-	/* UNLOCK SKILL은 UI LOAD하면서 처리 */
+	// Karma, Crystal, RotLevel, CurRotCount, MinRotCount, MaxRotCount
+
+
 
 	return S_OK;
 }

@@ -111,7 +111,6 @@ void CRot::Tick(_float fTimeDelta)
 		if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 		
 		m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-
 		m_pModelCom->Play_Animation(fTimeDelta * m_bPlayAnimation);
 	}
 	else if (m_bWakeUp && m_pTransformCom->Calc_Distance_XYZ(m_pKena->Get_TransformCom()) < 20.f)
@@ -336,7 +335,7 @@ HRESULT CRot::SetUp_State()
 		// COLLECT, COLLECT2, COLLECT3, COLLECT4, COLLECT5, COLLECT6, COLLECT7, COLLECT8,
 
 		// m_iCuteAnimIndex = rand() % (PHOTOPOSE8 - PHOTOPOSE1) + PHOTOPOSE1;
-		m_iCuteAnimIndex = rand() % (COLLECT8 - COLLECT) + COLLECT;
+		m_iCuteAnimIndex = (rand() % (COLLECT8 - COLLECT)) + COLLECT;
 		
 		m_pModelCom->ResetAnimIdx_PlayTime(m_iCuteAnimIndex);
 		m_pModelCom->Set_AnimIndex(m_iCuteAnimIndex);

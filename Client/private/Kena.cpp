@@ -549,9 +549,14 @@ void CKena::Tick(_float fTimeDelta)
 	if (m_bQuestOn)
 	{
 		/* Quest 2 Open */
+		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+		_bool bStart = true;
+		_float fDefaultVal = 2.f;
+		wstring wstr = L"";
+		m_PlayerQuestDelegator.broadcast(eQuest, bStart, fDefaultVal, wstr);
+
 		m_bQuestOn = false;
 	}
-
 
 	LiftRotRockProc();
 

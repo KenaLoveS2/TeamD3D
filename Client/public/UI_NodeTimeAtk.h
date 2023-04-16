@@ -11,14 +11,14 @@ private:
 	virtual ~CUI_NodeTimeAtk() = default;
 
 public:
-	void	Timer_On() { m_bStart = true; m_fTime = 0.f; m_fTimeAcc = 0.f; }
-
+	void	Timer_On() { m_bStart = true; m_fTime = 10 * 60.f; m_fTimeAcc = 0.f; }
+	_float Get_TimeLeft() { 	return m_fTime;	}
 public:
 	virtual HRESULT			Initialize_Prototype()					override;
 	virtual HRESULT			Initialize(void* pArg)					override;
 	virtual HRESULT			Late_Initialize(void* pArg = nullptr)	override;
-	virtual void			Tick(_float fTimeDelta)					override;
-	virtual void			Late_Tick(_float fTimeDelta)			override;
+	virtual void					Tick(_float fTimeDelta)					override;
+	virtual void					Late_Tick(_float fTimeDelta)			override;
 	virtual HRESULT			Render()								override;
 
 private:

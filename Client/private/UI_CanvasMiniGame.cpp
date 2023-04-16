@@ -120,7 +120,8 @@ void CUI_CanvasMiniGame::Tick(_float fTimeDelta)
 
 		if (pKena != nullptr)
 		{
-			if (pKena->Get_Hits())
+			_int iReturn = pKena->Get_Hits();
+			if (19 == pKena->Get_Hits())
 			{
 				m_bGameFinish = true;
 				BindFunction(CUI_ClientManager::MINIGAME_, true);
@@ -129,70 +130,70 @@ void CUI_CanvasMiniGame::Tick(_float fTimeDelta)
 
 	}
 
-
-
-
-
-	if (CGameInstance::GetInstance()->Key_Down(DIK_SPACE))
+	if (m_bGameFinish)
 	{
-		/* Temp code  */
-		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
-		if (pKena != nullptr)
-			pKena->Get_Status()->Set_Crystal(pKena->Get_Status()->Get_Crystal() + m_iResult);
-
-		m_bActive = false;
-	}
-
-	if (!m_bResultShow)
-	{
-		m_fTimeAcc += fTimeDelta;
-		m_fTime = 1.5f;
-		if (m_fTimeAcc > m_fTime)
+		if (CGameInstance::GetInstance()->Key_Down(DIK_SPACE))
 		{
-			m_iCurState = STATE_VICTORY;
-			m_fTimeAcc = 0.0f;
-			m_bResultShow = true;
-			static_cast<CUI_NodeVictory*>(m_vecNode[UI_VICTORY])->Sign_On();
-		}
-	}
-	else
-	{
-		m_fTimeAcc += fTimeDelta;
-		if (m_fTimeAcc > m_fTime && m_iCurState <= STATE_END)
-		{
-			m_fTimeAcc = 0.f;
-			m_iCurState = min(m_iCurState + 1, (_uint)STATE_END);
-			CalculateFunction(m_iCurState);
+			/* Temp code  */
+			CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+			if (pKena != nullptr)
+				pKena->Get_Status()->Set_Crystal(pKena->Get_Status()->Get_Crystal() + m_iResult);
+
+			m_bActive = false;
 		}
 
-		if (m_bCountTime)
+
+		if(!m_bResultShow)
 		{
-			m_iTimeLeft -= 5;
-			m_iResult += 5 * 5;
-			if (m_iTimeLeft <= 0)
+			m_fTimeAcc += fTimeDelta;
+			m_fTime = 1.5f;
+			if (m_fTimeAcc > m_fTime)
 			{
-				m_iTimeLeft = 0;
-				m_bCountTime = false;
-				m_bCountHit = true;
+				m_iCurState = STATE_VICTORY;
+				m_fTimeAcc = 0.0f;
+				m_bResultShow = true;
+				static_cast<CUI_NodeVictory*>(m_vecNode[UI_VICTORY])->Sign_On();
 			}
 		}
-
-		if (m_bCountHit)
+		else
 		{
-			m_iHitCount -= 1;
-			m_iResult += 1 * 10;
-			if (m_iHitCount <= 0)
+			m_fTimeAcc += fTimeDelta;
+			if (m_fTimeAcc > m_fTime && m_iCurState <= STATE_END)
 			{
-				m_iHitCount = 0;
-				m_bCountHit = false;
-				m_bReward = true;
+				m_fTimeAcc = 0.f;
+				m_iCurState = min(m_iCurState + 1, (_uint)STATE_END);
+				CalculateFunction(m_iCurState);
 			}
-		}
 
-		if (m_bReward == true)
-		{
-			static_cast<CUI_NodeReward*>(m_vecNode[UI_REWARD])->Open();
-			m_bReward = false;
+			if (m_bCountTime)
+			{
+				m_iTimeLeft -= 5;
+				m_iResult += 5 * 5;
+				if (m_iTimeLeft <= 0)
+				{
+					m_iTimeLeft = 0;
+					m_bCountTime = false;
+					m_bCountHit = true;
+				}
+			}
+
+			if (m_bCountHit)
+			{
+				m_iHitCount -= 1;
+				m_iResult += 1 * 10;
+				if (m_iHitCount <= 0)
+				{
+					m_iHitCount = 0;
+					m_bCountHit = false;
+					m_bReward = true;
+				}
+			}
+
+			if (m_bReward == true)
+			{
+				static_cast<CUI_NodeReward*>(m_vecNode[UI_REWARD])->Open();
+				m_bReward = false;
+			}
 		}
 	}
 
@@ -211,17 +212,19 @@ void CUI_CanvasMiniGame::Late_Tick(_float fTimeDelta)
 	for (auto e : m_vecEvents)
 		e->Late_Tick(fTimeDelta);
 
-	if (nullptr != m_pRendererCom && m_bActive)
+	if (nullptr != m_pRendererCom && m_bResultShow)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UIHDR, this);
 
-		for (auto node : m_vecNode)
-			node->Late_Tick(fTimeDelta);
 
 		/* Nodes added to RenderList After the canvas. */
 		/* So It can be guaranteed that Canvas Draw first */
 
 	}
+
+
+	for (auto node : m_vecNode)
+		node->Late_Tick(fTimeDelta);
 
 }
 
@@ -245,7 +248,7 @@ HRESULT CUI_CanvasMiniGame::Render()
 			XMVectorSet(1.f, 1.f, 1.f, 1.f));
 	}
 
-	if(m_iCurState >= STATE_TIME)
+	if (m_iCurState >= STATE_TIME)
 	{
 		_int iMin = (_int)m_iTimeLeft / 60;
 		_int iSec = (_int)m_iTimeLeft - iMin * 60;
@@ -260,14 +263,14 @@ HRESULT CUI_CanvasMiniGame::Render()
 
 		_float4 vPos;
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 210.0f, g_iWinSizeY * 0.5f - vPos.y -150.f };
+		_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 210.0f, g_iWinSizeY * 0.5f - vPos.y - 150.f };
 		//if (m_szTime != nullptr)
 		//{
 			//Font_Jangmi0 //Font_JungE0 // Font_SR0
-			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
-				vNewPos /* position */,
-				0.f, _float2(1.0f, 1.0f)/* size */,
-				XMVectorSet(1.f, 1.f, 1.f, 1.f));
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
+			vNewPos /* position */,
+			0.f, _float2(1.0f, 1.0f)/* size */,
+			XMVectorSet(1.f, 1.f, 1.f, 1.f));
 		//}
 	}
 
@@ -287,7 +290,7 @@ HRESULT CUI_CanvasMiniGame::Render()
 			XMVectorSet(1.f, 1.f, 1.f, 1.f));
 	}
 
-	if(m_iCurState >= STATE_HIT)
+	if (m_iCurState >= STATE_HIT)
 	{
 		wstring wstr = L"적중 타겟 : " + to_wstring(m_iHitCount);
 		_float4 vPos;
@@ -296,15 +299,15 @@ HRESULT CUI_CanvasMiniGame::Render()
 		//if (m_szHit != nullptr)
 		//{
 			//Font_Jangmi0 //Font_JungE0 // Font_SR0
-			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
-				vNewPos /* position */,
-				0.f, _float2(1.0f, 1.0f)/* size */,
-				XMVectorSet(1.f, 1.f, 1.f, 1.f));
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
+			vNewPos /* position */,
+			0.f, _float2(1.0f, 1.0f)/* size */,
+			XMVectorSet(1.f, 1.f, 1.f, 1.f));
 		//}
 
 	}
 
-	if(m_iCurState == STATE_RESULT_TITLE)
+	if (m_iCurState == STATE_RESULT_TITLE)
 	{
 		wstring wstr = L"최종 결과 : ";
 
@@ -314,10 +317,10 @@ HRESULT CUI_CanvasMiniGame::Render()
 		//if (m_szResult != nullptr)
 		//{
 			//Font_Jangmi0 //Font_JungE0 // Font_SR0
-			CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
-				vNewPos /* position */,
-				0.f, _float2(1.0f, 1.0f)/* size */,
-				XMVectorSet(1.f, 1.f, 1.f, 1.f));
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), wstr.c_str(),
+			vNewPos /* position */,
+			0.f, _float2(1.0f, 1.0f)/* size */,
+			XMVectorSet(1.f, 1.f, 1.f, 1.f));
 		//}
 	}
 
@@ -480,11 +483,11 @@ void CUI_CanvasMiniGame::BindFunction(CUI_ClientManager::UI_PRESENT eType, _floa
 {
 	switch (eType)
 	{
-	//case CUI_ClientManager::MINIGAME_TOTAL_TARGET:
-	//	break;
-	//case CUI_ClientManager::MINIGAME_HIT:
+		//case CUI_ClientManager::MINIGAME_TOTAL_TARGET:
+		//	break;
+		//case CUI_ClientManager::MINIGAME_HIT:
 
-	//	break;
+		//	break;
 	case CUI_ClientManager::MINIGAME_START:
 		m_bActive = true;
 		m_vecNode[UI_TIMEATK]->Set_Active(true);
@@ -497,10 +500,11 @@ void CUI_CanvasMiniGame::BindFunction(CUI_ClientManager::UI_PRESENT eType, _floa
 		m_iCurState = -1;
 		m_bReward = false;
 
-		m_iTimeLeft = 300;
-		m_iHitCount = 30;
+		m_iTimeLeft = static_cast<CUI_NodeTimeAtk*>(m_vecNode[UI_TIMEATK])->Get_TimeLeft();
+		m_iHitCount = 19;
 		m_iResult = 0;
-
+		m_vecNode[UI_TIMEATK]->Set_Active(false);
+		m_vecNode[UI_HITCOUNT]->Set_Active(false);
 		break;
 	}
 
