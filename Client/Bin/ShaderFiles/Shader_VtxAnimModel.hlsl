@@ -191,6 +191,37 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+float4 g_fShineColor;
+float g_fCycle_Interval;
+float g_fShine_Speed;
+float g_fShine_Width;
+
+PS_OUT PS_HIGHLIGHT(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	float width = g_fShine_Width * 0.001f * g_fCycle_Interval;
+	float frequency = floor(sin(In.vProjPos.z * g_fCycle_Interval + g_Time * g_fShine_Speed * g_fCycle_Interval) + width);
+
+	Out.vDiffuse = vDiffuse + abs(frequency) * 0.4f;
+
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}
+
 PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -2256,4 +2287,18 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_E_R_AO_E_DISSOLVE();
 	}//35
+
+	pass HighLight
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_HIGHLIGHT();
+	}// 36
+
 };

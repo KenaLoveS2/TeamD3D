@@ -38,7 +38,7 @@ HRESULT CE_ShamanHeadTrail::Initialize(void * pArg)
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
 	m_eEFfectDesc.fWidth = 0.1f; 
-	m_eEFfectDesc.fLife = 1.5f; 
+	m_eEFfectDesc.fLife = 1.8f; 
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
 	m_eEFfectDesc.fSegmentSize = 0.001f;
@@ -46,6 +46,7 @@ HRESULT CE_ShamanHeadTrail::Initialize(void * pArg)
 	/* ~Trail Option */
 
 	m_eEFfectDesc.bActive = false;
+	m_eEFfectDesc.iPassCnt = 1; 
 	return S_OK;
 }
 
@@ -60,8 +61,6 @@ void CE_ShamanHeadTrail::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
-
-	m_eEFfectDesc.fLife = 0.6f;
 
 	Update_Trail(); 
 }
@@ -128,10 +127,11 @@ void CE_ShamanHeadTrail::Update_Trail()
 	if (m_pParent == nullptr)
 		return;
 
-	_matrix Socketmatrix = m_pShamanBone->Get_CombindMatrix() * m_pShamanModel->Get_PivotMatrix() * m_pParent->Get_WorldMatrix();
-	//Socketmatrix.r[3] += m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_LOOK) * m_fRange;
+	_matrix Socketmatrix = m_pShamanBone->Get_CombindMatrix()* m_pShamanModel->Get_PivotMatrix()* m_pParent->Get_WorldMatrix();
 	m_pTransformCom->Set_WorldMatrix(Socketmatrix);
-	Trail_InputPos(Socketmatrix.r[3]);
+	
+	if (m_pShamanModel->Get_AnimIndex() != 29)
+		Trail_InputPos(Socketmatrix.r[3]);
 }
 
 void CE_ShamanHeadTrail::ToolTrail(const char* ToolTag)

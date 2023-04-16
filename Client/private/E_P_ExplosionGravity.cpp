@@ -46,31 +46,37 @@ HRESULT CE_P_ExplosionGravity::Initialize(void * pArg)
 
 HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 {
-	// Set_Option(CE_P_ExplosionGravity::TYPE_DEFAULT, XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
+	if (m_pParent)
+		m_pParentModel = (CModel*)m_pParent->Find_Component(L"Com_Model");
 	return S_OK;
 }
 
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
-// 	if (!lstrcmp(Get_ObjectCloneName(), L"Explosion"))
- 		if (m_eType == TYPE_DEFAULT)
- 			Set_OptionTool();
-//  		else
-//  			m_fLife += fTimeDelta;
+#ifdef _DEBUG
+//  	if (m_eType == TYPE_DEFAULT)
+//  		Set_OptionTool();
+#endif // _DEBUG
 
 	__super::Tick(fTimeDelta);
-	if (m_eEFfectDesc.bActive == false)
+	if (m_pParent && m_eType == TYPE_BOSS_HAND)
 	{
-		m_fLife = 0.0f;
-		return;
+		/* for.BossHand Update */
+		_matrix Socketmatrix = m_pParentBone->Get_CombindMatrix() * m_pParentModel->Get_PivotMatrix() * m_pParent->Get_TransformCom()->Get_WorldMatrix();
+		m_pTransformCom->Set_WorldMatrix(Socketmatrix);
 	}
-// 	else
-// 		m_pTransformCom->Set_Position(m_vFixPos);
+
+	if (m_eEFfectDesc.bActive == false)
+		return;
 
 	m_fLife += fTimeDelta;
+
 	/*m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && */
-	if (m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
+	if (m_eType != TYPE_BOSS_HAND && m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
+	{
+		m_fLife = 0.0f;
 		m_eEFfectDesc.bActive = false;
+	}
 }
 
 void CE_P_ExplosionGravity::Late_Tick(_float fTimeDelta)
@@ -368,6 +374,10 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 		break;
 	}
 
+	case CE_P_ExplosionGravity::TYPE_BOSS_HAND:
+		Load_Desc("ShamanHand");
+		break;
+
 	case CE_P_ExplosionGravity::TYPE_DAMAGE_PULSE:
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(1.f, 0.5f, 1.f, 0.2f), 0.2f,
@@ -412,8 +422,7 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 
 	case CE_P_ExplosionGravity::TYPE_BOWTARGET:
 		Load_Desc("BowTarget");
-		
-		break;
+		break;	
 	}
 }
 

@@ -1550,11 +1550,9 @@
     <ClInclude Include="..\public\BossRock_Pool.h">
       <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\SceneChangePortal.h" />
     <ClInclude Include="..\public\DeadZoneBossTree.h">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Rot_Base.h" />
     <ClInclude Include="..\public\E_Common_CIrcleSp.h">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClInclude>
@@ -1606,7 +1604,6 @@
     <ClInclude Include="..\public\BGM_Manager.h">
       <Filter>93. BGM Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Fire_Brazier.h" />
     <ClInclude Include="..\public\E_P_Rain.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
@@ -1697,8 +1694,6 @@
     <ClInclude Include="..\public\UI_NodeAlarm.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\Alarm</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BossShaman_Mask.h" />
-    <ClInclude Include="..\public\Camera_Shaman.h" />
     <ClInclude Include="..\public\Camera_Photo.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
@@ -1707,6 +1702,27 @@
     </ClInclude>
     <ClInclude Include="..\public\E_P_Level_RiseY.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossShaman_Mask.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Shaman.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_ShamanDust.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_WarriorEyeTrail.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Fire_Brazier.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rot_Base.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SceneChangePortal.h">
+      <Filter>1004.알아서해라</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2604,11 +2620,9 @@
     <ClCompile Include="..\private\BossRock_Pool.cpp">
       <Filter>02.GameObjects\Monster\BossRock</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\SceneChangePortal.cpp" />
     <ClCompile Include="..\private\DeadZoneBossTree.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Rot_Base.cpp" />
     <ClCompile Include="..\private\E_Common_CIrcleSp.cpp">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClCompile>
@@ -2660,7 +2674,6 @@
     <ClCompile Include="..\private\BGM_Manager.cpp">
       <Filter>93. BGM Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Fire_Brazier.cpp" />
     <ClCompile Include="..\private\E_P_Rain.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
@@ -2751,8 +2764,6 @@
     <ClCompile Include="..\private\UI_NodeAlarm.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\Alarm</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BossShaman_Mask.cpp" />
-    <ClCompile Include="..\private\Camera_Shaman.cpp" />
     <ClCompile Include="..\private\Camera_Photo.cpp">
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
@@ -2761,6 +2772,27 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_Level_RiseY.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossShaman_Mask.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Shaman.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_ShamanDust.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_WarriorEyeTrail.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Fire_Brazier.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rot_Base.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SceneChangePortal.cpp">
+      <Filter>1004.알아서해라</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -294,6 +294,9 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vColor = finalcolor * type;
 	Out.vColor.a = Out.vColor.r * In.fLife;
 	Out.vColor.rgb = Out.vColor.rgb * 1.4f;
+
+	Out.vColor = CalcHDRColor(Out.vColor, 2.f);
+
 	return Out;
 }
 
