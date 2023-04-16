@@ -44,6 +44,7 @@ HRESULT CBossRock_Pool::Initialize(void* pArg)
 
 		pRock = (CBossRock*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossRock"), CUtile::Create_DummyString(), &BossRockDesc);
 		assert(pRock && "CBossRock_Pool::Initialize()");
+		pRock->Set_RockIndex(i);
 
 		m_Rocks.push_back(pRock);
 		pRock = nullptr;
