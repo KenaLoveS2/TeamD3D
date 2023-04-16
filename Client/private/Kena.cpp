@@ -1732,15 +1732,16 @@ HRESULT CKena::SetUp_Components()
 HRESULT CKena::Ready_Rots()
 {
 	CRot::Clear();
-	for (_uint i = 0; i < 5; ++i)
+
+	_int iDevide = 8 - m_pKenaStatus->Get_RotCount();
+
+	for (_uint i = 0; i < 8; ++i)
 	{
 		_tchar szCloneRotTag[32] = { 0, };
 		swprintf_s(szCloneRotTag, L"PlayerRot_%d", i);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", CUtile::Create_StringAuto(szCloneRotTag), nullptr, &p_game_object);
 		dynamic_cast<CRot*>(p_game_object)->AlreadyRot();
-		m_pKenaStatus->Add_RotCount();
-
 		if (i == FIRST_ROT)
 		{
 			Set_FirstRotPtr((CRot*)p_game_object);
@@ -1748,6 +1749,11 @@ HRESULT CKena::Ready_Rots()
 			if (m_pCamera_Photo)
 				m_pCamera_Photo->Set_KenaPtr(this);
 		}
+	}
+
+	for (_uint i = 0; i < iDevide; ++i)
+	{
+		m_pKenaStatus->Add_RotCount();
 	}
 	
 	return S_OK;
@@ -3699,7 +3705,7 @@ void CKena::LiftRotRockProc()
 		_vector vCamLook = pGameInst->Get_CamLook_Float4();
 		_float3 vOut;
 
-		if (CPhysX_Manager::GetInstance()->Raycast_Collision(vCamPos, vCamLook, 10.f, &vOut))
+		if (CPhysX_Manager::GetInstance()->Raycast_Collision(vCamPos, vCamLook, 15.f, &vOut))
 		{
 			pCurTerrain->Set_BrushPosition(vOut);
 

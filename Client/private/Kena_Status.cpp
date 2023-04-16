@@ -253,19 +253,19 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 				_float fMax = (_float)m_iMaxArrowCount;
 				m_StatusDelegator.broadcast(eArrowUpgrade, fMax);
 			}
-			else if (iSlot == 3)	/* ȭ�� ������ ���� (8) */
+			else if (iSlot == 3)	/* ȭ�� ������ ���� (25) */
 			{
 				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
 
 				for (auto pArrow : *pArrows)
-					pArrow->Set_Damage(8);
+					pArrow->Set_Damage(25);
 			}
-			else if (iSlot == 4)	/* ȭ�� ������ ���� (12) */
+			else if (iSlot == 4)	/* ȭ�� ������ ���� (30) */
 			{
 				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
 
 				for (auto pArrow : *pArrows)
-					pArrow->Set_Damage(12);
+					pArrow->Set_Damage(30);
 			}
 
 			break;
@@ -580,7 +580,6 @@ const _bool CKena_Status::Get_SkillState(SKILLTAB eCategory, _uint iSlot) const
 
 void CKena_Status::Set_RotCount(_int iValue)
 {
-
 	//m_iCurrentRotCount = iValue;
 
 	//CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
@@ -594,7 +593,6 @@ void CKena_Status::Set_RotCount(_int iValue)
 	//m_StatusDelegator.broadcast(eNow, fRotNow);
 	//m_StatusDelegator.broadcast(eMax, fRotMax);
 	//m_StatusDelegator.broadcast(eGet, fGuage);
-
 
 	///* think later */
 	//if (Get_RotMax() == m_iCurrentRotCount)

@@ -60,7 +60,7 @@ private:
 	_float						m_fDistance = 10.f;
 	_bool						m_bReachToAim = false;
 
-	_int						m_iDamage = 5;
+	_int						m_iDamage = 20;
 
 	_float4						m_vFirePosition;
 	_float4						m_vFireCamLook;
