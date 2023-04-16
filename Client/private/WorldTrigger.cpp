@@ -65,16 +65,13 @@ HRESULT CWorldTrigger::Late_Initialize(void* pArg)
 	Load();
 	_smatrix mat;
 	m_vecWorldMatrix.push_back(mat);
+
 	return S_OK;
 }
 
 void CWorldTrigger::Tick(_float fTimeDelta)
 {
-	if(!m_bTestOnce)
-	{
-		Late_Initialize(nullptr);
-		m_bTestOnce = true;
-	}
+	
 	CGameObject::Tick(fTimeDelta);
 
 	m_pRendererCom->Set_PhysXRender(true);
@@ -90,6 +87,8 @@ void CWorldTrigger::Tick(_float fTimeDelta)
 		CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
 		m_pRendererCom->Set_CaptureMode(true);
 	}
+
+
 }
 
 void CWorldTrigger::Late_Tick(_float fTimeDelta)

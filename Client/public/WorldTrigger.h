@@ -19,9 +19,9 @@ private:
 	virtual ~CWorldTrigger() = default;
 
 public:
-	virtual HRESULT			Initialize_Prototype() override;
-	virtual HRESULT			Initialize(void* pArg) override;
-	virtual HRESULT			Late_Initialize(void* pArg) override;
+	virtual HRESULT					Initialize_Prototype() override;
+	virtual HRESULT					Initialize(void* pArg) override;
+	virtual HRESULT					Late_Initialize(void* pArg) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual void					Imgui_RenderProperty() override;
@@ -40,12 +40,12 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 
 private:
-	class CGameInstance* m_pGameInstance = nullptr;
+	class CGameInstance*			m_pGameInstance = nullptr;
 	_bool							m_bChange = false;
 	_uint								m_iVectorSize = 0;
-	vector<_smatrix>        m_vecWorldMatrix;
+	vector<_smatrix>				 m_vecWorldMatrix;
 	_uint								m_nMatNum = 0;
-	_bool								m_bTestOnce = false;
+
 public:
 	static  CWorldTrigger* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
