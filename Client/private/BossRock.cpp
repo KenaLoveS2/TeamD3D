@@ -61,7 +61,7 @@ HRESULT CBossRock::Late_Initialize(void * pArg)
 	PxBoxDesc.vSize = { 0.2f * fRandScale, 0.2f * fRandScale, 0.2f * fRandScale };
 	PxBoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
 	PxBoxDesc.fMass = 30000.f;
-	PxBoxDesc.fLinearDamping = 2.1f;
+	PxBoxDesc.fLinearDamping = 1.8f;
 	PxBoxDesc.fAngularDamping = 2.1f;
 	PxBoxDesc.fRestitution = 1.f;
 
@@ -183,7 +183,9 @@ void CBossRock::BossRockProc(_float fTimeDelta)
 	{
 		if (m_bGroundCollision)
 		{
-			m_pGameInstance->Play_Sound(m_pCopySoundkey_Impact, 0.5f);
+			if(m_iThisRockIndex > -1 && m_iThisRockIndex < 10)
+				m_pGameInstance->Play_Sound(m_pCopySoundkey_Impact, 0.3f);
+
 			m_bGroundCollision = false;
 			m_eState = STATE_END;
 		}
@@ -230,4 +232,9 @@ _int CBossRock::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _
 	}	
 
 	return 0;
+}
+
+void CBossRock::Set_RockIndex(_uint iIndex)
+{
+	m_iThisRockIndex = iIndex;
 }

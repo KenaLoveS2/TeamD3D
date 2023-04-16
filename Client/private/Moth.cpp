@@ -46,6 +46,8 @@ HRESULT CMoth::Initialize(void* pArg)
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("Moth_RIG");
 	m_pModelCom->Set_AnimIndex(TAUNT2);
 
+	m_vFocusIconPosOffset = { 0.f, 1.5f, 0.f, 0.f };
+
 	return S_OK;
 }
 
@@ -100,23 +102,18 @@ HRESULT CMoth::Late_Initialize(void * pArg)
 }
 
 void CMoth::Tick(_float fTimeDelta)
-{
-	/*m_bReadySpawn = true;
-	Update_Collider(fTimeDelta);
-	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	m_pModelCom->Play_Animation(fTimeDelta);
-	return;*/
-
+{	
 	if (m_bDeath) return;
 	__super::Tick(fTimeDelta);
 	
 	Update_Collider(fTimeDelta);
+	
+	// m_bReadySpawn = true;
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	
 	m_pModelCom->Play_Animation(fTimeDelta);
-
 }
 
 void CMoth::Late_Tick(_float fTimeDelta)

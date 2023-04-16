@@ -161,6 +161,7 @@ private:
 	_bool											 m_bPhotoAnimEnd = false;
 	void												Execute_Photo();
 	_bool											Is_PhotoAnimEnd();
+	_bool											m_bChatEnd = false;
 
 public:
 	static CSaiya*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
