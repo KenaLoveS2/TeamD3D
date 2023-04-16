@@ -95,6 +95,7 @@ void CCamera_Photo::Tick(_float TimeDelta)
 			m_eState = WAIT;
 
 			m_pFirstRot->Execute_Photo();
+			m_pKena->Execute_Photo();
 		}
 			
 		
@@ -102,7 +103,7 @@ void CCamera_Photo::Tick(_float TimeDelta)
 	}
 	case WAIT:
 	{
-		_bool bCompleteKena = false;
+		_bool bCompleteKena = m_pKena->Is_PhotoAnimEnd();
 		_bool bCompleteRot = m_pFirstRot && m_pFirstRot->Is_PhotoAnimEnd();
 		_bool bCompleteSaiya = false;
 

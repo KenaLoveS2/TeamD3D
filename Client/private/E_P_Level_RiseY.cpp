@@ -47,6 +47,16 @@ HRESULT CE_P_Level_RiseY::Late_Initialize(void* pArg)
 void CE_P_Level_RiseY::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bReset)
+	{
+		m_fLife += fTimeDelta;
+		if (m_fLife > 2.f)
+		{
+			Reset();
+			m_fLife = 0.0f;
+		}
+	}
 }
 
 void CE_P_Level_RiseY::Late_Tick(_float fTimeDelta)
@@ -74,7 +84,7 @@ HRESULT CE_P_Level_RiseY::Render()
 
 void CE_P_Level_RiseY::Reset()
 {
-	m_bReset = true;
+	m_bReset = false;
 	m_bTimer = false;
 	m_eEFfectDesc.bActive = false;
 

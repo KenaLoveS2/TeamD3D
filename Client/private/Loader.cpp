@@ -2843,7 +2843,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_LevelUp */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LevelUp"), CE_P_Level::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_KenaLvUp.json"))))
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LevelUp"), CE_P_Level::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_KenaLevelUp.json"))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Rot_P */ 
