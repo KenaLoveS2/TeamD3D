@@ -61,6 +61,11 @@ void CUI_CanvasAmmo::ConnectToAimUI(AIM_UI eUIType, _int iParam, CUI* pUI)
 
 }
 
+void CUI_CanvasAmmo::Call_BindFunction(_uint iTag, _float fData)
+{
+	Function((CUI_ClientManager::UI_PRESENT)iTag, fData);
+}
+
 HRESULT CUI_CanvasAmmo::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))

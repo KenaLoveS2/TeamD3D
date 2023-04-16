@@ -51,6 +51,16 @@ private:
 
 	_float3 m_vPxPivotDist;
 
+
+	CTexture*			m_pDissolveTextureCom = nullptr;
+
+	
+
+	_float				m_fDissolveTime = 1.f;
+	_bool				m_bDissolve = false;
+	_bool				m_bBowTargetClear = false;
+	_bool				m_bOnceBowTargetCheck = false;
+
 public:
 	CRope_RotRock(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CRope_RotRock(const CRope_RotRock& rhs);

@@ -62,7 +62,12 @@ void CE_P_Rain::Late_Tick(_float fTimeDelta)
 	}
 
 	if (m_eEFfectDesc.bActive == false)
+	{
+		CGameInstance::GetInstance()->Stop_Sound(SOUND_RAIN);
 		return;
+	}
+
+	CGameInstance::GetInstance()->Play_ManualSound(TEXT("PS_Rain_LP.ogg"), 0.8f, true, SOUND_RAIN);
 
 	__super::Late_Tick(fTimeDelta);
 }

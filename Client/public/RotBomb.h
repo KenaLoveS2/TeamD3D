@@ -27,45 +27,45 @@ public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
 	virtual HRESULT			Late_Initialize(void* pArg) override;
-	virtual void				Tick(_float fTimeDelta) override;
-	virtual void				Late_Tick(_float fTimeDelta) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 
-	virtual void				Imgui_RenderProperty() override;
-	virtual void				ImGui_ShaderValueProperty() override;
-	virtual void				ImGui_PhysXValueProperty() override;
-	virtual void				ImGui_AnimationProperty() override;
+	virtual void			Imgui_RenderProperty() override;
+	virtual void			ImGui_ShaderValueProperty() override;
+	virtual void			ImGui_PhysXValueProperty() override;
+	virtual void			ImGui_AnimationProperty() override;
 
 public:
-	void						Reset();
-	void						Set_Child();
+	void					Reset();
+	void					Set_Child();
 
 private:
 	CAnimationState*		m_pAnimation = nullptr;
-	class CKena*				m_pKena = nullptr;
+	class CKena*			m_pKena = nullptr;
 	class CE_BombTrail*		m_pPathTrail = nullptr;
 
 private:
 	BOMBSTATE				m_eCurState = BOMBSTATE_END;
 	BOMBSTATE				m_ePreState = BOMBSTATE_END;
 
-	_bool						m_bInject = false;
-	_float						m_fInitScale = 0.1f;
-	_float						m_fMaxScale = 1.f;
-	_float						m_fInjectScale = 1.3f;
-	_float						m_fScale = 1.f;
+	_bool					m_bInject = false;
+	_float					m_fInitScale = 0.1f;
+	_float					m_fMaxScale = 1.f;
+	_float					m_fInjectScale = 1.3f;
+	_float					m_fScale = 1.f;
 	_float3					m_vAimPos;
-	list<_float4>				m_PathList;
+	list<_float4>			m_PathList;
 
-	_smatrix					m_matDummy;
+	_smatrix				m_matDummy;
 
-	_bool						m_bHit = false;
+	_bool					m_bHit = false;
 	CGameObject*			m_pTarget = nullptr;
 	_float4					m_vHitPosition;
 
-	_bool						m_bBoom = false;
-	_float						m_fBoomTimer = 0.f;
-	_float						m_fBoomTime = 4.5f;
+	_bool					m_bBoom = false;
+	_float					m_fBoomTimer = 0.f;
+	_float					m_fBoomTime = 4.5f;
 
 private:
 	HRESULT					SetUp_Components();
@@ -74,17 +74,28 @@ private:
 	HRESULT					SetUp_ShadowShaderResources();
 
 	BOMBSTATE				Check_State();
-	void						Update_State(_float fTimeDelta);
-	void						Calculate_Path(_float fTimeDelta);
-	void						Throw(_float fTimeDelta);
+	void					Update_State(_float fTimeDelta);
+	void					Calculate_Path(_float fTimeDelta);
+	void					Throw(_float fTimeDelta);
 
-	virtual _int				Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
-	virtual _int				Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+	virtual _int			Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual _int			Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+
+private:
+	void					PlaySound_Charge();
+	void					PlaySound_Cancel();
+	void					PlaySound_Throw();
+	void					PlaySound_Land();
+	void					PlaySound_Into_Rumble();
+	void					PlaySound_Explode();
+	void					PlaySound_Inject_Charge();
+	void					PlaySound_Inject_Throw();
+	void					PlaySound_Inject_Explode();
 
 public:
 	static CRotBomb*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
-	virtual void				Free() override;
+	virtual void			Free() override;
 };
 
 END

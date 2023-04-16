@@ -14,6 +14,7 @@
 #include "Rot.h"
 #include "Light.h"
 #include "BGM_Manager.h"
+#include "Saiya.h"
 
 CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -167,7 +168,9 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 	m_vecEffects[EFFECT_BOWTRAIL1]->Activate(this, "Bow_TopJnt9");
 	m_vecEffects[EFFECT_BOWTRAIL2]->Activate(this, "Bow_BotJoint9");
 	m_vecEffects[EFFECT_AURA_PARTICLE]->Activate(this, "char_rt_clavicle_jnt");
-	
+
+	m_pSaiya = dynamic_cast<CSaiya*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_NPC"), TEXT("Saiya")));
+
 	return S_OK;
 }
 
@@ -560,6 +563,7 @@ HRESULT CBossHunter::SetUp_State()
 		m_bReadySpawn = true;
 		CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_2"));
 		m_pRendererCom->ShootStaticShadow();
+		m_pSaiya->Set_Disappear(true);
 	})
 	.AddTransition("SLEEP to CINEMA", "CINEMA")
 	.Predicator([this]()
@@ -1962,7 +1966,7 @@ void CBossHunter::MagicCircleEffect_On(_bool bIsInit, _float fTimeDelta)
 	_float4		vCenterPos = m_pTransformCom->Get_Position();
 	vPos.x = vCenterPos.x;
 	vPos.z = vCenterPos.z;
-	vPos.y += 0.2f;
+	vPos.y -= 0.2f;
 
 	m_vecEffects[EFFECT_MAGIC_MESH]->Activate(vPos);
 }
@@ -2011,10 +2015,12 @@ void CBossHunter::RoarEffect_On(_bool bIsInit, _float fTimeDelta)
 	else
 		vPos = m_pTransformCom->Get_Position();
 
+	_float4 vLook = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK));
+	//vPos -= vLook;
+
 	static _int iIndex = EFFECT_ROAR_TEXTURE1;
-
-
-	m_vecEffects[iIndex]->Activate_Scaling(vPos, { 10.f, 10.f });
+	m_vecEffects[iIndex]->Activate_Scaling(vPos , { 10.f, 10.f });
+	
 	iIndex++;
 	if (iIndex > (_int)EFFECT_ROAR_TEXTURE4)
 		iIndex = (_int)EFFECT_ROAR_TEXTURE1;

@@ -619,6 +619,21 @@
     <Filter Include="02.GameObjects\Trigger">
       <UniqueIdentifier>{d6f92db8-c997-4a7a-a6d1-c57811cc44ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame">
+      <UniqueIdentifier>{4a4b724c-4eb2-421e-9ebc-445347e8a89c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Victory">
+      <UniqueIdentifier>{5e33d6f0-489a-43aa-bda5-ef7f215fffe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame\HitCount">
+      <UniqueIdentifier>{90e48bdc-f409-420c-887e-475f3debcf63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame\TimeAtk">
+      <UniqueIdentifier>{c5c7e42d-5b97-44cc-a978-00b19c4be0a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\Alarm">
+      <UniqueIdentifier>{cbbf48a8-f12c-4be2-9ca6-bfdc874b64ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1667,18 +1682,30 @@
     <ClInclude Include="..\public\E_WarriorWeaponAcc.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_WarriorEyeTrail.h">
-      <Filter>02.GameObjects\Effect</Filter>
+    <ClInclude Include="..\public\UI_CanvasMiniGame.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_P_ShamanDust.h">
-      <Filter>02.GameObjects\Effect\Environment</Filter>
+    <ClInclude Include="..\public\UI_NodeHitCount.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\HitCount</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeVictory.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Victory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeTimeAtk.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\TimeAtk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAlarm.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\Alarm</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BossShaman_Mask.h" />
     <ClInclude Include="..\public\Camera_Shaman.h" />
-    <ClInclude Include="..\public\E_P_Level_RiseY.h">
-      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    <ClInclude Include="..\public\Camera_Photo.h">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_P_Level_Floor.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Level_RiseY.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2709,18 +2736,30 @@
     <ClCompile Include="..\private\E_WarriorWeaponAcc.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_WarriorEyeTrail.cpp">
-      <Filter>02.GameObjects\Effect</Filter>
+    <ClCompile Include="..\private\UI_CanvasMiniGame.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_P_ShamanDust.cpp">
-      <Filter>02.GameObjects\Effect\Environment</Filter>
+    <ClCompile Include="UI_NodeHitCount.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\HitCount</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeVictory.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Victory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeTimeAtk.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\TimeAtk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAlarm.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\Alarm</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BossShaman_Mask.cpp" />
     <ClCompile Include="..\private\Camera_Shaman.cpp" />
-    <ClCompile Include="..\private\E_P_Level_RiseY.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    <ClCompile Include="..\private\Camera_Photo.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_P_Level_Floor.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Level_RiseY.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClCompile>
   </ItemGroup>

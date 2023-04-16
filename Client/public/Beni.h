@@ -124,7 +124,8 @@ private:
 	class CSaiya*				m_pSaiya = nullptr;
 	string							m_strState;
 	_float3							m_vOffsetPos = _float3(0.5f, 0.f, 0.f);
-
+	_bool							m_bPhotoAnimEnd = false;
+	class CCamera_Photo* m_pCamera_Photo = nullptr;
 public:
 	static CBeni*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;

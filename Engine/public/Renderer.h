@@ -48,6 +48,7 @@ public:
 	void			Set_FogValue(_float4 vColor, _float fFogRange) { m_vFogColor = vColor, m_fFogRange = fFogRange; }
 	void			Set_LightShaft(bool bLightShaft) { m_bLightShaft = bLightShaft; }
 	void			Set_LightShaftValue(_float4 vValue) { m_vLightShaftValue = vValue; }
+	void			Set_GrayScale(_bool bGrayScale) { m_bGrayScale = bGrayScale; }
 
 #ifdef _DEBUG
 	HRESULT Add_DebugRenderGroup(class CComponent* pComponent);

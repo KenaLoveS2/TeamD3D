@@ -10,6 +10,7 @@ END
 
 BEGIN(Client)
 class CMonster;
+class CKena;
 class CUI_RotIcon final : public CUI_Billboard
 {
 private:
@@ -20,6 +21,7 @@ private:
 public:
 	void	Set_Pos(CGameObject* pTarget, _float4 vCorrect = { 0.f, 0.f, 0.f, 0.f });
 	void	Off_Focus(CGameObject* pTarget);
+	void	Set_Player(CKena* pKena) { m_pKena = pKena; }
 
 
 public:
@@ -35,6 +37,7 @@ private:
 
 private:
 	CGameObject*			m_pTarget;
+	CKena*					m_pKena;
 
 public:
 	static	CUI_RotIcon*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

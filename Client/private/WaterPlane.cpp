@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "..\public\WaterPlane.h"
 #include "GameInstance.h"
+#include "Kena.h"
+
+#define SND_WATER_1 L"Water_Lake_1.ogg"
+#define SND_WATER_2 L"Water_Lake_Rocks_1.ogg"
 
 CWaterPlane::CWaterPlane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -74,6 +78,19 @@ HRESULT CWaterPlane::Late_Initialize(void* pArg)
 	m_pTransformCom->Connect_PxActor_Static(m_szCloneObjectTag);
 	m_pTransformCom->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());
 
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+	RELEASE_INSTANCE(CGameInstance)
+
+	if (m_pKena == nullptr)
+		return E_FAIL;
+
+	if (g_LEVEL != LEVEL_GIMMICK)
+	{
+		Setting_Sound();
+		CGameInstance::GetInstance()->Play_Sound(m_szCopySoundKey_Water_1, 1.f, true);
+	}
+
 	return S_OK;
 }
 
@@ -135,11 +152,9 @@ void CWaterPlane::ImGui_PhysXValueProperty()
 HRESULT CWaterPlane::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_Component_Model_WaterPlane", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
-
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_GameObject_WaterNormalTexture", L"Com_Texture", (CComponent**)&m_pTextureCom[NORMAL], nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_GameObject_WaterNoiseTexture", L"Com_Texture2", (CComponent**)&m_pTextureCom[NOISE], nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL_FOR_COMPONENT, L"Prototype_GameObject_WaterMaskTexture", L"Com_Texture3", (CComponent**)&m_pTextureCom[MASK], nullptr, this), E_FAIL);
-	
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_Water", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 	return S_OK;
@@ -154,6 +169,21 @@ HRESULT CWaterPlane::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fTime", &m_fTimeDelta, sizeof(_float)), E_FAIL);
 	return S_OK;
+}
+
+void CWaterPlane::Setting_Sound()
+{
+	CGameInstance::GetInstance()->Copy_Sound(SND_WATER_1, m_szCopySoundKey_Water_1);
+	CGameInstance::GetInstance()->Copy_Sound(SND_WATER_2, m_szCopySoundKey_Water_2);
+
+	CSound::SOUND_DESC desc;
+	ZeroMemory(&desc, sizeof(CSound::SOUND_DESC));
+	desc.bIs3D = true;
+	desc.fRange = 150.f;
+	desc.pStartTransform = m_pTransformCom;
+	desc.pTargetTransform = m_pKena->Get_TransformCom();
+	CGameInstance::GetInstance()->Set_SoundDesc(m_szCopySoundKey_Water_1, desc);
+	CGameInstance::GetInstance()->Set_SoundDesc(m_szCopySoundKey_Water_2, desc);
 }
 
 CWaterPlane* CWaterPlane::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -182,6 +182,7 @@ void CUI::Imgui_RenderingSetting()
 {
 	ImGui::Separator();
 	ImGui::Text("RenderingSetting");
+	ImGui::Checkbox("m_bActive", &m_bActive);
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	vector<wstring>* pTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
@@ -194,6 +195,7 @@ void CUI::Imgui_RenderingSetting()
 	/* Diffuse */
 	static int selected_Diffuse;
 	selected_Diffuse = m_TextureListIndices[TEXTURE_DIFFUSE];
+	ImGui::InputInt("DiffuseTex Index ", &m_TextureListIndices[TEXTURE_DIFFUSE], 0, 100, ImGuiInputTextFlags_ReadOnly);
 	if (ImGui::ListBox(" : Diffuse", &selected_Diffuse, texture_getter, pNames, iNumTextures, 5))
 	{
 		m_TextureListIndices[TEXTURE_DIFFUSE] = selected_Diffuse;
@@ -212,6 +214,7 @@ void CUI::Imgui_RenderingSetting()
 	/* Mask */
 	static int selected_Mask = 0;
 	selected_Mask = m_TextureListIndices[TEXTURE_MASK];
+	ImGui::InputInt("MaskTex Index ", &m_TextureListIndices[TEXTURE_MASK], 0, 100, ImGuiInputTextFlags_ReadOnly);
 	if (ImGui::ListBox(" : Mask", &selected_Mask, texture_getter, pNames, iNumTextures, 5))
 	{
 		m_TextureListIndices[TEXTURE_MASK] = selected_Mask;

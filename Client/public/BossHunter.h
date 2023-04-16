@@ -100,6 +100,7 @@ private:
 	_float4x4 m_BodyPivotMatrix;
 	_float3 m_vBodyPivotTrans = { 0.f, 0.f, -0.7f };
 	_float3 m_vBodyPivotRot = { 1.65f, 0.f, 0.f };
+	class CSaiya* m_pSaiya = nullptr;
 
 	_float m_fIdleTimeCheck = 0.f;
 	_float m_fStunTimeCheck = 0.f;

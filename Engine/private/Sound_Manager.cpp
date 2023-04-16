@@ -145,7 +145,7 @@ _int CSound_Manager::Play_ManualSound(const _tchar* pSoundKey, _float fVolume, _
 	if (iManualChannelIndex != -1)
 	{
 		FMOD_Channel_IsPlaying(m_Channels[iManualChannelIndex].first, &bPlayFlag);
-		if (bPlayFlag)
+		if (bPlayFlag == TRUE)
 			return -1;
 	}
 
@@ -155,7 +155,6 @@ _int CSound_Manager::Play_ManualSound(const _tchar* pSoundKey, _float fVolume, _
 		for (_uint i = m_iNumManualChannels; i < MAX_CHANNEL_COUNT; i++)
 		{
 			// if (m_Channels[i].second == Pair->second) return -1;
-
 			if (iPlayIndex == -1 && FMOD_Channel_IsPlaying(m_Channels[i].first, &bPlayFlag))
 			{
 				iPlayIndex = i;

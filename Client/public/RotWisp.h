@@ -103,6 +103,8 @@ public:
 	static CRotWisp*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr)  override;
 	virtual void					Free() override;
+
+	void Set_Pulse(_bool bFlag) { m_bPulse = bFlag; }
 };
 
 END
