@@ -16,16 +16,16 @@ public:
 	void	Set_Clear();
 	_int	Get_Reward() { return m_iReward;  }
 	void	QuestOn() {
-		if (m_bActive == false)
-		{
+		//if (m_bActive == false)
+		//{
 			m_bActive = true; m_bOpening = false; m_fTimeAcc = 0.f;
-		}
+		//}
 	}
 	void	QuestOff() {
-		if (m_bActive == true)
-		{
+		//if (m_bActive == true)
+		//{
 			m_bOpening = true; m_bClear = true; m_fTimeAcc = 0.f;
-		}
+		//}
 
 	}
 	_float	Get_Alpha() { return m_fAlpha; }

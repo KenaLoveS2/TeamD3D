@@ -505,6 +505,10 @@ HRESULT CLevel_Gimmick::Ready_Layer_UI(const _tchar* pLayerTag)
 			CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)i, pCanvas);
 	}
 
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
+		TEXT("Prototype_GameObject_UI_MousePointer"), L"Clone_MousePointer")))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

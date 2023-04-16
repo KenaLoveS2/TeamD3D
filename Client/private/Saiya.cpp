@@ -159,11 +159,11 @@ void CSaiya::Tick(_float fTimeDelta)
 	{
 		if (m_pShaman->Get_BossClear() == true && false == m_bCall)
 		{
-			CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-			_bool bStart = true;
-			_float fIdx2 = 2;
-			m_SaiyaDelegator.broadcast(tag, bStart, fIdx2, wstrDefault);
-			CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+			//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+			//_bool bStart = true;
+			//_float fIdx2 = 2;
+			//m_SaiyaDelegator.broadcast(tag, bStart, fIdx2, wstrDefault);
+			//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 
 			m_bCall = true;
 		}
@@ -460,17 +460,16 @@ HRESULT CSaiya::SetUp_State()
 	{
 		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
 		/* Quest 0 Start */
-		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
-		CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
-		_bool bStart = true;
-		m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
+		//CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+		//CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
+		//_bool bStart = true;
+		//m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
 		//_float fIndex0=0, fIndex1=1, fIndex2=2, fIndex3=3;
 		//m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fIndex0, wstrDefault); // 수상한 아이들
 		//m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fIndex1, wstrDefault); // 아이들을 따라가라
 		//m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fIndex2, wstrDefault); // 펄스사용해라
 		//m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fIndex3, wstrDefault); // 스킬 열어라
 
-		CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
 	})
 		.AddTransition("ACTION_1 to ACTION_2", "ACTION_2")
 		.Predicator([this]()
@@ -619,12 +618,12 @@ HRESULT CSaiya::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]() {
 		/* Quest 0 - 1,2 Clear */
-		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-		_bool bStart = true;
-		_float fIdx1 = 1, fIdx2 = 2;
-		m_SaiyaDelegator.broadcast(tag, bStart, fIdx1, wstrDefault);
-		m_SaiyaDelegator.broadcast(tag, bStart, fIdx2, wstrDefault);
-		CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+		//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+		//_bool bStart = true;
+		//_float fIdx1 = 1, fIdx2 = 2;
+		//m_SaiyaDelegator.broadcast(tag, bStart, fIdx1, wstrDefault);
+		//m_SaiyaDelegator.broadcast(tag, bStart, fIdx2, wstrDefault);
+		//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 			
 	})
 		.Tick([this](_float fTimeDelta)
@@ -870,11 +869,11 @@ HRESULT CSaiya::SetUp_State()
 			CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
 
 			/* Quest 1 - 1 Clear */
-			CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-			_bool bStart = true;
-			_float fIdx1 = 1;
-			m_SaiyaDelegator.broadcast(tag, bStart, fIdx1, wstrDefault);
-			CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+			//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+			//_bool bStart = true;
+			//_float fIdx1 = 1;
+			//m_SaiyaDelegator.broadcast(tag, bStart, fIdx1, wstrDefault);
+			//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 
 	})
 		.AddTransition("ACTION_17 to ACTION_18", "ACTION_18")
@@ -1095,11 +1094,12 @@ HRESULT CSaiya::SetUp_StateFinal()
 		.AddState("CHAT")
 		.OnStart([this]()
 	{
-		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-		_bool bStart = true;
-		_float fIdx3 = 3;
-		m_SaiyaDelegator.broadcast(tag, bStart, fIdx3, wstrDefault);
-		CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+			/* Quest 2 - 3 */
+		//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+		//_bool bStart = true;
+		//_float fIdx3 = 3;
+		//m_SaiyaDelegator.broadcast(tag, bStart, fIdx3, wstrDefault);
+		//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 
 
 

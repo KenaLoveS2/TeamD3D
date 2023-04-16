@@ -19,6 +19,7 @@ public:
 
 private:
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Canvas(const _tchar* pLayerTag);
 
 	HRESULT Ready_For_LevelName();
 private: /*For. Imgui*/

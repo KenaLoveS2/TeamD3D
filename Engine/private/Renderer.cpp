@@ -126,7 +126,8 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGame
 			m_RenderObjects[RENDER_CINE].clear();
 		}
 	}
-	else if(m_bFade && eRenderGroup == RENDER_UI || m_bFade && eRenderGroup == RENDER_UILAST)
+	else if(m_bFade && eRenderGroup == RENDER_UI || m_bFade && eRenderGroup == RENDER_UILAST ||
+		m_bFade && eRenderGroup == RENDER_UIMOUSE)
 	{
 		if (!m_RenderObjects[RENDER_UI].empty())
 		{
@@ -144,6 +145,15 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGame
 				Safe_Release(pGameObject);
 			}
 			m_RenderObjects[RENDER_UILAST].clear();
+		}
+
+		if (!m_RenderObjects[RENDER_UIMOUSE].empty())
+		{
+			for (auto& pGameObject : m_RenderObjects[RENDER_UIMOUSE])
+			{
+				Safe_Release(pGameObject);
+			}
+			m_RenderObjects[RENDER_UIMOUSE].clear();
 		}
 	}
 	else
@@ -577,6 +587,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		if (FAILED(Render_UI()))
 			return E_FAIL;
 		if (FAILED(Render_UILast()))
+			return E_FAIL;
+		if (FAILED(Render_UIMouse()))
 			return E_FAIL;
 	}
 
@@ -1222,6 +1234,19 @@ HRESULT CRenderer::Render_UILast()
 	}
 
 	m_RenderObjects[RENDER_UILAST].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_UIMouse()
+{
+	for (auto& pGameObject : m_RenderObjects[RENDER_UIMOUSE])
+	{
+		pGameObject&& pGameObject->Render();
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_UIMOUSE].clear();
 
 	return S_OK;
 }

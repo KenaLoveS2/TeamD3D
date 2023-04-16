@@ -6428,6 +6428,11 @@ void CKena_State::Start_Roll_Into_Fall(_float fTimeDelta)
 void CKena_State::Start_Fall(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("FALL");
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	_float fTag = 0.f;
+	m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::Start_Fall_Into_Run(_float fTimeDelta)

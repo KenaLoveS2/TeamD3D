@@ -100,7 +100,6 @@ void CUI_CanvasInfo::Late_Tick(_float fTimeDelta)
 			pCanvas->Set_Active(true);
 		m_bActive = false;
 		m_bCapture = false;
-		return;
 
 		if (m_iTextureIdx == INFO_PORTAL)
 		{
@@ -108,12 +107,12 @@ void CUI_CanvasInfo::Late_Tick(_float fTimeDelta)
 			CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 			if (pKena != nullptr)
 			{
-				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-				_bool bStart = true;
-				_float fIdx = 2;
-				wstring wstr = L"";
-				pKena->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
-				CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+				//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+				//_bool bStart = true;
+				//_float fIdx = 2;
+				//wstring wstr = L"";
+				//pKena->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
+				//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 			}
 		}
 	}
@@ -190,7 +189,7 @@ HRESULT CUI_CanvasInfo::SetUp_ShaderResources()
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
-		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIdx)))
 			return E_FAIL;
 		if(FAILED(m_pShaderCom->Set_ShaderResourceView("g_LDRTexture", m_pRendererCom->Get_LDRTexture())))
 			return E_FAIL;

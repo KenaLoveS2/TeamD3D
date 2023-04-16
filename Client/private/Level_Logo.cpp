@@ -21,6 +21,9 @@ HRESULT CLevel_Logo::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_Canvas(TEXT("Layer_Canvas"))))
+		return E_FAIL;
+
 	if (FAILED(Ready_For_LevelName()))
 		return E_FAIL;               
 
@@ -137,6 +140,15 @@ HRESULT CLevel_Logo::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	}
 
 	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_Logo::Ready_Layer_Canvas(const _tchar* pLayerTag)
+{
+	if (FAILED(CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, pLayerTag,
+		TEXT("Prototype_GameObject_UI_MousePointer"), L"Clone_MousePointer")))
+		return E_FAIL;
 
 	return S_OK;
 }
