@@ -52,6 +52,8 @@ private:
 	_bool							m_bColliderOn = false;
 	_bool							m_bTestOnce = false;
 
+	_bool							m_bInfomationUIOn = false;
+	_float							m_fInfomationTimer = 0.f;
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

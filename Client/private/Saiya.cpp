@@ -126,6 +126,9 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 	{
 		m_pMainCam = dynamic_cast<CCameraForNpc*>(CGameInstance::GetInstance()->Find_Camera(TEXT("NPC_CAM")));
 		m_iChatIndex = 3;
+		m_vFinalPosition = _float4(-34.3f, 20.4f, 1230.8f, 1.f);
+		m_pTransformCom->Set_Position(m_vFinalPosition);
+		m_pTransformCom->Rotation(_float4(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 	}
 	
 	Setting_Sound();
@@ -133,14 +136,13 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 	m_pCamera_Photo = (CCamera_Photo*)CGameInstance::GetInstance()->Find_Camera(CAMERA_PHOTO_TAG);
 	if (m_pCamera_Photo) m_pCamera_Photo->Set_NpcSaiyaPtr(this);
 
-
 	return S_OK;
 }
 
 void CSaiya::Tick(_float fTimeDelta)
 {
 	if (m_bDeath) return;
-
+	
 	__super::Tick(fTimeDelta);
 	m_iNumKeyFrame = (_uint)m_keyframes.size();
 	Update_Collider(fTimeDelta);
@@ -156,7 +158,10 @@ void CSaiya::Tick(_float fTimeDelta)
 	if (m_pFSM && m_iKeyFrame < m_iNumKeyFrame - 2) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
-	AdditiveAnim(fTimeDelta);
+
+	if(!m_bPhoto)
+		AdditiveAnim(fTimeDelta);
+
 	if (m_bStraight)
 		m_pTransformCom->Go_Straight(fTimeDelta);
 }
@@ -1096,8 +1101,11 @@ HRESULT CSaiya::SetUp_StateFinal()
 		_bool bVal = false;
 		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
 		m_iLineIndex = 0;
-		//	CAMERA_PHOTO_TAG
-		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
+		m_bUIOff = true;
+		_float4 vPos = m_pMainCam->Get_Position();
+		_float4 vSaiyaPos = m_pTransformCom->Get_Position();
+		m_pCamera_Photo->Execute_Move(vPos, vSaiyaPos);
+		CGameInstance::GetInstance()->Work_Camera(CAMERA_PHOTO_TAG);
 	})
 		.AddTransition("CHAT to IDLE", "IDLE")
 		.Predicator([this]()
@@ -1109,6 +1117,7 @@ HRESULT CSaiya::SetUp_StateFinal()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_pCamera_Photo->Get_Position());
+		m_pTransformCom->Set_Position(m_vFinalPosition);
 	})
 		.AddTransition("READY_PHOTO to PHOTO", "PHOTO")
 		.Predicator([this]()
@@ -1126,7 +1135,7 @@ HRESULT CSaiya::SetUp_StateFinal()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_pCamera_Photo->Get_Position());
-
+		m_pTransformCom->Set_Position(m_vFinalPosition);
 		if (m_pModelCom->Get_AnimationFinish())
 			m_bPhotoAnimEnd = true;
 	})
