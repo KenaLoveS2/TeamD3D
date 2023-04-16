@@ -10,6 +10,7 @@
 #include "Kena_Status.h"
 #include "WorldTrigger.h"
 
+
 CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Canvas(pDevice, pContext)
 	, m_fTimeAcc(0.8f)
@@ -23,6 +24,7 @@ CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	, m_iCurLineIndex(0)
 	, m_fTimeOn(0.f)
 	, m_fTimeOnAcc(0.f)
+, m_bQuestClear(false)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
 	{
@@ -44,6 +46,7 @@ CUI_CanvasQuest::CUI_CanvasQuest(const CUI_CanvasQuest& rhs)
 	, m_iCurLineIndex(0)
 	, m_fTimeOn(0.f)
 	, m_fTimeOnAcc(0.f)
+, m_bQuestClear(false)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
 	{
@@ -176,7 +179,16 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 						static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->QuestOn();
 						_float fAlpha = static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->Get_Alpha();
 						if (line <= m_iLastClearLine && line != 0)
-							static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
+						{
+
+							if(line == m_iLastClearLine && m_bQuestClear == true)
+							{
+								
+							}
+							else
+								static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
+
+						}
 					}
 					break;
 				}
@@ -238,11 +250,12 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 
 		if (m_iCurQuestIndex == QUEST_1 || m_iCurQuestIndex == QUEST_2)
 		{
+			m_bQuestClear = false;
 			BindFunction(CUI_ClientManager::QUEST_, true, 0, L"");
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 0, L"");
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 1, L"");
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 2, L"");
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 3, L"");
+			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 0, L"");
+			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 1, L"");
+			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 2, L"");
+			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 3, L"");
 		}
 
 		//if (m_iCurQuestIndex == QUEST_2)
@@ -583,6 +596,8 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 			return;
 		if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
 			return;
+		m_bQuestClear = true;
+
 		BindFunction(CUI_ClientManager::QUEST_, true, 1.f, L"");
 
 		//m_bActive = true;
@@ -593,7 +608,6 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 		//	static_cast<CUI_NodeEffect*>(m_vecNode[(_int)fValue])->Change_Scale({ iLen - 10, });
 		m_vecEffects[(_int)fValue]->Start_Effect(
 			m_vecNode[(_int)fValue], 328.f, -2.f);
-
 		if ((_int)fValue == m_iNumsQuestLine[m_iCurQuestIndex] - 1)
 		{
 			m_iCurQuestIndex++;
