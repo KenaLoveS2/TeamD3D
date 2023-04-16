@@ -40,6 +40,8 @@ private:
 	_tchar* m_pCopySoundkey_Impact = nullptr;
 	_bool m_bGroundCollision = false;
 
+	_int m_iThisRockIndex = -1;
+	
 private:
 	CBossRock(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CBossRock(const CBossRock& rhs);
@@ -65,6 +67,7 @@ public:
 
 	HRESULT Setup_RockSounds();
 	_int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex);
+	void Set_RockIndex(_uint iIndex);
 };
 
 END

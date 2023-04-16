@@ -154,7 +154,8 @@ protected:
 	_bool	m_bSpawn = false;
 	_bool	m_bDying = false;
 	_bool	m_bDeath = false;
-	
+	_bool	m_bNoUseFocusIcon = false;
+
 	_bool   m_bRealAttack = false;
 
 	_bool   m_bIsFightReady = false;
@@ -166,6 +167,7 @@ protected:
 	_float  m_fSpawnRange   = 8.f;
 	
 	_float4 m_vRotIconPosOffset = { 0.f, 0.f, 0.f, 0.f };
+	_float4 m_vFocusIconPosOffset = { 0.f, 0.f, 0.f, 0.f };
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;

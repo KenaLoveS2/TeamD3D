@@ -48,6 +48,7 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 
 	m_bRotable = true;
 	m_vRotIconPosOffset = { 0.f, 1.5f, 0.f, 0.f };
+	m_vFocusIconPosOffset = { 0.f, 3.4f, 0.f, 0.f };
 
 	return S_OK;
 }

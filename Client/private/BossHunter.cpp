@@ -102,6 +102,8 @@ HRESULT CBossHunter::Initialize(void* pArg)
 		m_pRot = dynamic_cast<CRot*>(p_game_object);
 	}
 
+	m_bNoUseFocusIcon = true;
+
 	return S_OK;
 }
 
@@ -1252,8 +1254,8 @@ HRESULT CBossHunter::SetUp_State()
 	})
 	.Tick([this](_float fTimeDelta)
 	{
-	m_pTransformCom->Chase(m_vFlyTargetPos[m_vFlyTargetIndex], fTimeDelta);
-	if (m_pTransformCom->IsClosed_XZ(m_vFlyTargetPos[m_vFlyTargetIndex], 1.f))
+	m_pTransformCom->Chase(m_vFlyTargetPos[m_vFlyTargetIndex], fTimeDelta, 0.1f, true);
+	if (m_pTransformCom->IsClosed_XYZ(m_vFlyTargetPos[m_vFlyTargetIndex], 1.f))
 	{
 	m_vFlyTargetIndex++;
 	m_bFlyEnd = (m_vFlyTargetIndex == FLY_POS_COUNT);
