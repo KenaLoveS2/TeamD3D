@@ -122,17 +122,22 @@ private:
 	_bool		m_bFlare = false;
 	HRESULT PostProcess_LightShaft();
 	_bool		m_bLightShaft = false;
-
+	HRESULT PostProcess_Fade();
+	_bool		m_bFade = false;
+	_float		m_fFadeTime = 0.f;
+	_float		m_fTotalTime = 10.f;
 	_bool		m_bFog = false;
 	_float4		m_vFogColor;
 	_float		m_fFogStart = 0.f;
 	_float		m_fFogRange = 30.f;
+
 
 private:
 	HRESULT Render_DebugObject();
 	HRESULT Render_Cine();
 
 public:
+	void			Photo();
 	ID3D11ShaderResourceView*		Get_LDRTexture() { return m_pLDRTexture; }
 	const _bool&		Get_Fog() { return m_bFog; }
 	const _float4& Get_FogColor() { return m_vFogColor; }

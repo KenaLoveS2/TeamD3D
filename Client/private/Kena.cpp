@@ -521,8 +521,11 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	pStaff->Late_Initialize(pArg);
 
 	m_pCamera_Photo = (CCamera_Photo*)CGameInstance::GetInstance()->Find_Camera(CAMERA_PHOTO_TAG);
-	if (m_pCamera_Photo) m_pCamera_Photo->Set_KenaPtr(this);
-
+	if (m_pCamera_Photo)
+	{
+		m_pCamera_Photo->Set_KenaPtr(this);
+		m_pCamera_Photo->Set_FirstRotPtr(m_pFirstRot);
+	}
 	return S_OK;
 }
 
@@ -561,6 +564,12 @@ void CKena::Tick(_float fTimeDelta)
 	Update_Collider(fTimeDelta);
 
 	Check_TimeRate_Changed(fTimeDelta, fTimeRate);
+
+	if(m_bPhotoReady)
+	{
+		_float4 vPos = _float4(-34.7f, 20.4f, 1231.1f, 1.f);
+		m_pTransformCom->Set_Position(vPos);
+	}
 
 	Play_Animation(fTimeDelta, fTimeRate);
 

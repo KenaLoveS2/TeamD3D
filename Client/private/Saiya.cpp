@@ -1101,7 +1101,7 @@ HRESULT CSaiya::SetUp_StateFinal()
 		_bool bVal = false;
 		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
 		m_iLineIndex = 0;
-		m_bUIOff = false;
+		m_bUIOff = true;
 		_float4 vPos = m_pMainCam->Get_Position();
 		_float4 vSaiyaPos = m_pTransformCom->Get_Position();
 		m_pCamera_Photo->Execute_Move(vPos, vSaiyaPos);

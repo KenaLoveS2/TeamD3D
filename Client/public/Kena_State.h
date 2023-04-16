@@ -1231,6 +1231,7 @@ private:
 private:	/* Changer */
 	_bool	TruePass();
 	_bool	PhotoMode();
+	_bool   PhotoMode_Ready();
 	_bool	OnGround();
 	_bool	LevelUp();
 	_bool	Death();

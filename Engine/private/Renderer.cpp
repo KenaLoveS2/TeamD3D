@@ -35,6 +35,12 @@ void CRenderer::Imgui_Render()
 	ImGui::Checkbox("CINE", &m_bCine);
 	ImGui::Checkbox("FOG", &m_bFog);
 	ImGui::Checkbox("LightShaft", &m_bLightShaft);
+	ImGui::Checkbox("FADE", &m_bFade);
+
+	if(ImGui::Button("Photo"))
+	{
+		Photo();
+	}
 
 	if (m_bFog)
 	{
@@ -63,6 +69,12 @@ void CRenderer::Imgui_Render()
 		m_vLightShaftValue.y = LightShaftValue[1];
 		m_vLightShaftValue.z = LightShaftValue[2];
 		m_vLightShaftValue.w = LightShaftValue[3];
+	}
+
+	if(m_bFade)
+	{
+		ImGui::DragFloat("FadeTime", &m_fFadeTime, 0.1f, 0.f, 1000.f);
+		ImGui::DragFloat("TotalTime", &m_fTotalTime, 0.1f, 0.f, 1000.f);
 	}
 
 	if(ImGui::Button("ReCompile"))
@@ -112,6 +124,26 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGame
 				Safe_Release(pGameObject);
 			}
 			m_RenderObjects[RENDER_CINE].clear();
+		}
+	}
+	else if(m_bFade && eRenderGroup == RENDER_UI || m_bFade && eRenderGroup == RENDER_UILAST)
+	{
+		if (!m_RenderObjects[RENDER_UI].empty())
+		{
+			for (auto& pGameObject : m_RenderObjects[RENDER_UI])
+			{
+				Safe_Release(pGameObject);
+			}
+			m_RenderObjects[RENDER_UI].clear();
+		}
+
+		if (!m_RenderObjects[RENDER_UILAST].empty())
+		{
+			for (auto& pGameObject : m_RenderObjects[RENDER_UILAST])
+			{
+				Safe_Release(pGameObject);
+			}
+			m_RenderObjects[RENDER_UILAST].clear();
 		}
 	}
 	else
@@ -537,10 +569,14 @@ HRESULT CRenderer::Draw_RenderGroup()
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
 	}
-	if (FAILED(Render_UI()))
-		return E_FAIL;
-	if (FAILED(Render_UILast()))
-		return E_FAIL;
+
+	if (!m_bFade)
+	{
+		if (FAILED(Render_UI()))
+			return E_FAIL;
+		if (FAILED(Render_UILast()))
+			return E_FAIL;
+	}
 
 #ifdef _DEBUG
 	if (FAILED(Render_DebugObject()))
@@ -667,6 +703,22 @@ void CRenderer::Increase_Time()
 {
 	m_fDistortTime += TIMEDELTA;
 	m_fPrevCaptureTime += TIMEDELTA;
+
+	if(m_bGrayScale)
+	{
+		m_fFadeTime -= TIMEDELTA * 2.f;
+		if (m_fFadeTime <= 0.f)
+			m_fFadeTime = 0.f;
+	}
+	else if (m_bFade)
+	{
+		m_fFadeTime += TIMEDELTA * 2.f;
+		if (m_fFadeTime >= 11.f)
+		{
+			m_fFadeTime = 11.f;
+			m_bGrayScale = true;
+		}
+	}
 }
 
 HRESULT CRenderer::Render_StaticShadow()
@@ -1070,6 +1122,21 @@ HRESULT CRenderer::Render_PostProcess()
 		PostProcess_LightShaft();
 	}
 
+	/***6***/
+	if (m_bFade)
+	{
+		pLDRSour_SRV = pLDRSour->Get_SRV();
+		pLDRDest_RTV = pLDRDest->Get_RTV();
+		if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour_SRV)))
+			return E_FAIL;
+		m_pContext->OMSetRenderTargets(1, &pLDRDest_RTV, pDepthStencilView);
+		pLDRTmp = pLDRSour;
+		pLDRSour = pLDRDest;
+		pLDRDest = pLDRTmp;
+		PostProcess_Fade();
+	}
+
+
 	m_pContext->OMSetRenderTargets(1, &pBackBufferView, pDepthStencilView);
 	Safe_Release(pBackBufferView);
 	Safe_Release(pDepthStencilView);
@@ -1268,6 +1335,24 @@ HRESULT CRenderer::PostProcess_LightShaft()
 	m_pShader_PostProcess->Begin(6);
 	m_pVIBuffer->Render();
 	return S_OK;
+}
+
+HRESULT CRenderer::PostProcess_Fade()
+{
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_Time", &m_fFadeTime, sizeof(float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_TotalTime", &m_fTotalTime, sizeof(float))))
+		return E_FAIL;
+
+	m_pShader_PostProcess->Begin(7);
+	m_pVIBuffer->Render();
+	return S_OK;
+}
+
+void CRenderer::Photo()
+{
+	m_bFade = true;
 }
 
 #ifdef _DEBUG
