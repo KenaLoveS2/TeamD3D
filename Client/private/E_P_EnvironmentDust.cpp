@@ -46,14 +46,6 @@ void CE_P_EnvironmentDust::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if(ImGui::Button("True"))
-	{
-		_float4	vPos;
-		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-		vPos.y = 13.330f;
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&vPos));
-	}
-
 	if(m_pParent)
 	{
 		if (!lstrcmp(m_pParent->Get_ObjectCloneName(), L"1_GimmickPlatForm"))

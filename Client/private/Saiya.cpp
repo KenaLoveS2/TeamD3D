@@ -65,7 +65,7 @@ HRESULT CSaiya::Initialize(void* pArg)
 	if (g_LEVEL == LEVEL_TESTPLAY)
 	{
 		CGameObject* p_game_object = nullptr;
-		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", L"Saiya_Rot", nullptr, &p_game_object);
+		CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", L"Saiya_Rot", nullptr, &p_game_object);
 		m_pRot = dynamic_cast<CRot*>(p_game_object);
 	}
 
@@ -154,17 +154,6 @@ void CSaiya::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_iNumKeyFrame = (_uint)m_keyframes.size();
 	Update_Collider(fTimeDelta);
-
-	if(ImGui::Button("braodcast test"))
-	{
-		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-		_bool bStart = true;
-		_float fIdx1 = 1, fIdx2 = 2;
-		m_SaiyaDelegator.broadcast(tag, bStart, fIdx1, wstrDefault);
-		m_SaiyaDelegator.broadcast(tag, bStart, fIdx2, wstrDefault);
-		CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
-	}
-
 
 	if (g_LEVEL == LEVEL_FINAL )
 	{

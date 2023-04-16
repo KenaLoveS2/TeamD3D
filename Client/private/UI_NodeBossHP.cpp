@@ -85,28 +85,10 @@ HRESULT CUI_NodeBossHP::Initialize(void * pArg)
 
 void CUI_NodeBossHP::Tick(_float fTimeDelta)
 {
-	if (ImGui::Button("temp"))
-	{
-		m_bActive = true;
-		//_tchar* cloneTag = CUtile::Create_StringAuto(L"Particle_UIBossHP");
-		//m_pEffect = 
-		//	static_cast<CEffect_Particle_Base*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base", cloneTag, cloneTag));
-		//if (m_pEffect == nullptr)
-		//	MSG_BOX("failed to create effect : bossHP");
-		//else
-		//	m_pEffect->Set_Active(true);
-
-		static float fGuage = 1.f;
-		fGuage -= 0.1f;
-		Set_Guage(fGuage);
-	}
-
-
 	if (!m_bActive)
 		return;
 
 	__super::Tick(fTimeDelta);
-
 }
 
 void CUI_NodeBossHP::Late_Tick(_float fTimeDelta)

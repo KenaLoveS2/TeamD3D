@@ -248,9 +248,6 @@ void CBossHunter::Tick(_float fTimeDelta)
 
 	for (auto& pEffect : m_vecEffects)
 		pEffect->Tick(fTimeDelta);
-
-	if (ImGui::Button("DamageHunter"))
-		m_pMonsterStatusCom->UnderAttack(50);
 }
 
 void CBossHunter::Late_Tick(_float fTimeDelta)
