@@ -236,21 +236,22 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 		for (_uint i = 0; i < (_uint)m_vecNode.size() - 1; ++i)
 			m_vecNode[i]->Set_Active(false);
 
-		if (m_iCurQuestIndex == QUEST_1)
+		if (m_iCurQuestIndex == QUEST_1 || m_iCurQuestIndex == QUEST_2)
 		{
+			BindFunction(CUI_ClientManager::QUEST_, true, 0, L"");
 			BindFunction(CUI_ClientManager::QUEST_LINE, true, 0, L"");
 			BindFunction(CUI_ClientManager::QUEST_LINE, true, 1, L"");
 			BindFunction(CUI_ClientManager::QUEST_LINE, true, 2, L"");
 			BindFunction(CUI_ClientManager::QUEST_LINE, true, 3, L"");
 		}
 
-		if (m_iCurQuestIndex == QUEST_2)
-		{
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 0, L"");
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 1, L"");
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 2, L"");
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 3, L"");
-		}
+		//if (m_iCurQuestIndex == QUEST_2)
+		//{
+		//	BindFunction(CUI_ClientManager::QUEST_LINE, true, 0, L"");
+		//	BindFunction(CUI_ClientManager::QUEST_LINE, true, 1, L"");
+		//	BindFunction(CUI_ClientManager::QUEST_LINE, true, 2, L"");
+		//	BindFunction(CUI_ClientManager::QUEST_LINE, true, 3, L"");
+		//}
 
 		if (m_iCurQuestIndex == QUEST_END)
 			m_bFollowAlpha = true;
@@ -555,27 +556,36 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 			m_bClose = true;
 			m_fAlpha = 1.f;
 		}
+
+		m_iCurLineIndex = 3;
 		break;
 
 	case CUI_ClientManager::QUEST_LINE:
 	{
-		if (m_iCurLineIndex >= QUEST_END)
-			return;
-		if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
-		{
-			MSG_BOX("Try to Contact Wrong Line");
-			return;
-		}
-		m_iCurLineIndex = (_int)fValue;
-		m_vecNode[m_iCurQuestIndex * m_iNumsQuestLine[m_iCurQuestIndex] + (_int)fValue]->Set_Active(true);
+ 	//	if (m_iCurQuestIndex >= QUEST_END)
+		//	return;
+		//if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
+		//{
+		//	MSG_BOX("Try to Contact Wrong Line");
+		//	return;
+		//}
+
+		////m_bActive = true;
+		//BindFunction(CUI_ClientManager::QUEST_, true, 1.f, L"");
+		//m_iCurLineIndex = (_int)fValue;
+		//m_vecNode[m_iCurQuestIndex * m_iNumsQuestLine[m_iCurQuestIndex] + (_int)fValue]->Set_Active(true);
+		//m_iCurLineIndex = 3;
 		break;
 	}
 	case CUI_ClientManager::QUEST_CLEAR:
 	{
-		if (m_iCurLineIndex >= QUEST_END)
+		if (m_iCurQuestIndex >= QUEST_END)
 			return;
 		if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
 			return;
+		BindFunction(CUI_ClientManager::QUEST_, true, 1.f, L"");
+
+		//m_bActive = true;
 		m_iLastClearLine = (_int)fValue;
 		//_int iLen = m_Quests[m_iCurQuestIndex]->Get_QuestStringLength((_int)fValue);
 		///* 아이들을 따라가세요 : 1 */

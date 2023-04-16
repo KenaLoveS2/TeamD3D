@@ -28,6 +28,7 @@ public:
 	const _bool&					Is_Launched() const { return m_bLaunch; }
 	const _bool&					Is_Hit() const { return m_bArrowHit; }
 	const _bool&					Is_Dead() const { return m_bDead; }
+	void							TurnOn_Render() { m_bRender = true; }
 
 public:
 	virtual HRESULT					Initialize_Prototype() override;
@@ -57,6 +58,7 @@ private:
 	_bool							m_bRenderCheck = false;
 
 private:
+	_bool							m_bRender = true;
 	_bool							m_bKenaDetected = false;
 	_bool							m_bLaunch = false;
 	_bool							m_bArrowHit = false;
@@ -65,12 +67,12 @@ private:
 	_float4							m_vInitPosition;
 	_float							m_fFlyTime = 1000.f;
 
-	ANIMATION						m_eCurState = REST;
-	ANIMATION						m_ePreState = REST;
+	ANIMATION					m_eCurState = REST;
+	ANIMATION					m_ePreState = REST;
 
 	_float							m_fDissolveTime = 0.f;
 	CTexture*						m_pDissolveTexture = nullptr;
-	CBone* m_pTrailBone = nullptr;
+	CBone*							m_pTrailBone = nullptr;
 
 private:
 	void							Grouping();

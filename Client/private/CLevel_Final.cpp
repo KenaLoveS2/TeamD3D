@@ -48,7 +48,7 @@ HRESULT CLevel_Final::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-	//p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_Rot::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 
@@ -428,8 +428,8 @@ HRESULT CLevel_Final::Ready_Layer_Player(const _tchar* pLayerTag)
 
 HRESULT CLevel_Final::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
-	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Chap0_Monster.json");
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Test.json");
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Chap0_Monster.json");
+	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Test.json");
 	return S_OK;
 }
 
@@ -452,6 +452,9 @@ HRESULT CLevel_Final::Ready_Layer_Effect(const _tchar* pLayerTag)
 		FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_DeadZoneSmallPlace"), 
 			CUtile::Create_DummyString(L"DeadZoneSmallPlace", i), nullptr), E_FAIL);
 	}
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_WorldTrigger"), L"UIWorldTrigger", nullptr)))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

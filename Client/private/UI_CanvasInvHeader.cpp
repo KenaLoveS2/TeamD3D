@@ -84,7 +84,7 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 			m_pPlayer->Get_CameraPlayer()->Set_MouseFix(true);
 
 
-		if (m_bFirstOpen && g_LEVEL == LEVEL_TESTPLAY)
+		if (!m_bFirstOpen && g_LEVEL == LEVEL_TESTPLAY)
 		{
 			if (false == m_pPlayer->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOMB, 0))
 			{
@@ -97,7 +97,7 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 				CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 
 			}
-			m_bFirstOpen = false;
+			m_bFirstOpen = true;
 		}
 
 

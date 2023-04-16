@@ -116,8 +116,6 @@ void CUI_CanvasInfo::Late_Tick(_float fTimeDelta)
 				CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 			}
 		}
-
-
 	}
 }
 
