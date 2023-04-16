@@ -151,6 +151,7 @@ protected:
 	_bool	m_bStronglyHit = false;
 	_bool	m_bBind = false;
 	_bool	m_bReadySpawn = false;
+	_bool	m_bGroupAwaken = false;
 	_bool	m_bSpawn = false;
 	_bool	m_bDying = false;
 	_bool	m_bDeath = false;
@@ -186,7 +187,7 @@ public:
 	HRESULT Bind_Dissolove(class CShader* pShader);
 	_bool IsRealAttack() { return m_bRealAttack; }
 	void	Set_RealAttack(_bool bIsReal) { m_bRealAttack = bIsReal; }
-
+	void	Set_GroupAwaken() { m_bGroupAwaken = true; }
 	void Set_DeathFlag(_bool bFlag) { m_bDeath = bFlag; }
 	void Set_Dying(_uint iDeathAnimIndex);
 	void Clear_Death();

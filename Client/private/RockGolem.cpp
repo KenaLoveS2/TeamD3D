@@ -283,7 +283,7 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			m_fSpawnRange = 10.f;
 			m_bSpawn = DistanceTrigger(m_fSpawnRange);
-			return m_bSpawn;
+			return m_bSpawn || m_bGroupAwaken;
 		})
 
 			.AddState("WISPIN")

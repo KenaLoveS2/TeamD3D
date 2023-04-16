@@ -431,7 +431,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fSpawnRange);
+		return DistanceTrigger(m_fSpawnRange) || m_bGroupAwaken;
 	})
 		
 		.AddState("READY_SPAWN")
