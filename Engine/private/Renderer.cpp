@@ -1487,9 +1487,9 @@ void CRenderer::Free()
 
 	m_DebugObject.clear();
 #endif
-	for (_uint i = 0; i < RENDER_END; ++i)
+	for (_uint i = 0; i < (_uint)RENDER_END; ++i)
 	{
-		if (i != RENDER_STATIC_SHADOW)
+		if (i != (_uint)RENDER_STATIC_SHADOW)
 		{
 			for (auto& pGameObject : m_RenderObjects[i])
 			{

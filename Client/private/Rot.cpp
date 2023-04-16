@@ -454,7 +454,11 @@ HRESULT CRot::SetUp_State()
 	{
 		return m_pMonster_Manager->Is_Battle() == false;
 	})
-
+		.AddTransition("HIDE_WAIT to PHOTO", "READY_PHOTO")
+		.Predicator([this]()
+	{
+		return m_pCamera_Photo && m_pCamera_Photo->Is_Work();
+	})
 
 		.AddState("READY_PHOTO")		
 		.Tick([this](_float fTimeDelta)
@@ -616,9 +620,7 @@ _bool CRot::Is_PhotoAnimEnd()
 
 void CRot::Execute_PhotoTeleport()
 {
-	static _bool bTeleportFlag = false;
-
-	if (m_iThisRotIndex != FIRST_ROT || bTeleportFlag) return;
+	if (m_iThisRotIndex != FIRST_ROT) return;
 	
 	_float4 vKenaRight = m_pKenaTransform->Get_State(CTransform::STATE_RIGHT);
 
@@ -632,8 +634,6 @@ void CRot::Execute_PhotoTeleport()
 
 		i++;
 	}
-
-	bTeleportFlag = true;
 }
 
 void CRot::Push_EventFunctions()
