@@ -71,7 +71,6 @@ void CSky::Tick(_float fTimeDelta)
 		_float4 vDiffuse = _float4(g_fSkyColorIntensity, g_fSkyColorIntensity, g_fSkyColorIntensity, 1.f);
 		CGameInstance::GetInstance()->Get_Light(0)->Set_Diffuse(vDiffuse);
 	}
-
 	if(g_LEVEL == LEVEL_GIMMICK)
 	{
 		m_pRendererCom->Set_LightShaft(false);
@@ -88,6 +87,8 @@ void CSky::Tick(_float fTimeDelta)
 		_float4 vValue = _float4(0.35f, 0.6f, 0.4f, 1.f);
 		m_pRendererCom->Set_LightShaftValue(vValue);
 	}
+	m_pRendererCom->Set_LightShaft(false);
+
 }
 
 void CSky::Late_Tick(_float fTimeDelta)

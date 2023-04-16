@@ -33,6 +33,13 @@ public:
 	wstring		Get_MainQuest() {
 		return m_Main.first;   
 	}
+	_int		Get_QuestStringLength(_int iIndex) 
+	{ 
+		if (iIndex == 0)
+			return (_int)m_Main.first.length();
+		else
+			return (_int)m_vecSub[iIndex-1].first.length();
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

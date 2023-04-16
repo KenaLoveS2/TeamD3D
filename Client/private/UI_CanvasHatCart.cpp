@@ -333,7 +333,8 @@ void CUI_CanvasHatCart::BindFunction(CUI_ClientManager::UI_PRESENT eType, CKena*
 		m_bActive = !m_bActive;
 		m_pPlayer = pPlayer;
 		static_cast<CUI_NodeCurrentCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal(m_pPlayer->Get_Status()->Get_Crystal());
-
+		//if (nullptr != m_pPlayer->Get_CameraPlayer())
+		//	m_pPlayer->Get_CameraPlayer()->Set_MouseFix(false);
 		*Out_Open = m_bActive;
 	}
 }

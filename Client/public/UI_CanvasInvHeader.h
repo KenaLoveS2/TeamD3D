@@ -34,6 +34,7 @@ private: /* Bind Functions */
 
 private:
 	CKena*	m_pPlayer;
+	_bool	m_bFirstOpen;
 
 public:
 	static	CUI_CanvasInvHeader*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

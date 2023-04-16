@@ -475,8 +475,18 @@ HRESULT CKena_Status::Save_RunTime(const wstring & wstrFilePath)
 	jKenaStatus["12. Bomb Count"] = m_iCurBombCount;
 
 	for (_uint i = 0; i < (_uint)SKILLTAB_END; ++i)
-		for (_uint j = 0; j < 5; ++j)
-			jKenaStatus["99. Skill States"].push_back(m_bSkills[i][j]);
+	{
+		if (i < 4)
+		{
+			for (_uint j = 0; j < 5; ++j)
+				jKenaStatus["99. Skill States"].push_back(m_bSkills[i][j]);
+		}
+		else
+		{
+			for (_uint j = 0; j < 4; ++j)
+				jKenaStatus["99. Skill States"].push_back(m_bSkills[i][j]);
+		}
+	}
 
 
 	ofstream file(wstrFilePath.c_str());

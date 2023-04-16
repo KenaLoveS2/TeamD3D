@@ -9,6 +9,8 @@
 #include "CPortalPlane.h"
 #include "E_P_EnvironmentDust.h"
 #include "WorldTrigger.h"
+#include "PostFX.h"
+
 /* 기믹 클래스는 1개씩입니다. */
 CGimmick_EnviObj::CGimmick_EnviObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -136,31 +138,29 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 		}
 	}
 
-	if(m_bInfomationUIOn)
-	{
-		m_fInfomationTimer += fTimeDelta;
-
-		if(m_fInfomationTimer >=3.f)
-		{
-			CWorldTrigger* pWorldTrigger = dynamic_cast<CWorldTrigger*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Effect", L"UIWorldTrigger"));
-			assert(pWorldTrigger != nullptr && "CGimmick_EnviObj::Tick(_float fTimeDelta)");
-			
-			pWorldTrigger->BroadCast_WorldTrigger(3);
-			m_bInfomationUIOn = false;
-		}
-	}
-
 	if (m_pGimmickObjEffect)
 	{
 		m_pGimmickObjEffect->Tick(fTimeDelta);
 	}
-	
-
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_bInfomationUIOn)
+	{
+		m_fInfomationTimer += fTimeDelta;
+
+		if (m_fInfomationTimer >= 3.f)
+		{
+			CWorldTrigger* pWorldTrigger = dynamic_cast<CWorldTrigger*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Effect", L"UIWorldTrigger"));
+			assert(pWorldTrigger != nullptr && "CGimmick_EnviObj::Tick(_float fTimeDelta)");
+
+			pWorldTrigger->BroadCast_WorldTrigger(3);
+			m_bInfomationUIOn = false;
+		}
+	}
 
 	if (m_pRendererCom && m_bRenderActive)
 	{

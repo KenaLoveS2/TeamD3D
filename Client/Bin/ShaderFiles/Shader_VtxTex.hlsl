@@ -146,6 +146,7 @@ PS_OUT PS_MAIN_AlphaTestGuage(PS_IN In)
 		discard;
 
 	Out.vColor.a = Out.vColor.r;
+	Out.vColor.a *= g_fAlpha;
 
 	if (Out.vColor.a < 0.1)
 		discard;

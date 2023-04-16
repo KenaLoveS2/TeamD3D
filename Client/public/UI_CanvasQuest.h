@@ -48,6 +48,8 @@ private:
 private:/* Test */
 	CQuest*		m_Quests[QUEST_END];
 	_int		m_iCurQuestIndex;
+	_int		m_iCurLineIndex;
+	_int		m_iLastClearLine;
 	_int		m_iNumsQuestLine[QUEST_END];
 
 private:/* For Shader */
@@ -58,6 +60,15 @@ private:/* For Shader */
 	STATE		m_eState;
 
 	_float		m_fTmpAcc;
+
+	_float		m_fTimeOnAcc;
+	_float		m_fTimeOn;
+	_int		m_iLineIndexIter;
+	_int		m_iClearIndexIter;
+
+private:
+	_bool		m_bFollowAlpha;
+
 private:
 	vector<CUI_NodeEffect*>	m_vecEffects;
 

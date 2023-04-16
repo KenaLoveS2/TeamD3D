@@ -70,7 +70,10 @@ void CBowTarget_Manager::Launch_CurrentGroup()
 	NULL_CHECK_RETURN(m_pCurActiveGroup, );
 
 	for (auto pBowTarget : m_pCurActiveGroup->vecBowTarget)
+	{
+		pBowTarget->TurnOn_Render();
 		pBowTarget->TurnOn_Launch();
+	}
 }
 
 void CBowTarget_Manager::Launch_Group(const wstring& wstrGroupName)
