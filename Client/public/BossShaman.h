@@ -69,6 +69,8 @@ private:
 	};
 
 public:
+	_bool	Get_BossClear() { return m_isBossClear; }
+public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossShamanDelegator;
 
 private:
@@ -97,6 +99,8 @@ private:
 	_bool m_bTrapOffset = false;
 	_bool m_bTraptLoop = false;
 	_bool m_bTraptBreak = false;
+
+	_bool	m_isBossClear = false;
 
 	_float4 m_vTrapLookPos;
 

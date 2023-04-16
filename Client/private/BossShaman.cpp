@@ -27,11 +27,13 @@
 
 CBossShaman::CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
+	, m_isBossClear(false)
 {
 }
 
 CBossShaman::CBossShaman(const CBossShaman& rhs)
 	: CMonster(rhs)
+	, m_isBossClear(false)
 {
 }
 
@@ -1331,6 +1333,11 @@ HRESULT CBossShaman::SetUp_State()
 		if (m_fTeleportDissolveTime >= 1.f)
 			m_fTeleportDissolveTime = 1.f;
 	})
+		.OnExit([this]() {
+		m_isBossClear = true;
+
+
+			})
 		.AddTransition("DEATH_SCENE to DEATH", "DEATH")
 		.Predicator([this]()
 	{

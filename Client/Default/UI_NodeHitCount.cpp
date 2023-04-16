@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "UI_NodeHitCount.h"
 #include "GameInstance.h"
-
+#include "Kena.h"
 CUI_NodeHitCount::CUI_NodeHitCount(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Node(pDevice, pContext)
 	, m_szTitle(nullptr)
@@ -9,6 +9,7 @@ CUI_NodeHitCount::CUI_NodeHitCount(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	, m_iNumHits(0)
 	, m_fTime(0.f)
 	, m_fTimeAcc(0.f)
+	, m_bFinished(false)
 {
 }
 
@@ -19,13 +20,17 @@ CUI_NodeHitCount::CUI_NodeHitCount(const CUI_NodeHitCount& rhs)
 	, m_iNumHits(0)
 	, m_fTime(0.f)
 	, m_fTimeAcc(0.f)
+	, m_bFinished(false)
 {
 }
 
 void CUI_NodeHitCount::Counting()
 {
-	m_iNumHits++;
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 
+	if (pKena != nullptr)
+		m_iNumHits = pKena->Get_Hits();
+	
 	Safe_Delete_Array(m_szTitle);
 
 	wstring hit = to_wstring(m_iNumHits);
@@ -59,6 +64,7 @@ HRESULT CUI_NodeHitCount::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	m_iNumTargets = 19;
 	//m_bActive = true;
 	return S_OK;
 }
@@ -73,10 +79,8 @@ void CUI_NodeHitCount::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	if (ImGui::Button("TickCount"))
-	{
-		Counting();
-	}
+	Counting();
+
 
 	__super::Tick(fTimeDelta);
 }

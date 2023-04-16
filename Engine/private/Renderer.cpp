@@ -1014,21 +1014,14 @@ HRESULT CRenderer::Render_AlphaBlend2()
 
 HRESULT CRenderer::Render_UIHDR()
 {
-	for (auto& pGameObject : m_RenderObjects[RENDER_UIHDR])
-	{
-		if (nullptr != pGameObject)
-			pGameObject->Compute_CamDistance();
-	}
-
 	m_RenderObjects[RENDER_UIHDR].sort([](CGameObject* pSour, CGameObject* pDest)->_bool
 		{
-			return pSour->Get_CamDistance() > pDest->Get_CamDistance();
+			return pSour->Get_TransformCom()->Get_Position().z > pDest->Get_TransformCom()->Get_Position().z;
 		});
 
 	for (auto& pGameObject : m_RenderObjects[RENDER_UIHDR])
 	{
 		pGameObject&& pGameObject->Render();
-
 		Safe_Release(pGameObject);
 	}
 

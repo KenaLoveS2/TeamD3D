@@ -143,6 +143,10 @@ private:
 	void								Setting_Sound();
 	void								Play_LaughSound(float fVolume = 1.f);
 
+
+private:
+	class CBossShaman*			m_pShaman = nullptr;
+	_bool							m_bCall = false;
 private:
 	CUI_FocusNPC*							m_pFocus;
 	_bool											m_bMeetPlayer = false;

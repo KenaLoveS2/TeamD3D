@@ -44,6 +44,8 @@ CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	, m_bStateLock(false)
 	, m_pUI_FocusMonster(nullptr)
 	, m_pTargetMonster(nullptr)
+	, m_bQuestOn(false)
+	, m_iHitTarget(0)
 {
 }
 
@@ -53,6 +55,8 @@ CKena::CKena(const CKena & rhs)
 	, m_bStateLock(false)
 	, m_pUI_FocusMonster(nullptr)
 	, m_pTargetMonster(nullptr)
+	, m_bQuestOn(false)
+	, m_iHitTarget(0)
 {
 }
 
@@ -506,6 +510,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	{
 		const _float4 vPosFloat4 = _float4(151.7f, 22.2f, 609.5f, 1.f);
 		m_pTransformCom->Set_Position(vPosFloat4);
+		m_bQuestOn = true;
 	}
 	else
 	{
@@ -538,8 +543,15 @@ void CKena::Tick(_float fTimeDelta)
 	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
 	_float	fTimeRate = Update_TimeRate();
-	
+
 	__super::Tick(fTimeDelta);
+
+	if (m_bQuestOn)
+	{
+		/* Quest 2 Open */
+		m_bQuestOn = false;
+	}
+
 
 	LiftRotRockProc();
 
@@ -3571,6 +3583,14 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 				_float4		vPos = matOutPortal.Translation() + vOutLook * 0.5f;
 				vPos.y -= 4.f;
 				m_pTransformCom->Set_Position(vPos);
+
+				/* Quest 1 - 3 Clear */
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+				_bool bStart = true;
+				_float fIdx = 3;
+				wstring wstr = L"";
+				m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
+				CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 			}
 		}
 

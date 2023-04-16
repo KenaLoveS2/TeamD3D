@@ -16,11 +16,11 @@
     "04. HDR Intensity": 2.0,
     "05. TYPE_UI": true,
     "10. Type": 2,
-    "11. NumInstance": 70,
+    "11. NumInstance": 200,
     "12. Term": 0.5,
     "13. PSize": [
-        100.0,
-        100.0
+        50.0,
+        50.0
     ],
     "14. SpeedMin": [
         -100.0,
