@@ -66,6 +66,11 @@ HRESULT CWorldTrigger::Late_Initialize(void* pArg)
 	_smatrix mat;
 	m_vecWorldMatrix.push_back(mat);
 
+	if (g_LEVEL == LEVEL_GIMMICK)
+	{
+		m_nMatNum = 4;
+	}
+
 	return S_OK;
 }
 
