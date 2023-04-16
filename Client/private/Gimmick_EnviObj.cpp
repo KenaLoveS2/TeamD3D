@@ -8,7 +8,7 @@
 #include "BossWarrior.h"
 #include "CPortalPlane.h"
 #include "E_P_EnvironmentDust.h"
-
+#include "WorldTrigger.h"
 /* 기믹 클래스는 1개씩입니다. */
 CGimmick_EnviObj::CGimmick_EnviObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -130,9 +130,25 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 			dynamic_cast<CPortalPlane*>(CGameInstance::GetInstance()->
 				Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment",
 					L"3_BossDeadPortal_0"))->Set_GimmickRender(true);
+
+			m_bInfomationUIOn = true;
+
 		}
 	}
 
+	if(m_bInfomationUIOn)
+	{
+		m_fInfomationTimer += fTimeDelta;
+
+		if(m_fInfomationTimer >=3.f)
+		{
+			CWorldTrigger* pWorldTrigger = dynamic_cast<CWorldTrigger*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Effect", L"UIWorldTrigger"));
+			assert(pWorldTrigger != nullptr && "CGimmick_EnviObj::Tick(_float fTimeDelta)");
+			
+			pWorldTrigger->BroadCast_WorldTrigger(3);
+			m_bInfomationUIOn = false;
+		}
+	}
 
 	if (m_pGimmickObjEffect)
 	{

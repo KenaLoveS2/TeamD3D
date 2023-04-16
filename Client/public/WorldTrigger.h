@@ -19,15 +19,17 @@ private:
 	virtual ~CWorldTrigger() = default;
 
 public:
-	virtual HRESULT			Initialize_Prototype() override;
-	virtual HRESULT			Initialize(void* pArg) override;
-	virtual HRESULT			Late_Initialize(void* pArg) override;
+	virtual HRESULT					Initialize_Prototype() override;
+	virtual HRESULT					Initialize(void* pArg) override;
+	virtual HRESULT					Late_Initialize(void* pArg) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual void					Imgui_RenderProperty() override;
 	virtual void					ImGui_PhysXValueProperty() override;
 	virtual _int					Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 
+
+	void					BroadCast_WorldTrigger(_uint iValue);
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_WorldTriggerDelegator;
 
@@ -38,10 +40,10 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 
 private:
-	class CGameInstance* m_pGameInstance = nullptr;
+	class CGameInstance*			m_pGameInstance = nullptr;
 	_bool							m_bChange = false;
 	_uint								m_iVectorSize = 0;
-	vector<_smatrix>        m_vecWorldMatrix;
+	vector<_smatrix>				 m_vecWorldMatrix;
 	_uint								m_nMatNum = 0;
 
 public:
