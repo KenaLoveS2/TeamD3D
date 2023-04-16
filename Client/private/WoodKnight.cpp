@@ -221,7 +221,9 @@ void CWoodKnight::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom && m_bReadySpawn)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if (m_fDissolveTime <= 0.2f)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }

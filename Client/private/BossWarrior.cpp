@@ -230,7 +230,9 @@ void CBossWarrior::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom /*&& m_bSpawn*/)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if (m_fDissolveTime <= 0.2f)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 		
@@ -444,7 +446,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_bReadySpawn = true;
 	})
-		.AddTransition("SLEEP to CINEMA", "IDLE") // "IDLE" "CINEMA"
+		.AddTransition("SLEEP to CINEMA", "CINEMA") // "IDLE" "CINEMA"
 		.Predicator([this]()
 	{			
 		m_fSpawnRange = 20.f;
