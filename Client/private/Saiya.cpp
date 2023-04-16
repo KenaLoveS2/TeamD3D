@@ -1055,7 +1055,7 @@ HRESULT CSaiya::SetUp_StateFinal()
 		.AddTransition("IDLE to CHAT", "CHAT")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(5.f);
+		return DistanceTrigger(5.f) && !m_bChatEnd;
 	})
 
 		.AddState("CHAT")
@@ -1069,33 +1069,34 @@ HRESULT CSaiya::SetUp_StateFinal()
 		const _float3 vOffset = _float3(0.f, 0.7f, 0.f);
 		const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
 		m_pMainCam->Set_Target(this, CCameraForNpc::OFFSET_FRONT_LERP, vOffset, vLookOffset);
+		Set_PlayerLock(true);
     })
 	.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+		if (CGameInstance::GetInstance()->Key_Down(DIK_E))
 		{
-			m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
-
-			if (CGameInstance::GetInstance()->Key_Down(DIK_E))
+			Play_LaughSound();
+			if (m_iLineIndex == (int)m_vecChat[m_iChatIndex].size())
 			{
-				Play_LaughSound();
-				if (m_iLineIndex == (int)m_vecChat[m_iChatIndex].size())
-				{
-					m_iLineIndex++;
-					return;
-				}
-				CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
-				_bool bVal = true;
-				m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][m_iLineIndex]);
 				m_iLineIndex++;
+				return;
+			}
+			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+			_bool bVal = true;
+			m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][m_iLineIndex]);
+			m_iLineIndex++;
 		}
 	})
 		.OnExit([this]()
 	{
-		Set_PlayerLock(false);
 		/* Chat End */
+		Set_PlayerLock(false);
 		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 		_bool bVal = false;
 		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
 		m_iLineIndex = 0;
+		//	CAMERA_PHOTO_TAG
 		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
 	})
 		.AddTransition("CHAT to IDLE", "IDLE")
