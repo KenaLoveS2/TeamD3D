@@ -299,7 +299,7 @@ HRESULT CBranchTosser::SetUp_State()
 		.Predicator([this]()
 	{
 		m_fSpawnRange = 7.f;
-		return DistanceTrigger(m_fSpawnRange);
+		return DistanceTrigger(m_fSpawnRange) || m_bGroupAwaken;
 	})
 
 		.AddState("READY_SPAWN")

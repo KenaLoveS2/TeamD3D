@@ -2761,9 +2761,6 @@
     <ClCompile Include="..\private\UI_CanvasMiniGame.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame</Filter>
     </ClCompile>
-    <ClCompile Include="UI_NodeHitCount.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\HitCount</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_NodeVictory.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Victory</Filter>
     </ClCompile>
@@ -2808,6 +2805,9 @@
     </ClCompile>
     <ClCompile Include="..\private\SceneChangePortal.cpp">
       <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHitCount.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\HitCount</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

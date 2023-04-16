@@ -350,7 +350,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("RESURRECT to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fSpawnRange) || m_bSpawnByMaster;
+		return DistanceTrigger(m_fSpawnRange) || m_bSpawnByMaster || m_bGroupAwaken;
 		// return AnimFinishChecker(RESURRECT) && m_bSpawn;
 	})
 
