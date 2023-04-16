@@ -70,7 +70,14 @@ HRESULT CWorldTrigger::Late_Initialize(void* pArg)
 
 void CWorldTrigger::Tick(_float fTimeDelta)
 {
+	if(!m_bTestOnce)
+	{
+		Late_Initialize(nullptr);
+		m_bTestOnce = true;
+	}
 	CGameObject::Tick(fTimeDelta);
+
+	m_pRendererCom->Set_PhysXRender(true);
 
 	m_iVectorSize = static_cast<_uint>(m_vecWorldMatrix.size());
 	if (!m_vecWorldMatrix.empty() && m_nMatNum < m_iVectorSize)
@@ -167,6 +174,15 @@ _int CWorldTrigger::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPo
 	return 0;
 }
 
+void CWorldTrigger::BroadCast_WorldTrigger(_uint iValue)
+{
+	CUI_ClientManager::UI_PRESENT present = CUI_ClientManager::INFO_;
+	m_nMatNum = iValue;
+	_float fValue = static_cast<_float>(m_nMatNum);
+	m_WorldTriggerDelegator.broadcast(present, fValue);
+	m_nMatNum++;
+}
+
 HRESULT CWorldTrigger::Save()
 {
 	string      strSaveDirectory;
@@ -212,13 +228,13 @@ HRESULT CWorldTrigger::Load()
 {
 	string      strLoadDirectory;
 
-	if (g_LEVEL == LEVEL_FINAL)
+	 if(g_LEVEL == LEVEL_GIMMICK)
 	{
-		strLoadDirectory = "../Bin/Data/UITrigger/WorldTriggerFinal.json";
+		strLoadDirectory = "../Bin/Data/UITrigger/WorldTriggerGimmick.json";
 	}
 	else
 	{
-		strLoadDirectory = "../Bin/Data/UITrigger/WorldTrigger.json";
+		 strLoadDirectory = "../Bin/Data/UITrigger/WorldTrigger.json";
 	}
 
 	ifstream      file(strLoadDirectory.c_str());
