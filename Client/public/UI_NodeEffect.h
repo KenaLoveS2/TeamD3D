@@ -20,6 +20,7 @@ public:
 	void	Change_Scale(_float fData);
 	void	BackToOriginalScale();
 	void	Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; }
+	void	Set_Effect(CUI* pTarget, _float fX, _float fY);
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

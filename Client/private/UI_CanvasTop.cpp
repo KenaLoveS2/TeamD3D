@@ -71,6 +71,20 @@ HRESULT CUI_CanvasTop::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CUI_CanvasTop::Late_Initialize(void* pArg)
+{
+
+	/* Level Change */
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	if (pKena == nullptr)
+		return E_FAIL;
+
+	m_iRotNow = pKena->Get_Status()->Get_RotCount();
+	m_iRotLv = pKena->Get_Status()->Get_RotLevel();
+
+	return S_OK;
+}
+
 void CUI_CanvasTop::Tick(_float fTimeDelta)
 {
 	if (!m_bBindFinished)

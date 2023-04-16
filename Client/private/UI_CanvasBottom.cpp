@@ -109,8 +109,16 @@ HRESULT CUI_CanvasBottom::Bind()
 					pCam->m_CinemaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
 			}
 		}
-
+		
 		pSaiya->m_SaiyaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
+
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+			L"Layer_Player", L"Kena"));
+		if (pKena == nullptr)
+			return E_FAIL;
+
+		pKena->m_Delegator.bind(this, &CUI_CanvasBottom::BindFunction);
+
 	}
 	else
 	{

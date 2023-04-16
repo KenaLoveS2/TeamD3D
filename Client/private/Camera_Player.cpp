@@ -491,20 +491,20 @@ void CCamera_Player::Late_Tick(_float fTimeDelta)
 		CUtile::SetClientCursorPos(g_hWnd, g_iWinSizeX >> 1, g_iWinSizeY >> 1);
 		::SetCursor(NULL);
 
-		//CUI_MousePointer* pMouse = static_cast<CUI_MousePointer*>(CGameInstance::GetInstance()->Get_GameObjectPtr(
-		//	g_LEVEL, L"Layer_Canvas", L"Clone_MousePointer"));
-		//if (pMouse != nullptr)
-		//	pMouse->Set_Active(false);
+		CUI_MousePointer* pMouse = static_cast<CUI_MousePointer*>(CGameInstance::GetInstance()->Get_GameObjectPtr(
+			g_LEVEL, L"Layer_Canvas", L"Clone_MousePointer"));
+		if (pMouse != nullptr)
+			pMouse->Set_Active(false);
 	}
 	else
-		::SetCursor(::LoadCursor(nullptr, IDC_ARROW));
 	{
-		//::SetCursor(NULL);
-		//CUI_MousePointer* pMouse = static_cast<CUI_MousePointer*>(CGameInstance::GetInstance()->Get_GameObjectPtr(
-		//	g_LEVEL, L"Layer_Canvas", L"Clone_MousePointer"));
-		//if (pMouse != nullptr)
-		//	pMouse->Set_Active(true);
+		::SetCursor(NULL);
+		CUI_MousePointer* pMouse = static_cast<CUI_MousePointer*>(CGameInstance::GetInstance()->Get_GameObjectPtr(
+			g_LEVEL, L"Layer_Canvas", L"Clone_MousePointer"));
+		if (pMouse != nullptr)
+			pMouse->Set_Active(true);
 	}
+	//::SetCursor(::LoadCursor(nullptr, IDC_ARROW));
 
 	__super::Late_Tick(fTimeDelta);
 }

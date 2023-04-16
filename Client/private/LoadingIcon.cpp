@@ -77,7 +77,7 @@ void CLoadingIcon::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UILAST, this);
 }
 
 HRESULT CLoadingIcon::Render()

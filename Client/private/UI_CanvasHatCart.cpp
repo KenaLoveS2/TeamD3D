@@ -270,7 +270,7 @@ HRESULT CUI_CanvasHatCart::Ready_Nodes()
 			return E_FAIL;
 		m_vecNodeCloneTag.push_back(strCloneTag);
 		pGameInstance->Add_String(wstrCloneTag);
-		static_cast<CUI_NodeCurrentCrystal*>(pUI)->Set_Font(L"Font_Jangmi0", { 1.f, 1.f, 1.f, 1.f }, { 1.0f, 1.0f }, { 30.f, -10.f });
+		static_cast<CUI_NodeCurrentCrystal*>(pUI)->Set_Font(L"Font_Jangmi0", { 1.f, 1.f, 1.f, 1.f }, { 1.0f, 1.0f }, { 30.f, -15.f });
 
 	}
 	RELEASE_INSTANCE(CGameInstance);
@@ -333,8 +333,7 @@ void CUI_CanvasHatCart::BindFunction(CUI_ClientManager::UI_PRESENT eType, CKena*
 		m_bActive = !m_bActive;
 		m_pPlayer = pPlayer;
 		static_cast<CUI_NodeCurrentCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal(m_pPlayer->Get_Status()->Get_Crystal());
-		//if (nullptr != m_pPlayer->Get_CameraPlayer())
-		//	m_pPlayer->Get_CameraPlayer()->Set_MouseFix(false);
+
 		*Out_Open = m_bActive;
 	}
 }

@@ -51,6 +51,7 @@ private:/* Test */
 	_int		m_iCurLineIndex;
 	_int		m_iLastClearLine;
 	_int		m_iNumsQuestLine[QUEST_END];
+	_bool	m_bQuestClear = false;
 
 private:/* For Shader */
 	_float		m_fTimeAcc;

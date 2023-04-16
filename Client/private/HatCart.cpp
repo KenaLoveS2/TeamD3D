@@ -6,6 +6,7 @@
 #include "Kena.h"
 #include "MannequinRot.h"
 #include "BGM_Manager.h"
+#include "Camera_Player.h"
 
 CHatCart::CHatCart(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -100,6 +101,7 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 				{
 					CGameInstance::GetInstance()->Play_Sound(TEXT("Rot (9).ogg"), 0.8f);
 					m_pPlayer->Set_StateLock(true);
+					m_pPlayer->Get_CameraPlayer()->Set_MouseFix(false);
 
 					Update_MannequinRotMatrix();
 					m_pMannequinRot->Start_FashiomShow();
@@ -110,18 +112,19 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 				{
 					CGameInstance::GetInstance()->Play_Sound(TEXT("Rot (9).ogg"), 0.8f);
 					m_pPlayer->Set_StateLock(false);
+					m_pPlayer->Get_CameraPlayer()->Set_MouseFix(true);
 					m_pMannequinRot->End_FashiomShow();
 
 					CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_VILLAGE);
 
 
 					/* Quest 2 -1 Clear*/
-					CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-					_bool bStart = true;
-					_float fIdx = 1;
-					wstring wstr = L"";
-					m_pPlayer->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
-					CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+					//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+					//_bool bStart = true;
+					//_float fIdx = 1;
+					//wstring wstr = L"";
+					//m_pPlayer->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
+					//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 
 				}
 			}
