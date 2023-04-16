@@ -111,30 +111,6 @@ void CBombPlatform::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
-#ifdef _DEBUG
-	ImGui::Begin("CBombPlatform HighLight");
-	static _float4 vColor = m_fShineColor;
-	static _float  fCycle_Interval = m_fCycle_Interval;
-	static _float  fSpeed = m_fShine_Speed;
-	static _float  fWidth = m_fShine_Width;
-
-	if (ImGui::Button("re"))
-		m_pShaderCom->ReCompile();
-
-	ImGui::InputFloat4("m_fShineColor", (_float*)&vColor);
-	ImGui::InputFloat("m_fCycle_Interval", &fCycle_Interval);
-	ImGui::InputFloat("m_fShine_Speed", &fSpeed);
-	ImGui::InputFloat("m_fShine_Width", &fWidth);
-	ImGui::InputFloat("m_fTimeDelta", &m_fTimeDelta);
-
-	m_fShineColor = vColor;
-	m_fCycle_Interval = fCycle_Interval;
-	m_fShine_Speed = fSpeed;
-	m_fShine_Width = fWidth;
-
-	ImGui::End();
-#endif // _DEBUG
-
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
 

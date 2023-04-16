@@ -1575,16 +1575,6 @@ HRESULT CKena::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("K_D_Sphere", pEffectBase);
 
-	/* KenaLvUp_RiseY  */
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaLevel_RiseY", L"KenaLvUp_RiseY"));
-	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	m_mapEffect.emplace("KenaLvUp_RiseY", pEffectBase);
-
-	/* KenaLvUp_Floor  */
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaLevel_Floor", L"KenaLvUp_Floor"));
-	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	m_mapEffect.emplace("KenaLvUp_Floor", pEffectBase);
-
 	/* LevelUp */
 	string		strLevelUp = "";
 	for (_uint i = 0; i < 2; ++i)
