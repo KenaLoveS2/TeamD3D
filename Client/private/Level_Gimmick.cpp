@@ -46,12 +46,12 @@ HRESULT CLevel_Gimmick::Initialize()
 
 
 	p_game_instance->Clear_ImguiObjects();
-	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
-	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
+	//p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
