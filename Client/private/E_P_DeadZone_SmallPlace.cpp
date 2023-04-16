@@ -81,7 +81,7 @@ void CE_P_DeadZone_SmallPlace::Late_Tick(_float fTimeDelta)
 		Set_ShapePosition();
 
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(1.f, 2.f));
-		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 0.5f);
+		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.3f, 0.5f);
 		m_eEFfectDesc.vColor = XMVectorSetW(m_eEFfectDesc.vColor, 0.5f);
 		m_pTransformCom->Set_Scaled(_float3(1.f, 2.f, 1.f));
 		m_bTurnOnfirst = true;

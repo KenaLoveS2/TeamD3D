@@ -253,19 +253,19 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 				_float fMax = (_float)m_iMaxArrowCount;
 				m_StatusDelegator.broadcast(eArrowUpgrade, fMax);
 			}
-			else if (iSlot == 3)	/* 화살 데미지 증가 (8) */
+			else if (iSlot == 3)	/* 화살 데미지 증가 (25) */
 			{
 				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
 
 				for (auto pArrow : *pArrows)
-					pArrow->Set_Damage(8);
+					pArrow->Set_Damage(25);
 			}
-			else if (iSlot == 4)	/* 화살 데미지 증가 (12) */
+			else if (iSlot == 4)	/* 화살 데미지 증가 (30) */
 			{
 				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
 
 				for (auto pArrow : *pArrows)
-					pArrow->Set_Damage(12);
+					pArrow->Set_Damage(30);
 			}
 
 			break;
