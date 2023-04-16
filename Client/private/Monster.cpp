@@ -543,6 +543,8 @@ void CMonster::Set_Dying(_uint iDeathAnimIndex)
 	m_fDissolveTime = 0.f;
 
 	m_pGameInstance->Play_Sound(m_pSoundKey_Dissolve, 0.8f);
+
+	m_pKena->Get_Status()->Add_Karma(120);
 }
 
 void CMonster::Clear_Death()
