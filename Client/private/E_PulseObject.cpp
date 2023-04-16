@@ -93,8 +93,6 @@ HRESULT CE_PulseObject::Late_Initialize(void * pArg)
 
 void CE_PulseObject::Tick(_float fTimeDelta)
 {
-	ToolOption("CE_PulseObject");
-
 	if (m_bFinish == true )//&& m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
 	{
 		m_fPulseResetTimer += fTimeDelta;
