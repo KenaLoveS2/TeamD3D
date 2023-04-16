@@ -155,18 +155,6 @@ void CSaiya::Tick(_float fTimeDelta)
 	m_iNumKeyFrame = (_uint)m_keyframes.size();
 	Update_Collider(fTimeDelta);
 
-	if(ImGui::Button("braodcast test"))
-	{
-		/* Quest 2 - 2 */
-		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-		_bool bStart = true;
-		_float fIdx1 = 1, fIdx2 = 2;
-		m_SaiyaDelegator.broadcast(tag, bStart, fIdx1, wstrDefault);
-		m_SaiyaDelegator.broadcast(tag, bStart, fIdx2, wstrDefault);
-		CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
-	}
-
-
 	if (g_LEVEL == LEVEL_FINAL )
 	{
 		if (m_pShaman->Get_BossClear() == true && false == m_bCall)

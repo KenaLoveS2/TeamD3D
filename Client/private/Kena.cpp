@@ -560,14 +560,6 @@ void CKena::Tick(_float fTimeDelta)
 
 	LiftRotRockProc();
 
-	ImGui::Checkbox("StateFalse",&m_bStateLock);
-
-	if(ImGui::Button("HunterPos"))
-	{
-		const _float4 vPos = _float4(89.f, 6.f, 441.f, 1.f);
-		m_pTransformCom->Set_Position(vPos);
-	}
-
 	Check_Damaged();
 
 	CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;

@@ -248,9 +248,6 @@ void CBossHunter::Tick(_float fTimeDelta)
 
 	for (auto& pEffect : m_vecEffects)
 		pEffect->Tick(fTimeDelta);
-
-	if (ImGui::Button("DamageHunter"))
-		m_pMonsterStatusCom->UnderAttack(50);
 }
 
 void CBossHunter::Late_Tick(_float fTimeDelta)
@@ -260,7 +257,9 @@ void CBossHunter::Late_Tick(_float fTimeDelta)
 	CMonster::Late_Tick(fTimeDelta);
 	if (m_pRendererCom /*&& m_bSpawn*/)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if(m_fDissolveTime <= 0.2f)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 

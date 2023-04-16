@@ -87,8 +87,6 @@ void CSky::Tick(_float fTimeDelta)
 		_float4 vValue = _float4(0.35f, 0.6f, 0.4f, 1.f);
 		m_pRendererCom->Set_LightShaftValue(vValue);
 	}
-	m_pRendererCom->Set_LightShaft(false);
-
 }
 
 void CSky::Late_Tick(_float fTimeDelta)
