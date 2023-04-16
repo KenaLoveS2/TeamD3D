@@ -80,14 +80,15 @@ HRESULT CBossShaman::Initialize(void* pArg)
 	Create_Minions();	
 	Create_ShamanMask();
 
+	m_bNoUseFocusIcon = true;
+
 	return S_OK;
 }
 
 HRESULT CBossShaman::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
-
-	// ����
+		
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
 		//_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);

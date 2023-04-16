@@ -47,6 +47,8 @@ HRESULT CBranchTosser::Initialize(void* pArg)
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
 	
+	m_vFocusIconPosOffset = { 0.f, 1.9f, 0.f, 0.f };
+
 	return S_OK;
 }
 
@@ -103,17 +105,13 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 
 void CBranchTosser::Tick(_float fTimeDelta)
 {
-	// m_bReadySpawn = true;
-	// Update_Collider(fTimeDelta);
-	// m_pModelCom->Play_Animation(fTimeDelta);
-	// return;
-
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 
+	// m_bReadySpawn = true;
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_pTransformCom->LookAt(m_vKenaPos);

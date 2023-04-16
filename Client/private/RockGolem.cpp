@@ -43,6 +43,8 @@ HRESULT CRockGolem::Initialize(void* pArg)
 	m_pModelCom->Set_AllAnimCommonType();
 	m_pCrystalBone = m_pModelCom->Get_BonePtr("RG_Crystal_Jnt");
 	
+	m_bNoUseFocusIcon = true;
+
 	return S_OK;
 }
 

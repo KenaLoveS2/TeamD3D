@@ -11,7 +11,7 @@ BEGIN(Client)
 class CCamera_Photo : public CCamera
 {
 public:
-	enum STATE { MOVE, WAIT, PHOTO, STATE_END};
+	enum STATE { MOVE, WAIT, PHOTO_TIME, PHOTO_END, STATE_END};
 
 private:	
 	CRenderer* m_pRendererCom = nullptr;

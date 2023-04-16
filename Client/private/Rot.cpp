@@ -167,6 +167,7 @@ void CRot::Imgui_RenderProperty()
 			{
 				_float4 vPos = m_pTransformCom->Get_Position();
 				m_pCamera_Photo->Execute_Move(vPos + _float4(2.f, 1.f, 2.f, 0.f), vPos);
+				// m_pCamera_Photo->Execute_Move(m_vKenaPos + _float4(2.f, 1.f, 2.f, 0.f), m_vKenaPos + _float4(0.f, 0.5f, 0.f, 0.f));
 				m_pGameInstance->Work_Camera(CAMERA_PHOTO_TAG);
 				m_bTemp = true;
 			}
