@@ -60,6 +60,14 @@ private:
 	_bool						m_bKenaDetected = false;
 	_bool						m_bOpened = false;
 
+	//
+	_float						m_fTimeDelta = 0.0f;
+	_float4						m_fShineColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float						m_fCycle_Interval = 1.0f;
+	_float						m_fShine_Speed = 3.0f;
+	_float						m_fShine_Width = 3.0f;
+	//
+
 	ANIMATION				m_eCurState = CURSED_CLEARED;
 	ANIMATION				m_ePreState = CURSED_CLEARED;
 

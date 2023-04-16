@@ -93,24 +93,8 @@ HRESULT CChest_Anim::Late_Initialize(void * pArg)
 void CChest_Anim::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_fTimeDelta += fTimeDelta;
 
-	// if(!m_bTestOnce)
-	// {
-	// 	m_bTestOnce = true;
-	// 	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
-	// }
-
-
-	// ImGui::Begin("Chest");
-
-	// if (ImGui::Button("re"))
-	// {
-	// 	m_bOpened = false;
-	// 	m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);		
-	// 	m_ePreState = m_eCurState = CURSED_ACTIVATE;
-	// }
-
-	// ImGui::End();
 
 	/*Culling*/
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -181,7 +165,11 @@ HRESULT CChest_Anim::Render()
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+
+		if (m_eCurState == CURSED_ACTIVATE)
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 36);
+		else
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 	}
 
 	return S_OK;
@@ -460,9 +448,14 @@ HRESULT CChest_Anim::SetUp_ShaderResources()
 
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float)), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fShineColor", &m_fShineColor, sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fCycle_Interval", &m_fCycle_Interval, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fShine_Speed", &m_fShine_Speed, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fShine_Width", &m_fShine_Width, sizeof(_float)), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 
@@ -546,12 +539,13 @@ void CChest_Anim::Wait_BoxOpened(_bool bIsInit, _float fTimeDelta)
 
 HRESULT CChest_Anim::Create_Rot()
 {
+#ifdef FOR_MAP_GIMMICK
 	CGameObject* p = nullptr;
 	CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_Rot"), CUtile::Create_DummyString(), nullptr, &p);
 	assert(p && "CChest_Anim::Late_Initialize() -> m_pRot is NULL");
 	m_pRot = (CRot*)p;
 	m_pRot->Set_OrdinaryRotFlag(false);
-
+#endif
 	return S_OK;
 }
 

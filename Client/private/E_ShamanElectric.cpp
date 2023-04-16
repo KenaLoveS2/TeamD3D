@@ -55,13 +55,13 @@ void CE_ShamanElectric::Tick(_float fTimeDelta)
 	{
 		_float4 vPos = m_pParent->Get_TransformCom()->Get_Position();
 		_float fRange = 1.5f;
-		vPos.y += 1.f;
+		vPos.y += 1.5f;
 
 		_float3 vMin = _float3(vPos.x - fRange, vPos.y, vPos.z - fRange);
 		_float3 vMax = _float3(vPos.x + fRange, vPos.y, vPos.z + fRange);
 
 		m_eEFfectDesc.fTimeDelta = CUtile::Get_RandomFloat(0.1f, 0.3f);
-	//	m_eEFfectDesc.vScale = XMVectorSetY(m_eEFfectDesc.vScale, CUtile::Get_RandomFloat(1.f, 4.0f));
+		m_eEFfectDesc.vScale = XMVectorSetY(m_eEFfectDesc.vScale, 4.0f);
 
 		m_pTransformCom->Set_Position(CUtile::Get_RandomVector(vMin, vMax));
 

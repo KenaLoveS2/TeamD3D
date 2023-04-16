@@ -166,7 +166,7 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 	(The cloneTag is stored after the clone process.)
 	*/
 	str = "Node_HPBar";
-	tDesc.fileName.assign(str.begin(), str.end()); /* this file name doesn't exist eternally.(��������) */
+	tDesc.fileName.assign(str.begin(), str.end()); /* this file name doesn't exist eternally.*/
 	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_HPBar", L"Node_HPBar", &tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;

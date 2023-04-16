@@ -24,6 +24,8 @@ public:
 
 public:
 	void	Reset();
+	_bool	m_bDissolve = false;
+	_bool	m_bTurn = false;
 
 public:
 	static  CE_P_EnvironmentDust* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

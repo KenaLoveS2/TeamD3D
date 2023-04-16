@@ -1,9 +1,9 @@
 #pragma once
-#include "Effect.h"
+#include "Effect_Point_Instancing.h"
 
 BEGIN(Client)
 
-class CE_WarriorWeaponAcc final : public CEffect
+class CE_WarriorWeaponAcc final : public CEffect_Point_Instancing
 {
 private:
 	CE_WarriorWeaponAcc(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

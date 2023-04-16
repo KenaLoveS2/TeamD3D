@@ -46,62 +46,62 @@ void CE_P_EnvironmentDust::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// m_fLife += fTimeDelta;
-
 	if(ImGui::Button("True"))
 	{
-		//m_eEFfectDesc.bActive = true;
 		_float4	vPos;
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 		vPos.y = 13.330f;
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&vPos));
 	}
 
-
-	if(	!lstrcmp(m_pParent->Get_ObjectCloneName() , L"1_GimmickPlatForm"))
+	if(m_pParent)
 	{
-		if (m_eEFfectDesc.bActive == true)
+		if (!lstrcmp(m_pParent->Get_ObjectCloneName(), L"1_GimmickPlatForm"))
 		{
-			m_pTransformCom->Go_AxisY(fTimeDelta * 0.23f);
+			if (m_eEFfectDesc.bActive == true)
+			{
+				m_pTransformCom->Go_AxisY(fTimeDelta * 0.23f);
+			}
+
+			_float4	vPos;
+			XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+			if (vPos.y >= 1.249f)
+				m_bTurn = true;
 		}
-
-		_float4	vPos;
-		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-
-		if(vPos.y >= 1.249f)
+		else if (!lstrcmp(m_pParent->Get_ObjectCloneName(), L"4_Gimmick_Wall_B"))
 		{
-			m_eEFfectDesc.bActive = false;
+			if (m_eEFfectDesc.bActive == true)
+			{
+				m_pTransformCom->Go_AxisY(fTimeDelta * 0.6f);
+			}
+
+			_float4	vPos;
+			XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+			if (vPos.y >= 17.5f)
+				m_bTurn = true;
 		}
-		
-
-	}
-	else if (!lstrcmp(m_pParent->Get_ObjectCloneName(), L"4_Gimmick_Wall_B"))
-	{
-		if (m_eEFfectDesc.bActive == true)
-		{
-			m_pTransformCom->Go_AxisY(fTimeDelta * 0.6f);
-		}
-
-		_float4	vPos;
-		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-
-		if (vPos.y >= 17.5f)
-		{
-			m_eEFfectDesc.bActive = false;
-		}
-
-
 	}
 
-
-
+	if (m_bTurn)
+	{
+		m_fLife += fTimeDelta;
+		m_bTimer = true;
+		m_bDissolve = true;
+		_bool bResult = TurnOffSystem(m_fLife, 1.f, fTimeDelta);
+		if (bResult) {
+			Reset();
+			m_pTransformCom->Set_PositionY(0.0f);
+		}
+	}
 }
 
 void CE_P_EnvironmentDust::Late_Tick(_float fTimeDelta)
 {
 	if (m_bTurnOnfirst == false)
 	{
-		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(5.f, 10.f));
+		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(5.f, 15.f));
 		m_bTurnOnfirst = true;
 	}
 
@@ -114,6 +114,7 @@ void CE_P_EnvironmentDust::Late_Tick(_float fTimeDelta)
 HRESULT CE_P_EnvironmentDust::Render()
 {
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
 	return S_OK;
 }
@@ -128,6 +129,8 @@ HRESULT CE_P_EnvironmentDust::SetUp_ShaderResources()
 	if (m_pShaderCom == nullptr)
 		return E_FAIL;
 
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+
 	return S_OK;
 }
 
@@ -135,13 +138,11 @@ void CE_P_EnvironmentDust::Reset()
 {
 	m_fLife = 0.0f;
 	m_eEFfectDesc.bActive = false;
-
-// 	Set_ShapePosition();
-// 	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.1f, 1.0f);
-// 	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.05f, 0.1f));
+	m_bDissolve = false;
+	m_bTimer = false;
 }
 
-CE_P_EnvironmentDust * CE_P_EnvironmentDust::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)
+CE_P_EnvironmentDust* CE_P_EnvironmentDust::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath)
 {
 	CE_P_EnvironmentDust * pInstance = new CE_P_EnvironmentDust(pDevice, pContext);
 

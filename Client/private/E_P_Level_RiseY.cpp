@@ -51,11 +51,8 @@ void CE_P_Level_RiseY::Tick(_float fTimeDelta)
 	if (m_bReset)
 	{
 		m_fLife += fTimeDelta;
-		if (m_fLife > 2.f)
-		{
+		if (m_fLife > 1.5f)
 			Reset();
-			m_fLife = 0.0f;
-		}
 	}
 }
 
@@ -119,4 +116,6 @@ CGameObject * CE_P_Level_RiseY::Clone(void * pArg)
 void CE_P_Level_RiseY::Free()
 {
 	__super::Free();
+
+	m_ePointDesc = nullptr;
 }

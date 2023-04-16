@@ -149,7 +149,7 @@ void CImgui_TerrainEditor::Terrain_Selecte()
 
 	m_pPickingTerrain = m_pSelectedTerrain;
 
-	m_pSelected_Buffer = nullptr;  m_pSelected_Tranform = nullptr; // �ʱ�ȭ
+	m_pSelected_Buffer = nullptr;  m_pSelected_Tranform = nullptr; 
 
 	m_pSelected_Buffer = dynamic_cast<CVIBuffer_Terrain*>(m_pSelectedTerrain->Find_Component(L"Com_VIBuffer"));
 	m_pSelected_Tranform = dynamic_cast<CTransform*>(m_pSelectedTerrain->Find_Component(L"Com_Transform"));
@@ -160,10 +160,10 @@ void CImgui_TerrainEditor::Terrain_Selecte()
 
 	ImGui::InputInt("Selecte Filter Case", &m_iFilterCaseNum);
 
-	if (m_iFilterCaseNum >= _int(FLTER_END))		// ����ó��
+	if (m_iFilterCaseNum >= _int(FLTER_END))	
 		m_iFilterCaseNum = _int(FLTER_END) - 1;
 	
-	if (m_iFilterCaseNum < _int(FILTER_FIRST))	// ����ó��
+	if (m_iFilterCaseNum < _int(FILTER_FIRST))	
 		m_iFilterCaseNum = _int(FILTER_FIRST);
 }
 
@@ -179,12 +179,12 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 
 	if (ImGuiFileDialog::Instance()->Display("Select Save_Terrain Folder"))
 	{
-		if (ImGuiFileDialog::Instance()->IsOk())        // OK ������ ��
+		if (ImGuiFileDialog::Instance()->IsOk())      
 		{
 			Save_Terrain();
 			ImGuiFileDialog::Instance()->Close();
 		}
-		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ������ ��
+		if (!ImGuiFileDialog::Instance()->IsOk())      
 			ImGuiFileDialog::Instance()->Close();
 	}
 	ImGui::SameLine();
@@ -194,12 +194,12 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 
 	if (ImGuiFileDialog::Instance()->Display("Select Load_Terrain Folder"))
 	{
-		if (ImGuiFileDialog::Instance()->IsOk())        // OK ������ ��
+		if (ImGuiFileDialog::Instance()->IsOk())      
 		{
 			Load_Terrain();
 			ImGuiFileDialog::Instance()->Close();
 		}
-		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ������ ��
+		if (!ImGuiFileDialog::Instance()->IsOk())       
 			ImGuiFileDialog::Instance()->Close();
 	}
 	ImGui::NewLine();
@@ -208,12 +208,12 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 
 	if (ImGuiFileDialog::Instance()->Display("Select Pixel_Save Folder"))
 	{
-		if (ImGuiFileDialog::Instance()->IsOk())        // OK ������ ��
+		if (ImGuiFileDialog::Instance()->IsOk())       
 		{
 			Imgui_FilterPixel_Save();
 			ImGuiFileDialog::Instance()->Close();
 		}
-		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ������ ��
+		if (!ImGuiFileDialog::Instance()->IsOk())      
 			ImGuiFileDialog::Instance()->Close();
 	}
 
@@ -224,12 +224,12 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 
 	if (ImGuiFileDialog::Instance()->Display("Select Pixel Load Folder"))
 	{
-		if (ImGuiFileDialog::Instance()->IsOk())        // OK ������ ��
+		if (ImGuiFileDialog::Instance()->IsOk())    
 		{
 			Imgui_FilterPixel_Load();
 			ImGuiFileDialog::Instance()->Close();
 		}
-		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ������ ��
+		if (!ImGuiFileDialog::Instance()->IsOk())      
 			ImGuiFileDialog::Instance()->Close();
 	}
 }
@@ -347,9 +347,9 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 		TextureDesc.SampleDesc.Quality = 0;
 		TextureDesc.SampleDesc.Count = 1;
 
-		TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// �������� �������� �� �������
+		TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	
 		TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU�� �����Ҷ� ������
+		TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	
 		TextureDesc.MiscFlags = 0;
 
 		if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
@@ -497,9 +497,9 @@ void CImgui_TerrainEditor::Draw_FilterTexture()
 	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
-	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// �������� �������� �� �������
+	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	
 	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU�� �����Ҷ� ������
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	TextureDesc.MiscFlags = 0;
 
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
@@ -659,9 +659,9 @@ void CImgui_TerrainEditor::UnDraw_FilterTexture()
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
 
-	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// �������� �������� �� �������
+	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;
 	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU�� �����Ҷ� ������
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	
 	TextureDesc.MiscFlags = 0;
 
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
@@ -899,7 +899,7 @@ void CImgui_TerrainEditor::Save_Terrain()
 		{
 			fElement = 0.f;
 			memcpy(&fElement, (float*)&fWroldMatrix + i, sizeof(float));
-			jChild["10_Transform State"].push_back(fElement);		// �迭 ����. �����̳��� ������ ����մϴ�. �̷��� �ϸ� Transform State���� 16���� float ���� ����˴ϴ�.
+			jChild["10_Transform State"].push_back(fElement);	
 		}
 
 		jTerrainSave["Terrain_Data"].push_back(jChild);
@@ -912,7 +912,7 @@ void CImgui_TerrainEditor::Save_Terrain()
 
 void CImgui_TerrainEditor::Load_Terrain()
 {
-	string      strLoadDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();   // GetCurrentPath F12�� �鰡�� ����� �ٸ� �Լ� �� ����.
+	string      strLoadDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();  
 	string	   strLoadFileName = ImGuiFileDialog::Instance()->GetCurrentFileName();
 	char   szDash[128] = "\\";
 	strcat_s(szDash, strLoadFileName.c_str());

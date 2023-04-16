@@ -41,7 +41,10 @@ float4                  g_SecondColor;
 float                   g_SecondRatio =1.f;
 
 
-
+float4                  g_fShineColor;
+float                   g_fCycle_Interval;
+float                   g_fShine_Speed;
+float                   g_fShine_Width;
 
 
 
@@ -353,7 +356,6 @@ void GS_MAIN(point GS_IN In[1], inout PointStream<GS_OUT> Stream)
     Stream.Append(Out);
 
  
-    // �����? �����մϴ�.
     Stream.RestartStrip();
 }
 
@@ -504,7 +506,6 @@ PS_OUT PS_MAIN_TESS(PS_IN In)
 
     vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
-    /* ź��Ʈ�����̽� */
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));
@@ -954,7 +955,6 @@ PS_OUT PS_MAIN_Dissolve(PS_IN In)
 
     vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
-    /* ź��Ʈ�����̽� */
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));
@@ -998,8 +998,6 @@ PS_OUT PS_MAIN_Dissolve(PS_IN In)
     Out.vAmbient = (vector)1.f;
     return Out;
 }//1
-
-
 
 technique11 DefaultTechnique
 {
@@ -1355,5 +1353,4 @@ technique11 DefaultTechnique
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_Dissolve();
     } //26
-
 }

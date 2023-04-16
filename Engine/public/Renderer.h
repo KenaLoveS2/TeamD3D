@@ -15,6 +15,7 @@ public:
 		RENDER_NONALPHABLEND,
 		RENDER_NONLIGHT,
 		RENDER_ALPHABLEND,
+		RENDER_ALPHABLEND2,
 		RENDER_UIHDR,
 		RENDER_EFFECT,
 		RENDER_UI,
@@ -102,6 +103,7 @@ private:
 	HRESULT Render_Blend();
 	HRESULT Render_NonLight();
 	HRESULT Render_AlphaBlend();
+	HRESULT Render_AlphaBlend2();
 	HRESULT Render_UIHDR();
 	HRESULT Render_HDR();
 	HRESULT Render_PostProcess();

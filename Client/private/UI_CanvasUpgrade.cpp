@@ -83,7 +83,7 @@ HRESULT	CUI_CanvasUpgrade::Late_Initialize(void* pArg)
 	if (pKena == nullptr)
 		return E_FAIL;
 
-	for (_uint iType = 0; iType < CKena_Status::SKILLTAB_END; ++iType)
+	for (_uint iType = 0; iType < (_uint)CKena_Status::SKILL_ROT; ++iType)
 	{
 		for (_uint iSlot = 0; iSlot < 5; ++iSlot)
 		{
@@ -106,8 +106,25 @@ HRESULT	CUI_CanvasUpgrade::Late_Initialize(void* pArg)
 		}
 	}
 
+	for (_uint iSlot = 0; iSlot < 4; ++iSlot)
+	{
+		_bool isOpen = pKena->Get_Status()->Get_SkillState(CKena_Status::SKILL_ROT, iSlot);
 
-	
+		if (isOpen == true)
+		{
+			_uint iIndex = UI_ROTSKILLS_START + iSlot;
+			m_pSkills[CKena_Status::SKILL_ROT]->UnLock(iSlot);
+			static_cast<CUI_NodeSkill*>(m_vecNode[iIndex])->State_Change(2);
+			pKena->Get_Status()->Unlock_Skill(CKena_Status::SKILL_ROT, iSlot);
+
+			/* Bind Not Finished, so, Broadcast not Work. */
+			if (FAILED(SetUp_SkillSettings(CKena_Status::SKILL_ROT, iSlot)))
+			{
+				MSG_BOX("Skill Setting Not Complete");
+				return E_FAIL;
+			}
+		}
+	}
 
 	return S_OK;
 }
@@ -241,7 +258,7 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 	{
 		string strHeader = "Node_PlayerSkill" + m_pSkills[i]->Get_TypeName();
 
-		for (_uint j = 0; j < CSkillInfo::LEVEL_END; ++j)
+		for (_uint j = 0; j < (_uint)CSkillInfo::LEVEL_END; ++j)
 		{
 			CUI* pUI = nullptr;
 			CUI::UIDESC tDesc;
@@ -261,7 +278,7 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 	}
 
 	/* RotSkill */
-	for (_uint i = 1; i < CSkillInfo::LEVEL_END; ++i)
+	for (_uint i = 1; i < (_uint)CSkillInfo::LEVEL_END; ++i)
 	{
 		CUI* pUI = nullptr;
 		CUI::UIDESC tDesc;
@@ -567,7 +584,7 @@ void CUI_CanvasUpgrade::Picking()
 	POINT pt = CUtile::GetClientCursorPos(g_hWnd);
 
 	_bool isPicked = false; /* Blue Effect */
-	for (_uint i = 0; i <= UI_ROTSKILL_END; ++i)
+	for (_uint i = 0; i <= (_uint)UI_ROTSKILL_END; ++i)
 	{
 		_float4 vPos = m_vecNode[i]->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 		_float2 vPosConvert = { vPos.x + 0.5f*g_iWinSizeX, -vPos.y + 0.5f*g_iWinSizeY };
@@ -577,7 +594,7 @@ void CUI_CanvasUpgrade::Picking()
 
 		if (PtInRect(&rc, pt))
 		{
-			if (i >= UI_ROTSKILLS_START && i <= UI_ROTSKILL_END)
+			if (i >= (_uint)UI_ROTSKILLS_START && i <= (_uint)UI_ROTSKILL_END)
 			{
 				isPicked = true;
 				if (m_pSelected != m_vecNode[i])
@@ -611,7 +628,7 @@ void CUI_CanvasUpgrade::Picking()
 				/* Spread Selected Skill's Information To Nodes */
 				Spread();
 
-				if (i >= UI_ROTSKILLS_START && i <= UI_ROTSKILL_END)
+				if (i >= (_uint)UI_ROTSKILLS_START && i <= (_uint)UI_ROTSKILL_END)
 				{
 					m_vecEffects[EFFECT_RING]->Change_Scale(1.5f);
 					m_vecEffects[EFFECT_RING]->Start_Effect(m_pSelected, 0.f, 0.f);
@@ -679,7 +696,7 @@ void CUI_CanvasUpgrade::Free()
 {
 	if (m_isCloned)
 	{
-		for (_uint i = 0; i < TYPE_END; ++i)
+		for (_uint i = 0; i < (_uint)TYPE_END; ++i)
 			Safe_Release(m_pSkills[i]);
 	}
 	

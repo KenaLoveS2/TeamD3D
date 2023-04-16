@@ -188,8 +188,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar* pModelFilePath, _fmatrix Pivo
 				}
 
 				iMaterialIndex++;
-				m_Materials.push_back(ModelMatrial);			//  MODELMATERIAL  1���� 18���� �ؽ��ĸ� ���������ϴ�.
-																						// �ᱹ�� ���⸦ �պ����Ѵ�.
+				m_Materials.push_back(ModelMatrial);			//  MODELMATERIAL
 			}
 		}
 		else
@@ -870,7 +869,6 @@ HRESULT CModel::Save_Model(const wstring& wstrSaveFileDirectory)
 		}
 	}
 
-	/* ���� ��ġ ������ �޾Ƽ� �����ϱ� */
 	m_dwBeginBoneData = SetFilePointer(hFile, 0, nullptr, FILE_CURRENT);
 
 	/* Bones */
@@ -1394,7 +1392,7 @@ HRESULT CModel::Load_MeshMaterial(const wstring& wstrModelFilePath)
 		}
 	}
 
-	/* Materials	 ���⸦ �պ����Ѵ�.		*/
+	/* Materials*/
 	ReadFile(hFile, &m_iNumMaterials, sizeof(_uint), &dwByte, nullptr);
 	m_Materials.reserve(m_iNumMaterials);
 
@@ -1941,7 +1939,7 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 	memcpy(&matNew.m[3], &vPos, sizeof(_float4));
 
 	PxRigidActor* pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
-	pPhysX->Set_ActorMatrix(pActor, matNew); // ũ�������� ���� �ִ´�.
+	pPhysX->Set_ActorMatrix(pActor, matNew); 
 }
 
 void CModel::Calc_InstMinMax(_float* pMinX, _float* pMaxX, _float* pMinY, _float* pMaxY, _float* pMinZ, _float* pMaxZ)
@@ -2057,7 +2055,7 @@ void CModel::Create_InstModelPxBox(const _tchar* pActorName, CTransform* pConnec
 		if (bRotation == false)
 		{
 			PxRigidActor* pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
-			pPhysX->Set_ActorMatrix(pActor, matNew); // ũ�������� ���� �ִ´�.
+			pPhysX->Set_ActorMatrix(pActor, matNew);
 		}
 	}
 
@@ -2171,7 +2169,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 				for (auto& pInstMesh : m_InstancingMeshes)
 					pInstMesh->Edit_InstanceAngle_Pos_Model(m_pInstancingMatrix,
 						EditStartIndex, EdiEndIndex, m_vSortStartPos, m_vSortAngle );
-				// ���⼭�� m_vSortStartPos-> EditPos
+				// m_vSortStartPos-> EditPos
 			}
 		}
 
@@ -2347,7 +2345,6 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	if (m_iSelectMeshInstace_Index == -1)
 		return;
 
-	/*���� �κ�*/
 	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
 	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
 	ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index]) * parentMatrix;
@@ -2373,8 +2370,8 @@ void CModel::Imgui_Mesh_InstancingSort_EditOrCreate()
 	ImGui::Checkbox("Sort_Obj Create", &m_bSort_MeshCreate);
 	ImGui::Checkbox("ExistEdit", &m_bExistEdit);
 
-	static float SortPos[3] = { 0.f,0.f,0.f }; // ���� ��ŭ �������� ����
-	static float SortAngle[3] = { 0.f,0.f,0.f }; // �� �ޱ��� ����
+	static float SortPos[3] = { 0.f,0.f,0.f }; 
+	static float SortAngle[3] = { 0.f,0.f,0.f }; 
 
 
 
