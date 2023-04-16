@@ -1180,6 +1180,8 @@ void CKena::Push_EventFunctions()
 	TurnOnDashEd(true, 0.f);
 
 	TurnOnLvUp(true, 0.0f);
+	TurnOnLvUp_Part1_Floor(true, 0.0f);
+	TurnOnLvUp_Part2_RiseY(true, 0.0f);
 
 	PlaySound_Jump(true, 0.f);
 	PlaySound_PulseJump(true, 0.f);
@@ -1546,6 +1548,16 @@ HRESULT CKena::Ready_Effects()
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_DistortionSphere", L"K_D_Sphere"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("K_D_Sphere", pEffectBase);
+
+	/* KenaLvUp_RiseY  */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaLevel_RiseY", L"KenaLvUp_RiseY"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaLvUp_RiseY", pEffectBase);
+
+	/* KenaLvUp_Floor  */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaLevel_Floor", L"KenaLvUp_Floor"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaLvUp_Floor", pEffectBase);
 
 	/* LevelUp */
 	string		strLevelUp = "";
@@ -2455,6 +2467,30 @@ void CKena::TurnOnLvUp(_bool bIsInit, _float fTimeDelta)
 
 	m_mapEffect["K_LevelUp0"]->Set_Effect(vPos, true);
 	m_mapEffect["K_LevelUp1"]->Set_Effect(vPos, true);
+}
+
+void CKena::TurnOnLvUp_Part1_Floor(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnLvUp_Part1_Floor);
+		return;
+	}	
+	_float4 vPos = m_pTransformCom->Get_Position();
+	m_mapEffect["KenaLvUp_Floor"]->Set_Effect(vPos, true);
+}
+
+void CKena::TurnOnLvUp_Part2_RiseY(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnLvUp_Part2_RiseY);
+		return;
+	}
+	_float4 vPos = m_pTransformCom->Get_Position();
+	m_mapEffect["KenaLvUp_RiseY"]->Set_Effect(vPos, true);
 }
 
 void CKena::PlaySound_Jump(_bool bIsInit, _float fTimeDelta)

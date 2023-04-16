@@ -245,6 +245,8 @@ unsigned int	g_LEVEL = 0;
 #include "E_WarriorEyeTrail.h"
 #include "Village_Trigger.h"
 #include "E_P_ShamanDust.h"
+#include "E_P_Level_Floor.h"
+#include "E_P_Level_RiseY.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -2824,7 +2826,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_LevelUp */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LevelUp"), CE_P_Level::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_KenaLvUp.json"))))
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LevelUp"), CE_P_Level::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_KenaLevelUp.json"))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Rot_P */ 
@@ -2909,6 +2911,14 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_WarriorEyeTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WarriorEyeTrail"), CE_WarriorEyeTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaLevel_RiseY */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaLevel_RiseY"), CE_P_Level_RiseY::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_KenaLevelUp2.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaLevel_Floor */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaLevel_Floor"), CE_P_Level_Floor::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_KenaLevelUp3.json"))))
 		return E_FAIL;
 
 #pragma endregion MapObject

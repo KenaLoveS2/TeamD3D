@@ -295,6 +295,8 @@ private:	/* Effect Event Func */
 	void	TurnOnDashEd(_bool bIsInit, _float fTimeDelta);
 
 	void	TurnOnLvUp(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnLvUp_Part1_Floor(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnLvUp_Part2_RiseY(_bool bIsInit, _float fTimeDelta);
 
 private:	/* Sound Event Func */
 	void	PlaySound_Jump(_bool bIsInit, _float fTimeDelta);
@@ -322,7 +324,6 @@ public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, CKena*>		m_PlayerPtrDelegator;
 	//Delegator<CUI_ClientManager::UI_PRESENT, _float, _float, _float, _float>				m_PlayerAmmoDelegator;
 
-	// �׽�Ʈ�� �ӽ� ���� �ε�
 	_float m_fTest = 0.f;
 	_bool  m_bStateLock;
 	_float m_fLinearDamping = KENA_LINEAR_DAMING, m_fAngularDamping = KENA_ANGULAR_DAMING, m_fMass = KENA_MASS;

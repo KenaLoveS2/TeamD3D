@@ -1673,6 +1673,14 @@
     <ClInclude Include="..\public\E_P_ShamanDust.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BossShaman_Mask.h" />
+    <ClInclude Include="..\public\Camera_Shaman.h" />
+    <ClInclude Include="..\public\E_P_Level_RiseY.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Level_Floor.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2706,6 +2714,14 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_ShamanDust.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossShaman_Mask.cpp" />
+    <ClCompile Include="..\private\Camera_Shaman.cpp" />
+    <ClCompile Include="..\private\E_P_Level_RiseY.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Level_Floor.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

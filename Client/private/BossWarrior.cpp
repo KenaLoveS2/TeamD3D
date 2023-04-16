@@ -1418,22 +1418,22 @@ void CBossWarrior::TurnOnHieroglyph(_bool bIsInit, _float fTimeDelta)
 				_float4 WarriorPos = m_pTransformCom->Get_WorldMatrix().r[3];
 				_float4 vPos;
 				_float	fRange = 1.0f;
-				if (Pair.first == "W_Hieroglyph0") // ���ʾƷ�
+				if (Pair.first == "W_Hieroglyph0") 
 				{
 					vPos = _float4(WarriorPos.x + 0.7f, WarriorPos.y + fRange, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(0);
 				}
-				if (Pair.first == "W_Hieroglyph1") // ���� ��
+				if (Pair.first == "W_Hieroglyph1") 
 				{
 					vPos = _float4(WarriorPos.x + fRange, WarriorPos.y + fRange * 2.f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(1);
 				}
-				if (Pair.first == "W_Hieroglyph2") // ������ �Ʒ�
+				if (Pair.first == "W_Hieroglyph2") 
 				{
 					vPos = _float4(WarriorPos.x - 0.4f, WarriorPos.y + fRange + 0.2f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(2);
 				}
-				if (Pair.first == "W_Hieroglyph3") // ������ ��
+				if (Pair.first == "W_Hieroglyph3") 
 				{
 					vPos = _float4(WarriorPos.x - 0.7f, WarriorPos.y + fRange * 2.5f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(3);

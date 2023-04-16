@@ -88,7 +88,6 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 
-	// ����
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
 		//_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
@@ -576,14 +575,13 @@ HRESULT CBossShaman::SetUp_State()
 		m_pGameInstance->Get_WorkCameraPtr()->LookAt_NoUpDown(m_pTransformCom->Get_Position());
 		
 		m_pCamera_Shaman->Clear();
-		// �ӽ�
 		// m_pShamanMask->Clear(); 
 		// m_bStartRender = false;
 	})
 		.AddTransition("READY_SPAWN to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		// return m_fAwakeLoopTimeCheck >= 2.f; // �ӽ�
+		// return m_fAwakeLoopTimeCheck >= 2.f; 
 		return AnimFinishChecker(AWAKE);
 	})
 
@@ -701,7 +699,6 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("FOG_SNAP")
 		.OnStart([this]()
 	{
-		// �ִϸ��̼� ���� ���� �� ��ü �Ȱ� ����
 		Attack_Start(false, FOG_SNAP);
 	})
 		.OnExit([this]()
@@ -1042,7 +1039,7 @@ HRESULT CBossShaman::SetUp_State()
 		m_bLaserFire = false;
 		Attack_End(false, IDLE_LOOP);
 	})		
-		.AddTransition("LASER_FIRE to TRAP_END", "TRAP_END") // ������ �߻簡 ������ ���̵��?
+		.AddTransition("LASER_FIRE to TRAP_END", "TRAP_END") \
 		.Predicator([this]()
 	{
 		if (m_bTrap == false)
@@ -1058,6 +1055,11 @@ HRESULT CBossShaman::SetUp_State()
 			{
 				_float4 vPos = m_pShamanTapHex->Get_TransformCom()->Get_Position();				
 				m_mapEffect["Shaman_Charged"]->Set_Effect(vPos, true);
+
+				CCamera_Player* pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
+				if (pCamera != nullptr)
+					pCamera->Camera_Shake(0.005f, 30);
+
 				m_bTrap = true;
 			}
 		}
@@ -1166,7 +1168,6 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("DASH_ATTACK")
 		.OnStart([this]()
 	{		
-		// �ִϸ��̼� ���� ���� �޽� ���� ���� ����Ʈ
 		Attack_Start(false, DASH_ATTACK);
 	})
 		.OnExit([this]()
@@ -1193,7 +1194,6 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("FREEZE_BLAST")
 		.OnStart([this]()
 	{
-		// �ִϸ��̼� ���� ���� ���� �� �߻�
 		Attack_Start(false, FREEZE_BLAST);
 	})
 		.OnExit([this]()
@@ -1921,7 +1921,6 @@ void CBossShaman::TurnOnTeleport(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnTeleport);
 		return;
 	}
-	/* ���� ���?*/
 	_float4 vPos = m_pTransformCom->Get_Position();
 
 	m_mapEffect["S_P_Teleport"]->Set_Position(vPos);

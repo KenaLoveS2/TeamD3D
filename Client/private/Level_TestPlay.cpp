@@ -170,7 +170,6 @@ void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
 
 			FAILED_CHECK_RETURN(pKena->Change_Level(LEVEL_GIMMICK), );
 
-			// �� �۵� ������ ������ ��Ǻ����� �ϴµ�
 		}
 	}
 

@@ -353,7 +353,6 @@ void GS_MAIN(point GS_IN In[1], inout PointStream<GS_OUT> Stream)
     Stream.Append(Out);
 
  
-    // �����? �����մϴ�.
     Stream.RestartStrip();
 }
 
@@ -504,7 +503,6 @@ PS_OUT PS_MAIN_TESS(PS_IN In)
 
     vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
-    /* ź��Ʈ�����̽� */
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));
@@ -954,7 +952,6 @@ PS_OUT PS_MAIN_Dissolve(PS_IN In)
 
     vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
-    /* ź��Ʈ�����̽� */
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));

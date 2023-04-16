@@ -90,17 +90,31 @@ HRESULT CChest_Anim::Late_Initialize(void * pArg)
 void CChest_Anim::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_fTimeDelta += fTimeDelta;
 
-	//ImGui::Begin("Chest");
+#ifdef _DEBUG
+	ImGui::Begin("CChest_Anim HighLight");
+	static _float4 vColor = m_fShineColor;
+	static _float  fCycle_Interval = m_fCycle_Interval;
+	static _float  fSpeed = m_fShine_Speed;
+	static _float  fWidth = m_fShine_Width;
 
-	//if (ImGui::Button("re"))
-	//{
-	//	m_bOpened = false;
-	//	m_pModelCom->Set_AnimIndex((_uint)CURSED_ACTIVATE);
-	//	m_eCurState = CURSED_ACTIVATE;
-	//}
+	if (ImGui::Button("re"))
+		m_pShaderCom->ReCompile();
 
-	//ImGui::End();
+	ImGui::InputFloat4("m_fShineColor", (_float*)&vColor);
+	ImGui::InputFloat("m_fCycle_Interval", &fCycle_Interval);
+	ImGui::InputFloat("m_fShine_Speed", &fSpeed);
+	ImGui::InputFloat("m_fShine_Width", &fWidth);
+	ImGui::InputFloat("m_fTimeDelta", &m_fTimeDelta);
+
+	m_fShineColor = vColor;
+	m_fCycle_Interval = fCycle_Interval;
+	m_fShine_Speed = fSpeed;
+	m_fShine_Width = fWidth;
+
+	ImGui::End();
+#endif // _DEBUG
 
 	/*Culling*/
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -165,7 +179,11 @@ HRESULT CChest_Anim::Render()
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+
+		if (m_eCurState == CURSED_ACTIVATE)
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 36);
+		else
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 	}
 
 	return S_OK;
@@ -390,9 +408,14 @@ HRESULT CChest_Anim::SetUp_ShaderResources()
 
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float)), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fShineColor", &m_fShineColor, sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fCycle_Interval", &m_fCycle_Interval, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fShine_Speed", &m_fShine_Speed, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fShine_Width", &m_fShine_Width, sizeof(_float)), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 

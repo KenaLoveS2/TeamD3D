@@ -53,9 +53,10 @@ HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
-
+#ifdef _DEBUG
  	if (m_eType == TYPE_DEFAULT)
  		Set_OptionTool();
+#endif // _DEBUG
 
 	__super::Tick(fTimeDelta);
 	if (m_pParent && m_eType == TYPE_BOSS_HAND)
@@ -71,7 +72,7 @@ void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 	m_fLife += fTimeDelta;
 
 	/*m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && */
-	if (m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && m_eType != TYPE_BOSS_HAND && m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
+	if (m_eType != TYPE_BOSS_HAND && m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
 	{
 		m_fLife = 0.0f;
 		m_eEFfectDesc.bActive = false;

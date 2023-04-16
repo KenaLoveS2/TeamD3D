@@ -36,7 +36,7 @@ HRESULT CE_WarriorEyeTrail::Initialize(void * pArg)
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
 	m_eEFfectDesc.fWidth = 0.1f; 
-	m_eEFfectDesc.fLife = 2.5f; 
+	m_eEFfectDesc.fLife = 1.5f; 
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
 	m_eEFfectDesc.fSegmentSize = 0.001f;

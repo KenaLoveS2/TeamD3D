@@ -507,13 +507,13 @@ PS_OUT PS_MAIN_E_BLINK(PS_IN In)
 	/* DiffuseTexture */
 	vector vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	vDiffuse.a = vDiffuse.r;
-	//if (vDiffuse.a < 0.1f)
-	//	discard;
 
 	Out.vColor = vDiffuse;
 	Out.vColor = Out.vColor * g_vColor;
 	Out.vColor = saturate(Out.vColor.r * g_vColor) * 2.5f;
 	Out.vColor.rgb = Out.vColor.rgb * 2.f;
+	if (Out.vColor.a < 0.1f)
+		discard;
 
 	float fTime = min(g_Time, 3.f);
 	if (1.5f < fTime)   // Time 이상 컬러값이 내려가야함

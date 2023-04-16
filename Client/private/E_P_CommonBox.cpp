@@ -35,6 +35,7 @@ HRESULT CE_P_CommonBox::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
+
 	return S_OK;
 }
 
@@ -51,7 +52,8 @@ void CE_P_CommonBox::Tick(_float fTimeDelta)
 	if (m_bTurnOnfirst == false)
 	{
 		m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.2f));
-		m_bTurnOnfirst = true;
+		m_eEFfectDesc.fFrame[0] = 69.f;
+		m_fHDRValue = 3.f;
 
 		if (dynamic_cast<CFire_Brazier*>(m_pParent))
 		{
@@ -64,6 +66,7 @@ void CE_P_CommonBox::Tick(_float fTimeDelta)
 			m_ePointDesc->fMin = _float3(-0.5f, -0.5f, -0.5f);
 			m_ePointDesc->fMax = _float3(0.5f, 2.0f, 0.5f);
 		}
+		m_bTurnOnfirst = true;
 	}
 
 	__super::Tick(fTimeDelta);
@@ -130,10 +133,6 @@ void CE_P_CommonBox::Reset()
 	m_bTurnoff = false;
 	m_eEFfectDesc.bActive = false;
 	m_pVIInstancingBufferCom->Set_InstanceNum(m_iNumInstance);
-
-	Set_ShapePosition();
-	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.05f, 0.2f);
-	m_pVIInstancingBufferCom->Set_RandomPSize(_float2(0.1f, 0.1f));
 }
 
 CE_P_CommonBox * CE_P_CommonBox::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)
