@@ -756,6 +756,9 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/RotActionSelector/RotActionSelector_Tutorial_PC%03d.png"), 226))))
 		return E_FAIL;
 
+
+
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
