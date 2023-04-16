@@ -1304,6 +1304,8 @@ HRESULT CBossHunter::SetUp_State()
 	.AddState("DYING")
 	.OnStart([this]()
 	{
+		m_pKena->Get_Status()->Add_Karma(480);
+
 		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = -1.f;
 		m_BossHunterDelegator.broadcast(eBossHP, fValue);

@@ -292,21 +292,25 @@ void GS_RAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[0].vTexUV = float2(0.f, 0.f);
 	Out[0].fLife = In[0].fLife;
+	Out[0].vProjPos = Out[0].vPosition;
 
 	vPosition = In[0].vPosition - vRight + vUp;
 	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[1].vTexUV = float2(1.f, 0.f);
 	Out[1].fLife = In[0].fLife;
+	Out[1].vProjPos = Out[1].vPosition;
 
 	vPosition = In[0].vPosition - vRight - vUp;
 	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[2].vTexUV = float2(1.f, 1.f);
 	Out[2].fLife = In[0].fLife;
+	Out[2].vProjPos = Out[2].vPosition;
 
 	vPosition = In[0].vPosition + vRight - vUp;
 	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[3].vTexUV = float2(0.f, 1.f);
 	Out[3].fLife = In[0].fLife;
+	Out[3].vProjPos = Out[3].vPosition;
 
 	Vertices.Append(Out[0]);
 	Vertices.Append(Out[1]);
@@ -338,21 +342,25 @@ void GS_RECTDEFAULT(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[0].vTexUV = float2(0.f, 0.f);
 	Out[0].fLife = In[0].fLife;
+	Out[0].vProjPos = Out[0].vPosition;
 
 	vPosition = In[0].vPosition - vRight + vUp ;
 	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[1].vTexUV = float2(1.f, 0.f);
 	Out[1].fLife = In[0].fLife;
+	Out[1].vProjPos = Out[1].vPosition;
 
 	vPosition = In[0].vPosition - vRight - vUp ;
 	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[2].vTexUV = float2(1.f, 1.f);
 	Out[2].fLife = In[0].fLife;
+	Out[2].vProjPos = Out[2].vPosition;
 
 	vPosition = In[0].vPosition + vRight - vUp ;
 	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[3].vTexUV = float2(0.f, 1.f);
 	Out[3].fLife = In[0].fLife;
+	Out[3].vProjPos = Out[3].vPosition;
 
 	Vertices.Append(Out[0]);
 	Vertices.Append(Out[1]);
