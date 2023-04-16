@@ -38,6 +38,7 @@
 #include "Camera_Photo.h"
 #include "E_P_Level_RiseY.h"
 
+float g_QuestIndex = 0.f;
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 	, m_pUI_FocusRot(nullptr)
@@ -652,27 +653,24 @@ void CKena::Late_Tick(_float fTimeDelta)
 		}
 	}
 
-	if(CGameInstance::GetInstance()->Key_Down(DIK_1))
-	{
-		CUI_ClientManager::UI_PRESENT eQuestOpen = CUI_ClientManager::QUEST_;
-		_bool bOpen = true;
-		static _float fValue = 0.f;
-		wstring wstr = L"";
-		m_PlayerQuestDelegator.broadcast(eQuestOpen, bOpen, fValue, wstr);
-		CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
-		fValue++;
-	}
+	//if(CGameInstance::GetInstance()->Key_Down(DIK_1))
+	//{
+	//	CUI_ClientManager::UI_PRESENT eQuestOpen = CUI_ClientManager::QUEST_;
+	//	_bool bOpen = true;
+	//	wstring wstr = L"";
+	//	m_PlayerQuestDelegator.broadcast(eQuestOpen, bOpen, g_QuestIndex, wstr);
+	//	CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+	//}
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_2))
-	{
-		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_CLEAR_ALL;
-		_bool bOpen = true;
-		static _float fValue = 0.f;
-		wstring wstr = L"";
-		m_PlayerQuestDelegator.broadcast(eQuest, bOpen, fValue, wstr);
-		CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
-		fValue++;
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_2))
+	//{
+	//	CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_CLEAR_ALL;
+	//	_bool bOpen = true;
+	//	wstring wstr = L"";
+	//	m_PlayerQuestDelegator.broadcast(eQuest, bOpen, g_QuestIndex, wstr);
+	//	CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+	//	g_QuestIndex++;
+	//}
 
 
 
@@ -1732,16 +1730,15 @@ HRESULT CKena::SetUp_Components()
 HRESULT CKena::Ready_Rots()
 {
 	CRot::Clear();
-
-	_int iDevide = 8 - m_pKenaStatus->Get_RotCount();
-
-	for (_uint i = 0; i < 8; ++i)
+	for (_uint i = 0; i < 5; ++i)
 	{
 		_tchar szCloneRotTag[32] = { 0, };
 		swprintf_s(szCloneRotTag, L"PlayerRot_%d", i);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", CUtile::Create_StringAuto(szCloneRotTag), nullptr, &p_game_object);
 		dynamic_cast<CRot*>(p_game_object)->AlreadyRot();
+		m_pKenaStatus->Add_RotCount();
+
 		if (i == FIRST_ROT)
 		{
 			Set_FirstRotPtr((CRot*)p_game_object);
@@ -1749,11 +1746,6 @@ HRESULT CKena::Ready_Rots()
 			if (m_pCamera_Photo)
 				m_pCamera_Photo->Set_KenaPtr(this);
 		}
-	}
-
-	for (_uint i = 0; i < iDevide; ++i)
-	{
-		m_pKenaStatus->Add_RotCount();
 	}
 	
 	return S_OK;
@@ -3705,7 +3697,7 @@ void CKena::LiftRotRockProc()
 		_vector vCamLook = pGameInst->Get_CamLook_Float4();
 		_float3 vOut;
 
-		if (CPhysX_Manager::GetInstance()->Raycast_Collision(vCamPos, vCamLook, 15.f, &vOut))
+		if (CPhysX_Manager::GetInstance()->Raycast_Collision(vCamPos, vCamLook, 10.f, &vOut))
 		{
 			pCurTerrain->Set_BrushPosition(vOut);
 

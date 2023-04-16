@@ -165,7 +165,7 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 		if (m_fTimeAcc <= 0.f)
 			m_bOpen = false;
 
-		if (m_fAlpha >= 0.8f)
+		//if (m_fAlpha >= 0.8f)
 		{
 			_int iCount = 0;
 			for (_int i = 0; i < QUEST_END; ++i)
@@ -177,7 +177,7 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 					for (_int line = 0; line <= m_iCurLineIndex; ++line)
 					{
 						static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->QuestOn();
-						_float fAlpha = static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->Get_Alpha();
+						//_float fAlpha = static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->Get_Alpha();
 						//if (line <= m_iLastClearLine && line != 0)
 						//{
 
@@ -543,6 +543,7 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 	switch (eType)
 	{
 	case CUI_ClientManager::QUEST_:
+		m_iCurQuestIndex = (_int)fValue;
 		m_bOpen = false;
 		m_bClose = false;
 		m_iLineIndexIter = 0;
@@ -585,10 +586,7 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 	}
 	case CUI_ClientManager::QUEST_CLEAR:
 	{
-		if (m_iCurQuestIndex >= QUEST_END)
-			return;
-		if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
-			return;
+
 		m_bQuestClear = true;
 
 		m_iLastClearLine = (_int)fValue;
@@ -615,6 +613,7 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 		break;
 	}
 	case CUI_ClientManager::QUEST_CLEAR_ALL:
+		m_iCurQuestIndex = (_int)fValue;
 		BindFunction(CUI_ClientManager::QUEST_, true, m_iCurQuestIndex , L"");
 		static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->RewardOn();
 
