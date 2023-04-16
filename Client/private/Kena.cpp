@@ -524,7 +524,7 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(50);
+	m_pKenaStatus->Set_Attack(1000);
 	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
 	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
