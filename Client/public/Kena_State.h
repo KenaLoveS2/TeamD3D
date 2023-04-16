@@ -454,6 +454,7 @@ private:
 	HRESULT					SetUp_State_LevelUp();
 	HRESULT					SetUp_State_Mask();
 	HRESULT					SetUp_State_Meditate();
+	HRESULT					SetUp_State_PhotoMode();
 	HRESULT					SetUp_State_Pulse();
 	HRESULT					SetUp_State_Respawn();
 	HRESULT					SetUp_State_RotAction();
@@ -744,6 +745,9 @@ private:
 	void						Start_Meditate_Into(_float fTimeDelta);
 	void						Start_Meditate_Loop(_float fTimeDelta);
 	void						Start_Meditate_Exit(_float fTimeDelta);
+	/* PHOTO MODE */
+	void						Start_Photo_PeaceSign(_float fTimeDelta);
+	void						Start_Photo_PeaceSign_Loop(_float fTimeDelta);
 	/* PULSE */
 	void						Start_Into_Pulse(_float fTimeDelta);
 	void						Start_Into_Pulse_From_Run(_float fTimeDelta);
@@ -966,6 +970,9 @@ private:
 	void						Tick_Meditate_Into(_float fTimeDelta);
 	void						Tick_Meditate_Loop(_float fTimeDelta);
 	void						Tick_Meditate_Exit(_float fTimeDelta);
+	/* PHOTO MODE */
+	void						Tick_Photo_PeaceSign(_float fTimeDelta);
+	void						Tick_Photo_PeaceSign_Loop(_float fTimeDelta);
 	/* PULSE */
 	void						Tick_Into_Pulse(_float fTimeDelta);
 	void						Tick_Into_Pulse_From_Run(_float fTimeDelta);
@@ -1180,6 +1187,9 @@ private:
 	void						End_Meditate_Into(_float fTimeDelta);
 	void						End_Meditate_Loop(_float fTimeDelta);
 	void						End_Meditate_Exit(_float fTimeDelta);
+	/* PHOTO MODE */
+	void						End_Photo_PeaceSign(_float fTimeDelta);
+	void						End_Photo_PeaceSign_Loop(_float fTimeDelta);
 	/* PULSE */
 	void						End_Into_Pulse(_float fTimeDelta);
 	void						End_Into_Pulse_From_Run(_float fTimeDelta);
@@ -1220,6 +1230,8 @@ private:
 
 private:	/* Changer */
 	_bool	TruePass();
+	_bool	PhotoMode();
+	_bool   PhotoMode_Ready();
 	_bool	OnGround();
 	_bool	LevelUp();
 	_bool	Death();

@@ -168,6 +168,7 @@ struct PS_IN
 struct PS_OUT
 {
 	float4		vDiffuse  : SV_TARGET0;
+	float4		vDepth : SV_TARGET1;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -318,21 +319,19 @@ PS_OUT PS_EFFECT_PULSEOBJECT(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	float4 outglowcolor = float4(0.0f, 62.f, 102.f, 50.f) / 255.f;
-	float4 outglow = float4(fresnel_glow(8, 3.5, g_vColor.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
+	float4 outglow = float4(fresnel_glow(5, 3.5, g_vColor.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
 
 	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-//	vDiffuse.rgb = vDiffuse.rgb *4.f;
+	float4 fresnel = float4(fresnel_glow(5, 3.5, vDiffuse.rgb, In.vNormal.rgb, -In.vViewDir), vDiffuse.a);
+	fresnel.a = g_vColor.a;
 
-	Out.vDiffuse = vDiffuse * outglow * 4.f;
-	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 6.f;
-
+	Out.vDiffuse = saturate(fresnel + outglow);
+	Out.vDiffuse.a = fresnel.a;
+	Out.vDiffuse = CalcHDRColor(Out.vDiffuse, g_fHDRValue);
 	if (true == g_bPulseRecive)
 		Out.vDiffuse.b *= 10.f;
 
-	Out.vDiffuse.a = (outglowcolor.r * 5.f + 0.5f) * 0.05f;
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
-
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	return Out;
 }
 
@@ -896,7 +895,8 @@ PS_OUT PS_DISTORTION_INTO(PS_IN In)
 
 	Out.vDiffuse = finalcolor * g_vColor * 2.f;
 	Out.vDiffuse.a = Out.vDiffuse.a * fAlpha;
-
+	if (Out.vDiffuse.a < 0.1f)
+		discard;
 	Out.vDiffuse = CalcHDRColor(Out.vDiffuse, 1.5f);
 	return Out;
 }

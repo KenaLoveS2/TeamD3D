@@ -47,6 +47,13 @@ HRESULT CE_P_Level_RiseY::Late_Initialize(void* pArg)
 void CE_P_Level_RiseY::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bReset)
+	{
+		m_fLife += fTimeDelta;
+		if (m_fLife > 1.5f)
+			Reset();
+	}
 }
 
 void CE_P_Level_RiseY::Late_Tick(_float fTimeDelta)
@@ -74,7 +81,7 @@ HRESULT CE_P_Level_RiseY::Render()
 
 void CE_P_Level_RiseY::Reset()
 {
-	m_bReset = true;
+	m_bReset = false;
 	m_bTimer = false;
 	m_eEFfectDesc.bActive = false;
 
@@ -109,4 +116,6 @@ CGameObject * CE_P_Level_RiseY::Clone(void * pArg)
 void CE_P_Level_RiseY::Free()
 {
 	__super::Free();
+
+	m_ePointDesc = nullptr;
 }

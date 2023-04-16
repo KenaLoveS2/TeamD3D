@@ -36,6 +36,7 @@
 #include "ControlRoom.h"
 #include "Level_Loading.h"
 #include "Camera_Photo.h"
+#include "E_P_Level_RiseY.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -190,6 +191,11 @@ const _bool CKena::Get_State(STATERETURN eState) const
 	default:
 		return false;
 	}
+}
+
+const _bool& CKena::Is_PhotoAnimEnd() const
+{
+	return m_bPhotoReady && m_pAnimation->Get_CurrentAnimIndex() == (_uint)CKena_State::PHOTO_PEACESIGN_LOOP;
 }
 
 void CKena::Set_State(STATERETURN eState, _bool bValue)
@@ -520,8 +526,11 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	pStaff->Late_Initialize(pArg);
 
 	m_pCamera_Photo = (CCamera_Photo*)CGameInstance::GetInstance()->Find_Camera(CAMERA_PHOTO_TAG);
-	if (m_pCamera_Photo) m_pCamera_Photo->Set_KenaPtr(this);
-
+	if (m_pCamera_Photo)
+	{
+		m_pCamera_Photo->Set_KenaPtr(this);
+		m_pCamera_Photo->Set_FirstRotPtr(m_pFirstRot);
+	}
 	return S_OK;
 }
 
@@ -529,7 +538,7 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(50);
+	m_pKenaStatus->Set_Attack(1000);
 	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
 	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
@@ -567,6 +576,12 @@ void CKena::Tick(_float fTimeDelta)
 	Update_Collider(fTimeDelta);
 
 	Check_TimeRate_Changed(fTimeDelta, fTimeRate);
+
+	if(m_bPhotoReady)
+	{
+		_float4 vPos = _float4(-34.7f, 20.4f, 1231.1f, 1.f);
+		m_pTransformCom->Set_Position(vPos);
+	}
 
 	Play_Animation(fTimeDelta, fTimeRate);
 
@@ -1198,6 +1213,7 @@ void CKena::Push_EventFunctions()
 	TurnOnLvUp(true, 0.0f);
 	TurnOnLvUp_Part1_Floor(true, 0.f);
 	TurnOnLvUp_Part2_RiseY(true, 0.f);
+	TurnOffLvUp_Part2_RiseY(true, 0.0f);
 
 	PlaySound_Kena_FootStep(true, 0.f);
 	PlaySound_Kena_FootStep_Sprint(true, 0.f);
@@ -1229,6 +1245,7 @@ void CKena::Push_EventFunctions()
 	PlaySound_HeavyAttack_Combo_Staff_Sweep(true, 0.f);
 	PlaySound_AirAttack_Slam_Release(true, 0.f);
 	PlaySound_SpinAttack(true, 0.f);
+	PlaySound_WarriorGrab(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -1698,7 +1715,7 @@ HRESULT CKena::Ready_Rots()
 				m_pCamera_Photo->Set_KenaPtr(this);
 		}
 	}
-
+	
 	return S_OK;
 }
 
@@ -2511,8 +2528,7 @@ void CKena::TurnOnLvUp_Part1_Floor(_bool bIsInit, _float fTimeDelta)
 		const _tchar* pFuncName = __FUNCTIONW__;
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnLvUp_Part1_Floor);
 		return;
-	}
-
+	}	
 	_float4 vPos = m_pTransformCom->Get_Position();
 	m_mapEffect["KenaLvUp_Floor"]->Set_Effect(vPos, true);
 }
@@ -2525,9 +2541,19 @@ void CKena::TurnOnLvUp_Part2_RiseY(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnLvUp_Part2_RiseY);
 		return;
 	}
-
 	_float4 vPos = m_pTransformCom->Get_Position();
 	m_mapEffect["KenaLvUp_RiseY"]->Set_Effect(vPos, true);
+}
+
+void CKena::TurnOffLvUp_Part2_RiseY(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffLvUp_Part2_RiseY);
+		return;
+	}
+	dynamic_cast<CE_P_Level_RiseY*>(m_mapEffect["KenaLvUp_RiseY"])->Set_Reset(true);
 }
 
 void CKena::PlaySound_Kena_FootStep(_bool bIsInit, _float fTimeDelta)
@@ -3302,6 +3328,19 @@ void CKena::PlaySound_SpinAttack(_bool bIsInit, _float fTimeDelta)
 	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_ParryAttack_Woong.ogg", 1.f, false);
 }
 
+void CKena::PlaySound_WarriorGrab(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_WarriorGrab);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Warrior_Grab.ogg", 1.f, false);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Sit_1.ogg", 0.5f, false);
+}
+
 void CKena::PlaySound_Rot_Action_Combat_Voice()
 {
 	_int	iRand = _int(CUtile::Get_RandomFloat(0.f, 10.9f));
@@ -3475,21 +3514,39 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 		CGameObject* pGameObject = nullptr;
 
-		_bool bRealAttack = false;
-		if ((iColliderIndex == (_int)COL_MONSTER_WEAPON || iColliderIndex == (_int)COL_BOSS_SWIPECHARGE) && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false && m_bDodge == false && m_bDeath == false)
+		if (m_bPulse == false && m_bDodge == false && m_bDeath == false)
 		{
-			for (auto& Effect : m_mapEffect)
+			_bool bRealAttack = false;
+			if ((iColliderIndex == (_int)COL_MONSTER_WEAPON || iColliderIndex == (_int)COL_BOSS_SWIPECHARGE) && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
 			{
-				if (Effect.first == "KenaDamage")
+				for (auto& Effect : m_mapEffect)
 				{
-					Effect.second->Set_Active(true);
-					Effect.second->Set_Position(vCollisionPos);
+					if (Effect.first == "KenaDamage")
+					{
+						Effect.second->Set_Active(true);
+						Effect.second->Set_Position(vCollisionPos);
+					}
 				}
-			}
 
-			m_bParry = true;
-			m_iCurParryFrame = 0;
-			m_pAttackObject = pTarget;
+				m_bParry = true;
+				m_iCurParryFrame = 0;
+				m_pAttackObject = pTarget;
+			}
+			if (iColliderIndex == (_int)COL_MONSTER_ARROW)
+			{
+				for (auto& Effect : m_mapEffect)
+				{
+					if (Effect.first == "KenaDamage")
+					{
+						Effect.second->Set_Active(true);
+						Effect.second->Set_Position(vCollisionPos);
+					}
+				}
+
+				m_bParry = true;
+				m_iCurParryFrame = 0;
+				m_pAttackObject = pTarget;
+			}
 		}
 
 		if (iColliderIndex == (_int)COL_MONSTER && m_bDash == true)

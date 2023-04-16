@@ -469,7 +469,7 @@ HRESULT CRot::SetUp_State()
 		.OnStart([this]()
 	{
 		// PHOTOPOSE1, PHOTOPOSE2, PHOTOPOSE3, PHOTOPOSE4, PHOTOPOSE5, PHOTOPOSE6, PHOTOPOSE7, PHOTOPOSE8,
-		_uint iPhotoAnimIndex = rand() % (PHOTOPOSE8 - PHOTOPOSE1) + PHOTOPOSE1;
+		_uint iPhotoAnimIndex = PHOTOPOSE1 + (m_iThisRotIndex % (PHOTOPOSE8 - PHOTOPOSE1));
 
 		m_pModelCom->ResetAnimIdx_PlayTime(iPhotoAnimIndex);
 		m_pModelCom->Set_AnimIndex(iPhotoAnimIndex);

@@ -56,6 +56,7 @@ private:
 	_float4						m_vMovingQuat;
 	_float						m_fReturnTime = 0.f;
 	_float						m_fTimer = 0.f;
+
 	STATE						m_eCurState = STATE_SLEEP;
 	STATE						m_ePreState = STATE_SLEEP;
 

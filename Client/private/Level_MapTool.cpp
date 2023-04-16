@@ -134,14 +134,12 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
+	/*CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");*/
 
-	
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -149,19 +147,13 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar* pLayerTag)
 HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-
-	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, 
-		pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr), E_FAIL);
-
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Boss_Attack_Geo.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "DeadZoneReal.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "MiniGameMap.json");
 
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
+
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
 
@@ -281,6 +273,9 @@ HRESULT CLevel_MapTool::Ready_Layer_Effect(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CGameObject* pGameObject = nullptr;
+
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_WorldTrigger"), L"UIWorldTrigger", nullptr)))
+		return E_FAIL;
 
 	//if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Test", nullptr, &pGameObject)))
 	//	return E_FAIL;

@@ -110,15 +110,6 @@ void CDeadZoneBossTree::Tick(_float fTimeDelta)
 {
 
 	__super::Tick(fTimeDelta);
-#ifdef FOR_MAP_GIMMICK
-
-#else
-	if(!m_bTestOnce)
-	{
-		Late_Initialize();
-		m_bTestOnce = true;
-	}
-#endif
 
 	if (m_bBossAttackOn)
 	{

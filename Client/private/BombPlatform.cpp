@@ -46,7 +46,7 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 	/* CloneTag로 m_vMovingPos 다르게 주면 돼 */
 	if(!lstrcmp(m_szCloneObjectTag,L"MG_BombPlatform_0"))
 	{
-		m_vMovingPos = _float4(4.142f, 1.77f, 30.304f, 1.f);
+		m_vMovingPos = _float4(4.142f, 2.00f, 30.304f, 1.f);
 	}
 	else if (!lstrcmp(m_szCloneObjectTag, L"MG_BombPlatform_1"))
 	{
@@ -109,6 +109,7 @@ HRESULT CBombPlatform::Late_Initialize(void* pArg)
 void CBombPlatform::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	//m_fTimeDelta += fTimeDelta;
 
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
@@ -288,6 +289,7 @@ CBombPlatform::STATE CBombPlatform::Check_State()
 		case CBombPlatform::STATE_CLOSE:
 		{
 			_float4		vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			m_pBombplatformEffect->Reset();
 
 			if (vPos == m_vInitPos)
 			{
@@ -416,6 +418,7 @@ HRESULT CBombPlatform::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

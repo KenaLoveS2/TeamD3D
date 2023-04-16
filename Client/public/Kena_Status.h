@@ -94,6 +94,7 @@ public:
 	inline _bool Is_ShieldBreak() { return m_bShieldBreak; }
 
 	inline _int Get_Karma() { return m_iKarma; }
+	inline void Add_Karma(_int iValue) { m_iKarma += iValue; }
 	inline _int Get_RotLevel() { return m_iRotLevel; }
 	inline _int Get_RotCount() { return m_iCurrentRotCount; }
 	inline ROTSTATE Get_RotState() { return m_eRotState; }
