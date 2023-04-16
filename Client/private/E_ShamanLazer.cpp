@@ -175,7 +175,6 @@ void CE_ShamanLazer::TurnOnLazer( _float fTimeDelta)
 	{
 		Calculate_Path(fTimeDelta);
 		m_pPathTrail->Set_Active(true);
-		m_bFinalState = true;
 		Play_LaserSound(&m_bLaserFire1, m_szCopySoundKey_Fire1, 0.5f);
 		Play_LaserSound(&m_bLaserFire2, m_szCopySoundKey_Fire2, 0.5f);
 		
@@ -186,6 +185,7 @@ void CE_ShamanLazer::TurnOnLazer( _float fTimeDelta)
 			m_fDurationTime = 0.0f;
 			Reset();
 		}
+		m_bFinalState = true;
 	}
 	else
 	{

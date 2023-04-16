@@ -446,6 +446,13 @@ HRESULT CLevel_Final::Ready_Layer_Effect(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_P_DeadZoneDust"), L"Dust", nullptr), E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_P_DeadZoneDust"), L"Dust2", nullptr), E_FAIL);
+
+	for (_int i = 0; i < 3; ++i)
+	{
+		FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(LEVEL_FINAL, pLayerTag, TEXT("Prototype_GameObject_DeadZoneSmallPlace"), 
+			CUtile::Create_DummyString(L"DeadZoneSmallPlace", i), nullptr), E_FAIL);
+	}
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

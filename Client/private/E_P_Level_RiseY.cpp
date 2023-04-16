@@ -119,4 +119,6 @@ CGameObject * CE_P_Level_RiseY::Clone(void * pArg)
 void CE_P_Level_RiseY::Free()
 {
 	__super::Free();
+
+	m_ePointDesc = nullptr;
 }

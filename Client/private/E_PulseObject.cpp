@@ -70,8 +70,9 @@ HRESULT CE_PulseObject::Initialize(void * pArg)
 	m_eEFfectDesc.bActive = false;
 	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
 
+	m_fHDRValue = 3.f;
 	m_pTransformCom->Set_Scaled(_float3(3.f, 3.f, 3.f));
-
+	m_eEFfectDesc.vColor = XMVectorSet(0.0f, 125.f, 255.f, 16.f) / 255.f;
 	return S_OK;
 }
 
@@ -121,7 +122,7 @@ void CE_PulseObject::Late_Tick(_float fTimeDelta)
 		Set_Matrix();
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND2, this);
 }
 
 HRESULT CE_PulseObject::Render()
@@ -151,8 +152,7 @@ HRESULT CE_PulseObject::SetUp_ShaderResources()
 	else
 		bRecive = false;
 
-	m_pShaderCom->Set_RawValue("g_bPulseRecive", &bRecive, sizeof(bRecive));
-	
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bPulseRecive", &bRecive, sizeof(bRecive)), E_FAIL);
 	return S_OK;
 }
 

@@ -22,22 +22,22 @@ CSkillInfo::CSkillInfo()
 	//switch (eResult)
 	//{
 	//case CHECK_PREVSKILL:
-	//	msg = L"���� �ɷ� �ʿ�";
+	//	msg = L"";
 	//	break;
 	//case CHECK_ROTLEVEL:
-	//	msg = L"�νķ� ���� " + to_wstring(m_tDesc[iLevel].conditions[CHECK_ROTLEVEL]) + L" �ʿ�";
+	//	msg = L"" + to_wstring(m_tDesc[iLevel].conditions[CHECK_ROTLEVEL]) + L"";
 	//	break;
 	//case  CHECK_KARMA:
-	//	msg = L"ī���� ����";
+	//	msg = L"";
 	//	break;
 	//case CHECK_UNLOCKED_AVAILABLE:
-	//	msg = L"���׷��̵� ����";
+	//	msg = L"";
 	//	break;
 	//case CHECK_UNLOCKED_ALREADY:
-	//	msg = L"�߰� ī���� �ʿ�";
+	//	msg = L"";
 	//	break;
 	//default:
-	//	msg = L"���ư�";
+	//	msg = L"";
 	//	break;
 	//}
 	//return msg;

@@ -176,6 +176,7 @@ public:
 		m_iIceDaggerIdx++;
 		m_iIceDaggerIdx %= ICEDAGGER_COUNT;
 	}
+	void	TurnOnOffEffect_InTrap(_bool bActive);
 
  private:
 	void Set_AttackType();

@@ -243,9 +243,11 @@ unsigned int	g_LEVEL = 0;
 #include <fstream>
 #include "BowTarget_Trigger.h"
 #include "Respawn_Trigger.h"
+#include "E_WarriorEyeTrail.h"
 #include "Village_Trigger.h"
-#include "E_P_Level_RiseY.h"
+#include "E_P_ShamanDust.h"
 #include "E_P_Level_Floor.h"
+#include "E_P_Level_RiseY.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -569,7 +571,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = false;
+	_bool bRealObject = true;
 	_bool bFlowerCheck = false;
 
 #ifdef FOR_MAPTOOL   
@@ -2850,6 +2852,9 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
  	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot_P"), CE_P_Rot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_Rot.json"))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_ShamanDust */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanDust"), CE_P_ShamanDust::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_ShamanDust.json"))))
+		return E_FAIL;
 
 #pragma endregion Effect_Object
 
@@ -2888,7 +2893,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		return E_FAIL;
 
  	/* For.Prototype_GameObject_EnvironmentDust */
- 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnvironmentDust"), CE_P_EnvironmentDust::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_EnvironmentDust.json"))))
+ 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnvironmentDust"), CE_P_EnvironmentDust::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_P_Environment2.json"))))
  		return E_FAIL;
 
 	/* For.Prototype_GameObject_P_Rain */
@@ -2912,15 +2917,19 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_WarriorWeaponAcc */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WarriorWeaponAcc"), CE_WarriorWeaponAcc::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_WarriorWeapon.json"))))
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WarriorWeaponAcc"), CE_WarriorWeaponAcc::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_WarriorBody.json"))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_WarriorBodyAcc */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WarriorBodyAcc"), CE_P_WarriorBody::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_WarriorAura.json"))))
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WarriorBodyAcc"), CE_P_WarriorBody::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Particle/E_WarriorBody2.json"))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_DeadZoneSmallPlace */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneSmallPlace"), CE_P_DeadZone_SmallPlace::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_DeadZone_SmallRange.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_WarriorEyeTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WarriorEyeTrail"), CE_WarriorEyeTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_KenaLevel_RiseY */
