@@ -49,6 +49,9 @@ HRESULT CSapling::Initialize(void* pArg)
 
 	/* Create MovementTrail */
 	SetUp_MovementTrail();
+
+	m_vFocusIconPosOffset = { 0.f, 1.55f, 0.f, 0.f };
+
 	return S_OK;
 }
 
@@ -97,12 +100,6 @@ HRESULT CSapling::Late_Initialize(void * pArg)
 
 void CSapling::Tick(_float fTimeDelta)
 {
-	//m_bReadySpawn = true;
-	//m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	//m_pModelCom->Play_Animation(fTimeDelta);
-	//return;
-
-	
 	if (m_bDeath) return;
 
 	/* Update MovementTrail */
@@ -112,6 +109,7 @@ void CSapling::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
+	// m_bReadySpawn = true;
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();

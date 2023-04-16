@@ -1319,6 +1319,12 @@ PS_OUT PS_SAPLING(PS_IN In)
 	Diffuse.a = Diffuse.r;
 
 	Out.vColor = Diffuse * g_vColor * 10.f;
+
+	if (g_bTimer)
+	{
+		float fTime = min(g_Time, 1.f);
+		Out.vColor.a = Out.vColor.a * (1.f - fTime);
+	}
 	return Out;
 }
 

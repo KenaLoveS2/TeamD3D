@@ -65,11 +65,13 @@ public:
 	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_TrailON() const { return m_bTrailON; }
 	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }
+	const _bool&				Is_PhotoAnimEnd() const;
 	void						TurnOn_TeleportFlower() { m_bTeleportFlower = true; }
 	void						Set_State(STATERETURN eState, _bool bValue);
 	void						Set_AttackObject(CGameObject* pObject) { m_pAttackObject = pObject; }
 	void						Set_DamagedDir(DAMAGED_FROM eDir) { m_eDamagedDir = eDir; }
 	void						Set_RespawnPoint(class CRespawn_Trigger* pTrigger) { m_pRespawnPoint = pTrigger; }
+	void						Execute_Photo() { m_bPhotoReady = true; }
 
 	void						Set_RotActionPossible(_bool bValue) { m_bRotActionPossible = bValue; }
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
@@ -179,6 +181,7 @@ private:
 	_bool						m_bDodge = false;
 	_bool						m_bDash = false;
 	_bool						m_bMask = false;
+	_bool						m_bPhotoReady = false;
 
 	_bool						m_bGrabWarrior = false;
 
@@ -299,6 +302,7 @@ private:	/* Effect Event Func */
 	void	TurnOnLvUp(_bool bIsInit, _float fTimeDelta);
 	void	TurnOnLvUp_Part1_Floor(_bool bIsInit, _float fTimeDelta);
 	void	TurnOnLvUp_Part2_RiseY(_bool bIsInit, _float fTimeDelta);
+	void	TurnOffLvUp_Part2_RiseY(_bool bIsInit, _float fTimeDelta);
 
 private:	/* Sound Event Func */
 	void	PlaySound_Kena_FootStep(_bool bIsInit, _float fTimeDelta);
@@ -331,6 +335,7 @@ private:	/* Sound Event Func */
 	void	PlaySound_HeavyAttack_Combo_Staff_Sweep(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_AirAttack_Slam_Release(_bool bIsInit, _float fTimeDelta);
 	void	PlaySound_SpinAttack(_bool bIsInit, _float fTimeDelta);
+	void	PlaySound_WarriorGrab(_bool bIsInit, _float fTimeDelta);
 
 public:
 	void	PlaySound_Rot_Action_Combat_Voice();

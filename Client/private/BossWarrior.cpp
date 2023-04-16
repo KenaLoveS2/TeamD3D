@@ -87,6 +87,8 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	assert(m_pBossRockPool && "CBossWarrior::Initialize()");
 	m_pBossRockPool->Late_Initialize(nullptr);
 
+	m_bNoUseFocusIcon = true;
+
 	return S_OK;
 }
 
@@ -442,7 +444,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_bReadySpawn = true;
 	})
-		.AddTransition("SLEEP to CINEMA", "CINEMA") // "IDLE" "CINEMA"
+		.AddTransition("SLEEP to CINEMA", "IDLE") // "IDLE" "CINEMA"
 		.Predicator([this]()
 	{			
 		m_fSpawnRange = 20.f;

@@ -16,6 +16,7 @@
 #include "BossWarrior.h"
 #include "Respawn_Trigger.h"
 #include "BGM_Manager.h"
+#include "Camera_Photo.h"
 
 #define NULLFUNC	(_bool(CKena_State::*)())nullptr
 CKena_State::CKena_State()
@@ -73,6 +74,7 @@ HRESULT CKena_State::Initialize(CKena * pKena, CKena_Status * pStatus, CStateMac
 	FAILED_CHECK_RETURN(SetUp_State_LevelUp(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Mask(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Meditate(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_PhotoMode(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Pulse(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Respawn(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_RotAction(), E_FAIL);
@@ -205,6 +207,7 @@ HRESULT CKena_State::SetUp_State_Idle()
 		.Init_Start(this, &CKena_State::Start_Idle)
 		.Init_Tick(this, &CKena_State::Tick_Idle)
 		.Init_End(this, &CKena_State::End_Idle)
+		.Init_Changer(L"PHOTO_PEACESIGN", this, &CKena_State::PhotoMode, &CKena_State::PhotoMode_Ready)
 		.Init_Changer(L"DEATH", this, &CKena_State::Death)
 		.Init_Changer(L"WARRIOR_GRAB", this, &CKena_State::Grab_Warrior)
 		.Init_Changer(L"ROT_ACTION", this, &CKena_State::RotAction, &CKena_State::KeyDown_R)
@@ -237,6 +240,7 @@ HRESULT CKena_State::SetUp_State_Run()
 		.Init_Start(this, &CKena_State::Start_Run)
 		.Init_Tick(this, &CKena_State::Tick_Run)
 		.Init_End(this, &CKena_State::End_Run)
+		.Init_Changer(L"PHOTO_PEACESIGN", this, &CKena_State::PhotoMode, &CKena_State::PhotoMode_Ready)
 		.Init_Changer(L"DEATH", this, &CKena_State::Death)
 		.Init_Changer(L"WARRIOR_GRAB", this, &CKena_State::Grab_Warrior)
 		.Init_Changer(L"ROT_ACTION", this, &CKena_State::RotAction, &CKena_State::KeyDown_R)
@@ -258,6 +262,7 @@ HRESULT CKena_State::SetUp_State_Run()
 		.Init_Start(this, &CKena_State::Start_Run_Stop)
 		.Init_Tick(this, &CKena_State::Tick_Run_Stop)
 		.Init_End(this, &CKena_State::End_Run_Stop)
+		.Init_Changer(L"PHOTO_PEACESIGN", this, &CKena_State::PhotoMode, &CKena_State::PhotoMode_Ready)
 		.Init_Changer(L"DEATH", this, &CKena_State::Death)
 		.Init_Changer(L"WARRIOR_GRAB", this, &CKena_State::Grab_Warrior)
 		.Init_Changer(L"ROT_ACTION", this, &CKena_State::RotAction, &CKena_State::KeyDown_R)
@@ -4491,6 +4496,25 @@ HRESULT CKena_State::SetUp_State_Meditate()
 	return S_OK;
 }
 
+HRESULT CKena_State::SetUp_State_PhotoMode()
+{
+	m_pStateMachine->Add_State(L"PHOTO_PEACESIGN")
+		.Init_Start(this, &CKena_State::Start_Photo_PeaceSign)
+		.Init_Tick(this, &CKena_State::Tick_Photo_PeaceSign)
+		.Init_End(this, &CKena_State::End_Photo_PeaceSign)
+		.Init_Changer(L"PHOTO_PEACESIGN_LOOP", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"PHOTO_PEACESIGN_LOOP")
+		.Init_Start(this, &CKena_State::Start_Photo_PeaceSign_Loop)
+		.Init_Tick(this, &CKena_State::Tick_Photo_PeaceSign_Loop)
+		.Init_End(this, &CKena_State::End_Photo_PeaceSign_Loop)
+		.Init_Changer(L"IDLE", this, &CKena_State::KeyDown_BackSpace)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
 void CKena_State::Start_Idle(_float fTimeDelta)
 {
 	if (m_pAnimationState->Get_CurrentAnimIndex() == (_uint)RUN_STOP ||
@@ -6754,6 +6778,18 @@ void CKena_State::Start_Meditate_Exit(_float fTimeDelta)
 	m_pAnimationState->State_Animation("MEDITATE_EXIT");
 }
 
+void CKena_State::Start_Photo_PeaceSign(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PHOTO_PEACESIGN");
+}
+
+void CKena_State::Start_Photo_PeaceSign_Loop(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PHOTO_PEACESIGN_LOOP");
+
+	m_pKena->m_bPhotoReady = true;
+}
+
 void CKena_State::Start_Into_Pulse(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("INTO_PULSE");
@@ -7942,6 +7978,16 @@ void CKena_State::Tick_Meditate_Exit(_float fTimeDelta)
 {
 }
 
+void CKena_State::Tick_Photo_PeaceSign(_float fTimeDelta)
+{
+	m_pTransform->LookAt_NoUpDown(m_pKena->m_pCamera_Photo->Get_Position());
+}
+
+void CKena_State::Tick_Photo_PeaceSign_Loop(_float fTimeDelta)
+{
+	m_pTransform->LookAt_NoUpDown(m_pKena->m_pCamera_Photo->Get_Position());
+}
+
 void CKena_State::Tick_Into_Pulse(_float fTimeDelta)
 {
 }
@@ -8873,6 +8919,15 @@ void CKena_State::End_Meditate_Exit(_float fTimeDelta)
 {
 }
 
+void CKena_State::End_Photo_PeaceSign(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Photo_PeaceSign_Loop(_float fTimeDelta)
+{
+	m_pKena->m_bPhotoReady = false;
+}
+
 void CKena_State::End_Into_Pulse(_float fTimeDelta)
 {
 	m_pKena->m_bPulse = false;
@@ -9027,6 +9082,16 @@ void CKena_State::End_Teleport_Flower(_float fTimeDelta)
 _bool CKena_State::TruePass()
 {
 	return true;
+}
+
+_bool CKena_State::PhotoMode()
+{
+	return m_pKena->m_pCamera_Photo != nullptr && m_pKena->m_pCamera_Photo->Is_Work();
+}
+
+_bool CKena_State::PhotoMode_Ready()
+{
+	return m_pKena->m_bPhotoReady;
 }
 
 _bool CKena_State::OnGround()

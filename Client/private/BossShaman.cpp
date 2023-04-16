@@ -81,13 +81,15 @@ HRESULT CBossShaman::Initialize(void* pArg)
 	Create_Minions();	
 	Create_ShamanMask();
 
+	m_bNoUseFocusIcon = true;
+
 	return S_OK;
 }
 
 HRESULT CBossShaman::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
-
+		
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
 		//_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
@@ -1514,7 +1516,7 @@ HRESULT CBossShaman::Ready_Effects()
 		m_pShamanLEyeTrail->Set_Parent(this);
 	}
 
-	// ¿À¸¥¼Õ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	{
 		m_pShamanREyeTrail = (CE_ShamanHeadTrail*)(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanHeadTrail", L"S_REye"));
 		NULL_CHECK_RETURN(m_pShamanREyeTrail, E_FAIL);
@@ -1532,9 +1534,9 @@ HRESULT CBossShaman::Ready_Effects()
 		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", pCloneTag));
 		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 
-		if (i == 0) // ¿À¸¥¼Õ
+		if (i == 0) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			dynamic_cast<CE_P_ExplosionGravity*>(pEffectBase)->Set_ParentBone(m_pModelCom->Get_BonePtr("char_rt_thumb_d_jnt"));
-		else // ¿Þ¼Õ
+		else // ï¿½Þ¼ï¿½
 			dynamic_cast<CE_P_ExplosionGravity*>(pEffectBase)->Set_ParentBone(m_pModelCom->Get_BonePtr("char_lf_thumb_d_jnt"));
 
 		m_mapEffect.emplace(strMapTag, pEffectBase);

@@ -19,6 +19,10 @@ public:
 	virtual HRESULT Render() override;
 	void	Reset();
 
+	void	Set_Reset(_bool bReset) {
+		m_bTimer = true;
+		m_bReset = bReset;
+	}
 private:
 	_bool	m_bReset = false;
 	_float	m_fDurationTime = 0.0f;

@@ -45,6 +45,8 @@ HRESULT CShieldStick::Initialize(void* pArg)
 	
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
+	m_vFocusIconPosOffset = { 0.f, 1.6f, 0.f, 0.f };
+
 	return S_OK;
 }
 
@@ -98,6 +100,7 @@ void CShieldStick::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
+	// m_bReadySpawn = true;
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	if(m_bReadySpawn)

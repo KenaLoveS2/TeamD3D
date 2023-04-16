@@ -93,8 +93,9 @@ void CCamera_Photo::Tick(_float TimeDelta)
 		if (m_bEyeComplete && m_bAtComplete)
 		{
 			m_eState = WAIT;
-
-			m_pFirstRot->Execute_Photo();
+			if (m_pKena) m_pFirstRot->Execute_Photo();
+			// if (m_pNpcSaiya) m_pFirstRot->Execute_Photo();
+			if (m_pFirstRot) m_pFirstRot->Execute_Photo();
 		}
 			
 		
@@ -102,18 +103,24 @@ void CCamera_Photo::Tick(_float TimeDelta)
 	}
 	case WAIT:
 	{
-		_bool bCompleteKena = false;
-		_bool bCompleteRot = m_pFirstRot && m_pFirstRot->Is_PhotoAnimEnd();
-		_bool bCompleteSaiya = false;
+		_bool bWaitKena = m_pKena->Is_PhotoAnimEnd();
+		_bool bWaitRot = m_pFirstRot && m_pFirstRot->Is_PhotoAnimEnd();
+		_bool bWaitSaiya = true;
 
-		if (bCompleteKena && bCompleteRot && bCompleteSaiya)
-			m_eState = PHOTO;
+		if (bWaitKena && bWaitRot && bWaitSaiya)
+			m_eState = PHOTO_TIME;
 
 		break;
 	}
-	case PHOTO:
+	case PHOTO_TIME:
 	{
 
+		break;
+	}
+	case PHOTO_END:
+	{
+
+		break;
 	}
 	}
 
@@ -184,9 +191,10 @@ void CCamera_Photo::Execute_Move(_float4 vInitEye, _float4 vInitAt)
 {
 	// юс╫ц
 	m_vTargetAt = CRot::Get_RotUseKenaPos() + _float4(0.f, 0.5f, 0.f, 0.f);
+	// m_vTargetAt = m_pFirstRot->Get_Position();
+	
 	m_vTargetEye = m_vTargetAt + _float4(5.f, 1.f, 5.f, 0.f);
 	
-
 	m_eState = MOVE;
 	
 	m_pTransformCom->Set_Position(vInitEye);

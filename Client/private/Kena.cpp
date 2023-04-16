@@ -36,6 +36,7 @@
 #include "ControlRoom.h"
 #include "Level_Loading.h"
 #include "Camera_Photo.h"
+#include "E_P_Level_RiseY.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -186,6 +187,11 @@ const _bool CKena::Get_State(STATERETURN eState) const
 	default:
 		return false;
 	}
+}
+
+const _bool& CKena::Is_PhotoAnimEnd() const
+{
+	return m_bPhotoReady && m_pAnimation->Get_CurrentAnimIndex() == (_uint)CKena_State::PHOTO_PEACESIGN_LOOP;
 }
 
 void CKena::Set_State(STATERETURN eState, _bool bValue)
@@ -524,7 +530,7 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(100);
+	m_pKenaStatus->Set_Attack(50);
 	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOMB, 0);
 	//m_pKenaStatus->Unlock_Skill(CKena_Status::SKILL_BOW, 0);
 #endif	
@@ -1184,8 +1190,9 @@ void CKena::Push_EventFunctions()
 	TurnOnDashEd(true, 0.f);
 
 	TurnOnLvUp(true, 0.0f);
-	TurnOnLvUp_Part1_Floor(true, 0.0f);
-	TurnOnLvUp_Part2_RiseY(true, 0.0f);
+	TurnOnLvUp_Part1_Floor(true, 0.f);
+	TurnOnLvUp_Part2_RiseY(true, 0.f);
+	TurnOffLvUp_Part2_RiseY(true, 0.0f);
 
 	PlaySound_Kena_FootStep(true, 0.f);
 	PlaySound_Kena_FootStep_Sprint(true, 0.f);
@@ -1217,6 +1224,7 @@ void CKena::Push_EventFunctions()
 	PlaySound_HeavyAttack_Combo_Staff_Sweep(true, 0.f);
 	PlaySound_AirAttack_Slam_Release(true, 0.f);
 	PlaySound_SpinAttack(true, 0.f);
+	PlaySound_WarriorGrab(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -1696,7 +1704,7 @@ HRESULT CKena::Ready_Rots()
 				m_pCamera_Photo->Set_KenaPtr(this);
 		}
 	}
-
+	
 	return S_OK;
 }
 
@@ -2526,6 +2534,17 @@ void CKena::TurnOnLvUp_Part2_RiseY(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["KenaLvUp_RiseY"]->Set_Effect(vPos, true);
 }
 
+void CKena::TurnOffLvUp_Part2_RiseY(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffLvUp_Part2_RiseY);
+		return;
+	}
+	dynamic_cast<CE_P_Level_RiseY*>(m_mapEffect["KenaLvUp_RiseY"])->Set_Reset(true);
+}
+
 void CKena::PlaySound_Kena_FootStep(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
@@ -3296,6 +3315,19 @@ void CKena::PlaySound_SpinAttack(_bool bIsInit, _float fTimeDelta)
 
 	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_ParryAttack_Sweep.ogg", 1.f, false);
 	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_ParryAttack_Woong.ogg", 1.f, false);
+}
+
+void CKena::PlaySound_WarriorGrab(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::PlaySound_WarriorGrab);
+		return;
+	}
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Warrior_Grab.ogg", 1.f, false);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Sit_1.ogg", 0.5f, false);
 }
 
 void CKena::PlaySound_Rot_Action_Combat_Voice()
