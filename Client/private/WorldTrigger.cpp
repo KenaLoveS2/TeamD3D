@@ -66,6 +66,8 @@ HRESULT CWorldTrigger::Late_Initialize(void* pArg)
 	_smatrix mat;
 	m_vecWorldMatrix.push_back(mat);
 
+
+
 	return S_OK;
 }
 
