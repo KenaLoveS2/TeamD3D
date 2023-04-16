@@ -811,6 +811,7 @@
     <ClCompile Include="..\private\UI_NodeConfWindow.cpp" />
     <ClCompile Include="..\private\UI_NodeHat.cpp" />
     <ClCompile Include="..\private\UI_NodeHatCartBG.cpp" />
+    <ClCompile Include="..\private\UI_NodeHitCount.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHP.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHPBar.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDPip.cpp" />
@@ -854,7 +855,6 @@
     <ClCompile Include="..\private\WoodKnight.cpp" />
     <ClCompile Include="..\private\WorldTrigger.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="UI_NodeHitCount.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

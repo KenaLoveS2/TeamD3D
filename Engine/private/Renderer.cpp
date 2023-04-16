@@ -494,7 +494,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 {
 	Increase_Time();
 
-	CONTEXT_LOCK
+//	CONTEXT_LOCK
 
 	if (FAILED(Render_PrevFrame()))
 		return E_FAIL;
@@ -1172,12 +1172,12 @@ HRESULT CRenderer::Render_PostProcess()
 	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour->Get_SRV()))) // 이것이 현재 프레임
 		return E_FAIL;
 
+	if (!m_bCaptureMode)
+		m_pLDRTexture = pLDRSour->Get_SRV();
+
 	// 이걸 그리고 난것을 나의 렌더타겟에 그린다.
 	m_pShader_PostProcess->Begin(0);
 	m_pVIBuffer->Render();
-
-	if (!m_bCaptureMode)
-		m_pLDRTexture = pLDRSour->Get_SRV();
 
 	return S_OK;
 }

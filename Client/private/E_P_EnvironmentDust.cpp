@@ -89,7 +89,7 @@ void CE_P_EnvironmentDust::Tick(_float fTimeDelta)
 		m_fLife += fTimeDelta;
 		m_bTimer = true;
 		m_bDissolve = true;
-		_bool bResult = TurnOffSystem(m_fLife, 1.f, fTimeDelta);
+		_bool bResult = TurnOffSystem(m_fLife, 0.8f, fTimeDelta);
 		if (bResult) {
 			Reset();
 			m_pTransformCom->Set_PositionY(0.0f);

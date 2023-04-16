@@ -569,6 +569,9 @@ void CKena::Tick(_float fTimeDelta)
 	{
 		_float4 vPos = _float4(-34.7f, 20.4f, 1231.1f, 1.f);
 		m_pTransformCom->Set_Position(vPos);
+		CRot::Set_RotUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		m_pFirstRot->Execute_PhotoTeleport();
+
 	}
 
 	Play_Animation(fTimeDelta, fTimeRate);
@@ -2372,12 +2375,13 @@ void CKena::TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin2_jnt");
+	CBone* pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin2_jnt");
 	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
 
 	_matrix matIntoAttack = m_mapEffect["InteractStaff"]->Get_TransformCom()->Get_WorldMatrix();
 	matIntoAttack.r[3] = matWorldSocket.r[3];
+	matIntoAttack.r[3] = XMVectorSetY(matIntoAttack.r[3], XMVectorGetY(matIntoAttack.r[3]) + 0.2f);
 	m_mapEffect["InteractStaff"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
 	m_mapEffect["InteractStaff"]->Set_Active(true);
 }
