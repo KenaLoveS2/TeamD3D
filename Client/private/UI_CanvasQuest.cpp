@@ -8,8 +8,9 @@
 #include "UI_NodeQuestReward.h"
 #include "Saiya.h"
 #include "Kena_Status.h"
+#include "WorldTrigger.h"
 
-CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Canvas(pDevice, pContext)
 	, m_fTimeAcc(0.8f)
 	, m_iCurQuestIndex(0)
@@ -19,6 +20,9 @@ CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	, m_eState(STATE_NORMAL)
 	, m_fTmpAcc(0.f)
 	, m_bFollowAlpha(false)
+	, m_iCurLineIndex(0)
+	, m_fTimeOn(0.f)
+	, m_fTimeOnAcc(0.f)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
 	{
@@ -27,7 +31,7 @@ CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	}
 }
 
-CUI_CanvasQuest::CUI_CanvasQuest(const CUI_CanvasQuest & rhs)
+CUI_CanvasQuest::CUI_CanvasQuest(const CUI_CanvasQuest& rhs)
 	: CUI_Canvas(rhs)
 	, m_fTimeAcc(1.0f)
 	, m_iCurQuestIndex(0)
@@ -37,6 +41,9 @@ CUI_CanvasQuest::CUI_CanvasQuest(const CUI_CanvasQuest & rhs)
 	, m_eState(STATE_NORMAL)
 	, m_fTmpAcc(0.f)
 	, m_bFollowAlpha(false)
+	, m_iCurLineIndex(0)
+	, m_fTimeOn(0.f)
+	, m_fTimeOnAcc(0.f)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
 	{
@@ -53,7 +60,7 @@ HRESULT CUI_CanvasQuest::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_CanvasQuest::Initialize(void * pArg)
+HRESULT CUI_CanvasQuest::Initialize(void* pArg)
 {
 	/* Get a Texture Size, and Make an Initial Matrix */
 	XMStoreFloat4x4(&m_matInit, XMMatrixScaling(952.f, 1200.f, 1.f));
@@ -92,38 +99,53 @@ HRESULT CUI_CanvasQuest::Initialize(void * pArg)
 
 void CUI_CanvasQuest::Tick(_float fTimeDelta)
 {
-	//if (!m_bBindFinished)
-	//{
-	//	if (FAILED(Bind()))
-	//	{
-	//		//	MSG_BOX("Bind Failed");
-	//		return;
-	//	}
-	//}
-	 
-	m_bActive = true;
-	m_bOpen = false;
-	m_bClose = false;
+	if (!m_bBindFinished)
+	{
+		if (FAILED(Bind()))
+		{
+			//	MSG_BOX("Bind Failed");
+			return;
+		}
+	}
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
-	{
-		m_iCurQuestIndex = 0;
-		m_bFollowAlpha = false;
-		for (_uint i = 0; i < (_uint)m_vecNode.size() - 1; ++i)
-			m_vecNode[i]->Set_Active(false);
-	}
-	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
-	{
-		static _float fLine = 0;
-		BindFunction(CUI_ClientManager::QUEST_LINE, false, fLine, L"");
-		fLine = fmod(fLine + 1.f, (_float)m_iNumsQuestLine[m_iCurQuestIndex]);
-	}
-	if (CGameInstance::GetInstance()->Key_Down(DIK_U))
-	{
-		static _float fLine = 0;
-		BindFunction(CUI_ClientManager::QUEST_CLEAR, false, fLine, L"");
-		fLine = fmod(fLine + 1.f, (_float)m_iNumsQuestLine[m_iCurQuestIndex]);
-	}
+	//m_bActive = true;
+	//m_bOpen = false;
+	//m_bClose = false;
+
+	//static _bool bOpen = false;
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_W))
+	//{
+	//	if (m_bActive == false)
+	//		bOpen = true;
+	//	else
+	//		bOpen = false;
+	//	BindFunction(CUI_ClientManager::QUEST_, bOpen, 1.f, L"");
+	//	//bOpen = !bOpen;
+
+	//	//m_pRendererCom->ReCompile();
+	//	//m_pShaderCom->ReCompile();
+	//}
+
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+	//{
+	//	m_iCurQuestIndex = 0;
+	//	m_iCurLineIndex = 0;
+	//	m_bFollowAlpha = false;
+	//	for (_uint i = 0; i < (_uint)m_vecNode.size() - 1; ++i)
+	//		m_vecNode[i]->Set_Active(false);
+	//}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_I))
+	//{
+	//	static _float fLine = 0;
+	//	BindFunction(CUI_ClientManager::QUEST_LINE, false, fLine, L"");
+	//	fLine = fmod(fLine + 1.f, (_float)m_iNumsQuestLine[m_iCurQuestIndex]);
+	//}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_U))
+	//{
+	//	static _float fLine = 0;
+	//	BindFunction(CUI_ClientManager::QUEST_CLEAR, false, fLine, L"");
+	//	fLine = fmod(fLine + 1.f, (_float)m_iNumsQuestLine[m_iCurQuestIndex]);
+	//}
 
 
 	if (!m_bActive)
@@ -133,12 +155,35 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 	{
 		m_fTimeAcc -= 0.2f * fTimeDelta;
 		if (m_fTimeAcc > 0.6f)
-		m_fAlpha += 0.5f * fTimeDelta;
+			m_fAlpha += 0.5f * fTimeDelta;
 		if (m_fAlpha >= 1.f)
 			m_fAlpha = 1.f;
 
 		if (m_fTimeAcc <= 0.f)
 			m_bOpen = false;
+
+		if (m_fAlpha >= 0.8f)
+		{
+			_int iCount = 0;
+			for (_int i = 0; i < QUEST_END; ++i)
+			{
+				if (i < m_iCurQuestIndex)
+					iCount += (m_iNumsQuestLine[i]);
+				else if (i == m_iCurQuestIndex)
+				{
+					for (_int line = 0; line <= m_iCurLineIndex; ++line)
+					{
+						static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->QuestOn();
+						_float fAlpha = static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->Get_Alpha();
+						if (line <= m_iLastClearLine && line != 0)
+							static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
+					}
+					break;
+				}
+
+			}
+		}
+
 	}
 	else if (m_bClose)
 	{
@@ -147,12 +192,41 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 		{
 			m_fAlpha -= 0.5f * fTimeDelta;
 		}
-		m_fTimeAcc += 0.2f * fTimeDelta;
+		m_fTimeAcc += 0.5f * fTimeDelta;
 		if (m_fTimeAcc >= 1.f)
 		{
 			m_bActive = false;
 			m_bClose = false;
 		}
+
+		_int iCount = 0;
+		for (_int i = 0; i < QUEST_END; ++i)
+		{
+			if (i < m_iCurQuestIndex)
+				iCount += m_iNumsQuestLine[i];
+			else if (i == m_iCurQuestIndex)
+			{
+				for (_int line = 0; line <= m_iCurLineIndex; ++line)
+				{
+					static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->QuestOff();
+					_float fAlpha = static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->Get_Alpha();
+					if (line <= m_iLastClearLine && line != 0)
+						static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
+				}
+				break;
+			}
+		}
+
+		//for (_int i = 0; i <= m_iCurLineIndex; ++i)
+		//{
+		//	static_cast<CUI_NodeQuest*>(m_vecNode[m_iCurQuestIndex * m_iNumsQuestLine[m_iCurQuestIndex] + i])->QuestOff();
+
+		//	if (i <= m_iLastClearLine)
+		//		static_cast<CUI_NodeEffect*>(m_vecEffects[i])->Set_Alpha(m_fAlpha);
+		//}
+
+
+
 	}
 	else
 		m_eState = STATE_NORMAL;
@@ -161,6 +235,22 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 	{
 		for (_uint i = 0; i < (_uint)m_vecNode.size() - 1; ++i)
 			m_vecNode[i]->Set_Active(false);
+
+		if (m_iCurQuestIndex == QUEST_1)
+		{
+			BindFunction(CUI_ClientManager::QUEST_LINE, true, 0, L"");
+			BindFunction(CUI_ClientManager::QUEST_LINE, true, 1, L"");
+			BindFunction(CUI_ClientManager::QUEST_LINE, true, 2, L"");
+			BindFunction(CUI_ClientManager::QUEST_LINE, true, 3, L"");
+		}
+
+		if (m_iCurQuestIndex == QUEST_2)
+		{
+			BindFunction(CUI_ClientManager::QUEST_LINE, true, 0, L"");
+			BindFunction(CUI_ClientManager::QUEST_LINE, true, 1, L"");
+			BindFunction(CUI_ClientManager::QUEST_LINE, true, 2, L"");
+			BindFunction(CUI_ClientManager::QUEST_LINE, true, 3, L"");
+		}
 
 		if (m_iCurQuestIndex == QUEST_END)
 			m_bFollowAlpha = true;
@@ -185,23 +275,22 @@ void CUI_CanvasQuest::Late_Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
-
-	if (m_eState == STATE_NORMAL)
-	{
-		m_fTmpAcc += fTimeDelta;
-		if (m_fTmpAcc > 3.f)
-		{
-			m_eState = STATE_CLOSE;
-			m_fTimeAcc = 0.f;
-			m_bClose = true;
-			m_fAlpha = 1.f;
-		}
-	}
-
-	//__super::Late_Tick(fTimeDelta);
-
 	//__super::Late_Tick(fTimeDelta);
 	CUI::Late_Tick(fTimeDelta);
+
+	if (m_eState == STATE_NORMAL)
+{
+	m_fTmpAcc += fTimeDelta;
+	if (m_fTmpAcc > 5.f)
+	{
+		m_eState = STATE_CLOSE;
+		m_fTimeAcc = 0.f;
+		m_bClose = true;
+		m_fAlpha = 1.f;
+	}
+}
+
+
 
 	for (auto e : m_vecEvents)
 		e->Late_Tick(fTimeDelta);
@@ -230,12 +319,10 @@ HRESULT CUI_CanvasQuest::Render()
 
 HRESULT CUI_CanvasQuest::Bind()
 {
-	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	//CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),L"Layer_Player", L"Kena"));
-	//RELEASE_INSTANCE(CGameInstance);
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,L"Layer_Player", L"Kena"));
+	if (pKena == nullptr)
+		return E_FAIL;
 
-	//if (pKena == nullptr)
-	//	return E_FAIL;
 	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
 
 	//m_Quests[0]->m_QuestDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
@@ -243,7 +330,18 @@ HRESULT CUI_CanvasQuest::Bind()
 	CSaiya* pSaiya = dynamic_cast<CSaiya*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_NPC", L"Saiya"));
 	if (pSaiya == nullptr)
 		return E_FAIL;
+	
+	
+	pKena->m_PlayerQuestDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
 	pSaiya->m_SaiyaDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
+
+	//CWorldTrigger* p_world_trigger = dynamic_cast<CWorldTrigger*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+	//	L"Layer_Effect", L"UIWorldTrigger"));
+	//if (p_world_trigger == nullptr)
+	//	return E_FAIL;
+	//p_world_trigger->m_WorldTriggerDelegator2.bind(this, &CUI_CanvasQuest::BindFunction);
+
+
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -306,7 +404,7 @@ HRESULT CUI_CanvasQuest::Ready_Nodes()
 		CUI::UIDESC tDescEffectM;
 		_tchar* tagMTag = CUtile::StringToWideChar(strMEffect);
 		tDescEffectM.fileName = tagMTag;
-		CUI_NodeEffect* pEffectUI 
+		CUI_NodeEffect* pEffectUI
 			= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagMTag, &tDescEffectM));
 		if (FAILED(Add_Node(pEffectUI)))
 			return E_FAIL;
@@ -321,7 +419,7 @@ HRESULT CUI_CanvasQuest::Ready_Nodes()
 			CUI::UIDESC tDescEffectS;
 			_tchar* tagEffectS = CUtile::StringToWideChar(strEffectS);
 			tDescEffectS.fileName = tagEffectS;
-			CUI_NodeEffect* pUISub 
+			CUI_NodeEffect* pUISub
 				= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagEffectS, &tDescEffectS));
 			if (FAILED(Add_Node(pUISub)))
 				return E_FAIL;
@@ -440,6 +538,8 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 	case CUI_ClientManager::QUEST_:
 		m_bOpen = false;
 		m_bClose = false;
+		m_iLineIndexIter = 0;
+		m_iClearIndexIter = 0;
 		if (bValue)
 		{
 			m_eState = STATE_OPEN;
@@ -458,24 +558,25 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 		break;
 
 	case CUI_ClientManager::QUEST_LINE:
-		if (m_iCurQuestIndex >= QUEST_END)
+	{
+		if (m_iCurLineIndex >= QUEST_END)
 			return;
-
 		if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
 		{
 			MSG_BOX("Try to Contact Wrong Line");
 			return;
 		}
+		m_iCurLineIndex = (_int)fValue;
 		m_vecNode[m_iCurQuestIndex * m_iNumsQuestLine[m_iCurQuestIndex] + (_int)fValue]->Set_Active(true);
 		break;
+	}
 	case CUI_ClientManager::QUEST_CLEAR:
-	{		
-		if (m_iCurQuestIndex >= QUEST_END)
+	{
+		if (m_iCurLineIndex >= QUEST_END)
 			return;
 		if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
-		{
 			return;
-		}
+		m_iLastClearLine = (_int)fValue;
 		//_int iLen = m_Quests[m_iCurQuestIndex]->Get_QuestStringLength((_int)fValue);
 		///* 아이들을 따라가세요 : 1 */
 		//if (iLen > 10)
@@ -495,12 +596,12 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 	case CUI_ClientManager::QUEST_CLEAR_ALL:
 
 		static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->RewardOn();
-		
+
 		/* Temp code  */
 		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 		if (pKena != nullptr)
 			pKena->Get_Status()->Set_Karma(pKena->Get_Status()->Get_Karma() + 500);
-			
+
 		break;
 	}
 }
@@ -569,9 +670,9 @@ void CUI_CanvasQuest::Check(CUI_ClientManager::UI_PRESENT eType, _float fData)
 	}
 }
 
-CUI_CanvasQuest * CUI_CanvasQuest::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_CanvasQuest* CUI_CanvasQuest::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_CanvasQuest*	pInstance = new CUI_CanvasQuest(pDevice, pContext);
+	CUI_CanvasQuest* pInstance = new CUI_CanvasQuest(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
 		MSG_BOX("Failed To Create : CUI_CanvasQuest");
@@ -580,9 +681,9 @@ CUI_CanvasQuest * CUI_CanvasQuest::Create(ID3D11Device * pDevice, ID3D11DeviceCo
 	return pInstance;
 }
 
-CGameObject * CUI_CanvasQuest::Clone(void * pArg)
+CGameObject* CUI_CanvasQuest::Clone(void* pArg)
 {
-	CUI_CanvasQuest*	pInstance = new CUI_CanvasQuest(*this);
+	CUI_CanvasQuest* pInstance = new CUI_CanvasQuest(*this);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX("Failed To Clone : CUI_CanvasQuest");

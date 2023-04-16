@@ -173,7 +173,7 @@ void CUI_NodeEffect::Tick(_float fTimeDelta)
 	{
 	case TYPE_SEPERATOR:
 	{
-		m_fTime += 2.f * fTimeDelta;
+		m_fTime += 4.f * fTimeDelta;
 		if (m_fTime > 1.f)
 			m_fTime = 1.000001f;
 	}
@@ -523,6 +523,8 @@ HRESULT CUI_NodeEffect::SetUp_ShaderResources()
 	{
 	case TYPE_SEPERATOR:
 		if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTime, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
 			return E_FAIL;
 		break;
 	case TYPE_ALPHA:

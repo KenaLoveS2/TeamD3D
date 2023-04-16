@@ -112,7 +112,7 @@ void CUI_CanvasTop::Tick(_float fTimeDelta)
 		else if (false == m_vecNode[UI_ROTGUAGE]->Is_Active() && false == m_vecNode[UI_ROTLVUP]->Is_Active())
 		{
 			m_bRotLvUp = false;
-			static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_GuageZero();
+			//static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_GuageZero();
 
 			m_vecNode[UI_EFFECT_BACKFLARE]->Set_Active(false);
 			m_vecNode[UI_EFFECT_FRONTFLAREROUND]->Set_Active(false);
@@ -435,6 +435,7 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 	case CUI_ClientManager::TOP_ROT_LVUP:
 		m_bRotLvUp = true;
 		m_iRotLv = (_uint)fValue;
+		static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_GuageZero();
 		break;
 	case CUI_ClientManager::TOP_BOSS:
 		if (fValue >= 10.f)

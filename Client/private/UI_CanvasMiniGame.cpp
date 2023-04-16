@@ -5,6 +5,7 @@
 #include "UI_NodeReward.h"
 #include "Kena.h"
 #include "Kena_Status.h"
+#include "UI_NodeTimeAtk.h"
 
 CUI_CanvasMiniGame::CUI_CanvasMiniGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -22,6 +23,7 @@ CUI_CanvasMiniGame::CUI_CanvasMiniGame(ID3D11Device* pDevice, ID3D11DeviceContex
 	, m_bCountTime(false)
 	, m_bCountHit(false)
 	, m_bReward(false)
+	, m_bGameFinish(false)
 
 {
 }
@@ -42,6 +44,7 @@ CUI_CanvasMiniGame::CUI_CanvasMiniGame(const CUI_CanvasMiniGame& rhs)
 	, m_bCountTime(false)
 	, m_bCountHit(false)
 	, m_bReward(false)
+	, m_bGameFinish(false)
 {
 }
 
@@ -79,6 +82,8 @@ HRESULT CUI_CanvasMiniGame::Initialize(void* pArg)
 	//m_bActive = true;
 	m_fTime = 1.f;
 
+
+
 	return S_OK;
 }
 
@@ -93,21 +98,40 @@ void CUI_CanvasMiniGame::Tick(_float fTimeDelta)
 		}
 	}
 
-	if (ImGui::Button("minigame test"))
-	{
-		m_bActive = true;
-		m_bResultShow = false;
-		m_iCurState = -1;
-		m_bReward = false;
+	//if (ImGui::Button("minigame test"))
+	//{
+	//	m_bActive = true;
+	//	m_bResultShow = false;
+	//	m_iCurState = -1;
+	//	m_bReward = false;
 
-		m_iTimeLeft = 300;
-		m_iHitCount = 30;
-		m_iResult = 0;
+	//	m_iTimeLeft = 300;
+	//	m_iHitCount = 30;
+	//	m_iResult = 0;
 
-	}
+	//}
 
 	if (!m_bActive)
 		return;
+
+	if (!m_bGameFinish)
+	{
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+
+		if (pKena != nullptr)
+		{
+			if (pKena->Get_Hits())
+			{
+				m_bGameFinish = true;
+				BindFunction(CUI_ClientManager::MINIGAME_, true);
+			}
+		}
+
+	}
+
+
+
+
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_SPACE))
 	{
@@ -334,6 +358,11 @@ HRESULT CUI_CanvasMiniGame::Render()
 
 HRESULT CUI_CanvasMiniGame::Bind()
 {
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	if (pKena == nullptr)
+		return E_FAIL;
+	pKena->m_Delegator.bind(this, &CUI_CanvasMiniGame::BindFunction);
+
 	m_bBindFinished = true;
 
 	return S_OK;
@@ -451,7 +480,27 @@ void CUI_CanvasMiniGame::BindFunction(CUI_ClientManager::UI_PRESENT eType, _floa
 {
 	switch (eType)
 	{
-	case CUI_ClientManager::MINIGAME_:
+	//case CUI_ClientManager::MINIGAME_TOTAL_TARGET:
+	//	break;
+	//case CUI_ClientManager::MINIGAME_HIT:
+
+	//	break;
+	case CUI_ClientManager::MINIGAME_START:
+		m_bActive = true;
+		m_vecNode[UI_TIMEATK]->Set_Active(true);
+		m_vecNode[UI_HITCOUNT]->Set_Active(true);
+		static_cast<CUI_NodeTimeAtk*>(m_vecNode[UI_TIMEATK])->Timer_On();
+		break;
+	case CUI_ClientManager::MINIGAME_: /* result */
+		m_bActive = true;
+		m_bResultShow = false;
+		m_iCurState = -1;
+		m_bReward = false;
+
+		m_iTimeLeft = 300;
+		m_iHitCount = 30;
+		m_iResult = 0;
+
 		break;
 	}
 

@@ -83,7 +83,7 @@ HRESULT	CUI_CanvasUpgrade::Late_Initialize(void* pArg)
 	if (pKena == nullptr)
 		return E_FAIL;
 
-	for (_uint iType = 0; iType < CKena_Status::SKILLTAB_END; ++iType)
+	for (_uint iType = 0; iType < CKena_Status::SKILL_ROT; ++iType)
 	{
 		for (_uint iSlot = 0; iSlot < 5; ++iSlot)
 		{
@@ -106,8 +106,25 @@ HRESULT	CUI_CanvasUpgrade::Late_Initialize(void* pArg)
 		}
 	}
 
+	for (_uint iSlot = 0; iSlot < 4; ++iSlot)
+	{
+		_bool isOpen = pKena->Get_Status()->Get_SkillState(CKena_Status::SKILL_ROT, iSlot);
+		
+		if (isOpen == true)
+		{
+			_uint iIndex = UI_ROTSKILLS_START + iSlot;
+			m_pSkills[CKena_Status::SKILL_ROT]->UnLock(iSlot);
+			static_cast<CUI_NodeSkill*>(m_vecNode[iIndex])->State_Change(2);
+			pKena->Get_Status()->Unlock_Skill(CKena_Status::SKILL_ROT, iSlot);
 
-	
+			/* Bind Not Finished, so, Broadcast not Work. */
+			if (FAILED(SetUp_SkillSettings(CKena_Status::SKILL_ROT, iSlot)))
+			{
+				MSG_BOX("Skill Setting Not Complete");
+				return E_FAIL;
+			}
+		}
+	}
 
 	return S_OK;
 }
@@ -228,6 +245,7 @@ void CUI_CanvasUpgrade::Set_Caller(CGameObject * pObj)
 
 HRESULT CUI_CanvasUpgrade::Bind()
 {
+
 	m_bBindFinished = true;
 	return S_OK;
 }

@@ -48,7 +48,7 @@ private:
 	_int	m_iHitCount;
 	_int	m_iResult;
 
-
+	_bool	m_bGameFinish;
 	//_tchar* m_szHit;
 	//_tchar* m_szTime;
 	//_tchar* m_szResult;

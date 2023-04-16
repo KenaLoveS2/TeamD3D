@@ -105,7 +105,7 @@ void CUI_NodeQuest::Tick(_float fTimeDelta)
 
 	if (m_bOpening && m_bClear)
 	{
-		m_fSpeed = 0.3f;
+		m_fSpeed = 5.f;
 		m_fTimeAcc += fTimeDelta;
 		if (m_fAlpha <= 0.f)
 			m_bActive = false;

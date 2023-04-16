@@ -585,7 +585,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	/*				For. InfoWindow				*/
 	/********************************************/
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_InfoWindow"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/04. Menu/Information/Information_%d.png"), 5))))
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/04. Menu/Information/Information_%d.png"), 6))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_InfoWindow"); // 68
 
@@ -756,8 +756,25 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/RotActionSelector/RotActionSelector_Tutorial_PC%03d.png"), 226))))
 		return E_FAIL;
 
+	// HealthFlower
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HealthFlower"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/HealthFlower/HealthFlower_Tutorial_PC%03d.png"), 128))))
+		return E_FAIL;
 
+	// DashAbility
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_DashAbility"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/DashAbility/DashAbility_Tutorial_PC%03d.png"), 143))))
+		return E_FAIL;
 
+	// RusuFalls
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RusuFalls"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/RusuFalls/RusuFalls_PC%03d.png"), 245))))
+		return E_FAIL;
+
+	// RotCarry
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotCarry"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Video/RotCarry/RotCarry_Tutorial_PC%03d.png"), 168))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

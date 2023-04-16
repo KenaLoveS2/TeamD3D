@@ -46,7 +46,8 @@ public:
 
 		INFO_, 
 
-		MINIGAME_, 
+		MINIGAME_TOTAL_TARGET, MINIGAME_HIT, MINIGAME_START,
+		MINIGAME_, /* result */
 
 		/*Must Be Last ... ! */
 		UI_CONFIRM,
