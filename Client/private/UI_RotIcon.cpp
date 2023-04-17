@@ -46,6 +46,13 @@ void CUI_RotIcon::Set_Pos(CGameObject* pTarget, _float4 vCorrect)
 
 void CUI_RotIcon::Off_Focus(CGameObject* pTarget)
 {
+	if (pTarget == nullptr)
+	{
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OFF;
+		_float fNoMeaning = 1.f;
+		m_pKena->m_Delegator.broadcast(tag, fNoMeaning);
+	}
+
 	if (pTarget && m_pTarget == pTarget)
 	{
 		m_pTarget = nullptr;
