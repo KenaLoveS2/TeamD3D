@@ -100,6 +100,8 @@ HRESULT CUI_CanvasHUD::Late_Initialize(void* pArg)
 	}
 		else if (2 == iRotLevel)
 		{
+		m_vecNode[UI_PIPBAR1]->Set_Active(true);
+		m_vecNode[UI_PIPGAUGE1]->Set_Active(true);
 			m_vecNode[UI_PIPBAR2]->Set_Active(true);
 			m_vecNode[UI_PIPGAUGE2]->Set_Active(true);
 
@@ -113,6 +115,10 @@ HRESULT CUI_CanvasHUD::Late_Initialize(void* pArg)
 		}
 		else if (3 == iRotLevel)
 		{
+		m_vecNode[UI_PIPBAR1]->Set_Active(true);
+		m_vecNode[UI_PIPGAUGE1]->Set_Active(true);
+		m_vecNode[UI_PIPBAR2]->Set_Active(true);
+		m_vecNode[UI_PIPGAUGE2]->Set_Active(true);
 			m_vecNode[UI_PIPBAR3]->Set_Active(true);
 			m_vecNode[UI_PIPGAUGE3]->Set_Active(true);
 
@@ -123,6 +129,9 @@ HRESULT CUI_CanvasHUD::Late_Initialize(void* pArg)
 			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1] - 1])->ReArrangeX(); /* Frame */
 			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_2]])->ReArrangeX();
 			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_2] - 1])->ReArrangeX(); /* Frame */
+
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1] - 1])->ReArrangeX(); /* Frame */
 
 			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_1]])->Set_Guage(1.f);
 			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_2]])->Set_Guage(1.f);
