@@ -24,9 +24,8 @@ CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	, m_iCurLineIndex(0)
 	, m_fTimeOn(0.f)
 	, m_fTimeOnAcc(0.f)
-, m_bQuestClear(false)
 {
-	for (_uint i = 0; i < QUEST_END; ++i)
+	for (_uint i = 0; i < (_uint)QUEST_END; ++i)
 	{
 		m_Quests[i] = nullptr;
 		m_iNumsQuestLine[i] = 0;
@@ -46,9 +45,8 @@ CUI_CanvasQuest::CUI_CanvasQuest(const CUI_CanvasQuest& rhs)
 	, m_iCurLineIndex(0)
 	, m_fTimeOn(0.f)
 	, m_fTimeOnAcc(0.f)
-, m_bQuestClear(false)
 {
-	for (_uint i = 0; i < QUEST_END; ++i)
+	for (_uint i = 0; i < (_uint)QUEST_END; ++i)
 	{
 		m_Quests[i] = nullptr;
 		m_iNumsQuestLine[i] = 0;
@@ -110,169 +108,9 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 			return;
 		}
 	}
-
-	//m_bActive = true;
-	//m_bOpen = false;
-	//m_bClose = false;
-
-	//static _bool bOpen = false;
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_W))
-	//{
-	//	if (m_bActive == false)
-	//		bOpen = true;
-	//	else
-	//		bOpen = false;
-	//	BindFunction(CUI_ClientManager::QUEST_, bOpen, 1.f, L"");
-	//	//bOpen = !bOpen;
-
-	//	//m_pRendererCom->ReCompile();
-	//	//m_pShaderCom->ReCompile();
-	//}
-
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
-	//{
-	//	m_iCurQuestIndex = 0;
-	//	m_iCurLineIndex = 0;
-	//	m_bFollowAlpha = false;
-	//	for (_uint i = 0; i < (_uint)m_vecNode.size() - 1; ++i)
-	//		m_vecNode[i]->Set_Active(false);
-	//}
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_I))
-	//{
-	//	static _float fLine = 0;
-	//	BindFunction(CUI_ClientManager::QUEST_LINE, false, fLine, L"");
-	//	fLine = fmod(fLine + 1.f, (_float)m_iNumsQuestLine[m_iCurQuestIndex]);
-	//}
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_U))
-	//{
-	//	static _float fLine = 0;
-	//	BindFunction(CUI_ClientManager::QUEST_CLEAR, false, fLine, L"");
-	//	fLine = fmod(fLine + 1.f, (_float)m_iNumsQuestLine[m_iCurQuestIndex]);
-	//}
-
-
+	
 	if (!m_bActive)
 		return;
-
-	if (m_bOpen)
-	{
-		m_fTimeAcc -= 0.2f * fTimeDelta;
-		if (m_fTimeAcc > 0.6f)
-			m_fAlpha += 0.5f * fTimeDelta;
-		if (m_fAlpha >= 1.f)
-			m_fAlpha = 1.f;
-
-		if (m_fTimeAcc <= 0.f)
-			m_bOpen = false;
-
-		//if (m_fAlpha >= 0.8f)
-		{
-			_int iCount = 0;
-			for (_int i = 0; i < QUEST_END; ++i)
-			{
-				if (i < m_iCurQuestIndex)
-					iCount += (m_iNumsQuestLine[i]);
-				else if (i == m_iCurQuestIndex)
-				{
-					for (_int line = 0; line <= m_iCurLineIndex; ++line)
-					{
-						static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->QuestOn();
-						//_float fAlpha = static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->Get_Alpha();
-						//if (line <= m_iLastClearLine && line != 0)
-						//{
-
-						//	if(line == m_iLastClearLine && m_bQuestClear == true)
-						//	{
-						//		static_cast<CUI_NodeEffect*>(m_vecEffects[(_int)m_iLastClearLine])->Set_Effect(m_vecNode[iCount + line], 328.f, -2.f);
-						//		static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
-						//	}
-						//	else
-						//		static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
-
-						//}
-					}
-					break;
-				}
-
-			}
-		}
-
-	}
-	else if (m_bClose)
-	{
-		static_cast<CUI_NodeQuest*>(m_vecNode[0])->Set_Alpha(m_fAlpha);
-		if (m_fTimeAcc > 0.5f)
-		{
-			m_fAlpha -= 0.5f * fTimeDelta;
-		}
-		m_fTimeAcc += 0.5f * fTimeDelta;
-		if (m_fTimeAcc >= 1.f)
-		{
-			m_bActive = false;
-			m_bClose = false;
-		}
-
-		_int iCount = 0;
-		for (_int i = 0; i < QUEST_END; ++i)
-		{
-			if (i < m_iCurQuestIndex)
-				iCount += m_iNumsQuestLine[i];
-			else if (i == m_iCurQuestIndex)
-			{
-				for (_int line = 0; line <= m_iCurLineIndex; ++line)
-				{
-					static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->QuestOff();
-					_float fAlpha = static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->Get_Alpha();
-					//if (line <= m_iLastClearLine && line != 0)
-					//	static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
-				}
-				break;
-			}
-		}
-
-		//for (_int i = 0; i <= m_iCurLineIndex; ++i)
-		//{
-		//	static_cast<CUI_NodeQuest*>(m_vecNode[m_iCurQuestIndex * m_iNumsQuestLine[m_iCurQuestIndex] + i])->QuestOff();
-
-		//	if (i <= m_iLastClearLine)
-		//		static_cast<CUI_NodeEffect*>(m_vecEffects[i])->Set_Alpha(m_fAlpha);
-		//}
-
-
-
-	}
-	else
-		m_eState = STATE_NORMAL;
-
-	if (static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->Get_Alpha() > 0.8f)
-	{
-		for (_uint i = 0; i < (_uint)m_vecNode.size() - 1; ++i)
-			m_vecNode[i]->Set_Active(false);
-
-		m_iCurQuestIndex++;
-		//if (m_iCurQuestIndex == QUEST_1 /*|| m_iCurQuestIndex == QUEST_2 */)
-		//{
-			//m_bQuestClear = false;
-			//BindFunction(CUI_ClientManager::QUEST_, true, 0, L"");
-			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 0, L"");
-			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 1, L"");
-			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 2, L"");
-			//BindFunction(CUI_ClientManager::QUEST_LINE, true, 3, L"");
-	//	}
-		if (m_iCurQuestIndex == QUEST_END)
-			m_bFollowAlpha = true;
-	}
-
-	if (m_bFollowAlpha == true)
-	{
-		m_fAlpha = static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->Get_Alpha();
-		if (m_fAlpha <= 0.f)
-			m_bActive = false;
-	}
-
-	/*test */
-	//for (_uint i = 0; i < QUEST_END; ++i)
-	//	m_Quests[i]->Tick(fTimeDelta);
 
 	__super::Tick(fTimeDelta);
 
@@ -312,14 +150,11 @@ void CUI_CanvasQuest::Late_Tick(_float fTimeDelta)
 			node->Late_Tick(fTimeDelta);
 	}
 
-
 }
 
 HRESULT CUI_CanvasQuest::Render()
 {
 	__super::Render();
-
-	/* Button Click */
 
 	return S_OK;
 }
@@ -330,25 +165,12 @@ HRESULT CUI_CanvasQuest::Bind()
 	if (pKena == nullptr)
 		return E_FAIL;
 
-	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
-
-	//m_Quests[0]->m_QuestDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
-
 	CSaiya* pSaiya = dynamic_cast<CSaiya*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_NPC", L"Saiya"));
 	if (pSaiya == nullptr)
 		return E_FAIL;
 	
-	
 	pKena->m_PlayerQuestDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
 	pSaiya->m_SaiyaDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
-
-	//CWorldTrigger* p_world_trigger = dynamic_cast<CWorldTrigger*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-	//	L"Layer_Effect", L"UIWorldTrigger"));
-	//if (p_world_trigger == nullptr)
-	//	return E_FAIL;
-	//p_world_trigger->m_WorldTriggerDelegator2.bind(this, &CUI_CanvasQuest::BindFunction);
-
-
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -364,7 +186,7 @@ HRESULT CUI_CanvasQuest::Ready_Nodes()
 
 	230303 : save in stringManager. But won't be use again.(cause already stored in cloneTag)
 	*/
-	for (_uint i = 0; i < QUEST_END; ++i)
+	for (_uint i = 0; i < (_uint)QUEST_END; ++i)
 	{
 		CUI* pMain = nullptr;
 		CUI::UIDESC tMainDesc;
@@ -401,57 +223,6 @@ HRESULT CUI_CanvasQuest::Ready_Nodes()
 
 		}
 	}
-
-
-	/* Effect */
-	//for (_uint i = 0; i < QUEST_END; ++i)
-	_uint i = 0;
-	{
-		string strMEffect = "Node_EffectClear_" + to_string(i);
-		CUI::UIDESC tDescEffectM;
-		_tchar* tagMTag = CUtile::StringToWideChar(strMEffect);
-		tDescEffectM.fileName = tagMTag;
-		CUI_NodeEffect* pEffectUI
-			= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagMTag, &tDescEffectM));
-		if (FAILED(Add_Node(pEffectUI)))
-			return E_FAIL;
-		m_vecNodeCloneTag.push_back(strMEffect);
-		pGameInstance->Add_String(tagMTag);
-		m_vecEffects.push_back(pEffectUI);
-
-		_int iNumSubs = m_Quests[i]->Get_NumSubs();
-		for (_int j = 0; j < iNumSubs; ++j)
-		{
-			string strEffectS = "Node_EffectClear" + to_string(i) + "_" + to_string(j);
-			CUI::UIDESC tDescEffectS;
-			_tchar* tagEffectS = CUtile::StringToWideChar(strEffectS);
-			tDescEffectS.fileName = tagEffectS;
-			CUI_NodeEffect* pUISub
-				= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagEffectS, &tDescEffectS));
-			if (FAILED(Add_Node(pUISub)))
-				return E_FAIL;
-			m_vecNodeCloneTag.push_back(strEffectS);
-			pGameInstance->Add_String(tagEffectS);
-			m_vecEffects.push_back(pUISub);
-
-		}
-	}
-
-	/* Reward */
-	{
-		CUI* pUI = nullptr;
-		CUI::UIDESC tDesc;
-		string strCloneTag = "Node_QuestReward";
-		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
-		tDesc.fileName = wstrCloneTag;
-		pUI = static_cast<CUI*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_UI_Node_QuestReward", wstrCloneTag, &tDesc));
-		if (FAILED(Add_Node(pUI)))
-			return E_FAIL;
-		m_vecNodeCloneTag.push_back(strCloneTag);
-		CGameInstance::GetInstance()->Add_String(wstrCloneTag);
-	}
-
-
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -543,149 +314,12 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 	switch (eType)
 	{
 	case CUI_ClientManager::QUEST_:
-		m_iCurQuestIndex = (_int)fValue;
-		m_bOpen = false;
-		m_bClose = false;
-		m_iLineIndexIter = 0;
-		m_iClearIndexIter = 0;
-		if (bValue)
-		{
-			m_eState = STATE_OPEN;
-			m_bActive = true; /* If m_bActive is false, it won't be seen at all. */
-			m_fTimeAcc = 0.8f;
-			m_bOpen = true;
-			m_fAlpha = 0.5f;
-		}
-		else
-		{
-			m_eState = STATE_CLOSE;
-			m_fTimeAcc = 0.f;
-			m_bClose = true;
-			m_fAlpha = 1.f;
-		}
-
-		m_iCurLineIndex = 3;
 		break;
-
 	case CUI_ClientManager::QUEST_LINE:
-	{
- 	//	if (m_iCurQuestIndex >= QUEST_END)
-		//	return;
-		//if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
-		//{
-		//	MSG_BOX("Try to Contact Wrong Line");
-		//	return;
-		//}
-
-		////m_bActive = true;
-		//BindFunction(CUI_ClientManager::QUEST_, true, 1.f, L"");
-		//m_iCurLineIndex = (_int)fValue;
-		//m_vecNode[m_iCurQuestIndex * m_iNumsQuestLine[m_iCurQuestIndex] + (_int)fValue]->Set_Active(true);
-		//m_iCurLineIndex = 3;
 		break;
-	}
 	case CUI_ClientManager::QUEST_CLEAR:
-	{
-
-		m_bQuestClear = true;
-
-		m_iLastClearLine = (_int)fValue;
-		//static_cast<CUI_NodeEffect*>(m_vecEffects[(_int)fValue])->Set_Effect(this, 328.f, -2.f);
-
-		BindFunction(CUI_ClientManager::QUEST_, true, 1.f, L"");
-
-		//m_bActive = true;
-		m_iLastClearLine = (_int)fValue;
-		//_int iLen = m_Quests[m_iCurQuestIndex]->Get_QuestStringLength((_int)fValue);
-		///* 아이들을 따라가세요 : 1 */
-		//if (iLen > 10)
-		//	static_cast<CUI_NodeEffect*>(m_vecNode[(_int)fValue])->Change_Scale({ iLen - 10, });
-
-			//m_vecEffects[(_int)fValue]->Start_Effect(	m_vecNode[(_int)fValue], 328.f, -2.f);
-
-		if ((_int)fValue == m_iNumsQuestLine[m_iCurQuestIndex] - 1)
-		{
-			m_iCurQuestIndex++;
-			if (m_iCurQuestIndex >= QUEST_END)
-				m_iCurQuestIndex = QUEST_END;
-			BindFunction(CUI_ClientManager::QUEST_CLEAR_ALL, false, 1.f, L"");
-		}
 		break;
-	}
 	case CUI_ClientManager::QUEST_CLEAR_ALL:
-		m_iCurQuestIndex = (_int)fValue;
-		BindFunction(CUI_ClientManager::QUEST_, true, m_iCurQuestIndex , L"");
-		static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->RewardOn();
-
-		/* Temp code  */
-		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
-		if (pKena != nullptr)
-			pKena->Get_Status()->Set_Karma(pKena->Get_Status()->Get_Karma() + 500);
-
-		break;
-	}
-}
-
-void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
-{
-	switch (eFunc)
-	{
-	case CUI_ClientManager::FUNC_DEFAULT:
-		Default(eType, fValue);
-		break;
-	case CUI_ClientManager::FUNC_SWITCH:
-		Switch(eType, fValue);
-		break;
-	case CUI_ClientManager::FUNC_CHECK:
-		Check(eType, fValue);
-		break;
-	}
-}
-
-void CUI_CanvasQuest::Default(CUI_ClientManager::UI_PRESENT eType, _float fData)
-{
-}
-
-void CUI_CanvasQuest::Switch(CUI_ClientManager::UI_PRESENT eType, _float fData)
-{
-	switch (eType)
-	{
-	case CUI_ClientManager::QUEST_:/* Switch On/Off Canvas */
-		m_bOpen = false;
-		m_bClose = false;
-		if (!m_bActive)
-		{
-			m_eState = STATE_OPEN;
-			m_bActive = true; /* If m_bActive is false, it won't be seen at all. */
-			m_fTimeAcc = 0.8f;
-			m_bOpen = true;
-			m_fAlpha = 0.5f;
-		}
-		else
-		{
-			m_eState = STATE_CLOSE;
-			m_fTimeAcc = 0.f;
-			m_bClose = true;
-			m_fAlpha = 1.f;
-		}
-		break;
-	case CUI_ClientManager::QUEST_LINE:
-		m_vecNode[(_int)fData]->Set_Active(true);
-		break;
-	}
-}
-
-void CUI_CanvasQuest::Check(CUI_ClientManager::UI_PRESENT eType, _float fData)
-{
-	switch (eType)
-	{
-	case CUI_ClientManager::QUEST_LINE:
-		_int iIndex = (_int)fData % m_iNumsQuestLine[m_iCurQuestIndex];
-		if (iIndex >= (_int)m_vecEffects.size())
-			return;
-
-		m_vecEffects[iIndex]->Start_Effect(
-			m_vecNode[(_int)fData], 328.f, 5.f);
 		break;
 	}
 }
@@ -716,7 +350,7 @@ void CUI_CanvasQuest::Free()
 {
 	__super::Free();
 
-	for (_uint i = 0; i < QUEST_END; ++i)
+	for (_uint i = 0; i < (_uint)QUEST_END; ++i)
 		Safe_Release(m_Quests[i]);
 
 	m_vecEffects.clear();

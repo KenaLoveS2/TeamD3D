@@ -78,7 +78,13 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 		m_bActive = false;
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(false);
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(true);
-		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+	
+		if (nullptr != m_pPlayer)
+		{
+			if(m_pPlayer->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOW, 0))
+				CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+		}
+	
 
 		if (nullptr != m_pPlayer->Get_CameraPlayer())
 			m_pPlayer->Get_CameraPlayer()->Set_MouseFix(true);

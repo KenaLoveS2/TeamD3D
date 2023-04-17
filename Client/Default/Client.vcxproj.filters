@@ -637,6 +637,12 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Reward">
       <UniqueIdentifier>{868cb478-1bea-4881-94c7-f16de3aa4270}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest\QuestBox">
+      <UniqueIdentifier>{ea8f83f0-b3cf-4e1c-b6e5-38c234470c22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest\Reward%28old%29">
+      <UniqueIdentifier>{b71671f1-219f-4a77-b5bb-ccc4dc3f39fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -961,9 +967,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Quest.h">
       <Filter>02.GameObjects\UI\05. Real Object\Quest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeQuest.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_Event_Transform.h">
       <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
@@ -1703,9 +1706,6 @@
     <ClInclude Include="..\public\UI_NodeReward.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Reward</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_NodeQuestReward.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\E_P_Level_Floor.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClInclude>
@@ -1732,6 +1732,12 @@
     </ClInclude>
     <ClInclude Include="..\public\SceneChangePortal.h">
       <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeQuest.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\QuestBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeQuestReward.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Reward%28old%29</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2034,9 +2040,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Quest.cpp">
       <Filter>02.GameObjects\UI\05. Real Object\Quest</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeQuest.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_Event_Transform.cpp">
       <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
@@ -2776,9 +2779,6 @@
     <ClCompile Include="..\private\UI_NodeReward.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\Reward</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_NodeQuestReward.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\E_P_Level_Floor.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Level</Filter>
     </ClCompile>
@@ -2808,6 +2808,12 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeHitCount.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\HitCount</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeQuest.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\QuestBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeQuestReward.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Reward%28old%29</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

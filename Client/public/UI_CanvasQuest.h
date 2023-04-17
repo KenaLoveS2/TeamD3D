@@ -39,19 +39,12 @@ private:
 private: /* Bind Functions */
 	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bValue, _float fValue, wstring wstr);
 
-	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
-private:
-	void	Default(CUI_ClientManager::UI_PRESENT eType, _float fData);
-	void	Switch(CUI_ClientManager::UI_PRESENT eType, _float bTrue);
-	void	Check(CUI_ClientManager::UI_PRESENT eType, _float fData);
-
 private:/* Test */
 	CQuest*		m_Quests[QUEST_END];
 	_int		m_iCurQuestIndex;
 	_int		m_iCurLineIndex;
 	_int		m_iLastClearLine;
 	_int		m_iNumsQuestLine[QUEST_END];
-	_bool	m_bQuestClear = false;
 
 private:/* For Shader */
 	_float		m_fTimeAcc;
