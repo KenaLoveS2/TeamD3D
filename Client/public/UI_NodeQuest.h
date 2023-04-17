@@ -34,6 +34,9 @@ private:
 	_float					m_fTimeAcc;
 	_float					m_fTerm;
 
+	_bool					m_bAppear;
+	_bool					m_bDisappear;
+
 
 public:
 	static	CUI_NodeQuest*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

@@ -13,6 +13,8 @@ CUI_NodeQuest::CUI_NodeQuest(ID3D11Device * pDevice, ID3D11DeviceContext * pCont
 	, m_szQuest(nullptr)
 	, m_fTime(0.f)
 	, m_fTimeAcc(0.f)
+	, m_bAppear(false)
+	, m_bDisappear(false)
 {
 }
 
@@ -21,6 +23,8 @@ CUI_NodeQuest::CUI_NodeQuest(const CUI_NodeQuest & rhs)
 	, m_szQuest(nullptr)
 	, m_fTime(0.f)
 	, m_fTimeAcc(0.f)
+	, m_bAppear(false)
+	, m_bDisappear(false)
 {
 }
 
@@ -51,7 +55,11 @@ HRESULT CUI_NodeQuest::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	//m_bActive = false;
+	/* event */
+	m_vecEvents.push_back(CUI_Event_Fade::Create(0.08f, 0.5f));
+
+	m_fIntervalY = -10.f; /* Appear From */
+	m_fIntervalX = -10.f; /* Dissappear To */
 	return S_OK;
 }
 
@@ -59,6 +67,25 @@ void CUI_NodeQuest::Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
+
+	if (static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Is_End())
+		m_bActive = false;
+
+	if (!m_bAppear)
+	{
+		m_fTimeAcc += fTimeDelta;
+		if (m_fTimeAcc < m_fTerm)
+			return;
+
+		if
+	}
+	else
+	{
+		if (!m_bDisappear)
+		{
+
+		}
+	}
 
 	__super::Tick(fTimeDelta);
 
