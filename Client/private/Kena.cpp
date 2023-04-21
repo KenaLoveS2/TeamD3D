@@ -653,24 +653,23 @@ void CKena::Late_Tick(_float fTimeDelta)
 		}
 	}
 
-	//if(CGameInstance::GetInstance()->Key_Down(DIK_1))
-	//{
-	//	CUI_ClientManager::UI_PRESENT eQuestOpen = CUI_ClientManager::QUEST_;
-	//	_bool bOpen = true;
-	//	wstring wstr = L"";
-	//	m_PlayerQuestDelegator.broadcast(eQuestOpen, bOpen, g_QuestIndex, wstr);
-	//	CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
-	//}
-
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_2))
-	//{
-	//	CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_CLEAR_ALL;
-	//	_bool bOpen = true;
-	//	wstring wstr = L"";
-	//	m_PlayerQuestDelegator.broadcast(eQuest, bOpen, g_QuestIndex, wstr);
-	//	CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
-	//	g_QuestIndex++;
-	//}
+	if (CGameInstance::GetInstance()->Key_Down(DIK_1))
+	{       
+		CUI_ClientManager::UI_PRESENT eQuestOpen = CUI_ClientManager::QUEST_;
+		_bool bOpen = true;
+		wstring wstr = L"";
+		m_PlayerQuestDelegator.broadcast(eQuestOpen, bOpen, g_QuestIndex, wstr);
+		CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+	}
+	if (CGameInstance::GetInstance()->Key_Down(DIK_2))
+	{
+		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_CLEAR_ALL;
+		_bool bOpen = true;
+		wstring wstr = L"";
+		m_PlayerQuestDelegator.broadcast(eQuest, bOpen, g_QuestIndex, wstr);
+		CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+		g_QuestIndex++;
+	}
 
 
 
@@ -1386,6 +1385,9 @@ void CKena::Call_FocusRotIconFlower(CGameObject* pTarget)
 	if (m_pUI_FocusRot == nullptr)
 		return;
 
+	if (pTarget == nullptr)
+		m_pUI_FocusRot->Off_Focus(nullptr);
+
 	/* This Action needs Pip */
 	if (0 == m_pKenaStatus->Get_CurPIPCount())
 	{
@@ -1476,7 +1478,7 @@ void CKena::RimColorValue()
 
 HRESULT CKena::Ready_Parts()
 {
-	CKena_Parts*	pPart = nullptr;
+	CKena_Parts*	pPart = nullptr; 
 	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CKena_Parts::KENAPARTS_DESC	PartDesc;
