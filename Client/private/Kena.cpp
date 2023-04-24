@@ -3649,6 +3649,13 @@ _int CKena::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex
 		m_iCurParryFrame = 0;
 		m_pAttackObject = pTarget;
 	}
+
+	if (iColliderIndex == (_int)COL_BOSS_SWIPECHARGE)
+	{
+		m_bParry = true;
+		m_iCurParryFrame = 0;
+		m_pAttackObject = pTarget;
+	}
 	
 	if (iColliderIndex == (_int)COL_WARRIOR_GRAB_HAND)
 	{
