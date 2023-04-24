@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\RockGolem.h"
 #include "GameInstance.h"
+#include "E_P_ExplosionGravity.h"
 
 CRockGolem::CRockGolem(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -27,6 +28,7 @@ HRESULT CRockGolem::Initialize(void* pArg)
 	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_UI(5.f), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -126,6 +128,7 @@ void CRockGolem::Tick(_float fTimeDelta)
 	Update_Collider(fTimeDelta);
 
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pEffect)m_pEffect->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -138,6 +141,7 @@ void CRockGolem::Late_Tick(_float fTimeDelta)
 	if (m_bDeath) return;
 
 	CMonster::Late_Tick(fTimeDelta);
+	if (m_pEffect)m_pEffect->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)
 	{
@@ -691,6 +695,17 @@ void CRockGolem::Tick_Attack(_float fTimeDelta)
 	}
 }
 
+HRESULT CRockGolem::Ready_Effects()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	m_pEffect = dynamic_cast<CE_P_ExplosionGravity*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", L"E_RockGolem"));
+	NULL_CHECK_RETURN(m_pEffect, E_FAIL);
+	m_pEffect->Set_Parent(this);
+	m_pEffect->Set_Option(CE_P_ExplosionGravity::TYPE_ROCK_GOLEM);
+
+	return S_OK;
+}
+
 CRockGolem* CRockGolem::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CRockGolem*	pInstance = new CRockGolem(pDevice, pContext);
@@ -720,14 +735,22 @@ CGameObject* CRockGolem::Clone(void* pArg)
 void CRockGolem::Free()
 {
 	CMonster::Free();
+
+	Safe_Release(m_pEffect);
 }
 
 _int CRockGolem::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	if (pTarget && m_bSpawn && m_bExplodeAttack)
 	{
-		if (iColliderIndex == COL_PLAYER_WEAPON || iColliderIndex == COL_PLAYER_ARROW)
+		if (iColliderIndex == (_uint)COL_PLAYER_WEAPON || iColliderIndex == (_uint)COL_PLAYER_ARROW)
 		{			
+			/* Damage Particle */
+			_float4 vCollPos = vCollisionPos;
+			vCollPos.w = 1.f;
+			m_pEffect->UpdateParticle(vCollPos);
+			/* Damage Particle */
+
 			WeakleyHit();
 			// m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 			m_pMonsterStatusCom->UnderAttack(150);

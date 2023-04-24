@@ -51,6 +51,8 @@ Texture2D<float4>      g_RoughnessTexture;
 
 float4					g_EmissiveColor = (float4)1.f;
 float					g_fHDRIntensity = 0.f;
+float					g_fRimPower;
+float3					g_fRimcolor;
 
 /* EnemyWisp Texture */
 Texture2D<float4>     g_ReamTexture;
@@ -1332,13 +1334,17 @@ PS_OUT PS_MAIN_BOSS_AO_R_M(PS_IN In)
 	if (0.1f > vDiffuse.a)
 		discard;
 
-	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+	float4	   FinalColor = float4(0.f, 0.f, 0.f, 1.f);
 
-	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3     vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
-
-	FinalColor = vDiffuse;
+	
+	float rim = saturate(dot(vNormal, -normalize(In.vViewDir)));
+	float3 fresnel = pow(1.0f - rim, g_fRimPower) * g_fRimcolor;
+	
+	FinalColor.rgb = vDiffuse.rgb + fresnel;
+	FinalColor.a = vDiffuse.a;
 
 	if (g_bDissolve)
 	{
@@ -1370,7 +1376,7 @@ PS_OUT PS_MAIN_BOSS_AO_R_M(PS_IN In)
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
@@ -1394,7 +1400,11 @@ PS_OUT PS_MAIN_BOSS_AO_R_M_E(PS_IN In)
 	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
+	float rim = saturate(dot(vNormal, -normalize(In.vViewDir)));
+	float3 fresnel = pow(1.0f - rim, g_fRimPower) * g_fRimcolor;
+
 	FinalColor = vDiffuse + (vDiffuse * vEmissiveDesc * g_EmissiveColor);
+	FinalColor.rgb += fresnel;
 
 	if (g_bDissolve)
 	{
@@ -2138,7 +2148,7 @@ technique11 DefaultTechnique
 
 	pass BOSS_AO_R_M
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_CULLNONE);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -2150,7 +2160,7 @@ technique11 DefaultTechnique
 
 	pass BOSS_AO_R_M_E
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_CULLNONE);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();

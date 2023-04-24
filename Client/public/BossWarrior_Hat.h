@@ -9,7 +9,7 @@ private:
 	_bool m_bEnd = false;
 
 	_float4x4 m_SocketPivotMatrix;
-	_uint m_iShaderPass = 6;
+	_uint m_iShaderPass = 14;
 
 	_float3 m_vColliderPivotPos = { 0.f, -0.15f, 0.f };
 	_float3 m_vColliderPivotRot = {0.3f, 0.f, 0.f};

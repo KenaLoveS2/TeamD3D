@@ -82,6 +82,10 @@ private:
 	void Tick_Attack(_float fTimeDelta);
 
 private:
+	HRESULT Ready_Effects();
+	class CE_P_ExplosionGravity* m_pEffect = nullptr;
+
+private:
 	_float	m_fIdletoAttackTime = 0.f;
 
 	_int m_iAttackType = AT_EXPLODE;
