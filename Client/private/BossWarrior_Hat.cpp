@@ -74,7 +74,7 @@ void CBossWarrior_Hat::Tick(_float fTimeDelta)
 	if (m_bEnd) return;
 
 	__super::Tick(fTimeDelta);
-
+	
 	// Imgui_RenderProperty();
 
 	if (m_bHeadShot)
@@ -124,7 +124,7 @@ void CBossWarrior_Hat::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
 HRESULT CBossWarrior_Hat::Render()

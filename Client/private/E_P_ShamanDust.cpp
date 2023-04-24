@@ -42,6 +42,8 @@ HRESULT CE_P_ShamanDust::Late_Initialize(void* pArg)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	m_pShaman = (CBossShaman*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Monster"), TEXT("BossShaman_0"));
 	RELEASE_INSTANCE(CGameInstance);
+
+	m_eEFfectDesc.vColor = XMVectorSetW(m_eEFfectDesc.vColor, 0.05f);
 	return S_OK;
 }
 

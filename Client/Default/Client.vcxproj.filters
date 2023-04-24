@@ -1715,15 +1715,6 @@
     <ClInclude Include="..\public\BossShaman_Mask.h">
       <Filter>1004.알아서해라</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Camera_Shaman.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_P_ShamanDust.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_WarriorEyeTrail.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Fire_Brazier.h">
       <Filter>1004.알아서해라</Filter>
     </ClInclude>
@@ -1732,6 +1723,15 @@
     </ClInclude>
     <ClInclude Include="..\public\SceneChangePortal.h">
       <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Shaman.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_WarriorEyeTrail.h">
+      <Filter>02.GameObjects\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_ShamanDust.h">
+      <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2791,12 +2791,6 @@
     <ClCompile Include="..\private\Camera_Shaman.cpp">
       <Filter>1004.알아서해라</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_P_ShamanDust.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_WarriorEyeTrail.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Fire_Brazier.cpp">
       <Filter>1004.알아서해라</Filter>
     </ClCompile>
@@ -2808,6 +2802,12 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeHitCount.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\13. MiniGame\HitCount</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_ShamanDust.cpp">
+      <Filter>02.GameObjects\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_WarriorEyeTrail.cpp">
+      <Filter>02.GameObjects\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -40,6 +40,7 @@ struct VS_OUT
 	float4		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
+	float3		vViewDir : TEXCOORD2;
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
 };
@@ -52,13 +53,15 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
+	float4 worldPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
+	Out.vViewDir = normalize(g_vCamPosition.xyz - worldPosition.xyz);
+
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
 	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
 	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
-
 	return Out;
 }
 
@@ -77,6 +80,9 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 	vector		vTangent = mul(float4(In.vTangent, 0.f), g_WorldMatrix);
 	vTangent = mul(vTangent, g_SocketMatrix);
 
+	float4 worldPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
+	Out.vViewDir = normalize(g_vCamPosition.xyz - worldPosition.xyz);
+
 	Out.vPosition = mul(vPosition, matVP);
 	Out.vNormal = normalize(vNormal);
 	Out.vTexUV = In.vTexUV;
@@ -93,6 +99,7 @@ struct PS_IN
 	float4		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
+	float3		vViewDir : TEXCOORD2;
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
 };
@@ -379,6 +386,38 @@ PS_OUT PS_MAIN_HUNTER_ARROW(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_WARRIORHAT(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vOpacityDesc = g_OpacityTexture.Sample(LinearSampler, In.vTexUV);
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	float fOpacity = vOpacityDesc.r;
+
+	float rim = saturate(dot(vNormal, In.vViewDir));
+	float3 fresnel = pow(1.0f - rim, 5.f) * float3(255.f, 127.f, 255.f) / 255.f;
+
+	FinalColor = float4(vDiffuse.rgb + fresnel, fOpacity * vDiffuse.a);
+	if (0.1f > FinalColor.a)
+		discard;
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}//14
+
 technique11 DefaultTechnique
 {
 	pass Default		//0
@@ -560,4 +599,18 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_HUNTER_ARROW();
 	}
+
+	pass Warrior_Hat// 14
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_SOCKET();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_WARRIORHAT();
+	}
+
 }

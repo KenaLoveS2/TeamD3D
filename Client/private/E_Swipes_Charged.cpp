@@ -117,9 +117,9 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 	}
 	else
 	{
-		vScaled.x += fTimeDelta * 2.f + 0.2f;
-		vScaled.y += fTimeDelta * 2.f + 0.2f;
-		vScaled.z += fTimeDelta * 2.f + 0.2f;
+		vScaled.x += fTimeDelta * 2.2f;
+		vScaled.y += fTimeDelta * 2.2f;
+		vScaled.z += fTimeDelta * 2.2f;
 		m_pTransformCom->Set_Scaled(vScaled);
 
 		m_vecChild[0]->Set_AddScale(fTimeDelta + 1.1f);

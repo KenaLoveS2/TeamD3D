@@ -304,7 +304,6 @@ void CE_KenaPulse::Reset()
 _int CE_KenaPulse::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
     _bool bRealAttack = false;
-
     if (pTarget == nullptr)
     {
 
@@ -315,7 +314,7 @@ _int CE_KenaPulse::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
         if (pEffectBase != nullptr && pEffectBase->Get_Active() == false)
             return 0;
 
-        if (iColliderIndex == (_uint)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+        if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
         {
             if (m_pKena->Get_State(CKena::STATE_PULSE) == false)
                 return 0;
@@ -387,7 +386,55 @@ _int CE_KenaPulse::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTrigge
 
         if (iColliderIndex == (_int)COL_BOSS_SWIPECHARGE)
         {
-            int a = 0;
+			if (m_pKena->Get_State(CKena::STATE_PULSE) == false)
+				return 0;
+
+			// KenaPulse °ø°Ý·Â ±ð±â
+			CStatus* pStatus = dynamic_cast<CMonster*>(pTarget)->Get_MonsterStatusPtr();
+
+			if (pStatus->Get_Attack() > 10)
+				m_pKena->Set_State(CKena::STATE_HEAVYHIT, true);
+			else
+				m_pKena->Set_State(CKena::STATE_COMMONHIT, true);
+
+			m_pKena->Set_AttackObject(pTarget);
+			//
+			CKena::DAMAGED_FROM      eDir = CKena::DAMAGED_FROM_END;
+			CTransform* pTargetTransCom = pTarget->Get_TransformCom();
+			_float4    vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			vDir.Normalize();
+
+			m_pExplsionGravity->UpdateParticle(m_pTransformCom->Get_Position(), vDir);
+
+			_float         fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
+
+			if (fFrontBackAngle >= 0.f)
+				eDir = CKena::DAMAGED_FRONT;
+			else
+				eDir = CKena::DAMAGED_BACK;
+
+			m_pKena->Set_DamagedDir(eDir);
+			m_pStatus->Under_Shield(pStatus);
+
+			/* Update */
+			m_eStatus.fCurHp = m_pStatus->Get_Shield();
+			m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
+			/* Update */
+
+			/* Shield Guage UI Call */
+			m_fHpRatio = m_eStatus.fCurHp / m_eStatus.fMaxHp;
+			CUI_ClientManager::UI_PRESENT eShield = CUI_ClientManager::HUD_SHIELD;
+			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+			m_ShieldDelegator.broadcast(eShield, funcDefault, m_fHpRatio);
+			/* ~Shield Guage UI Call */
+
+			if (m_eStatus.fCurHp <= 0.0f)
+			{
+				m_bDesolve = true;
+				m_fDissolveTime = 0.0f;
+			}
+			else
+				m_eStatus.eState = STATUS::STATE_DAMAGE;
         }
     }
 
