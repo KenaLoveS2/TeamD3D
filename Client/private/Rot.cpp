@@ -111,7 +111,6 @@ void CRot::Tick(_float fTimeDelta)
 		if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 		
 		m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-
 		m_pModelCom->Play_Animation(fTimeDelta * m_bPlayAnimation);
 	}
 	else if (m_bWakeUp && m_pTransformCom->Calc_Distance_XYZ(m_pKena->Get_TransformCom()) < 20.f)
@@ -336,7 +335,7 @@ HRESULT CRot::SetUp_State()
 		// COLLECT, COLLECT2, COLLECT3, COLLECT4, COLLECT5, COLLECT6, COLLECT7, COLLECT8,
 
 		// m_iCuteAnimIndex = rand() % (PHOTOPOSE8 - PHOTOPOSE1) + PHOTOPOSE1;
-		m_iCuteAnimIndex = rand() % (COLLECT8 - COLLECT) + COLLECT;
+		m_iCuteAnimIndex = (rand() % (COLLECT8 - COLLECT)) + COLLECT;
 		
 		m_pModelCom->ResetAnimIdx_PlayTime(m_iCuteAnimIndex);
 		m_pModelCom->Set_AnimIndex(m_iCuteAnimIndex);
@@ -454,7 +453,11 @@ HRESULT CRot::SetUp_State()
 	{
 		return m_pMonster_Manager->Is_Battle() == false;
 	})
-
+		.AddTransition("HIDE_WAIT to PHOTO", "READY_PHOTO")
+		.Predicator([this]()
+	{
+		return m_pCamera_Photo && m_pCamera_Photo->Is_Work();
+	})
 
 		.AddState("READY_PHOTO")		
 		.Tick([this](_float fTimeDelta)
@@ -616,9 +619,7 @@ _bool CRot::Is_PhotoAnimEnd()
 
 void CRot::Execute_PhotoTeleport()
 {
-	static _bool bTeleportFlag = false;
-
-	if (m_iThisRotIndex != FIRST_ROT || bTeleportFlag) return;
+	if (m_iThisRotIndex != FIRST_ROT) return;
 	
 	_float4 vKenaRight = m_pKenaTransform->Get_State(CTransform::STATE_RIGHT);
 
@@ -632,8 +633,6 @@ void CRot::Execute_PhotoTeleport()
 
 		i++;
 	}
-
-	bTeleportFlag = true;
 }
 
 void CRot::Push_EventFunctions()

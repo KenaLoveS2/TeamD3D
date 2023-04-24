@@ -100,8 +100,6 @@ void CSpiritArrow::Tick(_float fTimeDelta)
 	if (m_bActive == false)
 		return;
 
-	m_iDamage = 50;
-
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
 

@@ -104,6 +104,48 @@ void CUI_NodeEffect::BackToOriginalScale()
 	m_matLocal = m_matLocalOriginal;
 }
 
+void CUI_NodeEffect::Set_Effect(CUI* pTarget, _float fX, _float fY)
+{
+	if (nullptr == pTarget)
+		return;
+
+	m_pTarget = pTarget;
+	m_bActive = true;
+
+	_float4 vPos = pTarget->Get_LocalMatrix().r[3];
+	vPos.x += fX;
+	vPos.y += fY;
+
+	this->Set_LocalTranslation(vPos);
+
+	//if (!m_vecEvents.empty())
+	//	m_vecEvents[0]->Call_Event((_uint)0);
+
+		m_fTime = 0.f;
+		//m_iParticleIndex = 0;
+		m_fParticleTimeAcc = 0.f;
+		for (auto& p : m_vecParticles)
+			p->DeActivate();
+		m_iParticleIndex = 0;
+
+		if (m_pParent != nullptr)
+		{
+			_float4x4 matWorldParent;
+			XMStoreFloat4x4(&matWorldParent, m_pParent->Get_WorldMatrix());
+
+			_matrix matParentTrans = XMMatrixTranslation(matWorldParent._41, matWorldParent._42, matWorldParent._43);
+
+			float fRatioX = matWorldParent._11 / m_matParentInit._11;
+			float fRatioY = matWorldParent._22 / m_matParentInit._22;
+			_matrix matParentScale = XMMatrixScaling(fRatioX, fRatioY, 1.f);
+
+			_smatrix matWorld = m_matLocal * matParentScale * matParentTrans;
+
+			m_vOriginalSettingScale = { matWorld.Right().Length(), matWorld.Up().Length(), matWorld.Forward().Length() };
+		}
+
+}
+
 HRESULT CUI_NodeEffect::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))

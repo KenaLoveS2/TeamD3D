@@ -255,8 +255,8 @@ void CBossShaman_Mask::ShamanMask_Proc(_float fTimeDelta)
 	case DISSOLVE:
 	{
 		m_fDissolveTime += fTimeDelta * m_fDissolveRate;
-		if (m_fDissolveTime >= 0.09f) 
-			m_fDissolveRate *= 1.02f;
+		if (m_fDissolveTime >= 0.05f) 
+			m_fDissolveRate *= 2.f;
 		
 		if (m_fDissolveTime >= 1.f)
 		{

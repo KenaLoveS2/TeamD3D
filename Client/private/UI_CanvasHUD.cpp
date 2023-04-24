@@ -83,6 +83,67 @@ HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CUI_CanvasHUD::Late_Initialize(void* pArg)
+{
+	/* Level Change */
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	if (pKena == nullptr)
+		return E_FAIL;
+
+	_int iRotLevel = 	pKena->Get_Status()->Get_RotLevel();
+	if(1 == iRotLevel)
+	{
+		m_vecNode[UI_PIPBAR1]->Set_Active(true);
+		m_vecNode[UI_PIPGAUGE1]->Set_Active(true);
+		m_iNumPips = 1;
+		m_iNumPipsNow = m_iNumPips;
+	}
+		else if (2 == iRotLevel)
+		{
+		m_vecNode[UI_PIPBAR1]->Set_Active(true);
+		m_vecNode[UI_PIPGAUGE1]->Set_Active(true);
+			m_vecNode[UI_PIPBAR2]->Set_Active(true);
+			m_vecNode[UI_PIPGAUGE2]->Set_Active(true);
+
+			m_iNumPips = 2;
+			m_iNumPipsNow = m_iNumPips;
+
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1] - 1])->ReArrangeX(); /* Frame */
+
+			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_1]])->Set_Guage(1.f);
+		}
+		else if (3 == iRotLevel)
+		{
+		m_vecNode[UI_PIPBAR1]->Set_Active(true);
+		m_vecNode[UI_PIPGAUGE1]->Set_Active(true);
+		m_vecNode[UI_PIPBAR2]->Set_Active(true);
+		m_vecNode[UI_PIPGAUGE2]->Set_Active(true);
+			m_vecNode[UI_PIPBAR3]->Set_Active(true);
+			m_vecNode[UI_PIPGAUGE3]->Set_Active(true);
+
+			m_iNumPips = 3;
+			m_iNumPipsNow = m_iNumPips;
+
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1] - 1])->ReArrangeX(); /* Frame */
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_2]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_2] - 1])->ReArrangeX(); /* Frame */
+
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1] - 1])->ReArrangeX(); /* Frame */
+
+			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_1]])->Set_Guage(1.f);
+			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_2]])->Set_Guage(1.f);
+		}
+
+
+
+
+
+	return S_OK;
+}
+
 void CUI_CanvasHUD::Tick(_float fTimeDelta)
 {
 	if (!m_bBindFinished)

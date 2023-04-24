@@ -31,7 +31,7 @@ HRESULT CRope_RotRock::Initialize(void* pArg)
 
 	m_pModelCom->Set_AllAnimCommonType();
 
-	m_pTransformCom->Set_Speed(1.f);
+	m_pTransformCom->Set_Speed(2.f);
 	m_pTransformCom->Set_RotatePerSecond(0.5f);
 
 
@@ -308,9 +308,7 @@ HRESULT CRope_RotRock::SetUp_State()
 		_float3 vPlayerPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
 		if (m_pTransformCom->IsClosed_XZ(vPlayerPos, 5.f))
-			m_pKena->Set_RopeRotRockPtr(this);
-		else
-			m_pKena->Set_RopeRotRockPtr(nullptr);
+			m_pKena->Set_RopeRotRockPtr(this);		
 	})
 	.OnExit([this]()
 	{
@@ -336,8 +334,6 @@ HRESULT CRope_RotRock::SetUp_State()
 
 		if (m_pTransformCom->IsClosed_XZ(vPlayerPos, 5.f))
 			m_pKena->Set_RopeRotRockPtr(this);
-		else
-			m_pKena->Set_RopeRotRockPtr(nullptr);
 	})
 		.OnExit([this]()
 	{

@@ -214,7 +214,7 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 		}
 	case CKena_Status::SKILL_SHIELD:
 		{
-			if (iSlot == 2)			/* º¸È£¸· Ã¼·Â Áõ°¡ */
+			if (iSlot == 2)			/* ï¿½ï¿½È£ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 			{
 				m_fMaxShield *= 1.5f;
 				m_fShield = m_fMaxShield;
@@ -223,7 +223,7 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 				CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::HUD_SHIELD_UPGRADE;
 				m_StatusDelegator.broadcast(eUpgrade, m_fMaxShield);
 			}
-			else if (iSlot == 4)	/* º¸È£¸· Ã¼·Â Áõ°¡ */
+			else if (iSlot == 4)	/* ï¿½ï¿½È£ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 			{
 				m_fMaxShield *= 1.5f;
 				m_fShield = m_fMaxShield;
@@ -245,7 +245,7 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 				_float fMax = (_float)m_iMaxArrowCount;
 				m_StatusDelegator.broadcast(eArrowUpgrade, fMax);
 			}
-			else if (iSlot == 2)		/* È­»ì °³¼ö Áõ°¡ */
+			else if (iSlot == 2)		/* È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 			{
 				m_iMaxArrowCount++;
 				m_iCurArrowCount = m_iMaxArrowCount;
@@ -253,19 +253,19 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 				_float fMax = (_float)m_iMaxArrowCount;
 				m_StatusDelegator.broadcast(eArrowUpgrade, fMax);
 			}
-			else if (iSlot == 3)	/* È­»ì µ¥¹ÌÁö Áõ°¡ (8) */
+			else if (iSlot == 3)	/* È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (25) */
 			{
 				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
 
 				for (auto pArrow : *pArrows)
-					pArrow->Set_Damage(8);
+					pArrow->Set_Damage(25);
 			}
-			else if (iSlot == 4)	/* È­»ì µ¥¹ÌÁö Áõ°¡ (12) */
+			else if (iSlot == 4)	/* È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (30) */
 			{
 				vector<CSpiritArrow*>* pArrows = dynamic_cast<CKena*>(m_pOwner)->Get_Arrows();
 
 				for (auto pArrow : *pArrows)
-					pArrow->Set_Damage(12);
+					pArrow->Set_Damage(30);
 			}
 
 			break;
@@ -281,14 +281,14 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 				_float fMax = (_float)m_iMaxBombCount;
 				m_StatusDelegator.broadcast(eBombUpgrade, fMax);
 			}
-			else if (iSlot == 2)		/* ÆøÅº ÅÍÁö´Â ½Ã°£ °¨¼Ò */
+			else if (iSlot == 2)		/* ï¿½ï¿½Åº ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 			{
 				vector<CRotBomb*>* pBombs = dynamic_cast<CKena*>(m_pOwner)->Get_Bombs();
 
 				for (auto pBomb : *pBombs)
 					pBomb->Set_BoomTime(2.5f);
 			}
-			else if (iSlot == 3)	/* ÆøÅº 2°³ ¼ÒÁö */
+			else if (iSlot == 3)	/* ï¿½ï¿½Åº 2ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 			{
 				m_iMaxBombCount++;
 				m_iCurBombCount = m_iMaxBombCount;
@@ -298,7 +298,7 @@ void CKena_Status::Apply_Skill(SKILLTAB eCategory, _uint iSlot)
 			}
 			else if (iSlot == 4)
 			{
-				/* ¾È ÇØ */
+				/* ï¿½ï¿½ ï¿½ï¿½ */
 			}
 
 			break;
@@ -453,12 +453,12 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 	return S_OK;
 }
 
-HRESULT CKena_Status::Save_RunTime(const wstring & wstrFilePath)
+HRESULT CKena_Status::Save_RunTime(const wstring& wstrFilePath)
 {
 	if (wstrFilePath == L"")
 		return E_FAIL;
 
-	Json	jKenaStatus;
+	Json   jKenaStatus;
 
 	jKenaStatus["00. Max HP"] = m_iMaxHP;
 	jKenaStatus["01. HP"] = m_iHP;
@@ -498,7 +498,8 @@ HRESULT CKena_Status::Save_RunTime(const wstring & wstrFilePath)
 	return S_OK;
 }
 
-HRESULT CKena_Status::Load_RunTime(const wstring & wstrFilePath)
+
+HRESULT CKena_Status::Load_RunTime(const wstring& wstrFilePath)
 {
 	if (wstrFilePath == L"")
 		return E_FAIL;
@@ -538,8 +539,6 @@ HRESULT CKena_Status::Load_RunTime(const wstring & wstrFilePath)
 				jKenaStatus["99. Skill States"][i * 5 + j].get_to<_bool>(m_bSkills[i][j]);
 		}
 	}
-
-	// Karma, Crystal, RotLevel, CurRotCount, MinRotCount, MaxRotCount
 
 	return S_OK;
 }
@@ -581,7 +580,6 @@ const _bool CKena_Status::Get_SkillState(SKILLTAB eCategory, _uint iSlot) const
 
 void CKena_Status::Set_RotCount(_int iValue)
 {
-
 	//m_iCurrentRotCount = iValue;
 
 	//CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
@@ -595,7 +593,6 @@ void CKena_Status::Set_RotCount(_int iValue)
 	//m_StatusDelegator.broadcast(eNow, fRotNow);
 	//m_StatusDelegator.broadcast(eMax, fRotMax);
 	//m_StatusDelegator.broadcast(eGet, fGuage);
-
 
 	///* think later */
 	//if (Get_RotMax() == m_iCurrentRotCount)

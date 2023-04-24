@@ -10,6 +10,7 @@
 #include "Kena_Status.h"
 #include "WorldTrigger.h"
 
+
 CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Canvas(pDevice, pContext)
 	, m_fTimeAcc(0.8f)
@@ -23,6 +24,7 @@ CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	, m_iCurLineIndex(0)
 	, m_fTimeOn(0.f)
 	, m_fTimeOnAcc(0.f)
+, m_bQuestClear(false)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
 	{
@@ -44,6 +46,7 @@ CUI_CanvasQuest::CUI_CanvasQuest(const CUI_CanvasQuest& rhs)
 	, m_iCurLineIndex(0)
 	, m_fTimeOn(0.f)
 	, m_fTimeOnAcc(0.f)
+, m_bQuestClear(false)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
 	{
@@ -172,12 +175,7 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 				else if (i == m_iCurQuestIndex)
 				{
 					for (_int line = 0; line <= m_iCurLineIndex; ++line)
-					{
 						static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->QuestOn();
-						_float fAlpha = static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->Get_Alpha();
-						if (line <= m_iLastClearLine && line != 0)
-							static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
-					}
 					break;
 				}
 
@@ -187,7 +185,7 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 	}
 	else if (m_bClose)
 	{
-		static_cast<CUI_NodeQuest*>(m_vecNode[0])->Set_Alpha(m_fAlpha);
+		//static_cast<CUI_NodeQuest*>(m_vecNode[0])->Set_Alpha(m_fAlpha);
 		if (m_fTimeAcc > 0.5f)
 		{
 			m_fAlpha -= 0.5f * fTimeDelta;
@@ -209,64 +207,13 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 				for (_int line = 0; line <= m_iCurLineIndex; ++line)
 				{
 					static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->QuestOff();
-					_float fAlpha = static_cast<CUI_NodeQuest*>(m_vecNode[iCount + line])->Get_Alpha();
-					if (line <= m_iLastClearLine && line != 0)
-						static_cast<CUI_NodeEffect*>(m_vecEffects[line])->Set_Alpha(fAlpha);
 				}
 				break;
 			}
 		}
-
-		//for (_int i = 0; i <= m_iCurLineIndex; ++i)
-		//{
-		//	static_cast<CUI_NodeQuest*>(m_vecNode[m_iCurQuestIndex * m_iNumsQuestLine[m_iCurQuestIndex] + i])->QuestOff();
-
-		//	if (i <= m_iLastClearLine)
-		//		static_cast<CUI_NodeEffect*>(m_vecEffects[i])->Set_Alpha(m_fAlpha);
-		//}
-
-
-
 	}
 	else
 		m_eState = STATE_NORMAL;
-
-	if (static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->Get_Alpha() > 0.8f)
-	{
-		for (_uint i = 0; i < (_uint)m_vecNode.size() - 1; ++i)
-			m_vecNode[i]->Set_Active(false);
-
-		if (m_iCurQuestIndex == QUEST_1 || m_iCurQuestIndex == QUEST_2)
-		{
-			BindFunction(CUI_ClientManager::QUEST_, true, 0, L"");
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 0, L"");
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 1, L"");
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 2, L"");
-			BindFunction(CUI_ClientManager::QUEST_LINE, true, 3, L"");
-		}
-
-		//if (m_iCurQuestIndex == QUEST_2)
-		//{
-		//	BindFunction(CUI_ClientManager::QUEST_LINE, true, 0, L"");
-		//	BindFunction(CUI_ClientManager::QUEST_LINE, true, 1, L"");
-		//	BindFunction(CUI_ClientManager::QUEST_LINE, true, 2, L"");
-		//	BindFunction(CUI_ClientManager::QUEST_LINE, true, 3, L"");
-		//}
-
-		if (m_iCurQuestIndex == QUEST_END)
-			m_bFollowAlpha = true;
-	}
-
-	if (m_bFollowAlpha == true)
-	{
-		m_fAlpha = static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->Get_Alpha();
-		if (m_fAlpha <= 0.f)
-			m_bActive = false;
-	}
-
-	/*test */
-	//for (_uint i = 0; i < QUEST_END; ++i)
-	//	m_Quests[i]->Tick(fTimeDelta);
 
 	__super::Tick(fTimeDelta);
 
@@ -282,7 +229,7 @@ void CUI_CanvasQuest::Late_Tick(_float fTimeDelta)
 	if (m_eState == STATE_NORMAL)
 {
 	m_fTmpAcc += fTimeDelta;
-	if (m_fTmpAcc > 5.f)
+	if (m_fTmpAcc > 2.f)
 	{
 		m_eState = STATE_CLOSE;
 		m_fTimeAcc = 0.f;
@@ -290,8 +237,6 @@ void CUI_CanvasQuest::Late_Tick(_float fTimeDelta)
 		m_fAlpha = 1.f;
 	}
 }
-
-
 
 	for (auto e : m_vecEvents)
 		e->Late_Tick(fTimeDelta);
@@ -537,6 +482,7 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 	switch (eType)
 	{
 	case CUI_ClientManager::QUEST_:
+		m_iCurQuestIndex = (_int)fValue;
 		m_bOpen = false;
 		m_bClose = false;
 		m_iLineIndexIter = 0;
@@ -579,10 +525,12 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 	}
 	case CUI_ClientManager::QUEST_CLEAR:
 	{
-		if (m_iCurQuestIndex >= QUEST_END)
-			return;
-		if ((_int)fValue > m_iNumsQuestLine[m_iCurQuestIndex])
-			return;
+
+		m_bQuestClear = true;
+
+		m_iLastClearLine = (_int)fValue;
+		//static_cast<CUI_NodeEffect*>(m_vecEffects[(_int)fValue])->Set_Effect(this, 328.f, -2.f);
+
 		BindFunction(CUI_ClientManager::QUEST_, true, 1.f, L"");
 
 		//m_bActive = true;
@@ -591,8 +539,8 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 		///* 아이들을 따라가세요 : 1 */
 		//if (iLen > 10)
 		//	static_cast<CUI_NodeEffect*>(m_vecNode[(_int)fValue])->Change_Scale({ iLen - 10, });
-		m_vecEffects[(_int)fValue]->Start_Effect(
-			m_vecNode[(_int)fValue], 328.f, -2.f);
+
+			//m_vecEffects[(_int)fValue]->Start_Effect(	m_vecNode[(_int)fValue], 328.f, -2.f);
 
 		if ((_int)fValue == m_iNumsQuestLine[m_iCurQuestIndex] - 1)
 		{
@@ -604,7 +552,8 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 		break;
 	}
 	case CUI_ClientManager::QUEST_CLEAR_ALL:
-
+		m_iCurQuestIndex = (_int)fValue;
+		BindFunction(CUI_ClientManager::QUEST_, true, m_iCurQuestIndex , L"");
 		static_cast<CUI_NodeQuestReward*>(m_vecNode[(_int)m_vecNode.size() - 1])->RewardOn();
 
 		/* Temp code  */

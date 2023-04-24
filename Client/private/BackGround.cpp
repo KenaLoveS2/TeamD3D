@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\BackGround.h"
 #include "GameInstance.h"
+#include "UI_MousePointer.h"
 
 CBackGround::CBackGround(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -79,6 +80,15 @@ void CBackGround::Tick(_float fTimeDelta)
 void CBackGround::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);	
+
+	if(g_LEVEL == LEVEL_LOGO)
+	{
+		::SetCursor(NULL);
+		CUI_MousePointer* pMouse = static_cast<CUI_MousePointer*>(CGameInstance::GetInstance()->Get_GameObjectPtr(
+			g_LEVEL, L"Layer_Canvas", L"Clone_MousePointer"));
+		if (pMouse != nullptr)
+			pMouse->Set_Active(true);
+	}
 
 	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }

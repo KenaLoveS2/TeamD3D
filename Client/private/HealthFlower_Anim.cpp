@@ -380,6 +380,8 @@ _bool CHealthFlower_Anim::Check_CameraRay()
 		m_pKena->Call_FocusRotIconFlower(this);
 		return true;
 	}
+	else
+		m_pKena->Call_FocusRotIconFlower(nullptr);
 
 	return false;
 }

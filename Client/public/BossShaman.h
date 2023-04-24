@@ -138,6 +138,7 @@ private:
 
 	_bool m_bStartRender = false;		
 	_float m_fCamDistRate = 0.73f;
+	_float m_fFogRange = 100.f;
 
 private:
 	CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

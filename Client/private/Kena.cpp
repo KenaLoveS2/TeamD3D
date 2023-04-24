@@ -38,6 +38,7 @@
 #include "Camera_Photo.h"
 #include "E_P_Level_RiseY.h"
 
+float g_QuestIndex = 0.f;
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 	, m_pUI_FocusRot(nullptr)
@@ -549,9 +550,14 @@ void CKena::Tick(_float fTimeDelta)
 	if (m_bQuestOn)
 	{
 		/* Quest 2 Open */
+		//CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+		//_bool bStart = true;
+		//_float fDefaultVal = 2.f;
+		//wstring wstr = L"";
+		//m_PlayerQuestDelegator.broadcast(eQuest, bStart, fDefaultVal, wstr);
+
 		m_bQuestOn = false;
 	}
-
 
 	LiftRotRockProc();
 
@@ -646,6 +652,36 @@ void CKena::Late_Tick(_float fTimeDelta)
 			//m_PlayerDelegator.broadcast(eRot, funcDefault, fState);
 		}
 	}
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_1))
+	{       
+		CUI_ClientManager::UI_PRESENT eQuestOpen = CUI_ClientManager::QUEST_;
+		_bool bOpen = true;
+		wstring wstr = L"";
+		m_PlayerQuestDelegator.broadcast(eQuestOpen, bOpen, g_QuestIndex, wstr);
+		CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+	}
+	if (CGameInstance::GetInstance()->Key_Down(DIK_2))
+	{
+		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_CLEAR_ALL;
+		_bool bOpen = true;
+		wstring wstr = L"";
+		m_PlayerQuestDelegator.broadcast(eQuest, bOpen, g_QuestIndex, wstr);
+		CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+		g_QuestIndex++;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	/* ~UI Control */
@@ -1349,6 +1385,9 @@ void CKena::Call_FocusRotIconFlower(CGameObject* pTarget)
 	if (m_pUI_FocusRot == nullptr)
 		return;
 
+	if (pTarget == nullptr)
+		m_pUI_FocusRot->Off_Focus(nullptr);
+
 	/* This Action needs Pip */
 	if (0 == m_pKenaStatus->Get_CurPIPCount())
 	{
@@ -1439,7 +1478,7 @@ void CKena::RimColorValue()
 
 HRESULT CKena::Ready_Parts()
 {
-	CKena_Parts*	pPart = nullptr;
+	CKena_Parts*	pPart = nullptr; 
 	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CKena_Parts::KENAPARTS_DESC	PartDesc;
@@ -3581,12 +3620,12 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 				m_pTransformCom->Set_Position(vPos);
 
 				/* Quest 1 - 3 Clear */
-				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-				_bool bStart = true;
-				_float fIdx = 3;
-				wstring wstr = L"";
-				m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
-				CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+				//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+				//_bool bStart = true;
+				//_float fIdx = 3;
+				//wstring wstr = L"";
+				//m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
+				//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 			}
 		}
 

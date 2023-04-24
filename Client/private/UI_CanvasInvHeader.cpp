@@ -89,12 +89,12 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 			if (false == m_pPlayer->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOMB, 0))
 			{
 				/* Quest 0 - 3 Clear */
-				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-				_bool bStart = true;
-				_float fIdx3 = 3;
-				wstring wstr = L"";
-				m_pPlayer->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx3, wstr);
-				CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+				//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+				//_bool bStart = true;
+				//_float fIdx3 = 3;
+				//wstring wstr = L"";
+				//m_pPlayer->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx3, wstr);
+				//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 
 			}
 			m_bFirstOpen = true;
