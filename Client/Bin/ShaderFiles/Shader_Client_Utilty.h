@@ -10,6 +10,7 @@ static const float PI = 3.14159265359;
 //    Disney
 // -------------------------------------------------------------------------
 
+// 세기, 강도, 컬러, 노말, 뷰
 float3 fresnel_glow(float amount, float intensity, float3 color, float3 normal, float3 view)
 {
 	float arg = abs(1.0f - dot(normalize(normal), normalize(view)));
