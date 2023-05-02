@@ -257,7 +257,6 @@ _int CDeadZoneBossTree::Execute_Collision(CGameObject* pTarget, _float3 vCollisi
 
 		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
 		{
-			/*���� ���� ���ý�*/
 			if (!m_bCollOnce)
 			{
 				m_bDissolve = true;

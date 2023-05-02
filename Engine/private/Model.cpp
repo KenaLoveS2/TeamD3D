@@ -2163,8 +2163,50 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 			ImGui::InputInt("Edit StartNum ", &EditStartIndex);
 			ImGui::InputInt("Edit EndNum ", &EdiEndIndex);
 
+			static _bool bIsImgui = false;
 
-			if (ImGui::Button("Edit ExistNums SortPos"))
+			ImGui::Checkbox("Use Imgui", &bIsImgui);
+
+			if(bIsImgui)
+			{
+				_float4 vOldPos, vNewPos;
+
+				_float4x4 Test = *m_pInstancingMatrix[EditStartIndex];
+
+				memcpy(&vOldPos, &Test.m[3], sizeof(_float4));
+
+				_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
+				InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
+				ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[EditStartIndex]) * parentMatrix;
+				m_pInstanceTransform->Set_WorldMatrix(ParentMulChild);
+				m_pInstanceTransform->Imgui_RenderProperty();
+				ResultMatrix = m_pInstanceTransform->Get_WorldMatrix();
+
+				ResultMatrix *= InvParentMulChild;
+				//XMStoreFloat4x4(m_pInstancingMatrix[EditStartIndex], ResultMatrix);
+				
+				memcpy(&vNewPos, &ResultMatrix.r[3], sizeof(_float4));
+
+				////if (ImGui::Button("Edit_Test_imgui"))
+				//{
+					m_vSortStartPos.x =  vNewPos.x - vOldPos.x  ;
+					m_vSortStartPos.y =  vNewPos.y - vOldPos.y;
+					m_vSortStartPos.z =  vNewPos.z - vOldPos.z;
+
+		
+					for (auto& pInstMesh : m_InstancingMeshes)
+						pInstMesh->Edit_InstanceAngle_Pos_Model(m_pInstancingMatrix,
+							EditStartIndex, EdiEndIndex, m_vSortStartPos,ResultMatrix);
+
+					return;
+				//}
+
+				
+
+
+			}
+
+			else if (ImGui::Button("Edit ExistNums SortPos") && !bIsImgui)
 			{
 				for (auto& pInstMesh : m_InstancingMeshes)
 					pInstMesh->Edit_InstanceAngle_Pos_Model(m_pInstancingMatrix,

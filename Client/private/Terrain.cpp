@@ -227,7 +227,6 @@ HRESULT CTerrain::SetUp_Components()
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
-
 	/* For.Com_Texture */
 	if (FAILED(__super::Add_Component(g_LEVEL_FOR_COMPONENT, m_TerrainDesc.wstrDiffuseTag.c_str(), TEXT("Com_Texture"),
 		(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))

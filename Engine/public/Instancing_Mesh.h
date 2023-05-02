@@ -37,6 +37,10 @@ public:
 	void			Edit_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix,
 		_int EditStartIndex, _int EditEndIndex, _float3 vPos , _float3 vAngle);
 
+	void			Edit_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix,
+		_int EditStartIndex, _int EditEndIndex, _float3 vChangePos, _matrix fMatrix);
+
+
 
 	void			Create_InstanceModel_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix,
 		_int iCreateNum, _float3 vPos, _float3 vAngle, _float3 vDirRatio);
