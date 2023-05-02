@@ -140,6 +140,9 @@ private:
 	_float m_fCamDistRate = 0.73f;
 	_float m_fFogRange = 100.f;
 
+	_float	m_fRimPower = 0.8f;
+	_float3	m_fRimColor = _float3(255.0f, 150.0f, 255.0f) / 255.f;
+
 private:
 	CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBossShaman(const CBossShaman& rhs);

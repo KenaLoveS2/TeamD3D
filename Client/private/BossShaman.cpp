@@ -184,11 +184,6 @@ void CBossShaman::Tick(_float fTimeDelta)
 	Update_Collider(fTimeDelta);
 	return;*/
 
-#ifdef EFFECTDEBUG
-	// m_bDashAttackTrail = true;
-	//m_bSpawn = true;
-#endif // EFFECTDEBUG
-	
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -225,9 +220,11 @@ void CBossShaman::Late_Tick(_float fTimeDelta)
 		for (auto& pChild : m_vecShamanElectric)
 			pChild->Late_Tick(fTimeDelta);
 
-		
-		if (m_pShamanLEyeTrail) m_pShamanLEyeTrail->Late_Tick(fTimeDelta);
-		if (m_pShamanREyeTrail) m_pShamanREyeTrail->Late_Tick(fTimeDelta);
+		if(m_pShamanLEyeTrail->Get_Active()==true)
+		{
+			if (m_pShamanLEyeTrail) m_pShamanLEyeTrail->Late_Tick(fTimeDelta);
+			if (m_pShamanREyeTrail) m_pShamanREyeTrail->Late_Tick(fTimeDelta);
+		}
 	}
 
 	if (m_pRendererCom && m_bStartRender)
@@ -529,6 +526,8 @@ HRESULT CBossShaman::SetUp_State()
 		m_bStartRender = true;
 		m_bTeleportDissolve = true;
 		m_fTeleportDissolveTime = 1.f;
+
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_BOSS_BATTLE_SHAMAN);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -606,6 +605,8 @@ HRESULT CBossShaman::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE_LOOP);
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
 		m_fIdleTimeCheck = 0.f;
+		m_bTrail = false;
+		m_pMovementTrail->Set_Active(false);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -1005,7 +1006,6 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("TRAP_LOOP")
 		.OnStart([this]()
 	{	
-		TurnOnOffEffect_InTrap(false);
 
 
 		m_bTraptBreak = false;
@@ -1023,7 +1023,8 @@ HRESULT CBossShaman::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{	
-		_float4 vTrapPos = m_pShamanTapHex->Get_JointBonePos();
+				TurnOnOffEffect_InTrap(false);
+				_float4 vTrapPos = m_pShamanTapHex->Get_JointBonePos();
 		vTrapPos.y = m_fTrapHeightY + m_pShamanTapHex->Get_TransformCom()->Get_PositionY();
 		m_pTransformCom->Set_Position(vTrapPos);
 		
@@ -1032,7 +1033,6 @@ HRESULT CBossShaman::SetUp_State()
 	})
 		.OnExit([this]()
 	{	
-		TurnOnOffEffect_InTrap(true);
 
 		m_bTrapOffset = false;
 		m_bTraptLoop = false;		
@@ -1056,10 +1056,12 @@ HRESULT CBossShaman::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+				dynamic_cast<CE_ShamanLazer*>(m_mapEffect["S_Lazer"])->Set_FinalState(false);
+
 		m_bTrap = false;
 		m_bLaserFire = false;
 		Attack_End(false, IDLE_LOOP);
-	})		
+		})
 		.AddTransition("LASER_FIRE to TRAP_END", "TRAP_END") \
 		.Predicator([this]()
 	{
@@ -1095,7 +1097,8 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("TRAP_END")
 		.OnStart([this]()
 	{
-		m_bTeleportDissolve = true;
+				TurnOnOffEffect_InTrap(true);
+				m_bTeleportDissolve = true;
 		m_fTeleportDissolveTime = 0.f;
 
 		m_pModelCom->ResetAnimIdx_PlayTime(TRAP_ESCAPE);
@@ -1423,6 +1426,9 @@ HRESULT CBossShaman::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bTeleportDissolve, sizeof(_bool)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fTeleportDissolveTime, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fRimPower", &m_fRimPower, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fRimcolor", &m_fRimColor, sizeof(_float3)), E_FAIL);
 
 	return S_OK;
 }

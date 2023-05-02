@@ -255,7 +255,7 @@ HRESULT CBossWarrior::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E);
 		}
-		else if(i == 1)
+		else if(i == 1) // ¿Ê
 		{
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
@@ -1248,6 +1248,10 @@ HRESULT CBossWarrior::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)))) return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
 	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fRimPower", &m_fRimPower, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fRimcolor", &m_fRimColor, sizeof(_float3)), E_FAIL);
+
 	// m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;

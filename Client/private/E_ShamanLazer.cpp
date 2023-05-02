@@ -108,7 +108,7 @@ void CE_ShamanLazer::Reset()
 	m_vecChild[CHILD_SP]->Set_Scale(XMVectorSet(3.f, 3.f, 3.f, 1.f));
 	m_fDurationTime = 0.0f;
 	m_fTimeDelta = 0.0f;
-	m_bFinalState = false;
+//	m_bFinalState = false;
 
 	m_bLaserCharge = false;
 	m_bLaserFire1 = false;

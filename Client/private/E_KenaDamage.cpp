@@ -79,7 +79,7 @@ void CE_KenaDamage::Tick(_float fTimeDelta)
 			pChild->ResetSprite();
 
 		m_fAddValue = 0.0f;
-		m_eEFfectDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+		m_eEFfectDesc.vScale = _float3(1.0f, 1.0f, 1.0f);
 	}
 }
 

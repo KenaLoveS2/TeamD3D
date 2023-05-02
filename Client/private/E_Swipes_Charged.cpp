@@ -30,7 +30,7 @@ HRESULT CE_Swipes_Charged::Initialize(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
@@ -117,9 +117,9 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 	}
 	else
 	{
-		vScaled.x += fTimeDelta * 2.f + 0.2f;
-		vScaled.y += fTimeDelta * 2.f + 0.2f;
-		vScaled.z += fTimeDelta * 2.f + 0.2f;
+		vScaled.x += fTimeDelta * m_pTransformCom->Get_TransformDesc().fSpeedPerSec;
+		vScaled.y += fTimeDelta * m_pTransformCom->Get_TransformDesc().fSpeedPerSec;
+		vScaled.z += fTimeDelta * m_pTransformCom->Get_TransformDesc().fSpeedPerSec;
 		m_pTransformCom->Set_Scaled(vScaled);
 
 		m_vecChild[0]->Set_AddScale(fTimeDelta + 1.1f);

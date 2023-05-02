@@ -104,6 +104,9 @@ void CRot::Tick(_float fTimeDelta)
 	 //m_pTransformCom->Tick(fTimeDelta);
 	 //return;
 
+	if(m_pCamera_Photo == nullptr)
+		m_pCamera_Photo = (CCamera_Photo*)m_pGameInstance->Find_Camera(CAMERA_PHOTO_TAG);
+
 	__super::Tick(fTimeDelta);
 	
 	if (m_pRotWisp->Get_Collect())
@@ -399,7 +402,12 @@ HRESULT CRot::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{	
 		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 1.f);
-	})		
+	})
+		.AddTransition("IDLE to PHOTO", "READY_PHOTO")
+		.Predicator([this]()
+	{
+		return m_pCamera_Photo && m_pCamera_Photo->Is_Work();
+	})
 		.AddTransition("FOLLOW_KENA to IDLE", "IDLE")
 		.Predicator([this]()
 	{	
@@ -626,10 +634,11 @@ void CRot::Execute_PhotoTeleport()
 	_uint i = 0;
 	for (auto& pRot : m_vecKenaConnectRot)
 	{
-		if(i % 2 == 0)
-			pRot->Set_Position(m_vKenaPos + vKenaRight * (pRot->m_iThisRotIndex + 0.5f));
-		else
-			pRot->Set_Position(m_vKenaPos + vKenaRight * (pRot->m_iThisRotIndex + 0.5f) * -1.f);
+		_float fTemp = (_float)(pRot->m_iThisRotIndex) * 0.3f;
+		_uint iTemp = i % 2;
+		iTemp == 0 ?
+			pRot->Set_Position(m_vKenaPos + vKenaRight * fTemp) :
+			pRot->Set_Position(m_vKenaPos - vKenaRight * fTemp);
 
 		i++;
 	}
