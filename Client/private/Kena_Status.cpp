@@ -485,7 +485,7 @@ HRESULT CKena_Status::Save_RunTime(const wstring& wstrFilePath)
 		}
 		else
 		{
-			for (_uint j = 0; j < 4; ++j)
+			for (_uint j = 1; j < 5; ++j)
 				jKenaStatus["99. Skill States"].push_back(m_bSkills[i][j]);
 		}
 	}
@@ -535,10 +535,17 @@ HRESULT CKena_Status::Load_RunTime(const wstring& wstrFilePath)
 		}
 		else
 		{
-			for (_uint j = 0; j < 4; ++j)
-				jKenaStatus["99. Skill States"][i * 5 + j].get_to<_bool>(m_bSkills[i][j]);
+			/*for (_uint j = 1; j < 5; ++j)
+				jKenaStatus["99. Skill States"][i * 5 + j].get_to<_bool>(m_bSkills[i][j]);*/
+			break;
 		}
 	}
+
+	m_bSkills[4][0] = false;
+	m_bSkills[4][0] = false;
+	m_bSkills[4][0] = false;
+	m_bSkills[4][0] = false;
+	m_bSkills[4][0] = false;
 
 	return S_OK;
 }

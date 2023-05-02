@@ -55,7 +55,7 @@ void CE_P_WarriorBody::Late_Tick(_float fTimeDelta)
 		m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 1.f);
 		m_pTransformCom->RotationFromNow(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), XMConvertToRadians(90.0f));
 
-		_float fColorW = 10.f / 255.f;
+		_float fColorW = 5.f / 255.f;
 		m_eEFfectDesc.vColor = XMVectorSetW(m_eEFfectDesc.vColor, fColorW);
 		m_bTurnOnfirst = true;
 	}

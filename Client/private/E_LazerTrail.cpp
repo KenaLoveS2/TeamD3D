@@ -58,8 +58,6 @@ HRESULT CE_LazerTrail::Initialize(void * pArg)
 
 void CE_LazerTrail::Tick(_float fTimeDelta)
 {
-	ToolTrail("CE_LazerTrail");
-
 	if (m_eEFfectDesc.bActive == false)
 	{
 		m_vecPositions.clear();

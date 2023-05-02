@@ -526,6 +526,8 @@ HRESULT CBossShaman::SetUp_State()
 		m_bStartRender = true;
 		m_bTeleportDissolve = true;
 		m_fTeleportDissolveTime = 1.f;
+
+		CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_BOSS_BATTLE_SHAMAN);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -1054,6 +1056,8 @@ HRESULT CBossShaman::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+				dynamic_cast<CE_ShamanLazer*>(m_mapEffect["S_Lazer"])->Set_FinalState(false);
+
 		m_bTrap = false;
 		m_bLaserFire = false;
 		Attack_End(false, IDLE_LOOP);
