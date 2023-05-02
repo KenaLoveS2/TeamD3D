@@ -11,7 +11,7 @@ private:
 	virtual ~CUI_NodeChat() = default;
 
 public:
-	void	Set_String(wstring wstr, _float fCorrectY = 0.f);
+	void	Set_String(wstring wstr, _float fCorrectY = 0.f, _bool bTypeLine = false);
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -29,6 +29,8 @@ private:
 	_tchar*					m_szChat;
 	_float					m_fCorrectX;
 	_float					m_fCorrectY;
+
+	_bool					m_bTypeLine;
 
 public:
 	static	CUI_NodeChat*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

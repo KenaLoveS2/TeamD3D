@@ -504,7 +504,7 @@ void CCamera_Player::Late_Tick(_float fTimeDelta)
 		if (pMouse != nullptr)
 			pMouse->Set_Active(true);
 	}
-	//::SetCursor(::LoadCursor(nullptr, IDC_ARROW));
+	::SetCursor(::LoadCursor(nullptr, IDC_ARROW));
 
 	__super::Late_Tick(fTimeDelta);
 }

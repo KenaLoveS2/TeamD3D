@@ -14,7 +14,13 @@ private:
 	virtual ~CUI_NodeQuest() = default;
 
 public:
+	void	Set_HeightByIndex(_float fY) { m_matLocal._42 = fY; }
 	void	Set_QuestString(wstring str);
+	void	Appear(_float fTerm);
+	void	Disappear(_float fTerm);
+	void	Move_Up();
+	_bool	Is_Finished() { return m_bFinished; }
+	_float4	Get_ComputePosition();
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -36,6 +42,10 @@ private:
 
 	_bool					m_bAppear;
 	_bool					m_bDisappear;
+
+	_bool					m_bFinished;
+	_bool					m_bMoveUp;
+
 
 
 public:

@@ -94,6 +94,15 @@ HRESULT CCollider::Initialize(void * pArg, CGameObject * pOwner)
 	
 	return S_OK;
 }
+void CCollider::Change_Size_AABB(_float3 vSize)
+{
+	if (m_pAABB != nullptr)
+	{
+		m_pAABB->Extents.x = vSize.x;
+		m_pAABB->Extents.y = vSize.y;
+		m_pAABB->Extents.z = vSize.z;
+	}
+}
 void CCollider::Update(_fmatrix TransformMatrix)
 {
 	switch (m_eType)

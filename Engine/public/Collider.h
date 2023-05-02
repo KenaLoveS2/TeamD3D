@@ -38,6 +38,7 @@ public:
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
 
 public:
+	void Change_Size_AABB(_float3 vSize);
 	void Update(_fmatrix TransformMatrix);
 
 public:

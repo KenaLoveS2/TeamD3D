@@ -8,10 +8,11 @@
 BEGIN(Client)
 class CQuest;
 class CUI_NodeEffect;
+class CUI_NodeQuest;
 class CUI_CanvasQuest final : public CUI_Canvas
 {
 	/* should be same with the order of m_vecNode.push_back()*/
-	enum UI_ORDER { UI_END };
+	enum UI_ORDER { UI_REWARD = 12, UI_END };
 
 	enum QUEST { QUEST_0, QUEST_1, QUEST_2, QUEST_END };
 
@@ -65,6 +66,10 @@ private:
 
 private:
 	vector<CUI_NodeEffect*>	m_vecEffects;
+
+private:
+	vector<CUI_NodeQuest*>	m_vecOpenQuest;
+	_int					m_iClearQuestIndex;
 
 public:
 	static	CUI_CanvasQuest*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

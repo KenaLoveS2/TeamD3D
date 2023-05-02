@@ -2,6 +2,8 @@
 #include "UI_NodeQuestReward.h"
 #include "GameInstance.h"
 #include "UI_Event_Fade.h"
+#include "Kena.h"
+#include "Kena_Status.h" 
 
 CUI_NodeQuestReward::CUI_NodeQuestReward(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Node(pDevice, pContext)
@@ -21,13 +23,22 @@ CUI_NodeQuestReward::CUI_NodeQuestReward(const CUI_NodeQuestReward& rhs)
 {
 }
 
-void CUI_NodeQuestReward::RewardOn()
+void CUI_NodeQuestReward::RewardOn(_float4 vPos)
 {
 	m_bActive = true;
-	m_bStart = false;
-	m_bEnd = false;
-	m_fTimeAcc = 0.0f;
-	//static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Change_Data(0.08f, 0.5f);
+	//m_pTransformCom->Set_Position(vPos);
+	m_matLocal._41 = vPos.x;
+	m_matLocal._42 = vPos.y;
+	m_matLocal._43 = vPos.z;
+
+	static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Change_Data(0.08f, 0.5f);
+
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	if (pKena != nullptr)
+		pKena->Get_Status()->Add_Karma(150);
+
+
+	m_vecEvents[EVENT_FADE]->Call_Event(true);
 }
 
 _float CUI_NodeQuestReward::Get_Alpha()
@@ -72,15 +83,6 @@ void CUI_NodeQuestReward::Tick(_float fTimeDelta)
 		m_bEnd = true;
 	}
 
-	m_fTimeAcc += fTimeDelta;
-	if (m_fTimeAcc < 1.5f)
-		return;
-
-	if (!m_bStart)
-	{
-		m_vecEvents[EVENT_FADE]->Call_Event(true);
-		m_bStart = true;
-	}
 	__super::Tick(fTimeDelta);
 }
 

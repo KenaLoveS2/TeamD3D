@@ -9,6 +9,7 @@
 #include "Saiya.h"
 #include "Kena_Status.h"
 #include "WorldTrigger.h"
+#include "WorldTrigger_S2.h"
 
 
 CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -24,6 +25,7 @@ CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	, m_iCurLineIndex(0)
 	, m_fTimeOn(0.f)
 	, m_fTimeOnAcc(0.f)
+	, m_iClearQuestIndex(-1)
 {
 	for (_uint i = 0; i < (_uint)QUEST_END; ++i)
 	{
@@ -45,6 +47,7 @@ CUI_CanvasQuest::CUI_CanvasQuest(const CUI_CanvasQuest& rhs)
 	, m_iCurLineIndex(0)
 	, m_fTimeOn(0.f)
 	, m_fTimeOnAcc(0.f)
+	, m_iClearQuestIndex(-1)
 {
 	for (_uint i = 0; i < (_uint)QUEST_END; ++i)
 	{
@@ -112,6 +115,30 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
+	if (-1 != m_iClearQuestIndex)
+	{
+		if (static_cast<CUI_NodeQuest*>(m_vecOpenQuest[(_int)m_iClearQuestIndex])->Is_Finished())
+		{
+			auto& iter = m_vecOpenQuest.begin();
+			for (iter ; iter != m_vecOpenQuest.end(); ++iter)
+			{
+				if (*iter == m_vecOpenQuest[m_iClearQuestIndex])
+				{
+					iter = m_vecOpenQuest.erase(iter);
+					break;
+				}
+			}
+
+			if (iter != m_vecOpenQuest.end())
+			{
+				for (iter; iter != m_vecOpenQuest.end(); ++iter)
+					(*iter)->Move_Up();
+			}
+
+			m_iClearQuestIndex = -1;
+		}
+	}
+
 	__super::Tick(fTimeDelta);
 
 }
@@ -123,19 +150,17 @@ void CUI_CanvasQuest::Late_Tick(_float fTimeDelta)
 	//__super::Late_Tick(fTimeDelta);
 	CUI::Late_Tick(fTimeDelta);
 
-	if (m_eState == STATE_NORMAL)
-{
-	m_fTmpAcc += fTimeDelta;
-	if (m_fTmpAcc > 2.f)
-	{
-		m_eState = STATE_CLOSE;
-		m_fTimeAcc = 0.f;
-		m_bClose = true;
-		m_fAlpha = 1.f;
-	}
-}
-
-
+	//if (m_eState == STATE_NORMAL)
+	//{
+	//	m_fTmpAcc += fTimeDelta;
+	//	if (m_fTmpAcc > 2.f)
+	//	{
+	//		m_eState = STATE_CLOSE;
+	//		m_fTimeAcc = 0.f;
+	//		m_bClose = true;
+	//		m_fAlpha = 1.f;
+	//	}
+	//}
 
 	for (auto e : m_vecEvents)
 		e->Late_Tick(fTimeDelta);
@@ -161,16 +186,31 @@ HRESULT CUI_CanvasQuest::Render()
 
 HRESULT CUI_CanvasQuest::Bind()
 {
-	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,L"Layer_Player", L"Kena"));
-	if (pKena == nullptr)
-		return E_FAIL;
+	//CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,L"Layer_Player", L"Kena"));
+	//if (pKena == nullptr)
+	//	return E_FAIL;
+	//
+	//CSaiya* pSaiya = dynamic_cast<CSaiya*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_NPC", L"Saiya"));
+	//if (pSaiya == nullptr)
+	//	return E_FAIL;
 
-	CSaiya* pSaiya = dynamic_cast<CSaiya*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_NPC", L"Saiya"));
-	if (pSaiya == nullptr)
+	map<const _tchar*, CGameObject*>* pMap =  CGameInstance::GetInstance()->Get_GameObjects(g_LEVEL, L"Layer_Trigger");
+	if (pMap == nullptr)
 		return E_FAIL;
+	if (!pMap->empty())
+	{
+		for (auto pair : *pMap)
+		{
+			CWorldTrigger_S2* pTrigger = dynamic_cast<CWorldTrigger_S2*>(pair.second);
+
+			if (pTrigger != nullptr)
+				pTrigger->m_TriggerDelegatorB.bind(this, &CUI_CanvasQuest::BindFunction);
+		}
+	}
+
 	
-	pKena->m_PlayerQuestDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
-	pSaiya->m_SaiyaDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
+	//pKena->m_PlayerQuestDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
+	//pSaiya->m_SaiyaDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -223,6 +263,20 @@ HRESULT CUI_CanvasQuest::Ready_Nodes()
 
 		}
 	}
+
+	{ /* Quest Reward */
+		string strTag = "Node_QuestReward";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_QuestReward", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -314,10 +368,35 @@ void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bV
 	switch (eType)
 	{
 	case CUI_ClientManager::QUEST_:
+		m_bActive = true;
+		static_cast<CUI_NodeQuest*>(m_vecNode[(_int)fValue])
+			->Set_HeightByIndex(300.f - 140.f * (m_vecOpenQuest.size() % 4));
+		m_vecOpenQuest.push_back(static_cast<CUI_NodeQuest*>(m_vecNode[(_int)fValue]));
+		static_cast<CUI_NodeQuest*>(m_vecNode[(_int)fValue])->Appear(0.1f);
 		break;
-	case CUI_ClientManager::QUEST_LINE:
+	case CUI_ClientManager::QUEST_LINE: /* Old */
 		break;
 	case CUI_ClientManager::QUEST_CLEAR:
+	{
+		static_cast<CUI_NodeQuest*>(m_vecNode[(_int)fValue])->Disappear(1.f);
+		_smatrix matLocal = m_vecNode[(_int)fValue]->Get_LocalMatrix();
+		_float4 vPos = { matLocal._41,matLocal._42,matLocal._43, 1.f };
+		vPos.x += 400.f;
+		static_cast<CUI_NodeQuestReward*>(m_vecNode[UI_REWARD])->RewardOn(vPos);
+
+		m_iClearQuestIndex = -1;
+		_int i = 0;
+		for (auto& quest : m_vecOpenQuest)
+		{
+			if (m_vecNode[(_int)fValue] == quest)
+			{
+				m_iClearQuestIndex = i;
+				break;
+			}
+			else
+				i++;
+		}
+	}
 		break;
 	case CUI_ClientManager::QUEST_CLEAR_ALL:
 		break;
@@ -354,4 +433,6 @@ void CUI_CanvasQuest::Free()
 		Safe_Release(m_Quests[i]);
 
 	m_vecEffects.clear();
+
+	m_vecOpenQuest.clear();
 }

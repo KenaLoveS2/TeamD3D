@@ -36,11 +36,11 @@ HRESULT CLevel_GamePlay::Initialize()
 		p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice,m_pContext));
 		p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
-		p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-		p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
-		p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-		p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
-		p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
+		//p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
+		///p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
+		//p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+		//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
+		//p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 
 	RELEASE_INSTANCE(CGameInstance)
 		
@@ -50,35 +50,35 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_CineCamera(TEXT("CinemaCam"))))
-	{
-		MSG_BOX("CinemaCam");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_CineCamera(TEXT("CinemaCam"))))
+	//{
+	//	MSG_BOX("CinemaCam");
+	//	return E_FAIL;
+	//}
 
-	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
-		return E_FAIL;
-
+	//if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+	//	return E_FAIL;
+	//
 	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 	//	return E_FAIL;
 
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-		return E_FAIL;
-
- 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
- 		return E_FAIL;
+	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	//	return E_FAIL;
+	//
+ 	//if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
+ 	//	return E_FAIL;
 
   	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
   	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
-	{
-		MSG_BOX("Layer_ControlRoom");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
+	//{
+	//	MSG_BOX("Layer_ControlRoom");
+	//	return E_FAIL;
+	//}
 	
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_GAMEPLAY)))
 		return E_FAIL;

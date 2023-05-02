@@ -11,6 +11,7 @@
 #include "CinematicCamera.h"
 #include "Kena.h"
 #include "Kena_State.h"
+#include "WorldTrigger_S2.h"
 
 CUI_CanvasBottom::CUI_CanvasBottom(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -122,12 +123,26 @@ HRESULT CUI_CanvasBottom::Bind()
 	}
 	else
 	{
-		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-			L"Layer_Player", L"Kena"));
-		if (pKena == nullptr)
+		//CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+		//	L"Layer_Player", L"Kena"));
+		//if (pKena == nullptr)
+		//	return E_FAIL;
+		//
+		//pKena->m_Delegator.bind(this, &CUI_CanvasBottom::BindFunction);
+
+		map<const _tchar*, CGameObject*>* pMap = CGameInstance::GetInstance()->Get_GameObjects(g_LEVEL, L"Layer_Trigger");
+		if (pMap == nullptr)
 			return E_FAIL;
-		
-		pKena->m_Delegator.bind(this, &CUI_CanvasBottom::BindFunction);
+		if (!pMap->empty())
+		{
+			for (auto pair : *pMap)
+			{
+				CWorldTrigger_S2* pTrigger = dynamic_cast<CWorldTrigger_S2*>(pair.second);
+
+				if (pTrigger != nullptr)
+					pTrigger->m_TriggerDelegatorB.bind(this, &CUI_CanvasBottom::BindFunction);
+			}
+		}
 	}
 
 
@@ -275,6 +290,13 @@ void CUI_CanvasBottom::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool b
 		{
 			CUI_ClientManager::GetInstance()->Switch_FrontUI(true);
 			m_vecNode[UI_CHAT]->Set_Active(false);
+		}
+		break;
+	case CUI_ClientManager::BOT_LINE:
+		if (bValue)
+		{
+			m_vecNode[UI_CHAT]->Set_Active(true);
+			static_cast<CUI_NodeChat*>(m_vecNode[UI_CHAT])->Set_String(wstr, fValue, true);
 		}
 		break;
 	}

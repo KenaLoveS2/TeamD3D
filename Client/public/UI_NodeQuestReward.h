@@ -4,7 +4,7 @@
 
 BEGIN(Client)
 class CUI_NodeQuestReward final : public CUI_Node
-{
+{ 
 public:
 	enum EVENT { EVENT_FADE, EVENT_END };
 
@@ -14,7 +14,7 @@ private:
 	virtual ~CUI_NodeQuestReward() = default;
 
 public:
-	void	RewardOn();// { m_bActive = true; }
+	void	RewardOn(_float4 vPos);// { m_bActive = true; }
 	_bool	Is_End() { return m_bEnd; }
 	_float	Get_Alpha();
 

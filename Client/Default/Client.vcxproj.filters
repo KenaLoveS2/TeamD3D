@@ -1739,6 +1739,9 @@
     <ClInclude Include="..\public\UI_NodeQuestReward.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Reward%28old%29</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\WorldTrigger_S2.h">
+      <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2814,6 +2817,9 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeQuestReward.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Reward%28old%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WorldTrigger_S2.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

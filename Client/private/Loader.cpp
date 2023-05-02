@@ -101,6 +101,7 @@
 #include "MannequinRot.h"
 #include "Meditation_Spot.h"
 #include "WorldTrigger.h"
+#include "WorldTrigger_S2.h"
 
 #include "BossRock.h"
 #include "BossRock_Pool.h"
@@ -1962,6 +1963,14 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 		CVIBuffer_Point_Instancing_S2::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/********************************************/
+	/*				For. Collider				*/
+	/********************************************/
+
+	/* For.Prototype_Component_Collider_AABB*/
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Collider_AABB_ForTrigger"),
+		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
+		assert(!"Issue");
 
 	/********************************************/
 	/*				For. ModelCom				*/
@@ -2000,6 +2009,11 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	/* Effect_Texture_Base  */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Texture_Base"),
 		CEffect_Texture_Base::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* WorldTrigger */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WorldTrigger_S2"),
+		CWorldTrigger_S2::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* HatCart */
