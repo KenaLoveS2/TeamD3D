@@ -326,6 +326,83 @@ void CInstancing_Mesh::Edit_InstanceAngle_Pos_Model(vector<_float4x4*> & VecInst
 	}
 }
 
+void CInstancing_Mesh::Edit_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix,
+	_int EditStartIndex, _int EditEndIndex, _float3 vChangePos,_matrix fMatrix)
+{
+	if (EditEndIndex <= 0 || EditEndIndex >= (_int)m_iNumInstance)
+		return;
+
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+
+	_float4x4 Temp;
+	//_matrix		m_matWorld, matScale, matRotX, matRotY, matRotZ, matTrans;
+	_float4 OldPos;
+	
+	_float4 vRight, vUp,vLook , vRotation;
+	memcpy(&vRight, &fMatrix.r[0], sizeof(_float4));
+	memcpy(&vUp, &fMatrix.r[1], sizeof(_float4));
+	memcpy(&vLook, &fMatrix.r[2], sizeof(_float4));
+	
+
+	CONTEXT_LOCK
+		HRESULT hr = m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	if (SUCCEEDED(hr))
+	{
+		for (_int i = EditStartIndex; i <= EditEndIndex; ++i)
+		{
+			//matScale = XMMatrixScaling(1.f, 1.f, 1.f);
+			//
+			//memcpy(&OldPos, &((VTXMATRIX*)SubResource.pData)[i].vPosition, sizeof(_float4));
+			//matRotX = XMMatrixRotationX(vRotation.x);
+			//matRotY = XMMatrixRotationY((vRotation.y));
+			//matRotZ = XMMatrixRotationZ((vRotation.z));
+
+			//matTrans = XMMatrixTranslation(OldPos.x + vChangePos.x, OldPos.y + vChangePos.y,
+			//	OldPos.z + vChangePos.z);
+
+			//m_matWorld = matScale * matRotX * matRotY * matRotZ * matTrans;
+			//XMStoreFloat4x4(&Temp, m_matWorld);
+
+			///*memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &Temp.m[0], sizeof(_float4));
+			//memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &Temp.m[1], sizeof(_float4));
+			//memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &Temp.m[2], sizeof(_float4));*/
+			//
+			//memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &vRight, sizeof(_float4));
+			//memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &vUp, sizeof(_float4));
+			//memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &vLook, sizeof(_float4));
+			//memcpy(&((VTXMATRIX*)SubResource.pData)[i].vPosition, &Temp.m[3], sizeof(_float4));
+		
+			//*VecInstancingMatrix[i] = Temp;
+
+		/*	
+			À§Ä¡¹Ù²ñ*/
+			
+			memcpy(&OldPos, &((VTXMATRIX*)SubResource.pData)[i].vPosition, sizeof(_float4));
+
+			OldPos.x += vChangePos.x;
+			OldPos.y += vChangePos.y;
+			OldPos.z += vChangePos.z;
+
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &vRight, sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &vUp, sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &vLook, sizeof(_float4));
+			memcpy(&((VTXMATRIX*)SubResource.pData)[i].vPosition, &OldPos, sizeof(_float4));
+			
+			memcpy(&VecInstancingMatrix[i]->m[0], &vRight, sizeof(_float4));
+			memcpy(&VecInstancingMatrix[i]->m[1], &vUp, sizeof(_float4));
+			memcpy(&VecInstancingMatrix[i]->m[2], &vLook, sizeof(_float4));
+			memcpy(&VecInstancingMatrix[i]->m[3], &OldPos, sizeof(_float4));
+
+			
+		}
+
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	}
+}
+
 
 void CInstancing_Mesh::Create_InstanceModel_InstanceAngle_Pos_Model(vector<_float4x4*>& VecInstancingMatrix,
 	_int iCreateNum, _float3 vPos, _float3 vAngle, _float3 vDirRatio)
