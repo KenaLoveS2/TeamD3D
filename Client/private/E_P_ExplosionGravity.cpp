@@ -54,8 +54,8 @@ HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
-//  	if (m_eType == TYPE_DEFAULT)
-//  		Set_OptionTool();
+	if (m_eType == TYPE_DEFAULT)
+		Set_OptionTool();
 #endif // _DEBUG
 
 	__super::Tick(fTimeDelta);
@@ -72,7 +72,7 @@ void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 	m_fLife += fTimeDelta;
 
 	/*m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && */
-	if (m_eType != TYPE_BOSS_HAND && m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
+	if (m_eType != CE_P_ExplosionGravity::TYPE_DEFAULT && m_eType != TYPE_BOSS_HAND && m_eEFfectDesc.bActive == true && m_pVIInstancingBufferCom->Get_Finish() == true)
 	{
 		m_fLife = 0.0f;
 		m_eEFfectDesc.bActive = false;
@@ -376,6 +376,10 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 
 	case CE_P_ExplosionGravity::TYPE_BOSS_HAND:
 		Load_Desc("ShamanHand");
+		break;
+
+	case CE_P_ExplosionGravity::TYPE_ROCK_GOLEM:
+		Load_Desc("RockGolem");
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_DAMAGE_PULSE:
