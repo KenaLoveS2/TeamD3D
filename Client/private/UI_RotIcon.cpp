@@ -22,12 +22,12 @@ CUI_RotIcon::CUI_RotIcon(const CUI_RotIcon & rhs)
 
 void CUI_RotIcon::Set_Pos(CGameObject* pTarget, _float4 vCorrect)
 {
-	if (m_pTarget == nullptr && pTarget != nullptr)
+	/*if (m_pTarget == nullptr && pTarget != nullptr)
 	{
 		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_USEROT;
 		_float fNoMeaning = 1.f;
 		m_pKena->m_Delegator.broadcast(tag, fNoMeaning);
-	}
+	}*/
 
 	if (pTarget == nullptr)
 	{
@@ -46,10 +46,17 @@ void CUI_RotIcon::Set_Pos(CGameObject* pTarget, _float4 vCorrect)
 
 void CUI_RotIcon::Off_Focus(CGameObject* pTarget)
 {
+	if (pTarget == nullptr)
+	{
+		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OFF;
+		_float fNoMeaning = 1.f;
+		m_pKena->m_Delegator.broadcast(tag, fNoMeaning);
+	}
+
 	if (pTarget && m_pTarget == pTarget)
 	{
 		m_pTarget = nullptr;
-		m_bActive = false;		
+		m_bActive = false;
 
 		CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::BOT_KEY_OFF;
 		_float fNoMeaning = 1.f;

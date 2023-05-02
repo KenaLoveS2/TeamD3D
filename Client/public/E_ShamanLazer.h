@@ -45,6 +45,7 @@ public:
 	void			Calculate_Path(_float fTimeDelta);
 
 	_bool			Get_FinalState() { return m_bFinalState; }
+	void				Set_FinalState(_bool bState) { m_bFinalState = bState; }
 
 private:
 	_vector			m_SpawnPos;

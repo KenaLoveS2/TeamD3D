@@ -315,7 +315,8 @@ HRESULT CKena::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
 	if (pArg != nullptr)
-		m_pKenaStatus->Load_RunTime((const _tchar*)pArg);
+		//m_pKenaStatus->Load_RunTime((const _tchar*)pArg);
+		m_pKenaStatus->Load_RunTime(L"../Bin/Data/Status/Kena_Runtime_Status_BackUp.json");
 
 	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Find_Camera(L"PLAYER_CAM"));
 	NULL_CHECK_RETURN(m_pCamera, E_FAIL);
@@ -581,7 +582,6 @@ void CKena::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_Position(vPos);
 		CRot::Set_RotUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 		m_pFirstRot->Execute_PhotoTeleport();
-
 	}
 
 	Play_Animation(fTimeDelta, fTimeRate);
@@ -1386,12 +1386,15 @@ void CKena::Call_FocusRotIconFlower(CGameObject* pTarget)
 	if (m_pUI_FocusRot == nullptr)
 		return;
 
+	if (pTarget == nullptr)
+		m_pUI_FocusRot->Off_Focus(nullptr);
+
 	/* This Action needs Pip */
 	if (0 == m_pKenaStatus->Get_CurPIPCount())
 	{
 		m_pUI_FocusRot->Set_Pos(nullptr);
 		return;
-	}	
+	}
 
 	m_pUI_FocusRot->Set_Pos(pTarget, _float4(0.f, 0.5f, 0.f, 0.f));
 }
@@ -1730,14 +1733,15 @@ HRESULT CKena::SetUp_Components()
 HRESULT CKena::Ready_Rots()
 {
 	CRot::Clear();
-	for (_uint i = 0; i < 5; ++i)
+	_int iDevide = 8 - m_pKenaStatus->Get_RotCount();
+
+	for (_uint i = 0; i < 8; ++i)
 	{
 		_tchar szCloneRotTag[32] = { 0, };
 		swprintf_s(szCloneRotTag, L"PlayerRot_%d", i);
 		CGameObject* p_game_object = nullptr;
 		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Rot", L"Prototype_GameObject_Rot", CUtile::Create_StringAuto(szCloneRotTag), nullptr, &p_game_object);
 		dynamic_cast<CRot*>(p_game_object)->AlreadyRot();
-		m_pKenaStatus->Add_RotCount();
 
 		if (i == FIRST_ROT)
 		{
@@ -1747,7 +1751,10 @@ HRESULT CKena::Ready_Rots()
 				m_pCamera_Photo->Set_KenaPtr(this);
 		}
 	}
-	
+
+	for (_uint i = 0; i < iDevide; ++i)
+		m_pKenaStatus->Add_RotCount();
+
 	return S_OK;
 }
 
@@ -3550,7 +3557,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		if (m_bPulse == false && m_bDodge == false && m_bDeath == false)
 		{
 			_bool bRealAttack = false;
-			if ((iColliderIndex == (_int)COL_MONSTER_WEAPON || iColliderIndex == (_int)COL_BOSS_SWIPECHARGE) && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+			if ((iColliderIndex == (_int)COL_MONSTER_WEAPON) && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
 			{
 				for (auto& Effect : m_mapEffect)
 				{
@@ -3566,6 +3573,21 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 				m_pAttackObject = pTarget;
 			}
 			if (iColliderIndex == (_int)COL_MONSTER_ARROW)
+			{
+				for (auto& Effect : m_mapEffect)
+				{
+					if (Effect.first == "KenaDamage")
+					{
+						Effect.second->Set_Active(true);
+						Effect.second->Set_Position(vCollisionPos);
+					}
+				}
+
+				m_bParry = true;
+				m_iCurParryFrame = 0;
+				m_pAttackObject = pTarget;
+			}
+			if (iColliderIndex == (_int)COL_BOSS_SWIPECHARGE)
 			{
 				for (auto& Effect : m_mapEffect)
 				{

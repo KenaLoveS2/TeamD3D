@@ -1,0 +1,5 @@
+{
+  "00. Max HP": 150,
+  "01. HP": 30,
+  "02. Attack": 30,
+  "03. Max Shield": 225.0,"04. Shield":225.0,"05. Shield Break":false,"06. Karma":900,"07. Crystal":500,"08. Rot Level":2,"09. Rot Count":6,"10. Max Rot Count":10,"11. Min Rot Count":5,"12. Pip Level":2,"13. Arrow Count":5,"14. Bomb Count":1,"99. Skill States":[true,true,true,true,true,true,true,true,true,true,true,false,true,false,false,true,true,true,false,false,false,false,false,false]}
