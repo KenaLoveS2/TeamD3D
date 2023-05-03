@@ -44,7 +44,7 @@ CRenderTarget * CTarget_Manager::Get_Target(const _tchar * pTargetTag)
 
 HRESULT CTarget_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	D3D11_VIEWPORT			ViewportDesc;
 	ZeroMemory(&ViewportDesc, sizeof ViewportDesc);
 
@@ -62,7 +62,7 @@ HRESULT CTarget_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* 
 	m_pVIBuffer = CVIBuffer_Rect::Create(pDevice, pContext);
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
-#endif // _DEBUG
+//#endif // _DEBUG
 
 	return S_OK;
 }

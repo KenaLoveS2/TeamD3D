@@ -37,6 +37,8 @@ void CRenderer::Imgui_Render()
 	ImGui::Checkbox("LightShaft", &m_bLightShaft);
 	ImGui::Checkbox("FADE", &m_bFade);
 	ImGui::Checkbox("Temp", &m_bTemp);
+	ImGui::Checkbox("Bloom", &CPostFX::GetInstance()->m_bBloom);
+	ImGui::Checkbox("Blur", &CPostFX::GetInstance()->m_bBlur);
 
 	if(ImGui::Button("Photo"))
 	{

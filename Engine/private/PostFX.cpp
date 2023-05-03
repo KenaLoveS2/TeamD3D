@@ -461,10 +461,12 @@ void CPostFX::PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTarg
 	DownScale(pHDRSRV);
 
 	// Bloom
-	Bloom();
+	if(m_bBloom)
+		Bloom();
 
 	// Blur the bloom values
-	Blur(m_pTempSRV[0], m_pBloomUAV);
+	if(m_bBlur)
+		Blur(m_pTempSRV[0], m_pBloomUAV);
 
 	// Cleanup
 	ZeroMemory(&arrConstBuffers, sizeof(arrConstBuffers));

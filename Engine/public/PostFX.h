@@ -40,10 +40,13 @@ public:
 
 	_bool Get_Capture();
 
-private:
-	_bool					m_bOn = false;
+public:
+	_bool							m_bBloom = true;
+	_bool							m_bBlur = true;
 
-	ID3D11Device*			m_pDevice = nullptr;
+private:
+	_bool							m_bOn = false;
+	ID3D11Device*				m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = nullptr;
 
 	// Downscaled scene texture
