@@ -325,6 +325,12 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 	ImGui::NewLine();
 	ImGui::Text("Create_Button");
 
+	
+	if (ImGui::IsKeyDown(ImGuiKey_X))
+	{
+		m_bUseTerrainPicking = !m_bUseTerrainPicking;
+	}
+
 	ImGui::Checkbox("Picking Create Obj", &m_bUseTerrainPicking);
 
 	if (m_wstrProtoName == L"" || m_wstrModelName == L"")
@@ -765,13 +771,13 @@ void CImgui_MapEditor::Imgui_Create_Option_Reset()/* √ ±‚»≠*/
 
 void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 {
-	//const	char* pName = 			typeid(typename CImgui_TerrainEditor).name();
-	//CImgui_TerrainEditor* pTerrainEditor = 	dynamic_cast<CImgui_TerrainEditor*>(CGameInstance::GetInstance()->Get_ImguiObject(pName));
+	const	char* pName = 			typeid(typename CImgui_TerrainEditor).name();
+	CImgui_TerrainEditor* pTerrainEditor = 	dynamic_cast<CImgui_TerrainEditor*>(CGameInstance::GetInstance()->Get_ImguiObject(pName));
 
-	//if (pTerrainEditor == nullptr)
-	//	return;
+	if (pTerrainEditor == nullptr)
+		return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain3"));
+	m_pSelectedTerrain = pTerrainEditor->Get_SelectedTerrin();//dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain3"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -808,6 +814,12 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 	ImGui::Begin("Instance Obj PosControl");
 
 	CTransform* pSelectObjTransform = static_cast<CTransform*>(pSelectEnviObj->Find_Component(TEXT("Com_Transform")));	
+	
+	if (ImGui::IsKeyDown(ImGuiKey_C))
+	{
+		m_bIstancingObjPicking = !m_bIstancingObjPicking;
+	}
+	
 	ImGui::Checkbox("Picking Terrain", &m_bIstancingObjPicking);
 	
 	static _int			m_iNum_GroundCoverObj = 0;
