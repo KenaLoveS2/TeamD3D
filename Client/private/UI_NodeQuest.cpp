@@ -6,52 +6,92 @@
 #include <codecvt>
 #include <locale>
 #include "Utile.h"
+#include "UI_Event_Fade.h"
 
-CUI_NodeQuest::CUI_NodeQuest(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_NodeQuest::CUI_NodeQuest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Node(pDevice, pContext)
 	, m_szQuest(nullptr)
 	, m_fTime(0.f)
 	, m_fTimeAcc(0.f)
-	, m_fSpeed(0.f)
-	, m_fAlpha(0.f)
-	, m_bOpening(false)
-	, m_bClear(false)
-	, m_iReward(10)
+	, m_bAppear(false)
+	, m_bDisappear(false)
+	, m_bFinished(false)
+	, m_bMoveUp(false)
 {
 }
 
-CUI_NodeQuest::CUI_NodeQuest(const CUI_NodeQuest & rhs)
+CUI_NodeQuest::CUI_NodeQuest(const CUI_NodeQuest& rhs)
 	: CUI_Node(rhs)
 	, m_szQuest(nullptr)
 	, m_fTime(0.f)
 	, m_fTimeAcc(0.f)
-	, m_fSpeed(0.f)
-	, m_fAlpha(0.f)
-	, m_bOpening(false)
-	, m_bClear(false)
-	, m_iReward(10)
+	, m_bAppear(false)
+	, m_bDisappear(false)
+	, m_bFinished(false)
+	, m_bMoveUp(false)
 {
 }
 
 void CUI_NodeQuest::Set_QuestString(wstring str)
 {
-
-	//wcscpy_s()
 	m_szQuest = CUtile::Create_String(str.c_str());
-	//m_szQuest = new _tchar[str.length()+1];
-	//_int i = 0;
-	//for (auto c : str)
-	//{
-	//	m_szQuest[i] = c;
-	//	i++;
-	//}
-	//m_szQuest[i] = '\0';
 }
 
-void CUI_NodeQuest::Set_Clear()
+void CUI_NodeQuest::Appear(_float fTerm)
 {
-	m_bClear = true;
+	m_bActive = true;
+
+	m_bAppear = true;
+	m_bDisappear = false;
+
+	//m_fIntervalY = -20.f;
+	//m_matLocal._42 += m_fIntervalY;
+
+	/* this variable is not for this action, but just use it */
+	m_fIntervalY = m_matLocal._42;
+	m_matLocal._42 -= 20.f;
+
 	m_fTimeAcc = 0.0f;
+	m_fTerm = fTerm;
+
+	static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Change_Data(0.03f, 5000.f);
+	m_vecEvents[EVENT_FADE]->Call_Event(true);
+
+}
+
+void CUI_NodeQuest::Disappear(_float fTerm)
+{
+	m_bAppear = false;
+	m_bDisappear = true;
+	m_bFinished = false;
+
+	m_fTimeAcc = 0.0f;
+	m_fTerm = fTerm;
+
+	static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Change_Data(0.05f, 0.f);
+	static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->FadeOut();
+}
+
+void CUI_NodeQuest::Move_Up()
+{
+	m_bMoveUp = true;
+	m_fIntervalY = m_matLocal._42 + 140.f;
+	m_fTimeAcc = 0.0f;
+}
+
+_float4 CUI_NodeQuest::Get_ComputePosition()
+{
+	_float4 vParentPos = { 0.f, 0.f, 0.f, 0.f };
+
+	if (m_pParent != nullptr)
+	{
+		vParentPos = m_pParent->Get_LocalMatrix().r[3];
+	}
+	_float4 vPos = { m_matLocal._41, m_matLocal._42, m_matLocal._43, 0.f };
+	vPos = vParentPos + vPos;
+
+	return vPos;
+
 }
 
 HRESULT CUI_NodeQuest::Initialize_Prototype()
@@ -62,7 +102,7 @@ HRESULT CUI_NodeQuest::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_NodeQuest::Initialize(void * pArg)
+HRESULT CUI_NodeQuest::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
@@ -76,7 +116,11 @@ HRESULT CUI_NodeQuest::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	//m_bActive = false;
+	/* event */
+	m_vecEvents.push_back(CUI_Event_Fade::Create(0.08f, 0.5f));
+
+	m_fIntervalY = -20.f; /* Appear From */
+	m_fIntervalX = -10.f; /* Dissappear To */
 	return S_OK;
 }
 
@@ -85,34 +129,50 @@ void CUI_NodeQuest::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	if (!m_bOpening)
+	if (m_bAppear)
 	{
-		m_fSpeed = 0.3f;
 		m_fTimeAcc += fTimeDelta;
-		if (m_fAlpha < 1.f)
+		if (m_fTimeAcc < m_fTerm)
+			return;
+
+		if (m_matLocal._42 >= m_fIntervalY)
 		{
-			m_fAlpha += m_fSpeed * m_fTimeAcc;
-			//m_matLocal._11 += m_fSpeed * m_fTimeAcc;
-			//Set_LocalMatrix(m_matLocal);
+			m_matLocal._42 = m_fIntervalY;
+			m_bAppear = false;
 		}
 		else
-		{
-			m_bOpening = true;
-			m_fAlpha = 1.f;
-			m_fTimeAcc = 0.f;
-		}
+			m_matLocal._42 += 1.f * (m_fTimeAcc - m_fTerm);
+
 	}
 
-	if (m_bOpening && m_bClear)
+	if (m_bDisappear)
 	{
-		m_fSpeed = 5.f;
 		m_fTimeAcc += fTimeDelta;
-		if (m_fAlpha <= 0.f)
+		if (static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Is_End())
+		{
 			m_bActive = false;
+			m_bDisappear = false;
+			m_bFinished = true;
+		}
 		else
 		{
-			m_fAlpha -= m_fSpeed * m_fTimeAcc;
-			m_bClear = false;
+			m_matLocal._41 -= 1.f * m_fTimeAcc;
+		}
+
+	}
+
+	if (m_bMoveUp)
+	{
+		m_fTimeAcc += fTimeDelta;
+
+		if (m_matLocal._42 >= m_fIntervalY)
+		{
+			m_matLocal._42 = m_fIntervalY;
+			m_bMoveUp = false;
+		}
+		else
+		{
+			m_matLocal._42 += 5.f * m_fTimeAcc;
 		}
 	}
 
@@ -125,7 +185,33 @@ void CUI_NodeQuest::Late_Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	__super::Late_Tick(fTimeDelta);
+	//__super::Late_Tick(fTimeDelta);
+
+
+	CUI::Late_Tick(fTimeDelta);
+
+	/* Calculate with Parent(Canvas) WorldMatrix (Scale, Translation) */
+	if (m_pParent != nullptr)
+	{
+		_float4x4 matWorldParent;
+		XMStoreFloat4x4(&matWorldParent, m_pParent->Get_WorldMatrix());
+
+		_matrix matParentTrans = XMMatrixTranslation(matWorldParent._41, matWorldParent._42, matWorldParent._43);
+
+		float fRatioX = matWorldParent._11 / m_matParentInit._11;
+		float fRatioY = matWorldParent._22 / m_matParentInit._22;
+		_matrix matParentScale = XMMatrixScaling(fRatioX, fRatioY, 1.f);
+
+		_matrix matWorld = m_matLocal * matParentScale * matParentTrans;
+		m_pTransformCom->Set_WorldMatrix(matWorld);
+	}
+
+	for (auto e : m_vecEvents)
+		e->Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRendererCom && m_bActive)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UILAST, this);
+
 }
 
 HRESULT CUI_NodeQuest::Render()
@@ -147,12 +233,12 @@ HRESULT CUI_NodeQuest::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 25.f, g_iWinSizeY*0.5f - vPos.y -20.f};
+	_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - 150.f, g_iWinSizeY * 0.5f - vPos.y - 25.f };
 
 	CGameInstance::GetInstance()->Render_Font(TEXT("Font_Jangmi0"), m_szQuest,
 		vNewPos /* position */,
-		0.f, _float2(1.f, 1.f)/* size */, 
-		XMVectorSet(1.f, 1.f, 1.f, m_fAlpha)/* color */);
+		0.f, _float2(1.f, 1.f)/* size */,
+		XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Get_Alpha()));
 
 	return S_OK;
 }
@@ -180,6 +266,8 @@ HRESULT CUI_NodeQuest::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
+	CUI::SetUp_ShaderResources();
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -199,85 +287,12 @@ HRESULT CUI_NodeQuest::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
-		return E_FAIL;
-
 	return S_OK;
 }
 
-//HRESULT CUI_NodeQuest::Save_Data()
-//{
-//	Json	json;
-
-	//std::string std = "한글테스트";
-	//std::wstring_convert<codecvt_utf8_utf16<int16_t>, int16_t> convert;
-	//auto p = reinterpret_cast<const int16_t*>(std.data());
-	//json["test"] = convert.to_bytes(p, p + std.size());
-
-	//Json	jString = {
-	//	{"name", "John"},
-	//	{"what", "fckyou"}
-	//};
-
-	/* convert wstring to string */
-	//using convert_type = codecvt_utf8<wchar_t>;
-	//wstring wstr = L"한글테스트";
-	//wstring_convert<convert_type> utf8_conv;
-	//json["test"] = utf8_conv.to_bytes(wstr);
-	//json.dump();
-	/* ~ convert wstring to string */
-
-
-	//using convert_type = codecvt_utf8<wchar_t>;
-
-	//wstring main = L"타로를 구하세요";
-	//wstring_convert<convert_type> utf8_conv;
-	//json["mainQuest"]; // = utf8_conv.to_bytes(main);
-	//				   //json.dump();
-
-	//Json jSub;
-	//wstring sub1 = L"신사를 정화하세요.";
-	//wstring sub2 = L"오염된 숲을 정화하세요.";
-	//json["sub1"] = utf8_conv.to_bytes(sub1);
-	//json.dump();
-	//json["sub2"] = utf8_conv.to_bytes(sub2);
-	//json.dump();
-	//json["mainQuest"].push_back(jSub);
-
-//}
-
-//HRESULT CUI_NodeQuest::Load_Data(wstring fileName)
-//{
-//	Json	jLoad;
-//
-//	wstring name = L"../Bin/Data/UI/";
-//	name += fileName;
-//	name += L"_Property.json";
-//	string filePath;
-//	filePath.assign(name.begin(), name.end());
-//
-//	ifstream file(filePath);
-//	if (file.fail())
-//		return E_FAIL;
-//	file >> jLoad;
-//	file.close();
-//
-//
-//
-//	/* convert string to wstring */
-//	//string test;
-//	//jLoad["test"].get_to<string>(test);
-//	//using convert_type = codecvt_utf8<wchar_t>;
-//	//wstring_convert<convert_type> utf8_conv;
-//	//wstring wstr = utf8_conv.from_bytes(test);
-//	/* ~ convert string to wstring */
-//}
-
-
-
-CUI_NodeQuest * CUI_NodeQuest::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_NodeQuest* CUI_NodeQuest::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_NodeQuest*	pInstance = new CUI_NodeQuest(pDevice, pContext);
+	CUI_NodeQuest* pInstance = new CUI_NodeQuest(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
 		MSG_BOX("Failed To Create : CUI_NodeQuest");
@@ -286,9 +301,9 @@ CUI_NodeQuest * CUI_NodeQuest::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CGameObject * CUI_NodeQuest::Clone(void * pArg)
+CGameObject* CUI_NodeQuest::Clone(void* pArg)
 {
-	CUI_NodeQuest*	pInstance = new CUI_NodeQuest(*this);
+	CUI_NodeQuest* pInstance = new CUI_NodeQuest(*this);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX("Failed To Clone : CUI_NodeQuestMain");
@@ -303,7 +318,7 @@ void CUI_NodeQuest::Free()
 
 	if (m_isCloned)
 	{
-		delete [] m_szQuest;
+		delete[] m_szQuest;
 		m_szQuest = nullptr;
 	}
 }

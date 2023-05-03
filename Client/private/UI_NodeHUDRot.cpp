@@ -21,6 +21,11 @@ void CUI_NodeHUDRot::Change_RotIcon(_float fIcon)
 
 }
 
+_bool CUI_NodeHUDRot::Is_ChangeFinished()
+{
+	return static_cast<CUI_Event_Animation*>(m_vecEvents[EVENT_ANIM])->Is_Finished();
+}
+
 HRESULT CUI_NodeHUDRot::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))

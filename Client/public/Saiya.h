@@ -170,6 +170,8 @@ private:
 	_bool											m_bChatEnd = false;
 	_float4											m_vFinalPosition;
 
+	_bool							m_bQuestClearMoment = false;
+
 public:
 	static CSaiya*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;

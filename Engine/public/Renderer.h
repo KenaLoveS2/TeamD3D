@@ -53,8 +53,8 @@ public:
 
 #ifdef _DEBUG
 	HRESULT Add_DebugRenderGroup(class CComponent* pComponent);
-	_bool								m_bDebugRender = false;
 #endif
+	_bool								m_bDebugRender = false;
 
 	HRESULT Draw_RenderGroup();
 
@@ -68,14 +68,14 @@ private:
 	typedef list<class CComponent*>		DEBUGOBJECTS;
 #endif
 private:
-	class CTarget_Manager*		m_pTarget_Manager = nullptr;
+	class CTarget_Manager*			m_pTarget_Manager = nullptr;
 	class CLight_Manager*			m_pLight_Manager = nullptr;
-	class CLevel_Manager*		m_pLevel_Manager = nullptr;
+	class CLevel_Manager*			m_pLevel_Manager = nullptr;
 	class CVIBuffer_Rect*			m_pVIBuffer = nullptr;
-	class CShader*						m_pShader = nullptr;
-	class CShader*						m_pShader_PostProcess = nullptr;
-	class CShader*						m_pShader_SSAO = nullptr;
-	_float4x4								m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
+	class CShader*					m_pShader = nullptr;
+	class CShader*					m_pShader_PostProcess = nullptr;
+	class CShader*					m_pShader_SSAO = nullptr;
+	_float4x4						m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
 	ID3D11DepthStencilView*			m_pShadowDepthStencilView = nullptr;
 	ID3D11DepthStencilView*			m_pStaticShadowDepthStencilView = nullptr;
@@ -90,6 +90,7 @@ private:
 	_float							m_fDistortTime = 0.f;
 	_float							m_fPrevCaptureTime = 0.f;
 	_bool							m_bCine = false;
+	_bool							m_bTemp = false;
 
 private:
 	void Increase_Time();

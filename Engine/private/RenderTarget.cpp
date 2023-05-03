@@ -102,8 +102,6 @@ HRESULT CRenderTarget::Clear()
 	return S_OK;
 }
 
-#ifdef _DEBUG
-
 HRESULT CRenderTarget::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)
 {
 	D3D11_VIEWPORT			ViewportDesc;
@@ -136,7 +134,6 @@ HRESULT CRenderTarget::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
 	pVIBuffer->Render();
 	return S_OK;
 }
-#endif // _DEBUG
 
 CRenderTarget * CRenderTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, _uint iWidth, _uint iHeight, DXGI_FORMAT ePixelFormat, const _float4 * pClearColor)
 {

@@ -20,11 +20,15 @@
 
 CUI_CanvasHUD::CUI_CanvasHUD(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
+	,m_fNewState(0.f)
+, m_bOnce(false)
 {
 }
 
 CUI_CanvasHUD::CUI_CanvasHUD(const CUI_CanvasHUD & rhs)
 	: CUI_Canvas(rhs)
+	,m_fNewState(0.f)
+, m_bOnce(false)
 {
 }
 
@@ -162,6 +166,13 @@ void CUI_CanvasHUD::Tick(_float fTimeDelta)
 	{
 		Function(CUI_ClientManager::HUD_PIP, 0.f);
 	}
+
+	if (static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Is_ChangeFinished() && m_bOnce)
+	{
+		static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(m_fNewState);
+		m_bOnce = false;
+	}
+
 
 
 	__super::Tick(fTimeDelta);
@@ -482,7 +493,8 @@ void CUI_CanvasHUD::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 		}
 		break;
 	case CUI_ClientManager::HUD_ROT:
-		static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(fValue);
+		m_fNewState = fValue;
+		m_bOnce = true;
 		break;
 	}
 }

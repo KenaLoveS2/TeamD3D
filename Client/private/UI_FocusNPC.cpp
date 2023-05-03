@@ -72,6 +72,7 @@ void CUI_FocusNPC::Late_Tick(_float fTimeDelta)
 	if (10.f > fDistance) /*	&& (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))*/
 		m_bActive = true;
 	else
+	//if(10.f <fDistance)
 		m_bActive = false;
 
 	if (dynamic_cast<CSaiya*>(m_tBBDesc.pOwner)->Get_Disappear() || dynamic_cast<CSaiya*>(m_tBBDesc.pOwner)->UIOFF())

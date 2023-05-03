@@ -55,6 +55,9 @@ private:
 	_uint	m_iNumPipsNow; /* Full Pip Left */
 	_int	m_Pips[PIP_END];
 
+	_float m_fNewState;
+	_bool m_bOnce;
+
 public:
 	static	CUI_CanvasHUD*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr);

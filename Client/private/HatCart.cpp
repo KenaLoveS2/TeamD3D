@@ -106,6 +106,7 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 					Update_MannequinRotMatrix();
 					m_pMannequinRot->Start_FashiomShow();
 
+					CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
 					CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_SHOP);
 				}
 				else /* Cart Close */
@@ -115,16 +116,17 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 					m_pPlayer->Get_CameraPlayer()->Set_MouseFix(true);
 					m_pMannequinRot->End_FashiomShow();
 
+					CUI_ClientManager::GetInstance()->Switch_FrontUI(true);
 					CBGM_Manager::GetInstance()->Change_FieldState(CBGM_Manager::FIELD_VILLAGE);
 
 
 					/* Quest 2 -1 Clear*/
-					//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-					//_bool bStart = true;
-					//_float fIdx = 1;
-					//wstring wstr = L"";
-					//m_pPlayer->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
-					//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+					CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+					_bool bStart = true;
+					_float fIdx = 9.f;
+					wstring wstr = L"";
+					m_pPlayer->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
+					CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 
 				}
 			}

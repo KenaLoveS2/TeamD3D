@@ -1332,6 +1332,7 @@ void CUI_ClientManager::Switch_FrontUI(_bool bActive)
 {
 	m_vecCanvas[CANVAS_HUD]->Set_Active(bActive);
 	m_vecCanvas[CANVAS_AMMO]->Set_Active(bActive);
+	m_vecCanvas[CANVAS_QUEST]->Set_Active(bActive);
 }
 
 void CUI_ClientManager::Free()

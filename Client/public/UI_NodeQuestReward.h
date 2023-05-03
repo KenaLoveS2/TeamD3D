@@ -14,7 +14,7 @@ private:
 	virtual ~CUI_NodeQuestReward() = default;
 
 public:
-	void	RewardOn();// { m_bActive = true; }
+	void	RewardOn(_float4 vPos);// { m_bActive = true; }
 	_bool	Is_End() { return m_bEnd; }
 	_float	Get_Alpha();
 
@@ -30,14 +30,14 @@ private:
 	virtual HRESULT			SetUp_ShaderResources() override;
 
 private:
-	_bool		m_bEnd; 
+	_bool		m_bEnd;
 	_float		m_fTime;
 	_float		m_fTimeAcc;
 	_bool		m_bStart;
 
 public:
-	static	CUI_NodeQuestReward*	Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
-	virtual CGameObject*			Clone(void* pArg = nullptr);
+	static	CUI_NodeQuestReward* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject* Clone(void* pArg = nullptr);
 	virtual void					Free() override;
 };
 END

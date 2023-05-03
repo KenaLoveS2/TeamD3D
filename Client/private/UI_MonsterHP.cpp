@@ -38,9 +38,8 @@ HRESULT CUI_MonsterHP::Initialize(void * pArg)
 		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 	}
 	
-	/* It might be faster.... */
 	m_iRenderPass = 20;
-	m_pTransformCom->Set_Scaled(_float3(80.f, 5.f, 1.f));
+	m_pTransformCom->Set_Scaled(_float3(150.f, 10.f, 1.f));
 	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
 	if (FAILED(SetUp_Components()))

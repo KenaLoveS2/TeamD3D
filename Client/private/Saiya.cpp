@@ -150,12 +150,12 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 void CSaiya::Tick(_float fTimeDelta)
 {
 	if (m_bDeath) return;
-	
+
 	__super::Tick(fTimeDelta);
 	m_iNumKeyFrame = (_uint)m_keyframes.size();
 	Update_Collider(fTimeDelta);
 
-	if (g_LEVEL == LEVEL_FINAL )
+	if (g_LEVEL == LEVEL_FINAL)
 	{
 		if (m_pShaman->Get_BossClear() == true && false == m_bCall)
 		{
@@ -180,13 +180,33 @@ void CSaiya::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 
+	if (m_pModelCom->Get_AnimIndex() == SAIYA_CHASINGLOOP)
+		m_pFocus->Set_Active(false);
+
+	if (g_LEVEL == LEVEL_TESTPLAY)
+	{
+		_bool isPlay = false;
+		for (int i = 0; i < NPC_CINE_END; i++)
+		{
+			if (m_pCinecam[i]->IsPlaying())
+			{
+				m_pFocus->Set_Active(false);
+				isPlay = true;
+				break;
+			}
+		}
+
+		if (isPlay == false)
+			m_pFocus->Set_Active(true);
+	}
+
+
+
 	if(!m_bPhoto)
 		AdditiveAnim(fTimeDelta);
 
 	if (m_bStraight)
-		m_pTransformCom->Go_Straight(fTimeDelta);
-
-	
+		m_pTransformCom->Go_Straight(fTimeDelta);	
 }
 
 void CSaiya::Late_Tick(_float fTimeDelta)
@@ -496,6 +516,10 @@ HRESULT CSaiya::SetUp_State()
 			m_pTransformCom->Set_Position(CUtile::Float3toFloat4Position(m_keyframes[2].vPos));
 			m_pTransformCom->Set_Look(CUtile::Float3toFloat4Look(m_keyframes[2].vLook));
 		}
+		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+		_bool bStart = true;
+		_float fIndex = 1.f;
+		m_SaiyaDelegator.broadcast(eQuest, bStart, fIndex, wstrDefault);
 	})
 		.AddTransition("ACTION_2 to ACTION_3" , "ACTION_3")
 		.Predicator([this]()
@@ -653,6 +677,7 @@ HRESULT CSaiya::SetUp_State()
 			m_pModelCom->Set_AnimIndex(SAIYA_CHEER);
 			CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
 			Set_PlayerLock(true);
+			//m_pFocus->Set_Active(true);
 	})
 
 		.OnExit([this]()
@@ -700,7 +725,9 @@ HRESULT CSaiya::SetUp_State()
 		_bool bVal = false;
 		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
 
-		m_iLineIndex = 0;
+	//	m_pFocus->Set_Active(false);
+
+			m_iLineIndex = 0;
 		m_iChatIndex++;
 
 		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
@@ -821,6 +848,8 @@ HRESULT CSaiya::SetUp_State()
 		const _float3 vOffset = _float3(2.5f, 2.f, 1.f);
 		const _float3 vLookOffset = _float3(0.f, 0.3f, 0.f);
 		m_pMainCam->Set_Target(this, CCameraForNpc::OFFSET_FRONT, vOffset, vLookOffset);
+
+	//	m_pFocus->Set_Active(true);
 	})
 		.AddTransition("ACTION_16 to ACTION_17", "ACTION_17")
 		.Predicator([this]()
@@ -863,6 +892,7 @@ HRESULT CSaiya::SetUp_State()
 			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 			_bool bVal = false;
 			m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
+	//		m_pFocus->Set_Active(false);
 
 			m_iLineIndex = 0;
 			m_iChatIndex++;
@@ -1008,6 +1038,7 @@ HRESULT CSaiya::SetUp_State()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_PULSE);
 		m_pModelCom->Set_AnimIndex(SAIYA_PULSE);
+	//	m_pFocus->Set_Active(true);
 	})
 		.AddTransition("ACTION_25 to ACTION_26", "ACTION_26")
 		.Predicator([this]()
@@ -1048,7 +1079,7 @@ HRESULT CSaiya::SetUp_State()
 		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 		_bool bVal = false;
 		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
-
+	//	m_pFocus->Set_Active(false);
 		m_iLineIndex = 0;
 		m_iChatIndex++;
 		CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
@@ -1102,7 +1133,7 @@ HRESULT CSaiya::SetUp_StateFinal()
 		//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 
 
-
+		//		m_pFocus->Set_Active(true);
 		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 		_bool bVal = true;
 		m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][0]);
@@ -1133,6 +1164,7 @@ HRESULT CSaiya::SetUp_StateFinal()
 		.OnExit([this]()
 	{
 		/* Chat End */
+		//		m_pFocus->Set_Active(false);
 		Set_PlayerLock(false);
 		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 		_bool bVal = false;
@@ -1273,6 +1305,8 @@ HRESULT CSaiya::SetUp_UI()
 		MSG_BOX("Failed To Make Focus UI");
 		return E_FAIL;
 	}
+
+	//m_pFocus->Set_Active(true);
 
 	return S_OK;
 }

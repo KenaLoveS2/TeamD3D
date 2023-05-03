@@ -36,6 +36,9 @@ void CRenderer::Imgui_Render()
 	ImGui::Checkbox("FOG", &m_bFog);
 	ImGui::Checkbox("LightShaft", &m_bLightShaft);
 	ImGui::Checkbox("FADE", &m_bFade);
+	ImGui::Checkbox("Temp", &m_bTemp);
+	ImGui::Checkbox("Bloom", &CPostFX::GetInstance()->m_bBloom);
+	ImGui::Checkbox("Blur", &CPostFX::GetInstance()->m_bBlur);
 
 	if(ImGui::Button("Photo"))
 	{
@@ -595,6 +598,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 #ifdef _DEBUG
 	if (FAILED(Render_DebugObject()))
 		return E_FAIL;
+#endif
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 		if (pGameInstance->Get_DIKeyState(DIK_F8) & 0x8000)
@@ -616,7 +620,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_EFFECT"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_PrevFrame"));
 	}
-#endif
 	return S_OK;
 }
 
@@ -1167,16 +1170,18 @@ HRESULT CRenderer::Render_PostProcess()
 		pLDRDest = pLDRTmp;
 		PostProcess_Fade();
 	}
-
-
+	
 	m_pContext->OMSetRenderTargets(1, &pBackBufferView, pDepthStencilView);
 	Safe_Release(pBackBufferView);
 	Safe_Release(pDepthStencilView);
 
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_bTemp", &m_bTemp, sizeof(_bool))))
+		return E_FAIL;
+
 	// LDR to Backbuffer
 	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour->Get_SRV()))) // 이것이 현재 프레임
 		return E_FAIL;
-
+	
 	if (!m_bCaptureMode)
 		m_pLDRTexture = pLDRSour->Get_SRV();
 
