@@ -200,8 +200,6 @@ void CTarget_Manager::CopyRenderTarget(ID3D11DeviceContext * pContext, const _tc
 	pContext->CopyResource(pDst->Get_Tex2D(), pSrc->Get_Tex2D());
 }
 
-#ifdef _DEBUG
-
 HRESULT CTarget_Manager::Ready_Debug(const _tchar * pTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
 {
 	CRenderTarget*		pTarget = Find_RenderTarget(pTargetTag);
@@ -227,7 +225,6 @@ void CTarget_Manager::Render_Debug(const _tchar* pMRTTag)
 	for (auto& pRenderTarget : *pMRTList)
 		pRenderTarget->Render(m_pShader, m_pVIBuffer);	
 }
-#endif // _DEBUG
 
 CRenderTarget * CTarget_Manager::Find_RenderTarget(const _tchar * pTargetTag)
 {
@@ -265,8 +262,6 @@ void CTarget_Manager::Free()
 
 	m_RenderTargets.clear();
 
-#ifdef _DEBUG
 	Safe_Release(m_pShader);
 	Safe_Release(m_pVIBuffer);
-#endif
 }

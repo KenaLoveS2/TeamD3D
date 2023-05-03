@@ -26,11 +26,9 @@ public:
 	HRESULT Resize(_uint iWidth, _uint iHeight);
 	HRESULT Clear();
 	
-#ifdef _DEBUG
 public:
 	HRESULT Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
-#endif
 
 private:
 	ID3D11Device*							m_pDevice = nullptr;
@@ -46,12 +44,10 @@ private:
 	_float4										m_vClearColor;
 	DXGI_FORMAT							m_ePixelFormat;
 
-#ifdef _DEBUG
 private:
 	_float4x4							m_WorldMatrix;
 	_float2								m_vPos;
 	_float2								m_vSize;
-#endif
 
 public:
 	static CRenderTarget* Create(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext, _uint iWidth, _uint iHeight, DXGI_FORMAT ePixelFormat, const _float4* pClearColor);

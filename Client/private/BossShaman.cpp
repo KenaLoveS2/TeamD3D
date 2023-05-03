@@ -1382,6 +1382,13 @@ HRESULT CBossShaman::SetUp_State()
 		g_bDayOrNight = true;
 		m_pTransformCom->Clear_Actor();
 		Clear_Death();
+
+		/* Quest 2 - 2 */
+		CUI_ClientManager::UI_PRESENT eClear = CUI_ClientManager::QUEST_CLEAR;
+		_float fIdx = 10.f;
+		_bool bStart = true;
+		wstring wstr = L"";
+		m_pKena->m_PlayerQuestDelegator.broadcast(eClear, bStart, fIdx, wstr);
 	})
 
 		.Build();

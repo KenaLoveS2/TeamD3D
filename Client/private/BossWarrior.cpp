@@ -764,6 +764,11 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_bEnRageReady = false;
 		m_pMonsterStatusCom->Add_CurrentHP(100);
+
+		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+		_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
+		m_BossWarriorDelegator.broadcast(eBossHP, fGauge);
+
 		Attack_Start(ENRAGE);
 	})
 		.OnExit([this]()

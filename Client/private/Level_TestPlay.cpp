@@ -27,6 +27,7 @@
 #include "Monster_Manager.h"
 #include "BGM_Manager.h"
 #include "BowTarget_Manager.h"
+#include "WorldTrigger_S2.h"
 
 CLevel_TestPlay::CLevel_TestPlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -43,12 +44,12 @@ HRESULT CLevel_TestPlay::Initialize()
 
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 	p_game_instance->Clear_ImguiObjects();
-	//p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
-	//p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
+	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
 	//p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-	//p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImgui_TerrainEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
@@ -623,6 +624,58 @@ HRESULT CLevel_TestPlay::Ready_Layer_UI(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
 		TEXT("Prototype_GameObject_UI_MousePointer"), L"Clone_MousePointer")))
 		return E_FAIL;
+
+
+	/* Triggers */
+	string	strLoadDirectory = "../Bin/Data/UITrigger/TriggerList_LevelTestPlay.json";
+	Json jLoad;
+	ifstream file(strLoadDirectory);
+	if (file.fail())
+		return E_FAIL;
+	file >> jLoad;
+	file.close();
+
+	_int iTotalCount = 0;
+	jLoad["Total Count"].get_to<_int>(iTotalCount);
+
+	if (iTotalCount != 0)
+	{
+		for (_int i = 0; i < iTotalCount; ++i)
+		{
+			string tag = to_string(i);
+			CWorldTrigger_S2::DESC tDesc;
+
+			string strName = "";
+			jLoad[tag][0].get_to<string>(strName);
+			strcpy_s(tDesc.szName, MAX_PATH, strName.c_str());
+
+			_int iType = 0;
+			jLoad[tag][1].get_to<_int>(iType);
+			tDesc.eType = (CWorldTrigger_S2::TYPE)iType;
+
+			jLoad[tag][2].get_to<_float>(tDesc.fData);
+
+			string strData = "";
+			jLoad[tag][3].get_to<string>(strData);
+			//strcpy_s(tDesc.szData, MAX_PATH, strData.c_str());
+			strcpy_s(tDesc.szData, MAX_PATH, "");
+
+			wstring wstrData = CUtile::utf8_to_wstring(strData);
+			wcscpy_s(tDesc.wstrData, MAX_PATH, wstrData.c_str());
+
+			jLoad[tag][4].get_to<_float>(tDesc.vPosition.x);
+			jLoad[tag][5].get_to<_float>(tDesc.vPosition.y);
+			jLoad[tag][6].get_to<_float>(tDesc.vPosition.z);
+
+			jLoad[tag][7].get_to<_float>(tDesc.vScale.x);
+			jLoad[tag][8].get_to<_float>(tDesc.vScale.y);
+			jLoad[tag][9].get_to<_float>(tDesc.vScale.z);
+
+			if (FAILED(CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Trigger",
+				L"Prototype_GameObject_WorldTrigger_S2", CUtile::Create_DummyString(), &tDesc)))
+				return E_FAIL;
+		}
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 

@@ -113,7 +113,7 @@ HRESULT CUI_CanvasItemBar::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 120.f, g_iWinSizeY*0.5f - vPos.y - 15.f};
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 120.f, g_iWinSizeY*0.5f - vPos.y - 25.f};
 
 	if (nullptr != m_szName)
 	{
@@ -181,7 +181,7 @@ HRESULT CUI_CanvasItemBar::Ready_Nodes()
 		m_vecNodeCloneTag.push_back(strCloneTag);
 		pGameInstance->Add_String(wstrCloneTag);
 		static_cast<CUI_NodeCrystal*>(pUI)->Set_Crystal(m_tItemDesc.iPrice);
-		static_cast<CUI_NodeCrystal*>(pUI)->Set_Font(L"Font_Jangmi0", { 0.f, 0.f, 0.f, 1.f }, { 0.6f, 0.6f }, { 20.f, -10.f });
+		static_cast<CUI_NodeCrystal*>(pUI)->Set_Font(L"Font_Jangmi0", { 0.f, 0.f, 0.f, 1.f }, { 1.f, 1.f }, { 20.f, -25.f });
 
 	}
 

@@ -30,11 +30,9 @@ public:
 	HRESULT Resize(ID3D11DeviceContext* pContext);
 	void			CopyRenderTarget(ID3D11DeviceContext * pContext, const _tchar* pDstTag, const _tchar* pSrcTag);
 
-#ifdef _DEBUG
 public:
 	HRESULT Ready_Debug(const _tchar* pTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	void Render_Debug(const _tchar* pMRTTag);
-#endif // _DEBUG
 
 private:
 	map<const _tchar*, class CRenderTarget*>				m_RenderTargets;
@@ -50,13 +48,10 @@ private:
 	ID3D11DepthStencilView*				m_pDepthStencilView = nullptr;
 	D3D11_VIEWPORT						m_OriginViewPort;
 
-#ifdef _DEBUG
 private:
 	class CVIBuffer_Rect*				m_pVIBuffer = nullptr;
 	class CShader*						m_pShader = nullptr;
 	_float4x4							m_ViewMatrix, m_ProjMatrix;
-#endif
-
 
 private:
 	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);

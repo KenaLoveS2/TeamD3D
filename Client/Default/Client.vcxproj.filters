@@ -1733,6 +1733,9 @@
     <ClInclude Include="..\public\E_P_ShamanDust.h">
       <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\WorldTrigger_S2.h">
+      <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2808,6 +2811,9 @@
     </ClCompile>
     <ClCompile Include="..\private\E_WarriorEyeTrail.cpp">
       <Filter>02.GameObjects\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WorldTrigger_S2.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\WorldTrigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

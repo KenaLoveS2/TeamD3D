@@ -6713,16 +6713,32 @@ void CKena_State::Start_Level_Up(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
 
 	_float fMin = 0.0f;
+	_float fMax = 1.0f;
 
-	_int	iRotLevel = m_pStatus->Get_RotLevel();
-	if (iRotLevel == 1)
+	_int	iRotLevel = m_pStatus->Get_RotLevel() - 1;
+
+	if(iRotLevel == 0)
+	{
+		fMin = 0.f;
+		fMax = 1.f;
+	}
+	else	if (iRotLevel == 1)
+	{
 		fMin = 1.0f;
+		fMax = 5.f;
+	}
 	else if (iRotLevel == 2)
+	{
 		fMin = 5.0f;
+		fMax = 10.f;
+	}
 	else if (iRotLevel == 3)
+	{
 		fMin = 10.0f;
+		fMax = 15.f;
+	}
 
-	_float fRotMax = (_float)m_pStatus->Get_RotMax();
+	_float fRotMax = fMax;//(_float)m_pStatus->Get_RotMax();
 	_float fRotNow = (_float)m_pStatus->Get_RotCount();
 	_float fGuage = (fRotNow - fMin) / (fRotMax - fMin);
 

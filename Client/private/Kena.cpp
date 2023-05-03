@@ -636,9 +636,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 	/* UI Control */
 	if (CKena_Status::RS_ACTIVE == m_pKenaStatus->Get_RotState())
 	{
-		CMonster* pMonster = m_pRotForMonster[0]->Get_Target();
-		if (nullptr != pMonster && false == pMonster->Get_Bind())
-		{
+		//CMonster* pMonster = m_pRotForMonster[0]->Get_Target();
+		//if (nullptr != pMonster && false == pMonster->Get_Bind())
+		//{
 			CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
 			CKena_Status::ROTSTATE eRotState;
 			if (m_pKenaStatus->Get_CurPIPGuage() >= 1.0f)
@@ -650,26 +650,26 @@ void CKena::Late_Tick(_float fTimeDelta)
 			_float fState = (_float)eRotState;
 			m_Delegator.broadcast(eRot, fState);
 			//m_PlayerDelegator.broadcast(eRot, funcDefault, fState);
-		}
+		//}
 	}
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_1))
-	{       
-		CUI_ClientManager::UI_PRESENT eQuestOpen = CUI_ClientManager::QUEST_;
-		_bool bOpen = true;
-		wstring wstr = L"";
-		m_PlayerQuestDelegator.broadcast(eQuestOpen, bOpen, g_QuestIndex, wstr);
-		CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
-	}
-	if (CGameInstance::GetInstance()->Key_Down(DIK_2))
-	{
-		CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_CLEAR_ALL;
-		_bool bOpen = true;
-		wstring wstr = L"";
-		m_PlayerQuestDelegator.broadcast(eQuest, bOpen, g_QuestIndex, wstr);
-		CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
-		g_QuestIndex++;
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_1))
+	//{       
+	//	CUI_ClientManager::UI_PRESENT eQuestOpen = CUI_ClientManager::QUEST_;
+	//	_bool bOpen = true;
+	//	wstring wstr = L"";
+	//	m_PlayerQuestDelegator.broadcast(eQuestOpen, bOpen, g_QuestIndex, wstr);
+	//	CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+	//}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_2))
+	//{
+	//	CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_CLEAR_ALL;
+	//	_bool bOpen = true;
+	//	wstring wstr = L"";
+	//	m_PlayerQuestDelegator.broadcast(eQuest, bOpen, g_QuestIndex, wstr);
+	//	CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+	//	g_QuestIndex++;
+	//}
 
 
 
@@ -3639,12 +3639,16 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 				m_pTransformCom->Set_Position(vPos);
 
 				/* Quest 1 - 3 Clear */
-				//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-				//_bool bStart = true;
-				//_float fIdx = 3;
-				//wstring wstr = L"";
-				//m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
-				//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+				if(g_LEVEL == LEVEL_TESTPLAY)
+				{
+					CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+					_bool bStart = true;
+					_float fIdx = 7.f;
+					wstring wstr = L"";
+					m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx, wstr);
+					//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
+				}
+	
 			}
 		}
 

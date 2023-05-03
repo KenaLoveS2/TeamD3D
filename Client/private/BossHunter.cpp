@@ -1375,6 +1375,13 @@ HRESULT CBossHunter::SetUp_State()
 		g_bDayOrNight = true;
 		m_pTransformCom->Clear_Actor();
 		Clear_Death();
+
+		/* Quest 1 - 2 */
+ 		CUI_ClientManager::UI_PRESENT eClear = CUI_ClientManager::QUEST_CLEAR;
+		_float fIdx = 6.f;
+		_bool bStart = true;
+		wstring wstr = L"";
+		m_pKena->m_PlayerQuestDelegator.broadcast(eClear, bStart, fIdx, wstr);
 	})
 
 	.Build();

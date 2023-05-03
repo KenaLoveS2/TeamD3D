@@ -57,6 +57,7 @@ private:
 public:
 	static void Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAME>& v, string& chatFileName);
 	_bool		CameraFinishedChecker(_float fRatio = 0.95f);
+	_bool		IsPlaying() const { return m_bPlay; }
 
 private:
 	vector<CAMERAKEYFRAME>		m_keyframes;

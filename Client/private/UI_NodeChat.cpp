@@ -1,32 +1,42 @@
 #include "stdafx.h"
 #include "..\public\UI_NodeChat.h"
 #include "GameInstance.h"
+#include "UI_Event_Fade.h"
 
-CUI_NodeChat::CUI_NodeChat(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_NodeChat::CUI_NodeChat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Node(pDevice, pContext)
 	, m_szChat(nullptr)
 	, m_fCorrectX(0.f)
 	, m_fCorrectY(0.f)
+	, m_bTypeLine(false)
 {
 }
 
-CUI_NodeChat::CUI_NodeChat(const CUI_NodeChat & rhs)
+CUI_NodeChat::CUI_NodeChat(const CUI_NodeChat& rhs)
 	: CUI_Node(rhs)
 	, m_szChat(nullptr)
 	, m_fCorrectX(0.f)
 	, m_fCorrectY(0.f)
+	, m_bTypeLine(false)
 {
 }
 
-void CUI_NodeChat::Set_String(wstring wstr, _float fCorrectY)
+void CUI_NodeChat::Set_String(wstring wstr, _float fCorrectY, _bool bTypeLine)
 {
 	Safe_Delete_Array(m_szChat);
 	m_szChat = CUtile::Create_String(wstr.c_str());
-	
+
 	size_t length = wstr.length();
-	m_fCorrectX = 14.f * _float(length-1); // 10.f
+	m_fCorrectX = 14.f * _float(length - 1); // 10.f
 
 	m_fCorrectY = fCorrectY;
+
+	m_bTypeLine = bTypeLine;
+	if (m_bTypeLine)
+	{
+		//static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Change_Data(0.05f, 50.f);
+		m_vecEvents[0]->Call_Event(true);
+	}
 }
 
 HRESULT CUI_NodeChat::Initialize_Prototype()
@@ -37,7 +47,7 @@ HRESULT CUI_NodeChat::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_NodeChat::Initialize(void * pArg)
+HRESULT CUI_NodeChat::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
@@ -47,17 +57,21 @@ HRESULT CUI_NodeChat::Initialize(void * pArg)
 
 	if (FAILED(SetUp_Components()))
 	{
-		MSG_BOX("Failed To SetUp Components : CUI_NodeLetterBox");
+		MSG_BOX("Failed To SetUp Components : CUI_NodeChat");
 		return E_FAIL;
 	}
-	
+
 	m_matLocal._11 = 0.f;
 	m_matLocal._22 = 0.f;
+
+
+	m_vecEvents.push_back(CUI_Event_Fade::Create(0.08f, 2.f));
+
 
 	return S_OK;
 }
 
-HRESULT CUI_NodeChat::Late_Initialize(void * pArg)
+HRESULT CUI_NodeChat::Late_Initialize(void* pArg)
 {
 	return S_OK;
 }
@@ -67,6 +81,9 @@ void CUI_NodeChat::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
+	if (m_bTypeLine && static_cast<CUI_Event_Fade*>(m_vecEvents[0])->Is_End())
+		m_bActive = false;
+
 	__super::Tick(fTimeDelta);
 
 }
@@ -75,7 +92,7 @@ void CUI_NodeChat::Late_Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
-	
+
 	__super::Late_Tick(fTimeDelta);
 
 }
@@ -96,14 +113,19 @@ HRESULT CUI_NodeChat::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - m_fCorrectX, g_iWinSizeY*0.5f - vPos.y + m_fCorrectY };
+	_float2 vNewPos = { vPos.x + g_iWinSizeX * 0.5f - m_fCorrectX, g_iWinSizeY * 0.5f - vPos.y + m_fCorrectY };
 
 	if (nullptr != m_szChat)
 	{
+		_float4 vColor = { 1.f, 1.f, 1.f, 1.f };
+
+		if (m_bTypeLine)
+			vColor.w = static_cast<CUI_Event_Fade*>(m_vecEvents[0])->Get_Alpha();
+
 		CGameInstance::GetInstance()->Render_Font(TEXT("Font_SR0"), m_szChat,
 			vNewPos /* position */,
 			0.f, _float2(0.8f, 0.8f)/* size */,
-			{ 1.f, 1.f, 1.f, 1.f }/* color */);
+			vColor/* color */);
 	}
 
 	return S_OK;
@@ -155,9 +177,9 @@ HRESULT CUI_NodeChat::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CUI_NodeChat * CUI_NodeChat::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_NodeChat* CUI_NodeChat::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_NodeChat*	pInstance = new CUI_NodeChat(pDevice, pContext);
+	CUI_NodeChat* pInstance = new CUI_NodeChat(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
 		MSG_BOX("Failed To Create : CUI_NodeChat");
@@ -166,9 +188,9 @@ CUI_NodeChat * CUI_NodeChat::Create(ID3D11Device * pDevice, ID3D11DeviceContext 
 	return pInstance;
 }
 
-CGameObject * CUI_NodeChat::Clone(void * pArg)
+CGameObject* CUI_NodeChat::Clone(void* pArg)
 {
-	CUI_NodeChat*	pInstance = new CUI_NodeChat(*this);
+	CUI_NodeChat* pInstance = new CUI_NodeChat(*this);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX("Failed To Clone : CUI_NodeChat");

@@ -79,6 +79,7 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(false);
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(true);
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_QUEST)->Set_Active(true);
 
 		if (nullptr != m_pPlayer->Get_CameraPlayer())
 			m_pPlayer->Get_CameraPlayer()->Set_MouseFix(true);
@@ -89,11 +90,11 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 			if (false == m_pPlayer->Get_Status()->Get_SkillState(CKena_Status::SKILL_BOMB, 0))
 			{
 				/* Quest 0 - 3 Clear */
-				//CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
-				//_bool bStart = true;
-				//_float fIdx3 = 3;
-				//wstring wstr = L"";
-				//m_pPlayer->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx3, wstr);
+				CUI_ClientManager::UI_PRESENT tag = CUI_ClientManager::QUEST_CLEAR;
+				_bool bStart = true;
+				_float fIdx3 = 3.f;
+				wstring wstr = L"";
+				m_pPlayer->m_PlayerQuestDelegator.broadcast(tag, bStart, fIdx3, wstr);
 				//CGameInstance::GetInstance()->Play_Sound(L"clear.ogg", 1.f, false, SOUND_UI);
 
 			}

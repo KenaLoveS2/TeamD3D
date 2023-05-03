@@ -9,6 +9,8 @@ float4			g_vLightCamPos;
 float4			g_vCamPosition;
 matrix			g_ReflectViewMatrix;
 
+bool				g_bTemp;
+
 Texture2D<float4>		g_LDRTexture;
 Texture2D<float4>		g_NormalTexture;
 Texture2D<float4>		g_DepthTexture;
@@ -123,14 +125,35 @@ struct PS_OUT
 	float4		vColor : SV_TARGET0;
 };
 
+sampler TempSampler = sampler_state
+{
+	filter = min_mag_mip_Point;
+	AddressU = clamp;
+	AddressV = clamp;
+};
+
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float4 vDiffuse = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
+	if (g_bTemp)
+	{
+		float4 vDiffuse = (float4)0.f;
 
-	Out.vColor = vDiffuse;
-	
+		if (In.vTexUV.x <= 0.5f)
+			vDiffuse = g_DiffuseTexture.Sample(TempSampler, In.vTexUV);
+		else
+			vDiffuse = g_LDRTexture.Sample(TempSampler, In.vTexUV);
+
+		Out.vColor = vDiffuse;
+	}
+	else
+	{
+		float4 vDiffuse = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
+
+		Out.vColor = vDiffuse;	
+	}
+
 	return Out;
 }
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+Ôªø#include "stdafx.h"
 #include "..\public\UI_CanvasBottom.h"
 #include "GameInstance.h"
 #include "Kena.h"
@@ -11,13 +11,14 @@
 #include "CinematicCamera.h"
 #include "Kena.h"
 #include "Kena_State.h"
+#include "WorldTrigger_S2.h"
 
-CUI_CanvasBottom::CUI_CanvasBottom(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_CanvasBottom::CUI_CanvasBottom(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CUI_Canvas(pDevice, pContext)
 {
 }
 
-CUI_CanvasBottom::CUI_CanvasBottom(const CUI_CanvasBottom & rhs)
+CUI_CanvasBottom::CUI_CanvasBottom(const CUI_CanvasBottom& rhs)
 	: CUI_Canvas(rhs)
 {
 }
@@ -30,7 +31,7 @@ HRESULT CUI_CanvasBottom::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_CanvasBottom::Initialize(void * pArg)
+HRESULT CUI_CanvasBottom::Initialize(void* pArg)
 {
 	/* Get a Texture Size, and Make an Initial Matrix */
 	XMStoreFloat4x4(&m_matInit, XMMatrixScaling((_float)g_iWinSizeX, 70.f, 1.f));
@@ -109,7 +110,7 @@ HRESULT CUI_CanvasBottom::Bind()
 					pCam->m_CinemaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
 			}
 		}
-		
+
 		pSaiya->m_SaiyaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
 
 		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
@@ -122,12 +123,26 @@ HRESULT CUI_CanvasBottom::Bind()
 	}
 	else
 	{
-		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
-			L"Layer_Player", L"Kena"));
-		if (pKena == nullptr)
+		//CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+		//	L"Layer_Player", L"Kena"));
+		//if (pKena == nullptr)
+		//	return E_FAIL;
+		//
+		//pKena->m_Delegator.bind(this, &CUI_CanvasBottom::BindFunction);
+
+		map<const _tchar*, CGameObject*>* pMap = CGameInstance::GetInstance()->Get_GameObjects(g_LEVEL, L"Layer_Trigger");
+		if (pMap == nullptr)
 			return E_FAIL;
-		
-		pKena->m_Delegator.bind(this, &CUI_CanvasBottom::BindFunction);
+		if (!pMap->empty())
+		{
+			for (auto pair : *pMap)
+			{
+				CWorldTrigger_S2* pTrigger = dynamic_cast<CWorldTrigger_S2*>(pair.second);
+
+				if (pTrigger != nullptr)
+					pTrigger->m_TriggerDelegatorB.bind(this, &CUI_CanvasBottom::BindFunction);
+			}
+		}
 	}
 
 
@@ -277,6 +292,13 @@ void CUI_CanvasBottom::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool b
 			m_vecNode[UI_CHAT]->Set_Active(false);
 		}
 		break;
+	case CUI_ClientManager::BOT_LINE:
+		if (bValue)
+		{
+			m_vecNode[UI_CHAT]->Set_Active(true);
+			static_cast<CUI_NodeChat*>(m_vecNode[UI_CHAT])->Set_String(wstr, fValue, true);
+		}
+		break;
 	}
 
 
@@ -287,23 +309,23 @@ void CUI_CanvasBottom::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float 
 	switch (eType)
 	{
 	case CUI_ClientManager::BOT_KEY_USEROT:
-		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"∫ŒΩƒ∑… ≥Ø∏Æ±‚", CUI_NodeKey::TYPE_Q);
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"Î∂ÄÏãùÎ†π ÎÇ†Î¶¨Í∏∞", CUI_NodeKey::TYPE_Q);
 		break;
 	case CUI_ClientManager::BOT_KEY_OPENSHOP:
-		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"ªÛ¡° µ—∑Ø∫∏±‚", CUI_NodeKey::TYPE_Q);
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"ÏÉÅÏ†ê ÎëòÎü¨Î≥¥Í∏∞", CUI_NodeKey::TYPE_Q);
 		break;
 	case CUI_ClientManager::BOT_KEY_OPENCHEST:
-		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"ªÛ¿⁄ ø≠±‚", CUI_NodeKey::TYPE_Q);
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"ÏÉÅÏûê Ïó¥Í∏∞", CUI_NodeKey::TYPE_Q);
 		break;
 	case CUI_ClientManager::BOT_KEY_AIMARROW:
-		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"»≠ªÏ ¡∂¡ÿ", CUI_NodeKey::TYPE_LB);
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"ÌôîÏÇ¥ Ï°∞Ï§Ä", CUI_NodeKey::TYPE_LB);
 		break;
 	case CUI_ClientManager::BOT_KEY_AIMBOMB:
-		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY2])->Set_Key(L"∆¯≈∫ ¡∂¡ÿ", CUI_NodeKey::TYPE_RB, 0.3f);
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY2])->Set_Key(L"Ìè≠ÌÉÑ Ï°∞Ï§Ä", CUI_NodeKey::TYPE_RB, 0.3f);
 		break;
 	case CUI_ClientManager::BOT_KEY_MOVEROT:
-		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"¡∂¡ÿ«œ±‚", CUI_NodeKey::TYPE_R);
-		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY2])->Set_Key(L"µŒ±‚", CUI_NodeKey::TYPE_B, 0.3f);
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->Set_Key(L"Ï°∞Ï§ÄÌïòÍ∏∞", CUI_NodeKey::TYPE_R);
+		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY2])->Set_Key(L"ÎëêÍ∏∞", CUI_NodeKey::TYPE_B, 0.3f);
 		break;
 	case CUI_ClientManager::BOT_KEY_OFF:
 		static_cast<CUI_NodeKey*>(m_vecNode[UI_KEY1])->SetOff_Key();
@@ -312,9 +334,9 @@ void CUI_CanvasBottom::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float 
 	}
 }
 
-CUI_CanvasBottom * CUI_CanvasBottom::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_CanvasBottom* CUI_CanvasBottom::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_CanvasBottom*	pInstance = new CUI_CanvasBottom(pDevice, pContext);
+	CUI_CanvasBottom* pInstance = new CUI_CanvasBottom(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
 		MSG_BOX("Failed To Create : CUI_CanvasBottom");
@@ -323,9 +345,9 @@ CUI_CanvasBottom * CUI_CanvasBottom::Create(ID3D11Device * pDevice, ID3D11Device
 	return pInstance;
 }
 
-CGameObject * CUI_CanvasBottom::Clone(void * pArg)
+CGameObject* CUI_CanvasBottom::Clone(void* pArg)
 {
-	CUI_CanvasBottom*	pInstance = new CUI_CanvasBottom(*this);
+	CUI_CanvasBottom* pInstance = new CUI_CanvasBottom(*this);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX("Failed To Clone : CUI_CanvasBottom");

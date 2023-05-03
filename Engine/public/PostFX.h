@@ -30,7 +30,7 @@ private:
 
 public:
 	void			SetDebugName(ID3D11DeviceChild* pObj, const char* pName);
-	HRESULT			CompileShader(PWCHAR strPath, D3D10_SHADER_MACRO* pMacros, char* strEntryPoint, char* strProfile, DWORD dwShaderFlags, ID3DBlob** ppVertexShaderBuffer);
+	HRESULT	CompileShader(PWCHAR strPath, D3D10_SHADER_MACRO* pMacros, char* strEntryPoint, char* strProfile, DWORD dwShaderFlags, ID3DBlob** ppVertexShaderBuffer);
 
 public:
 	void Day();
