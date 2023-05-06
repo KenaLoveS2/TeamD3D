@@ -34,12 +34,12 @@ HRESULT CLevel_GamePlay::Initialize()
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 		p_game_instance->Clear_ImguiObjects();
 		p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
-		//p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice,m_pContext));
-		//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
-		p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
+		p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice,m_pContext));
+		p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+		//p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 		//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 		//p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-		//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
+		p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 		//p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 
 	RELEASE_INSTANCE(CGameInstance)
@@ -59,26 +59,26 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//	return E_FAIL;
 
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	//	return E_FAIL;
 
- 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
- 		return E_FAIL;
+ //	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
+ //		return E_FAIL;
 
   	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
   		return E_FAIL;
 
-	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
-	{
-		MSG_BOX("Layer_ControlRoom");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
+	//{
+	//	MSG_BOX("Layer_ControlRoom");
+	//	return E_FAIL;
+	//}
 	
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_GAMEPLAY)))
 		return E_FAIL;
@@ -196,7 +196,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		
-	// CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
@@ -493,8 +493,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 
 	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossShaman"), L"BossShaman_0", nullptr, &pGameObject))) return E_FAIL;	 
 	
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossHunter"), L"BossHunter_0", nullptr, &pGameObject))) return E_FAIL;
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_RockGolem"), L"Rock", nullptr, &pGameObject))) return E_FAIL;
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossHunter"), L"BossHunter_0", nullptr, &pGameObject))) return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_RockGolem"), L"Rock", nullptr, &pGameObject))) return E_FAIL;
 		
 	// if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr, &pGameObject))) return E_FAIL;
 	// if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;

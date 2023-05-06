@@ -142,11 +142,11 @@ void CPhysX_Manager::Free()
 	Px_Safe_Release(pTransport);
 	Px_Safe_Release(m_pFoundation);
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	Safe_Release(m_pInputLayout);
 	Safe_Delete(m_pBatch);
 	Safe_Delete(m_pEffect);
-#endif // _DEBUG
+//#endif // _DEBUG
 }
 
 HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -210,7 +210,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 void CPhysX_Manager::Init_Rendering()
 {	
-#ifdef _DEBUG
+//#ifdef _DEBUG
 
 	m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
 
@@ -231,7 +231,7 @@ void CPhysX_Manager::Init_Rendering()
 	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCONTACT_POINT, 2.f);
 	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCONTACT_NORMAL, 2.f);
 
-#endif
+//#endif
 }
 
 void CPhysX_Manager::Tick(_float fTimeDelta)
@@ -247,7 +247,7 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 
 void CPhysX_Manager::Render()
 {	
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	const PxRenderBuffer &RenderBuffer = m_pScene->getRenderBuffer();
 
 	PxU32 NbTriangles = RenderBuffer.getNbTriangles();
@@ -280,7 +280,7 @@ void CPhysX_Manager::Render()
 	}
 
 	m_pBatch->End();
-#endif // _DEBUG
+//#endif // _DEBUG
 }
 
 void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)

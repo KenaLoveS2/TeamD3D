@@ -69,8 +69,6 @@ HRESULT CFieldBecon_Anim::Late_Initialize(void * pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 
-	m_pRendererCom->Set_PhysXRender(true);
-
 	return S_OK;
 }
 

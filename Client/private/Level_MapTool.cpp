@@ -35,7 +35,7 @@ HRESULT CLevel_MapTool::Initialize()
 		return E_FAIL;
 
 	CGameInstance* p_game_instance = CGameInstance::GetInstance();
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	p_game_instance->Clear_ImguiObjects();
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
 	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
@@ -46,11 +46,12 @@ HRESULT CLevel_MapTool::Initialize()
 	//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 
-#ifdef FOR_MAP_GIMMICK
-	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-#endif
+//#ifdef FOR_MAP_GIMMICK
+//	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+//#endif
 
-#endif
+//#endif
+
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
@@ -58,13 +59,13 @@ HRESULT CLevel_MapTool::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-#ifdef FOR_MAP_GIMMICK
-	if (FAILED(Ready_Layer_CineCamera(TEXT("CinemaCam"))))
-	{
-		MSG_BOX("CinemaCam");
-		return E_FAIL;
-	}
-#endif
+//#ifdef FOR_MAP_GIMMICK
+//	if (FAILED(Ready_Layer_CineCamera(TEXT("CinemaCam"))))
+//	{
+//		MSG_BOX("CinemaCam");
+//		return E_FAIL;
+//	}
+//#endif
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
@@ -78,10 +79,10 @@ HRESULT CLevel_MapTool::Initialize()
 	}
 
 
-#ifdef FOR_MAP_GIMMICK
-	if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
-		return E_FAIL;
-#endif
+//#ifdef FOR_MAP_GIMMICK
+//	if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
+//		return E_FAIL;
+//#endif
 	return S_OK;
 }
 
@@ -135,10 +136,10 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -212,22 +213,22 @@ HRESULT CLevel_MapTool::Ready_Layer_Camera(const _tchar* pLayerTag)
 		pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_LightCamera"), L"LightCamera")))
 		return E_FAIL;
 
-#ifdef FOR_MAP_GIMMICK
-	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
-	CameraDesc.vEye = _float4(0.f, 0.f, 0.f, 1.f);
-	CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
-	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-	CameraDesc.fFovy = XMConvertToRadians(75.0f);
-	CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
-	CameraDesc.fNear = 0.1f;
-	CameraDesc.fFar = 1000.f;
-	CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
-	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
-
-	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Camera_Player", L"Camera_Player", &CameraDesc));
-	NULL_CHECK_RETURN(pCamera, E_FAIL);
-	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"PLAYER_CAM", pCamera), E_FAIL);
-#endif
+//#ifdef FOR_MAP_GIMMICK
+//	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
+//	CameraDesc.vEye = _float4(0.f, 0.f, 0.f, 1.f);
+//	CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
+//	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+//	CameraDesc.fFovy = XMConvertToRadians(75.0f);
+//	CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
+//	CameraDesc.fNear = 0.1f;
+//	CameraDesc.fFar = 1000.f;
+//	CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
+//	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+//
+//	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Camera_Player", L"Camera_Player", &CameraDesc));
+//	NULL_CHECK_RETURN(pCamera, E_FAIL);
+//	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"PLAYER_CAM", pCamera), E_FAIL);
+//#endif
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -247,13 +248,14 @@ HRESULT CLevel_MapTool::Ready_Layer_Player(const _tchar* pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
-#ifdef FOR_MAP_GIMMICK
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
-		return E_FAIL;
+//#ifdef FOR_MAP_GIMMICK
+//	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
+//		return E_FAIL;
+//
+//	CGameInstance::GetInstance()->Set_PlayerPtr(pGameObject);
+//
+//#endif
 
-	CGameInstance::GetInstance()->Set_PlayerPtr(pGameObject);
-
-#endif
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

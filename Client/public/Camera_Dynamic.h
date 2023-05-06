@@ -26,6 +26,7 @@ private:
 	_bool		m_bFix = false;
 	_bool		m_bAutoTurn = false;
 	_float		m_fTurnSpeed = 20.f;
+	_bool		m_bMouseFix = false;
 	_float		m_fMouseSensitivity;
 
 public:

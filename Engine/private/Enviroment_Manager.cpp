@@ -10,6 +10,10 @@ _bool CEnviroment_Manager::Is_RenderIndex(_uint iObjRoomIndex)
 	
 	if (m_iCurPlayer_RoomIndex == 0)
 		return iObjRoomIndex == m_iCurPlayer_RoomIndex || iObjRoomIndex == m_iCurPlayer_RoomIndex + 1;
+	else if(m_iCurPlayer_RoomIndex == 2)
+	{
+		return iObjRoomIndex == m_iCurPlayer_RoomIndex || iObjRoomIndex == m_iCurPlayer_RoomIndex + 1;
+	}
 	else if (m_iCurPlayer_RoomIndex == 5)
 		return iObjRoomIndex == m_iCurPlayer_RoomIndex;
 

@@ -50,12 +50,12 @@ HRESULT CRenderTarget::Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT ePixe
 
 HRESULT CRenderTarget::Resize(_uint iWidth, _uint iHeight)
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	m_WorldMatrix._11 = m_vSize.x;
 	m_WorldMatrix._22 = m_vSize.y;
 	m_WorldMatrix._41 = m_vPos.x - iWidth * 0.5f;
 	m_WorldMatrix._42 = -m_vPos.y + iHeight * 0.5f;
-#endif
+//#endif
 
 	if (m_bResizable == false)
 		return S_OK;

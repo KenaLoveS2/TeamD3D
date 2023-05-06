@@ -18,6 +18,8 @@ _uint CRot::m_iKenaFindRotCount = 0;
 vector<CRot*> CRot::m_vecKenaConnectRot;
 _float4 CRot::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 
+_bool CRot::m_bHideFlag = false;
+
 CRot::CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	: CRot_Base(pDevice, p_context)	
 	, m_pMonster_Manager(CMonster_Manager::GetInstance())
@@ -97,6 +99,7 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 void CRot::Tick(_float fTimeDelta)
 {
+	//return;
 	 //m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	 //m_pModelCom->Play_Animation(fTimeDelta);
 	 //m_pRotHat->Tick(fTimeDelta);
@@ -132,6 +135,8 @@ void CRot::Tick(_float fTimeDelta)
 
 void CRot::Late_Tick(_float fTimeDelta)
 {
+	//return;
+
 	 //__super::Late_Tick(fTimeDelta);
 	 //m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 	 //m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -383,7 +388,7 @@ HRESULT CRot::SetUp_State()
 		.Predicator([this]()
 	{
 		// return false; // юс╫ц
-		return m_pMonster_Manager->Is_Battle();
+		return m_pMonster_Manager->Is_Battle() || m_bHideFlag == true;
 	})
 		.AddTransition("IDLE to FOLLOW_KENA ", "FOLLOW_KENA")
 		.Predicator([this]()
@@ -440,7 +445,8 @@ HRESULT CRot::SetUp_State()
 
 		.AddState("HIDE")
 		.OnStart([this]()
-	{	
+	{
+			m_bHideFlag = true;
 		m_pGameInstance->Play_Sound(m_pCopySoundKey[CSK_HIDE1 + rand() % 3], 0.5f);
 		TurnOn_TeleportEffect(m_pTransformCom->Get_Position(), HIDE + rand() % 2);
 	})
@@ -448,18 +454,22 @@ HRESULT CRot::SetUp_State()
 	{
 		m_pTransformCom->Set_Position(g_vInvisiblePosition);
 	})
-		.AddTransition("RUN_AWAY to HIDE_WAIT ", "HIDE_WAIT")
+		.AddTransition("HIDE to HIDE_WAIT ", "HIDE_WAIT")
 		.Predicator([this]()
 	{
 		return m_pModelCom->Get_AnimationFinish();
 	})
+		
 
-
-		.AddState("HIDE_WAIT")		
+		.AddState("HIDE_WAIT")
+		.OnExit([this]()
+	{
+		m_bHideFlag = false;
+	})
 		.AddTransition("HIDE_WAIT to TELEPORT_KENA ", "TELEPORT_KENA")
 		.Predicator([this]()
 	{
-		return m_pMonster_Manager->Is_Battle() == false;
+		return m_pMonster_Manager->Is_Battle() == false || m_bHideFlag == false;
 	})
 		.AddTransition("HIDE_WAIT to PHOTO", "READY_PHOTO")
 		.Predicator([this]()

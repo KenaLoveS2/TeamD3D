@@ -72,8 +72,6 @@ void CWorldTrigger::Tick(_float fTimeDelta)
 {
 	CGameObject::Tick(fTimeDelta);
 
-	m_pRendererCom->Set_PhysXRender(true);
-
 	m_iVectorSize = static_cast<_uint>(m_vecWorldMatrix.size());
 	if (!m_vecWorldMatrix.empty() && m_nMatNum < m_iVectorSize)
 		m_pTransformCom->Set_WorldMatrix_float4x4(m_vecWorldMatrix[m_nMatNum]);

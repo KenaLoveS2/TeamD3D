@@ -14,6 +14,7 @@
 #include "BossRock_Pool.h"
 #include "E_WarriorEyeTrail.h"
 #include "BGM_Manager.h"
+#include "Rot.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -216,6 +217,13 @@ void CBossWarrior::Tick(_float fTimeDelta)
 	AdditiveAnim(fTimeDelta);
 
 	m_pBossRockPool->Tick(fTimeDelta);
+
+	ImGui::Begin("Warrior");
+	if(ImGui::Button("Die"))
+	{
+		m_pMonsterStatusCom->Set_HP(0);
+	}
+	ImGui::End();
 }
 
 void CBossWarrior::Late_Tick(_float fTimeDelta)
@@ -445,6 +453,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.OnExit([this]()
 	{
 		m_bReadySpawn = true;
+		CRot::Set_HideFlag(true);
 	})
 		.AddTransition("SLEEP to CINEMA", "CINEMA") // "IDLE" "CINEMA"
 		.Predicator([this]()
@@ -1064,6 +1073,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
+			CRot::Set_HideFlag(false);
 		g_bDayOrNight = true;
 		m_pTransformCom->Clear_Actor();
 		Clear_Death();
@@ -1662,7 +1672,7 @@ void CBossWarrior::TurnOnMotionBlur(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnMotionBlur);
 		return;
 	}
-	m_pRendererCom->Set_MotionBlur(true);
+	//m_pRendererCom->Set_MotionBlur(true);
 }
 
 void CBossWarrior::TurnOffMotionBlur(_bool bIsInit, _float fTimeDelta)

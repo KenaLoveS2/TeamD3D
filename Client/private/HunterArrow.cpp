@@ -119,17 +119,15 @@ HRESULT CHunterArrow::Late_Initialize(void* pArg)
 		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, m_ColliderPivotMatrix);
 	}
 
+	m_pHunter = (CBossHunter*)pArg;
+
 	/* SwipeCharged */
 	{
 		m_pSwipesCharged = dynamic_cast<CE_Swipes_Charged*>(m_pGameInstance->Clone_GameObject(L"Prototype_GameObject_Swipes_Charged", L"Hunter_Charged"));
 		NULL_CHECK_RETURN(m_pSwipesCharged, E_FAIL);
-		m_pSwipesCharged->Set_Parent(this);
-		m_pSwipesCharged->Late_Initialize(this);
+		m_pSwipesCharged->Set_Parent(m_pHunter);
+		m_pSwipesCharged->Late_Initialize();
 	}
-
-	m_pHunter = (CBossHunter*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Monster"), TEXT("BossHunter_0"));
-
-
 
 	return S_OK;
 }

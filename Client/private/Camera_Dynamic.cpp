@@ -93,7 +93,9 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 
 	if (pGameInstance->Key_Pressing(DIK_F4))
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.f, 0.f, 950.f,1.f));
-	
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_F1))
+		m_bMouseFix = !m_bMouseFix;
 
 	m_pTransformCom->Speed_Boost(pGameInstance->Key_Pressing(DIK_LSHIFT), 5.f);
 	m_pTransformCom->Speed_Down(pGameInstance->Key_Pressing(DIK_LCONTROL), 5.f);
@@ -130,6 +132,18 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 void CCamera_Dynamic::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	//if (m_bMouseFix)
+	//{
+	//	CUtile::SetClientCursorPos(g_hWnd, g_iWinSizeX >> 1, g_iWinSizeY >> 1);
+	//	::ShowCursor(false);
+	//	::SetCursor(NULL);
+	//}
+	//else
+	//{
+	//	::ShowCursor(true);
+	//	::SetCursor(NULL);
+	//}
 }
 
 HRESULT CCamera_Dynamic::Render()
