@@ -380,7 +380,6 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_PLAYER));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
-	m_pRendererCom->Set_PhysXRender(true);
 	m_pTransformCom->Set_PxPivotScale(vPivotScale);
 	m_pTransformCom->Set_PxPivot(vPivotPos);
 
@@ -538,6 +537,15 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 void CKena::Tick(_float fTimeDelta)
 {
+	if(NanCheck())
+	{
+		m_pTransformCom->Set_WorldMatrix_float4x4(m_PrevMatrix);
+	}
+	else
+	{
+		m_PrevMatrix = m_pTransformCom->Get_WorldMatrixFloat4x4();
+	}
+
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 	m_pKenaStatus->Set_Attack(1000);
@@ -547,6 +555,26 @@ void CKena::Tick(_float fTimeDelta)
 	_float	fTimeRate = Update_TimeRate();
 
 	__super::Tick(fTimeDelta);
+
+	ImGui::Begin("Kena");
+
+	if (ImGui::Button("WarriorPos"))
+	{
+		const _float4 vPosFloat4 = _float4(22.8f, 15.f, 842.8f, 1.f);
+		m_pTransformCom->Set_Position(vPosFloat4);
+	}
+
+	if (ImGui::Button("ShamanPos"))
+	{
+		const _float4 vPosFloat4 = _float4(25.f, 15.f, 1123.8f, 1.f);
+		m_pTransformCom->Set_Position(vPosFloat4);
+	}
+
+	if (ImGui::Button("HP"))
+	{
+		m_pKenaStatus->Set_HP(m_pKenaStatus->Get_MaxHP());
+	}
+	ImGui::End();
 
 	if (m_bQuestOn)
 	{
@@ -1416,6 +1444,21 @@ void CKena::Dead_FocusRotIcon(CGameObject* pTarget)
 	m_pUI_FocusRot->Off_Focus(pTarget);
 }
 
+bool CKena::NanCheck()
+{
+	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
+
+	if (isnan(XMVectorGetX(matWorld.r[0])) || isnan(XMVectorGetX(matWorld.r[1])) || isnan(XMVectorGetX(matWorld.r[2])))
+		return true;
+
+	if (XMVectorGetX(XMVector4Length(matWorld.r[0])) == 0.f ||
+		XMVectorGetX(XMVector4Length(matWorld.r[1])) == 0.f ||
+		XMVectorGetX(XMVector4Length(matWorld.r[2])) == 0.f)
+		return true;
+
+	return false;
+}
+
 void CKena::RimColorValue()
 {
 	// Set rim lighting variables based on attack type
@@ -2097,6 +2140,8 @@ _float CKena::LookAnimationController(_float fTimeDelta)
 CKena::DAMAGED_FROM CKena::Calc_DirToMonster(CGameObject * pTarget)
 {
 	DAMAGED_FROM		eDir = DAMAGED_FROM_END;
+
+	if (pTarget == nullptr) return eDir;
 
 	CTransform*	pTargetTransCom = pTarget->Get_TransformCom();
 	_float4		vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);

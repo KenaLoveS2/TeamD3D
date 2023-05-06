@@ -38,6 +38,11 @@ public:
 	
 	HRESULT Reserve_Manager(_uint iStartRoomIndex =0);
 
-	_uint Get_CurrentPlayerRoomIndex() { return m_iCurPlayer_RoomIndex; }	
+	_uint Get_CurrentPlayerRoomIndex() { return m_iCurPlayer_RoomIndex; }
+	void	Set_CurrentPlayerRoomIndex(int iRoomindex)
+	{
+		m_iCurPlayer_RoomIndex = 3;
+	}
+
 };
 END

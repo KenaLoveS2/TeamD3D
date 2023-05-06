@@ -30,7 +30,7 @@ public:
 		vector<_float4x4>&	vecMatrixVec, vector<_float3>& vecColiderSize,CEnviromentObj::CHAPTER eChapter);
 	
 
-#ifdef 	_DEBUG
+
 private:
 	void														Imgui_SelectOption();						// 컴포넌트 기능 선택
 	void														Imgui_Save_Load_Json();
@@ -87,7 +87,7 @@ private:	/*Use_Data*/
 	_int														m_iCreateObjRoom_Option = 0;
 	array<_bool, CEnviromentObj::COMPONENTS_END>				m_bComOptions;
 
-#endif
+
 public:
 	static	CImgui_MapEditor*									Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, void* pArg = nullptr);
 	virtual void												Free() override;

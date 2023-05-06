@@ -22,7 +22,7 @@
 #include "BGM_Manager.h"
 #include "E_P_ExplosionGravity.h"
 #include "CameraForNpc.h"
-
+#include "Rot.h"
 
 // #define EFFECTDEBUG
 
@@ -484,7 +484,8 @@ HRESULT CBossShaman::SetUp_State()
 		.OnExit([this]()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-		m_bReadySpawn = true;		
+		m_bReadySpawn = true;
+		CRot::Set_HideFlag(true);
 	})
 		.AddTransition("SLEEP to CAMERA_SCENE", "CAMERA_SCENE_START")
 		.Predicator([this]()
@@ -1382,7 +1383,7 @@ HRESULT CBossShaman::SetUp_State()
 		g_bDayOrNight = true;
 		m_pTransformCom->Clear_Actor();
 		Clear_Death();
-
+		CRot::Set_HideFlag(false);
 		/* Quest 2 - 2 */
 		CUI_ClientManager::UI_PRESENT eClear = CUI_ClientManager::QUEST_CLEAR;
 		_float fIdx = 10.f;

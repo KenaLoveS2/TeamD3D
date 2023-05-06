@@ -233,7 +233,6 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR2"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
 		return E_FAIL;
-
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_PrevFrame"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
 		return E_FAIL;
 
@@ -271,6 +270,13 @@ HRESULT CRenderer::Initialize_Prototype()
 	// PrevFrame 텍스쳐 렌더링용
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_PrevFrame"), TEXT("Target_PrevFrame"))))
 		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Debug"), TEXT("Target_LDR1"))))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Debug"), TEXT("Target_LDR2"))))
+		return E_FAIL;
+
 
 	/* For. SHADOW */
 	m_iShadowWidth = 8192;
@@ -311,48 +317,50 @@ HRESULT CRenderer::Initialize_Prototype()
 #endif
 
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
+	_float fSizeX = 150.f, fSizeY = 150.f;
 
-	_float fSizeX = 200.f, fSizeY = 200.f;
+	_float fDebug = fSizeY * 0.5f;
+	_float fX = fSizeX * 0.5f;
 
 	// For. Model
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), fSizeX * 0.5f, fSizeY * 0.5f, fSizeX, fSizeY)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), fX, fDebug, fSizeX, fSizeY)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Normal"), fSizeX * 0.5f, (fSizeY * 0.5f) + fSizeY , fSizeX, fSizeY)))
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Normal"), fX + fSizeX, fDebug, fSizeX, fSizeY)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Depth"), fSizeX * 0.5f, (fSizeY * 0.5f) + (fSizeY * 2.f), fSizeX, fSizeY)))
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Depth"), fX + fSizeX * 2.f, fDebug, fSizeX, fSizeY)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_MtrlAmbient"), (fSizeX * 0.5f) + fSizeX, fSizeY * 0.5f, fSizeX, fSizeY)))
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_MtrlAmbient"), fX + fSizeX * 3.f, fDebug, fSizeX, fSizeY)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), (fSizeX * 0.5f) + fSizeX, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), fX + fSizeX * 4.f, fDebug, fSizeX, fSizeY)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_HDR"), (fSizeX * 0.5f) + fSizeX, (fSizeY * 0.5f) + (fSizeY * 2.f), fSizeX, fSizeY)))
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), fX + fSizeX * 5.f, fDebug, fSizeX, fSizeY)))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ShadowDepth"), fX + fSizeX * 6.f, fDebug, fSizeX, fSizeY)))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_StaticShadowDepth"), fX + fSizeX * 7.f, fDebug, fSizeX, fSizeY)))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Effect"), fX + fSizeX * 8.f, fDebug, fSizeX, fSizeY)))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_PrevFrame"), fX + fSizeX * 9.f, fDebug, fSizeX, fSizeY)))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_HDR"), fX + fSizeX * 9.f, fDebug + fSizeY, fSizeX, fSizeY)))
 		return E_FAIL;
 	
-	// For. Lighting
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), (fSizeX * 0.5f) + fSizeX * 2.f, fSizeY * 0.5f, fSizeX, fSizeY)))
-		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular"), (fSizeX * 0.5f) + fSizeX * 2.f, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
-		return E_FAIL;
-
-	// For. Shadow
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ShadowDepth"), (fSizeX * 0.5f) + fSizeX * 3.f, fSizeY * 0.5f, fSizeX, fSizeY)))
-		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_StaticShadowDepth"), (fSizeX * 0.5f) + fSizeX * 3.f, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
-		return E_FAIL;
-
-	// For. Water & Distortion
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Effect"), (fSizeX * 0.5f) + fSizeX * 4.f, fSizeY * 0.5f, fSizeX, fSizeY)))
-		return E_FAIL;
-
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Cine"),1600.f - 240.f, 900.f - 135.f, 480.f, 270.f)))
 		return E_FAIL;
 
-	// For. PrevFrame
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_PrevFrame"), (fSizeX * 0.5f) + fSizeX * 5.f, fSizeY * 0.5f, fSizeX, fSizeY)))
-		return E_FAIL;
-
-#endif
+//#endif
 	CreateTexture(L"../Bin/Resources/Textures/Effect/flare.jpg", m_pFlareTexture);
 	CreateTexture(L"../Bin/Resources/Textures/Effect/smoothNormalSphere.png", m_pDistortionTexture);
 	return S_OK;
@@ -507,6 +515,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 {
 	Increase_Time();
 
+	//if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_J) & 0x8000)
+	//	m_bPhysXRenderFlag = !m_bPhysXRenderFlag;
+
 //	CONTEXT_LOCK
 
 	if (FAILED(Render_PrevFrame()))
@@ -619,7 +630,12 @@ HRESULT CRenderer::Draw_RenderGroup()
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_SSAO"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_EFFECT"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_PrevFrame"));
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_HDR"));
 	}
+
+	if (m_bPhysXRenderFlag)
+		CPhysX_Manager::GetInstance()->Render();
+
 	return S_OK;
 }
 

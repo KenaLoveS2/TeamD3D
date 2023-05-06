@@ -134,6 +134,9 @@ private:
 	class CHatCart*				m_pHatCart = nullptr;
 	class CCamera_Photo*		m_pCamera_Photo = nullptr;
 
+	bool									NanCheck();
+	_float4x4							m_PrevMatrix;
+
 private:
 	map<const string, class CEffect_Base*>		m_mapEffect;
 	vector<class CKena_Parts*>					m_vecPart;

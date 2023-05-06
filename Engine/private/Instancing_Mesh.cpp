@@ -712,7 +712,6 @@ HRESULT CInstancing_Mesh::Render()
 
 _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> & InstanceMatrixVec, _fmatrix ParentMat)
 {
-	return 1;
 	list<_float4x4> InstPos;
 
 	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
@@ -767,7 +766,6 @@ _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vecto
 
 _int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> & InstanceMatrixVec, _fmatrix ParentMat)
 {
-	return 1;
 	list<_float4x4> InstPos;
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -778,7 +776,7 @@ _int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLi
 		_vector vTransPos = XMVectorSetW(matTransWorld.r[3], 1.0f);
 		vTransPos = XMVectorSwizzle(vTransPos, 0, 1, 2, 3);
 
-		if (pGameInstance->isInFrustum_WorldSpace(vTransPos, 10.f))  	/*절두체 컬링*/
+		if (pGameInstance->isInFrustum_WorldSpace(vTransPos, 75.f))  	/*절두체 컬링*/
 		{
 			_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
 			_vector camPos = XMLoadFloat4(&vCamPos);

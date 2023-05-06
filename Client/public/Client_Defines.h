@@ -17,14 +17,14 @@ extern bool g_bFrameLimit;
 //#undef FOR_MAPTOOL
 
 #define LIFT_ROT_COUNT		6
-#define FIRST_ROT			0
+#define FIRST_ROT					0
 
 #define MONSTER_LINEAR_DAMING		2.0f
-#define MONSTER_ANGULAR_DAMING		0.5f
-#define MONSTER_MASS				25000.f
+#define MONSTER_ANGULAR_DAMING	0.5f
+#define MONSTER_MASS							25000.f
 
 #define CAMERA_SHAMAN_TAG			TEXT("CAMERA_SHAMAN")
-#define CAMERA_PHOTO_TAG			TEXT("CAMERA_PHOTO")
+#define CAMERA_PHOTO_TAG				TEXT("CAMERA_PHOTO")
 
 namespace Client
 {

@@ -48,7 +48,7 @@ private:
 	_bool m_bTemp = false;
 
 	_bool m_bPlayAnimation = true;
-
+	
 private:
 	CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CRot(const CRot& rhs);
@@ -67,6 +67,9 @@ public:
 	virtual void ImGui_ShaderValueProperty() override;
 	virtual void ImGui_PhysXValueProperty() override;
 	void AlreadyRot();
+
+	static _bool m_bHideFlag;
+	static void Set_HideFlag(_bool bFlag) { m_bHideFlag = bFlag; }
 
 private:	
 	virtual HRESULT SetUp_State() override;

@@ -87,7 +87,6 @@ HRESULT CSapling::Late_Initialize(void * pArg)
 
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
-		m_pRendererCom->Set_PhysXRender(true);
 		m_pTransformCom->Set_PxPivotScale(vPivotScale);
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}

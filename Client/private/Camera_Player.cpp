@@ -106,6 +106,13 @@ HRESULT CCamera_Player::Initialize(void * pArg)
 
 void CCamera_Player::Tick(_float fTimeDelta)
 {
+	ImGui::Begin("Camera");
+	if(ImGui::Button("XMMatrixIdentity"))
+	{
+		m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
+	}
+	ImGui::End();
+
 	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
 	fTimeDelta /= fTimeRate;
 
@@ -410,6 +417,9 @@ void CCamera_Player::Tick(_float fTimeDelta)
 			matWorld.r[1] = XMVector4Transform(matWorld.r[1], matRotation);
 			matWorld.r[2] = XMVector4Transform(matWorld.r[2], matRotation);
 
+			if (isnan(XMVectorGetX(matWorld.r[0])) || isnan(XMVectorGetX(matWorld.r[1])) || isnan(XMVectorGetX(matWorld.r[2])))
+				return;
+
 			if (m_fShakeRatio >= 1.f)
 				m_bShakeReturn = true;
 		}
@@ -425,6 +435,9 @@ void CCamera_Player::Tick(_float fTimeDelta)
 			matWorld.r[0] = XMVector4Transform(matWorld.r[0], matRotation);
 			matWorld.r[1] = XMVector4Transform(matWorld.r[1], matRotation);
 			matWorld.r[2] = XMVector4Transform(matWorld.r[2], matRotation);
+
+			if (isnan(XMVectorGetX(matWorld.r[0])) || isnan(XMVectorGetX(matWorld.r[1])) || isnan(XMVectorGetX(matWorld.r[2])))
+				return;
 
 			if (m_fShakeRatio <= 0.f)
 			{
@@ -450,8 +463,8 @@ void CCamera_Player::Tick(_float fTimeDelta)
 			_vector		vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
 			_vector		vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight)) * vScale.y;
 
-			//if (isnan(XMVectorGetX(vLook)) || isnan(XMVectorGetX(vRight)) || isnan(XMVectorGetX(vUp)))
-			//	return;
+			if (isnan(XMVectorGetX(vLook)) || isnan(XMVectorGetX(vRight)) || isnan(XMVectorGetX(vUp)))
+				return;
 
 			matWorld.r[0] = vRight;
 			matWorld.r[1] = vUp;
