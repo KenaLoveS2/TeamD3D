@@ -538,6 +538,9 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 void CKena::Tick(_float fTimeDelta)
 {
+	if (CGameInstance::GetInstance()->Key_Down(DIK_F10))
+		m_bStateLock = !m_bStateLock;
+
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 	m_pKenaStatus->Set_Attack(1000);

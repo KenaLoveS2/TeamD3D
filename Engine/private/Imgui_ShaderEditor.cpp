@@ -32,6 +32,10 @@ void CImgui_ShaderEditor::Imgui_FreeRender()
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	ImGui::Checkbox("PhysXRender", &m_bPhysXRender);
+	if (CGameInstance::GetInstance()->Key_Down(DIK_HOME))
+		m_bPhysXRender = true;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_END))
+		m_bPhysXRender = false;
 
 	if(m_bPhysXRender)
 		m_pRendererCom->Set_PhysXRender(true);

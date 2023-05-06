@@ -44,10 +44,10 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 
 
-	p_game_instance->Clear_ImguiObjects();
-	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
-	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
-	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	//p_game_instance->Clear_ImguiObjects();
+	//p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
+	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
@@ -108,11 +108,11 @@ HRESULT CLevel_Final::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas"))))
-	{
-		MSG_BOX("Layer_Canvas");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas"))))
+	//{
+	//	MSG_BOX("Layer_Canvas");
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
 	{
@@ -137,6 +137,8 @@ HRESULT CLevel_Final::Initialize()
 void CLevel_Final::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	CGameInstance::GetInstance()->Work_Camera(L"DEBUG_CAM");
 }
 
 void CLevel_Final::Late_Tick(_float fTimeDelta)
@@ -224,7 +226,7 @@ HRESULT CLevel_Final::Ready_Layer_Camera(const _tchar* pLayerTag)
 	CameraDesc.vEye = _float4(0.f, 7.f, 500.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
 	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-	CameraDesc.fFovy = XMConvertToRadians(90.0f);
+	CameraDesc.fFovy = XMConvertToRadians(60.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
 	CameraDesc.fNear = 0.2f;
 	CameraDesc.fFar = 500.f;
@@ -430,7 +432,8 @@ HRESULT CLevel_Final::Ready_Layer_Player(const _tchar* pLayerTag)
 
 HRESULT CLevel_Final::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Chap0_Monster.json");
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Chap0_Monster_NoBoss.json");
+	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Chap0_Monster.json");
 	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Test.json");
 	return S_OK;
 }

@@ -166,8 +166,11 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		_bool bResult = TurnOffSystem(m_fDissolveTime, 3.f, fTimeDelta);
 		if (bResult == true) m_bDesolve = false;
 	}
-	else
-		m_fDissolveTime = 0.0f;
+    else
+    {
+        m_fDissolveTime = 0.0f;
+        m_eEFfectDesc.bActive = true;
+    }
 
 	_float3 vScaled = m_pTransformCom->Get_Scaled();
 	switch (m_ePulseType)

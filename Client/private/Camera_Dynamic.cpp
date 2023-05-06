@@ -101,7 +101,7 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 	if (!pGameInstance->Key_Pressing(DIK_LSHIFT) && !pGameInstance->Key_Pressing(DIK_LCONTROL))
 		m_pTransformCom->Set_Speed(10.f);
 
-	if (pGameInstance->Get_DIMouseState(DIM_RB) & 0x80)
+	if ((pGameInstance->Get_DIMouseState(DIM_RB) & 0x80) && !m_bAutoTurn)
 	{
 		long	MouseMove = 0;
 		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
@@ -109,6 +109,18 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
 			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * m_fMouseSensitivity);
 	}
+
+	if (pGameInstance->Key_Down(DIK_DELETE))
+		m_bAutoTurn = !m_bAutoTurn;
+	if (pGameInstance->Key_Down(DIK_HOME))
+		m_fTurnSpeed += 1.f;
+	if (pGameInstance->Key_Down(DIK_END))
+		m_fTurnSpeed -= 1.f;
+	if (pGameInstance->Key_Down(DIK_BACKSPACE))
+		m_fTurnSpeed = 20.f;
+
+	if (m_bAutoTurn)
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_fTurnSpeed * m_fMouseSensitivity);
 
 	RELEASE_INSTANCE(CGameInstance);
 
