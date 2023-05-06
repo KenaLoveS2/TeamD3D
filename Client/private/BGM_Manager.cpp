@@ -22,6 +22,8 @@ HRESULT CBGM_Manager::Initialize(const string & strFilePath)
 	if (strFilePath != "")
 		Load_FromFile(strFilePath);
 
+	//m_fBGMVolume = 0.f;
+
 	return S_OK;
 }
 

@@ -192,7 +192,6 @@ private:
 	ID3D11DeviceContext* m_pContext = nullptr;
 
 #pragma region Render Variable
-#ifdef _DEBUG
 private:	
 	PrimitiveBatch<VertexPositionColor>*		m_pBatch = nullptr;
 	BasicEffect*												m_pEffect = nullptr;
@@ -205,6 +204,8 @@ public:
 		wstrSelectedTag = L"";
 		iSelectColider_Index = 0;
 	}
+#ifdef _DEBUG
+
 #endif // _DEBUG
 
 
@@ -223,12 +224,12 @@ public:
 	void Render();
 
 	void	Imgui_Render();
-#ifdef _DEBUG
+
 	void	Imgui_Render(const _tchar* pActorName,vector<_float3>* vec_ColiderSize);
 
 	void	Imgui_Render(const _tchar* pActorName);
 
-#endif
+
 	PxVec3						Get_ScalingBox(PxRigidActor *pActor);
 		
 	PxRigidActor*				Find_StaticGameObject(_int iIndex);

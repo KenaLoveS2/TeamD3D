@@ -43,13 +43,12 @@ HRESULT CLevel_Final::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-
 	p_game_instance->Clear_ImguiObjects();
 	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
-	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-	//p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_Rot::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
@@ -430,8 +429,8 @@ HRESULT CLevel_Final::Ready_Layer_Player(const _tchar* pLayerTag)
 
 HRESULT CLevel_Final::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Chap0_Monster.json");
-	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Test.json");
+	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Chap0_Monster.json");
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Level1_Test.json");
 	return S_OK;
 }
 

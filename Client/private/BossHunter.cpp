@@ -559,7 +559,8 @@ HRESULT CBossHunter::SetUp_State()
 		m_fDissolveTime = 1.f;
 	})
 	.OnExit([this]()
-	{	
+	{
+		CRot::Set_HideFlag(true);
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_bReadySpawn = true;
 		CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_2"));
@@ -630,7 +631,7 @@ HRESULT CBossHunter::SetUp_State()
 	})
 	.AddTransition("READY_SPAWN to IDLE", "IDLE")
 	.Predicator([this]()
-	{
+	{		
 		return m_pCineCam[0]->CameraFinishedChecker() && m_bDissolve == false;
 	})
 
@@ -1375,7 +1376,7 @@ HRESULT CBossHunter::SetUp_State()
 		g_bDayOrNight = true;
 		m_pTransformCom->Clear_Actor();
 		Clear_Death();
-
+		CRot::Set_HideFlag(false);
 		/* Quest 1 - 2 */
  		CUI_ClientManager::UI_PRESENT eClear = CUI_ClientManager::QUEST_CLEAR;
 		_float fIdx = 6.f;
@@ -1665,7 +1666,7 @@ void CBossHunter::Create_Arrow()
 	{
 		m_pArrows[i] = (CHunterArrow*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_HunterArrow"), CUtile::Create_DummyString(TEXT("HunterArrow"), i), &ArrowDesc);
 		assert(m_pArrows[i] && "Failed!! -> CBossHunter::Create_Arrow()");
-		m_pArrows[i]->Late_Initialize(nullptr);
+		m_pArrows[i]->Late_Initialize(this);
 		m_pArrows[i]->Set_BowBonePtr(m_pModelCom->Get_BonePtr("Bow_RootJnt"));
 
 		//Safe_AddRef(ArrowDesc.pSocket);

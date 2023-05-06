@@ -92,8 +92,8 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 
 void CRope_RotRock::Tick(_float fTimeDelta)
 {
+	//return;
 	__super::Tick(fTimeDelta);
-
 
 	_bool bBowTargetClear = CBowTarget_Manager::GetInstance()->Check_Group_Hit(L"MAP4_GROUP_0");
 
@@ -144,6 +144,7 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 
 void CRope_RotRock::Late_Tick(_float fTimeDelta)
 {
+	//return;
 	__super::Late_Tick(fTimeDelta);
 	
 	if (m_pRendererCom && m_bRenderActive && m_bBowTargetClear)

@@ -91,29 +91,30 @@ void CUI_NodeQuestReward::Late_Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	CUI::Late_Tick(fTimeDelta);
+	__super::Late_Tick(fTimeDelta);
+	//CUI::Late_Tick(fTimeDelta);
 
-	/* Calculate with Parent(Canvas) WorldMatrix (Scale, Translation) */
-	if (m_pParent != nullptr)
-	{
-		_float4x4 matWorldParent;
-		XMStoreFloat4x4(&matWorldParent, m_pParent->Get_WorldMatrix());
+	///* Calculate with Parent(Canvas) WorldMatrix (Scale, Translation) */
+	//if (m_pParent != nullptr)
+	//{
+	//	_float4x4 matWorldParent;
+	//	XMStoreFloat4x4(&matWorldParent, m_pParent->Get_WorldMatrix());
 
-		_matrix matParentTrans = XMMatrixTranslation(matWorldParent._41, matWorldParent._42, matWorldParent._43);
+	//	_matrix matParentTrans = XMMatrixTranslation(matWorldParent._41, matWorldParent._42, matWorldParent._43);
 
-		float fRatioX = matWorldParent._11 / m_matParentInit._11;
-		float fRatioY = matWorldParent._22 / m_matParentInit._22;
-		_matrix matParentScale = XMMatrixScaling(fRatioX, fRatioY, 1.f);
+	//	float fRatioX = matWorldParent._11 / m_matParentInit._11;
+	//	float fRatioY = matWorldParent._22 / m_matParentInit._22;
+	//	_matrix matParentScale = XMMatrixScaling(fRatioX, fRatioY, 1.f);
 
-		_matrix matWorld = m_matLocal * matParentScale * matParentTrans;
-		m_pTransformCom->Set_WorldMatrix(matWorld);
-	}
+	//	_matrix matWorld = m_matLocal * matParentScale * matParentTrans;
+	//	m_pTransformCom->Set_WorldMatrix(matWorld);
+	//}
 
-	for (auto e : m_vecEvents)
-		e->Late_Tick(fTimeDelta);
+	//for (auto e : m_vecEvents)
+	//	e->Late_Tick(fTimeDelta);
 
-	if (nullptr != m_pRendererCom && m_bActive)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UILAST, this);
+	//if (nullptr != m_pRendererCom && m_bActive)
+	//	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UILAST, this);
 }
 
 HRESULT CUI_NodeQuestReward::Render()

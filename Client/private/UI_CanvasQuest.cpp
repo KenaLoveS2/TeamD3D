@@ -145,10 +145,12 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 
 void CUI_CanvasQuest::Late_Tick(_float fTimeDelta)
 {
+	//return;
+	
 	if (!m_bActive)
 		return;
-	//__super::Late_Tick(fTimeDelta);
-	CUI::Late_Tick(fTimeDelta);
+	__super::Late_Tick(fTimeDelta);
+	//CUI::Late_Tick(fTimeDelta);
 
 	//if (m_eState == STATE_NORMAL)
 	//{
@@ -162,23 +164,24 @@ void CUI_CanvasQuest::Late_Tick(_float fTimeDelta)
 	//	}
 	//}
 
-	for (auto e : m_vecEvents)
-		e->Late_Tick(fTimeDelta);
+	//for (auto e : m_vecEvents)
+	//	e->Late_Tick(fTimeDelta);
 
-	if (nullptr != m_pRendererCom && m_bActive)
-	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UIHDR, this);
+	//if (nullptr != m_pRendererCom && m_bActive)
+	//{
+	//	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UIHDR, this);
 
-		/* Nodes added to RenderList After the canvas. */
-		/* So It can be guaranteed that Canvas Draw first */
-		for (auto node : m_vecNode)
-			node->Late_Tick(fTimeDelta);
-	}
+	//	/* Nodes added to RenderList After the canvas. */
+	//	/* So It can be guaranteed that Canvas Draw first */
+	//	for (auto node : m_vecNode)
+	//		node->Late_Tick(fTimeDelta);
+	//}
 
 }
 
 HRESULT CUI_CanvasQuest::Render()
 {
+	return S_OK;
 	__super::Render();
 
 	return S_OK;

@@ -461,12 +461,10 @@ void CPostFX::PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTarg
 	DownScale(pHDRSRV);
 
 	// Bloom
-	if(m_bBloom)
-		Bloom();
+	Bloom();
 
 	// Blur the bloom values
-	if(m_bBlur)
-		Blur(m_pTempSRV[0], m_pBloomUAV);
+	Blur(m_pTempSRV[0], m_pBloomUAV);
 
 	// Cleanup
 	ZeroMemory(&arrConstBuffers, sizeof(arrConstBuffers));
@@ -525,7 +523,7 @@ void CPostFX::Imgui_Render()
 
 	static _float2 DOFFarStartMinMax{ 0.f, 100.f };
 	ImGui::InputFloat2("DOFFarStartMinMax", (float*)&DOFFarStartMinMax);
-	ImGui::DragFloat("DOFFarStart", &m_fDOFFarStart, 0.01f, DOFFarStartMinMax.x, DOFFarStartMinMax.y);
+	ImGui::DragFloat("DOFFarStart", &m_fDOFFarStart, 10.f, DOFFarStartMinMax.x, DOFFarStartMinMax.y);
 
 	static _float2 DOFFarRangeRcpMinMax{ 0.f, 1.f };
 	ImGui::InputFloat2("DOFFarRangeRcpMinMax", (float*)&DOFFarRangeRcpMinMax);

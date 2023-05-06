@@ -80,12 +80,14 @@ void CTerrain::Tick(_float fTimeDelta)
 #ifdef FOR_MAP_GIMMICK
 
 #else
+	
+#endif
+
 	if (b == false)
 	{
 		m_pVIBufferCom->initialize_World(m_pTransformCom);
 		b = true;
 	}
-#endif
 
 	__super::Tick(fTimeDelta);
 

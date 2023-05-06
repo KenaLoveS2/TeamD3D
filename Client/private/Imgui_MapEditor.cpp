@@ -36,16 +36,16 @@ CImgui_MapEditor::CImgui_MapEditor(ID3D11Device * pDevice, ID3D11DeviceContext *
 
 HRESULT CImgui_MapEditor::Initialize(void * pArg)
 {
-#ifdef _DEBUG
+
 	m_bComOptions.fill(false);
-#endif
+
 	return S_OK;
 }
 
 
 void CImgui_MapEditor::Imgui_FreeRender()
 {
-#ifdef _DEBUG
+
 	ImGui::Text("<MapTool>");
 	if (ImGui::CollapsingHeader("Selcte_Option"))
 	{
@@ -62,10 +62,9 @@ void CImgui_MapEditor::Imgui_FreeRender()
 	}
 
 	ImGui::End();
-#endif
+
 }
 
-#ifdef _DEBUG
 void CImgui_MapEditor::Imgui_SelectOption()
 {
 
@@ -783,7 +782,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 		return;
 }
 
-#endif
+
 
 CImgui_MapEditor * CImgui_MapEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)
 {
@@ -801,7 +800,7 @@ void CImgui_MapEditor::Free()
 	__super::Free();
 }
 
-#ifdef _DEBUG
+
 void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 {
 	if (pSelectEnviObj == nullptr)
@@ -941,7 +940,7 @@ void CImgui_MapEditor::Imgui_DZ_objClear()
 	}
 }
 
-#endif
+
 
 
 

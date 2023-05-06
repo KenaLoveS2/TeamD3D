@@ -78,6 +78,8 @@ void CUI_MousePointer::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_MousePointer::Render()
 {
+	//return S_OK;
+
 	__super::Render();
 
 	if (FAILED(SetUp_ShaderResources()))

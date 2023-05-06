@@ -82,6 +82,7 @@ void CUI_CanvasBottom::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_CanvasBottom::Render()
 {
+	return S_OK;
 	__super::Render();
 
 	return S_OK;

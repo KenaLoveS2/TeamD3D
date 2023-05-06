@@ -166,7 +166,7 @@ public:
 
 	const	_bool	Get_UseTriangleMeshActor() const { return m_bUseTriangleMeshActor; }
 
-#ifdef _DEBUG	
+
 public:/*For.Mesh_Instancing*/
 	void		Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix, _bool bPickingTerrain = false, _int iGroundCoverNum = 0, _float fBetween = 0.f, _bool IsMultipleCheck = false,_float fRaduis = 0.f);
 	void		Imgui_Mesh_InstancingSort_EditOrCreate();
@@ -190,7 +190,7 @@ private:
 	_float3						m_vIncreateDir;
 	_bool						m_bXYZRatioUse[3];
 
-#endif
+
 
 public:
 	void Create_PxTriangle(PX_USER_DATA * pUserData);
